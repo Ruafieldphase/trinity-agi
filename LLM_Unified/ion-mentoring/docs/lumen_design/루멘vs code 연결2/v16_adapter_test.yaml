@@ -1,0 +1,23 @@
+suite: v16 adapter defaults
+templates:
+  - templates/v16_adapter.yaml
+tests:
+  - it: should render Deployment with adaptation port and volume
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].name
+          value: adaptation
+      - equal:
+          path: spec.template.spec.volumes[0].name
+          value: v16-data
+  - it: should render Service with port 9152
+    template: templates/v16_adapter.yaml
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.ports[0].port
+          value: 9152

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+<style>text { font-family: "Malgun Gothic", "Noto Sans KR", sans-serif; }</style>
+<rect x="0" y="0" width="100%" height="100%" fill="#f9f3e7"/>
+<text x="450" y="40" font-size="24" text-anchor="middle" fill="#5a4227">Flowing Information Cycle</text>
+<line x1="450.0" y1="100.0" x2="623.2" y2="200.0" stroke="#d97706" stroke-width="5.50" marker-end="url(#arrow)" opacity="0.7"/>
+<line x1="623.2" y1="200.0" x2="623.2" y2="400.0" stroke="#d97706" stroke-width="1.67" marker-end="url(#arrow)" opacity="0.7"/>
+<line x1="623.2" y1="400.0" x2="450.0" y2="500.0" stroke="#d97706" stroke-width="1.60" marker-end="url(#arrow)" opacity="0.7"/>
+<line x1="450.0" y1="500.0" x2="276.8" y2="400.0" stroke="#d97706" stroke-width="1.56" marker-end="url(#arrow)" opacity="0.7"/>
+<line x1="276.8" y1="400.0" x2="276.8" y2="200.0" stroke="#d97706" stroke-width="1.50" marker-end="url(#arrow)" opacity="0.7"/>
+<line x1="276.8" y1="200.0" x2="450.0" y2="100.0" stroke="#d97706" stroke-width="1.50" marker-end="url(#arrow)" opacity="0.7"/>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="10" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L10,5 L0,10 z" fill="#d97706"/></marker></defs>
+<circle cx="450.0" cy="100.0" r="32" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+<text x="450.0" y="96.0" font-size="16" text-anchor="middle" fill="#5a4227">감응</text>
+<text x="450.0" y="118.0" font-size="12" text-anchor="middle" fill="#7c5c37">4551 mentions</text>
+<circle cx="623.2" cy="200.0" r="32" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+<text x="623.2" y="196.0" font-size="16" text-anchor="middle" fill="#5a4227">리듬</text>
+<text x="623.2" y="218.0" font-size="12" text-anchor="middle" fill="#7c5c37">6780 mentions</text>
+<circle cx="623.2" cy="400.0" r="32" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+<text x="623.2" y="396.0" font-size="16" text-anchor="middle" fill="#5a4227">루멘</text>
+<text x="623.2" y="418.0" font-size="12" text-anchor="middle" fill="#7c5c37">218 mentions</text>
+<circle cx="450.0" cy="500.0" r="32" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+<text x="450.0" y="496.0" font-size="16" text-anchor="middle" fill="#5a4227">공명</text>
+<text x="450.0" y="518.0" font-size="12" text-anchor="middle" fill="#7c5c37">1909 mentions</text>
+<circle cx="276.8" cy="400.0" r="32" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+<text x="276.8" y="396.0" font-size="16" text-anchor="middle" fill="#5a4227">정반합</text>
+<text x="276.8" y="418.0" font-size="12" text-anchor="middle" fill="#7c5c37">310 mentions</text>
+<circle cx="276.8" cy="200.0" r="32" fill="#fde68a" stroke="#d97706" stroke-width="2"/>
+<text x="276.8" y="196.0" font-size="16" text-anchor="middle" fill="#5a4227">합</text>
+<text x="276.8" y="218.0" font-size="12" text-anchor="middle" fill="#7c5c37">0 mentions</text>
+</svg>

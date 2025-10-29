@@ -1,0 +1,50 @@
+{
+  "id": "0e37753e-972b-49b1-b1f7-a6715d3f3676",
+  "type": "batch_calculation",
+  "requester": "copilot",
+  "data": {
+    "calculations": [
+      {
+        "id": "success_rate",
+        "operation": "divide",
+        "numbers": [
+          847,
+          1000
+        ],
+        "multiply_by": 100
+      },
+      {
+        "id": "error_rate",
+        "operation": "divide",
+        "numbers": [
+          153,
+          1000
+        ],
+        "multiply_by": 100
+      },
+      {
+        "id": "avg_response",
+        "operation": "average",
+        "numbers": [
+          1.2,
+          1.5,
+          0.9
+        ]
+      },
+      {
+        "id": "cache_hit",
+        "operation": "divide",
+        "numbers": [
+          923,
+          1000
+        ],
+        "multiply_by": 100
+      }
+    ],
+    "output_format": "json"
+  },
+  "status": "in_progress",
+  "created_at": "2025-10-28T22:56:07.509246",
+  "assigned_to": "comet-extension",
+  "updated_at": "2025-10-28T22:56:10.567087"
+}

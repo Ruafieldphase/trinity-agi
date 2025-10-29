@@ -1,0 +1,39 @@
+name: lumen_v18_autotune_on_drift
+on:
+  workflow_run:
+    workflows: ["lumen_v18_drift_watch"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      window_n:
+        description: "Recent drift events to consider"
+        default: "12"
+      violation_k:
+        description: "Tighten if violations >= K"
+        default: "3"
+jobs:
+  autotune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Adjust policy
+        working-directory: lumen_v1_8_assets
+        env:
+          WINDOW_N: ${{ github.event.inputs.window_n || '12' }}
+          VIOLATION_K: ${{ github.event.inputs.violation_k || '3' }}
+        run: |
+          python auto_policy_adjuster_v18.py
+          python policy_annotations_v18.py
+          cat adaptive_gate_policy_v18.json
+      - name: Upload policy artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v18-policy-autotuned
+          path: |
+            lumen_v1_8_assets/adaptive_gate_policy_v18.json
+            lumen_v1_8_assets/grafana_annotations_v18.json
+            lumen_v1_8_assets/ledger_v18_policy.db

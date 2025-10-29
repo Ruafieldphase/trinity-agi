@@ -1,0 +1,312 @@
+{
+  "timestamp": "2025-10-26T12:01:24.334908",
+  "config_a": {
+    "SYNTHESIS_SECTION_MAX_CHARS": "900"
+  },
+  "config_b": {
+    "SYNTHESIS_SECTION_MAX_CHARS": "800"
+  },
+  "iterations": 5,
+  "stats_a": {
+    "confidence": {
+      "mean": 0.648,
+      "stdev": 0.004,
+      "min": 0.644,
+      "max": 0.653,
+      "values": [
+        0.644,
+        0.645,
+        0.648,
+        0.65,
+        0.653
+      ]
+    },
+    "quality": {
+      "mean": 0.8,
+      "stdev": 0.0,
+      "min": 0.8,
+      "max": 0.8,
+      "values": [
+        0.8,
+        0.8,
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "second_pass_rate": {
+      "mean": 0.0,
+      "stdev": 0.0,
+      "min": 0.0,
+      "max": 0.0,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "duration": {
+      "mean": 6.63,
+      "stdev": 0.38,
+      "min": 6.27,
+      "max": 7.12,
+      "values": [
+        7.12,
+        6.27,
+        6.93,
+        6.32,
+        6.52
+      ]
+    }
+  },
+  "stats_b": {
+    "confidence": {
+      "mean": 0.581,
+      "stdev": 0.18,
+      "min": 0.259,
+      "max": 0.667,
+      "values": [
+        0.656,
+        0.661,
+        0.663,
+        0.259,
+        0.667
+      ]
+    },
+    "quality": {
+      "mean": 0.76,
+      "stdev": 0.089,
+      "min": 0.6,
+      "max": 0.8,
+      "values": [
+        0.8,
+        0.8,
+        0.8,
+        0.6,
+        0.8
+      ]
+    },
+    "second_pass_rate": {
+      "mean": 0.067,
+      "stdev": 0.149,
+      "min": 0.0,
+      "max": 0.333,
+      "values": [
+        0.0,
+        0.0,
+        0.0,
+        0.333,
+        0.0
+      ]
+    },
+    "duration": {
+      "mean": 6.72,
+      "stdev": 0.12,
+      "min": 6.59,
+      "max": 6.87,
+      "values": [
+        6.79,
+        6.59,
+        6.87,
+        6.75,
+        6.61
+      ]
+    }
+  },
+  "difference": {
+    "confidence": {
+      "absolute": -0.067,
+      "percentage": -10.3
+    },
+    "quality": {
+      "absolute": -0.04,
+      "percentage": -5.0
+    },
+    "second_pass_rate": {
+      "absolute": 0.067,
+      "percentage": 0
+    },
+    "duration": {
+      "absolute": 0.09,
+      "percentage": 1.4
+    }
+  },
+  "raw_results": {
+    "config_a": [
+      {
+        "test_name": "Config_A_Run_1",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "900"
+        },
+        "timestamp": "2025-10-26T11:59:07.513862",
+        "duration_sec": 7.12,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.644,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      },
+      {
+        "test_name": "Config_A_Run_2",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "900"
+        },
+        "timestamp": "2025-10-26T11:59:21.636195",
+        "duration_sec": 6.27,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.645,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      },
+      {
+        "test_name": "Config_A_Run_3",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "900"
+        },
+        "timestamp": "2025-10-26T11:59:34.911497",
+        "duration_sec": 6.93,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.648,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      },
+      {
+        "test_name": "Config_A_Run_4",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "900"
+        },
+        "timestamp": "2025-10-26T11:59:48.843505",
+        "duration_sec": 6.32,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.65,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      },
+      {
+        "test_name": "Config_A_Run_5",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "900"
+        },
+        "timestamp": "2025-10-26T12:00:02.164886",
+        "duration_sec": 6.52,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.653,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      }
+    ],
+    "config_b": [
+      {
+        "test_name": "Config_B_Run_1",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "800"
+        },
+        "timestamp": "2025-10-26T12:00:15.690823",
+        "duration_sec": 6.79,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.656,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      },
+      {
+        "test_name": "Config_B_Run_2",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "800"
+        },
+        "timestamp": "2025-10-26T12:00:29.486987",
+        "duration_sec": 6.59,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.661,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      },
+      {
+        "test_name": "Config_B_Run_3",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "800"
+        },
+        "timestamp": "2025-10-26T12:00:43.087114",
+        "duration_sec": 6.87,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.663,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      },
+      {
+        "test_name": "Config_B_Run_4",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "800"
+        },
+        "timestamp": "2025-10-26T12:00:56.962880",
+        "duration_sec": 6.75,
+        "success": true,
+        "new_events": 28,
+        "metrics": {
+          "avg_confidence": 0.259,
+          "avg_quality": 0.6,
+          "second_pass_rate": 0.333,
+          "total_events": 28,
+          "total_tasks": 3
+        }
+      },
+      {
+        "test_name": "Config_B_Run_5",
+        "env_vars": {
+          "SYNTHESIS_SECTION_MAX_CHARS": "800"
+        },
+        "timestamp": "2025-10-26T12:01:10.716971",
+        "duration_sec": 6.61,
+        "success": true,
+        "new_events": 13,
+        "metrics": {
+          "avg_confidence": 0.667,
+          "avg_quality": 0.8,
+          "second_pass_rate": 0.0,
+          "total_events": 13,
+          "total_tasks": 1
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "timestamp": "2025-10-27T21:40:10.066942",
+  "window_hours": 24,
+  "total_cases": 12,
+  "cases": [
+    {
+      "task_id": "75a56d53-6fe8-4478-8796-ac710988c0fb",
+      "min_quality": 0.6,
+      "first_quality": 0.4,
+      "quality_gap": 0.19999999999999996,
+      "evidence_ok": false,
+      "confidence": 0.7563636363636363,
+      "past_performance": 0.593939393939394,
+      "impact": 0.4,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "27a9d170-3812-46c4-936b-30b1ce07181d",
+      "min_quality": 0.6,
+      "first_quality": 0.4,
+      "quality_gap": 0.19999999999999996,
+      "evidence_ok": false,
+      "confidence": 0.7588571428571429,
+      "past_performance": 0.5980952380952381,
+      "impact": 0.4,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "43242f2b-7d55-46f1-baf3-df094d3444d0",
+      "min_quality": 0.6,
+      "first_quality": 0.4,
+      "quality_gap": 0.19999999999999996,
+      "evidence_ok": false,
+      "confidence": 0.76,
+      "past_performance": 0.6,
+      "impact": 0.4,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "38624803-d05d-4c1e-828d-527fce5cacd7",
+      "min_quality": 0.6,
+      "first_quality": 0.4,
+      "quality_gap": 0.19999999999999996,
+      "evidence_ok": false,
+      "confidence": 0.766,
+      "past_performance": 0.61,
+      "impact": 0.4,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "fab5fa11-897d-4a2c-9b49-89c6ff94af11",
+      "min_quality": 0.6,
+      "first_quality": 0.4,
+      "quality_gap": 0.19999999999999996,
+      "evidence_ok": false,
+      "confidence": 0.7667200000000001,
+      "past_performance": 0.6112000000000001,
+      "impact": 0.4,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "a85abd09-08ce-4c81-96cc-4ca751979294",
+      "min_quality": 0.6,
+      "first_quality": 0.4,
+      "quality_gap": 0.19999999999999996,
+      "evidence_ok": false,
+      "confidence": 0.7690909090909092,
+      "past_performance": 0.6151515151515152,
+      "impact": 0.4,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "947eaa0a-1e6f-4a99-ae6b-fd2c08ae6b05",
+      "min_quality": 0.6,
+      "first_quality": 0.4,
+      "quality_gap": 0.19999999999999996,
+      "evidence_ok": false,
+      "confidence": 0.7671641791044777,
+      "past_performance": 0.6119402985074627,
+      "impact": 0.4,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "a8f86d68-1f73-424c-bb36-33da129be355",
+      "min_quality": 0.6,
+      "first_quality": 0.5,
+      "quality_gap": 0.09999999999999998,
+      "evidence_ok": false,
+      "confidence": 0.7624161073825504,
+      "past_performance": 0.6040268456375839,
+      "impact": 0.5,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "0da32d28-1afa-43d9-baf0-9de9e5519720",
+      "min_quality": 0.6,
+      "first_quality": 0.5,
+      "quality_gap": 0.09999999999999998,
+      "evidence_ok": false,
+      "confidence": 0.7607843137254902,
+      "past_performance": 0.6013071895424836,
+      "impact": 0.5,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "b97b3a5d-7bfa-4cfb-959c-c14a257a436c",
+      "min_quality": 0.6,
+      "first_quality": 0.5,
+      "quality_gap": 0.09999999999999998,
+      "evidence_ok": false,
+      "confidence": 0.7657831325301205,
+      "past_performance": 0.6096385542168675,
+      "impact": 0.5,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "c5fe7505-16b0-4664-9fe0-a559b16421a3",
+      "min_quality": 0.6,
+      "first_quality": 0.5,
+      "quality_gap": 0.09999999999999998,
+      "evidence_ok": false,
+      "confidence": 0.7662427745664739,
+      "past_performance": 0.6104046242774567,
+      "impact": 0.5,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    },
+    {
+      "task_id": "753fb661-d831-429d-871d-a359129b16e5",
+      "min_quality": 0.6,
+      "first_quality": 0.5,
+      "quality_gap": 0.09999999999999998,
+      "evidence_ok": false,
+      "confidence": 0.8076595744680852,
+      "past_performance": 0.6794326241134753,
+      "impact": 0.5,
+      "transparency": 0.7,
+      "rune_confidence": 0.5,
+      "recommendations": [
+        "강한 근거 추가",
+        "모호한 문장 줄이기"
+      ],
+      "replan": true
+    }
+  ],
+  "summary": {
+    "avg_quality_gap": 0.1583333333333333,
+    "avg_confidence": 0.7672568141740739,
+    "avg_quality": 0.44166666666666665,
+    "evidence_failure_rate": 1.0,
+    "recommendations": {
+      "모호한 문장 줄이기": 12,
+      "강한 근거 추가": 12
+    }
+  }
+}

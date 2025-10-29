@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Lumen — Session Restore (v1.6 FINAL)
+export LUMEN_SESSION="v1.6_Final"
+export LUMEN_ROOT="${LUMEN_ROOT:-$PWD}"
+export LUMEN_NS="${LUMEN_NS:-lumen-prod}"
+export HELM_RELEASE="${HELM_RELEASE:-lumen}"
+export ENRICH_EXPORTER_PORT="${ENRICH_EXPORTER_PORT:-9151}"
+export ADAPT_EXPORTER_PORT="${ADAPT_EXPORTER_PORT:-9152}"
+
+l6.final.deploy() {
+  helm upgrade --install "$HELM_RELEASE" "$LUMEN_ROOT/charts/lumen"         -f "$LUMEN_ROOT/charts/lumen/values.prod.yaml" -n "$LUMEN_NS"         --set featureFlags.enableV16Enrichment=true         --set featureFlags.enableV16Adaptation=true
+}
+l6.final.verify() {
+  curl -fsSL "http://$1:9143/metrics" | sed -n '1,40p' || true
+  curl -fsSL "http://$1:${ENRICH_EXPORTER_PORT}/metrics" | head -n 10 || true
+  curl -fsSL "http://$1:${ADAPT_EXPORTER_PORT}/metrics" | head -n 10 || true
+}
+echo "[Lumen] v1.6 FINAL session restored. Use: l6.final.deploy && l6.final.verify <host>"

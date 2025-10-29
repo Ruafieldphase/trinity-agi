@@ -1,0 +1,102 @@
+name: lumen_integrated_gate_and_flipback
+on:
+  workflow_dispatch:
+    inputs:
+      roi_env:
+        description: "Environment"
+        default: "prod"
+      roi_service:
+        description: "Service"
+        default: "api"
+      maturity_overall_min:
+        description: "Maturity overall min (0..1)"
+        default: "0.60"
+      flip_platform:
+        description: "Rollback platform (helm|argocd|none)"
+        default: "none"
+      flip_target:
+        description: "Rollback target (prev rev)"
+        default: "previous"
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start exporters (best-effort)
+        run: |
+          (cd lumen_v1_9_assets && (python prod_roi_exporter_v19.py &) && sleep 1) || true
+          (cd lumen_v1_9_assets && (python slo_exporter_v19.py &) && sleep 1) || true
+      - name: Build maturity spectrum if needed
+        run: |
+          python lumen_v1_5_preview_assets/maturity_spectrum_v15_alpha.py || true
+      - name: Integrated gate (ROI/SLO × Maturity)
+        id: gate
+        env:
+          ROI_ENV: ${{ github.event.inputs.roi_env }}
+          ROI_SERVICE: ${{ github.event.inputs.roi_service }}
+          MATURITY_OVERALL_MIN: ${{ github.event.inputs.maturity_overall_min }}
+        run: |
+          set +e
+          OUT=$(python scripts/integrated_gate_v19_v15.py); CODE=$?
+          echo "$OUT"
+          echo "json<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          exit $CODE
+  flipback:
+    needs: eval
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Helm rollback (optional)
+        if: ${{ github.event.inputs.flip_platform == 'helm' }}
+        env:
+          NAMESPACE: default
+          RELEASE: ${{ github.event.inputs.roi_service }}
+          TARGET: ${{ github.event.inputs.flip_target }}
+        run: |
+          bash scripts/helm_rollback_v19.sh
+      - name: ArgoCD rollback (optional)
+        if: ${{ github.event.inputs.flip_platform == 'argocd' }}
+        env:
+          APP: ${{ github.event.inputs.roi_service }}
+          REVISION: ${{ github.event.inputs.flip_target }}
+        run: |
+          bash scripts/argocd_rollback_v19.sh
+  notify:
+    needs: [eval]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+      - name: Send summary notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          STATUS="${{ needs.eval.result }}"
+          LEVEL="green"; MSG="Integrated gate PASS"
+          if [ "$STATUS" != "success" ]; then LEVEL="red"; MSG="Integrated gate FAIL"; fi
+          python scripts/incident_notifier_v19.py --title "Integrated Gate" --text "$MSG — see workflow logs." --level "$LEVEL"
+card:
+  needs: [eval]
+  runs-on: ubuntu-latest
+  if: always()
+  steps:
+    - uses: actions/checkout@v4
+    - name: Publish integrated gate incident card
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        GATE_JSON_PATH: gate_result.json
+        SPEC_JSON_PATH: lumen_v1_5_preview_assets/Maturity_Spectrum_v1_5_alpha.json
+      run: |
+        cat <<'JSON' > gate_result.json
+        ${{ steps.gate.outputs.json }}
+        JSON
+        python scripts/gate_result_card_v15.py

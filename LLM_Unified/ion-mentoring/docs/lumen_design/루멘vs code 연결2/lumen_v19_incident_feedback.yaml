@@ -1,0 +1,23 @@
+name: lumen_v19_incident_feedback
+on:
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch: {}
+jobs:
+  feedback:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Apply incident→policy feedback
+        working-directory: lumen_v1_9_assets
+        run: |
+          python incident_to_policy_v19.py
+      - name: Upload updated policy
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v19-incident-feedback
+          path: ../lumen_v1_8_assets/adaptive_gate_policy_v18.json

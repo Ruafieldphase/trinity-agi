@@ -1,0 +1,40 @@
+name: lumen_v19_record_event_reusable
+on:
+  workflow_call:
+    inputs:
+      env:
+        type: string
+        required: true
+      action:
+        type: string
+        required: true
+      version:
+        type: string
+        required: true
+      author:
+        type: string
+        required: true
+      result:
+        type: string
+        required: true
+      notes:
+        type: string
+        required: false
+        default: ""
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Log production event
+        working-directory: lumen_v1_9_assets
+        run: |
+          python prod_event_logger.py --env "${{ inputs.env }}"             --action "${{ inputs.action }}"             --version "${{ inputs.version }}"             --author "${{ inputs.author }}"             --result "${{ inputs.result }}"             --notes "${{ inputs.notes }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v19-prod-events
+          path: lumen_v1_9_assets/lumen_prod_events.db

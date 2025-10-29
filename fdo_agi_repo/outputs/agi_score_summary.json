@@ -1,0 +1,8 @@
+{
+  "tasks_considered": 50,
+  "autonomy": 0.96,
+  "learning_rate": 0.1,
+  "adaptation_rate": 0.12,
+  "evidence_rate": 0.58,
+  "agi_score": 0.453
+}

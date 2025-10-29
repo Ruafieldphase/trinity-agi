@@ -1,0 +1,10 @@
+{
+  "id": "6845d695-b7ba-4fac-b011-0f7656b0a666",
+  "type": "ping",
+  "requester": "test",
+  "data": {},
+  "status": "completed",
+  "created_at": "2025-10-29T10:10:51.753215",
+  "assigned_to": "comet-extension",
+  "updated_at": "2025-10-29T10:31:05.573984"
+}

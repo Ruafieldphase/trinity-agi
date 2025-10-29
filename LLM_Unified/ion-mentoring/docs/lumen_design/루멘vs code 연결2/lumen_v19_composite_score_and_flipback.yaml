@@ -1,0 +1,84 @@
+name: lumen_v19_composite_score_and_flipback
+on:
+  workflow_dispatch:
+    inputs:
+      roi_env:
+        description: "Environment"
+        default: "prod"
+      roi_service:
+        description: "Service"
+        default: "api"
+      score_min:
+        description: "Minimum composite score to PASS (0..100)"
+        default: "70"
+      flip_platform:
+        description: "Rollback platform (helm|argocd)"
+        default: "helm"
+      flip_target:
+        description: "Rollback target (prev rev)"
+        default: "previous"
+      confirm_execute:
+        description: "Execute flipback after dry-run? (yes/no)"
+        default: "no"
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start exporters (best-effort)
+        run: |
+          (cd lumen_v1_9_assets && (python prod_roi_exporter_v19.py &) && sleep 1) || true
+          (cd lumen_v1_9_assets && (python slo_exporter_v19.py &) && sleep 1) || true
+      - name: Score
+        id: score
+        env:
+          ROI_ENV: ${{ github.event.inputs.roi_env }}
+          ROI_SERVICE: ${{ github.event.inputs.roi_service }}
+          ROI_THRESHOLDS_MATRIX_FILE: docs/roi_thresholds_matrix_v19.example.yaml
+          ROI_WEIGHTS_MATRIX_FILE: docs/roi_weights_matrix_v19.example.yaml
+        run: |
+          python scripts/composite_score_v19.py | tee score.json
+          echo "json=$(cat score.json)" >> $GITHUB_OUTPUT
+  flipback:
+    needs: eval
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse score and decide
+        id: decide
+        env:
+          JSON: ${{ needs.eval.outputs.json }}
+          SCORE_MIN: ${{ github.event.inputs.score_min }}
+        run: |
+          SCORE=$(python -c 'import os,json; j=json.loads(os.environ["JSON"]); print(j.get("score",0))')
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+          python - <<'PY'
+import os, json
+score_min = float(os.environ["SCORE_MIN"])
+j = json.loads(os.environ["JSON"])
+status = "PASS" if j.get("score",0) >= score_min else "FAIL"
+print(status)
+PY
+      - name: Dry-run flipback if FAIL
+        if: steps.decide.outputs.score != '' && steps.decide.outputs.score < ${{ github.event.inputs.score_min }}
+        env:
+          PLATFORM: ${{ github.event.inputs.flip_platform }}
+          SERVICE: ${{ github.event.inputs.roi_service }}
+          TARGET: ${{ github.event.inputs.flip_target }}
+          DRY_RUN: "true"
+        run: |
+          bash scripts/bluegreen_flipback_v19.sh
+      - name: Execute flipback (only if confirmed and FAIL)
+        if: steps.decide.outputs.score != '' && steps.decide.outputs.score < ${{ github.event.inputs.score_min }} && github.event.inputs.confirm_execute == 'yes'
+        env:
+          PLATFORM: ${{ github.event.inputs.flip_platform }}
+          SERVICE: ${{ github.event.inputs.roi_service }}
+          TARGET: ${{ github.event.inputs.flip_target }}
+          DRY_RUN: "false"
+        run: |
+          bash scripts/bluegreen_flipback_v19.sh

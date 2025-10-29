@@ -1,0 +1,92 @@
+{
+  "summary": {
+    "total_tasks": 5,
+    "successful_tasks": 5,
+    "failed_tasks": 0,
+    "success_rate_percent": 100.0,
+    "avg_quality_score": 0.8,
+    "avg_citations": 6.0,
+    "avg_citation_quality": 0.0,
+    "avg_elapsed_sec": 36.1
+  },
+  "comparison": {
+    "baseline_success_rate": 51.76,
+    "new_success_rate": 100.0,
+    "improvement_points": 48.24,
+    "improvement_percent": 93.2
+  },
+  "goal_achievement": {
+    "target_success_rate": 70.0,
+    "current_success_rate": 100.0,
+    "gap_to_target": -30.0,
+    "target_achieved": true,
+    "status": "[OK] TARGET ACHIEVED"
+  },
+  "task_results": [
+    {
+      "task_id": 1,
+      "goal": "Explain how BM25 retrieval algorithm works",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 34.892319679260254,
+      "ok": true,
+      "error": null,
+      "category": "standard"
+    },
+    {
+      "task_id": 2,
+      "goal": "Describe the evidence gate 3-stage correction process",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 36.66209888458252,
+      "ok": true,
+      "error": null,
+      "category": "standard"
+    },
+    {
+      "task_id": 3,
+      "goal": "What is the purpose of synthetic citations?",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 35.56337261199951,
+      "ok": true,
+      "error": null,
+      "category": "standard"
+    },
+    {
+      "task_id": 4,
+      "goal": "How does the AGI pipeline handle low confidence results?",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 35.13439750671387,
+      "ok": true,
+      "error": null,
+      "category": "standard"
+    },
+    {
+      "task_id": 5,
+      "goal": "Explain the role of Reciprocal Rank Fusion in hybrid retrieval",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 38.269821882247925,
+      "ok": true,
+      "error": null,
+      "category": "standard"
+    }
+  ]
+}

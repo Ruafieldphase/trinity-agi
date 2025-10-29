@@ -1,0 +1,8 @@
+{
+  "task_id": "cf9c672b-7b9b-48cd-a23b-e576eede5e85",
+  "worker": "comet-browser",
+  "status": "failed",
+  "data": {},
+  "completed_at": "2025-10-28T21:25:03.630092",
+  "error_message": "Unknown task type: data_transform"
+}

@@ -1,0 +1,175 @@
+{
+  "title": "Resonance + Adaptive Feedback",
+  "uid": "resonance-plus-feedback",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Coherence",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "coherence_value"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Phase Diff",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "phase_diff_value"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Entropy",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "entropy_value"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Safety",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "expr": "safety_value"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Latency p95 (ms)",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 6,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "latency_p95_ms"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Error Rate",
+      "gridPos": {
+        "x": 6,
+        "y": 16,
+        "w": 6,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "error_rate"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Throughput RPS",
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 6,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "throughput_rps"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Proposals Executed",
+      "gridPos": {
+        "x": 18,
+        "y": 16,
+        "w": 6,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "feedback_proposals_total"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Feedback Apply Count",
+      "gridPos": {
+        "x": 0,
+        "y": 22,
+        "w": 6,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "feedback_proposals_total"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Feedback Rollback Count",
+      "gridPos": {
+        "x": 6,
+        "y": 22,
+        "w": 6,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "feedback_rollback_total"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Active Adjustments",
+      "gridPos": {
+        "x": 12,
+        "y": 22,
+        "w": 6,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "feedback_active_adjustments"
+        }
+      ]
+    }
+  ]
+}

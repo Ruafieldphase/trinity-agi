@@ -1,0 +1,15 @@
+{
+  "total_messages": 24138,
+  "user_questions": 9007,
+  "ai_responses": 0,
+  "conversations": 0,
+  "emotion_distribution": {
+    "keywords": 9007
+  },
+  "rhythm_distribution": {
+    "exploration": 8393,
+    "integration": 302,
+    "reflection": 220,
+    "planning": 92
+  }
+}

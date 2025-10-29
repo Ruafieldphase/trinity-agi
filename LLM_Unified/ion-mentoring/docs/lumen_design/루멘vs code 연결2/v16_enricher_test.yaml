@@ -1,0 +1,23 @@
+suite: v16 enricher defaults
+templates:
+  - templates/v16_enricher.yaml
+tests:
+  - it: should render Deployment with enrichment port and volume
+    asserts:
+      - isKind:
+          of: Deployment
+      - equal:
+          path: spec.template.spec.containers[0].ports[0].name
+          value: enrichment
+      - equal:
+          path: spec.template.spec.volumes[0].name
+          value: v16-data
+  - it: should render Service with port 9151
+    template: templates/v16_enricher.yaml
+    documentIndex: 1
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.ports[0].port
+          value: 9151

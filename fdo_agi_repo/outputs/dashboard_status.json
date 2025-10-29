@@ -1,0 +1,115 @@
+{
+  "timestamp": "2025-10-28T15:15:34.949898",
+  "healthy": false,
+  "health_checks": {
+    "confidence_ok": true,
+    "quality_ok": true,
+    "second_pass_ok": true,
+    "lumen_ok": true,
+    "proxy_ok": false,
+    "system_ok": true
+  },
+  "policy": {
+    "recent_hours": 1.0,
+    "min_samples": {
+      "confidence": 5,
+      "quality": 5
+    },
+    "samples": {
+      "confidence": 2,
+      "quality": 4
+    },
+    "notes": {
+      "confidence": "insufficient_samples(2<5)",
+      "quality": "insufficient_samples(4<5)"
+    },
+    "resolved_proxy_port": 18090
+  },
+  "metrics": {
+    "avg_confidence": 0.799,
+    "avg_quality": 0.4,
+    "total_tasks": 2,
+    "replan_count": 4,
+    "second_pass_count": 1,
+    "second_pass_rate": 0.5,
+    "samples": {
+      "confidence": 2,
+      "quality": 4
+    },
+    "evidence_correction": {
+      "attempts": 2,
+      "avg_hits": 0.0,
+      "avg_added": 1,
+      "avg_relevance": 0.0,
+      "success_rate": 0.0,
+      "fallback_rate": 0.0
+    }
+  },
+  "external_services": {
+    "lumen": {
+      "ok": true,
+      "status_code": 200,
+      "response_preview": "{'success': True, 'persona': {'name': '세나', 'type': '브리지형', 'emoji': '✒️', 'specialty': '연결, 통합', 'key': 'pen'}, 'response': 'Ping! And a hearty \"Hello!\" right back at you. 세나 here, detecting your sig"
+    },
+    "proxy": {
+      "ok": false,
+      "port": 18090,
+      "status": "not_listening"
+    },
+    "system": {
+      "ok": true,
+      "cpu_percent": 52.8,
+      "memory_percent": 49.0,
+      "disk_percent": 79.3,
+      "warnings": {
+        "cpu": false,
+        "memory": false,
+        "disk": false
+      }
+    }
+  },
+  "timeline": [
+    {
+      "timestamp": "2025-10-28T11:58:24.011298",
+      "event_count": 0,
+      "avg_quality": null,
+      "avg_confidence": null,
+      "second_pass_rate": 0.0
+    },
+    {
+      "timestamp": "2025-10-28T12:28:24.011298",
+      "event_count": 54,
+      "avg_quality": 0.85,
+      "avg_confidence": 0.798,
+      "second_pass_rate": 0.0
+    },
+    {
+      "timestamp": "2025-10-28T12:58:24.011298",
+      "event_count": 28,
+      "avg_quality": 0.85,
+      "avg_confidence": 0.799,
+      "second_pass_rate": 0.0
+    },
+    {
+      "timestamp": "2025-10-28T13:28:24.011298",
+      "event_count": 0,
+      "avg_quality": null,
+      "avg_confidence": null,
+      "second_pass_rate": 0.0
+    },
+    {
+      "timestamp": "2025-10-28T13:58:24.011298",
+      "event_count": 0,
+      "avg_quality": null,
+      "avg_confidence": null,
+      "second_pass_rate": 0.0
+    },
+    {
+      "timestamp": "2025-10-28T14:28:24.011298",
+      "event_count": 45,
+      "avg_quality": 0.4,
+      "avg_confidence": 0.799,
+      "second_pass_rate": 0.25
+    }
+  ]
+}

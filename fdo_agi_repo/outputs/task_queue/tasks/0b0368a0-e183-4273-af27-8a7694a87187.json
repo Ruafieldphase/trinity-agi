@@ -1,0 +1,10 @@
+{
+  "id": "0b0368a0-e183-4273-af27-8a7694a87187",
+  "type": "ping",
+  "requester": "copilot-http",
+  "data": {},
+  "status": "completed",
+  "created_at": "2025-10-29T08:45:10.216256",
+  "assigned_to": "comet-extension",
+  "updated_at": "2025-10-29T08:45:10.829407"
+}

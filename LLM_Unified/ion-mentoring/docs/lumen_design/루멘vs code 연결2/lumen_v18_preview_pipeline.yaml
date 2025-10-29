@@ -1,0 +1,29 @@
+name: lumen_v18_preview_pipeline
+on:
+  workflow_dispatch: {}
+jobs:
+  v18-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Derive adaptive policy
+        working-directory: lumen_v1_8_assets
+        run: |
+          python ledger_analyzer_v18.py
+          cat adaptive_gate_policy_v18.json
+      - name: Annotate graph with memory signatures
+        working-directory: lumen_v1_8_assets
+        run: |
+          python fractal_memory_injector_v18.py
+          ls -l feedback_graph_v18_annotated.json || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v18-preview
+          path: |
+            lumen_v1_8_assets/adaptive_gate_policy_v18.json
+            lumen_v1_8_assets/feedback_graph_v18_annotated.json

@@ -1,0 +1,5 @@
+persona_id,persona_name,persona_role,backend,turns,injections,injection_rate,avg_affect_delta,avg_tokens,avg_characters
+antithesis,Boundary Challenger,Critical reflector,local_ollama,46,0,0.0,0.11847826086956528,317.45652173913044,2274.7608695652175
+rune,RUNE Analyzer,Resonance,unknown,46,0,0.0,0.0,36.58695652173913,253.15217391304347
+synthesis,Fractal Synthesiser,Integrator,local_lmstudio,46,0,0.0,0.10282608695652176,217.2173913043478,1596.891304347826
+thesis,Dialectic Thesis,Seed explorer,local_lmstudio,46,0,0.0,0.09869565217391306,247.67391304347825,1772.6521739130435

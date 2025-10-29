@@ -1,0 +1,26 @@
+# Lumen v1.6 — Adaptation Rules (P2)
+version: 1
+thresholds:
+  semantic_density_avg30:
+    low: 0.6
+    high: 2.5
+  entropy_score:
+    high: 0.75
+  m_score:
+    min: 0.45
+tuning:
+  window_ms:
+    step_up: 300     # widen when unstable/high entropy
+    step_down: 200   # narrow when stable/low entropy
+    min: 800
+    max: 2400
+  gain:
+    alpha_step_down: 0.02  # reduce reactivity when noisy
+    alpha_step_up: 0.01    # increase reactivity when sluggish
+    alpha_min: 0.04
+    alpha_max: 0.20
+  resync:
+    phase_diff_threshold: 0.35
+    cooldown_s: 30
+observability:
+  emit_every_s: 2

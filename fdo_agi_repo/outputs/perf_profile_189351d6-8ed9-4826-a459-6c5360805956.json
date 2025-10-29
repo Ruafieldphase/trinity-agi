@@ -1,0 +1,14 @@
+{
+  "task_id": "189351d6-8ed9-4826-a459-6c5360805956",
+  "force_low_quality": false,
+  "wall_clock_seconds": 90.670378,
+  "segments": {
+    "start_to_run_config": 0.0017583370208740234,
+    "run_config_to_meta": 0.008344650268554688,
+    "meta_to_eval": 58.228824615478516,
+    "eval_to_second_pass": 32.43084406852722,
+    "second_pass_to_end": 0.0002357959747314453
+  },
+  "second_pass": true,
+  "quality": 0.4
+}

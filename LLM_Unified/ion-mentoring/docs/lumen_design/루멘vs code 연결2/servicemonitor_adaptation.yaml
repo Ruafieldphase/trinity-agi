@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: lumen-adaptation
+  labels: { release: prometheus }
+spec:
+  selector:
+    matchLabels:
+      app: lumen
+  namespaceSelector: { any: true }
+  endpoints:
+    - port: adaptation
+      interval: 10s

@@ -1,0 +1,18 @@
+{
+  "id": "fd1ccb53-777c-43bb-91e4-b3e9bc20e3ce",
+  "type": "calculation",
+  "requester": "copilot",
+  "data": {
+    "operation": "add",
+    "numbers": [
+      10,
+      20,
+      30
+    ],
+    "message": "Copilot이 보낸 계산 요청입니다!"
+  },
+  "status": "failed",
+  "created_at": "2025-10-28T21:40:36.710998",
+  "assigned_to": "comet-browser",
+  "updated_at": "2025-10-28T21:40:43.852282"
+}

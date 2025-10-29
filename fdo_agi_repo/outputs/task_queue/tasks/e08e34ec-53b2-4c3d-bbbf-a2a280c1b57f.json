@@ -1,0 +1,25 @@
+{
+  "id": "e08e34ec-53b2-4c3d-bbbf-a2a280c1b57f",
+  "type": "json_process",
+  "requester": "copilot",
+  "data": {
+    "items": [
+      {
+        "name": "Copilot",
+        "role": "Python AI",
+        "status": "active"
+      },
+      {
+        "name": "Comet",
+        "role": "Browser AI",
+        "status": "active"
+      }
+    ],
+    "task": "count_active",
+    "message": "Comet, active 상태인 아이템 개수를 세어주세요!"
+  },
+  "status": "failed",
+  "created_at": "2025-10-28T21:40:36.712003",
+  "assigned_to": "comet-browser",
+  "updated_at": "2025-10-28T21:40:43.205655"
+}

@@ -1,0 +1,595 @@
+{
+  "generated_at": "2025-10-26 06:33:15",
+  "total_runs": 6,
+  "elapsed_sec": 650.683,
+  "results": [
+    {
+      "env": {
+        "SYNTHESIS_SECTION_MAX_CHARS": "900",
+        "THESIS_LEARNING_MAX_CHARS": "1000",
+        "ANTITHESIS_SOURCE_MAX_CHARS": "1200"
+      },
+      "rep": 1,
+      "profile": {
+        "task_id": "a04746c2-12e8-40fb-b644-ed24ac06850e",
+        "force_low_quality": false,
+        "wall_clock_seconds": 85.733834,
+        "segments": {
+          "start_to_run_config": 0.0033414363861083984,
+          "run_config_to_meta": 0.024718284606933594,
+          "meta_to_eval": 53.44761419296265,
+          "eval_to_second_pass": 32.25760769844055,
+          "second_pass_to_end": 0.0002117156982421875
+        },
+        "second_pass": true,
+        "quality": 0.4,
+        "persona_llm": {
+          "has_events": true,
+          "overall": {
+            "count": 5,
+            "ok_count": 5,
+            "success_rate": 1.0,
+            "total_duration_sec": 85.677647,
+            "avg_duration_sec": 17.135529,
+            "max_duration_sec": 26.334902,
+            "avg_user_chars": 712.8,
+            "max_user_chars": 1304.0,
+            "corr_userchars_duration": 0.4206
+          },
+          "by_persona": {
+            "thesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 30.666414,
+              "avg_duration_sec": 15.333207,
+              "max_duration_sec": 18.450625,
+              "avg_user_chars": 173.0,
+              "max_user_chars": 267.0,
+              "corr_userchars_duration": -1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            },
+            "antithesis": {
+              "count": 1,
+              "ok_count": 1,
+              "success_rate": 1.0,
+              "total_duration_sec": 8.655504,
+              "avg_duration_sec": 8.655504,
+              "max_duration_sec": 8.655504,
+              "avg_user_chars": 905.0,
+              "max_user_chars": 905.0,
+              "corr_userchars_duration": null,
+              "attempt_hist": {
+                "0": 1
+              },
+              "success_attempt_hist": {
+                "0": 1
+              },
+              "error_top": []
+            },
+            "synthesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 46.355728,
+              "avg_duration_sec": 23.177864,
+              "max_duration_sec": 26.334902,
+              "avg_user_chars": 1156.5,
+              "max_user_chars": 1304.0,
+              "corr_userchars_duration": 1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            }
+          },
+          "by_pass": {}
+        }
+      }
+    },
+    {
+      "env": {
+        "SYNTHESIS_SECTION_MAX_CHARS": "900",
+        "THESIS_LEARNING_MAX_CHARS": "1000",
+        "ANTITHESIS_SOURCE_MAX_CHARS": "1200"
+      },
+      "rep": 2,
+      "profile": {
+        "task_id": "91b313ac-e8eb-43a1-be91-694263e8c340",
+        "force_low_quality": false,
+        "wall_clock_seconds": 144.820383,
+        "segments": {
+          "start_to_run_config": 0.0016336441040039062,
+          "run_config_to_meta": 0.015294790267944336,
+          "meta_to_eval": 103.88713550567627,
+          "eval_to_second_pass": 40.91572070121765,
+          "second_pass_to_end": 0.00027680397033691406
+        },
+        "second_pass": true,
+        "quality": 0.4,
+        "persona_llm": {
+          "has_events": true,
+          "overall": {
+            "count": 6,
+            "ok_count": 5,
+            "success_rate": 0.8333333333333334,
+            "total_duration_sec": 142.780503,
+            "avg_duration_sec": 23.79675,
+            "max_duration_sec": 32.050889,
+            "avg_user_chars": 1054.5,
+            "max_user_chars": 1920.0,
+            "corr_userchars_duration": 0.8515
+          },
+          "by_persona": {
+            "thesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 31.434323,
+              "avg_duration_sec": 15.717161,
+              "max_duration_sec": 20.785014,
+              "avg_user_chars": 173.0,
+              "max_user_chars": 267.0,
+              "corr_userchars_duration": -1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            },
+            "antithesis": {
+              "count": 1,
+              "ok_count": 1,
+              "success_rate": 1.0,
+              "total_duration_sec": 21.065978,
+              "avg_duration_sec": 21.065978,
+              "max_duration_sec": 21.065978,
+              "avg_user_chars": 1084.0,
+              "max_user_chars": 1084.0,
+              "corr_userchars_duration": null,
+              "attempt_hist": {
+                "0": 1
+              },
+              "success_attempt_hist": {
+                "0": 1
+              },
+              "error_top": []
+            },
+            "synthesis": {
+              "count": 3,
+              "ok_count": 2,
+              "success_rate": 0.6666666666666666,
+              "total_duration_sec": 90.280202,
+              "avg_duration_sec": 30.093401,
+              "max_duration_sec": 32.050889,
+              "avg_user_chars": 1632.33,
+              "max_user_chars": 1920.0,
+              "corr_userchars_duration": 0.7546,
+              "attempt_hist": {
+                "0": 2,
+                "1": 1
+              },
+              "success_attempt_hist": {
+                "0": 1,
+                "1": 1
+              },
+              "error_top": []
+            }
+          },
+          "by_pass": {}
+        }
+      }
+    },
+    {
+      "env": {
+        "SYNTHESIS_SECTION_MAX_CHARS": "900",
+        "THESIS_LEARNING_MAX_CHARS": "1000",
+        "ANTITHESIS_SOURCE_MAX_CHARS": "1200"
+      },
+      "rep": 3,
+      "profile": {
+        "task_id": "abf23b6b-9c20-49c6-8c10-0f5835ac3de6",
+        "force_low_quality": false,
+        "wall_clock_seconds": 150.986568,
+        "segments": {
+          "start_to_run_config": 0.0021774768829345703,
+          "run_config_to_meta": 0.015575647354125977,
+          "meta_to_eval": 112.81028819084167,
+          "eval_to_second_pass": 38.158048152923584,
+          "second_pass_to_end": 0.0002162456512451172
+        },
+        "second_pass": true,
+        "quality": 0.4,
+        "persona_llm": {
+          "has_events": true,
+          "overall": {
+            "count": 6,
+            "ok_count": 5,
+            "success_rate": 0.8333333333333334,
+            "total_duration_sec": 148.940488,
+            "avg_duration_sec": 24.823415,
+            "max_duration_sec": 32.04545,
+            "avg_user_chars": 1086.5,
+            "max_user_chars": 1920.0,
+            "corr_userchars_duration": 0.6282
+          },
+          "by_persona": {
+            "thesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 37.42887,
+              "avg_duration_sec": 18.714435,
+              "max_duration_sec": 27.232797,
+              "avg_user_chars": 173.0,
+              "max_user_chars": 267.0,
+              "corr_userchars_duration": -1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            },
+            "antithesis": {
+              "count": 1,
+              "ok_count": 1,
+              "success_rate": 1.0,
+              "total_duration_sec": 22.09761,
+              "avg_duration_sec": 22.09761,
+              "max_duration_sec": 22.09761,
+              "avg_user_chars": 1251.0,
+              "max_user_chars": 1251.0,
+              "corr_userchars_duration": null,
+              "attempt_hist": {
+                "0": 1
+              },
+              "success_attempt_hist": {
+                "0": 1
+              },
+              "error_top": []
+            },
+            "synthesis": {
+              "count": 3,
+              "ok_count": 2,
+              "success_rate": 0.6666666666666666,
+              "total_duration_sec": 89.414008,
+              "avg_duration_sec": 29.804669,
+              "max_duration_sec": 32.04545,
+              "avg_user_chars": 1640.67,
+              "max_user_chars": 1920.0,
+              "corr_userchars_duration": 0.9589,
+              "attempt_hist": {
+                "0": 2,
+                "1": 1
+              },
+              "success_attempt_hist": {
+                "0": 1,
+                "1": 1
+              },
+              "error_top": []
+            }
+          },
+          "by_pass": {}
+        }
+      }
+    },
+    {
+      "env": {
+        "SYNTHESIS_SECTION_MAX_CHARS": "800",
+        "THESIS_LEARNING_MAX_CHARS": "1000",
+        "ANTITHESIS_SOURCE_MAX_CHARS": "1200"
+      },
+      "rep": 1,
+      "profile": {
+        "task_id": "4fd9e1f0-a22f-4987-b9cb-8861d427cd80",
+        "force_low_quality": false,
+        "wall_clock_seconds": 104.808954,
+        "segments": {
+          "start_to_run_config": 0.0016846656799316406,
+          "run_config_to_meta": 0.019386768341064453,
+          "meta_to_eval": 69.70679235458374,
+          "eval_to_second_pass": 35.080458641052246,
+          "second_pass_to_end": 0.00028014183044433594
+        },
+        "second_pass": true,
+        "quality": 0.4,
+        "persona_llm": {
+          "has_events": true,
+          "overall": {
+            "count": 5,
+            "ok_count": 5,
+            "success_rate": 1.0,
+            "total_duration_sec": 104.766215,
+            "avg_duration_sec": 20.953243,
+            "max_duration_sec": 31.711812,
+            "avg_user_chars": 846.2,
+            "max_user_chars": 1720.0,
+            "corr_userchars_duration": 0.9282
+          },
+          "by_persona": {
+            "thesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 26.16296,
+              "avg_duration_sec": 13.08148,
+              "max_duration_sec": 16.308066,
+              "avg_user_chars": 173.0,
+              "max_user_chars": 267.0,
+              "corr_userchars_duration": -1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            },
+            "antithesis": {
+              "count": 1,
+              "ok_count": 1,
+              "success_rate": 1.0,
+              "total_duration_sec": 21.682536,
+              "avg_duration_sec": 21.682536,
+              "max_duration_sec": 21.682536,
+              "avg_user_chars": 868.0,
+              "max_user_chars": 868.0,
+              "corr_userchars_duration": null,
+              "attempt_hist": {
+                "0": 1
+              },
+              "success_attempt_hist": {
+                "0": 1
+              },
+              "error_top": []
+            },
+            "synthesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 56.920719,
+              "avg_duration_sec": 28.460359,
+              "max_duration_sec": 31.711812,
+              "avg_user_chars": 1508.5,
+              "max_user_chars": 1720.0,
+              "corr_userchars_duration": 1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            }
+          },
+          "by_pass": {}
+        }
+      }
+    },
+    {
+      "env": {
+        "SYNTHESIS_SECTION_MAX_CHARS": "800",
+        "THESIS_LEARNING_MAX_CHARS": "1000",
+        "ANTITHESIS_SOURCE_MAX_CHARS": "1200"
+      },
+      "rep": 2,
+      "profile": {
+        "task_id": "94794ea1-a8e5-4a23-af2e-0fd2513cb765",
+        "force_low_quality": false,
+        "wall_clock_seconds": 61.746398,
+        "segments": {
+          "start_to_run_config": 0.002641439437866211,
+          "run_config_to_meta": 0.016910552978515625,
+          "meta_to_eval": 42.35629725456238,
+          "eval_to_second_pass": 19.37009072303772,
+          "second_pass_to_end": 0.00019931793212890625
+        },
+        "second_pass": true,
+        "quality": 0.4,
+        "persona_llm": {
+          "has_events": true,
+          "overall": {
+            "count": 5,
+            "ok_count": 5,
+            "success_rate": 1.0,
+            "total_duration_sec": 61.703332,
+            "avg_duration_sec": 12.340666,
+            "max_duration_sec": 18.490592,
+            "avg_user_chars": 653.8,
+            "max_user_chars": 1127.0,
+            "corr_userchars_duration": -0.2817
+          },
+          "by_persona": {
+            "thesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 29.899036,
+              "avg_duration_sec": 14.949518,
+              "max_duration_sec": 17.786264,
+              "avg_user_chars": 173.0,
+              "max_user_chars": 267.0,
+              "corr_userchars_duration": -1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            },
+            "antithesis": {
+              "count": 1,
+              "ok_count": 1,
+              "success_rate": 1.0,
+              "total_duration_sec": 6.075353,
+              "avg_duration_sec": 6.075353,
+              "max_duration_sec": 6.075353,
+              "avg_user_chars": 935.0,
+              "max_user_chars": 935.0,
+              "corr_userchars_duration": null,
+              "attempt_hist": {
+                "0": 1
+              },
+              "success_attempt_hist": {
+                "0": 1
+              },
+              "error_top": []
+            },
+            "synthesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 25.728943,
+              "avg_duration_sec": 12.864471,
+              "max_duration_sec": 18.490592,
+              "avg_user_chars": 994.0,
+              "max_user_chars": 1127.0,
+              "corr_userchars_duration": 1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            }
+          },
+          "by_pass": {}
+        }
+      }
+    },
+    {
+      "env": {
+        "SYNTHESIS_SECTION_MAX_CHARS": "800",
+        "THESIS_LEARNING_MAX_CHARS": "1000",
+        "ANTITHESIS_SOURCE_MAX_CHARS": "1200"
+      },
+      "rep": 3,
+      "profile": {
+        "task_id": "586da35d-b256-4062-8ac6-aecce2251d99",
+        "force_low_quality": false,
+        "wall_clock_seconds": 102.4062,
+        "segments": {
+          "start_to_run_config": 0.001961231231689453,
+          "run_config_to_meta": 0.01741504669189453,
+          "meta_to_eval": 59.08510613441467,
+          "eval_to_second_pass": 43.30128335952759,
+          "second_pass_to_end": 0.0001895427703857422
+        },
+        "second_pass": true,
+        "quality": 0.4,
+        "persona_llm": {
+          "has_events": true,
+          "overall": {
+            "count": 5,
+            "ok_count": 5,
+            "success_rate": 1.0,
+            "total_duration_sec": 102.359742,
+            "avg_duration_sec": 20.471948,
+            "max_duration_sec": 29.808828,
+            "avg_user_chars": 859.4,
+            "max_user_chars": 1631.0,
+            "corr_userchars_duration": 0.9517
+          },
+          "by_persona": {
+            "thesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 27.679512,
+              "avg_duration_sec": 13.839756,
+              "max_duration_sec": 14.208808,
+              "avg_user_chars": 173.0,
+              "max_user_chars": 267.0,
+              "corr_userchars_duration": -1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            },
+            "antithesis": {
+              "count": 1,
+              "ok_count": 1,
+              "success_rate": 1.0,
+              "total_duration_sec": 15.415887,
+              "avg_duration_sec": 15.415887,
+              "max_duration_sec": 15.415887,
+              "avg_user_chars": 779.0,
+              "max_user_chars": 779.0,
+              "corr_userchars_duration": null,
+              "attempt_hist": {
+                "0": 1
+              },
+              "success_attempt_hist": {
+                "0": 1
+              },
+              "error_top": []
+            },
+            "synthesis": {
+              "count": 2,
+              "ok_count": 2,
+              "success_rate": 1.0,
+              "total_duration_sec": 59.264342,
+              "avg_duration_sec": 29.632171,
+              "max_duration_sec": 29.808828,
+              "avg_user_chars": 1586.0,
+              "max_user_chars": 1631.0,
+              "corr_userchars_duration": -1.0,
+              "attempt_hist": {
+                "0": 2
+              },
+              "success_attempt_hist": {
+                "0": 2
+              },
+              "error_top": []
+            }
+          },
+          "by_pass": {}
+        }
+      }
+    }
+  ],
+  "summary": [
+    {
+      "SYNTHESIS_SECTION_MAX_CHARS": "900",
+      "THESIS_LEARNING_MAX_CHARS": "1000",
+      "ANTITHESIS_SOURCE_MAX_CHARS": "1200",
+      "repeats": 3,
+      "wall_clock_avg": 127.18026166666668,
+      "meta_to_eval_avg": 90.0483459631602,
+      "success_rate_overall_avg": 0.888888888888889,
+      "synthesis_success_rate_avg": 0.7777777777777777,
+      "synthesis_avg_duration_avg": 27.691978000000002,
+      "synthesis_avg_user_chars_avg": 1476.5
+    },
+    {
+      "SYNTHESIS_SECTION_MAX_CHARS": "800",
+      "THESIS_LEARNING_MAX_CHARS": "1000",
+      "ANTITHESIS_SOURCE_MAX_CHARS": "1200",
+      "repeats": 3,
+      "wall_clock_avg": 89.65385066666666,
+      "meta_to_eval_avg": 57.04939858118693,
+      "success_rate_overall_avg": 1.0,
+      "synthesis_success_rate_avg": 1.0,
+      "synthesis_avg_duration_avg": 23.652333666666667,
+      "synthesis_avg_user_chars_avg": 1362.8333333333333
+    }
+  ]
+}

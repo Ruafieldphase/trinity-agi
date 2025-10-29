@@ -1,0 +1,48 @@
+============================================================
+🔍 Binoche Ensemble Success Rate Monitor (Phase 6k)
+============================================================
+Time Window: Last 48 hours
+Generated: 2025-10-29 19:27:38
+
+📊 Overall Performance:
+  Total predictions: 125
+  Correct: 120
+  Accuracy: 96.0%
+
+🎯 Accuracy by Ensemble Confidence:
+  high (≥0.8):
+    Total: 80
+    Correct: 80
+    Accuracy: 100.0%
+  medium (0.5-0.8):
+    Total: 45
+    Correct: 40
+    Accuracy: 88.9%
+
+📈 Accuracy by Decision Type:
+  Approve:
+    Total: 111
+    Correct: 111
+    Accuracy: 100.0%
+  Reject:
+    Total: 14
+    Correct: 9
+    Accuracy: 64.3%
+
+🔀 Confusion Matrix (Predicted vs Actual):
+  Predicted │ approve  │  revise  │  reject 
+  ──────────────────────────────────────────────────
+    approve │   111    │    0     │    0     │
+     reject │    0     │    5     │    9     │
+
+🧠 Information Theory (Production):
+  Mutual Information: 0.1839 bits
+  Expected (Phase 7): 1.1106 bits (100%)
+  Current: 16.6% of expected
+  ⚠️ DRIFT DETECTED: MI dropped 83.4% (current=0.1839, expected=1.1106)
+
+💡 Recommendations:
+  ✅ Ensemble performing excellently (≥95% accuracy)
+  🚨 Drift detected - consider retraining ensemble weights
+
+============================================================

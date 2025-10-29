@@ -1,0 +1,10 @@
+thresholds:
+  unstable: 0.3
+  stable: 0.75
+rolling_window: 5
+decision_window_minutes: 5
+priority_weights:
+  delta_inv: 0.6
+  tokens: 0.4
+persona_limits:
+  max_parallel: 1

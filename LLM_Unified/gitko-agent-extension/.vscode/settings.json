@@ -1,0 +1,5 @@
+{
+    "gitko.enableHttpPoller": true,
+    "gitko.httpApiBase": "http://localhost:8091/api",
+    "gitko.httpPollingInterval": 2000
+}

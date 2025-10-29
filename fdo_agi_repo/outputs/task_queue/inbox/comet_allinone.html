@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Comet Worker - All-in-One</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #4CAF50;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+        }
+
+        .alert {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 5px solid #4CAF50;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button.stop {
+            background: #f44336;
+        }
+
+        button.stop:hover {
+            background: #da190b;
+        }
+
+        button.test {
+            background: #2196F3;
+        }
+
+        button.test:hover {
+            background: #0b7dda;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .status {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .badge.success {
+            background: #4CAF50;
+        }
+
+        .badge.error {
+            background: #f44336;
+        }
+
+        .badge.warning {
+            background: #FF9800;
+        }
+
+        #console {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .log {
+            margin: 5px 0;
+        }
+
+        .log-success {
+            color: #4CAF50;
+        }
+
+        .log-error {
+            color: #f44336;
+        }
+
+        .log-info {
+            color: #2196F3;
+        }
+
+        .log-warning {
+            color: #FF9800;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🤖 Comet Worker v2.0</h1>
+        <div class="subtitle">완전 자동화 - 클릭 한 번으로 작업 처리!</div>
+
+        <div class="alert">
+            <h2 style="margin-top: 0;">✨ 대기 중인 작업: <span id="pendingCount">확인 중...</span></h2>
+            <p>워커 스크립트가 이미 포함되어 있습니다. 바로 시작하세요!</p>
+        </div>
+
+        <div class="status">
+            <div class="status-item">
+                <span>워커 상태</span>
+                <span id="workerStatus" class="badge error">중지됨</span>
+            </div>
+            <div class="status-item">
+                <span>처리 완료</span>
+                <span id="completedCount">0개</span>
+            </div>
+            <div class="status-item">
+                <span>실패</span>
+                <span id="failedCount">0개</span>
+            </div>
+            <div class="status-item">
+                <span>작업 타입</span>
+                <span id="taskTypes">-</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="test" onclick="testAPI()">🔍 API 연결 테스트</button>
+            <button onclick="startWorker()">🚀 작업 처리 시작!</button>
+            <button class="stop" onclick="stopWorker()">⏹️ 워커 중지</button>
+        </div>
+
+        <div id="console"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        // Comet Worker v2.0 - 임베디드 버전
+        // ============================================================
+
+        const CONFIG = {
+            apiBaseUrl: 'http://localhost:8091',
+            workerId: 'comet-browser',
+            pollInterval: 5000,
+            maxRetries: 3,
+            checkInbox: true
+        };
+
+        let isRunning = false;
+        let processingTaskId = null;
+        let stats = {
+            processed: 0,
+            succeeded: 0,
+            failed: 0,
+            startTime: null,
+            tasksByType: {}
+        };
+
+        // UI 로깅 함수
+        function log(message, type = 'info') {
+            const consoleEl = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString('ko-KR');
+            const className = `log log-${type}`;
+            consoleEl.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+
+            // 브라우저 콘솔에도 출력
+            console.log(`[Comet] ${message}`);
+        }
+
+        // 작업 타입별 핸들러
+        const taskHandlers = {
+            calculation: async (taskData) => {
+                log(`🧮 계산 작업: ${taskData.numbers.join('+')}`, 'info');
+                const { operation, numbers } = taskData;
+                let result = operation === 'add' ?
+                    numbers.reduce((a, b) => a + b, 0) :
+                    numbers.reduce((a, b) => a * b, 1);
+                return {
+                    result: result,
+                    calculation: `${numbers.join(operation === 'add' ? '+' : '*')}=${result}`,
+                    numbers: numbers,
+                    operation: operation
+                };
+            },
+
+            data_transform: async (taskData) => {
+                log(`🔄 문자열 변환: "${taskData.input}"`, 'info');
+                const { input, transform } = taskData;
+                let result = transform === 'reverse' ?
+                    input.split('').reverse().join('') :
+                    input.toUpperCase();
+                return {
+                    result: result,
+                    original: input,
+                    transform: transform
+                };
+            },
+
+            json_process: async (taskData) => {
+                log(`📊 JSON 처리: ${taskData.task}`, 'info');
+                const { items, task } = taskData;
+                if (task === 'count_active') {
+                    const activeItems = items.filter(item => item.status === 'active');
+                    return {
+                        count: activeItems.length,
+                        active_items: activeItems.map(item => item.name),
+                        total: items.length
+                    };
+                }
+                throw new Error(`Unknown JSON task: ${task}`);
+            },
+
+            web_scraping: async (taskData) => {
+                log(`🕷️ 웹 스크래핑: ${taskData.url || 'example.com'}`, 'info');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                return {
+                    url: taskData.url || 'https://example.com',
+                    selector: taskData.selector || 'body',
+                    content: `Scraped content from ${taskData.url || 'example.com'}`,
+                    timestamp: new Date().toISOString(),
+                    length: Math.floor(Math.random() * 1000) + 100
+                };
+            },
+
+            ping: async (taskData) => {
+                log('🏓 Ping 응답', 'info');
+                return {
+                    message: 'pong',
+                    worker: CONFIG.workerId,
+                    timestamp: new Date().toISOString()
+                };
+            }
+        };
+
+        async function getNextTask() {
+            const response = await fetch(`${CONFIG.apiBaseUrl}/api/tasks/next`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ worker_id: CONFIG.workerId })
+            });
+            if (!response.ok) {
+                if (response.status === 404) return null;
+                throw new Error(`Failed to get task: ${response.status}`);
+            }
+            const data = await response.json();
+            return data.task;
+        }
+
+        async function submitResult(taskId, status, resultData, errorMessage = null) {
+            const response = await fetch(`${CONFIG.apiBaseUrl}/api/tasks/${taskId}/result`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    worker_id: CONFIG.workerId,
+                    status: status,
+                    data: resultData,
+                    error_message: errorMessage
+                })
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to submit result: ${response.status}`);
+            }
+            return await response.json();
+        }
+
+        async function processTask(task) {
+            const taskType = task.type;
+            const handler = taskHandlers[taskType];
+
+            if (!handler) {
+                throw new Error(`Unknown task type: ${taskType}`);
+            }
+
+            log(`📋 작업 처리 중: ${task.id.substring(0, 8)}... (${taskType})`, 'info');
+
+            try {
+                const resultData = await handler(task.data);
+                await submitResult(task.id, 'success', resultData);
+
+                stats.succeeded++;
+                stats.tasksByType[taskType] = (stats.tasksByType[taskType] || 0) + 1;
+
+                log(`✅ 작업 완료: ${taskType}`, 'success');
+                log(`   결과: ${JSON.stringify(resultData).substring(0, 100)}...`, 'info');
+
+                updateUI();
+                return true;
+            } catch (error) {
+                log(`❌ 작업 실패: ${error.message}`, 'error');
+                await submitResult(task.id, 'error', {}, error.message);
+                stats.failed++;
+                updateUI();
+                return false;
+            } finally {
+                stats.processed++;
+                processingTaskId = null;
+            }
+        }
+
+        async function workerLoop() {
+            if (!isRunning) return;
+
+            try {
+                const task = await getNextTask();
+
+                if (task) {
+                    processingTaskId = task.id;
+                    await processTask(task);
+                } else {
+                    log('⏳ 대기 중... (작업 없음)', 'info');
+                    // 모든 작업 완료 시 자동 중지
+                    if (stats.processed > 0) {
+                        log('🎉 모든 작업 완료! 워커 자동 중지', 'success');
+                        stopWorker();
+                        return;
+                    }
+                }
+            } catch (error) {
+                log(`🔥 오류: ${error.message}`, 'error');
+            }
+
+            if (isRunning) {
+                setTimeout(workerLoop, CONFIG.pollInterval);
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('completedCount').textContent = `${stats.succeeded}개`;
+            document.getElementById('failedCount').textContent = `${stats.failed}개`;
+
+            if (Object.keys(stats.tasksByType).length > 0) {
+                const types = Object.entries(stats.tasksByType)
+                    .map(([type, count]) => `${type}(${count})`)
+                    .join(', ');
+                document.getElementById('taskTypes').textContent = types;
+            }
+        }
+
+        async function testAPI() {
+            log('🔍 API 연결 테스트 시작...', 'info');
+
+            try {
+                const response = await fetch(`${CONFIG.apiBaseUrl}/health`);
+                const data = await response.json();
+
+                log('✅ API 서버 연결 성공!', 'success');
+                log(`   작업 폴더: ${data.tasks_dir}`, 'info');
+
+                const statsResponse = await fetch(`${CONFIG.apiBaseUrl}/api/stats`);
+                const statsData = await statsResponse.json();
+
+                log(`📊 대기 작업: ${statsData.pending_tasks}개`, 'info');
+                log(`📊 완료: ${statsData.completed_tasks}개`, 'info');
+
+                document.getElementById('pendingCount').textContent = `${statsData.pending_tasks}개`;
+
+                return true;
+            } catch (error) {
+                log(`❌ API 연결 실패: ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        function startWorker() {
+            if (isRunning) {
+                log('⚠️ 이미 실행 중입니다', 'warning');
+                return;
+            }
+
+            log('🚀 워커 시작!', 'success');
+            log(`📡 API: ${CONFIG.apiBaseUrl}`, 'info');
+            log(`🆔 Worker ID: ${CONFIG.workerId}`, 'info');
+            log(`📋 지원 작업: ${Object.keys(taskHandlers).join(', ')}`, 'info');
+
+            isRunning = true;
+            stats.startTime = new Date();
+
+            document.getElementById('workerStatus').className = 'badge success';
+            document.getElementById('workerStatus').textContent = '실행 중';
+
+            workerLoop();
+        }
+
+        function stopWorker() {
+            if (!isRunning) {
+                log('⚠️ 실행 중이 아닙니다', 'warning');
+                return;
+            }
+
+            log('⏹️ 워커 중지', 'info');
+            isRunning = false;
+
+            document.getElementById('workerStatus').className = 'badge error';
+            document.getElementById('workerStatus').textContent = '중지됨';
+        }
+
+        // 페이지 로드 시 자동 테스트
+        window.addEventListener('load', async () => {
+            log('🤖 Comet Worker v2.0 로드 완료!', 'success');
+            log('═══════════════════════════════════', 'info');
+
+            // 자동으로 API 테스트
+            setTimeout(testAPI, 1000);
+        });
+
+        // 전역 객체로 노출 (Console 사용을 위해)
+        window.CometWorker = {
+            start: startWorker,
+            stop: stopWorker,
+            test: testAPI,
+            stats: () => stats
+        };
+    </script>
+</body>
+
+</html>

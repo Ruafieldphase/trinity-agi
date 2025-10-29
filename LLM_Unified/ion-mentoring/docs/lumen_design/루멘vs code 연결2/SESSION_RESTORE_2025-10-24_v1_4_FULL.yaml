@@ -1,0 +1,68 @@
+# Lumen Session Restore — v1.4 Full Ops Completion
+# Generated: 2025-10-24T03:06:29.966858Z
+# NOTE: Although this file uses .yaml extension, it is designed to be 'source'-able in a shell.
+
+### v1.4 — core session ###
+export LUMEN_SESSION="v1.4_FullOps"
+export LUMEN_HOME="${LUMEN_HOME:-$PWD}"
+export LUMEN_MONO="${LUMEN_MONO:-$LUMEN_HOME/lumen_v1_4_monorepo_skeleton}"
+
+# Basic stack
+up()      { (cd "$LUMEN_MONO" && make up); }
+up_exp()  { (cd "$LUMEN_MONO" && make up-exp); }
+up_int()  { (cd "$LUMEN_MONO" && make up-int); }
+
+# Auto-remediation & Approval link
+auto()    { (cd "$LUMEN_MONO" && make auto); }
+link()    { (cd "$LUMEN_MONO" && make link); }
+
+# Observability quick open (macOS 'open', Linux 'xdg-open' fallback)
+g()       { (command -v open >/dev/null && open "http://localhost:3000") || (command -v xdg-open >/dev/null && xdg-open "http://localhost:3000") || echo "Grafana: http://localhost:3000"; }
+pstats()  { (command -v open >/dev/null && open "http://localhost:8077/stats") || (command -v xdg-open >/dev/null && xdg-open "http://localhost:8077/stats") || echo "Proofd Stats: http://localhost:8077/stats"; }
+
+# CI / Security
+ci_all()  { (cd "$LUMEN_MONO" && pre-commit run --all-files && gh workflow run lint_and_static.yaml && gh workflow run security_policy_gates.yaml); }
+
+# Release
+rel()     { (cd "$LUMEN_MONO" && npm run release && gh workflow run sbom_syft.yaml); }
+
+### v1.5 preview — paths & helpers ###
+export LUMEN_V15="/mnt/data/lumen_v1_5_preview_assets"
+export PATH="$PATH:$LUMEN_V15"
+
+# Maturity (overall/loop) + windows
+l15.maturity_spectrum() { (cd "$LUMEN_V15" && python maturity_spectrum_v15_alpha.py); }
+l15.windows()           { (cd "$LUMEN_V15" && python maturity_spectrum_window_v15.py); }
+
+# Metrics exporter (Prometheus) — serves :9158/metrics
+l15.serve_metrics()     { (cd "$LUMEN_V15" && MATURITY_EXPORTER_PORT="${MATURITY_EXPORTER_PORT:-9158}" nohup python maturity_exporter_v15.py >/tmp/lumen_v15_exporter.log 2>&1 & echo $! > /tmp/lumen_v15_exporter.pid && echo "[exporter] pid $(cat /tmp/lumen_v15_exporter.pid)"); }
+
+# Streaming ingestion (Kafka / Loki)
+l15.ingest_kafka()      { (cd "$LUMEN_V15" && python streaming_ingestor_v15_kafka.py); }
+l15.ingest_loki()       { (cd "$LUMEN_V15" && python loki_pull_v15.py); }
+
+# Gate & policy hint
+l15.gate()              { MATURITY_OVERALL_MIN="${1:-0.60}" MATURITY_SENSE_MIN=0.50 MATURITY_FEEDBACK_MIN=0.50 MATURITY_RELEASE_MIN=0.50 python "/mnt/data/scripts/maturity_gate_v15.py"; }
+l15.hint()              { python "/mnt/data/scripts/maturity_to_policy_hint_v15.py"; }
+
+# Integrated gate (ROI/SLO × Maturity)
+l15.integrated()        { python "/mnt/data/scripts/integrated_gate_v19_v15.py"; }
+
+# Docker preview stack (Kafka/Loki/Promtail/Prometheus/Grafana)
+dc.v15.up()             { (cd "/mnt/data/docker" && docker compose -f docker-compose.v15.preview.yml up -d); }
+dc.v15.down()           { (cd "/mnt/data/docker" && docker compose -f docker-compose.v15.preview.yml down -v); }
+
+# Grafana dashboard import hint
+echo "# Grafana dashboard JSON: /mnt/data/lumen_v1_5_preview_assets/grafana_dashboard_v15_maturity.json" >/dev/null
+
+# Quality-of-life banner
+cat <<'BANNER' 1>&2
+────────────────────────────────────────────────────────
+  Lumen Session Restore loaded: v1.4 → v1.5 Preview
+  - up | up_exp | up_int | auto | link | ci_all | rel
+  - l15.maturity_spectrum | l15.windows | l15.serve_metrics
+  - l15.ingest_kafka | l15.ingest_loki
+  - l15.gate <overall_min> | l15.hint | l15.integrated
+  - dc.v15.up | dc.v15.down
+────────────────────────────────────────────────────────
+BANNER

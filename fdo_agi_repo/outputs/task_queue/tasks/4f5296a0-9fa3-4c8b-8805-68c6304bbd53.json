@@ -1,0 +1,10 @@
+{
+  "id": "4f5296a0-9fa3-4c8b-8805-68c6304bbd53",
+  "type": "ping",
+  "requester": "test-script",
+  "data": {},
+  "status": "in_progress",
+  "created_at": "2025-10-29T10:10:46.302636",
+  "assigned_to": "test-poller",
+  "updated_at": "2025-10-29T10:11:09.116487"
+}

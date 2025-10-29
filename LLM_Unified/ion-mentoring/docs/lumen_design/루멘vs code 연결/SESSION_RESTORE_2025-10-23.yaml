@@ -1,0 +1,29 @@
+# SESSION_RESTORE_2025-10-23.yaml
+session: Resonance_v1.2_final
+generated: 2025-10-23T10:30:26.943294Z
+steps:
+  - cd: luon_full_bundle/
+  - env:
+      LUMEN_SESSION: Resonance_v1.2_final
+  - run: python collect_metrics_v2.py
+  - run: python resonance_mapper.py metrics.json
+  - run: python rl_linucb.py suggest
+  - run: python resonance_notifier.py --mode=console --rules=feedback_rules_v2.yaml --emit_json --out=proposals.json --state_file=rules_state.json
+  - run: python safety_guard.py
+  - run: python resonance_executor.py --proposals=proposals_sanitized.json --state=weights_state.json --metrics_dir=./metrics
+  - run: python prometheus_textfile_publisher.py
+  - run: python rhythm_autotune.py
+  - run: python params_apply.py --stage dev --dry-run
+  - run: python stage_params_sync.py --stage dev --write-dotenv
+  - run: python thresholds_sync.py --stage dev
+  - run: python grafana_annotate.py --text "Resonance v1.2 restore run" --tags lumen,restore --dashboard_uid rhythm-v1-2
+artifacts:
+  - proposals.json
+  - proposals_sanitized.json
+  - weights_state.json
+  - metrics/lumen_metrics.prom
+  - proof_ledger.jsonl
+  - tuner_logs.jsonl
+  - suggested_params.json
+  - params_patch.diff
+  - .env.dev

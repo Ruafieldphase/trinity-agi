@@ -1,0 +1,68 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Lumen: Collect Metrics",
+      "type": "shell",
+      "command": "python collect_metrics.py",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/adaptive_feedback"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lumen: Map Resonance",
+      "type": "shell",
+      "command": "python resonance_mapper.py metrics.json",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/adaptive_feedback"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lumen: Notify (Console)",
+      "type": "shell",
+      "command": "python resonance_notifier.py --mode=console --metrics=metrics.json --rules=feedback_rules.yaml",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/adaptive_feedback"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lumen: Integration Test",
+      "type": "shell",
+      "command": "bash integration_resonance_feedback_test.sh",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/adaptive_feedback"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lumen: Notify (Slack)",
+      "type": "shell",
+      "command": "bash slack_test.sh slack",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/adaptive_feedback"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lumen: Adaptive Loop (once)",
+      "type": "shell",
+      "command": "bash adaptive_feedback_loop.sh",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/adaptive_feedback"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Lumen: Rollback Tick",
+      "type": "shell",
+      "command": "python resonance_rollback.py",
+      "options": {
+        "cwd": "${workspaceFolder}/tools/adaptive_feedback"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

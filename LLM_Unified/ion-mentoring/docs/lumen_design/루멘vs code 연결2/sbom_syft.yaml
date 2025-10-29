@@ -1,0 +1,21 @@
+name: sbom_syft
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0.14.3
+      - name: Generate SBOM
+        run: |
+          syft dir:. -o spdx-json > sbom.spdx.json || true
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-spdx
+          path: sbom.spdx.json

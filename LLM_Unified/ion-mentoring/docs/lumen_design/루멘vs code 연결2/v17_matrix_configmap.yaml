@@ -1,0 +1,9 @@
+{{- if and .Values.featureFlags.enableV17FeedbackGraph .Values.v17.feedback.enableMatrixConfigMap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "lumen.fullname" . }}-v17-matrix
+data:
+  gain_alpha_matrix.json: |
+    {{- toJson .Values.v17.feedback.matrix | nindent 8 }}
+{{- end }}

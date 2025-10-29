@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Lumen v1.7 — Full Loop Session Restore
+export LUMEN_SESSION="v1.7_FullLoop"
+export LUMEN_ROOT="${LUMEN_ROOT:-$PWD}"
+export LUMEN_V16="${LUMEN_V16:-$LUMEN_ROOT/lumen_v1_6_assets}"
+export LUMEN_V17="${LUMEN_V17:-$LUMEN_ROOT/lumen_v1_7_assets}"
+
+l7.full.run() {
+  set -e
+  (cd "$LUMEN_V16" && (python stream_enricher_v1.py < samples.jsonl &) && sleep 1 && (python metrics_enrichment_exporter.py &) && sleep 1 && (python resonance_adapter_v1_native_matrix.py &) && sleep 1 && (python adaptation_metrics_exporter.py &) && sleep 1)
+  (cd "$LUMEN_V17" && python feedback_graph_core_v17.py && (python metrics_feedback_graph_exporter.py &) && sleep 1)
+  (cd "$LUMEN_V17" && python ledger_v17_ingestor.py && ls -lh ledger_v17.db)
+  echo ">> Gate:"
+  (cd "$LUMEN_V17" && python v17_gate.py --metrics-url http://127.0.0.1:9153/metrics --sym-min ${LUMEN_GATE_TARGET_SYM:-0.75} --s-min ${LUMEN_GATE_TARGET_S:-0.60} --c-min ${LUMEN_GATE_TARGET_C:-0.55}) || (cd "$LUMEN_V17" && python v17_gate_rollback.py --state-file "$LUMEN_V16/adaptation_state.json" --window ${LUMEN_ROLLBACK_SAFE_WINDOW:-1200} --alpha ${LUMEN_ROLLBACK_SAFE_ALPHA:-0.12}; return 2)
+}
+
+echo "[Lumen] v1.7 Full Loop session restored. Run: l7.full.run"

@@ -1,0 +1,27 @@
+name: lumen_v18_drift_watch
+on:
+  schedule:
+    - cron: "0 * * * *"   # hourly
+  workflow_dispatch: {}
+jobs:
+  drift-watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start exporters (demo)
+        run: |
+          (cd lumen_v1_7_assets && (python metrics_feedback_graph_exporter.py &) && sleep 1)
+          (cd lumen_v1_8_assets && (python policy_trace_exporter_v18.py &) && sleep 1)
+      - name: Drift check
+        working-directory: lumen_v1_8_assets
+        run: |
+          python drift_monitor_v18.py --indices http://127.0.0.1:9153/metrics --policy http://127.0.0.1:9154/metrics --margin 0.00
+      - name: Upload policy ledger
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v18-policy-ledger
+          path: lumen_v1_8_assets/ledger_v18_policy.db

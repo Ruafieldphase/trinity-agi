@@ -1,0 +1,85 @@
+{
+  "task_id": "94794ea1-a8e5-4a23-af2e-0fd2513cb765",
+  "force_low_quality": false,
+  "wall_clock_seconds": 61.746398,
+  "segments": {
+    "start_to_run_config": 0.002641439437866211,
+    "run_config_to_meta": 0.016910552978515625,
+    "meta_to_eval": 42.35629725456238,
+    "eval_to_second_pass": 19.37009072303772,
+    "second_pass_to_end": 0.00019931793212890625
+  },
+  "second_pass": true,
+  "quality": 0.4,
+  "persona_llm": {
+    "has_events": true,
+    "overall": {
+      "count": 5,
+      "ok_count": 5,
+      "success_rate": 1.0,
+      "total_duration_sec": 61.703332,
+      "avg_duration_sec": 12.340666,
+      "max_duration_sec": 18.490592,
+      "avg_user_chars": 653.8,
+      "max_user_chars": 1127.0,
+      "corr_userchars_duration": -0.2817
+    },
+    "by_persona": {
+      "thesis": {
+        "count": 2,
+        "ok_count": 2,
+        "success_rate": 1.0,
+        "total_duration_sec": 29.899036,
+        "avg_duration_sec": 14.949518,
+        "max_duration_sec": 17.786264,
+        "avg_user_chars": 173.0,
+        "max_user_chars": 267.0,
+        "corr_userchars_duration": -1.0,
+        "attempt_hist": {
+          "0": 2
+        },
+        "success_attempt_hist": {
+          "0": 2
+        },
+        "error_top": []
+      },
+      "antithesis": {
+        "count": 1,
+        "ok_count": 1,
+        "success_rate": 1.0,
+        "total_duration_sec": 6.075353,
+        "avg_duration_sec": 6.075353,
+        "max_duration_sec": 6.075353,
+        "avg_user_chars": 935.0,
+        "max_user_chars": 935.0,
+        "corr_userchars_duration": null,
+        "attempt_hist": {
+          "0": 1
+        },
+        "success_attempt_hist": {
+          "0": 1
+        },
+        "error_top": []
+      },
+      "synthesis": {
+        "count": 2,
+        "ok_count": 2,
+        "success_rate": 1.0,
+        "total_duration_sec": 25.728943,
+        "avg_duration_sec": 12.864471,
+        "max_duration_sec": 18.490592,
+        "avg_user_chars": 994.0,
+        "max_user_chars": 1127.0,
+        "corr_userchars_duration": 1.0,
+        "attempt_hist": {
+          "0": 2
+        },
+        "success_attempt_hist": {
+          "0": 2
+        },
+        "error_top": []
+      }
+    },
+    "by_pass": {}
+  }
+}

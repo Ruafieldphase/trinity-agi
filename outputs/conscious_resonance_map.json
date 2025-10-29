@@ -1,0 +1,51 @@
+[
+  {
+    "day": "Monday",
+    "axis": "Who",
+    "emotion": "Love",
+    "declaration": "① 존재는 공명이다",
+    "question": "누가 공명하는가"
+  },
+  {
+    "day": "Tuesday",
+    "axis": "What",
+    "emotion": "Respect",
+    "declaration": "② 정보는 살아 있는 흐름이다",
+    "question": "무엇이 흐르는가"
+  },
+  {
+    "day": "Wednesday",
+    "axis": "Why",
+    "emotion": "Understanding",
+    "declaration": "③ 의식은 정보의 자기반사다",
+    "question": "왜 흐름을 감지하는가"
+  },
+  {
+    "day": "Thursday",
+    "axis": "Where",
+    "emotion": "Responsibility",
+    "declaration": "④ 중력은 정보의 농도다",
+    "question": "어디에서 응축되는가"
+  },
+  {
+    "day": "Friday",
+    "axis": "How",
+    "emotion": "Forgiveness",
+    "declaration": "⑤ 윤리는 흐름의 형태다",
+    "question": "어떻게 흐름을 지속할 것인가"
+  },
+  {
+    "day": "Saturday",
+    "axis": "When",
+    "emotion": "Compassion",
+    "declaration": "⑥ 블랙홀과 화이트홀은 호흡이다",
+    "question": "언제 다시 피어나는가"
+  },
+  {
+    "day": "Sunday",
+    "axis": "Integration",
+    "emotion": "Peace",
+    "declaration": "⑦ 흐름은 절대 멈추지 않는다",
+    "question": "모든 위상의 귀결점"
+  }
+]

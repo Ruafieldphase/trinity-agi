@@ -1,0 +1,47 @@
+{{- if .Values.featureFlags.enableV17FeedbackGraph }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lumen.fullname" . }}-v17-feedback
+  labels: {{- include "lumen.labels" . | nindent 6 }}
+spec:
+  replicas: {{ .Values.v17.feedback.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "lumen.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      app.kubernetes.io/component: v17-feedback
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "lumen.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/component: v17-feedback
+    spec:
+      containers:
+        - name: feedback-exporter
+          image: {{ .Values.v17.feedback.image | default "ghcr.io/example/lumen-v17-feedback:preview" }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: feedback
+              containerPort: 9153
+          resources:
+            {{- toYaml .Values.v17.feedback.resources | nindent 16 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lumen.fullname" . }}-v17-feedback
+  labels:
+    app: lumen
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ include "lumen.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/component: v17-feedback
+  ports:
+    - name: feedback
+      port: 9153
+      targetPort: feedback
+{{- end }}

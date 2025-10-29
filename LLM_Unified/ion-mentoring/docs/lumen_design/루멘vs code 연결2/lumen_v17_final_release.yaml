@@ -1,0 +1,57 @@
+name: lumen_v17_final_release
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Final tag (e.g., v1.7.0)"
+        required: true
+      changelog_path:
+        description: "Release notes path"
+        required: false
+        default: "docs/RELEASE_NOTES_v1_7_FINAL.md"
+      generate_sbom:
+        description: "Run SBOM step (requires syft in repo)"
+        required: false
+        default: "false"
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Package Helm chart
+        run: |
+          mkdir -p dist
+          helm package charts/lumen -d dist || true
+      - name: (optional) SBOM
+        if: ${{ github.event.inputs.generate_sbom == 'true' }}
+        run: |
+          echo "SBOM generation hook — ensure repo has sbom_syft.yaml or syft installed."
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v17-final
+          path: |
+            dist/*.tgz
+            lumen_v1_7_assets/feedback_graph.json
+            lumen_v1_7_assets/gain_alpha_matrix.json
+            lumen_v1_7_assets/indices.json
+            lumen_v1_7_assets/ledger_v17.db
+            docs/RELEASE_NOTES_v1_7_FINAL.md
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
+          body_path: ${{ github.event.inputs.changelog_path }}
+          files: |
+            dist/*.tgz
+            lumen_v1_7_assets/feedback_graph.json
+            lumen_v1_7_assets/gain_alpha_matrix.json
+            lumen_v1_7_assets/indices.json
+            lumen_v1_7_assets/ledger_v17.db
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

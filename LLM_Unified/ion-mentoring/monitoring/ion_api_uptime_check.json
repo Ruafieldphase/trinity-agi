@@ -1,0 +1,28 @@
+{
+  "displayName": "ION API Production Health Check",
+  "monitoredResource": {
+    "type": "uptime_url",
+    "labels": {
+      "project_id": "naeda-genesis",
+      "host": "ion-api-x4qvsargwa-uc.a.run.app"
+    }
+  },
+  "httpCheck": {
+    "path": "/health",
+    "port": 443,
+    "useSsl": true,
+    "validateSsl": true,
+    "requestMethod": "GET",
+    "acceptedResponseStatusCodes": [
+      {
+        "statusClass": "STATUS_CLASS_2XX"
+      }
+    ]
+  },
+  "period": "60s",
+  "timeout": "10s",
+  "selectedRegions": [
+    "USA",
+    "ASIA_PACIFIC"
+  ]
+}

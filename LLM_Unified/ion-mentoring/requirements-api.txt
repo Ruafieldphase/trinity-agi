@@ -1,0 +1,38 @@
+# FastAPI 웹 프레임워크
+fastapi>=0.109.1
+starlette>=0.47.2
+uvicorn==0.24.0
+pydantic==2.10.5  # Updated for Python 3.13 compatibility
+pydantic-settings==2.7.1  # Compatible with pydantic 2.10.5
+
+# Vertex AI & Gemini
+google-cloud-aiplatform==1.38.0
+google-generativeai>=0.8.0
+
+# Redis Cache
+redis>=7.0.0,<8.0.0
+upstash-redis>=0.15.0
+
+# 기존 프로젝트 의존성 (Week 1-2)
+# (이미 설치되어 있으므로 버전 고정)
+pytest==8.4.2
+pytest-cov==4.1.0
+pytest-asyncio==0.24.0
+ruff==0.8.4
+black==24.10.0
+
+# Rate Limiting
+slowapi==0.1.9
+
+# 환경 변수 관리
+python-dotenv==1.0.0
+
+# Load testing
+locust==2.41.6
+
+# HTTP 클라이언트 (테스트용)
+httpx==0.25.2
+
+# 로깅 (프로덕션)
+python-json-logger==2.0.7
+google-cloud-logging==3.8.0

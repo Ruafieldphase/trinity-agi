@@ -1,0 +1,61 @@
+name: lumen_v17_rc_to_final
+on:
+  workflow_dispatch:
+    inputs:
+      strict_sym_min:
+        description: "Symmetry minimum for Final"
+        default: "0.75"
+      strict_s_min:
+        description: "Stability index minimum"
+        default: "0.60"
+      strict_c_min:
+        description: "Creative index minimum"
+        default: "0.55"
+jobs:
+  run-and-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start v1.6 with native matrix
+        working-directory: lumen_v1_6_assets
+        run: |
+          (python stream_enricher_v1.py < samples.jsonl &) && sleep 1
+          (python metrics_enrichment_exporter.py &) && sleep 1
+          (python resonance_adapter_v1_native_matrix.py &) && sleep 2
+          (python adaptation_metrics_exporter.py &) && sleep 1
+      - name: Build v1.7 graph & exporter
+        working-directory: lumen_v1_7_assets
+        run: |
+          python feedback_graph_core_v17.py
+          (python metrics_feedback_graph_exporter.py &) && sleep 1
+          curl -fsSL http://127.0.0.1:9153/metrics | head -n 20
+      - name: Ingest to ledger
+        working-directory: lumen_v1_7_assets
+        run: |
+          python ledger_v17_ingestor.py
+          ls -l ledger_v17.db
+      - name: Strict gate (RC→Final)
+        id: gate
+        working-directory: lumen_v1_7_assets
+        continue-on-error: true
+        run: |
+          python v17_gate.py --metrics-url http://127.0.0.1:9153/metrics             --sym-min ${{ github.event.inputs.strict_sym_min }}             --s-min ${{ github.event.inputs.strict_s_min }}             --c-min ${{ github.event.inputs.strict_c_min }}
+      - name: Rollback on failure
+        if: steps.gate.outcome == 'failure'
+        working-directory: lumen_v1_7_assets
+        run: |
+          python v17_gate_rollback.py --state-file ../lumen_v1_6_assets/adaptation_state.json --window 1200 --alpha 0.12
+          exit 2
+      - name: Upload ledger & graph artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v17-ledger-and-graph
+          path: |
+            lumen_v1_7_assets/ledger_v17.db
+            lumen_v1_7_assets/feedback_graph.json
+            lumen_v1_7_assets/gain_alpha_matrix.json
+            lumen_v1_7_assets/indices.json

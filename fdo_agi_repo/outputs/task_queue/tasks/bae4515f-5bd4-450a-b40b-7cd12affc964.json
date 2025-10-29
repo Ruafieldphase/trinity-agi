@@ -1,0 +1,12 @@
+{
+  "id": "bae4515f-5bd4-450a-b40b-7cd12affc964",
+  "type": "ping",
+  "requester": "copilot-check",
+  "data": {
+    "message": "Hello Comet!"
+  },
+  "status": "completed",
+  "created_at": "2025-10-28T20:53:14.269880",
+  "assigned_to": "comet-browser",
+  "updated_at": "2025-10-28T21:22:50.157894"
+}

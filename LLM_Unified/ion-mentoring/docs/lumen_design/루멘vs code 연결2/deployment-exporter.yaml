@@ -1,0 +1,47 @@
+{{- if .Values.exporter.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lumen.fullname" . }}-exporter
+  labels: {{- include "lumen.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "lumen.fullname" . }}-exporter
+  template:
+    metadata:
+      labels:
+        app: {{ include "lumen.fullname" . }}-exporter
+        {{- include "lumen.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: exporter
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["python","maturity_exporter_v15.py"]
+          ports:
+            - name: http
+              containerPort: {{ .Values.exporter.port }}
+          readinessProbe:
+            httpGet: { path: /metrics, port: http }
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /metrics, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lumen.fullname" . }}-exporter
+  labels: {{- include "lumen.labels" . | nindent 4 }}
+spec:
+  selector:
+    app: {{ include "lumen.fullname" . }}-exporter
+  ports:
+    - port: {{ .Values.exporter.port }}
+      targetPort: http
+      name: http
+{{- end }}

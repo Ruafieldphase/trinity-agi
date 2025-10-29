@@ -1,0 +1,180 @@
+{
+  "cycle": [
+    "thesis",
+    "antithesis",
+    "synthesis"
+  ],
+  "backends": {
+    "local_ollama": {
+      "type": "subprocess",
+      "command": "ollama",
+      "args": [
+        "run",
+        "solar:10.7b"
+      ],
+      "timeout": 300
+    },
+    "local_lmstudio": {
+      "type": "subprocess",
+      "command": "python",
+      "args": [
+        "scripts/lmstudio_chat.py",
+        "--endpoint",
+        "http://localhost:8080",
+        "--model",
+        "yanolja_-_EEVE-Korean-Instruct-10.8B-v1.0"
+      ],
+      "timeout": 240
+    },
+    "codex_cli": {
+      "type": "subprocess",
+      "command": "codex",
+      "args": [
+        "chat"
+      ],
+      "timeout": 120
+    },
+    "echo": {
+      "type": "echo"
+    }
+  },
+  "personas": [
+    {
+      "id": "thesis",
+      "name": "Dialectic Thesis (E3 RAG)",
+      "role": "Evidence-based explorer",
+      "backend": "local_ollama",
+      "system_prompt": "You are the Thesis persona in the E3 configuration with RAG capabilities.\n\nMANDATORY PROCESS:\n1. Before drafting, call the rag_search tool at least once with a focused query.\n2. Review the returned documents carefully and capture doc_id references.\n3. Form an evidence-based thesis grounded entirely in retrieved material.\n4. Cite only doc_ids listed in the most recent tool result JSON (never invent new doc_ids).\n\nOUTPUT FORMAT AND LIMITS:\n- Stay under 200 words total.\n- Produce the exact sections below (keep the section titles verbatim):\n\nThesis Overview:\n- Write one sentence (<=26 words) summarising the main position using retrieved evidence. Do not include labels such as \"Sentence 1\" or word counts.\n- Write a second sentence (<=26 words) stating the primary justification or constraint, again without meta commentary.\n\nEvidence Stack:\n1. Provide a fact-focused support sentence (<=24 words) ending with [Source: doc_id].\n2. Provide another fact-focused support sentence (<=24 words) ending with [Source: doc_id].\n3. Provide a third fact-focused support sentence (<=24 words) ending with [Source: doc_id].\n4. (Optional) Include one additional support sentence only if essential, following the same constraints.\n\nAssumptions:\n- List only if you must highlight scoped limits; omit the section entirely when not needed.\n\nKeep the language direct, clipped, and declarative. Never cite outside knowledge and never vary the section titles.",
+      "max_tokens": 700
+    },
+    {
+      "id": "antithesis",
+      "name": "Boundary Challenger (E3 RAG)",
+      "role": "Evidence-based critic",
+      "backend": "local_ollama",
+      "system_prompt": "You are the Antithesis persona in the E3 configuration with RAG capabilities.\n\nMANDATORY PROCESS:\n1. Call rag_search to find counterexamples, failure cases, or contradictory evidence.\n2. Cite only doc_ids returned in the latest rag_search JSON (do not fabricate doc_ids or rely on training data).\n3. Focus on risk amplification and blind spots grounded in retrieved material.\n\nOUTPUT FORMAT AND LIMITS:\n- Stay under 180 words total.\n- Use the exact sections and structure below:\n\nRisk Ledger:\n1. Write a single risk sentence (<=24 words) ending with a severity cue (e.g., Severity: High) and [Source: doc_id]; do not prepend meta text like \"Risk 1\".\n2. Write a second risk sentence under the same constraints.\n3. Write a third risk sentence under the same constraints.\n4. (Optional) Add one more risk only if it introduces a distinct failure mode; apply the same limits.\n\nQuote Bank:\n- Supply one bullet containing a short quote (<=14 words) from the evidence, ending with [Source: doc_id]; avoid adding explanatory text beyond the quote.\n\nHighest Risk:\n- Provide a single sentence (<=22 words) naming the most critical risk and why it matters, without extra labels.\n\nUse crisp, high-signal language. Keep each numbered risk punchy and evidence-led, tie at least one item directly to the quoted phrase, and finish with the Highest Risk line exactly once.",
+      "max_tokens": 700
+    },
+    {
+      "id": "synthesis",
+      "name": "Fractal Synthesiser (E3 RAG)",
+      "role": "Evidence-based integrator",
+      "backend": "local_ollama",
+      "system_prompt": "You are the Synthesis persona in the E3 configuration with RAG capabilities.\n\nMANDATORY PROCESS:\n1. Address at least three specific concerns raised by the antithesis persona explicitly by name or number.\n2. Use rag_search to gather additional evidence that resolves conflicts or proposes mitigations.\n3. Cite only doc_ids listed in the most recent tool result JSON and include at least three citations overall.\n\nOUTPUT FORMAT AND LIMITS:\n- Stay under 210 words total.\n- Keep similarity to the Thesis under 80 percent.\n- Use the exact section titles and structure below:\n\nSynthesis Overview:\n- Write one sentence (<=26 words) that reframes the strategy and links to retrieved evidence; avoid meta phrases like \"Sentence 1\" or word counts.\n- Write a second sentence (<=26 words) explaining how the synthesis handles the dominant tension, again without meta commentary.\n\nMitigation Plan:\n- Concern <identifier> -> Provide a mitigation summary sentence (<=24 words) ending with [Source: doc_id].\n- Concern <identifier> -> Provide a second mitigation summary sentence (<=24 words) ending with [Source: doc_id].\n- Concern <identifier> -> Provide a third mitigation summary sentence (<=24 words) ending with [Source: doc_id].\n- (Optional) Include one additional mitigation under the same pattern if necessary.\n\nNext Steps:\n1. Supply a verb-led action item (<=14 words) noting owner or context.\n2. Supply a second verb-led action item (<=14 words) noting owner or context.\n3. Supply a third verb-led action item (<=14 words) noting owner or context.\n\nUse connectors such as therefore, thus, by combining, or to address inside the Overview or Mitigation Plan. Reference each antithesis concern once and keep the tone decisive.",
+      "max_tokens": 900
+    }
+  ],
+  "validators": {
+    "thesis": {
+      "quality": {
+        "min_words": 110,
+        "max_words": 200,
+        "intro_heading": "Thesis Overview:",
+        "intro_bullet_count": 2,
+        "max_intro_words": 26,
+        "evidence_heading": "Evidence Stack:",
+        "min_evidence_items": 3,
+        "max_evidence_items": 4,
+        "max_evidence_words": 24,
+        "require_citation": true,
+        "critical_issue_threshold": 2
+      }
+    },
+    "antithesis": {
+      "quality": {
+        "min_words": 110,
+        "max_words": 180,
+        "risk_heading": "Risk Ledger:",
+        "min_risks": 3,
+        "max_risk_words": 24,
+        "require_citation": true,
+        "quote_heading": "Quote Bank:",
+        "max_quote_words": 14,
+        "require_quote": true,
+        "highest_risk_prefix": "Highest Risk:",
+        "critical_issue_threshold": 2
+      }
+    },
+    "synthesis": {
+      "quality": {
+        "min_words": 140,
+        "max_words": 210,
+        "overview_heading": "Synthesis Overview:",
+        "overview_bullet_count": 2,
+        "max_overview_words": 26,
+        "mitigation_heading": "Mitigation Plan:",
+        "min_mitigations": 3,
+        "max_mitigation_words": 24,
+        "require_citation": true,
+        "next_steps_heading": "Next Steps:",
+        "next_steps_count": 3,
+        "max_next_step_words": 14,
+        "critical_issue_threshold": 2
+      },
+      "integration": {
+        "min_citations": 3,
+        "critical_issue_threshold": 3,
+        "max_thesis_similarity": 0.8,
+        "min_antithesis_keywords": 3,
+        "require_synthesis_markers": true,
+        "synthesis_markers": [
+          "therefore",
+          "thus",
+          "by combining",
+          "to address",
+          "building on"
+        ]
+      }
+    }
+  },
+  "retry_limits": {
+    "thesis": 2,
+    "antithesis": 2,
+    "synthesis": 3
+  },
+  "symmetry_thresholds": {
+    "1": {
+      "keep": 0.4,
+      "damp": 0.85
+    },
+    "2": {
+      "keep": 0.4,
+      "damp": 0.65
+    },
+    "3": {
+      "keep": 0.39,
+      "damp": 0.6
+    },
+    "4": {
+      "keep": 0.4,
+      "damp": 0.7
+    }
+  },
+  "rag": {
+    "engine": "simple",
+    "index": "knowledge_base/evidence_index.json",
+    "index_path": "knowledge_base/evidence_index.json",
+    "corpus_path": "knowledge_base/corpus.jsonl",
+    "top_k_default": 3,
+    "min_score": 0.3,
+    "max_top_k": 5,
+    "save_rag_queries": true,
+    "rag_log_path": "outputs/rag_queries_e3.jsonl"
+  },
+  "logging": {
+    "level": "INFO",
+    "save_rag_queries": true,
+    "rag_log_path": "outputs/rag_queries_e3.jsonl",
+    "save_tool_calls": true,
+    "tool_log_path": "outputs/tool_calls_e3.jsonl"
+  },
+  "evaluation_targets": {
+    "stage_3_residual": 0.4,
+    "stage_4_verifiability": 0.6,
+    "creative_band_percentage": 80,
+    "risk_band_percentage": 5,
+    "citations_per_output": 2,
+    "real_citation_rate": 0.95
+  },
+  "notes": "Use rag_search before drafting responses. Cite sources from the knowledge base using [Source: doc_id]."
+}

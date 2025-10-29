@@ -1,0 +1,138 @@
+# Pre-commit hooks configuration
+# 커밋 전 자동으로 실행되는 검사 목록
+# 설치: pre-commit install
+
+repos:
+  # ============================================================================
+  # 기본 검사 (빠름) - 모든 커밋에 필수
+  # ============================================================================
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: "Trim trailing whitespace"
+        args: [--markdown-template='{original}']
+
+      - id: end-of-file-fixer
+        name: "Fix end of file"
+
+      - id: check-yaml
+        name: "Check YAML syntax"
+        args: ['--unsafe']
+
+      - id: check-json
+        name: "Check JSON syntax"
+        exclude: "^\\.vscode/"
+
+      - id: check-toml
+        name: "Check TOML syntax"
+
+      - id: check-added-large-files
+        name: "Check for large files"
+        args: ['--maxkb=1000']
+
+      - id: check-executable-scripts
+        name: "Check executable scripts"
+
+      - id: debug-statements
+        name: "Check for debugger imports"
+
+  # ============================================================================
+  # Black - 코드 포매팅
+  # ============================================================================
+  - repo: https://github.com/psf/black
+    rev: 23.12.0
+    hooks:
+      - id: black
+        name: "Black code formatter"
+        language_version: python3.11
+        args: ['--line-length=100']
+
+  # ============================================================================
+  # Ruff - 린팅
+  # ============================================================================
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.8
+    hooks:
+      - id: ruff
+        name: "Ruff lint"
+        args: [
+          '--select=E,W,F,I,N,UP,B,A,C4,SIM,PIE',
+          '--ignore=E501,W503',
+          '--line-length=100'
+        ]
+
+      - id: ruff-format
+        name: "Ruff format"
+        args: ['--line-length=100']
+
+  # ============================================================================
+  # MyPy - 타입 검사 (선택: 느림)
+  # ============================================================================
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.1
+    hooks:
+      - id: mypy
+        name: "MyPy type checking"
+        additional_dependencies: [
+          'pydantic>=2.0',
+          'fastapi',
+          'types-pyyaml',
+          'types-python-dateutil',
+          'google-cloud-secret-manager',
+          'google-cloud-monitoring'
+        ]
+        args: [
+          '--ignore-missing-imports',
+          '--no-implicit-optional'
+        ]
+        exclude: '^tests/'
+
+  # ============================================================================
+  # Pytest - 유닛 테스트 (선택: 가장 느림)
+  # ============================================================================
+  - repo: local
+    hooks:
+      - id: pytest
+        name: "Pytest unit tests"
+        entry: pytest
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
+        args: [
+          'tests/unit',
+          '-v',
+          '--tb=short',
+          '--timeout=10',
+          '-x'  # 첫 실패에서 중단
+        ]
+        stages: [commit]
+
+  # ============================================================================
+  # 보안 검사
+  # ============================================================================
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        name: "Bandit security check"
+        args: ['-c', '.bandit', '-r', 'app/']
+        exclude: '^tests/'
+
+  # ============================================================================
+  # 문서 검사
+  # ============================================================================
+  - repo: https://github.com/pre-commit/mirrors-docformatter
+    rev: v1.7.5
+    hooks:
+      - id: docformatter
+        name: "Docstring formatter"
+        args: ['--in-place', '--make-summary-multi-line']
+
+default_language_version:
+  python: python3.11
+
+default_stages: [commit]
+
+fail_fast: false

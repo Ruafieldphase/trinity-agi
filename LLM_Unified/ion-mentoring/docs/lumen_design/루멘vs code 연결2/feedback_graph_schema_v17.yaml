@@ -1,0 +1,25 @@
+# Lumen v1.7 — Adaptive Feedback Graph 2.0 (Schema)
+version: 2
+graph:
+  nodes:
+    - id: string  # e.g., observation, proof, release, security, enrichment, adaptation, memory
+      kind: string  # 'loop' | 'metric' | 'system'
+  edges:
+    - src: string
+      dst: string
+      weight: number   # -1..1 (negative: inhibitory, positive: excitatory)
+      phase_diff: number  # 0..1 normalized
+      coherence: number   # 0..1
+matrices:
+  gain_alpha_matrix:
+    # square matrix flattening (row-major), with node order list
+    nodes: [string]
+    values: [number]
+indices:
+  s_index: number  # stability index 0..1
+  c_index: number  # creative index 0..1
+  symmetry_score: number  # 0..1 (feedback symmetry)
+outputs:
+  - feedback_graph.json
+  - gain_alpha_matrix.json
+  - indices.json

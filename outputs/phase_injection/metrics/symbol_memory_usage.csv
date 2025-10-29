@@ -1,0 +1,7 @@
+scenario,symbol,count
+baseline,low_affect,1
+baseline,phase_injected,1
+boosted,seed,5
+ALL,low_affect,1
+ALL,phase_injected,1
+ALL,seed,5

@@ -1,0 +1,25 @@
+groups:
+  - name: lumen-error-budget-burn
+    interval: 30s
+    rules:
+      # Fast burn: if 5m error ratio would exhaust 2% of monthly budget quickly
+      - alert: LumenFastBurn
+        expr: err:lumen_maturity_error_ratio:5m > (2 * slo:lumen_error_budget)
+        for: 10m
+        labels:
+          severity: critical
+          team: lumen
+        annotations:
+          summary: "Fast error-budget burn (5m window)"
+          description: "5m error ratio {{ $value | printf "%.2f" }} > 2x monthly budget; immediate intervention required."
+
+      # Slow burn: sustained elevation on 30m window
+      - alert: LumenSlowBurn
+        expr: err:lumen_maturity_error_ratio:30m > (1 * slo:lumen_error_budget)
+        for: 2h
+        labels:
+          severity: warning
+          team: lumen
+        annotations:
+          summary: "Slow error-budget burn (30m window)"
+          description: "30m error ratio exceeding budget; tune gains or widen STREAM_BUFFER_WINDOW_MS."

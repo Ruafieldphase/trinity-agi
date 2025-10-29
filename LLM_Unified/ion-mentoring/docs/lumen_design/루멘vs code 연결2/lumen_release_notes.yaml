@@ -1,0 +1,35 @@
+name: lumen_release_notes
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag for release (e.g., v1.5-rc1)"
+        required: true
+      changelog_path:
+        description: "Path to changelog md"
+        required: false
+        default: "docs/CHANGELOG_v1_5_RC.md"
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package chart
+        run: |
+          mkdir -p dist
+          helm package charts/lumen -d dist || true
+      - name: Upload chart artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-chart
+          path: dist/*.tgz
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
+          body_path: ${{ github.event.inputs.changelog_path }}
+          files: dist/*.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

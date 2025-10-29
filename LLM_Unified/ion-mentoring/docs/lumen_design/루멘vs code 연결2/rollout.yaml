@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: lumen
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: lumen
+  template:
+    metadata:
+      labels:
+        app: lumen
+    spec:
+      containers:
+        - name: lumen
+          image: ghcr.io/example/lumen:v1.5-rc
+          ports:
+            - containerPort: 8080
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {duration: 60}
+        - analysis:
+            templates:
+              - templateName: lumen-maturity-analysis
+            args:
+              - name: promServer
+                value: http://prometheus-server
+              - name: threshold
+                value: "0.45"
+        - setWeight: 50
+        - pause: {duration: 120}
+        - analysis:
+            templates:
+              - templateName: lumen-maturity-analysis
+            args:
+              - name: promServer
+                value: http://prometheus-server
+              - name: threshold
+                value: "0.45"
+        - setWeight: 100

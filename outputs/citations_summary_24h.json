@@ -1,0 +1,65 @@
+{
+  "window_hours": 24,
+  "generated_at": "2025-10-27T12:23:37.934893",
+  "counts": {
+    "tasks_total": 207,
+    "improved_with_citations": 6,
+    "completed": 6,
+    "replans": 0,
+    "noreplans": 6,
+    "pending": 0
+  },
+  "rates": {
+    "replan_rate": 0.0,
+    "evidence_ok_rate": 100.0
+  },
+  "citations": {
+    "thesis_avg": 3.0,
+    "synthesis_avg": 6.0
+  },
+  "quality": {
+    "noreplan_avg": 0.8000000000000002
+  },
+  "samples": [
+    {
+      "task_id": "batch_val_001",
+      "thesis_citations": 3,
+      "synthesis_citations": 6,
+      "quality": 0.8,
+      "evidence_ok": true,
+      "replan": false
+    },
+    {
+      "task_id": "batch_val_002",
+      "thesis_citations": 3,
+      "synthesis_citations": 6,
+      "quality": 0.8,
+      "evidence_ok": true,
+      "replan": false
+    },
+    {
+      "task_id": "batch_val_003",
+      "thesis_citations": 3,
+      "synthesis_citations": 6,
+      "quality": 0.8,
+      "evidence_ok": true,
+      "replan": false
+    },
+    {
+      "task_id": "batch_val_004",
+      "thesis_citations": 3,
+      "synthesis_citations": 6,
+      "quality": 0.8,
+      "evidence_ok": true,
+      "replan": false
+    },
+    {
+      "task_id": "batch_val_005",
+      "thesis_citations": 3,
+      "synthesis_citations": 6,
+      "quality": 0.8,
+      "evidence_ok": true,
+      "replan": false
+    }
+  ]
+}

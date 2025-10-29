@@ -1,0 +1,17 @@
+image:
+  repository: ghcr.io/example/lumen
+  tag: v1.5-dev
+  pullPolicy: IfNotPresent
+replicas: 1
+resources:
+  requests: { cpu: "100m", memory: "256Mi" }
+  limits:   { cpu: "500m", memory: "512Mi" }
+maturity: { enabled: true, port: 9143 }
+streaming:
+  kafka: { enabled: false, bootstrap: "localhost:9092", topicResInput: "lumen.resonance.input" }
+  loki:  { url: "" }
+  windowMs: 1000
+featureFlags:
+  enableServiceMonitor: false
+  enableKafkaTopicsHook: false
+  enableExternalSecrets: false

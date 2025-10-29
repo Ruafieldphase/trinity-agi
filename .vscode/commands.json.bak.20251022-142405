@@ -1,0 +1,214 @@
+{
+  "commands": [
+    {
+      "id": "task.run.vs-code:-watch-orchestrator-status",
+      "title": "Run: VS Code: Watch Orchestrator Status",
+      "taskLabel": "VS Code: Watch Orchestrator Status"
+    },
+    {
+      "id": "task.run.monitoring:-start-canary-loop-(30m,-with-probe)",
+      "title": "Run: Monitoring: Start Canary Loop (30m, with probe)",
+      "taskLabel": "Monitoring: Start Canary Loop (30m, with probe)"
+    },
+    {
+      "id": "task.run.monitoring:-start-canary-loop-(30m)",
+      "title": "Run: Monitoring: Start Canary Loop (30m)",
+      "taskLabel": "Monitoring: Start Canary Loop (30m)"
+    },
+    {
+      "id": "task.run.monitoring:-stop-all-canary-loops",
+      "title": "Run: Monitoring: Stop All Canary Loops",
+      "taskLabel": "Monitoring: Stop All Canary Loops"
+    },
+    {
+      "id": "task.run.monitoring:-rate-limit-probe-(safe)",
+      "title": "Run: Monitoring: Rate Limit Probe (safe)",
+      "taskLabel": "Monitoring: Rate Limit Probe (safe)"
+    },
+    {
+      "id": "task.run.monitoring:-one-shot-probe",
+      "title": "Run: Monitoring: One-shot Probe",
+      "taskLabel": "Monitoring: One-shot Probe"
+    },
+    {
+      "id": "task.run.monitoring:-check-canary-status",
+      "title": "Run: Monitoring: Check Canary Status",
+      "taskLabel": "Monitoring: Check Canary Status"
+    },
+    {
+      "id": "task.run.monitoring:-create-canary-dashboard",
+      "title": "Run: Monitoring: Create Canary Dashboard",
+      "taskLabel": "Monitoring: Create Canary Dashboard"
+    },
+    {
+      "id": "task.run.luon:-start-watch",
+      "title": "Run: Luon: Start Watch",
+      "taskLabel": "Luon: Start Watch"
+    },
+    {
+      "id": "task.run.luon:-kill-and-restart-watch",
+      "title": "Run: Luon: Kill and Restart Watch",
+      "taskLabel": "Luon: Kill and Restart Watch"
+    },
+    {
+      "id": "task.run.luon:-run-pipeline-once",
+      "title": "Run: Luon: Run Pipeline Once",
+      "taskLabel": "Luon: Run Pipeline Once"
+    },
+    {
+      "id": "task.run.python:-run-all-tests-(repo-venv)",
+      "title": "Run: Python: Run All Tests (repo venv)",
+      "taskLabel": "Python: Run All Tests (repo venv)"
+    },
+    {
+      "id": "task.run.python:-run-vertex-ai-test-(repo-venv)",
+      "title": "Run: Python: Run Vertex AI Test (repo venv)",
+      "taskLabel": "Python: Run Vertex AI Test (repo venv)"
+    },
+    {
+      "id": "task.run.load-test:-run-all-scenarios",
+      "title": "Run: Load Test: Run All Scenarios",
+      "taskLabel": "Load Test: Run All Scenarios"
+    },
+    {
+      "id": "task.run.load-test:-light-smoke-(10s)",
+      "title": "Run: Load Test: Light Smoke (10s)",
+      "taskLabel": "Load Test: Light Smoke (10s)"
+    },
+    {
+      "id": "task.run.load-testing:-summarize-locust-results-(latest)",
+      "title": "Run: Load Testing: Summarize Locust Results (Latest)",
+      "taskLabel": "Load Testing: Summarize Locust Results (Latest)"
+    },
+    {
+      "id": "task.run.load-testing:-summarize-locust-results-(all-csvs)",
+      "title": "Run: Load Testing: Summarize Locust Results (All CSVs)",
+      "taskLabel": "Load Testing: Summarize Locust Results (All CSVs)"
+    },
+    {
+      "id": "task.run.dry-run:-phase4-canary-deploy",
+      "title": "Run: Dry-Run: Phase4 Canary Deploy",
+      "taskLabel": "Dry-Run: Phase4 Canary Deploy"
+    },
+    {
+      "id": "task.run.phase4:-canary-deploy-(5%)",
+      "title": "Run: Phase4: Canary Deploy (5%)",
+      "taskLabel": "Phase4: Canary Deploy (5%)"
+    },
+    {
+      "id": "task.run.phase4:-canary-deploy-(10%)",
+      "title": "Run: Phase4: Canary Deploy (10%)",
+      "taskLabel": "Phase4: Canary Deploy (10%)"
+    },
+    {
+      "id": "task.run.phase4:-canary-deploy-(25%)",
+      "title": "Run: Phase4: Canary Deploy (25%)",
+      "taskLabel": "Phase4: Canary Deploy (25%)"
+    },
+    {
+      "id": "task.run.phase4:-canary-deploy-(50%)",
+      "title": "Run: Phase4: Canary Deploy (50%)",
+      "taskLabel": "Phase4: Canary Deploy (50%)"
+    },
+    {
+      "id": "task.run.phase4:-canary-deploy-(100%)",
+      "title": "Run: Phase4: Canary Deploy (100%)",
+      "taskLabel": "Phase4: Canary Deploy (100%)"
+    },
+    {
+      "id": "task.run.phase4:-rollback-canary-(to-0%)",
+      "title": "Run: Phase4: Rollback Canary (to 0%)",
+      "taskLabel": "Phase4: Rollback Canary (to 0%)"
+    },
+    {
+      "id": "task.run.emergency:-rollback-canary-(interactive)",
+      "title": "Run: Emergency: Rollback Canary (Interactive)",
+      "taskLabel": "Emergency: Rollback Canary (Interactive)"
+    },
+    {
+      "id": "task.run.emergency:-force-rollback-canary-(skip-confirmation)",
+      "title": "Run: Emergency: Force Rollback Canary (Skip Confirmation)",
+      "taskLabel": "Emergency: Force Rollback Canary (Skip Confirmation)"
+    },
+    {
+      "id": "task.run.one-off:-balanced-warmup",
+      "title": "Run: One-off: Balanced Warmup",
+      "taskLabel": "One-off: Balanced Warmup"
+    },
+    {
+      "id": "task.run.quick:-post-compare-personalized-vs-legacy-chat",
+      "title": "Run: Quick: POST compare personalized vs legacy chat",
+      "taskLabel": "Quick: POST compare personalized vs legacy chat"
+    },
+    {
+      "id": "task.run.quick:-post-compare-(debug,-save-json)",
+      "title": "Run: Quick: POST compare (debug, save JSON)",
+      "taskLabel": "Quick: POST compare (debug, save JSON)"
+    },
+    {
+      "id": "task.run.monitoring:-filter-logs-(last-1-hour)",
+      "title": "Run: Monitoring: Filter Logs (Last 1 Hour)",
+      "taskLabel": "Monitoring: Filter Logs (Last 1 Hour)"
+    },
+    {
+      "id": "task.run.monitoring:-filter-logs-(last-24-hours)",
+      "title": "Run: Monitoring: Filter Logs (Last 24 Hours)",
+      "taskLabel": "Monitoring: Filter Logs (Last 24 Hours)"
+    },
+    {
+      "id": "task.run.operations:-generate-daily-report",
+      "title": "Run: Operations: Generate Daily Report",
+      "taskLabel": "Operations: Generate Daily Report"
+    },
+    {
+      "id": "task.run.operations:-cleanup-old-logs-(7-days,-dryrun)",
+      "title": "Run: Operations: Cleanup Old Logs (7 days, DryRun)",
+      "taskLabel": "Operations: Cleanup Old Logs (7 days, DryRun)"
+    },
+    {
+      "id": "task.run.operations:-cleanup-old-logs-(7-days,-execute)",
+      "title": "Run: Operations: Cleanup Old Logs (7 days, Execute)",
+      "taskLabel": "Operations: Cleanup Old Logs (7 days, Execute)"
+    },
+    {
+      "id": "task.run.probe:-gentle-(3-req,-2s-delay)",
+      "title": "Run: Probe: Gentle (3 req, 2s delay)",
+      "taskLabel": "Probe: Gentle (3 req, 2s delay)"
+    },
+    {
+      "id": "task.run.probe:-normal-(10-req,-1s-delay)",
+      "title": "Run: Probe: Normal (10 req, 1s delay)",
+      "taskLabel": "Probe: Normal (10 req, 1s delay)"
+    },
+    {
+      "id": "task.run.probe:-aggressive-(25-req,-500ms-delay)",
+      "title": "Run: Probe: Aggressive (25 req, 500ms delay)",
+      "taskLabel": "Probe: Aggressive (25 req, 500ms delay)"
+    },
+    {
+      "id": "task.run.inbox-watcher:-register-(at-logon)",
+      "title": "Run: Inbox Watcher: Register (At logon)",
+      "taskLabel": "Inbox Watcher: Register (At logon)"
+    },
+    {
+      "id": "task.run.inbox-watcher:-unregister",
+      "title": "Run: Inbox Watcher: Unregister",
+      "taskLabel": "Inbox Watcher: Unregister"
+    },
+    {
+      "id": "task.run.inbox-watcher:-stop-(scheduled-task)",
+      "title": "Run: Inbox Watcher: Stop (Scheduled Task)",
+      "taskLabel": "Inbox Watcher: Stop (Scheduled Task)"
+    },
+    {
+      "id": "task.run.inbox-watcher:-run-now-(foreground)",
+      "title": "Run: Inbox Watcher: Run Now (foreground)",
+      "taskLabel": "Inbox Watcher: Run Now (foreground)"
+    },
+    {
+      "id": "task.run.inbox-watcher:-run-now-(direct)",
+      "title": "Run: Inbox Watcher: Run Now (direct)",
+      "taskLabel": "Inbox Watcher: Run Now (direct)"
+    }
+  ]
+}

@@ -1,0 +1,277 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ion-mentoring"
+version = "0.1.0"
+description = "ION Mentoring: Multi-Persona AI Chat Service - Nada AI Project"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = {text = "MIT"}
+authors = [
+    {name = "Ion Mentoring Team", email = "ion@naeda.ai"}
+]
+keywords = ["ai", "mentoring", "multi-persona", "chatbot", "vertex-ai"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+# 핵심 의존성
+dependencies = [
+    # 웹 프레임워크
+    "fastapi>=0.104.1",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.10.5",
+    "pydantic-settings>=2.7.1",
+
+    # Google Cloud
+    "google-cloud-aiplatform>=1.38.0",
+    "google-cloud-logging>=3.8.0",
+
+    # Rate Limiting
+    "slowapi>=0.1.9",
+
+    # 환경 변수
+    "python-dotenv>=1.0.0",
+
+    # 데이터 처리
+    "pandas>=1.5.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+
+    # HTTP 클라이언트
+    "requests>=2.28.0",
+    "httpx>=0.25.2",
+
+    # 로깅 및 모니터링
+    "python-json-logger>=2.0.7",
+    "opentelemetry-api>=1.20.0",
+    "opentelemetry-sdk>=1.20.0",
+    "opentelemetry-instrumentation>=0.41b0",
+    "opentelemetry-exporter-prometheus>=0.41b0",
+    "prometheus-client>=0.18.0",
+]
+
+[project.optional-dependencies]
+# 개발 의존성
+dev = [
+    # 테스트
+    "pytest>=8.4.2",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.12.0",
+    "httpx>=0.25.2",
+
+    # 코드 품질
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "isort>=5.13.0",
+    "pylint>=3.0.0",
+
+    # 성능 프로파일링
+    "cProfile-utils>=1.0.0",
+    "memory-profiler>=0.61.0",
+    "py-spy>=0.3.14",
+
+    # 문서화
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "sphinx-autodoc-typehints>=1.24.0",
+    "mkdocs>=1.5.0",
+    "mkdocs-material>=9.4.0",
+
+    # 개발 도구
+    "ipython>=8.16.0",
+    "jupyter>=1.0.0",
+    "notebook>=7.0.0",
+    "pre-commit>=3.5.0",
+]
+
+# 테스트 의존성
+test = [
+    "pytest>=8.4.2",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.12.0",
+    "httpx>=0.25.2",
+    "pytest-xdist>=3.5.0",  # 병렬 테스트
+    "pytest-timeout>=2.2.0",  # 타임아웃 관리
+]
+
+# 로드 테스팅
+load-test = [
+    "locust>=2.41.6",
+    "psutil>=5.9.0",
+]
+
+# RAG 및 검색 기능 (선택)
+rag = [
+    "langchain>=0.1.0",
+    "chromadb>=0.4.0",
+    "faiss-cpu>=1.7.4",
+]
+
+# 모든 선택 의존성
+all = [
+    "ion-mentoring[dev,test,load-test,rag]"
+]
+
+[project.urls]
+Homepage = "https://github.com/nada-ai/ion-mentoring"
+Documentation = "https://ion-mentoring.readthedocs.io"
+Repository = "https://github.com/nada-ai/ion-mentoring.git"
+"Bug Tracker" = "https://github.com/nada-ai/ion-mentoring/issues"
+
+[tool.setuptools]
+packages = ["app", "orchestration", "analysis", "scripts"]
+
+[tool.setuptools.package-data]
+orchestration = ["*.py"]
+
+# ============================================================================
+# 도구 설정
+# ============================================================================
+
+[tool.black]
+line-length = 100
+target-version = ['py311', 'py312', 'py313']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # 디렉토리
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+extend-select = ["E", "F", "I", "N", "W"]
+ignore = ["E501", "E402", "N803", "N806", "E722", "F401"]  # Black manages E501; E402: module imports; N803/N806: naming; E722: bare except; F401: unused imports
+
+[tool.ruff.lint.per-file-ignores]
+"vscode_integration.py" = ["N815"]  # mixedCase for VS Code task properties
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = false
+warn_unused_configs = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
+no_implicit_optional = false
+warn_redundant_casts = false
+warn_unused_ignores = false
+warn_no_return = false
+strict_equality = false
+# Relax type checking for faster CI and compatibility
+
+[[tool.mypy.overrides]]
+module = [
+    "google.cloud.*",
+    "pandas.*",
+    "numpy.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--disable-warnings",
+    "-p", "no:warnings",
+    "--ignore=tests/test_vscode_integration.py",
+    "--ignore=tests/unit/test_config.py",
+    "--ignore=tests/unit/test_logging.py",
+    "--ignore=tests/unit/test_sentry_monitoring.py",
+    "--ignore=tests/security/test_security_edge_cases.py",
+    "--ignore=tests/test_api.py",
+    "--ignore=tests/test_integration.py",
+    "--ignore=tests/unit/test_caching_optimization.py",
+]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "e2e: End-to-end tests",
+    "slow: Slow tests",
+    "asyncio: Async tests",
+]
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = ["app", "orchestration", "analysis", "scripts"]
+omit = [
+    "*/tests/*",
+    "*/__main__.py",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+precision = 2
+show_missing = true
+skip_covered = false
+
+[tool.isort]
+profile = "black"
+multi_line_mode = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 100
+
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # missing-docstring
+    "C0103",  # invalid-name
+    "R0913",  # too-many-arguments
+    "R0914",  # too-many-locals
+]
+
+[tool.pylint.format]
+max-line-length = 100
+
+# ============================================================================
+# 프로젝트 설정
+# ============================================================================
+
+[tool.ion-mentoring]
+# 프로젝트별 커스텀 설정
+version = "0.1.0"
+min_python_version = "3.11"
+supported_backends = ["vertex-ai", "openai", "mock"]
+default_backend = "vertex-ai"

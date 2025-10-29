@@ -1,0 +1,457 @@
+# Lumen System - Cloud Monitoring Dashboard
+# ION Mentoring API 종합 모니터링 대시보드
+
+displayName: "Lumen System - ION API Monitoring"
+mosaicLayout:
+  columns: 12
+  tiles:
+    # ========================================
+    # Row 1: 성숙도 & ROI 개요
+    # ========================================
+    - width: 4
+      height: 4
+      widget:
+        title: "System Maturity Score"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="custom.googleapis.com/maturity_score" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 3600s
+                perSeriesAligner: ALIGN_MEAN
+          sparkChartView:
+            sparkChartType: SPARK_LINE
+          thresholds:
+            - value: 90
+              color: GREEN
+              label: "Excellent"
+            - value: 70
+              color: YELLOW
+              label: "Good"
+            - value: 50
+              color: ORANGE
+              label: "Fair"
+            - value: 0
+              color: RED
+              label: "Poor"
+
+    - width: 4
+      height: 4
+      widget:
+        title: "ROI Percentage"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="custom.googleapis.com/roi_percentage" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 3600s
+                perSeriesAligner: ALIGN_MEAN
+          sparkChartView:
+            sparkChartType: SPARK_LINE
+          thresholds:
+            - value: 500
+              color: GREEN
+              label: "Excellent"
+            - value: 300
+              color: YELLOW
+              label: "Acceptable"
+            - value: 0
+              color: RED
+              label: "Poor"
+
+    - width: 4
+      height: 4
+      widget:
+        title: "SLO Compliance"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="custom.googleapis.com/slo_compliance" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 3600s
+                perSeriesAligner: ALIGN_MEAN
+          sparkChartView:
+            sparkChartType: SPARK_LINE
+          thresholds:
+            - value: 100
+              color: GREEN
+              label: "All SLOs Met"
+            - value: 75
+              color: YELLOW
+              label: "Some Issues"
+            - value: 0
+              color: RED
+              label: "Critical"
+
+    # ========================================
+    # Row 2: SLO 메트릭
+    # ========================================
+    - width: 6
+      height: 4
+      yPos: 4
+      widget:
+        title: "Availability & Error Rate"
+        xyChart:
+          dataSets:
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="run.googleapis.com/request_count" resource.type="cloud_run_revision" metric.label.response_code_class="2"'
+                  aggregation:
+                    alignmentPeriod: 300s
+                    perSeriesAligner: ALIGN_RATE
+              plotType: LINE
+              targetAxis: Y1
+              legendTemplate: "Success Rate"
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="run.googleapis.com/request_count" resource.type="cloud_run_revision" metric.label.response_code_class="5"'
+                  aggregation:
+                    alignmentPeriod: 300s
+                    perSeriesAligner: ALIGN_RATE
+              plotType: LINE
+              targetAxis: Y2
+              legendTemplate: "5xx Errors"
+          yAxis:
+            label: "Success Rate"
+            scale: LINEAR
+          y2Axis:
+            label: "Error Rate"
+            scale: LINEAR
+          thresholds:
+            - value: 99.5
+              label: "SLO Target"
+              targetAxis: Y1
+
+    - width: 6
+      height: 4
+      xPos: 6
+      yPos: 4
+      widget:
+        title: "Latency (P95 & P99)"
+        xyChart:
+          dataSets:
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="run.googleapis.com/request_latencies" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 300s
+                    perSeriesAligner: ALIGN_DELTA
+                    crossSeriesReducer: REDUCE_PERCENTILE_95
+              plotType: LINE
+              targetAxis: Y1
+              legendTemplate: "P95 Latency"
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="run.googleapis.com/request_latencies" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 300s
+                    perSeriesAligner: ALIGN_DELTA
+                    crossSeriesReducer: REDUCE_PERCENTILE_99
+              plotType: LINE
+              targetAxis: Y1
+              legendTemplate: "P99 Latency"
+          yAxis:
+            label: "Latency (ms)"
+            scale: LINEAR
+          thresholds:
+            - value: 200
+              label: "P95 Target"
+            - value: 500
+              label: "P99 Target"
+
+    # ========================================
+    # Row 3: 캐싱 성능
+    # ========================================
+    - width: 6
+      height: 4
+      yPos: 8
+      widget:
+        title: "Cache Hit Rate"
+        xyChart:
+          dataSets:
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="custom.googleapis.com/cache_hit_rate" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 300s
+                    perSeriesAligner: ALIGN_MEAN
+              plotType: LINE
+              targetAxis: Y1
+              legendTemplate: "Hit Rate"
+          yAxis:
+            label: "Hit Rate (%)"
+            scale: LINEAR
+          thresholds:
+            - value: 80
+              label: "Target (80%)"
+              color: GREEN
+            - value: 70
+              label: "Warning (70%)"
+              color: YELLOW
+            - value: 60
+              label: "Critical (60%)"
+              color: ORANGE
+
+    - width: 6
+      height: 4
+      xPos: 6
+      yPos: 8
+      widget:
+        title: "Request Rate"
+        xyChart:
+          dataSets:
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="run.googleapis.com/request_count" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 60s
+                    perSeriesAligner: ALIGN_RATE
+              plotType: LINE
+              targetAxis: Y1
+              legendTemplate: "Requests/sec"
+          yAxis:
+            label: "Requests per second"
+            scale: LINEAR
+
+    # ========================================
+    # Row 4: 비용 효율성
+    # ========================================
+    - width: 12
+      height: 4
+      yPos: 12
+      widget:
+        title: "Cost Metrics & ROI Trend"
+        xyChart:
+          dataSets:
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="custom.googleapis.com/roi_percentage" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 3600s
+                    perSeriesAligner: ALIGN_MEAN
+              plotType: LINE
+              targetAxis: Y1
+              legendTemplate: "ROI %"
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="custom.googleapis.com/cache_hit_rate" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 3600s
+                    perSeriesAligner: ALIGN_MEAN
+              plotType: LINE
+              targetAxis: Y2
+              legendTemplate: "Cache Hit Rate %"
+          yAxis:
+            label: "ROI (%)"
+            scale: LINEAR
+          y2Axis:
+            label: "Cache Hit Rate (%)"
+            scale: LINEAR
+          thresholds:
+            - value: 500
+              label: "ROI Target"
+              targetAxis: Y1
+            - value: 80
+              label: "Cache Target"
+              targetAxis: Y2
+
+    # ========================================
+    # Row 5: 성숙도 세부 메트릭
+    # ========================================
+    - width: 3
+      height: 2
+      yPos: 16
+      widget:
+        title: "Deployment Frequency (7d)"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="run.googleapis.com/revision_count" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 604800s # 7 days
+                perSeriesAligner: ALIGN_COUNT
+
+    - width: 3
+      height: 2
+      xPos: 3
+      yPos: 16
+      widget:
+        title: "Active Instances"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="run.googleapis.com/container/instance_count" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 60s
+                perSeriesAligner: ALIGN_MEAN
+
+    - width: 3
+      height: 2
+      xPos: 6
+      yPos: 16
+      widget:
+        title: "Memory Utilization"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="run.googleapis.com/container/memory/utilizations" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 300s
+                perSeriesAligner: ALIGN_MEAN
+
+    - width: 3
+      height: 2
+      xPos: 9
+      yPos: 16
+      widget:
+        title: "CPU Utilization"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="run.googleapis.com/container/cpu/utilizations" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 300s
+                perSeriesAligner: ALIGN_MEAN
+
+    # ========================================
+    # Row 6: Cost Rhythm Metrics (Lumen Philosophy)
+    # ========================================
+    - width: 4
+      height: 3
+      yPos: 18
+      widget:
+        title: "Cost Coherence (일관성)"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="custom.googleapis.com/cost_coherence" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 3600s
+                perSeriesAligner: ALIGN_MEAN
+          sparkChartView:
+            sparkChartType: SPARK_LINE
+          thresholds:
+            - value: 0.7
+              color: GREEN
+              label: "Stable"
+            - value: 0.5
+              color: YELLOW
+              label: "Unstable"
+            - value: 0.0
+              color: RED
+              label: "Chaotic"
+
+    - width: 4
+      height: 3
+      xPos: 4
+      yPos: 18
+      widget:
+        title: "Cost Phase (위상)"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="custom.googleapis.com/cost_phase" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 3600s
+                perSeriesAligner: ALIGN_MEAN
+          sparkChartView:
+            sparkChartType: SPARK_LINE
+          thresholds:
+            - value: 0.8
+              color: GREEN
+            - value: 0.5
+              color: YELLOW
+            - value: 0.0
+              color: RED
+
+    - width: 4
+      height: 3
+      xPos: 8
+      yPos: 18
+      widget:
+        title: "Cost Entropy (엔트로피)"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="custom.googleapis.com/cost_entropy" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 3600s
+                perSeriesAligner: ALIGN_MEAN
+          sparkChartView:
+            sparkChartType: SPARK_LINE
+          thresholds:
+            - value: 0.0
+              color: GREEN
+              label: "Predictable"
+            - value: 0.5
+              color: YELLOW
+            - value: 1.0
+              color: RED
+              label: "Unpredictable"
+
+    - width: 6
+      height: 3
+      yPos: 21
+      widget:
+        title: "Budget Usage Trend"
+        xyChart:
+          dataSets:
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="custom.googleapis.com/forecasted_spend" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 3600s
+                    perSeriesAligner: ALIGN_MEAN
+              plotType: LINE
+              targetAxis: Y1
+            - timeSeriesQuery:
+                timeSeriesFilter:
+                  filter: 'metric.type="custom.googleapis.com/monthly_budget" resource.type="cloud_run_revision"'
+                  aggregation:
+                    alignmentPeriod: 3600s
+                    perSeriesAligner: ALIGN_MEAN
+              plotType: LINE
+              targetAxis: Y1
+          yAxis:
+            label: "USD"
+            scale: LINEAR
+
+    - width: 6
+      height: 3
+      xPos: 6
+      yPos: 21
+      widget:
+        title: "Cost Rhythm Status"
+        scorecard:
+          timeSeriesQuery:
+            timeSeriesFilter:
+              filter: 'metric.type="custom.googleapis.com/rhythm_status" resource.type="cloud_run_revision"'
+              aggregation:
+                alignmentPeriod: 3600s
+                perSeriesAligner: ALIGN_MOST_RECENT
+          thresholds:
+            - value: 2
+              color: GREEN
+              label: "RESONANT"
+            - value: 1
+              color: YELLOW
+              label: "DISSONANT"
+            - value: 0
+              color: RED
+              label: "CHAOTIC"
+
+    # ========================================
+    # Row 7: 로그 기반 메트릭
+    # ========================================
+    - width: 12
+      height: 4
+      yPos: 24
+      widget:
+        title: "Error Logs (Last 24h)"
+        logsPanel:
+          resourceNames:
+            - "projects/naeda-genesis"
+          filter: |
+            resource.type="cloud_run_revision"
+            resource.labels.service_name="ion-api-canary"
+            severity>=ERROR

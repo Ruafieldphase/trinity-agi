@@ -1,0 +1,84 @@
+name: Lumen v1.1 Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump type (major|minor|patch)"
+        required: true
+        default: "patch"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Bump version
+        run: |
+          python scripts/bump_version.py "${{ inputs.bump }}"
+          echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
+
+      - name: Generate release notes
+        run: |
+          python scripts/release_notes.py > RELEASE_NOTES.txt
+
+      - name: Build Docker image
+        run: |
+          IMAGE="ghcr.io/${{ github.repository_owner }}/lumen-adaptive:${{ env.VERSION }}"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          docker build -f Dockerfile.adaptive_feedback -t "$IMAGE" .
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        run: docker push "$IMAGE"
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Sign image with cosign (keyless)
+        env:
+          COSIGN_EXPERIMENTAL: 1
+        run: |
+          cosign sign --yes "$IMAGE"
+
+      - name: Generate SBOM (Syft)
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE }}
+          output-file: sbom.spdx.json
+
+      - name: Create Grafana snapshot (optional)
+        env:
+          GRAFANA_URL: ${{ secrets.GRAFANA_URL }}
+          GRAFANA_API_TOKEN: ${{ secrets.GRAFANA_API_TOKEN }}
+        run: |
+          python scripts/grafana_snapshot.py > SNAPSHOT_URL.txt || echo "" > SNAPSHOT_URL.txt
+          echo "\nGrafana Snapshot: $(cat SNAPSHOT_URL.txt)" >> RELEASE_NOTES.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ env.VERSION }}"
+          name: "Lumen v${{ env.VERSION }}"
+          body_path: RELEASE_NOTES.txt
+          files: |
+            grafana/dashboards/grafana_resonance_plus_feedback.json
+            grafana/dashboards/grafana_feedback_panel.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

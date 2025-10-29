@@ -1,0 +1,46 @@
+{
+  "date": "2025-10-23",
+  "period_start": "2025-10-22 08:17:06 UTC",
+  "period_end": "2025-10-23 08:17:06 UTC",
+  "ion_api": {
+    "service_name": "ion-api",
+    "total_requests": 77963,
+    "requests_per_second": 1.68,
+    "latency_p50": null,
+    "latency_p95": null,
+    "latency_p99": null,
+    "error_4xx_count": 14564,
+    "error_5xx_count": 7,
+    "error_4xx_rate": 18.68,
+    "error_5xx_rate": 0.01,
+    "avg_instances": 0.83,
+    "max_instances": 2,
+    "avg_cpu_utilization": 0.0,
+    "avg_memory_utilization": 0.0,
+    "status": "warning",
+    "alerts": [
+      "\u26a0\ufe0f High 4xx error rate: 18.68%"
+    ]
+  },
+  "lumen_gateway": {
+    "service_name": "lumen-gateway",
+    "total_requests": 7,
+    "requests_per_second": 0.0,
+    "latency_p50": null,
+    "latency_p95": null,
+    "latency_p99": null,
+    "error_4xx_count": 0,
+    "error_5xx_count": 0,
+    "error_4xx_rate": 0.0,
+    "error_5xx_rate": 0.0,
+    "avg_instances": 1.0,
+    "max_instances": 1,
+    "avg_cpu_utilization": 0.0,
+    "avg_memory_utilization": 0.0,
+    "status": "healthy",
+    "alerts": []
+  },
+  "recommendations": [
+    "Review alerts and investigate root causes"
+  ]
+}

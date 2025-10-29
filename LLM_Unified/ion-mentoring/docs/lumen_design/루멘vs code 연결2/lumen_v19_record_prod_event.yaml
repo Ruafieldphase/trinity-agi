@@ -1,0 +1,40 @@
+name: lumen_v19_record_prod_event
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "Environment (prod/stage)"
+        default: "prod"
+      action:
+        description: "deploy or rollback"
+        default: "deploy"
+      version:
+        description: "tag/commit"
+        default: "vX.Y.Z"
+      author:
+        description: "actor/login"
+        default: "github-actions[bot]"
+      result:
+        description: "success or failure"
+        default: "success"
+      notes:
+        description: "free text"
+        default: ""
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Log prod event
+        working-directory: lumen_v1_9_assets
+        run: |
+          python prod_event_logger.py --env "${{ github.event.inputs.env }}"             --action "${{ github.event.inputs.action }}"             --version "${{ github.event.inputs.version }}"             --author "${{ github.event.inputs.author }}"             --result "${{ github.event.inputs.result }}"             --notes "${{ github.event.inputs.notes }}"
+      - name: Upload event DB
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v19-prod-events
+          path: lumen_v1_9_assets/lumen_prod_events.db

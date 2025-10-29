@@ -1,0 +1,57 @@
+{{- if .Values.ingestor.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lumen.fullname" . }}-ingestor
+  labels: {{- include "lumen.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "lumen.fullname" . }}-ingestor
+  template:
+    metadata:
+      labels:
+        app: {{ include "lumen.fullname" . }}-ingestor
+        {{- include "lumen.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: ingestor
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            {{- if .Values.ingestor.kafka.enabled }}
+            - "python"
+            - "streaming_ingestor_v15_kafka.py"
+            {{- else }}
+            - "python"
+            - "loki_pull_v15.py"
+            {{- end }}
+          env:
+            {{- if .Values.ingestor.kafka.enabled }}
+            - name: KAFKA_BROKERS
+              value: {{ .Values.ingestor.kafka.brokers | quote }}
+            - name: KAFKA_TOPIC
+              value: {{ .Values.ingestor.kafka.topic | quote }}
+            - name: KAFKA_GROUP
+              value: {{ .Values.ingestor.kafka.group | quote }}
+            {{- end }}
+            {{- if .Values.ingestor.loki.enabled }}
+            - name: LOKI_URL
+              value: {{ .Values.ingestor.loki.url | quote }}
+            - name: LOKI_QUERY
+              value: {{ .Values.ingestor.loki.query | quote }}
+            - name: LOKI_LIMIT
+              value: {{ .Values.ingestor.loki.limit | quote }}
+            - name: LOKI_SINCE_NS
+              value: {{ .Values.ingestor.loki.sinceNs | quote }}
+            {{- end }}
+          volumeMounts:
+            - name: config
+              mountPath: /app/streaming_config_v1_5.yaml
+              subPath: streaming_config_v1_5.yaml
+      volumes:
+        - name: config
+          configMap:
+            name: {{ include "lumen.fullname" . }}-config
+{{- end }}

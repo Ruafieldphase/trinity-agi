@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Lumen — Session Restore (v1.7 RC)
+export LUMEN_SESSION="v1.7_RC"
+export LUMEN_ROOT="${LUMEN_ROOT:-$PWD}"
+export LUMEN_V16="${LUMEN_V16:-$LUMEN_ROOT/lumen_v1_6_assets}"
+export LUMEN_V17="${LUMEN_V17:-$LUMEN_ROOT/lumen_v1_7_assets}"
+
+l7.rc.run() {
+  set -e
+  (cd "$LUMEN_V16" && (python stream_enricher_v1.py < samples.jsonl &) && sleep 1 && (python metrics_enrichment_exporter.py &) && sleep 1 && (python resonance_adapter_v1.py &) && sleep 1 && (python adaptation_metrics_exporter.py &) && sleep 1)
+  (cd "$LUMEN_V17" && python feedback_graph_core_v17.py)
+  cp -f "$LUMEN_V17/gain_alpha_matrix.json" "$LUMEN_V16/"
+  (cd "$LUMEN_V16" && python "$LUMEN_V17/matrix_injector_v17.py")
+  (cd "$LUMEN_V17" && (python metrics_feedback_graph_exporter.py &) && sleep 1 && curl -fsSL http://127.0.0.1:9153/metrics | head -n 20)
+}
+echo "[Lumen] v1.7 RC session restored. Run: l7.rc.run"

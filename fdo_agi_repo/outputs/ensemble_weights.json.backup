@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-10-28T20:21:12.865115",
+  "weights": {
+    "logic": 0.3907560658690747,
+    "emotion": 0.3476890164672686,
+    "rhythm": 0.26155491766365674
+  },
+  "metadata": {
+    "learning_rate": 0.01,
+    "predictions_count": 23,
+    "judge_stats": {
+      "logic": {
+        "accuracy": 1.0,
+        "avg_confidence": 0.85,
+        "correct_count": 23,
+        "total_count": 23,
+        "calibration_error": 0.15000000000000002
+      },
+      "emotion": {
+        "accuracy": 1.0,
+        "avg_confidence": 0.7351129451580988,
+        "correct_count": 23,
+        "total_count": 23,
+        "calibration_error": 0.2648870548419012
+      },
+      "rhythm": {
+        "accuracy": 1.0,
+        "avg_confidence": 0.85,
+        "correct_count": 23,
+        "total_count": 23,
+        "calibration_error": 0.15000000000000002
+      }
+    },
+    "weight_change": 0.0028192563618042988,
+    "window_hours": 24
+  }
+}

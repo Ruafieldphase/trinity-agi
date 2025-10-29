@@ -1,0 +1,14 @@
+{
+  "task_id": "429c0b7d-297f-476b-a918-00375bd9ab3c",
+  "worker": "comet-browser",
+  "status": "success",
+  "data": {
+    "url": "https://github.com/trending",
+    "selector": "article.Box-row h2 a",
+    "content": "Scraped content from https://github.com/trending",
+    "timestamp": "2025-10-28T12:22:49.187Z",
+    "length": 216
+  },
+  "completed_at": "2025-10-28T21:22:49.499427",
+  "error_message": null
+}

@@ -1,0 +1,61 @@
+{
+  "timestamp": "2025-10-29T19:27:38.846767",
+  "time_window_hours": 48,
+  "predictions_count": 125,
+  "success_rate": {
+    "overall": {
+      "total": 125,
+      "correct": 120,
+      "accuracy": 0.96
+    },
+    "by_confidence": {
+      "high (≥0.8)": {
+        "total": 80,
+        "correct": 80,
+        "accuracy": 1.0
+      },
+      "medium (0.5-0.8)": {
+        "total": 45,
+        "correct": 40,
+        "accuracy": 0.8888888888888888
+      },
+      "low (<0.5)": {
+        "total": 0,
+        "correct": 0,
+        "accuracy": 0.0
+      }
+    },
+    "by_decision": {
+      "approve": {
+        "total": 111,
+        "correct": 111,
+        "accuracy": 1.0
+      },
+      "revise": {
+        "total": 0,
+        "correct": 0,
+        "accuracy": 0.0
+      },
+      "reject": {
+        "total": 14,
+        "correct": 9,
+        "accuracy": 0.6428571428571429
+      }
+    },
+    "confusion_matrix": {
+      "approve": {
+        "approve": 111
+      },
+      "reject": {
+        "reject": 9,
+        "revise": 5
+      }
+    }
+  },
+  "mutual_information": {
+    "current": 0.18391656564045494,
+    "expected": 1.1106,
+    "percent_of_expected": 16.56010855757743
+  },
+  "drift_detected": true
+}

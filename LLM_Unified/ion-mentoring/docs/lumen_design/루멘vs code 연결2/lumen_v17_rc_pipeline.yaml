@@ -1,0 +1,39 @@
+name: lumen_v17_rc_pipeline
+on:
+  workflow_dispatch: {}
+jobs:
+  v17-rc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start v1.6 P1/P2 (local)
+        working-directory: lumen_v1_6_assets
+        run: |
+          (python stream_enricher_v1.py < samples.jsonl &) && sleep 1
+          (python metrics_enrichment_exporter.py &) && sleep 1
+          (python resonance_adapter_v1.py &) && sleep 2
+          (python adaptation_metrics_exporter.py &) && sleep 1
+      - name: Build v1.7 graph
+        working-directory: lumen_v1_7_assets
+        run: |
+          python feedback_graph_core_v17.py
+          ls -l gain_alpha_matrix.json indices.json
+      - name: Inject matrix hint -> v1.6 adapter state
+        working-directory: lumen_v1_7_assets
+        run: |
+          cp -f gain_alpha_matrix.json ../lumen_v1_6_assets/
+          cd ../lumen_v1_6_assets
+          python ../lumen_v1_7_assets/matrix_injector_v17.py
+      - name: Start v1.7 exporter
+        working-directory: lumen_v1_7_assets
+        run: |
+          (python metrics_feedback_graph_exporter.py &) && sleep 1
+          curl -fsSL http://127.0.0.1:9153/metrics | head -n 20
+      - name: Gate (symmetry & indices)
+        working-directory: lumen_v1_7_assets
+        run: |
+          python v17_gate.py --metrics-url http://127.0.0.1:9153/metrics --sym-min 0.70 --s-min 0.55 --c-min 0.50

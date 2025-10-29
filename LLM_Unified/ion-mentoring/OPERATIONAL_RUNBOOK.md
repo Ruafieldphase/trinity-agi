@@ -1,0 +1,889 @@
+﻿# ION Mentoring ?댁쁺 ?뚮젅?대턿 (Operational Runbook)
+
+?꾨줈?뺤뀡 ?댁쁺 以?諛쒖깮?????덈뒗 ?곹솴蹂?????덉감?낅땲??
+
+**?묒꽦??*: 2025-10-18
+**踰꾩쟾**: 1.0
+**?대떦**: ?댁쁺 ?
+
+---
+
+## ?뱰 紐⑹감
+
+1. [?쇱씪 ?댁쁺 ?덉감](#?쇱씪-?댁쁺-?덉감)
+2. [?μ븷 ???(#?μ븷-???
+3. [?깅뒫 臾몄젣 ?닿껐](#?깅뒫-臾몄젣-?닿껐)
+4. [諛고룷 諛?濡ㅻ갚](#諛고룷-諛?濡ㅻ갚)
+5. [紐⑤땲?곕쭅 諛??뚮┝](#紐⑤땲?곕쭅-諛??뚮┝)
+6. [?뺢린 ?좎?蹂댁닔](#?뺢린-?좎?蹂댁닔)
+
+---
+
+## ?쇱씪 ?댁쁺 ?덉감
+
+### ?낅Т ?쒖옉 (留ㅼ씪 ?ㅼ쟾)
+
+#### 泥댄겕由ъ뒪??
+
+```
+??紐⑤땲?곕쭅 ??쒕낫???뺤씤
+??吏??諛??먮윭 濡쒓렇 寃??
+???깅뒫 硫뷀듃由??뺤씤
+???뚮┝ ?대젰 ?뺤씤
+??? ?щ옓 梨꾨꼸 ?뺤씤
+???ъ슜???쇰뱶諛??뺤씤
+```
+
+#### ??쒕낫???뺤씤 ??ぉ
+
+**Google Cloud Console**
+
+```
+寃쎈줈: Cloud Run ??Services ??ion-api-prod
+
+?뺤씤 ?ы빆:
+1. ?몄뒪?댁뒪 ?곹깭
+   - Active instances: 1-10 (?뺤긽 踰붿쐞)
+   - Failed deployments: 0
+   - Health check failures: 0
+
+2. 硫뷀듃由?
+   - P95 latency: < 2000ms ??
+   - Error rate: < 1% ??
+   - Request rate: ?꾩옱媛??뺤씤
+
+3. 由ъ냼??
+   - Memory usage: < 500MB ??
+   - CPU usage: < 80% ??
+```
+
+**Cloud Logging (濡쒓렇)**
+
+```
+寃쎈줈: Cloud Logging ??Logs Explorer
+
+荑쇰━:
+resource.type="cloud_run_revision"
+resource.labels.service_name="ion-api"
+severity="ERROR"
+
+?뺤씤 ?ы빆:
+- ?먮윭 媛쒖닔: < 10媛??쒓컙 (?뺤긽)
+- 理쒓렐 ?먮윭: ?곸꽭 寃??
+- ?먮윭 ?⑦꽩: 諛섎났 ?ㅻ쪟 ?뺤씤
+```
+
+**Alert Policy (?뚮┝ ?뺤콉)**
+
+```
+寃쎈줈: Monitoring ??Alerting ??Alert Policies
+
+?뺤씤 ?ы빆:
+1. ?쒖꽦 ?뚮┝: ?덈뒗吏 ?뺤씤
+2. ?몄떆?섑듃 ?대젰: 理쒓렐 24?쒓컙
+3. ?뚮┝ ?뚯냼嫄??ㅼ젙: 留뚮즺?섏? ?딆쓬 ?뺤씤
+```
+
+---
+
+## ?μ븷 ???
+
+### ?ш컖?꾨퀎 ????덉감
+
+#### ?뵶 Critical (湲닿툒)
+
+- **?뺤쓽**: ?쒕퉬???꾩쟾 以묐떒, P95 > 10珥? ?먮윭??> 50%
+- **????쒓컙**: 5遺???
+- **?먯뒪而щ젅?댁뀡**: 利됱떆 ?대떦???몄텧
+
+##### ?덉감
+
+```
+1遺? 利됱떆 ???
+?쒋? Step 1: ?쒕퉬???곹깭 ?뺤씤
+?? ?붴? Cloud Run 肄섏넄?먯꽌 ?곹깭 ?뺤씤
+?쒋? Step 2: 理쒓렐 諛고룷 ?뺤씤
+?? ?붴? 理쒓렐 30遺???諛고룷 ?덉뿀?붿? ?뺤씤
+?붴? Step 3: 濡ㅻ갚 以鍮?
+   ?붴? ?댁쟾 踰꾩쟾 ?뺤씤
+
+2遺? 珥덇린 議곗튂
+?쒋? ?듭뀡 A: 濡ㅻ갚 (諛고룷 ??< 1?쒓컙)
+?? ?붴? gcloud run deploy ... --revision=previous
+?쒋? ?듭뀡 B: ?몄뒪?댁뒪 ?ъ떆??
+?? ?붴? Cloud Run 由щ퉬???щ같??
+?붴? ?듭뀡 C: ?몃옒???щ씪?고똿 (?щ윭 由ъ쟾)
+
+3遺? ? 怨듭?
+?쒋? #incident-response Slack 梨꾨꼸
+?쒋? PagerDuty ?뚮┝ ?쒖꽦??
+?붴? 怨좉컼 吏?먰? 怨듭?
+
+5遺? ?곸꽭 遺꾩꽍
+?붴? 濡쒓렇 諛?硫뷀듃由??곸꽭 遺꾩꽍 ?쒖옉
+```
+
+**?먮룞 蹂듦뎄 ?쒕굹由ъ삤**:
+
+```yaml
+auto_recovery:
+  - trigger: error_rate > 50%
+    action: restart_latest_revision
+    delay: 30s
+
+  - trigger: p95_latency > 10s
+    action: scale_up_instances
+    scale_to: 50
+
+  - trigger: oom_error
+    action: restart_with_2gb_memory
+    delay: 60s
+```
+
+#### ?윝 High (?믪쓬)
+
+- **?뺤쓽**: ?쒕퉬??遺遺??μ븷, P95 > 5珥? ?먮윭??> 10%
+- **????쒓컙**: 15遺???
+- **?먯뒪而щ젅?댁뀡**: ?ъ쟾 怨듭?
+
+##### ?덉감
+
+```
+?④퀎蹂????
+
+1. 紐⑤땲?곕쭅 媛뺥솕
+   ?쒋? ?뚮┝ ?ㅼ젙 ?곹뼢
+   ?쒋? 濡쒓렇 ?섏쭛 鍮덈룄 利앷?
+   ?붴? 硫뷀듃由??덈줈怨좎묠 60珥?
+
+2. ?곹뼢 踰붿쐞 ?뚯븙
+   ?쒋? ?곹뼢諛쏅뒗 ?섎Ⅴ?뚮굹 ?뺤씤
+   ?쒋? ?곹뼢諛쏅뒗 ?ъ슜?????뚯븙
+   ?붴? ?깅뒫 ????먯씤 遺꾩꽍
+
+3. ?꾩떆 ?닿껐
+   ?쒋? 罹먯떆 鍮꾩슦湲?(Redis)
+   ?쒋? ?곗씠?곕쿋?댁뒪 ?곌껐 ? ?ъ꽕??
+   ?붴? 濡쒓퉭 ?덈꺼 議곗젙
+
+4. 洹쇰낯 ?먯씤 遺꾩꽍
+   ?쒋? 理쒓렐 蹂寃쎌궗???뺤씤
+   ?쒋? ?곗씠?곕쿋?댁뒪 遺???뺤씤
+   ?붴? ?몃? API ?곹깭 ?뺤씤
+```
+
+#### ?윞 Medium (以묎컙)
+
+- **?뺤쓽**: ?깅뒫 ??? P95 1-5珥? ?먮윭??1-10%
+- **????쒓컙**: 1?쒓컙 ??
+- **議곗튂**: 紐⑤땲?곕쭅 媛뺥솕
+
+##### ?덉감
+
+```
+1. ?곹솴 遺꾩꽍
+   ?쒋? ?깅뒫 硫뷀듃由?異붿씠 ?뺤씤
+   ?쒋? ?몃옒???⑦꽩 遺꾩꽍
+   ?붴? 由ъ냼???ъ슜瑜??뺤씤
+
+2. ?먮룞 ?ㅼ??쇰쭅
+   ?쒋? Min instances 利앷? (1??)
+   ?쒋? Max instances ?뺤씤
+   ?붴? ?ㅼ??쇰쭅 ?꾨즺 ?湲?(5遺?
+
+3. ?깅뒫 媛쒖꽑
+   ?쒋? 荑쇰━ 理쒖쟻??寃??
+   ?쒋? 罹먯떆 ?⑥쑉???뺤씤
+   ?붴? 濡쒓렇 ?섏? 議곗젙
+
+4. ?꾩냽 議곗튂
+   ?쒋? ?먯씤 遺꾩꽍 怨꾪쉷 ?섎┰
+   ?쒋? 媛쒖꽑 ?묒뾽 ?ㅼ?以꾨쭅
+   ?붴? 紐⑤땲?곕쭅 怨꾩냽
+```
+
+#### ?윟 Low (??쓬)
+
+- **?뺤쓽**: 寃쎈????깅뒫 ??? P95 < 1珥?珥덇낵
+- **????쒓컙**: 24?쒓컙 ??
+
+##### ?덉감
+
+```
+1. ?곹솴 湲곕줉
+   ?쒋? 諛쒖깮 ?쒓컙 湲곕줉
+   ?쒋? ?곹뼢諛쏅뒗 ?ъ슜????
+   ?붴? ?깅뒫 ????뺣룄
+
+2. 遺꾩꽍
+   ?쒋? ?먯씤 遺꾩꽍
+   ?쒋? ?ы쁽 媛???щ? ?뺤씤
+   ?붴? ?⑦꽩 遺꾩꽍
+
+3. ?쇱젙 怨꾪쉷
+   ?쒋? 媛쒖꽑 ?묒뾽 ?먯뿉 異붽?
+   ?쒋? ?곗꽑?쒖쐞 ?뺤콉
+   ?붴? ?ㅽ봽由고듃??諛섏쁺
+```
+
+---
+
+### ?쇰컲?곸씤 ?μ븷蹂????
+
+#### 1. 硫붾え由?遺議?(Out of Memory)
+
+**利앹긽**:
+
+```
+- OOMKilled ?먮윭
+- 硫붾え由??ъ슜瑜?100%
+- ???붿껌 嫄곕?
+```
+
+**???*:
+
+```
+Step 1: 利됱떆 議곗튂
+  gcloud run deploy ion-api-prod \
+    --memory 2Gi \
+    --image gcr.io/PROJECT/ion-api:latest
+
+Step 2: 硫붾え由??꾩닔 遺꾩꽍
+  # 濡쒓렇 ?뺤씤
+  gcloud logging read \
+    "resource.type=cloud_run_revision AND resource.labels.service_name=ion-api" \
+    --limit 100
+
+Step 3: ?ㅼ??쇰쭅
+  gcloud run services update ion-api-prod \
+    --memory 2Gi \
+    --max-instances 100
+
+Step 4: 紐⑤땲?곕쭅
+  - 硫붾え由??ъ슜瑜?異붿씠 ?뺤씤
+  - 硫붾え由??꾩닔 媛?μ꽦 ?뺤씤
+  - 媛쒖꽑 ?묒뾽 怨꾪쉷
+```
+
+#### 2. ?믪? CPU ?ъ슜瑜?(CPU Throttling)
+
+**利앹긽**:
+
+```
+- CPU ?ъ슜瑜?> 90%
+- ?묐떟 ?쒓컙 利앷?
+- ??꾩븘??利앷?
+```
+
+**???*:
+
+```
+Step 1: ?먮룞 ?ㅼ??쇰쭅 ?뺤씤
+  gcloud run services describe ion-api-prod
+
+Step 2: ?ㅼ?????
+  gcloud run deploy ion-api-prod \
+    --cpu 2 \
+    --max-instances 100
+
+Step 3: 遺??遺꾩궛 ?뺤씤
+  # 濡쒕뱶 諛몃윴???곹깭 ?뺤씤
+  # ?몃옒??遺꾩궛???쒕?濡??섎뒗吏 ?뺤씤
+
+Step 4: 肄붾뱶 理쒖쟻??
+  - CPU 吏묒빟???묒뾽 ?앸퀎
+  - 罹먯떛 ?곸슜
+  - 諛곗튂 泥섎━ 怨좊젮
+```
+
+#### 3. ?곗씠?곕쿋?댁뒪 ?곌껐 ?ㅻ쪟
+
+**利앹긽**:
+
+```
+Error: Cannot acquire connection from pool
+Error: too many connections
+```
+
+**???*:
+
+```
+Step 1: ?곌껐 ? ?곹깭 ?뺤씤
+  # Cloud SQL 肄섏넄?먯꽌 ?뺤씤
+  # ?쒖꽦 ?곌껐 ???뺤씤
+
+Step 2: ?곌껐 ? 珥덇린??
+  # ?좏뵆由ъ??댁뀡 ?ъ떆??
+  gcloud run deploy ion-api-prod \
+    --image gcr.io/PROJECT/ion-api:latest
+
+Step 3: ?곌껐 ? ?ш린 利앷?
+  # config/prod.yaml ?섏젙
+  database:
+    pool_size: 20  # 湲곗〈: 10
+    max_overflow: 40  # 湲곗〈: 20
+
+Step 4: ?곗씠?곕쿋?댁뒪 ?곹깭 ?뺤씤
+  # Cloud SQL 肄섏넄?먯꽌 硫붿씤?곕꼳???묒뾽 ?뺤씤
+  # 由ъ냼??遺議??뺤씤
+```
+
+#### 4. ?몃? API ??꾩븘??(Vertex AI)
+
+**利앹긽**:
+
+```
+Error: API call timeout
+Error: 504 Gateway Timeout
+```
+
+**???*:
+
+```
+Step 1: Vertex AI ?쒕퉬???곹깭 ?뺤씤
+  # Google Cloud Status ?뺤씤
+  https://status.cloud.google.com/
+
+Step 2: ?ъ떆??濡쒖쭅 ?뺤씤
+  # ?먮룞 ?ъ떆?꾧? ?묐룞?섎뒗吏 ?뺤씤
+  # 濡쒓렇?먯꽌 ?ъ떆???잛닔 ?뺤씤
+
+Step 3: ??꾩븘???ㅼ젙 議곗젙
+  # app/config.py ?섏젙
+  vertex_timeout: 120  # 湲곗〈: 60珥?
+
+Step 4: 紐⑤땲?곕쭅
+  - Vertex AI ?묐떟 ?쒓컙 異붿씠
+  - ??꾩븘??鍮덈룄 異붿씠
+  - Google Cloud ?곹깭 ?섏씠吏 紐⑤땲?곕쭅
+```
+
+---
+
+## ?깅뒫 臾몄젣 ?닿껐
+
+### ?먮┛ ?묐떟 ?쒓컙
+
+#### 吏꾨떒 ?덉감
+
+```
+1. ?뺤긽 踰붿쐞 ?뺤씤
+   ?쒋? P50 < 1s? YES/NO
+   ?쒋? P95 < 2s? YES/NO
+   ?붴? P99 < 5s? YES/NO
+
+2. 臾몄젣 踰붿쐞 ?뚯븙
+   ?쒋? 紐⑤뱺 ?붿껌???먮┛媛?
+   ?쒋? ?뱀젙 ?섎Ⅴ?뚮굹留??먮┛媛?
+   ?쒋? ?뱀젙 ?쒓컙??먮쭔 ?먮┛媛?
+   ?붴? ?뱀젙 硫붿떆吏 湲몄씠?????먮┛媛?
+
+3. ?먯씤 遺꾩꽍
+   ?쒋? CPU ?ъ슜瑜??뺤씤
+   ?쒋? 硫붾え由??ъ슜瑜??뺤씤
+   ?쒋? ?곗씠?곕쿋?댁뒪 ?묐떟 ?쒓컙 ?뺤씤
+   ?쒋? ?몃? API ?묐떟 ?쒓컙 ?뺤씤
+   ?붴? ?ㅽ듃?뚰겕 ???룺 ?뺤씤
+```
+
+#### 濡쒓렇 遺꾩꽍 ?덉떆
+
+```bash
+# Vertex AI ?묐떟 ?쒓컙 遺꾩꽍
+gcloud logging read \
+  'jsonPayload.service="vertex_ai" AND jsonPayload.response_time > 3000' \
+  --format json | jq '.[].jsonPayload.response_time' | sort -n
+
+# ?섎Ⅴ?뚮굹蹂??됯퇏 ?묐떟 ?쒓컙
+gcloud logging read \
+  'jsonPayload.type="response"' \
+  --format json | \
+  jq 'group_by(.jsonPayload.persona_used) | \
+      map({persona: .[0].jsonPayload.persona_used, \
+           avg_time: (map(.jsonPayload.response_time) | add / length)})' \
+
+# ?쒓컙?蹂??묐떟 ?쒓컙
+gcloud logging read \
+  'jsonPayload.type="response"' \
+  --limit 1000 \
+  --format json | \
+  jq '.[] | .timestamp' | sort | uniq -c
+```
+
+#### ?닿껐 ?④퀎
+
+```
+1?쒖쐞: 罹먯떛 ?쒖꽦??
+  ?쒋? Redis ?곌껐 ?뺤씤
+  ?쒋? 罹먯떆 ?덊듃???뺤씤
+  ?붴? 罹먯떆 TTL 議곗젙
+
+2?쒖쐞: ?곗씠?곕쿋?댁뒪 理쒖쟻??
+  ?쒋? ?먮┛ 荑쇰━ ?앸퀎
+  ?쒋? ?몃뜳??異붽?
+  ?붴? 荑쇰━ ?ъ옉??
+
+3?쒖쐞: 由ъ냼???뺤옣
+  ?쒋? CPU ?낃렇?덉씠??
+  ?쒋? 硫붾え由?利앷?
+  ?붴? ?몄뒪?댁뒪 ??利앷?
+
+4?쒖쐞: 肄붾뱶 理쒖쟻??
+  ?쒋? ?뚭퀬由ъ쬁 媛쒖꽑
+  ?쒋? 諛곗튂 泥섎━
+  ?붴? 鍮꾨룞湲?泥섎━
+```
+
+### ?믪? ?먮윭??
+
+#### 吏꾨떒 ?덉감
+
+```bash
+# ?먮윭 遺꾪룷 ?뺤씤
+gcloud logging read \
+  'severity="ERROR"' \
+  --format json | \
+  jq '.[] | .jsonPayload.error_type' | sort | uniq -c | sort -rn
+
+# ?먮윭 ?먯씤 遺꾩꽍
+gcloud logging read \
+  'severity="ERROR" AND jsonPayload.type="error"' \
+  --format json | \
+  jq '{error_type: .jsonPayload.error_type, message: .jsonPayload.message, count: 1}' | \
+  group_by(.error_type) | \
+  map({error: .[0].error_type, count: length})
+```
+
+#### ?닿껐 ?④퀎
+
+```
+1. ?먮윭 遺꾨쪟
+   ?쒋? 4xx ?먮윭 (?대씪?댁뼵??
+   ?? ?붴? ?낅젰 寃利??ㅽ뙣, ?몄쬆 ?ㅽ뙣
+   ?쒋? 5xx ?먮윭 (?쒕쾭)
+   ?? ?붴? ?곗씠?곕쿋?댁뒪 ?ㅻ쪟, API ?ㅻ쪟
+   ?붴? ??꾩븘???먮윭
+
+2. 媛??먮윭蹂????
+   ?쒋? Validation Errors: ?낅젰 媛?대뱶 媛쒖꽑
+   ?쒋? Auth Errors: ?몄쬆 ?ㅼ젙 ?뺤씤
+   ?쒋? DB Errors: ?곗씠?곕쿋?댁뒪 ?곌껐 ?뺤씤
+   ?쒋? API Errors: ?몃? API ?곹깭 ?뺤씤
+   ?붴? Timeout: ??꾩븘???ㅼ젙 議곗젙
+```
+
+---
+
+## 諛고룷 諛?濡ㅻ갚
+
+### 諛고룷 ?덉감
+
+#### Pre-Deployment Checklist
+
+```
+諛고룷 48?쒓컙 ??
+[ ] 紐⑤뱺 ?뚯뒪???듦낵 (CI/CD)
+[ ] 肄붾뱶 由щ럭 ?꾨즺
+[ ] 由대━???명듃 以鍮?
+[ ] 濡ㅻ갚 怨꾪쉷 以鍮?
+
+諛고룷 24?쒓컙 ??
+[ ] ?곗씠?곕쿋?댁뒪 諛깆뾽 ?뺤씤
+[ ] 紐⑤땲?곕쭅 ??쒕낫??以鍮?
+[ ] ? ?명떚?쇱??댁뀡
+[ ] 諛고룷 ?덈룄??理쒖쥌 ?뺤씤
+
+諛고룷 1?쒓컙 ??
+[ ] 留덉?留??뚯뒪??
+[ ] ? 以鍮??곹솴 ?뺤씤
+[ ] 湲닿툒 ?곕씫泥??뺤씤
+```
+
+#### 諛고룷 ?덉감
+
+```bash
+# Step 1: ?댁쟾 踰꾩쟾 諛깆뾽
+OLD_REVISION=$(gcloud run services describe ion-api-prod \
+  --format="value(status.latestRevisionName)")
+echo "Previous revision: $OLD_REVISION"
+
+# Step 2: ???대?吏 鍮뚮뱶 諛??몄떆
+docker build -t gcr.io/PROJECT/ion-api:v1.2.3 .
+docker push gcr.io/PROJECT/ion-api:v1.2.3
+
+# Step 3: ?ㅽ뀒?댁쭠 諛고룷 (?뚯뒪??
+gcloud run deploy ion-api-staging \
+  --image gcr.io/PROJECT/ion-api:v1.2.3 \
+  --region us-central1 \
+  --no-traffic
+
+# Step 4: ?ㅻえ???뚯뒪??
+curl https://ion-api-staging.run.app/health
+curl -X POST https://ion-api-staging.run.app/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "?뚯뒪??}'
+
+# Step 5: ?꾨줈?뺤뀡 諛고룷 (移대굹由?- 10% ?몃옒??
+gcloud run deploy ion-api-prod \
+  --image gcr.io/PROJECT/ion-api:v1.2.3 \
+  --traffic LATEST=10,PREVIOUS=90 \
+  --region us-central1
+
+# Step 6: 紐⑤땲?곕쭅 (10遺?
+watch -n 5 'gcloud logging read \
+  "resource.type=cloud_run_revision" \
+  --limit 10 --format json | jq'
+
+# Step 7: ?몃옒???꾪솚
+gcloud run deploy ion-api-prod \
+  --traffic LATEST=100 \
+  --region us-central1
+
+# Step 8: 理쒖쥌 ?뺤씤
+curl https://ion-api-prod.run.app/health
+```
+
+### 濡ㅻ갚 ?덉감
+
+#### 利됱떆 濡ㅻ갚 (< 5遺?
+
+```bash
+# 濡ㅻ갚 ???由щ퉬???뺤씤
+gcloud run revisions list --service ion-api-prod --limit 5
+
+# ?댁쟾 踰꾩쟾?쇰줈 濡ㅻ갚
+gcloud run deploy ion-api-prod \
+  --revision=[PREVIOUS_REVISION_ID] \
+  --region us-central1 \
+  --no-traffic
+
+# ?몃옒???꾪솚 (利됱떆)
+gcloud run deploy ion-api-prod \
+  --traffic [PREVIOUS_REVISION_ID]=100 \
+  --region us-central1
+
+# ?뺤씤
+curl https://ion-api-prod.run.app/health
+```
+
+#### 遺遺?濡ㅻ갚 (5-10% ?몃옒???꾪솚)
+
+```bash
+# ?④퀎蹂?濡ㅻ갚
+gcloud run deploy ion-api-prod \
+  --traffic LATEST=5,PREVIOUS=95 \
+  --region us-central1
+
+# 紐⑤땲?곕쭅 (5遺?
+# ?먮윭???뺤씤
+# P95 ?묐떟 ?쒓컙 ?뺤씤
+
+# ?꾩슂??怨꾩냽 濡ㅻ갚
+gcloud run deploy ion-api-prod \
+  --traffic PREVIOUS=100 \
+  --region us-central1
+```
+
+---
+
+## 紐⑤땲?곕쭅 諛??뚮┝
+
+### Phase 4 移대굹由?紐⑤땲?곕쭅 ?쒖뒪??(2025-10-21 ?낅뜲?댄듃)
+
+#### ?먮룞 紐⑤땲?곕쭅 猷⑦봽
+
+**紐⑹쟻**: 30遺?媛꾧꺽?쇰줈 移대굹由??덇굅??硫뷀듃由??먮룞 ?섏쭛 諛?Rate Limit ?꾨줈釉??ㅽ뻾
+
+**?ㅽ뻾 諛⑸쾿**:
+
+```powershell
+# VS Code Tasks?먯꽌 ?ㅽ뻾
+Task: "Monitoring: Start Canary Loop (30m, with probe)"
+
+# ?먮뒗 PowerShell 吏곸젒 ?ㅽ뻾
+cd D:\nas_backup\LLM_Unified\ion-mentoring\scripts
+.\start_monitor_loop_with_probe.ps1 -KillExisting -IntervalSeconds 1800 -DurationMinutes 1440
+```
+
+**援ъ꽦 ?붿냼**:
+
+- `start_monitor_loop.ps1`: 硫붿씤 猷⑦봽 ?ㅽ겕由쏀듃 (detached ?ㅽ뻾)
+- `check_monitoring_status.ps1`: 硫뷀듃由??섏쭛 諛??꾧퀎媛?寃利?
+- `rate_limit_probe.ps1`: ?덉쟾 ?꾨줈釉?(GET /health, 湲곕낯 3??1珥?媛꾧꺽)
+- `show_latest_monitor_log.ps1`: 濡쒓렇 議고쉶 ?ы띁
+
+**濡쒓렇 ?꾩튂**: `D:\nas_backup\LLM_Unified\ion-mentoring\logs\monitor_loop_YYYYMMDD_HHmmss.log`
+
+**?꾧퀎媛?*:
+
+- Error Rate: ??0.5% (PASS) / > 0.5% (FAIL ??UNHEALTHY)
+- P95 Response Time: ??200ms (PASS) / > 200ms (FAIL ??UNHEALTHY)
+
+**?곹깭 ?뺤씤**:
+
+```powershell
+# ?ㅼ떆媛??곹깭 議고쉶
+Task: "Monitoring: Check Canary Status"
+
+# 理쒖떊 濡쒓렇 ?뺤씤 (留덉?留?100以?
+.\show_latest_monitor_log.ps1 -TailLines 100
+```
+
+**紐⑤땲?곕쭅 以묒?**:
+
+```powershell
+Task: "Monitoring: Stop All Canary Loops"
+```
+
+---
+
+### 200 ms 루프 성능 모니터링
+
+**목적**: `loop_latency_ms`, `adapter_success_rate`를 상시 확인해 Resonance 루프가 200 ms 성능 요구를 충족하는지 판단하고, R-Axis 안전 경고에 즉시 대응합니다.
+
+**빠른 실행 방법**
+- Windows (PowerShell)
+  ```powershell
+  .\scripts\start_loop_with_exporter.ps1 -Ticks 900 -TickMs 200 -ExporterPort 9108
+  ```
+- Linux/macOS (bash)
+  ```bash
+  SPEC="FDO-AGI의 감응 루프 구조/quick_loop_spec.yaml" \\
+  CTRL="controls/commands.jsonl" \\
+  TICKS=900 TICK_MS=200 EXPORTER_PORT=9108 PYTHON_BIN=python3 \\
+  ./scripts/start_loop_with_exporter.sh
+  ```
+
+**검증 절차**
+1. 러너 종료 후 `python control_bus/verify_loop_performance.py --metrics logs/metrics.csv`로 latency/성공률을 요약합니다.
+2. Webview (`control_bus/webview_control.py`)의 `latencyBadge`와 R-Axis 카드에서 WARN/BLOCK 여부를 확인합니다.
+3. Prometheus 지표 `resonance_loop_latency_ms`, `resonance_adapter_success_rate`에 Alertmanager 룰이 연결돼 있는지 확인합니다.
+
+**자세한 운영 가이드**: `docs/system_c/v0_8_release/LOOP_PERFORMANCE_OPERATIONS.md` 참고 (스크립트 매개변수, 경보 템플릿, 체크리스트 수록).
+
+---
+---
+
+#### Rate Limit ?꾨줈釉??쒖뒪??
+
+**紐⑹쟻**: API Rate Limiting ?숈옉 寃利?諛??덉쟾???몃옒???앹꽦
+
+**?꾨━???쒖뒪??* (VS Code Tasks):
+
+1. **Gentle** (3 req, 2s delay): 理쒖냼 遺?? ?곸떆 紐⑤땲?곕쭅??
+2. **Normal** (10 req, 1s delay): ?쇰컲 寃利앹슜
+3. **Aggressive** (25 req, 500ms delay): 遺???뚯뒪?몄슜
+
+**湲곕낯 ?숈옉** (?뚮씪誘명꽣 ?놁씠 ?ㅽ뻾 ??:
+
+- Method: GET
+- Canary endpoint: `/api/v2/health`
+- Legacy endpoint: `/health`
+- 404 ?먮윭 ?좊컻 諛⑹?
+
+**?섎룞 ?ㅽ뻾 ?덉떆**:
+
+```powershell
+# Gentle ?꾨줈釉?
+Task: "Probe: Gentle (3 req, 2s delay)"
+
+# Normal ?꾨줈釉?
+Task: "Probe: Normal (10 req, 1s delay)"
+
+# 而ㅼ뒪? ?뚮씪誘명꽣
+.\rate_limit_probe.ps1 `
+  -Method POST `
+  -CanaryEndpointPath "/api/v2/recommend/personalized" `
+  -LegacyEndpointPath "/chat" `
+  -RequestsPerSide 5 `
+  -DelayMsBetweenRequests 1000
+```
+
+**異쒕젰**:
+
+- 肄섏넄: ?ㅼ떆媛??깃났/?ㅽ뙣 濡쒓렇 諛??붿빟
+- JSON: ?꾨줈洹몃옒留ㅽ떛 ?뚯떛??硫뷀듃由?(stdout)
+
+---
+
+#### 硫뷀듃由?由ъ뀑
+
+**?⑸룄**: ?댁쟾 ?먮윭 ?꾩쟻移??쒓굅 諛???踰좎씠?ㅻ씪???앹꽦
+
+```powershell
+# REST API 吏곸젒 ?몄텧
+Invoke-RestMethod -Uri "https://ion-api-canary-64076350717.us-central1.run.app/api/v2/canary/metrics/reset" -Method Post
+
+# 寃곌낵
+# {
+#   "status": "success",
+#   "message": "Metrics reset successfully",
+#   "timestamp": "2025-10-21T02:08:10.077837"
+# }
+```
+
+**二쇱쓽**: 硫뷀듃由?? ?몃찓紐⑤━ ?꾩쟻?대?濡? 由ъ뀑? ?꾨줈?몄뒪 ?ъ떆???먮뒗 紐낆떆???몄텧濡쒕쭔 媛??
+
+---
+
+#### Orchestrator 鍮꾧탳 寃利?
+
+**紐⑹쟻**: v2 personalized 異붿쿇 vs legacy chat ?묐떟 ?깅뒫 鍮꾧탳
+
+```powershell
+# VS Code Task
+Task: "Phase4: Orchestrator Comparison"
+
+# 吏곸젒 ?ㅽ뻾
+.\run_phase4_comparison.ps1 `
+  -RequestsPerSide 10 `
+  -Retries 0 `
+  -DelayMsBetweenRequests 50 `
+  -MinSuccessRatePercent 95
+```
+
+**異쒕젰**: ?깃났瑜? ?됯퇏 ?묐떟 ?쒓컙, JSON ?꾪떚?⑺듃 (persist)
+
+---
+
+### 二쇱슂 紐⑤땲?곕쭅 吏??
+
+#### ?ㅼ떆媛?紐⑤땲?곕쭅 紐낅졊??
+
+```bash
+# Cloud Run ?곹깭 ?ㅼ떆媛?紐⑤땲?곕쭅
+watch -n 5 'gcloud run services describe ion-api-prod --format="table(\
+  status.latestRevisionName,\
+  status.latestReadyRevisionName,\
+  status.address,\
+  status.traffic)"'
+
+# 濡쒓렇 ?ㅼ떆媛??ㅽ듃由щ컢
+gcloud logging read \
+  "resource.type=cloud_run_revision" \
+  --limit 50 \
+  --follow
+
+# 硫뷀듃由??뺤씤
+gcloud monitoring time-series list \
+  --filter='metric.type=run.googleapis.com/request_latencies'
+```
+
+#### 而ㅼ뒪? ?뚮┝ ?ㅼ젙
+
+```yaml
+# alert_policy.yaml
+displayName: "ION API - High Error Rate"
+conditions:
+  - displayName: "Error rate > 5%"
+    conditionThreshold:
+      filter: 'metric.type="cloud_run_revision/request_count" \
+        AND resource.labels.service_name="ion-api-prod"'
+      comparison: COMPARISON_GT
+      thresholdValue: 0.05
+      duration: 300s
+
+notificationChannels:
+  - "projects/PROJECT_ID/notificationChannels/CHANNEL_ID"
+```
+
+---
+
+## ?뺢린 ?좎?蹂댁닔
+
+### 二쇨컙 ?묒뾽
+
+```
+?붿슂??
+?쒋? 二쇨컙 ?깅뒫 由ы룷???앹꽦
+?쒋? 吏?쒖＜ ?뚮┝ ?대젰 遺꾩꽍
+?붴? ?대쾲二?怨꾪쉷 ?섎┰
+
+?섏슂??
+?쒋? ?섏〈??蹂댁븞 ?낅뜲?댄듃 ?뺤씤
+?쒋? ?곗씠?곕쿋?댁뒪 ?듦퀎 ?낅뜲?댄듃
+?붴? 罹먯떆 ?⑥쑉??遺꾩꽍
+
+湲덉슂??
+?쒋? 二쇨컙 ?깅뒫 硫뷀듃由??붿빟
+?쒋? ?댁뒋 ?몃옒??寃??
+?붴? 二쇨컙 ?뚯쓽
+```
+
+### ?붽컙 ?묒뾽
+
+```
+1??~3??
+?쒋? ?붽컙 ?깅뒫 由ы룷???앹꽦
+?쒋? 諛고룷 ?대젰 遺꾩꽍
+?쒋? ?먮윭 ?몃젋??遺꾩꽍
+?붴? SLA 異⑹” ?щ? ?뺤씤
+
+10??~15??
+?쒋? ?곗씠???뺣━ (?ㅻ옒??濡쒓렇)
+?쒋? ?몃뜳??理쒖쟻??
+?쒋? 諛깆뾽 蹂듦뎄 ?뚯뒪??
+?붴? ?ы빐 蹂듦뎄 ?덈젴
+
+20??~25??
+?쒋? 蹂댁븞 ?⑥튂 寃??
+?쒋? ?섏〈???낅뜲?댄듃
+?쒋? ?깅뒫 ?쒕떇
+?붴? ?⑸웾 怨꾪쉷
+
+25??~31??
+?쒋? ?붽컙 ?뚯쓽
+?쒋? 遺꾧린蹂?怨꾪쉷 ?섎┰
+?쒋? ? 援먯쑁
+?붴? 臾몄꽌 ?낅뜲?댄듃
+```
+
+### 遺꾧린蹂??묒뾽
+
+```
+Q1 (1??:
+- ?곌컙 紐⑺몴 ?ㅼ젙
+- ?명봽???⑸웾 怨꾪쉷
+- 蹂댁븞 媛먯궗
+
+Q2 (4??:
+- ?깅뒫 理쒖쟻???꾨줈?앺듃 寃??
+- ?꾪궎?띿쿂 由щ럭
+- ? ?뺤옣 怨꾪쉷
+
+Q3 (7??:
+- ?щ쫫 ?몃옒???덉륫
+- ?명봽???낃렇?덉씠??
+- ?좉린???덉젙??寃利?
+
+Q4 (10??:
+- ?곌컙 ?깃낵 ?됯?
+- ?대뀈 怨꾪쉷 ?섎┰
+- ?ы빐 蹂듦뎄 ?꾩껜 ?덈젴
+```
+
+---
+
+## ?뱸 湲닿툒 ?곕씫泥?
+
+### 1李??대떦??
+
+- **?대쫫**: [?대떦??
+- **?곕씫泥?*: +82-10-XXXX-XXXX
+- **?쒓컙?**: 09:00-18:00
+
+### 2李??대떦??
+
+- **?대쫫**: [?대떦??
+- **?곕씫泥?*: +82-10-XXXX-XXXX
+- **?쒓컙?**: 24/7 (鍮꾩긽?쒕쭔)
+
+### ? 梨꾨꼸
+
+- **Slack**: #production-alerts
+- **PagerDuty**: [留곹겕]
+- **?쒖뒪???곹깭**: [?대? ??쒕낫??
+
+---
+
+**?댁쁺 ?뚮젅?대턿 - ?꾨줈?뺤뀡 以鍮??꾨즺** ??

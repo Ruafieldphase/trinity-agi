@@ -1,0 +1,41 @@
+name: lumen_v17_final_pipeline
+on:
+  workflow_dispatch: {}
+jobs:
+  v17-final:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start v1.6 P1/P2 (local) with native adapter
+        working-directory: lumen_v1_6_assets
+        run: |
+          (python stream_enricher_v1.py < samples.jsonl &) && sleep 1
+          (python metrics_enrichment_exporter.py &) && sleep 1
+          (python resonance_adapter_v1_native_matrix.py &) && sleep 2
+          (python adaptation_metrics_exporter.py &) && sleep 1
+      - name: Build v1.7 graph and copy matrix to v1.6
+        working-directory: lumen_v1_7_assets
+        run: |
+          python feedback_graph_core_v17.py
+          cp -f gain_alpha_matrix.json ../lumen_v1_6_assets/
+      - name: Start v1.7 indices exporter
+        working-directory: lumen_v1_7_assets
+        run: |
+          (python metrics_feedback_graph_exporter.py &) && sleep 1
+          curl -fsSL http://127.0.0.1:9153/metrics | head -n 20
+      - name: Gate (strict)
+        working-directory: lumen_v1_7_assets
+        run: |
+          python v17_gate.py --metrics-url http://127.0.0.1:9153/metrics --sym-min 0.75 --s-min 0.60 --c-min 0.55
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v17-final-artifacts
+          path: |
+            lumen_v1_7_assets/feedback_graph.json
+            lumen_v1_7_assets/gain_alpha_matrix.json
+            lumen_v1_7_assets/indices.json

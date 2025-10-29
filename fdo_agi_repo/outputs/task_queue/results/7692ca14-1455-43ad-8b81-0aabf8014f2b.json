@@ -1,0 +1,13 @@
+{
+  "task_id": "7692ca14-1455-43ad-8b81-0aabf8014f2b",
+  "worker": "comet-extension",
+  "status": "success",
+  "data": {
+    "message": "pong",
+    "worker": "comet-extension",
+    "timestamp": "2025-10-28T13:54:35.260Z",
+    "extension_version": "2.0.0"
+  },
+  "completed_at": "2025-10-28T22:54:35.571954",
+  "error_message": null
+}

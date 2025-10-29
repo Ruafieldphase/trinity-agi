@@ -1,0 +1,11 @@
+{
+  "name": "lumen-http-sink",
+  "config": {
+    "connector.class": "io.confluent.connect.http.HttpSinkConnector",
+    "tasks.max": "1",
+    "topics": "lumen.resonance.input",
+    "http.api.url": "http://loki:3100/loki/api/v1/push",
+    "request.method": "POST",
+    "behavior.on.error": "log"
+  }
+}

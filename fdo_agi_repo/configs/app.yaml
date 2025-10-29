@@ -1,0 +1,12 @@
+llm:
+  enabled: true
+  provider: local_proxy
+  model: yanolja_-_eeve-korean-instruct-10.8b-v1.0
+  endpoint: http://localhost:8080/v1/chat/completions
+  # 향후 페르소나별 모델/프로바이더 오버라이드가 필요하면 아래에 기술합니다.
+  persona_overrides: {}
+corrections:
+  enabled: true # 자기교정(두 번째 패스) 사용 여부
+  max_passes: 2 # 최대 패스 수 (1차 + 추가 1회)
+evaluation:
+  min_quality: 0.6 # replan 판단에 사용하는 최소 품질 임계값 (환경변수 EVAL_MIN_QUALITY 로 오버라이드 가능)

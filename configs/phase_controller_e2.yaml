@@ -1,0 +1,436 @@
+# Phase Controller E2: Tool-Enhanced Exploration
+# ================================================
+# 목적: E1 Baseline에서 발견된 문제점을 해결하고 도구 사용을 활성화
+# 작성자: 세나 (Sena)
+# 작성일: 2025-10-12
+# 기반: E1 실험 분석 결과
+
+---
+
+# 실험 메타데이터
+experiment:
+  id: E2
+  name: "Tool-Enhanced Exploration"
+  baseline: E1
+  goal: "Verifiability 향상 (0.10 → 0.60), 백엔드 실패율 감소 (37.5% → 5%)"
+  changes_from_baseline:
+    - "도구 사용 활성화 (websearch, rag, codeexec, notion)"
+    - "백엔드 재할당 (Synthesis → Ollama)"
+    - "컨텍스트 요약 (depth≥2)"
+    - "Antithesis 프롬프트 강화"
+
+---
+
+# 페르소나 설정
+personas:
+  thesis:
+    id: "thesis"
+    name: "Dialectic Thesis"
+    role: "Seed explorer"
+
+    # 백엔드 설정 (E1에서 변경: LMStudio → Ollama)
+    backend:
+      backend_id: "local_ollama"
+      type: "subprocess"
+      command: "ollama"
+      args: ["run", "solar:10.7b"]
+      timeout: 240  # E1: 180s → E2: 240s (여유 부여)
+
+    # 도구 설정 (E2 신규)
+    tools:
+      enabled: true
+      budget: 3  # 최대 3회 도구 호출
+      preference:  # 우선순위 순서
+        - name: "r_websearch"
+          purpose: "최신 정보 검색"
+          when: "트렌드, 최신 연구 필요 시"
+        - name: "r_rag"
+          purpose: "기존 지식 검색"
+          when: "과거 사례, 기존 연구 필요 시"
+        - name: "r_codeexec"
+          purpose: "프로토타입 검증"
+          when: "기술적 제안 검증 필요 시"
+
+      # 도구 호출 전략
+      strategy:
+        auto_invoke: false  # 자동 호출 비활성화, LLM이 명시적으로 요청
+        require_concrete_examples: true  # 구체적 사례 2개 이상 요구
+        verify_before_cite: true  # 인용 전 검증
+
+    # 프롬프트 강화 (E2)
+    prompt_enhancements:
+      - "Provide at least 2 concrete real-world examples"
+      - "Cite specific sources when making claims"
+      - "Use tools (websearch, rag) to find supporting evidence"
+      - "Avoid generic statements; be specific and verifiable"
+
+    # 가중치 (E1과 동일 유지)
+    weights:
+      creativity: 0.7
+      verifiability: 0.3  # E2에서 도구로 향상 예상
+
+  antithesis:
+    id: "antithesis"
+    name: "Boundary Challenger"
+    role: "Critical reflector"
+
+    # 백엔드 (E1과 동일 - Ollama 유지, 0% 실패율)
+    backend:
+      backend_id: "local_ollama"
+      type: "subprocess"
+      command: "ollama"
+      args: ["run", "solar:10.7b"]
+      timeout: 240
+
+    # 도구 설정 (E2 신규)
+    tools:
+      enabled: true
+      budget: 2
+      preference:
+        - name: "r_websearch"
+          purpose: "반증 사례 검색"
+          when: "Thesis 주장에 대한 반례 필요 시"
+        - name: "r_rag"
+          purpose: "실패 사례 조사"
+          when: "과거 실패 사례, 위험 요인 필요 시"
+
+      strategy:
+        auto_invoke: false
+        require_counterexamples: true  # 반례 2개 이상 요구
+        focus_on_critical_flaws: true  # 3가지 핵심 결함에 집중
+
+    # 프롬프트 강화 (E2 - E1에서 가장 큰 문제)
+    prompt_enhancements:
+      - "Provide at least 2 concrete counterexamples or edge cases"
+      - "Cite specific studies, data, or expert opinions that challenge the thesis"
+      - "Avoid repeating the thesis structure; introduce a new analytical framework"
+      - "Focus on 3 most critical flaws rather than listing all items"
+      - "Use tools (websearch, rag) to find contradictory evidence"
+
+    # 다양성 강제 (E2 신규)
+    diversity_enforcement:
+      enabled: true
+      max_ngram_overlap: 0.3  # Thesis와 4-gram 중복 < 30%
+      template_detection: true  # "While X, Y" 패턴 3회 이상 경고
+      penalty_on_repetition: "damp"  # 반복 시 응답 감쇠
+
+    # 가중치
+    weights:
+      criticality: 0.8  # 비판 강도 (E1: 템플릿화됨 → E2: 강화)
+      constructiveness: 0.2
+
+  synthesis:
+    id: "synthesis"
+    name: "Fractal Synthesiser"
+    role: "Integrator"
+
+    # 백엔드 (E1에서 변경: LMStudio → Ollama)
+    # 이유: E1에서 Synthesis가 50% 실패율, Ollama는 0%
+    backend:
+      backend_id: "local_ollama"
+      type: "subprocess"
+      command: "ollama"
+      args: ["run", "solar:10.7b"]
+      timeout: 300  # Synthesis는 더 긴 시간 필요
+
+    # 도구 설정 (E2 신규)
+    tools:
+      enabled: true
+      budget: 2
+      preference:
+        - name: "r_rag"
+          purpose: "통합 사례 검색"
+          when: "유사한 통합 사례 필요 시"
+        - name: "r_notion"
+          purpose: "최종 결과 문서화"
+          when: "Synthesis 완료 시"
+
+      strategy:
+        auto_invoke: false
+        require_integration_markers: true  # "therefore", "thus" 필수
+
+    # 프롬프트 강화 (E2 - E1에서 Thesis 복사 문제)
+    prompt_enhancements:
+      - "Explicitly address at least 3 concerns raised by Antithesis"
+      - "Propose concrete solutions or compromises for each concern"
+      - "Avoid copying Thesis; create a NEW integrated proposal"
+      - "Use integrative language: 'therefore', 'thus', 'by combining...'"
+      - "Similarity to Thesis must be < 80%"
+
+    # 통합 검증 (E2 신규)
+    integration_validation:
+      enabled: true
+      max_thesis_similarity: 0.8  # Thesis와 유사도 < 80%
+      min_antithesis_keywords: 3  # Antithesis 키워드 3개 이상 포함
+      require_synthesis_markers: true  # 통합 마커 필수
+      on_failure: "review"  # 실패 시 검토 대기열
+
+    # 가중치
+    weights:
+      integration: 0.7
+      novelty: 0.3
+
+  rune:
+    id: "rune"
+    name: "RUNE Analyzer"
+    role: "Resonance evaluator"
+
+    # 백엔드 (E1과 동일 - 간단한 메트릭만 처리)
+    backend:
+      backend_id: "local_lmstudio"  # 내장 메트릭 사용
+      type: "subprocess"
+      command: "python"
+      args: ["scripts/lmstudio_chat.py", "--endpoint", "http://localhost:8080", "--model", "yanolja_-_EEVE-Korean-Instruct-10.8B-v1.0"]
+      timeout: 120  # 짧은 타임아웃
+
+    # 도구 설정 (E2 신규)
+    tools:
+      enabled: true
+      budget: 2
+      preference:
+        - name: "r_websearch"
+          purpose: "팩트 체크"
+          when: "Synthesis의 주장 검증 필요 시"
+        - name: "r_notion"
+          purpose: "평가 결과 저장"
+          when: "RUNE 평가 완료 시"
+
+      strategy:
+        auto_invoke: true  # RUNE은 자동으로 팩트 체크
+        fact_check_ratio: 0.3  # 주장의 30% 검증 (E1: 10%)
+
+    # 프롬프트 강화 (E2)
+    prompt_enhancements:
+      - "Fact-check at least 30% of claims using websearch"
+      - "Provide specific sources for verification"
+      - "Highlight unverified claims clearly"
+
+    # 메트릭 가중치
+    weights:
+      impact: 0.3
+      transparency: 0.2
+      reproducibility: 0.2
+      verifiability: 0.3  # E2에서 강화
+
+---
+
+# Phase 컨트롤러 설정
+phase_controller:
+  # 초기 상태
+  initial_state:
+    language_frame: "default"
+    affect_amplitude: 0.35  # E1: 0.22 → E2: 0.35 (더 활발한 탐색)
+    boundary_window: [0.3, 0.7]  # 창의 밴드 범위
+    freedom_level: 0.6
+    stability_level: 0.7
+    symbol_memory: []
+
+  # Depth별 설정
+  depth_config:
+    max_depth: 3  # E1: 2 → E2: 3 (더 깊은 탐색)
+    depth_1:
+      exploration_rate: 0.7  # 탐색 70%
+      consolidation_rate: 0.3  # 정리 30%
+      context_strategy: "full"  # 전체 컨텍스트 사용
+    depth_2:
+      exploration_rate: 0.5
+      consolidation_rate: 0.5
+      context_strategy: "summarize"  # E2 신규: 컨텍스트 요약
+      summary_ratio: 0.3  # depth 1 대화를 30%로 요약
+    depth_3:
+      exploration_rate: 0.3
+      consolidation_rate: 0.7
+      context_strategy: "summarize"
+      summary_ratio: 0.2  # 더 강한 요약
+
+  # Symmetry Stage 설정
+  symmetry:
+    stage_1_folding:
+      target_residual: 0.55  # E1: 0.625 → E2: 0.55 (12% 감소)
+      target_tension: 0.26
+      decision_threshold:
+        keep: 0.5
+        damp: 0.7
+        review: 0.8
+
+    stage_2_unfolding:
+      target_residual: 0.45  # E1: 0.672 → E2: 0.45 (33% 감소)
+      target_tension: 0.24
+      decision_threshold:
+        keep: 0.5
+        damp: 0.7
+        review: 0.8
+      # E2 신규: Antithesis 품질 체크
+      quality_checks:
+        - type: "template_detection"
+          threshold: 3  # "While X, Y" 3회 이상 경고
+        - type: "diversity"
+          min_ngram_diversity: 0.7
+
+    stage_3_integration:
+      target_residual: 0.35  # E1: 0.589 → E2: 0.35 (41% 감소)
+      target_tension: 0.12
+      decision_threshold:
+        keep: 0.4
+        damp: 0.6
+        review: 0.8
+      # E2 신규: Synthesis 통합 검증
+      integration_checks:
+        - type: "thesis_similarity"
+          max_similarity: 0.8
+        - type: "antithesis_coverage"
+          min_keywords: 3
+        - type: "synthesis_markers"
+          required: true
+
+    stage_4_symmetry:
+      target_residual: 0.25  # E1: 0.255 (유지)
+      target_tension: 0.27
+      decision_threshold:
+        keep: 0.3
+        damp: 0.5
+        review: 0.7
+
+  # 백엔드 재시도 정책 (E2 신규)
+  backend_retry:
+    enabled: true
+    max_retries: 2
+    strategies:
+      - "retry_with_same_backend"  # 1차: 그대로 재시도
+      - "retry_with_shorter_context"  # 2차: 컨텍스트 50% 요약 후 재시도
+    on_final_failure:
+      action: "mark_as_failed"  # 잔차 계산 제외
+      placeholder: false  # placeholder 응답 사용 안 함
+
+  # Phase Injection (E1과 동일 유지)
+  phase_injection:
+    enabled: true
+    trigger_conditions:
+      - type: "loop_count"
+        threshold: 2
+      - type: "affect_stagnation"
+        window: 3
+        threshold: 0.05
+    injection_strength: 0.15
+
+---
+
+# 밴드 관리
+band_management:
+  stable:  # 잔차 < 0.3
+    description: "안정적, 예측 가능"
+    action: "keep"
+    rate_target: 0.20  # E1: 12.5% → E2: 20%
+
+  creative:  # 0.3 ≤ 잔차 < 0.6
+    description: "창의적, 균형 잡힌 긴장"
+    action: "keep"
+    rate_target: 0.60  # E1: 25% → E2: 60% (핵심 목표)
+
+  risk:  # 잔차 ≥ 0.6
+    description: "위험, 과도한 긴장"
+    action: "review"
+    rate_target: 0.20  # E1: 62.5% → E2: 20% (대폭 감소)
+
+---
+
+# 모니터링 및 로깅
+monitoring:
+  # 실시간 메트릭
+  realtime_metrics:
+    - "residual_symmetry_delta"
+    - "symmetry_tension"
+    - "backend_timeout_rate"
+    - "tool_call_success_rate"
+    - "verifiability_score"
+
+  # 경고 조건
+  alerts:
+    - type: "high_residual_rate"
+      threshold: 0.5  # risk 밴드 50% 이상 시
+      action: "notify"
+
+    - type: "backend_failure_rate"
+      threshold: 0.2  # 20% 이상 실패 시
+      action: "switch_backend"
+
+    - type: "low_verifiability"
+      threshold: 0.3  # 30% 미만 시
+      action: "force_tool_use"
+
+  # 로깅
+  logging:
+    level: "INFO"
+    outputs:
+      - "outputs/persona_runs/E2/*.jsonl"
+      - "outputs/persona_metrics/E2/*.csv"
+      - "outputs/phase_controller_E2.log"
+
+---
+
+# 예상 개선 효과
+expected_improvements:
+  verifiability:
+    e1_baseline: 0.10
+    e2_target: 0.60
+    improvement: "+500%"
+
+  backend_failure_rate:
+    e1_baseline: 0.375
+    e2_target: 0.05
+    improvement: "-87%"
+
+  average_residual:
+    e1_baseline: 0.629
+    e2_target: 0.45
+    improvement: "-28%"
+
+  risk_band_rate:
+    e1_baseline: 0.625
+    e2_target: 0.20
+    improvement: "-68%"
+
+  creative_band_rate:
+    e1_baseline: 0.25
+    e2_target: 0.60
+    improvement: "+140%"
+
+---
+
+# 실행 방법
+usage:
+  command: |
+    python orchestration/persona_orchestrator.py \
+      --config configs/phase_controller_e2.yaml \
+      --task "Design an empathic AI coach for creative writers" \
+      --output outputs/persona_runs/E2/
+
+  validation:
+    - "outputs/persona_metrics/E2/symmetry_summary.txt에서 밴드 비율 확인"
+    - "creative 밴드 60% 달성 여부 검증"
+    - "Verifiability 0.60 이상 여부 검증"
+
+---
+
+# 체크리스트
+checklist:
+  before_run:
+    - [ ] Ollama 백엔드 실행 중 (solar:10.7b)
+    - [ ] LMStudio 백엔드 실행 중 (EEVE-Korean-Instruct-10.8B-v1.0)
+    - [ ] 도구 스크립트 작동 확인 (r_websearch, r_rag, r_codeexec, r_notion)
+    - [ ] outputs/persona_runs/E2/ 디렉토리 생성
+
+  after_run:
+    - [ ] 밴드 비율 검증 (creative 60% 목표)
+    - [ ] Verifiability 검증 (0.60 목표)
+    - [ ] 백엔드 실패율 검증 (5% 목표)
+    - [ ] E1과 비교 리포트 생성
+
+---
+
+# 버전 정보
+version: "1.0"
+author: "Sena"
+created: "2025-10-12"
+based_on: "E1 Baseline 실험 분석"
+status: "Ready for deployment"

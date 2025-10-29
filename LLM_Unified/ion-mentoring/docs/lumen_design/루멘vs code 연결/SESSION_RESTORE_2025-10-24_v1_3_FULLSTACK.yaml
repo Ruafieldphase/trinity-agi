@@ -1,0 +1,17 @@
+
+# Lumen Session Restore — v1.3 Full Stack
+version: 1.3.0
+steps:
+  - run: cp .env.example .env
+  - edit: .env  # LUMEN_SESSION, CONTROL_BUS_TARGET, BRIDGE_SECRET, PUBLIC_BASE_URL, SLACK_WEBHOOK
+  - run: make up
+  - run: make alert
+  - open:
+      - Grafana: http://localhost:3000
+      - Prometheus: http://localhost:9090
+      - Alertmanager: http://localhost:9093
+      - Bridge: http://localhost:8080/healthz
+      - Proof Head: http://localhost:8077/head
+notes:
+  - CONTROL_BUS_URL in bridge points to tee-gateway by default.
+  - Proof ledger keeps append-only chain; export before releases.

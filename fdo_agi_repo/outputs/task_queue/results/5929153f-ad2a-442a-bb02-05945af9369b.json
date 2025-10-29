@@ -1,0 +1,13 @@
+{
+  "task_id": "5929153f-ad2a-442a-bb02-05945af9369b",
+  "worker": "comet-browser",
+  "status": "success",
+  "data": {
+    "message": "pong",
+    "worker": "http-poller-auto",
+    "timestamp": "2025-10-29T09:27:02.856918",
+    "implementation": "python-test"
+  },
+  "completed_at": "2025-10-29T09:27:04.887314",
+  "error_message": null
+}

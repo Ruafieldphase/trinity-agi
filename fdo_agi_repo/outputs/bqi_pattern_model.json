@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "created_at": "2025-10-29T10:10:11.413792Z",
+    "duration_sec": 0.043,
+    "ledger_path": "D:\\nas_backup\\fdo_agi_repo\\memory\\resonance_ledger.jsonl",
+    "task_count": 398
+  },
+  "priority_rules": {},
+  "emotion_rules": {},
+  "rhythm_rules": {},
+  "samples_used": 0,
+  "global_mean_priority": 2.0
+}

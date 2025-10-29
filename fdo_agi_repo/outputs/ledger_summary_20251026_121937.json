@@ -1,0 +1,46 @@
+{
+  "window_hours": 6.0,
+  "now": 1761448777.635683,
+  "counts": {
+    "events": {
+      "persona_llm_end": 82,
+      "synthesis_end": 56,
+      "eval": 44,
+      "rune": 44,
+      "learning": 12,
+      "thesis_start": 55,
+      "persona_llm_start": 81,
+      "thesis_end": 55,
+      "synthesis_start": 55,
+      "second_pass": 12,
+      "run_config": 43,
+      "meta_cognition": 43,
+      "antithesis_start": 43,
+      "antithesis_end": 43,
+      "corrections_skipped": 2,
+      "persona_llm_run": 78
+    },
+    "tasks_started": 43,
+    "tasks_ended": 44,
+    "distinct_tasks_started": 28,
+    "distinct_tasks_ended": 44
+  },
+  "metrics": {
+    "avg_confidence": 0.658,
+    "avg_quality": 0.8,
+    "second_pass_total": 12,
+    "completion_rate": 1.0,
+    "second_pass_rate_per_task": 0.273
+  },
+  "notes": {
+    "paths": {
+      "ledger": "D:\\nas_backup\\fdo_agi_repo\\memory\\resonance_ledger.jsonl",
+      "coordinate": "D:\\nas_backup\\fdo_agi_repo\\memory\\coordinate.jsonl"
+    },
+    "exclude_prefixes": [
+      "integration_test_",
+      "low_confidence_test_",
+      "temp_low_conf_"
+    ]
+  }
+}

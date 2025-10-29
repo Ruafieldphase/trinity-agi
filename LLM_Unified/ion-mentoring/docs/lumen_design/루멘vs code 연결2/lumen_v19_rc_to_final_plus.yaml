@@ -1,0 +1,56 @@
+name: lumen_v19_rc_to_final_plus
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Final tag (e.g., v1.9.0)"
+        required: true
+      roi_env:
+        description: "env name for thresholds (prod/stage/dev)"
+        default: "prod"
+jobs:
+  rc-to-final-plus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start exporters (best-effort)
+        run: |
+          (cd lumen_v1_8_assets && (python roi_risk_exporter_v18.py &) && sleep 1) || true
+          (cd lumen_v1_9_assets && (python prod_roi_exporter_v19.py &) && sleep 1) || true
+      - name: ROI gate (env-specific)
+        env:
+          ROI_ENV: "${{ github.event.inputs.roi_env }}"
+          ROI_THRESHOLDS_FILE: "docs/roi_thresholds_v19.example.yaml"
+        run: |
+          python scripts/check_roi_thresholds_env_v19.py
+      - name: Build ROI artifacts (snapshot + graph)
+        env:
+          MPLBACKEND: Agg
+        run: |
+          python scripts/gen_roi_snapshot_v19.py
+          python scripts/build_roi_graph_v19.py
+      - name: Build release notes (inject snapshot)
+        run: |
+          python scripts/build_release_notes_v19.py
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v19-final-plus
+          path: |
+            docs/RELEASE_NOTES_v1_9_FINAL.md
+            docs/ROI_SNAPSHOT_v1_9_*.md
+            docs/ROI_GRAPH_v1_9_*.png
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
+          body_path: docs/RELEASE_NOTES_v1_9_FINAL.md
+          files: |
+            docs/ROI_GRAPH_v1_9_*.png
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

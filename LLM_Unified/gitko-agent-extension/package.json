@@ -1,0 +1,237 @@
+{
+    "name": "gitko-agent-extension",
+    "displayName": "Gitko AI Agent Orchestrator",
+    "description": "Multi-agent orchestration for GitHub Copilot Chat",
+    "version": "0.1.0",
+    "publisher": "naeda",
+    "engines": {
+        "vscode": "^1.90.0"
+    },
+    "categories": [
+        "AI",
+        "Chat"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "gitko.enableHttpPoller",
+                "title": "Gitko: Enable HTTP Poller",
+                "category": "Gitko"
+            },
+            {
+                "command": "gitko.disableHttpPoller",
+                "title": "Gitko: Disable HTTP Poller",
+                "category": "Gitko"
+            },
+            {
+                "command": "gitko.showPollerOutput",
+                "title": "Gitko: Show HTTP Poller Output",
+                "category": "Gitko"
+            },
+            {
+                "command": "gitko.computerUse.clickByText",
+                "title": "Gitko: Computer Use - Click by Text",
+                "category": "Gitko"
+            },
+            {
+                "command": "gitko.computerUse.scanScreen",
+                "title": "Gitko: Computer Use - Scan Screen",
+                "category": "Gitko"
+            }
+        ],
+        "languageModelTools": [
+            {
+                "name": "sian_refactor",
+                "displayName": "Sian Code Refactoring",
+                "modelDescription": "Refactors and improves code quality. Use when user wants to clean up, optimize, or modernize code.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string",
+                            "description": "User request for code improvement"
+                        }
+                    },
+                    "required": [
+                        "message"
+                    ]
+                }
+            },
+            {
+                "name": "lubit_review",
+                "displayName": "Lubit Code Review",
+                "modelDescription": "Reviews code for bugs, security issues, and best practices. Use when user asks for code review or security check.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string",
+                            "description": "User request for code review"
+                        }
+                    },
+                    "required": [
+                        "message"
+                    ]
+                }
+            },
+            {
+                "name": "gitko_orchestrate",
+                "displayName": "Gitko Orchestrator",
+                "modelDescription": "Orchestrates complex tasks using multiple agents. Use for comprehensive project improvements or multi-step tasks.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "message": {
+                            "type": "string",
+                            "description": "User request for complex task"
+                        }
+                    },
+                    "required": [
+                        "message"
+                    ]
+                }
+            }
+        ],
+        "chatParticipants": [
+            {
+                "id": "gitko-agent",
+                "name": "gitko",
+                "description": "AI agent orchestrator with Lubit and Sian",
+                "isSticky": true,
+                "commands": [
+                    {
+                        "name": "review",
+                        "description": "Review code with Lubit agent"
+                    },
+                    {
+                        "name": "improve",
+                        "description": "Suggest improvements with Sian agent"
+                    },
+                    {
+                        "name": "parallel",
+                        "description": "Run both Lubit and Sian in parallel"
+                    },
+                    {
+                        "name": "help",
+                        "description": "Show help and configuration guide"
+                    },
+                    {
+                        "name": "check",
+                        "description": "Verify Python environment configuration"
+                    }
+                ]
+            }
+        ],
+        "configuration": {
+            "title": "Gitko Agent",
+            "properties": {
+                "gitkoAgent.pythonPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to Python executable (leave empty for auto-detection)",
+                    "order": 1
+                },
+                "gitkoAgent.scriptPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to gitko_cli.py script (leave empty for auto-detection)",
+                    "order": 2
+                },
+                "gitkoAgent.workingDirectory": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Working directory for agent execution (leave empty for auto-detection)",
+                    "order": 3
+                },
+                "gitkoAgent.enableLogging": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable detailed logging to Output Channel",
+                    "order": 4
+                },
+                "gitkoAgent.timeout": {
+                    "type": "number",
+                    "default": 300000,
+                    "description": "Timeout for agent execution in milliseconds (default: 5 minutes)",
+                    "order": 5
+                },
+                "gitkoAgent.computerUsePythonPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to Python executable for Computer Use (leave empty to reuse gitkoAgent.pythonPath or auto-detect)",
+                    "order": 6
+                },
+                "gitkoAgent.computerUseScriptPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to computer_use.py (OCR/RPA backend). Leave empty for default: D:/nas_backup/LLM_Unified/ion-mentoring/computer_use.py",
+                    "order": 7
+                },
+                "gitkoAgent.ocrBackend": {
+                    "type": "string",
+                    "enum": [
+                        "auto",
+                        "tesseract",
+                        "rapidocr"
+                    ],
+                    "default": "auto",
+                    "description": "OCR backend selection for Computer Use: 'auto' (prefer Tesseract, fallback RapidOCR), or force 'tesseract' / 'rapidocr' if needed.",
+                    "order": 8
+                },
+                "gitko.enableHttpPoller": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable HTTP-based task polling for asynchronous task processing. Requires Task Queue API server running on configured endpoint.",
+                    "order": 10
+                },
+                "gitko.httpApiBase": {
+                    "type": "string",
+                    "default": "http://localhost:8091/api",
+                    "description": "Task Queue API base URL (without trailing slash). Default connects to local API server from Phase 7c.",
+                    "order": 11
+                },
+                "gitko.httpPollingInterval": {
+                    "type": "number",
+                    "default": 2000,
+                    "minimum": 500,
+                    "maximum": 10000,
+                    "description": "Polling interval in milliseconds. Lower values increase responsiveness but use more resources. Minimum 500ms, maximum 10000ms.",
+                    "order": 12
+                },
+                "gitko.enableComputerUseOverHttp": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Allow Computer Use actions (scan/find/click/type) to be executed via HTTP task poller. Disable to hard-block any remote desktop actions.",
+                    "order": 13
+                },
+                "gitko.minUiActionIntervalMs": {
+                    "type": "number",
+                    "default": 150,
+                    "minimum": 0,
+                    "maximum": 5000,
+                    "description": "Minimum interval between UI actions (milliseconds) enforced by the poller for safety. Set higher to slow down automation.",
+                    "order": 14
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts"
+    },
+    "devDependencies": {
+        "@types/node": "^20.x",
+        "@types/vscode": "^1.90.0",
+        "typescript": "^5.4.0",
+        "@typescript-eslint/eslint-plugin": "^7.0.0",
+        "@typescript-eslint/parser": "^7.0.0",
+        "eslint": "^8.57.0"
+    }
+}

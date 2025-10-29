@@ -1,0 +1,20 @@
+{
+  "medium": {
+    "avg_success_rate": 100.0,
+    "avg_quality": 0.8,
+    "avg_time_sec": 30.72,
+    "total_tasks": 10
+  },
+  "complex": {
+    "avg_success_rate": 100.0,
+    "avg_quality": 0.8,
+    "avg_time_sec": 30.51,
+    "total_tasks": 5
+  },
+  "simple": {
+    "avg_success_rate": 100.0,
+    "avg_quality": 0.8,
+    "avg_time_sec": 28.73,
+    "total_tasks": 5
+  }
+}

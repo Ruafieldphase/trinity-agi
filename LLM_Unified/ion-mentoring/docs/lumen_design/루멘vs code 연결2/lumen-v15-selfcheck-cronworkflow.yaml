@@ -1,0 +1,41 @@
+# argocd/cron/lumen-v15-selfcheck-cronworkflow.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  name: lumen-v15-selfcheck
+  namespace: argo
+spec:
+  schedule: "0 18 * * *"   # 03:00 Asia/Seoul daily
+  timezone: "Asia/Seoul"
+  concurrencyPolicy: "Replace"
+  startingDeadlineSeconds: 600
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  workflowSpec:
+    entrypoint: selfcheck
+    templates:
+      - name: selfcheck
+        container:
+          image: ghcr.io/<owner>/lumen:v1.5-rc
+          imagePullPolicy: IfNotPresent
+          workingDir: /app
+          envFrom:
+            - secretRef:
+                name: lumen-webhooks   # contains SLACK_WEBHOOK_URL / DISCORD_WEBHOOK_URL
+          command: [bash, -lc]
+          args:
+            - |
+              set -euo pipefail
+              echo "[cron] maturity spectrum"
+              python lumen_v1_5_preview_assets/maturity_spectrum_v15_alpha.py
+              echo "[cron] integrated gate"
+              set +e
+              python scripts/integrated_gate_v19_v15.py | tee /tmp/gate.json
+              RC=${PIPESTATUS[0]}; set -e
+              echo "[cron] publish card"
+              GATE_JSON_PATH=/tmp/gate.json python scripts/gate_result_card_v15.py || true
+              exit $RC
+        outputs:
+          artifacts:
+            - name: gate-json
+              path: /tmp/gate.json

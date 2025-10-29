@@ -1,0 +1,7 @@
+sample,total_before,total_after,total_delta,label_before,label_after,forbidden_before,header_rescued,forbidden_hit,risk_total_before,risk_total,risk_total_delta,risk_valid,risk_overflow,quote_total_before,quote_total,quote_total_delta,quote_valid,quote_overflow,highest_missing_before,highest_missing,highest_missing_delta,H1_before,H1,H1_delta,H2_before,H2,H2_delta,C1_before,C1,C1_delta,L1_before,L1,L1_delta,Q1_before,Q1,Q1_delta,R1_before,R1,R1_delta,W1_before,W1,W1_delta
+0,0.15,0.4,0.25,Poor,Poor,0,0,0,2,0,-2,0,0,1,0,-1,0,0,1,1,0,0.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+1,0.2,0.45,0.25,Poor,Poor,0,0,0,2,0,-2,0,0,1,0,-1,0,0,1,1,0,0.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.5,0.5,0.0
+2,0.15,0.4,0.25,Poor,Poor,0,0,0,2,0,-2,0,0,1,0,-1,0,0,1,1,0,0.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+3,0.15,0.4,0.25,Poor,Poor,0,0,0,1,0,-1,0,0,1,0,-1,0,0,1,1,0,0.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+4,0.2,0.45,0.25,Poor,Poor,0,0,0,1,0,-1,0,0,1,0,-1,0,0,1,1,0,0.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.5,0.5,0.0
+AVERAGE,0.17,0.42,0.25,,0/5 Pass,0.0,0.0,0.0,1.6,0.0,-1.6,0.0,0.0,1.0,0.0,-1.0,0.0,0.0,1.0,1.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.2,0.2,0.0

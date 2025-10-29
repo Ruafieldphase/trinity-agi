@@ -1,0 +1,93 @@
+{
+  "title": "Lumen v1.5 \u2014 Maturity Spectrum",
+  "schemaVersion": 39,
+  "tags": [
+    "lumen",
+    "v1.5",
+    "maturity"
+  ],
+  "panels": [
+    {
+      "type": "text",
+      "title": "Overview",
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Maturity Spectrum** \u2014 Sense/Feedback/Release + Overall. Includes 6h/24h window comparison."
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Overall Maturity",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "targets": [
+        {
+          "expr": "lumen_maturity_overall",
+          "legendFormat": "overall"
+        },
+        {
+          "expr": "lumen_maturity_overall_window{window=\"6h\"}",
+          "legendFormat": "overall (6h)"
+        },
+        {
+          "expr": "lumen_maturity_overall_window{window=\"24h\"}",
+          "legendFormat": "overall (24h)"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Sense / Feedback / Release",
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "targets": [
+        {
+          "expr": "lumen_maturity_sense",
+          "legendFormat": "sense"
+        },
+        {
+          "expr": "lumen_maturity_feedback",
+          "legendFormat": "feedback"
+        },
+        {
+          "expr": "lumen_maturity_release",
+          "legendFormat": "release"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Windowed Snapshot",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "targets": [
+        {
+          "expr": "lumen_maturity_overall_window{window=\"6h\"}",
+          "legendFormat": "overall_6h"
+        },
+        {
+          "expr": "lumen_maturity_overall_window{window=\"24h\"}",
+          "legendFormat": "overall_24h"
+        }
+      ]
+    }
+  ]
+}

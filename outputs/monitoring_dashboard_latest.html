@@ -1,0 +1,2191 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --excellent: #10b981;
+            --good: #3b82f6;
+            --degraded: #f59e0b;
+            --critical: #ef4444;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .status-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .status-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-EXCELLENT {
+            border-left: 5px solid var(--excellent);
+        }
+
+        .status-GOOD {
+            border-left: 5px solid var(--good);
+        }
+
+        .status-DEGRADED {
+            border-left: 5px solid var(--degraded);
+        }
+
+        .status-CRITICAL {
+            border-left: 5px solid var(--critical);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        .alert-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .alert-critical {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .alert-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .last-updated {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .trend-up {
+            color: #ef4444;
+        }
+
+        .trend-down {
+            color: #10b981;
+        }
+
+        .trend-stable {
+            color: #6b7280;
+        }
+
+        .memory-pill {
+            background-color: #eef2ff;
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .session-preview {
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .session-meta {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .session-card {
+            max-height: 420px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">🚀 Monitoring Dashboard</h1>
+                    <p class="mb-0 mt-2">Real-time System Performance & Health</p>
+                    <p class="last-updated mb-0 mt-2">
+                        Last Updated: <span id="lastUpdate">Loading...</span>
+                        <span class="ms-2">|</span>
+                        Last Refresh: <span id="lastRefresh">Never</span>
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-light me-2" onclick="refreshDashboard()">
+                        🔄 Refresh Now
+                    </button>
+                    <button class="btn btn-outline-primary" id="autoRefreshBtn" onclick="toggleAutoRefresh()">
+                        ▶ Enable Auto-Refresh
+                    </button>
+                    <label for="autoRefreshInterval" class="ms-2 me-1 small"
+                        style="color: rgba(255,255,255,0.9);">Interval</label>
+                    <select id="autoRefreshInterval" class="form-select form-select-sm d-inline-block w-auto"
+                        onchange="onRefreshIntervalChange(event)">
+                        <option value="15000">15s</option>
+                        <option value="30000">30s</option>
+                        <option value="60000">60s</option>
+                        <option value="120000">2m</option>
+                        <option value="300000">5m</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Executive Summary -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card status-card status-EXCELLENT">
+                    <div class="card-body text-center">
+                        <div class="metric-label">System Health</div>
+                        <div class="metric-value" id="healthStatus">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card">
+                    <div class="card-body text-center">
+                        <div class="metric-label">Availability</div>
+                        <div class="metric-value"><span id="availability">--</span>%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card">
+                    <div class="card-body text-center">
+                        <div class="metric-label">Total Alerts</div>
+                        <div class="metric-value" id="totalAlerts">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card">
+                    <div class="card-body text-center">
+                        <div class="metric-label">Data Points</div>
+                        <div class="metric-value" id="dataPoints">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Severity Distribution -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Alert Severity Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="severityChart"></canvas>
+                        </div>
+                        <div class="d-flex justify-content-around mt-3">
+                            <div class="text-center">
+                                <span class="alert-badge alert-critical" id="criticalCount">0</span>
+                                <div class="small mt-1">Critical</div>
+                            </div>
+                            <div class="text-center">
+                                <span class="alert-badge alert-warning" id="warningCount">0</span>
+                                <div class="small mt-1">Warning</div>
+                            </div>
+                            <div class="text-center">
+                                <span class="alert-badge alert-info" id="infoCount">0</span>
+                                <div class="small mt-1">Info</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Recent Critical Alerts -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Critical Alerts</h5>
+                    </div>
+                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                        <div id="criticalAlertsList">
+                            <p class="text-muted">No critical alerts</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- Latency Trends -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Latency Trends (Hourly)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 400px;">
+                            <canvas id="latencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Availability Timeline -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Availability Timeline (Hourly)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="availabilityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channel Statistics Table -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Channel Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Channel</th>
+                                        <th>Availability</th>
+                                        <th>Mean Latency</th>
+                                        <th>P95 Latency</th>
+                                        <th>Std Dev</th>
+                                        <th>Trend</th>
+                                        <th>Alerts</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="channelStatsTable">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGI System Status -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">🤖 AGI System Status</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-dark" id="safeModeBadge" style="display:none;">SAFE MODE</span>
+                            <span class="badge bg-primary" id="agiStatusBadge">--</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Health Gate Status Row -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="alert alert-info d-flex justify-content-between align-items-center mb-0">
+                                    <div>
+                                        <strong>🚦 Health Gate:</strong>
+                                        <span id="healthGateStatus" class="badge bg-secondary">Loading...</span>
+                                        <span class="ms-2 text-muted small" id="healthGateDetails">--</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="refreshHealthGate()">
+                                        🔄 Refresh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiTotalEvents">--</div>
+                                    <div class="metric-label">Total Events</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiTaskCount">--</div>
+                                    <div class="metric-label">Unique Tasks</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiAvgQuality">--</div>
+                                    <div class="metric-label">Avg Quality</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiSuccessRate">--</div>
+                                    <div class="metric-label">Success Rate</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <canvas id="agiQualityChart"></canvas>
+                            </div>
+                            <div class="col-md-6">
+                                <canvas id="agiEventTypesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Evidence Gate Metrics -->
+        <div class="row mb-4" id="evidenceGateSection" style="display:none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">🧪 Evidence Gate</h5>
+                        <span class="badge bg-secondary" id="evidenceGateSummary">--</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning d-none" id="ecForcedWarning">
+                            강제 Evidence 성공률이 임계값보다 낮습니다. 파이프라인과 소스 증거 품질을 점검하세요.
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-2 col-6 mb-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="ecAttempts">--</div>
+                                    <div class="metric-label">Attempts</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6 mb-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="ecAvgHits">--</div>
+                                    <div class="metric-label">Avg Hits</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6 mb-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="ecAvgAdded">--</div>
+                                    <div class="metric-label">Avg Added</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6 mb-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="ecAvgRel">--</div>
+                                    <div class="metric-label">Avg Relevance</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6 mb-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="ecSuccessRate">--</div>
+                                    <div class="metric-label">Success Rate</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6 mb-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="ecFallbackRate">--</div>
+                                    <div class="metric-label">Fallback Rate</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <strong>Forced Checks</strong>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="small text-muted">Sort columns or filter to inspect latest
+                                                forced runs.</div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox"
+                                                    id="ecForcedFilterSuccess" />
+                                                <label class="form-check-label" for="ecForcedFilterSuccess">Success
+                                                    only</label>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-3 col-6 mb-3">
+                                                <div class="text-center">
+                                                    <div class="metric-value" id="ecForcedAttempts">--</div>
+                                                    <div class="metric-label">Forced Attempts</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-6 mb-3">
+                                                <div class="text-center">
+                                                    <div class="metric-value" id="ecForcedAvgHits">--</div>
+                                                    <div class="metric-label">Forced Avg Hits</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-6 mb-3">
+                                                <div class="text-center">
+                                                    <div class="metric-value" id="ecForcedAvgAdded">--</div>
+                                                    <div class="metric-label">Forced Avg Added</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-6 mb-3">
+                                                <div class="text-center">
+                                                    <div class="metric-value" id="ecForcedSuccessRate">--</div>
+                                                    <div class="metric-label">Forced Success Rate</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-12">
+                                                <canvas id="ecForcedSparkline" height="60"></canvas>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-hover align-middle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width: 22%; cursor:pointer;" data-key="time"
+                                                                    onclick="sortForcedSamples('time')">Time</th>
+                                                                <th style="width: 10%; cursor:pointer;" data-key="hits"
+                                                                    onclick="sortForcedSamples('hits')">Hits</th>
+                                                                <th style="width: 10%; cursor:pointer;" data-key="added"
+                                                                    onclick="sortForcedSamples('added')">Added</th>
+                                                                <th style="width: 18%; cursor:pointer;"
+                                                                    data-key="avg_relevance"
+                                                                    onclick="sortForcedSamples('avg_relevance')">Rel
+                                                                </th>
+                                                                <th style="width: 12%; cursor:pointer;"
+                                                                    data-key="success"
+                                                                    onclick="sortForcedSamples('success')">Success</th>
+                                                                <th style="width: 12%; cursor:pointer;"
+                                                                    data-key="fallback"
+                                                                    onclick="sortForcedSamples('fallback')">Fallback
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="ecForcedSamplesTable">
+                                                            <tr>
+                                                                <td colspan="6" class="text-muted">No samples</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="text-muted small" id="ecForcedNote" style="display:none;">
+                                            No forced events found in the selected time window.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGI Timeline & Health Services -->
+        <div class="row mb-4">
+            <!-- AGI Timeline Chart -->
+            <div class="col-lg-8 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">📈 AGI Quality & Confidence Timeline</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="agiTimelineChart" height="80"></canvas>
+                        <div class="text-muted small mt-2">
+                            <span class="me-3">🟢 Quality</span>
+                            <span>🔵 Confidence</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Services -->
+            <div class="col-lg-4">
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">🌐 Lumen Gateway</h6>
+                        <span class="badge" id="lumenStatusBadge">--</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="lumenStatus">
+                            <div class="small">Status: <span id="lumenStatusCode">--</span></div>
+                            <div class="small text-muted mt-1" id="lumenResponse">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">🔌 LLM Proxy</h6>
+                        <span class="badge" id="proxyStatusBadge">--</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="proxyStatus">
+                            <div class="small">Port: <span id="proxyPort">--</span></div>
+                            <div class="small text-muted mt-1">Status: <span id="proxyState">--</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">💻 System Resources</h6>
+                        <span class="badge" id="systemStatusBadge">--</span>
+                    </div>
+                    <div class="card-body">
+                        <div id="systemStatus">
+                            <div class="small">CPU: <span id="systemCPU">--</span>%</div>
+                            <div class="small">Memory: <span id="systemMemory">--</span>%</div>
+                            <div class="small">Disk: <span id="systemDisk">--</span>%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Session Memory -->
+        <div class="row mb-4" id="sessionMemorySection" style="display:none;">
+            <div class="col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">세션 요약 메모리</h5>
+                        <span class="badge bg-secondary" id="sessionLastUpdatedBadge">--</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="memory-pill">
+                            <div class="text-muted small">총 세션</div>
+                            <div class="h4 mb-0" id="sessionTotal">--</div>
+                        </div>
+                        <div class="memory-pill">
+                            <div class="text-muted small">임베딩 커버리지</div>
+                            <div class="h5 mb-0" id="sessionCoverage">--%</div>
+                            <div class="session-meta">Vectors: <span id="sessionEmbeddings">--</span></div>
+                        </div>
+                        <div class="memory-pill">
+                            <div class="text-muted small">최근 24시간 저장</div>
+                            <div class="h5 mb-0" id="sessionRecent24h">--</div>
+                            <div class="session-meta">Last saved: <span id="sessionLastUpdated">--</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card session-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">최근 저장된 요약</h5>
+                        <span class="text-muted small" id="sessionIndexPath">--</span>
+                    </div>
+                    <div class="list-group list-group-flush" id="sessionRecentList">
+                        <div class="p-3 text-muted">데이터를 불러오는 중...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGI Persona Performance (conditional) -->
+        <div class="row mb-4" id="agiPersonaSection" style="display:none;">
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">🧠 Persona Performance</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-secondary" id="personaTrendToggleBtn"
+                                onclick="togglePersonaTrendMetric()" title="Toggle persona trend metric">Trend:
+                                Success%</button>
+                            <span class="badge bg-secondary" id="agiPersonaSummary">--</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 320px;">
+                            <canvas id="agiPersonaChart"></canvas>
+                        </div>
+                        <div class="text-muted small mt-2">Bar = total calls, color = success rate (green ≥ 80%, yellow
+                            ≥ 60%, red &lt; 60%).</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">📋 Persona Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Persona</th>
+                                        <th class="text-end">Total Calls</th>
+                                        <th class="text-end">Success Rate</th>
+                                        <th class="text-end">Avg Duration</th>
+                                        <th class="text-end" id="trendHeader">Trend (succ%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="agiPersonaTable">
+                                    <tr>
+                                        <td colspan="5" class="text-muted text-center">No persona data</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Period Comparison -->
+        <div class="row mb-4" id="periodComparisonSection" style="display:none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Period Comparison (vs Previous 24h)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h6>Local LLM</h6>
+                                <div id="localComparison">--</div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Cloud AI</h6>
+                                <div id="cloudComparison">--</div>
+                            </div>
+                            <div class="col-md-4">
+                                <h6>Lumen Gateway</h6>
+                                <div id="gatewayComparison">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // {{METRICS_JSON_PLACEHOLDER}}
+
+        let metricsData = JSON.parse('{"SessionSummaries":{"Embeddings":8,"LastUpdated":"2025-10-28T09:48:26","RuleSessions":2,"EmbeddingCoverage":72.7,"TotalSessions":11,"IndexPath":"D:\\nas_backup\\LLM_Unified\\ion-mentoring\\data\\session_summaries\\index.json","Recent24h":0,"LlmSessions":9,"RecentSessions":[{"summary_type":"llm","embedding_dims":768,"message_count":4,"session_id":"test-restart-001","created_at":"2025-10-28T09:48:26.292229","preview":"- Vertex AI 마이그레이션 프로젝트 시작.\n- 마이그레이션 전 현재 시스템 아키텍처 분석 필요.\n- Vertex AI SDK는 `pip install google-cloud-aiplatform` 명령어로 설치.","user_id":"user-restart-001"},{"summary_type":"llm","embedding_dims":768,"message_count":4,"session_id":"test-session-hybrid-001","created_at":"2025-10-28T09:48:21.174790","preview":"- Vertex AI 마이그레이션 프로젝트 시작 예정.\n- 마이그레이션 전 현재 시스템 아키텍처 분석 필요.\n- Vertex AI SDK는 `pip install google-cloud-aiplatform` 명령어로 설치.","user_id":"user-hybrid-001"},{"summary_type":"llm","embedding_dims":768,"message_count":5,"session_id":"test-session-004","created_at":"2025-10-28T09:48:19.298892","preview":"테스트 세션 4의 요약","user_id":"user-000"},{"summary_type":"rule_based","embedding_dims":768,"message_count":4,"session_id":"test-session-003","created_at":"2025-10-28T09:48:18.998525","preview":"테스트 세션 3의 요약","user_id":"user-001"},{"summary_type":"llm","embedding_dims":768,"message_count":3,"session_id":"test-session-002","created_at":"2025-10-28T09:48:18.458880","preview":"테스트 세션 2의 요약","user_id":"user-000"}],"Available":true},"Generated":"2025-10-29T20:15:06","PeriodComparison":{"CurrentPeriod":{"End":"2025-10-29T11:15:06","Count":286,"Start":"2025-10-28T11:15:03"},"AvailabilityChange":{"Local":{"Current":100,"ChangePercent":0,"Change":0,"Previous":100,"Trend":"STABLE","Arrow":null},"Cloud":{"Current":99.65,"ChangePercent":-0.4,"Change":-0.35,"Previous":100,"Trend":"DOWN","Arrow":null},"Gateway":{"Current":100,"ChangePercent":0,"Change":0,"Previous":100,"Trend":"STABLE","Arrow":null}},"LatencyChange":{"Local":{"Current":2060.37,"ChangePercent":2.2,"Change":44.229999999999791,"Previous":2016.14,"Trend":"SLOWER","Arrow":"▲"},"Cloud":{"Current":281.47,"ChangePercent":1.2,"Change":3.25,"Previous":278.22,"Trend":"SLOWER","Arrow":"▲"},"Gateway":{"Current":254.8,"ChangePercent":2,"Change":5.0500000000000114,"Previous":249.75,"Trend":"SLOWER","Arrow":"▲"}},"PreviousPeriod":{"End":"2025-10-28T11:15:03","Count":136,"Start":"2025-10-27T11:15:03"},"ComparisonWindow":"24h"},"AlertsTimeline":{"EndIso":"2025-10-29T11:15:06","Spikes":[2,4,5,2,2,2,2,1,3,1,4,0,2,3,4,2,3,4,1,4,3,0,5,1,0],"Warnings":[26,28,29,26,26,26,26,25,27,25,28,24,26,25,28,26,27,28,25,28,28,24,27,25,0],"Sparkline":{"Warnings":"%%@%%%%#%#%#%#%%%%#%%#%# ","Alerts":"               @@   @    ","Spikes":"-#@----.+.# -+#-+#.#+ @. "},"Hours":["2025-10-28T11:15:03","2025-10-28T12:15:03","2025-10-28T13:15:03","2025-10-28T14:15:03","2025-10-28T15:15:03","2025-10-28T16:15:03","2025-10-28T17:15:03","2025-10-28T18:15:03","2025-10-28T19:15:03","2025-10-28T20:15:03","2025-10-28T21:15:03","2025-10-28T22:15:03","2025-10-28T23:15:03","2025-10-29T00:15:03","2025-10-29T01:15:03","2025-10-29T02:15:03","2025-10-29T03:15:03","2025-10-29T04:15:03","2025-10-29T05:15:03","2025-10-29T06:15:03","2025-10-29T07:15:03","2025-10-29T08:15:03","2025-10-29T09:15:03","2025-10-29T10:15:03","2025-10-29T11:15:03"],"StartIso":"2025-10-28T11:15:03","Interval":"1h","Alerts":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0]},"AlertsSummary":{"Local":{"BaselineAlerts":0,"Spikes":16,"AdaptiveWarns":0,"AdaptiveAlerts":0,"BaselineWarns":286},"Cloud":{"BaselineAlerts":0,"Spikes":23,"AdaptiveWarns":0,"AdaptiveAlerts":0,"BaselineWarns":0},"Total":{"BaselineAlerts":0,"Spikes":60,"AdaptiveWarns":0,"AdaptiveAlerts":0,"BaselineWarns":286},"Gateway":{"BaselineAlerts":0,"Spikes":21,"AdaptiveWarns":0,"AdaptiveAlerts":0,"BaselineWarns":0}},"SnapshotCount":286,"Health":{"Status":"EXCELLENT","Warnings":287,"AvgAvailability":99.88,"Alerts":3,"Spikes":60},"Channels":{"Local":{"Count":286,"Min":2036,"BaselineByTOD":{"Peak":{"Count":107,"Std":8.48,"Mean":2060.03},"OffPeak":{"Count":179,"Std":7.37,"Mean":2060.58}},"Median":2060,"BaselineAlerts":0,"Trend":{"LongMeanMs":2060.2,"Direction":"STABLE","ShortMeanMs":2058.6,"LongCount":20,"ShortCount":10},"Mean":2060.37,"Sparkline":"=+:*-=-===.=-=-=:@:=:.=*: =--#","SparklineHourlyLatency":":=*:-=**+-#*- :@.+:*#*#-","AdaptiveAlerts":0,"BaselineWarns":286,"Std":7.79,"Availability":100,"Spikes":16,"Max":2093,"HourlyLatency":[2058.17,2060.33,2062.08,2058.08,2059.17,2060.33,2062.33,2061.83,2061.25,2059.17,2062.83,2061.83,2059.33,2055.45,2057.5,2064.58,2057.17,2061,2057.67,2062.33,2062.58,2062.33,2062.82,2058.58],"P95":2073,"AdaptiveWarns":0},"Cloud":{"Count":286,"Min":222,"BaselineByTOD":{"Peak":{"Count":107,"Std":45.7,"Mean":279.71},"OffPeak":{"Count":179,"Std":20.47,"Mean":282.52}},"Median":274,"BaselineAlerts":0,"Trend":{"LongMeanMs":274.4,"Direction":"STABLE","ShortMeanMs":275.2,"LongCount":20,"ShortCount":10},"Mean":281.47,"Sparkline":"--=-=---=* @-*------*--+*==- =","SparklineHourlyLatency":"# =%*=-:::-..-=.  - @ ..","AdaptiveAlerts":0,"BaselineWarns":0,"Std":32.26,"Availability":99.65,"Spikes":23,"Max":721,"HourlyLatency":[296.58,272.25,286,301.08,292.58,287.67,281.58,278.58,278,280.42,282.83,275.75,274.25,281.55,285.17,276.67,272.25,272.58,281.83,269.83,303.5,273,276.36,274.5],"P95":313,"AdaptiveWarns":0},"Gateway":{"Count":286,"Min":213,"BaselineByTOD":{"Peak":{"Count":107,"Std":568.66,"Mean":301.01},"OffPeak":{"Count":179,"Std":11.19,"Mean":227.18}},"Median":222,"BaselineAlerts":0,"Trend":{"LongMeanMs":221.55,"Direction":"STABLE","ShortMeanMs":220.5,"LongCount":20,"ShortCount":10},"Mean":254.8,"Sparkline":"::=--.:  .  -=-..@ #.::.-.:.- ","SparklineHourlyLatency":"               @    #   ","AdaptiveAlerts":0,"BaselineWarns":0,"Std":348.75,"Availability":100,"Spikes":21,"Max":4716,"HourlyLatency":[226.75,227.83,229.17,227.58,233.92,226.83,227.08,233.42,234.25,227.58,226.75,224.17,219.25,219.27,233.33,595.67,221.25,227.08,220.33,219.67,543.67,222.42,221.09,221.08],"P95":248,"AdaptiveWarns":0}},"AGI":{"TimeWindow":24,"ReplanRate":28.28,"PersonaTimeline":{},"Alerts":{"HighReplanRate":true,"HighAvgDuration":false,"Inactive":false,"LowQuality":false,"LowSuccessRate":false},"Health":{"checks":{"confidence_ok":true,"quality_ok":true,"second_pass_ok":true,"lumen_ok":true,"proxy_ok":true,"system_ok":true},"thresholds":{"min_quality":0.6,"min_confidence":0.6,"min_success_rate_percent":70,"replan_rate_percent":10,"max_avg_duration_sec":10,"inactive_hours":2,"evidence_forced_warn_percent":70,"evidence_forced_crit_percent":50,"evidence_forced_ma_window":5,"persona":{"low_success_warn_percent":60,"low_success_crit_percent":50,"slow_duration_sec":10}},"policy":{"recent_hours":1.0,"min_samples":{"confidence":5,"quality":5},"samples":{"confidence":4,"quality":3},"notes":{"confidence":"insufficient_samples(4\u003c5)","quality":"insufficient_samples(3\u003c5)"},"resolved_proxy_port":18091},"thresholds_ui":{"min_quality":0.6,"min_confidence":0.6,"min_success_rate_percent":70,"replan_rate_percent":10,"max_avg_duration_sec":10,"inactive_hours":2,"evidence_forced_warn_percent":70,"evidence_forced_crit_percent":50,"evidence_forced_ma_window":5,"persona":{"low_success_warn_percent":60,"low_success_crit_percent":50,"slow_duration_sec":10}},"external_services":{"lumen":{"ok":true,"status_code":200,"response_preview":"{\u0027success\u0027: True, \u0027persona\u0027: {\u0027name\u0027: \u0027?몃굹\u0027, \u0027type\u0027: \u0027釉뚮━吏??, \u0027emoji\u0027: \u0027?믭툘\u0027, \u0027specialty\u0027: \u0027?곌껐, ?듯빀\u0027, \u0027key\u0027: \u0027pen\u0027}, \u0027response\u0027: \u0027?먯슜! ?몃굹, ?묐떟 ?꾨즺. ?곌껐 ?곹깭 ?묓샇?⑸땲?? ?뱻 ?쒓? 吏湲??ъ슜?먮떂怨??뺤떎?섍쾶 ?곌껐?섏뼱 ?덈떎??嫄??뚮젮?쒕━怨??띠뿀?댁슂! ?뱀떆 吏"},"proxy":{"ok":true,"port":18091,"status":"active"},"system":{"ok":true,"cpu_percent":20.3,"memory_percent":30.1,"disk_percent":67.7,"warnings":{"cpu":false,"memory":false,"disk":false}}},"healthy":false},"TaskCount":99,"Timeline":[{"timestamp":"2025-10-29T16:55:33.778264","event_count":362,"avg_quality":0.85,"avg_confidence":0.801,"second_pass_rate":0.0},{"timestamp":"2025-10-29T17:25:33.778264","event_count":23,"avg_quality":0.85,"avg_confidence":0.804,"second_pass_rate":0.0},{"timestamp":"2025-10-29T17:55:33.778264","event_count":296,"avg_quality":0.85,"avg_confidence":0.806,"second_pass_rate":0.0},{"timestamp":"2025-10-29T18:25:33.778264","event_count":138,"avg_quality":0.85,"avg_confidence":0.808,"second_pass_rate":0.0},{"timestamp":"2025-10-29T18:55:33.778264","event_count":202,"avg_quality":0.85,"avg_confidence":0.815,"second_pass_rate":0.0},{"timestamp":"2025-10-29T19:25:33.778264","event_count":38,"avg_quality":0.85,"avg_confidence":0.812,"second_pass_rate":0.0}],"LastActivity":"2025-10-29T19:26:25","EvidenceCorrection":{"attempts":14,"avg_hits":0.0,"avg_added":1,"avg_relevance":0.0,"success_rate":0.0,"fallback_rate":0.0,"forced_attempts":0,"forced_avg_hits":0,"forced_avg_added":0,"forced_success_rate":0,"forced_success_sparkline":[],"forced_samples":[]},"AvgDuration":null,"EventTypes":{},"Thresholds":{"min_quality":0.6,"min_confidence":0.6,"min_success_rate_percent":70,"replan_rate_percent":10,"max_avg_duration_sec":10,"inactive_hours":2,"evidence_forced_warn_percent":70,"evidence_forced_crit_percent":50,"evidence_forced_ma_window":5,"persona":{"low_success_warn_percent":60,"low_success_crit_percent":50,"slow_duration_sec":10}},"CollectionTime":"2025-10-29T20:15:04.754580","SuccessRate":74.77,"SecondPassRate":5.100,"AvgQuality":0.736,"AvgConfidence":0.805,"TotalEvents":1609,"PersonaStats":{}},"TimeWindowHours":24,"Config":{"PeakEnd":18,"SparklineLen":30,"PeakStart":9,"LogPath":"d:\\nas_backup\\outputs\\status_snapshots.jsonl","GeneratedAt":"2025-10-29T20:15:06","Hours":24},"AvailabilityTimeline":{"EndIso":"2025-10-29T11:15:06","Local":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"StartIso":"2025-10-28T11:15:03","Cloud":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,91.67,100,100,100,100,100,100,100],"Sparkline":{"Local":"------------------------","Cloud":"@@@@@@@@@@@@@@@@ @@@@@@@","Gateway":"------------------------"},"Hours":["2025-10-28T11:15:03","2025-10-28T12:15:03","2025-10-28T13:15:03","2025-10-28T14:15:03","2025-10-28T15:15:03","2025-10-28T16:15:03","2025-10-28T17:15:03","2025-10-28T18:15:03","2025-10-28T19:15:03","2025-10-28T20:15:03","2025-10-28T21:15:03","2025-10-28T22:15:03","2025-10-28T23:15:03","2025-10-29T00:15:03","2025-10-29T01:15:03","2025-10-29T02:15:03","2025-10-29T03:15:03","2025-10-29T04:15:03","2025-10-29T05:15:03","2025-10-29T06:15:03","2025-10-29T07:15:03","2025-10-29T08:15:03","2025-10-29T09:15:03","2025-10-29T10:15:03","2025-10-29T11:15:03"],"Gateway":[100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100,100],"Interval":"1h"},"AlertsBySeverity":{"InfoCount":633,"Total":636,"WarningCount":0,"Warning":[],"CriticalCount":3,"Info":[{"Timestamp":"2025-10-28T20:15:06","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-28T20:15:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:15:06","Message":"SPIKE: Cloud AI latency 307ms (avg 277 +/- 8)"},{"Timestamp":"2025-10-28T20:20:06","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-28T20:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:25:06","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T20:25:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:25:06","Message":"SPIKE: Cloud AI latency 313ms (avg 283 +/- 13)"},{"Timestamp":"2025-10-28T20:30:06","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-28T20:30:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:35:06","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T20:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:40:06","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-28T20:40:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:45:06","Message":"WARN: Local LLM latency 2051ms"},{"Timestamp":"2025-10-28T20:45:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:50:09","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-28T20:50:09","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T20:55:06","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-28T20:55:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:00:06","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-28T21:00:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:05:06","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T21:05:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:10:06","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T21:10:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:15:06","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-28T21:15:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:20:06","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-28T21:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:20:06","Message":"SPIKE: Local LLM latency 2067ms (avg 2058 +/- 3)"},{"Timestamp":"2025-10-28T21:25:06","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-28T21:25:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:25:06","Message":"SPIKE: Gateway latency 262ms (avg 226 +/- 7)"},{"Timestamp":"2025-10-28T21:30:06","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T21:30:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:35:06","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-28T21:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:40:06","Message":"WARN: Local LLM latency 2052ms"},{"Timestamp":"2025-10-28T21:40:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:45:06","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-28T21:45:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:45:06","Message":"SPIKE: Local LLM latency 2070ms (avg 2058 +/- 4)"},{"Timestamp":"2025-10-28T21:50:06","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-28T21:50:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:55:11","Message":"WARN: Local LLM latency 2073ms"},{"Timestamp":"2025-10-28T21:55:11","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T21:55:11","Message":"SPIKE: Local LLM latency 2073ms (avg 2059 +/- 6)"},{"Timestamp":"2025-10-28T22:00:06","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-28T22:00:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:05:06","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T22:05:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:10:06","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-28T22:10:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:15:06","Message":"WARN: Local LLM latency 2044ms"},{"Timestamp":"2025-10-28T22:15:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:20:06","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-28T22:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:20:06","Message":"SPIKE: Cloud AI latency 314ms (avg 273 +/- 5)"},{"Timestamp":"2025-10-28T22:25:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-28T22:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:30:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-28T22:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:35:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-28T22:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:35:05","Message":"SPIKE: Cloud AI latency 317ms (avg 278 +/- 14)"},{"Timestamp":"2025-10-28T22:40:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-28T22:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:45:05","Message":"WARN: Local LLM latency 2071ms"},{"Timestamp":"2025-10-28T22:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:45:05","Message":"SPIKE: Gateway latency 237ms (avg 226 +/- 5)"},{"Timestamp":"2025-10-28T22:50:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T22:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T22:50:05","Message":"SPIKE: Gateway latency 242ms (avg 226 +/- 6)"},{"Timestamp":"2025-10-28T22:55:05","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-28T22:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:00:09","Message":"WARN: Local LLM latency 2054ms"},{"Timestamp":"2025-10-28T23:00:09","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:05:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-28T23:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:10:05","Message":"WARN: Local LLM latency 2077ms"},{"Timestamp":"2025-10-28T23:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:10:05","Message":"SPIKE: Local LLM latency 2077ms (avg 2062 +/- 5)"},{"Timestamp":"2025-10-28T23:15:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-28T23:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:20:05","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-28T23:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:25:05","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-28T23:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:30:05","Message":"WARN: Local LLM latency 2050ms"},{"Timestamp":"2025-10-28T23:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:35:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-28T23:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:40:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-28T23:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:45:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-28T23:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:50:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-28T23:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-28T23:50:05","Message":"SPIKE: Cloud AI latency 321ms (avg 283 +/- 12)"},{"Timestamp":"2025-10-28T23:55:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-28T23:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:00:05","Message":"WARN: Local LLM latency 2045ms"},{"Timestamp":"2025-10-29T00:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:00:05","Message":"SPIKE: Cloud AI latency 428ms (avg 287 +/- 18)"},{"Timestamp":"2025-10-29T00:05:09","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T00:05:09","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:10:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T00:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:15:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T00:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:20:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T00:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:20:05","Message":"SPIKE: Gateway latency 279ms (avg 226 +/- 7)"},{"Timestamp":"2025-10-29T00:25:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T00:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:30:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T00:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:35:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T00:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:40:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T00:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:45:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T00:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:50:05","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T00:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T00:55:05","Message":"WARN: Local LLM latency 2054ms"},{"Timestamp":"2025-10-29T00:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:00:05","Message":"WARN: Local LLM latency 2052ms"},{"Timestamp":"2025-10-29T01:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:05:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T01:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2057ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:10:08","Message":"WARN: Local LLM latency 2071ms"},{"Timestamp":"2025-10-29T01:10:08","Message":"BASELINE WARN: Local LLM sustained latency 2057ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:10:08","Message":"SPIKE: Local LLM latency 2071ms (avg 2058 +/- 4)"},{"Timestamp":"2025-10-29T01:15:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T01:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:20:05","Message":"WARN: Local LLM latency 2054ms"},{"Timestamp":"2025-10-29T01:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:25:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T01:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:30:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T01:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:35:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T01:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:40:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T01:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:45:05","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T01:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:50:05","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T01:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:55:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T01:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T01:55:05","Message":"SPIKE: Gateway latency 245ms (avg 226 +/- 6)"},{"Timestamp":"2025-10-29T02:00:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T02:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:05:05","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T02:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:05:05","Message":"SPIKE: Local LLM latency 2069ms (avg 2059 +/- 5)"},{"Timestamp":"2025-10-29T02:10:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T02:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:15:12","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T02:15:12","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:20:05","Message":"WARN: Local LLM latency 2066ms"},{"Timestamp":"2025-10-29T02:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:25:05","Message":"WARN: Local LLM latency 2048ms"},{"Timestamp":"2025-10-29T02:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:30:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T02:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:35:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T02:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:40:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T02:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:45:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T02:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:50:05","Message":"WARN: Local LLM latency 2072ms"},{"Timestamp":"2025-10-29T02:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:55:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T02:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T02:55:05","Message":"SPIKE: Cloud AI latency 325ms (avg 283 +/- 15)"},{"Timestamp":"2025-10-29T03:00:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T03:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:05:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T03:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:10:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-29T03:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:10:05","Message":"SPIKE: Gateway latency 263ms (avg 224 +/- 9)"},{"Timestamp":"2025-10-29T03:15:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T03:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:20:16","Message":"WARN: Local LLM latency 2048ms"},{"Timestamp":"2025-10-29T03:20:16","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:20:16","Message":"SPIKE: Gateway latency 264ms (avg 228 +/- 15)"},{"Timestamp":"2025-10-29T03:25:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T03:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:30:05","Message":"WARN: Local LLM latency 2074ms"},{"Timestamp":"2025-10-29T03:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:35:05","Message":"WARN: Local LLM latency 2071ms"},{"Timestamp":"2025-10-29T03:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:40:05","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-29T03:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:45:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T03:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:50:05","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-29T03:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T03:55:05","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T03:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:00:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T04:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:05:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T04:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:10:05","Message":"WARN: Local LLM latency 2050ms"},{"Timestamp":"2025-10-29T04:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:15:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T04:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:20:05","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T04:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:25:09","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T04:25:09","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:30:06","Message":"WARN: Local LLM latency 2044ms"},{"Timestamp":"2025-10-29T04:30:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:35:05","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T04:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:35:05","Message":"SPIKE: Cloud AI latency 307ms (avg 273 +/- 8)"},{"Timestamp":"2025-10-29T04:40:05","Message":"WARN: Local LLM latency 2052ms"},{"Timestamp":"2025-10-29T04:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:40:05","Message":"SPIKE: Gateway latency 295ms (avg 230 +/- 9)"},{"Timestamp":"2025-10-29T04:45:05","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T04:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:45:05","Message":"SPIKE: Cloud AI latency 316ms (avg 273 +/- 12)"},{"Timestamp":"2025-10-29T04:50:05","Message":"WARN: Local LLM latency 2049ms"},{"Timestamp":"2025-10-29T04:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T04:55:05","Message":"WARN: Local LLM latency 2066ms"},{"Timestamp":"2025-10-29T04:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:00:05","Message":"WARN: Local LLM latency 2073ms"},{"Timestamp":"2025-10-29T05:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:05:05","Message":"WARN: Local LLM latency 2073ms"},{"Timestamp":"2025-10-29T05:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:10:05","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T05:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:15:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T05:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:20:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T05:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:25:05","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T05:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:30:09","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T05:30:09","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:35:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T05:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:40:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T05:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:45:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T05:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:50:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T05:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T05:55:05","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T05:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:00:05","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T06:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:00:05","Message":"SPIKE: Local LLM latency 2068ms (avg 2060 +/- 3)"},{"Timestamp":"2025-10-29T06:05:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T06:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:10:05","Message":"WARN: Local LLM latency 2048ms"},{"Timestamp":"2025-10-29T06:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:15:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T06:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:20:06","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T06:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:25:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T06:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:30:06","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T06:30:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:35:10","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T06:35:10","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:35:10","Message":"SPIKE: Cloud AI latency 315ms (avg 274 +/- 5)"},{"Timestamp":"2025-10-29T06:40:06","Message":"WARN: Local LLM latency 2072ms"},{"Timestamp":"2025-10-29T06:40:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:40:06","Message":"SPIKE: Local LLM latency 2072ms (avg 2060 +/- 5)"},{"Timestamp":"2025-10-29T06:45:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T06:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:50:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T06:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T06:55:06","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T06:55:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:00:06","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T07:00:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:00:06","Message":"SPIKE: Cloud AI latency 321ms (avg 279 +/- 15)"},{"Timestamp":"2025-10-29T07:00:06","Message":"SPIKE: Gateway latency 244ms (avg 225 +/- 7)"},{"Timestamp":"2025-10-29T07:05:06","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T07:05:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:10:06","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T07:10:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:15:06","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T07:15:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:20:06","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T07:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:25:06","Message":"WARN: Local LLM latency 2066ms"},{"Timestamp":"2025-10-29T07:25:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:30:06","Message":"WARN: Local LLM latency 2071ms"},{"Timestamp":"2025-10-29T07:30:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:35:06","Message":"WARN: Local LLM latency 2049ms"},{"Timestamp":"2025-10-29T07:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:40:09","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T07:40:09","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:45:06","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T07:45:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:50:06","Message":"WARN: Local LLM latency 2054ms"},{"Timestamp":"2025-10-29T07:50:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T07:55:06","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T07:55:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:00:06","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T08:00:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:05:06","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T08:05:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:10:06","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-29T08:10:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:15:06","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T08:15:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:20:06","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T08:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:25:06","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T08:25:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:30:19","Message":"WARN: Local LLM latency 2074ms"},{"Timestamp":"2025-10-29T08:30:19","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:30:19","Message":"SPIKE: Local LLM latency 2074ms (avg 2062 +/- 5)"},{"Timestamp":"2025-10-29T08:35:06","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T08:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:40:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T08:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:45:09","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T08:45:09","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:50:05","Message":"WARN: Local LLM latency 2041ms"},{"Timestamp":"2025-10-29T08:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:55:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T08:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T08:55:05","Message":"SPIKE: Cloud AI latency 295ms (avg 272 +/- 6)"},{"Timestamp":"2025-10-29T09:00:05","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-29T09:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:05:06","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T09:05:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:10:05","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-29T09:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:15:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-29T09:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:20:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T09:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:25:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T09:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:25:05","Message":"SPIKE: Cloud AI latency 295ms (avg 275 +/- 8)"},{"Timestamp":"2025-10-29T09:30:05","Message":"WARN: Local LLM latency 2073ms"},{"Timestamp":"2025-10-29T09:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:30:05","Message":"SPIKE: Local LLM latency 2073ms (avg 2056 +/- 7)"},{"Timestamp":"2025-10-29T09:35:05","Message":"WARN: Local LLM latency 2050ms"},{"Timestamp":"2025-10-29T09:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:40:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T09:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:45:05","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T09:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T09:45:05","Message":"SPIKE: Cloud AI latency 306ms (avg 279 +/- 12)"},{"Timestamp":"2025-10-29T09:50:11","Message":"WARN: Local LLM latency 2044ms"},{"Timestamp":"2025-10-29T09:50:11","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:00:08","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T10:00:08","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:05:05","Message":"WARN: Local LLM latency 2037ms"},{"Timestamp":"2025-10-29T10:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:10:05","Message":"WARN: Local LLM latency 2041ms"},{"Timestamp":"2025-10-29T10:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:15:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T10:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2057ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:20:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T10:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2056ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:20:05","Message":"SPIKE: Gateway latency 248ms (avg 219 +/- 2)"},{"Timestamp":"2025-10-29T10:25:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T10:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:30:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T10:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:30:05","Message":"SPIKE: Gateway latency 262ms (avg 222 +/- 9)"},{"Timestamp":"2025-10-29T10:35:05","Message":"WARN: Local LLM latency 2045ms"},{"Timestamp":"2025-10-29T10:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:40:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T10:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:45:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T10:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:50:05","Message":"WARN: Local LLM latency 2054ms"},{"Timestamp":"2025-10-29T10:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T10:50:05","Message":"SPIKE: Gateway latency 261ms (avg 228 +/- 15)"},{"Timestamp":"2025-10-29T10:55:07","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T10:55:07","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:00:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T11:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:05:05","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T11:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2055ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:05:05","Message":"SPIKE: Local LLM latency 2069ms (avg 2056 +/- 5)"},{"Timestamp":"2025-10-29T11:10:05","Message":"WARN: Local LLM latency 2066ms"},{"Timestamp":"2025-10-29T11:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2056ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:15:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-29T11:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2056ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:20:05","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-29T11:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2056ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:25:05","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T11:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2057ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:30:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T11:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2056ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:35:05","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-29T11:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2056ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:40:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T11:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2057ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:45:05","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T11:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2057ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:50:05","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T11:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:55:09","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T11:55:09","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T11:55:09","Message":"SPIKE: Gateway latency 4716ms (avg 222 +/- 6)"},{"Timestamp":"2025-10-29T12:00:05","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T12:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:00:05","Message":"SPIKE: Cloud AI latency 303ms (avg 274 +/- 6)"},{"Timestamp":"2025-10-29T12:05:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T12:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:10:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-29T12:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:15:05","Message":"WARN: Local LLM latency 2046ms"},{"Timestamp":"2025-10-29T12:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:20:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T12:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:25:05","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T12:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:30:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T12:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:35:05","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T12:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:40:05","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-29T12:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:45:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T12:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:50:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T12:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:55:05","Message":"WARN: Local LLM latency 2050ms"},{"Timestamp":"2025-10-29T12:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T12:55:05","Message":"SPIKE: Gateway latency 230ms (avg 220 +/- 4)"},{"Timestamp":"2025-10-29T13:00:08","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T13:00:08","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:05:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T13:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:05:05","Message":"SPIKE: Cloud AI latency 299ms (avg 270 +/- 6)"},{"Timestamp":"2025-10-29T13:10:05","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-29T13:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:10:05","Message":"SPIKE: Local LLM latency 2067ms (avg 2057 +/- 4)"},{"Timestamp":"2025-10-29T13:15:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T13:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:15:05","Message":"SPIKE: Gateway latency 251ms (avg 221 +/- 4)"},{"Timestamp":"2025-10-29T13:20:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T13:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:25:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T13:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:30:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T13:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:35:05","Message":"WARN: Local LLM latency 2067ms"},{"Timestamp":"2025-10-29T13:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:40:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T13:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:45:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T13:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:45:05","Message":"SPIKE: Cloud AI latency 295ms (avg 272 +/- 11)"},{"Timestamp":"2025-10-29T13:50:05","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T13:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T13:55:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T13:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:00:05","Message":"WARN: Local LLM latency 2075ms"},{"Timestamp":"2025-10-29T14:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:00:05","Message":"SPIKE: Local LLM latency 2075ms (avg 2059 +/- 6)"},{"Timestamp":"2025-10-29T14:05:10","Message":"WARN: Local LLM latency 2066ms"},{"Timestamp":"2025-10-29T14:05:10","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:05:10","Message":"SPIKE: Gateway latency 275ms (avg 223 +/- 10)"},{"Timestamp":"2025-10-29T14:10:05","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T14:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:15:05","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-29T14:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:15:05","Message":"SPIKE: Cloud AI latency 304ms (avg 274 +/- 10)"},{"Timestamp":"2025-10-29T14:20:05","Message":"WARN: Local LLM latency 2073ms"},{"Timestamp":"2025-10-29T14:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:25:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T14:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:30:05","Message":"WARN: Local LLM latency 2052ms"},{"Timestamp":"2025-10-29T14:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:35:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T14:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:40:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T14:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:45:05","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T14:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:50:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T14:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T14:55:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T14:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:00:05","Message":"WARN: Local LLM latency 2054ms"},{"Timestamp":"2025-10-29T15:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:05:05","Message":"WARN: Local LLM latency 2041ms"},{"Timestamp":"2025-10-29T15:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:10:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T15:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:15:05","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-29T15:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:20:05","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T15:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:25:05","Message":"WARN: Local LLM latency 2052ms"},{"Timestamp":"2025-10-29T15:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:25:05","Message":"SPIKE: Gateway latency 225ms (avg 219 +/- 3)"},{"Timestamp":"2025-10-29T15:30:05","Message":"WARN: Local LLM latency 2044ms"},{"Timestamp":"2025-10-29T15:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:35:06","Message":"WARN: Local LLM latency 2093ms"},{"Timestamp":"2025-10-29T15:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2058ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:35:06","Message":"SPIKE: Local LLM latency 2093ms (avg 2055 +/- 8)"},{"Timestamp":"2025-10-29T15:40:05","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T15:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:45:05","Message":"WARN: Local LLM latency 2068ms"},{"Timestamp":"2025-10-29T15:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:50:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T15:50:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T15:50:05","Message":"SPIKE: Cloud AI latency 295ms (avg 272 +/- 10)"},{"Timestamp":"2025-10-29T15:55:05","Message":"WARN: Local LLM latency 2057ms"},{"Timestamp":"2025-10-29T15:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:00:05","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T16:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:05:05","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T16:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:10:07","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T16:10:07","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:10:07","Message":"SPIKE: Gateway latency 234ms (avg 218 +/- 3)"},{"Timestamp":"2025-10-29T16:15:05","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T16:15:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:20:05","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T16:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:25:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-29T16:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:30:05","Message":"WARN: Local LLM latency 2048ms"},{"Timestamp":"2025-10-29T16:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:35:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-29T16:35:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:40:05","Message":"WARN: Local LLM latency 2072ms"},{"Timestamp":"2025-10-29T16:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:45:05","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T16:45:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:50:06","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T16:50:06","Message":"WARN: Cloud AI latency 721ms"},{"Timestamp":"2025-10-29T16:50:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T16:50:06","Message":"SPIKE: Cloud AI latency 721ms (avg 268 +/- 22)"},{"Timestamp":"2025-10-29T16:50:06","Message":"SPIKE: Gateway latency 252ms (avg 222 +/- 5)"},{"Timestamp":"2025-10-29T16:55:05","Message":"WARN: Local LLM latency 2070ms"},{"Timestamp":"2025-10-29T16:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:00:06","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T17:00:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:05:07","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T17:05:07","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:10:09","Message":"WARN: Local LLM latency 2063ms"},{"Timestamp":"2025-10-29T17:10:09","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:10:09","Message":"SPIKE: Gateway latency 4061ms (avg 225 +/- 10)"},{"Timestamp":"2025-10-29T17:15:06","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T17:15:06","Message":"BASELINE WARN: Local LLM sustained latency 2064ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:20:06","Message":"WARN: Local LLM latency 2058ms"},{"Timestamp":"2025-10-29T17:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:25:05","Message":"WARN: Local LLM latency 2074ms"},{"Timestamp":"2025-10-29T17:25:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:30:06","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T17:30:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:35:06","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T17:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:40:06","Message":"WARN: Local LLM latency 2061ms"},{"Timestamp":"2025-10-29T17:40:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:45:06","Message":"WARN: Local LLM latency 2069ms"},{"Timestamp":"2025-10-29T17:45:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:50:06","Message":"WARN: Local LLM latency 2049ms"},{"Timestamp":"2025-10-29T17:50:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T17:55:06","Message":"WARN: Local LLM latency 2075ms"},{"Timestamp":"2025-10-29T17:55:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:00:05","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T18:00:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:05:05","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T18:05:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:10:05","Message":"WARN: Local LLM latency 2055ms"},{"Timestamp":"2025-10-29T18:10:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:15:09","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T18:15:09","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:20:06","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T18:20:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:20:06","Message":"SPIKE: Cloud AI latency 283ms (avg 269 +/- 5)"},{"Timestamp":"2025-10-29T18:25:06","Message":"WARN: Local LLM latency 2062ms"},{"Timestamp":"2025-10-29T18:25:06","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:25:06","Message":"SPIKE: Cloud AI latency 298ms (avg 270 +/- 6)"},{"Timestamp":"2025-10-29T18:30:05","Message":"WARN: Local LLM latency 2046ms"},{"Timestamp":"2025-10-29T18:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2063ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:35:06","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T18:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:35:06","Message":"SPIKE: Cloud AI latency 333ms (avg 268 +/- 20)"},{"Timestamp":"2025-10-29T18:40:06","Message":"WARN: Local LLM latency 2059ms"},{"Timestamp":"2025-10-29T18:40:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:45:06","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T18:45:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:50:06","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T18:50:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T18:55:06","Message":"WARN: Local LLM latency 2066ms"},{"Timestamp":"2025-10-29T18:55:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:05:07","Message":"WARN: Local LLM latency 2050ms"},{"Timestamp":"2025-10-29T19:05:07","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:10:06","Message":"WARN: Local LLM latency 2091ms"},{"Timestamp":"2025-10-29T19:10:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:10:06","Message":"SPIKE: Local LLM latency 2091ms (avg 2060 +/- 7)"},{"Timestamp":"2025-10-29T19:10:06","Message":"SPIKE: Gateway latency 235ms (avg 220 +/- 3)"},{"Timestamp":"2025-10-29T19:15:06","Message":"WARN: Local LLM latency 2053ms"},{"Timestamp":"2025-10-29T19:15:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:20:05","Message":"WARN: Local LLM latency 2064ms"},{"Timestamp":"2025-10-29T19:20:05","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:25:06","Message":"WARN: Local LLM latency 2051ms"},{"Timestamp":"2025-10-29T19:25:06","Message":"BASELINE WARN: Local LLM sustained latency 2062ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:30:05","Message":"WARN: Local LLM latency 2044ms"},{"Timestamp":"2025-10-29T19:30:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:35:06","Message":"WARN: Local LLM latency 2066ms"},{"Timestamp":"2025-10-29T19:35:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:40:05","Message":"WARN: Local LLM latency 2075ms"},{"Timestamp":"2025-10-29T19:40:05","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:45:06","Message":"WARN: Local LLM latency 2052ms"},{"Timestamp":"2025-10-29T19:45:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:50:06","Message":"WARN: Local LLM latency 2036ms"},{"Timestamp":"2025-10-29T19:50:06","Message":"BASELINE WARN: Local LLM sustained latency 2061ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T19:55:05","Message":"WARN: Local LLM latency 2065ms"},{"Timestamp":"2025-10-29T19:55:05","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T20:00:06","Message":"WARN: Local LLM latency 2060ms"},{"Timestamp":"2025-10-29T20:00:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T20:05:06","Message":"WARN: Local LLM latency 2056ms"},{"Timestamp":"2025-10-29T20:05:06","Message":"BASELINE WARN: Local LLM sustained latency 2060ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T20:10:06","Message":"WARN: Local LLM latency 2081ms"},{"Timestamp":"2025-10-29T20:10:06","Message":"BASELINE WARN: Local LLM sustained latency 2059ms (avg over 20 samples)"},{"Timestamp":"2025-10-29T20:10:06","Message":"SPIKE: Local LLM latency 2081ms (avg 2057 +/- 12)"}],"Critical":[{"Timestamp":"2025-10-29T11:55:09","Message":"ALERT: Lumen Gateway latency 4716ms"},{"Timestamp":"2025-10-29T12:50:05","Message":"Cloud AI offline (429)"},{"Timestamp":"2025-10-29T17:10:09","Message":"ALERT: Lumen Gateway latency 4061ms"}]}}');
+
+        // Global state for persona trend metric and charts
+        let personaTrendMetric = (function () {
+            try { return localStorage.getItem('personaTrendMetric') || 'success'; } catch (_) { return 'success'; }
+        })(); // 'success' | 'duration'
+        let agiPersonaBarChart = null;
+        let personaSparkCharts = {};
+        // Global chart instances to prevent duplicate overlays on auto-refresh
+        let severityChartInstance = null;
+        let latencyChartInstance = null;
+        let availabilityChartInstance = null;
+        let agiQualityChartInstance = null;
+        let agiEventTypesChartInstance = null;
+        let agiTimelineChartInstance = null;
+        let ecForcedSparkChart = null;
+        // Forced samples sort/filter state
+        let ecForcedSort = { key: 'time', dir: 'desc' };
+        let ecForcedFilterSuccessOnly = false;
+
+        // ====== Lazy rendering support ======
+        let lazyObserver = null;
+        const renderedLazyTargets = new Set();
+        const lazyTargets = [];
+
+        function renderIfVisible(id, renderFn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const rect = el.getBoundingClientRect();
+            const inViewport = (rect.top < window.innerHeight) && (rect.bottom > 0);
+            if (inViewport) {
+                try { renderFn(); renderedLazyTargets.add(id); } catch (e) { console.error('lazy render error', id, e); }
+            } else {
+                // observe for later
+                if (lazyObserver) lazyObserver.observe(el);
+            }
+        }
+
+        function primeLazyCharts() {
+            // define targets once
+            if (lazyTargets.length === 0) {
+                lazyTargets.push(
+                    { id: 'severityChart', fn: createSeverityChart },
+                    { id: 'latencyChart', fn: createLatencyChart },
+                    { id: 'availabilityChart', fn: createAvailabilityChart },
+                    { id: 'agiQualityChart', fn: createAGIQualityChart },
+                    { id: 'agiEventTypesChart', fn: createAGIEventTypesChart },
+                    { id: 'agiTimelineChart', fn: updateAGITimeline },
+                    { id: 'agiPersonaChart', fn: updateAGIPersonaSection }
+                );
+            }
+
+            // init observer once
+            if (!lazyObserver && 'IntersectionObserver' in window) {
+                lazyObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const id = entry.target.id;
+                            const target = lazyTargets.find(t => t.id === id);
+                            if (target && !renderedLazyTargets.has(id)) {
+                                try { target.fn(); renderedLazyTargets.add(id); } catch (e) { console.error('observer render error', id, e); }
+                            }
+                            if (lazyObserver) lazyObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { root: null, rootMargin: '100px', threshold: 0.01 });
+            }
+
+            // attempt immediate renders for visible targets; observe others
+            lazyTargets.forEach(t => renderIfVisible(t.id, t.fn));
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            updateExecutiveSummary();
+            // Defer heavy chart rendering
+            primeLazyCharts();
+            updateAGIStatus();
+            updateEvidenceGateSection();
+            // Heavy AGI charts are lazily rendered
+            updateHealthServices();
+            // Persona section: ensure visibility/table updated; chart will also be created here (may be heavy)
+            // If performance becomes an issue, split table vs chart rendering in future.
+            updateAGIPersonaSection();
+            updateChannelStatsTable();
+            updatePeriodComparison();
+            displayCriticalAlerts();
+            renderSessionMemory();
+        }
+
+        function fmtPct(v, digits = 1) {
+            if (v === null || v === undefined || isNaN(v)) return '--';
+            // v may be already percent (0-100) or fraction (0-1) depending on source
+            // EvidenceCorrection.success_rate is 0..1 (per PS1 script multiply? It stores fraction with 3 decimals)
+            // Check and normalize: if <= 1.5 assume fraction
+            const pct = (Math.abs(v) <= 1.5) ? (v * 100) : v;
+            return `${pct.toFixed(digits)}%`;
+        }
+
+        function updateEvidenceGateSection() {
+            try {
+                const agi = metricsData.AGI || {};
+                const ec = agi.EvidenceCorrection || {};
+                const section = document.getElementById('evidenceGateSection');
+                if (!ec || Object.keys(ec).length === 0) {
+                    section.style.display = 'none';
+                    return;
+                }
+
+                section.style.display = 'block';
+
+                // Load thresholds (with safe fallbacks)
+                const thr = agi.Thresholds ?? agi.Health?.thresholds_ui ?? agi.Health?.thresholds ?? {};
+                const ecWarn = (typeof thr?.evidence_forced_warn_percent === 'number') ? thr.evidence_forced_warn_percent : 70;
+                const ecCrit = (typeof thr?.evidence_forced_crit_percent === 'number') ? thr.evidence_forced_crit_percent : 50;
+                const maWindow = (function () {
+                    const v = Math.floor(thr?.evidence_forced_ma_window ?? 5);
+                    if (!isFinite(v) || v < 2) return 5; if (v > 50) return 50; return v;
+                })();
+
+                const attempts = ec.attempts ?? 0;
+                const avgHits = typeof ec.avg_hits === 'number' ? ec.avg_hits : null;
+                const avgAdded = typeof ec.avg_added === 'number' ? ec.avg_added : null;
+                const avgRel = typeof ec.avg_relevance === 'number' ? ec.avg_relevance : null;
+                const succ = typeof ec.success_rate === 'number' ? ec.success_rate : null; // 0..1
+                const fb = typeof ec.fallback_rate === 'number' ? ec.fallback_rate : null; // 0..1
+
+                document.getElementById('ecAttempts').textContent = attempts.toString();
+                document.getElementById('ecAvgHits').textContent = avgHits !== null ? avgHits.toFixed(2) : '--';
+                document.getElementById('ecAvgAdded').textContent = avgAdded !== null ? avgAdded.toFixed(2) : '--';
+                document.getElementById('ecAvgRel').textContent = avgRel !== null ? avgRel.toFixed(3) : '--';
+                document.getElementById('ecSuccessRate').textContent = fmtPct(succ, 1);
+                document.getElementById('ecFallbackRate').textContent = fmtPct(fb, 1);
+
+                const forcedAttempts = ec.forced_attempts ?? 0;
+                const forcedAvgHits = typeof ec.forced_avg_hits === 'number' ? ec.forced_avg_hits : null;
+                const forcedAvgAdded = typeof ec.forced_avg_added === 'number' ? ec.forced_avg_added : null;
+                const forcedSucc = typeof ec.forced_success_rate === 'number' ? ec.forced_success_rate : null; // 0..1
+
+                document.getElementById('ecForcedAttempts').textContent = forcedAttempts.toString();
+                document.getElementById('ecForcedAvgHits').textContent = forcedAvgHits !== null ? forcedAvgHits.toFixed(2) : '--';
+                document.getElementById('ecForcedAvgAdded').textContent = forcedAvgAdded !== null ? forcedAvgAdded.toFixed(2) : '--';
+                document.getElementById('ecForcedSuccessRate').textContent = fmtPct(forcedSucc, 1);
+
+                const summary = document.getElementById('evidenceGateSummary');
+                summary.textContent = `${attempts} attempts • ${fmtPct(succ, 1)} success`;
+
+                // Badge colorization based on configurable thresholds
+                const pct = (typeof forcedSucc === 'number') ? (forcedSucc * 100) : null;
+                summary.className = 'badge ' + (
+                    forcedAttempts === 0 ? 'bg-secondary' :
+                        (pct === null ? 'bg-secondary' : (pct < ecCrit ? 'bg-danger' : (pct < ecWarn ? 'bg-warning' : 'bg-success')))
+                );
+
+                const forcedNote = document.getElementById('ecForcedNote');
+                forcedNote.style.display = forcedAttempts > 0 ? 'none' : 'block';
+
+                // Warning banner if forced success rate is below target
+                const warn = document.getElementById('ecForcedWarning');
+                if (forcedAttempts > 0 && typeof forcedSucc === 'number' && (forcedSucc * 100) < ecWarn) {
+                    warn.classList.remove('d-none');
+                } else {
+                    warn.classList.add('d-none');
+                }
+
+                // Render sparkline
+                try {
+                    const spark = Array.isArray(ec.forced_success_sparkline) ? ec.forced_success_sparkline : [];
+                    const ctx = document.getElementById('ecForcedSparkline').getContext('2d');
+                    if (ecForcedSparkChart) { ecForcedSparkChart.destroy(); ecForcedSparkChart = null; }
+                    if (spark.length > 0) {
+                        // Compute simple trailing moving average for overlay
+                        const k = maWindow;
+                        const ma = [];
+                        for (let i = 0; i < spark.length; i++) {
+                            const s = Math.max(0, i - k + 1);
+                            let sum = 0; let cnt = 0;
+                            for (let j = s; j <= i; j++) { const v = Number(spark[j]); if (isFinite(v)) { sum += v; cnt++; } }
+                            ma.push(cnt > 0 ? (sum / cnt) : null);
+                        }
+
+                        ecForcedSparkChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: spark.map((_, i) => '' + (i + 1)),
+                                datasets: [{
+                                    label: 'Forced Success',
+                                    data: spark,
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                    fill: true,
+                                    pointRadius: 0,
+                                    tension: 0.25
+                                }, {
+                                    label: 'Moving Avg',
+                                    data: ma,
+                                    borderColor: '#2563eb',
+                                    backgroundColor: 'rgba(0,0,0,0)',
+                                    fill: false,
+                                    pointRadius: 0,
+                                    tension: 0.15,
+                                    borderWidth: 1.5,
+                                    spanGaps: true
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: { display: false },
+                                    y: { display: false, min: 0, max: 1 }
+                                },
+                                plugins: { legend: { display: false }, tooltip: { enabled: false } }
+                            }
+                        });
+                    }
+                } catch (e) { console.warn('Forced sparkline render failed', e); }
+
+                // Render recent samples table with sort/filter
+                try {
+                    const samples = Array.isArray(ec.forced_samples) ? ec.forced_samples : [];
+                    // hook up filter checkbox (one-time)
+                    const chk = document.getElementById('ecForcedFilterSuccess');
+                    if (chk && !chk._forcedBound) {
+                        chk._forcedBound = true;
+                        chk.addEventListener('change', () => {
+                            ecForcedFilterSuccessOnly = !!chk.checked;
+                            renderForcedSamplesTable(samples);
+                        });
+                    }
+                    // initial checkbox sync (in case of auto-refresh)
+                    if (chk) chk.checked = !!ecForcedFilterSuccessOnly;
+                    renderForcedSamplesTable(samples);
+                } catch (e) { console.warn('Forced samples render failed', e); }
+            } catch (e) {
+                try { document.getElementById('evidenceGateSection').style.display = 'none'; } catch (_) { }
+                console.error('updateEvidenceGateSection error', e);
+            }
+        }
+
+        function sortForcedSamples(key) {
+            try {
+                if (!key) return;
+                if (ecForcedSort.key === key) {
+                    ecForcedSort.dir = (ecForcedSort.dir === 'asc') ? 'desc' : 'asc';
+                } else {
+                    ecForcedSort = { key, dir: (key === 'time') ? 'desc' : 'asc' };
+                }
+                const agi = metricsData.AGI || {};
+                const ec = agi.EvidenceCorrection || {};
+                const samples = Array.isArray(ec.forced_samples) ? ec.forced_samples : [];
+                renderForcedSamplesTable(samples);
+            } catch (e) { console.warn('sortForcedSamples error', e); }
+        }
+
+        function renderForcedSamplesTable(samplesRaw) {
+            const tbody = document.getElementById('ecForcedSamplesTable');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const arr = Array.isArray(samplesRaw) ? [...samplesRaw] : [];
+            // filter
+            let filtered = ecForcedFilterSuccessOnly ? arr.filter(s => !!s.success) : arr;
+            // sort
+            const key = ecForcedSort.key;
+            const dir = ecForcedSort.dir === 'asc' ? 1 : -1;
+            const toNum = (v) => (v === null || v === undefined || v === '' || Number.isNaN(Number(v))) ? null : Number(v);
+            filtered.sort((a, b) => {
+                if (key === 'time') {
+                    const ta = a.time ? new Date(a.time).getTime() : 0;
+                    const tb = b.time ? new Date(b.time).getTime() : 0;
+                    return (ta - tb) * dir;
+                }
+                if (key === 'success' || key === 'fallback') {
+                    const va = a[key] ? 1 : 0; const vb = b[key] ? 1 : 0; return (va - vb) * dir;
+                }
+                const na = toNum(a[key]);
+                const nb = toNum(b[key]);
+                if (na === null && nb === null) return 0;
+                if (na === null) return 1; // nulls last
+                if (nb === null) return -1;
+                return (na - nb) * dir;
+            });
+            // build rows
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-muted">No samples</td></tr>';
+                return;
+            }
+            for (const s of filtered) {
+                const tr = document.createElement('tr');
+                const t = (s.time ? new Date(s.time).toLocaleString() : '--');
+                tr.innerHTML = `
+                    <td>${t}</td>
+                    <td>${(s.hits ?? '--')}</td>
+                    <td>${(s.added ?? '--')}</td>
+                    <td>${(typeof s.avg_relevance === 'number' ? s.avg_relevance.toFixed(3) : '--')}</td>
+                    <td>${s.success ? '<span class="badge bg-success">YES</span>' : '<span class="badge bg-secondary">NO</span>'}</td>
+                    <td>${s.fallback ? '<span class="badge bg-warning text-dark">YES</span>' : '<span class="badge bg-secondary">NO</span>'}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function updateAGIStatus() {
+            const agi = metricsData.AGI;
+
+            if (!agi || agi.TotalEvents === 0) {
+                document.getElementById('agiStatusBadge').textContent = 'No Activity';
+                document.getElementById('agiStatusBadge').className = 'badge bg-secondary';
+                document.getElementById('agiTotalEvents').textContent = '0';
+                document.getElementById('agiTaskCount').textContent = '0';
+                document.getElementById('agiAvgQuality').textContent = '--';
+                document.getElementById('agiSuccessRate').textContent = '--';
+                return;
+            }
+
+            document.getElementById('agiTotalEvents').textContent = agi.TotalEvents;
+            document.getElementById('agiTaskCount').textContent = agi.TaskCount;
+            document.getElementById('agiAvgQuality').textContent = agi.AvgQuality ? agi.AvgQuality.toFixed(2) : '--';
+            document.getElementById('agiSuccessRate').textContent = agi.SuccessRate ? `${agi.SuccessRate}%` : '--';
+
+            // Status badge based on success rate and alerts
+            const badge = document.getElementById('agiStatusBadge');
+            const hasAlerts = agi.Alerts && (
+                agi.Alerts.LowQuality ||
+                agi.Alerts.LowSuccessRate ||
+                agi.Alerts.HighReplanRate ||
+                agi.Alerts.HighAvgDuration ||
+                agi.Alerts.Inactive
+            );
+
+            if (hasAlerts) {
+                if (agi.Alerts.LowQuality || agi.Alerts.LowSuccessRate) {
+                    badge.textContent = 'CRITICAL';
+                    badge.className = 'badge bg-danger';
+                } else {
+                    badge.textContent = 'WARNING';
+                    badge.className = 'badge bg-warning';
+                }
+            } else if (agi.SuccessRate >= 80) {
+                badge.textContent = 'EXCELLENT';
+                badge.className = 'badge bg-success';
+            } else if (agi.SuccessRate >= 70) {
+                badge.textContent = 'GOOD';
+                badge.className = 'badge bg-warning';
+            } else {
+                badge.textContent = 'DEGRADED';
+                badge.className = 'badge bg-danger';
+            }
+
+            // Safe Mode from metrics (if provided)
+            try {
+                const safeFromMetrics = !!(agi?.Health?.safe_mode || agi?.Health?.SafeMode || agi?.SafeMode);
+                updateSafeModeBadge(safeFromMetrics);
+            } catch (_) { /* ignore */ }
+
+            // Display AGI alerts if any
+            displayAGIAlerts();
+        }
+
+        function updateAGIPersonaSection() {
+            const agi = metricsData.AGI;
+            const section = document.getElementById('agiPersonaSection');
+            const tableBody = document.getElementById('agiPersonaTable');
+            const badge = document.getElementById('agiPersonaSummary');
+
+            if (!agi || !agi.PersonaStats || Object.keys(agi.PersonaStats).length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = 'flex';
+
+            // Update toggle UI and header label
+            updatePersonaTrendToggleUI();
+
+            // Transform stats into arrays
+            const entries = Object.entries(agi.PersonaStats).map(([name, v]) => ({
+                name,
+                total: v.total_calls ?? 0,
+                successRate: typeof v.success_rate === 'number' ? v.success_rate : 0,
+                avgDuration: typeof v.avg_duration === 'number' ? v.avg_duration : null
+            }));
+
+            // Sort by total desc
+            entries.sort((a, b) => b.total - a.total);
+
+            // Summary badge
+            const totalCalls = entries.reduce((s, e) => s + e.total, 0);
+            const weightedSuccess = entries.reduce((s, e) => s + e.successRate * e.total, 0) / (totalCalls || 1);
+            badge.textContent = `${totalCalls} calls • ${(weightedSuccess * 100).toFixed(1)}% avg`;
+
+            // Helper: slugify persona name for element IDs
+            const slugify = (s) => s.replace(/[^a-zA-Z0-9_-]+/g, '_');
+
+            // Table rendering with inline status dots + sparkline cell
+            tableBody.innerHTML = entries.map(e => {
+                const srPct = e.successRate * 100;
+                const thr = agi.Thresholds ?? agi.Health?.thresholds_ui ?? agi.Health?.thresholds ?? {};
+                const personaWarn = thr?.persona?.low_success_warn_percent ?? 60;
+                const personaCrit = thr?.persona?.low_success_crit_percent ?? 50;
+                const durationThreshold = thr?.persona?.slow_duration_sec ?? (thr?.max_avg_duration_sec ?? 10);
+                const dot = (() => {
+                    if (srPct < personaCrit) return '<span title="very low success" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:6px;"></span>';
+                    if (srPct < personaWarn) return '<span title="low success" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:6px;"></span>';
+                    if (e.avgDuration !== null && e.avgDuration > durationThreshold) return '<span title="slow" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:6px;"></span>';
+                    return '<span title="ok" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;margin-right:6px;"></span>';
+                })();
+                const canvasId = `persona_spark_${slugify(e.name)}`;
+                return `
+                <tr>
+                    <td>${dot}${e.name}</td>
+                    <td class="text-end">${e.total}</td>
+                    <td class="text-end">${srPct.toFixed(1)}%</td>
+                    <td class="text-end">${e.avgDuration !== null ? e.avgDuration.toFixed(1) + 's' : '-'}</td>
+                    <td class="text-end"><canvas id="${canvasId}" width="120" height="24" style="max-width:140px; height:24px;"></canvas></td>
+                </tr>`;
+            }).join('');
+
+            // Chart rendering
+            const ctx = document.getElementById('agiPersonaChart').getContext('2d');
+            const labels = entries.map(e => e.name);
+            const totals = entries.map(e => e.total);
+            const colors = entries.map(e => {
+                const pct = e.successRate * 100;
+                const thr = agi.Thresholds ?? agi.Health?.thresholds_ui ?? agi.Health?.thresholds ?? {};
+                const personaWarn = thr?.persona?.low_success_warn_percent ?? 60;
+                if (pct >= 80) return 'rgba(16, 185, 129, 0.8)';
+                if (pct >= personaWarn) return 'rgba(245, 158, 11, 0.8)';
+                return 'rgba(239, 68, 68, 0.8)';
+            });
+
+            // Destroy previous chart instance if exists
+            if (agiPersonaBarChart && typeof agiPersonaBarChart.destroy === 'function') {
+                try { agiPersonaBarChart.destroy(); } catch (e) { }
+                agiPersonaBarChart = null;
+            }
+
+            agiPersonaBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Calls',
+                        data: totals,
+                        backgroundColor: colors
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const idx = context.dataIndex;
+                                    const e = entries[idx];
+                                    const sr = (e.successRate * 100).toFixed(1);
+                                    const dur = e.avgDuration !== null ? e.avgDuration.toFixed(1) + 's' : '-';
+                                    const val = context.parsed.y ?? context.parsed;
+                                    return ` ${val} calls • ${sr}% • ${dur}`;
+                                }
+                            }
+                        },
+                        title: { display: true, text: 'Persona Calls (color by success rate)' }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { precision: 0 } }
+                    }
+                }
+            });
+
+            // Render tiny sparklines for each persona (success rate over time)
+            const personaTimeline = agi.PersonaTimeline;
+            if (personaTimeline && personaTimeline.personas && personaTimeline.bins && personaTimeline.bins.length > 0) {
+                // Destroy old spark charts
+                for (const key in personaSparkCharts) {
+                    if (personaSparkCharts[key] && typeof personaSparkCharts[key].destroy === 'function') {
+                        try { personaSparkCharts[key].destroy(); } catch (e) { }
+                    }
+                }
+                personaSparkCharts = {};
+
+                entries.forEach(e => {
+                    const pid = `persona_spark_${slugify(e.name)}`;
+                    const el = document.getElementById(pid);
+                    if (!el) return;
+                    const p = personaTimeline.personas[e.name];
+                    const seriesSucc = p?.success_rate ?? [];
+                    const seriesDur = p?.avg_duration ?? [];
+                    const chosenSeries = personaTrendMetric === 'success'
+                        ? seriesSucc.map(v => v !== null ? (v * 100) : null)
+                        : seriesDur;
+                    if (!chosenSeries || chosenSeries.length === 0) return;
+
+                    const thr = agi.Thresholds ?? agi.Health?.thresholds_ui ?? agi.Health?.thresholds ?? {};
+                    const personaWarn = thr?.persona?.low_success_warn_percent ?? 60;
+                    const personaCrit = thr?.persona?.low_success_crit_percent ?? 50;
+                    const personaSlow = thr?.persona?.slow_duration_sec ?? (thr?.max_avg_duration_sec ?? 10);
+
+                    const lastVal = (chosenSeries.filter(v => v !== null).pop() ?? 0);
+                    let stroke = '#9ca3af'; // default gray
+                    if (personaTrendMetric === 'success') {
+                        if (lastVal < personaCrit) stroke = '#ef4444';
+                        else if (lastVal < personaWarn) stroke = '#f59e0b';
+                        else stroke = '#10b981';
+                    } else {
+                        if (lastVal > (personaSlow + 5)) stroke = '#ef4444';
+                        else if (lastVal > personaSlow) stroke = '#f59e0b';
+                        else stroke = '#10b981';
+                    }
+
+                    const bins = personaTimeline.bins || [];
+                    personaSparkCharts[pid] = new Chart(el.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: bins.map(() => ''),
+                            datasets: [{
+                                data: chosenSeries,
+                                borderColor: stroke,
+                                backgroundColor: 'rgba(0,0,0,0)',
+                                pointRadius: 0,
+                                spanGaps: true,
+                                tension: 0.35,
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: false,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    enabled: true,
+                                    callbacks: {
+                                        label: function (context) {
+                                            const idx = context.dataIndex;
+                                            const ts = bins[idx] ? new Date(bins[idx]).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) : '';
+                                            const val = context.parsed.y ?? context.parsed;
+                                            const unit = personaTrendMetric === 'success' ? '%' : 's';
+                                            return ` ${ts} • ${val !== null ? val.toFixed(1) + unit : '-'} `;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: { display: false },
+                                y: {
+                                    display: false,
+                                    suggestedMin: 0,
+                                    suggestedMax: personaTrendMetric === 'success' ? 100 : undefined
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        function togglePersonaTrendMetric() {
+            personaTrendMetric = (personaTrendMetric === 'success') ? 'duration' : 'success';
+            try { localStorage.setItem('personaTrendMetric', personaTrendMetric); } catch (_) { }
+            updatePersonaTrendToggleUI();
+            updateAGIPersonaSection();
+        }
+
+        function updatePersonaTrendToggleUI() {
+            const btn = document.getElementById('personaTrendToggleBtn');
+            const th = document.getElementById('trendHeader');
+            if (!btn || !th) return;
+            if (personaTrendMetric === 'success') {
+                btn.textContent = 'Trend: Success%';
+                th.textContent = 'Trend (succ%)';
+            } else {
+                btn.textContent = 'Trend: Duration(s)';
+                th.textContent = 'Trend (dur)';
+            }
+        }
+
+        function displayAGIAlerts() {
+            const agi = metricsData.AGI;
+            if (!agi || !agi.Alerts) return;
+
+            const alerts = [];
+
+            // Use thresholds from JSON when available (prefer AGI.Thresholds injected by generator)
+            const thr = agi.Thresholds ?? agi.Health?.thresholds_ui ?? agi.Health?.thresholds ?? {};
+            const qualityThreshold = thr?.min_quality ?? 0.6;
+            const confidenceThreshold = thr?.min_confidence ?? 0.6;
+            const durationThreshold = thr?.max_avg_duration_sec ?? 10; // seconds
+            const successRateThreshold = thr?.min_success_rate_percent ?? 70; // %
+            const successRateCrit = thr?.success_crit_percent ?? (successRateThreshold - 10); // dynamic critical cutoff
+            const replanRateThreshold = thr?.replan_rate_percent ?? 10; // %
+            const inactiveWarnHours = thr?.inactive_hours ?? 2; // hours
+            const inactiveCritHours = thr?.inactive_crit_hours ?? (inactiveWarnHours * 3);
+
+            if (agi.Alerts.LowQuality) {
+                alerts.push({
+                    severity: agi.AvgQuality < (qualityThreshold - 0.1) ? 'danger' : 'warning',
+                    icon: agi.AvgQuality < (qualityThreshold - 0.1) ? '🔴' : '🟡',
+                    message: `AGI Quality Low: ${agi.AvgQuality.toFixed(2)} (threshold: ${qualityThreshold})`
+                });
+            }
+
+            if (agi.Alerts.LowSuccessRate) {
+                alerts.push({
+                    severity: agi.SuccessRate < successRateCrit ? 'danger' : 'warning',
+                    icon: agi.SuccessRate < successRateCrit ? '🔴' : '🟡',
+                    message: `AGI Success Rate Low: ${agi.SuccessRate}% (threshold: ${successRateThreshold}%, crit: < ${successRateCrit}%)`
+                });
+            }
+
+            if (agi.Alerts.HighReplanRate) {
+                alerts.push({
+                    severity: agi.ReplanRate > replanRateThreshold ? 'danger' : 'warning',
+                    icon: agi.ReplanRate > replanRateThreshold ? '🔴' : '🟡',
+                    message: `AGI Replan Rate High: ${agi.ReplanRate}% (threshold: ${replanRateThreshold}%)`
+                });
+            }
+
+            if (agi.Alerts.HighAvgDuration) {
+                alerts.push({
+                    severity: agi.AvgDuration > (durationThreshold + 5) ? 'danger' : 'warning',
+                    icon: agi.AvgDuration > (durationThreshold + 5) ? '🔴' : '🟡',
+                    message: `AGI Duration High: ${agi.AvgDuration.toFixed(1)}s (threshold: ${durationThreshold}s)`
+                });
+            }
+
+            if (agi.Alerts.Inactive) {
+                const lastActivity = new Date(agi.LastActivity);
+                const hoursSinceNum = (new Date() - lastActivity) / 3600000;
+                const hoursSince = hoursSinceNum.toFixed(1);
+                alerts.push({
+                    severity: hoursSinceNum > inactiveCritHours ? 'danger' : 'warning',
+                    icon: hoursSinceNum > inactiveCritHours ? '🔴' : '🟡',
+                    message: `AGI Inactive: ${hoursSince}h since last activity (warn ≥ ${inactiveWarnHours}h, crit > ${inactiveCritHours}h)`
+                });
+            }
+
+            // Persona-specific alerts (use configurable thresholds when available)
+            if (agi.PersonaStats && Object.keys(agi.PersonaStats).length > 0) {
+                const lowSuccessList = [];
+                const veryLowSuccessList = [];
+                const slowPersonaList = [];
+
+                const personaWarn = agi.Health?.thresholds?.persona?.low_success_warn_percent ?? 60;
+                const personaCrit = agi.Health?.thresholds?.persona?.low_success_crit_percent ?? 50;
+                const personaSlow = agi.Health?.thresholds?.persona?.slow_duration_sec ?? durationThreshold;
+
+                Object.entries(agi.PersonaStats).forEach(([name, v]) => {
+                    const srPct = typeof v.success_rate === 'number' ? v.success_rate * 100 : null;
+                    const avgDur = typeof v.avg_duration === 'number' ? v.avg_duration : null;
+
+                    if (srPct !== null) {
+                        if (srPct < personaCrit) veryLowSuccessList.push(`${name} ${srPct.toFixed(1)}%`);
+                        else if (srPct < personaWarn) lowSuccessList.push(`${name} ${srPct.toFixed(1)}%`);
+                    }
+
+                    if (avgDur !== null && avgDur > personaSlow) {
+                        slowPersonaList.push(`${name} ${avgDur.toFixed(1)}s`);
+                    }
+                });
+
+                if (veryLowSuccessList.length > 0 || lowSuccessList.length > 0) {
+                    const isCritical = veryLowSuccessList.length > 0;
+                    const merged = [...veryLowSuccessList, ...lowSuccessList].join(', ');
+                    alerts.push({
+                        severity: isCritical ? 'danger' : 'warning',
+                        icon: isCritical ? '🔴' : '🟡',
+                        message: `Persona Low Success: ${merged} (threshold: ${personaWarn}%)`
+                    });
+                }
+
+                if (slowPersonaList.length > 0) {
+                    alerts.push({
+                        severity: 'warning',
+                        icon: '🟡',
+                        message: `Persona Slow Duration: ${slowPersonaList.join(', ')} (threshold: ${personaSlow}s)`
+                    });
+                }
+            }
+
+            if (alerts.length > 0) {
+                const container = document.querySelector('#agiAlertContainer');
+                if (!container) {
+                    // Create alert container in AGI card if it doesn't exist
+                    const agiCard = document.querySelector('#agiStatusBadge').closest('.card').querySelector('.card-body');
+                    const alertDiv = document.createElement('div');
+                    alertDiv.id = 'agiAlertContainer';
+                    alertDiv.className = 'alert-container mb-3';
+                    agiCard.insertBefore(alertDiv, agiCard.firstChild);
+                }
+
+                const alertContainer = document.getElementById('agiAlertContainer');
+                alertContainer.innerHTML = alerts.map(alert => `
+                    <div class="alert alert-${alert.severity} mb-2" role="alert">
+                        <strong>${alert.icon}</strong> ${alert.message}
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updateAGITimeline() {
+            const agi = metricsData.AGI;
+            if (!agi || !agi.Timeline || agi.Timeline.length === 0) {
+                if (agiTimelineChartInstance && typeof agiTimelineChartInstance.destroy === 'function') {
+                    try { agiTimelineChartInstance.destroy(); } catch (e) { }
+                }
+                agiTimelineChartInstance = null;
+                return;
+            }
+
+            const ctx = document.getElementById('agiTimelineChart').getContext('2d');
+            const timeline = agi.Timeline;
+
+            // Prepare data
+            const labels = timeline.map(t => {
+                const date = new Date(t.timestamp);
+                return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+            });
+            const qualityData = timeline.map(t => t.avg_quality);
+            const confidenceData = timeline.map(t => t.avg_confidence);
+            const eventCounts = timeline.map(t => t.event_count ?? 0);
+            // Thresholds (guide lines)
+            const thr = agi.Thresholds ?? agi.Health?.thresholds_ui ?? agi.Health?.thresholds ?? {};
+            const qualityMin = typeof thr?.min_quality === 'number' ? thr.min_quality : 0.6;
+            const confidenceMin = typeof thr?.min_confidence === 'number' ? thr.min_confidence : 0.6;
+
+            if (agiTimelineChartInstance && typeof agiTimelineChartInstance.destroy === 'function') {
+                try { agiTimelineChartInstance.destroy(); } catch (e) { }
+            }
+            agiTimelineChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Quality',
+                            data: qualityData,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            spanGaps: true
+                        },
+                        {
+                            label: 'Confidence',
+                            data: confidenceData,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            spanGaps: true
+                        },
+                        {
+                            label: 'Quality Min',
+                            data: labels.map(() => qualityMin),
+                            borderColor: 'rgba(16, 185, 129, 0.6)',
+                            borderDash: [6, 4],
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0,
+                            spanGaps: true
+                        },
+                        {
+                            label: 'Confidence Min',
+                            data: labels.map(() => confidenceMin),
+                            borderColor: 'rgba(59, 130, 246, 0.6)',
+                            borderDash: [6, 4],
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0,
+                            spanGaps: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                afterBody: function (items) {
+                                    // Append event count to tooltip
+                                    try {
+                                        const idx = items[0].dataIndex;
+                                        const cnt = eventCounts[idx] ?? 0;
+                                        return `events: ${cnt}`;
+                                    } catch (e) {
+                                        return '';
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1.0,
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toFixed(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateHealthServices() {
+            const agi = metricsData.AGI;
+            if (!agi || !agi.Health || !agi.Health.external_services) {
+                return;
+            }
+
+            const health = agi.Health.external_services;
+
+            // Lumen Gateway
+            if (health.lumen) {
+                const lumenBadge = document.getElementById('lumenStatusBadge');
+                lumenBadge.textContent = health.lumen.ok ? 'ACTIVE' : 'DOWN';
+                lumenBadge.className = health.lumen.ok ? 'badge bg-success' : 'badge bg-danger';
+
+                document.getElementById('lumenStatusCode').textContent = health.lumen.status_code || '--';
+                const preview = health.lumen.response_preview || '';
+                document.getElementById('lumenResponse').textContent = preview.substring(0, 50) + '...';
+            }
+
+            // LLM Proxy
+            if (health.proxy) {
+                const proxyBadge = document.getElementById('proxyStatusBadge');
+                proxyBadge.textContent = health.proxy.ok ? 'ACTIVE' : 'INACTIVE';
+                proxyBadge.className = health.proxy.ok ? 'badge bg-success' : 'badge bg-danger';
+
+                document.getElementById('proxyPort').textContent = health.proxy.port || '--';
+                document.getElementById('proxyState').textContent = health.proxy.status || '--';
+            }
+
+            // System Resources
+            if (health.system) {
+                const systemBadge = document.getElementById('systemStatusBadge');
+                systemBadge.textContent = health.system.ok ? 'HEALTHY' : 'STRESSED';
+                systemBadge.className = health.system.ok ? 'badge bg-success' : 'badge bg-warning';
+
+                document.getElementById('systemCPU').textContent = health.system.cpu_percent?.toFixed(1) || '--';
+                document.getElementById('systemMemory').textContent = health.system.memory_percent?.toFixed(1) || '--';
+                document.getElementById('systemDisk').textContent = health.system.disk_percent?.toFixed(1) || '--';
+
+                // Color coding for high usage
+                const cpuEl = document.getElementById('systemCPU').parentElement;
+                if (health.system.warnings?.cpu) {
+                    cpuEl.classList.add('text-danger');
+                }
+
+                const memEl = document.getElementById('systemMemory').parentElement;
+                if (health.system.warnings?.memory) {
+                    memEl.classList.add('text-warning');
+                }
+
+                const diskEl = document.getElementById('systemDisk').parentElement;
+                if (health.system.warnings?.disk) {
+                    diskEl.classList.add('text-warning');
+                }
+            }
+        }
+
+        function updateExecutiveSummary() {
+            document.getElementById('healthStatus').textContent = metricsData.Health.Status;
+            document.getElementById('availability').textContent = metricsData.Health.AvgAvailability.toFixed(1);
+            document.getElementById('totalAlerts').textContent = metricsData.Health.Alerts;
+            document.getElementById('dataPoints').textContent = metricsData.SnapshotCount;
+            document.getElementById('lastUpdate').textContent = new Date(metricsData.Generated).toLocaleString();
+
+            // Update status card color
+            const statusCard = document.querySelector('.status-card.status-EXCELLENT');
+            statusCard.className = 'card status-card status-' + metricsData.Health.Status;
+
+            // Update severity badges
+            if (metricsData.AlertsBySeverity) {
+                document.getElementById('criticalCount').textContent = metricsData.AlertsBySeverity.CriticalCount;
+                document.getElementById('warningCount').textContent = metricsData.AlertsBySeverity.WarningCount;
+                document.getElementById('infoCount').textContent = metricsData.AlertsBySeverity.InfoCount;
+            }
+        }
+
+        function createSeverityChart() {
+            const ctx = document.getElementById('severityChart').getContext('2d');
+            if (severityChartInstance && typeof severityChartInstance.destroy === 'function') {
+                try { severityChartInstance.destroy(); } catch (e) { }
+                severityChartInstance = null;
+            }
+            if (!metricsData.AlertsBySeverity || metricsData.AlertsBySeverity.Total === 0) return;
+
+            severityChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Critical', 'Warning', 'Info'],
+                    datasets: [{
+                        data: [
+                            metricsData.AlertsBySeverity.CriticalCount,
+                            metricsData.AlertsBySeverity.WarningCount,
+                            metricsData.AlertsBySeverity.InfoCount
+                        ],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        function createLatencyChart() {
+            const ctx = document.getElementById('latencyChart').getContext('2d');
+            if (latencyChartInstance && typeof latencyChartInstance.destroy === 'function') {
+                try { latencyChartInstance.destroy(); } catch (e) { }
+                latencyChartInstance = null;
+            }
+            const hours = metricsData.AlertsTimeline.Hours.map(h => new Date(h).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }));
+
+            latencyChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: hours,
+                    datasets: [
+                        {
+                            label: 'Local LLM',
+                            data: metricsData.Channels.Local.HourlyLatency,
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Cloud AI',
+                            data: metricsData.Channels.Cloud.HourlyLatency,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Lumen Gateway',
+                            data: metricsData.Channels.Gateway.HourlyLatency,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Latency (ms)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createAvailabilityChart() {
+            const ctx = document.getElementById('availabilityChart').getContext('2d');
+            if (availabilityChartInstance && typeof availabilityChartInstance.destroy === 'function') {
+                try { availabilityChartInstance.destroy(); } catch (e) { }
+                availabilityChartInstance = null;
+            }
+            const hours = metricsData.AvailabilityTimeline.Hours.map(h => new Date(h).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }));
+
+            availabilityChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hours,
+                    datasets: [
+                        {
+                            label: 'Local LLM',
+                            data: metricsData.AvailabilityTimeline.Local,
+                            backgroundColor: 'rgba(139, 92, 246, 0.7)'
+                        },
+                        {
+                            label: 'Cloud AI',
+                            data: metricsData.AvailabilityTimeline.Cloud,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)'
+                        },
+                        {
+                            label: 'Lumen Gateway',
+                            data: metricsData.AvailabilityTimeline.Gateway,
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Availability (%)' }
+                        },
+                        x: { stacked: false }
+                    }
+                }
+            });
+        }
+
+        function createAGIQualityChart() {
+            const ctx = document.getElementById('agiQualityChart').getContext('2d');
+            const agi = metricsData.AGI;
+
+            if (!agi || agi.TotalEvents === 0) {
+                if (agiQualityChartInstance && typeof agiQualityChartInstance.destroy === 'function') {
+                    try { agiQualityChartInstance.destroy(); } catch (e) { }
+                    agiQualityChartInstance = null;
+                }
+                ctx.font = '16px sans-serif';
+                ctx.fillStyle = '#6c757d';
+                ctx.textAlign = 'center';
+                ctx.fillText('No AGI activity in time window', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+
+            if (agiQualityChartInstance && typeof agiQualityChartInstance.destroy === 'function') {
+                try { agiQualityChartInstance.destroy(); } catch (e) { }
+                agiQualityChartInstance = null;
+            }
+
+            agiQualityChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Avg Quality', 'Remaining'],
+                    datasets: [{
+                        data: [agi.AvgQuality * 100, (1 - agi.AvgQuality) * 100],
+                        backgroundColor: [
+                            agi.AvgQuality >= 0.8 ? 'rgba(16, 185, 129, 0.7)' :
+                                agi.AvgQuality >= 0.7 ? 'rgba(251, 191, 36, 0.7)' :
+                                    'rgba(239, 68, 68, 0.7)',
+                            'rgba(229, 231, 235, 0.3)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: 'AGI Quality Score' }
+                    }
+                }
+            });
+        }
+
+        function createAGIEventTypesChart() {
+            const ctx = document.getElementById('agiEventTypesChart').getContext('2d');
+            const agi = metricsData.AGI;
+
+            if (!agi || !agi.EventTypes || Object.keys(agi.EventTypes).length === 0) {
+                if (agiEventTypesChartInstance && typeof agiEventTypesChartInstance.destroy === 'function') {
+                    try { agiEventTypesChartInstance.destroy(); } catch (e) { }
+                    agiEventTypesChartInstance = null;
+                }
+                ctx.font = '16px sans-serif';
+                ctx.fillStyle = '#6c757d';
+                ctx.textAlign = 'center';
+                ctx.fillText('No AGI events', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+
+            // Sort by count desc and cap to Top N + Other
+            const entries = Object.entries(agi.EventTypes).sort((a, b) => b[1] - a[1]);
+            const total = entries.reduce((sum, [, v]) => sum + v, 0);
+            const TOP_N = 10;
+            const top = entries.slice(0, TOP_N);
+            const rest = entries.slice(TOP_N);
+            if (rest.length > 0) {
+                const otherSum = rest.reduce((sum, [, v]) => sum + v, 0);
+                top.push(['other', otherSum]);
+            }
+
+            const labels = top.map(([k]) => k);
+            const data = top.map(([, v]) => v);
+
+            if (agiEventTypesChartInstance && typeof agiEventTypesChartInstance.destroy === 'function') {
+                try { agiEventTypesChartInstance.destroy(); } catch (e) { }
+                agiEventTypesChartInstance = null;
+            }
+
+            agiEventTypesChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Event Count',
+                        data: data,
+                        backgroundColor: 'rgba(139, 92, 246, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: true, text: rest.length > 0 ? 'AGI Event Types (Top 10)' : 'AGI Event Types' },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const value = context.parsed.y ?? context.parsed;
+                                    const pct = total > 0 ? (value / total * 100).toFixed(1) : '0.0';
+                                    return ` ${value} (${pct}%)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function updateChannelStatsTable() {
+            const tbody = document.getElementById('channelStatsTable');
+            const channels = [
+                { name: 'Local LLM', key: 'Local', icon: '🖥️' },
+                { name: 'Cloud AI', key: 'Cloud', icon: '☁️' },
+                { name: 'Lumen Gateway', key: 'Gateway', icon: '🌐' }
+            ];
+
+            tbody.innerHTML = channels.map(ch => {
+                const stats = metricsData.Channels[ch.key];
+                const trend = stats.Trend;
+                const trendClass = trend.Direction === 'IMPROVING' ? 'trend-down' :
+                    trend.Direction === 'DEGRADING' ? 'trend-up' : 'trend-stable';
+                const trendIcon = trend.Direction === 'IMPROVING' ? '▼' :
+                    trend.Direction === 'DEGRADING' ? '▲' : '=';
+
+                return `
+                    <tr>
+                        <td>${ch.icon} <strong>${ch.name}</strong></td>
+                        <td>${stats.Availability}%</td>
+                        <td>${stats.Mean} ms</td>
+                        <td>${stats.P95} ms</td>
+                        <td>±${stats.Std} ms</td>
+                        <td class="${trendClass}">${trendIcon} ${trend.Direction}</td>
+                        <td>
+                            ${stats.BaselineAlerts || 0} / ${stats.AdaptiveAlerts || 0} / ${stats.Spikes || 0}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updatePeriodComparison() {
+            if (!metricsData.PeriodComparison) return;
+
+            document.getElementById('periodComparisonSection').style.display = 'block';
+
+            const channels = ['Local', 'Cloud', 'Gateway'];
+            const elemIds = ['localComparison', 'cloudComparison', 'gatewayComparison'];
+
+            channels.forEach((ch, idx) => {
+                const latChange = metricsData.PeriodComparison.LatencyChange[ch];
+                const availChange = metricsData.PeriodComparison.AvailabilityChange[ch];
+
+                const html = `
+                    <div class="small">
+                        <div>Latency: <strong>${latChange.Arrow} ${Math.abs(latChange.ChangePercent)}%</strong></div>
+                        <div>Availability: <strong>${availChange.Arrow} ${Math.abs(availChange.ChangePercent)}%</strong></div>
+                    </div>
+                `;
+                document.getElementById(elemIds[idx]).innerHTML = html;
+            });
+        }
+
+        function displayCriticalAlerts() {
+            if (!metricsData.AlertsBySeverity || metricsData.AlertsBySeverity.CriticalCount === 0) return;
+
+            const list = document.getElementById('criticalAlertsList');
+            const alerts = metricsData.AlertsBySeverity.Critical.slice(0, 5);
+
+            list.innerHTML = alerts.map(alert => {
+                const time = new Date(alert.Timestamp).toLocaleTimeString();
+                return `
+                    <div class="alert alert-danger py-2 mb-2">
+                        <small class="text-muted">${time}</small><br>
+                        ${alert.Message}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderSessionMemory() {
+            const section = document.getElementById('sessionMemorySection');
+            if (!section) return;
+
+            const data = metricsData.SessionSummaries;
+            if (!data || !data.Available) {
+                section.style.display = 'none';
+                return;
+            }
+
+            section.style.display = '';
+            document.getElementById('sessionTotal').textContent = data.TotalSessions ?? '--';
+            document.getElementById('sessionEmbeddings').textContent = data.Embeddings ?? '--';
+            document.getElementById('sessionCoverage').textContent = data.EmbeddingCoverage ? `${data.EmbeddingCoverage}%` : '--';
+            document.getElementById('sessionRecent24h').textContent = data.Recent24h ?? '--';
+            document.getElementById('sessionLastUpdated').textContent = data.LastUpdated ?? '--';
+            document.getElementById('sessionLastUpdatedBadge').textContent = data.LastUpdated ? new Date(data.LastUpdated).toLocaleTimeString() : '--';
+            document.getElementById('sessionIndexPath').textContent = data.IndexPath || 'index.json';
+
+            const list = document.getElementById('sessionRecentList');
+            if (!list) return;
+
+            if (!data.RecentSessions || data.RecentSessions.length === 0) {
+                list.innerHTML = '<div class="p-3 text-muted">저장된 요약이 없습니다.</div>';
+                return;
+            }
+
+            list.innerHTML = data.RecentSessions.map(item => {
+                const created = item.created_at ? new Date(item.created_at).toLocaleString() : '-';
+                const preview = item.preview ? item.preview.replace(/</g, '&lt;').replace(/>/g, '&gt;') : '(요약 미저장)';
+                return `
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>${item.session_id || '-'}</strong>
+                                <div class="session-meta">User: ${item.user_id || '-'} • Type: ${item.summary_type || '-'}</div>
+                            </div>
+                            <span class="badge bg-light text-dark">${item.embedding_dims || 0} dims</span>
+                        </div>
+                        <div class="session-preview mt-2">${preview}</div>
+                        <div class="session-meta mt-1">${created} • Messages: ${item.message_count || 0}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Auto-refresh functionality
+        let autoRefreshEnabled = (function () {
+            try { return localStorage.getItem('autoRefreshEnabled') === 'true'; } catch (_) { return false; }
+        })();
+        let refreshIntervalId = null;
+        const DEFAULT_REFRESH_INTERVAL = 60000; // 60 seconds (reduced load)
+        let autoRefreshIntervalMs = (function () {
+            try { return parseInt(localStorage.getItem('autoRefreshIntervalMs') || String(DEFAULT_REFRESH_INTERVAL), 10); } catch (_) { return DEFAULT_REFRESH_INTERVAL; }
+        })();
+
+        function setAutoRefresh(enabled) {
+            const btn = document.getElementById('autoRefreshBtn');
+
+            if (enabled) {
+                if (!refreshIntervalId) {
+                    refreshIntervalId = setInterval(refreshDashboard, autoRefreshIntervalMs);
+                }
+                autoRefreshEnabled = true;
+                if (btn) {
+                    btn.textContent = '⏸ Pause Auto-Refresh';
+                    btn.classList.remove('btn-outline-primary');
+                    btn.classList.add('btn-primary');
+                }
+            } else {
+                if (refreshIntervalId) {
+                    clearInterval(refreshIntervalId);
+                    refreshIntervalId = null;
+                }
+                autoRefreshEnabled = false;
+                if (btn) {
+                    btn.textContent = '▶ Enable Auto-Refresh';
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-primary');
+                }
+            }
+
+            try { localStorage.setItem('autoRefreshEnabled', String(autoRefreshEnabled)); } catch (_) { }
+        }
+
+        function onRefreshIntervalChange(e) {
+            const selVal = parseInt(e.target.value, 10);
+            if (!Number.isFinite(selVal) || selVal <= 0) return;
+            autoRefreshIntervalMs = selVal;
+            try { localStorage.setItem('autoRefreshIntervalMs', String(autoRefreshIntervalMs)); } catch (_) { }
+            // restart timer if running
+            if (refreshIntervalId) {
+                clearInterval(refreshIntervalId);
+                refreshIntervalId = setInterval(refreshDashboard, autoRefreshIntervalMs);
+            }
+        }
+
+        async function refreshDashboard() {
+            try {
+                const jsonPath = window.location.pathname.replace('.html', '.json').replace('monitoring_dashboard', 'monitoring_metrics');
+                const response = await fetch(jsonPath);
+
+                if (!response.ok) {
+                    console.warn('Failed to fetch updated metrics:', response.status);
+                    return;
+                }
+
+                const newData = await response.json();
+                metricsData = newData;
+
+                // Preserve scroll position to avoid jump on refresh
+                const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
+                // Re-initialize dashboard with new data
+                initDashboard();
+                // Restore scroll
+                window.scrollTo({ top: scrollY, behavior: 'auto' });
+
+                // Also refresh Health Gate after data swap (in case metrics lacked gate info)
+                refreshHealthGate();
+
+                // Update last refresh time
+                const now = new Date().toLocaleTimeString();
+                document.getElementById('lastRefresh').textContent = now;
+
+                console.log('Dashboard refreshed at', now);
+            } catch (error) {
+                console.error('Error refreshing dashboard:', error);
+            }
+        }
+
+        function toggleAutoRefresh() {
+            setAutoRefresh(!autoRefreshEnabled);
+            const secs = Math.round((autoRefreshIntervalMs || DEFAULT_REFRESH_INTERVAL) / 1000);
+            console.log(autoRefreshEnabled ? `Auto-refresh enabled (every ${secs}s)` : 'Auto-refresh disabled');
+        }
+
+        // Pause/resume refresh when tab visibility changes
+        document.addEventListener('visibilitychange', () => {
+            const desired = (function () { try { return localStorage.getItem('autoRefreshEnabled') === 'true'; } catch (_) { return false; } })();
+            if (document.hidden) {
+                // Pause timer but keep desired state persisted
+                if (refreshIntervalId) {
+                    clearInterval(refreshIntervalId);
+                    refreshIntervalId = null;
+                }
+            } else {
+                // Resume only if user desired auto refresh
+                if (desired) {
+                    setAutoRefresh(true);
+                }
+            }
+        });
+
+        // Clear timers on unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshIntervalId) {
+                clearInterval(refreshIntervalId);
+                refreshIntervalId = null;
+            }
+        });
+
+        // Initialize on load
+        initDashboard();
+        // Sync auto-refresh UI/state from storage
+        setAutoRefresh(autoRefreshEnabled);
+        // Initialize interval select UI from storage
+        (function initIntervalSelect() {
+            const sel = document.getElementById('autoRefreshInterval');
+            if (!sel) return;
+            const opts = Array.from(sel.options).map(o => parseInt(o.value, 10));
+            const chosen = opts.includes(autoRefreshIntervalMs) ? autoRefreshIntervalMs : DEFAULT_REFRESH_INTERVAL;
+            sel.value = String(chosen);
+        })();
+
+        // ====== Health Gate Functions ======
+        let lastHealthGateState = null;
+
+        async function refreshHealthGate() {
+            // 1) Prefer embedded state in metrics JSON if present
+            try {
+                const embedded = metricsData?.AGI?.Health?.health_gate || metricsData?.AGI?.HealthGate;
+                if (embedded) {
+                    lastHealthGateState = embedded;
+                    updateHealthGateUI(embedded);
+                    return;
+                }
+            } catch (_) { /* no-op */ }
+
+            // 2) Try relative path next to metrics/dashboard
+            const baseDir = (function () {
+                try {
+                    const p = window.location.pathname;
+                    return p.substring(0, p.lastIndexOf('/') + 1);
+                } catch (_) { return './'; }
+            })();
+
+            const candidates = [
+                baseDir + 'health_gate_state.json',
+                baseDir + '../fdo_agi_repo/outputs/health_gate_state.json'
+            ];
+
+            for (const url of candidates) {
+                try {
+                    const resp = await fetch(url);
+                    if (resp.ok) {
+                        const state = await resp.json();
+                        lastHealthGateState = state;
+                        updateHealthGateUI(state);
+                        return;
+                    }
+                } catch (_) { /* try next */ }
+            }
+
+            // 3) If all fails, mark UI as unknown
+            console.warn('Health Gate state not available from any source');
+            document.getElementById('healthGateStatus').textContent = 'Unknown';
+            document.getElementById('healthGateStatus').className = 'badge bg-secondary';
+            document.getElementById('healthGateDetails').textContent = 'No state found';
+            updateSafeModeBadge(false);
+        }
+
+        function updateHealthGateUI(state) {
+            const statusEl = document.getElementById('healthGateStatus');
+            const detailsEl = document.getElementById('healthGateDetails');
+
+            if (state.gate_open) {
+                statusEl.textContent = '✅ OPEN';
+                statusEl.className = 'badge bg-success';
+                detailsEl.textContent = `Success streak: ${state.success_streak} | Failure streak: ${state.failure_streak}`;
+            } else {
+                statusEl.textContent = '🔴 CLOSED';
+                statusEl.className = 'badge bg-danger';
+                const cooldown = state.cooldown_until ? ` | Cooldown until: ${new Date(state.cooldown_until).toLocaleString()}` : '';
+                detailsEl.textContent = `Failure streak: ${state.failure_streak} | Success streak: ${state.success_streak}${cooldown}`;
+            }
+
+            if (state.manual_reset) {
+                detailsEl.textContent += ` | Manual reset: ${state.reset_reason || 'Yes'}`;
+            }
+
+            // Reflect Safe Mode
+            const safe = !!(state.safe_mode || state.safeMode || state.mode === 'safe');
+            updateSafeModeBadge(safe);
+        }
+
+        function updateSafeModeBadge(enabled) {
+            const badge = document.getElementById('safeModeBadge');
+            if (!badge) return;
+            if (enabled) {
+                badge.style.display = '';
+                badge.textContent = 'SAFE MODE';
+                badge.className = 'badge bg-dark';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Load health gate on init
+        refreshHealthGate();
+    </script>
+
+    <!-- Quick link to latest metrics JSON (relative to dashboard location) -->
+    <div style="position: fixed; right: 16px; bottom: 16px; z-index: 1030;">
+        <a class="btn btn-sm btn-outline-secondary" href="monitoring_metrics_latest.json" target="_blank"
+            title="Open latest metrics JSON">
+            ⬇ Download JSON
+        </a>
+    </div>
+</body>
+
+</html>

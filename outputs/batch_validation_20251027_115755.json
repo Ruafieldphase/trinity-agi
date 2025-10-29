@@ -1,0 +1,98 @@
+{
+  "summary": {
+    "total_tasks": 5,
+    "successful_tasks": 0,
+    "failed_tasks": 5,
+    "success_rate_percent": 0.0,
+    "avg_quality_score": 0.0,
+    "avg_citations": 0.0,
+    "avg_citation_quality": 0.0,
+    "avg_elapsed_sec": 16.43
+  },
+  "comparison": {
+    "baseline_success_rate": 51.76,
+    "new_success_rate": 0.0,
+    "improvement_points": -51.76,
+    "improvement_percent": -100.0
+  },
+  "goal_achievement": {
+    "target_success_rate": 70.0,
+    "current_success_rate": 0.0,
+    "gap_to_target": 70.0,
+    "target_achieved": false,
+    "status": "[WARN] GAP: 70.00% remaining"
+  },
+  "per_category": {
+    "standard": {
+      "total": 5,
+      "successful": 0,
+      "failed": 5,
+      "success_rate_percent": 0.0,
+      "avg_quality_score": 0.0,
+      "avg_citations": 0.0,
+      "avg_elapsed_sec": 16.43
+    }
+  },
+  "task_results": [
+    {
+      "task_id": 1,
+      "goal": "Explain how BM25 retrieval algorithm works",
+      "success": false,
+      "quality_score": 0.0,
+      "citations": 0,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 19.031039476394653,
+      "ok": false,
+      "error": "run_synthesis() takes 3 positional arguments but 4 were given",
+      "category": "standard"
+    },
+    {
+      "task_id": 2,
+      "goal": "Describe the evidence gate 3-stage correction process",
+      "success": false,
+      "quality_score": 0.0,
+      "citations": 0,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 15.788694143295288,
+      "ok": false,
+      "error": "run_synthesis() takes 3 positional arguments but 4 were given",
+      "category": "standard"
+    },
+    {
+      "task_id": 3,
+      "goal": "What is the purpose of synthetic citations?",
+      "success": false,
+      "quality_score": 0.0,
+      "citations": 0,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 15.993640899658203,
+      "ok": false,
+      "error": "run_synthesis() takes 3 positional arguments but 4 were given",
+      "category": "standard"
+    },
+    {
+      "task_id": 4,
+      "goal": "How does the AGI pipeline handle low confidence results?",
+      "success": false,
+      "quality_score": 0.0,
+      "citations": 0,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 18.85468864440918,
+      "ok": false,
+      "error": "run_synthesis() takes 3 positional arguments but 4 were given",
+      "category": "standard"
+    },
+    {
+      "task_id": 5,
+      "goal": "Explain the role of Reciprocal Rank Fusion in hybrid retrieval",
+      "success": false,
+      "quality_score": 0.0,
+      "citations": 0,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 12.499818086624146,
+      "ok": false,
+      "error": "run_synthesis() takes 3 positional arguments but 4 were given",
+      "category": "standard"
+    }
+  ]
+}

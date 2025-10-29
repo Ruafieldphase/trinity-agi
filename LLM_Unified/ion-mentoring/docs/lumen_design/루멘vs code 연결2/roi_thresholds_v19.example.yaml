@@ -1,0 +1,11 @@
+# roi_thresholds_v19.example.yaml
+# Example per-environment thresholds
+prod:
+  success_min: 0.85
+  rollback_max: 0.15
+stage:
+  success_min: 0.80
+  rollback_max: 0.20
+dev:
+  success_min: 0.70
+  rollback_max: 0.30

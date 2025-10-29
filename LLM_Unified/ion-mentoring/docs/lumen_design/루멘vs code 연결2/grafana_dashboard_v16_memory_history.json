@@ -1,0 +1,57 @@
+{
+  "title": "Lumen v1.6 \u2014 Memory & History",
+  "uid": "lumen-v16-mem-hist",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "table",
+      "title": "Resonance Memory Signatures",
+      "targets": [
+        {
+          "expr": "sum by () (1)"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "showHeader": true
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Entropy Shift (derived)",
+      "targets": [
+        {
+          "expr": "lumen_enrichment_entropy_score"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Phase Resync Latency (ms)",
+      "targets": [
+        {
+          "expr": "lumen_phase_resync_latency"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      }
+    }
+  ]
+}

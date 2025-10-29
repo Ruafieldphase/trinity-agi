@@ -1,0 +1,82 @@
+# System C v8 Report
+
+
+Generated: 2025-10-14T14:45:11.213594+09:00
+
+Input: `system_c_run_20251014_after_prompt_v6.jsonl`
+
+Samples: 3
+
+## Sample #0
+- Timestamp: 2025-10-14T14:45:11.213594+09:00
+
+
+### Scores
+| Metric | Before | After (v8) | ? |
+|---|---:|---:|---:|
+| Total | 0.15 | 0.45 | +0.30 |
+| H1 Headers/Labels | 0.00 | 1.00 | +1.00 |
+| H2 Structure | 0.00 | 0.00 | +0.00 |
+| C1 Forbidden | 1.00 | 1.00 | +0.00 |
+| L1 Risk Ledger | 0.00 | 0.00 | +0.00 |
+| Q1 Quote Bank | 0.00 | 0.00 | +0.00 |
+| R1 Highest | 0.00 | 0.00 | +0.00 |
+| W1 Word Range | 0.00 | 0.50 | +0.50 |
+
+
+**Label:** Before=Poor / After=Poor
+
+
+### Warnings (After)
+
+- Header rescue injected skeleton for: Thesis, Antithesis, Synthesis
+- Risk Ledger count 0 below minimum 2.
+- Quote Bank count 0 below minimum 1.
+- Highest Risk section missing or invalid.
+
+### Section Diffs
+
+### Thesis
+```diff
+--- before
++++ after
+@@ -0,0 +1,20 @@
++Thesis Overview:
++
++* Bullet 1: The latest phase injection experiment reveals an opportunity to enhance product efficiency and market appeal.
++* Bullet 2: Leveraging innovative design and collaborative partnerships can further drive growth and customer satisfaction.
++
++Evidence Stack:
++
++1. The experimental results showed a 20% improvement in energy efficiency, [Source: doc_20251014_005359].
++2. Customer feedback suggests a preference for sleek, modern designs, [Source: doc_20251015_001234].
++3. Collaborating with leading industry partners can boost product innovation and market presence, [Source: doc_20251016_012345].
++
++(Optional) 4. A recent market study indicates a growing demand for eco-friendly products, which can be capitalized on with sustainable design elements, [Source: doc_20251017_032456].
++
++Based on the evidence presented, next creative interventions could involve:
++
++* Implementing energy-efficient components and designs to reduce environmental impact and appeal to eco-conscious consumers.
++* Partnering with leading designers and manufacturers to create visually striking, high-quality products that meet customer preferences.
++* Exploring collaborative opportunities with environmentally-focused organizations to strengthen brand reputation and attract eco-conscious consumers.
++
++By focusing on these areas, the company can capitalize on the latest phase injection experiment's findings and position itself as an industry leader in innovation, efficiency, and sustainability.
+```
+
+### Antithesis
+```diff
+--- before
++++ after
+@@ -0,0 +1,3 @@
++Risk Ledger:
++Quote Bank:
++Highest Risk: R1 â Why: (to be specified)
+```
+
+### Synthesis
+```diff
+(no change)
+```
+
+
+---

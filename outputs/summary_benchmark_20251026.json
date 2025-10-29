@@ -1,0 +1,17 @@
+{
+  "benchmark_time": "2025-10-26 12:16:50",
+  "results": {
+    "current": {
+      "model_name": "Current (Pipeline - No LLM)",
+      "total_requests": 20,
+      "successful": 20,
+      "failed": 0,
+      "latency": {
+        "p50_ms": 0.06,
+        "p95_ms": 4.55,
+        "avg_ms": 0.32
+      },
+      "errors": []
+    }
+  }
+}

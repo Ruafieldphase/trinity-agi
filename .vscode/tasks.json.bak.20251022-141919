@@ -1,0 +1,658 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "VS Code: Watch Orchestrator Status",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe ${workspaceFolder}/LLM_Unified/ion-mentoring/extension_api.py watch-status --state-file ${workspaceFolder}/LLM_Unified/ion-mentoring/outputs/orchestrator_state.json --interval 1.0"
+      ],
+      "group": "test",
+      "isBackground": true
+    },
+    {
+      "label": "Monitoring: Start Canary Loop (30m, with probe)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/start_monitor_loop_with_probe.ps1",
+        "-KillExisting",
+        "-IntervalSeconds",
+        "1800",
+        "-DurationMinutes",
+        "1440"
+      ],
+      "group": "test",
+      "isBackground": true
+    },
+    {
+      "label": "Monitoring: Start Canary Loop (30m)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/start_monitor_loop.ps1",
+        "-KillExisting",
+        "-IntervalSeconds",
+        "1800",
+        "-DurationMinutes",
+        "1440"
+      ],
+      "group": "test",
+      "isBackground": true
+    },
+    {
+      "label": "Monitoring: Stop All Canary Loops",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/start_monitor_loop.ps1",
+        "-KillExisting",
+        "-StopOnly"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Monitoring: Rate Limit Probe (safe)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/rate_limit_probe.ps1",
+        "-RequestsPerSide",
+        "10",
+        "-DelayMsBetweenRequests",
+        "500"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Monitoring: One-shot Probe",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/rate_limit_probe.ps1",
+        "-RequestsPerSide",
+        "5",
+        "-DelayMsBetweenRequests",
+        "500",
+        "-OutJson",
+        "${workspaceFolder}/rate_limit_probe_once.json"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Monitoring: Check Canary Status",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/check_monitoring_status.ps1"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Monitoring: Create Canary Dashboard",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/check_monitoring_status.ps1"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Luon: Start Watch",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/start_luon_watch.ps1",
+        "-IntervalSeconds",
+        "15"
+      ]
+    },
+    {
+      "label": "Luon: Kill and Restart Watch",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/start_luon_watch.ps1",
+        "-KillExisting",
+        "-IntervalSeconds",
+        "15"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Luon: Run Pipeline Once",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/run_luon_pipeline.ps1"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Python: Run All Tests (repo venv)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe -m pytest -q"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Python: Run Vertex AI Test (repo venv)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        "${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe -m pytest -q LLM_Unified/ion-mentoring/tests/test_ion_first_vertex_ai.py"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Load Test: Run All Scenarios",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/run_all_load_tests.ps1"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Load Test: Light Smoke (10s)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/run_all_load_tests.ps1",
+        "-ScenarioProfile",
+        "light",
+        "-OverrideRunTime",
+        "10s"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Load Testing: Summarize Locust Results (Latest)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/summarize_locust_results.ps1"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Load Testing: Summarize Locust Results (All CSVs)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/summarize_locust_results.ps1",
+        "-InputGlob",
+        "outputs/*.csv"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Dry-Run: Phase4 Canary Deploy",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/deploy_phase4_canary.ps1",
+        "-ProjectId",
+        "naeda-genesis",
+        "-DryRun"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Phase4: Canary Deploy (5%)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/deploy_phase4_canary.ps1",
+        "-ProjectId",
+        "naeda-genesis",
+        "-CanaryPercentage",
+        "5"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Phase4: Canary Deploy (10%)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/deploy_phase4_canary.ps1",
+        "-ProjectId",
+        "naeda-genesis",
+        "-CanaryPercentage",
+        "10"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Phase4: Canary Deploy (25%)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/deploy_phase4_canary.ps1",
+        "-ProjectId",
+        "naeda-genesis",
+        "-CanaryPercentage",
+        "25"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Phase4: Canary Deploy (50%)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/deploy_phase4_canary.ps1",
+        "-ProjectId",
+        "naeda-genesis",
+        "-CanaryPercentage",
+        "50"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Phase4: Canary Deploy (100%)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/deploy_phase4_canary.ps1",
+        "-ProjectId",
+        "naeda-genesis",
+        "-CanaryPercentage",
+        "100"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Phase4: Rollback Canary (to 0%)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/rollback_phase4_canary.ps1",
+        "-ProjectId",
+        "naeda-genesis",
+        "-AutoApprove"
+      ],
+      "group": "build",
+      "options": {
+        "env": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1"
+        }
+      }
+    },
+    {
+      "label": "Emergency: Rollback Canary (Interactive)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/emergency_rollback.ps1"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Emergency: Force Rollback Canary (Skip Confirmation)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/emergency_rollback.ps1",
+        "-Force",
+        "-SkipConfirmation"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "One-off: Balanced Warmup",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/balanced_warmup.ps1",
+        "-CanaryUrl",
+        "https://ion-api-canary-64076350717.us-central1.run.app",
+        "-LegacyUrl",
+        "https://ion-api-64076350717.us-central1.run.app",
+        "-CountPerSide",
+        "25"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Quick: POST compare personalized vs legacy chat",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/compare_canary_vs_legacy.ps1",
+        "-Method",
+        "POST",
+        "-RequestsPerSide",
+        "10",
+        "-Retries",
+        "0",
+        "-DelayMsBetweenRequests",
+        "50",
+        "-CanaryEndpointPath",
+        "/api/v2/recommend/personalized",
+        "-LegacyEndpointPath",
+        "/chat",
+        "-CanaryBodyJson",
+        "{\"user_id\":\"test-123\",\"query\":\"Explain AI concepts in a concise style\",\"options\":{\"style\":\"concise\",\"depth\":\"overview\"}}",
+        "-LegacyBodyJson",
+        "{\"message\":\"Explain AI concepts in a concise style\"}",
+        "-MinSuccessRatePercent",
+        "80"
+      ]
+    },
+    {
+      "label": "Quick: POST compare (debug, save JSON)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/compare_canary_vs_legacy.ps1",
+        "-Method",
+        "POST",
+        "-RequestsPerSide",
+        "10",
+        "-Retries",
+        "2",
+        "-DelayMsBetweenRequests",
+        "50",
+        "-CanaryEndpointPath",
+        "/api/v2/recommend/personalized",
+        "-LegacyEndpointPath",
+        "/chat",
+        "-CanaryBodyJson",
+        "{\"user_id\":\"test-123\",\"query\":\"Explain AI concepts in a concise style\"}",
+        "-LegacyBodyJson",
+        "{\"message\":\"Explain AI concepts in a concise style\"}",
+        "-MinSuccessRatePercent",
+        "80",
+        "-OutJson",
+        "${workspaceFolder}/compare_quick_out.json"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Monitoring: Filter Logs (Last 1 Hour)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/filter_logs_by_time.ps1",
+        "-Last",
+        "1h",
+        "-ShowSummary"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Monitoring: Filter Logs (Last 24 Hours)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/filter_logs_by_time.ps1",
+        "-Last",
+        "24h",
+        "-ShowSummary"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Operations: Generate Daily Report",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/generate_daily_report.ps1",
+        "-Hours",
+        "24"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Operations: Cleanup Old Logs (7 days, DryRun)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/cleanup_old_logs.ps1",
+        "-KeepDays",
+        "7",
+        "-DryRun",
+        "-Verbose"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Operations: Cleanup Old Logs (7 days, Execute)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/cleanup_old_logs.ps1",
+        "-KeepDays",
+        "7"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Probe: Gentle (3 req, 2s delay)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/rate_limit_probe.ps1",
+        "-RequestsPerSide",
+        "3",
+        "-DelayMsBetweenRequests",
+        "2000"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Probe: Normal (10 req, 1s delay)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/rate_limit_probe.ps1",
+        "-RequestsPerSide",
+        "10",
+        "-DelayMsBetweenRequests",
+        "1000"
+      ],
+      "group": "test"
+    },
+    {
+      "label": "Probe: Aggressive (25 req, 500ms delay)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/LLM_Unified/ion-mentoring/scripts/rate_limit_probe.ps1",
+        "-RequestsPerSide",
+        "25",
+        "-DelayMsBetweenRequests",
+        "500"
+      ],
+      "group": "test"
+    }
+  ]
+}

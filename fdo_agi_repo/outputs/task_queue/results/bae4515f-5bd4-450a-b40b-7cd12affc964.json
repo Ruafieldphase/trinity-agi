@@ -1,0 +1,12 @@
+{
+  "task_id": "bae4515f-5bd4-450a-b40b-7cd12affc964",
+  "worker": "comet-browser",
+  "status": "success",
+  "data": {
+    "message": "pong",
+    "worker": "comet-browser",
+    "timestamp": "2025-10-28T12:22:49.835Z"
+  },
+  "completed_at": "2025-10-28T21:22:50.150801",
+  "error_message": null
+}

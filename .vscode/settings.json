@@ -1,0 +1,39 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true
+    },
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
+    // ?¯ ?°ë????ë™ ?¬ì»¤??ë¹„í™œ?±í™”
+    "terminal.integrated.automationProfile.windows": null,
+    "terminal.integrated.focusAfterRun": "none",
+    "task.autoDetect": "off",
+    "task.alwaysRevealTaskTerminal": false,
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "claudeCode.useTerminal": true,
+    // ?¤– AGI ?¸ì…˜ ?ë™ ?œì‘
+    "window.restoreWindows": "all",
+    "workbench.startupEditor": "readme",
+    // Gitko: Enable HTTP Poller ëª…ë ¹??VS Code ?œì‘ ???ë™ ?¤í–‰
+    "auto-run-command.commands": [
+        {
+            "command": "gitko.enableHttpPoller",
+            "args": []
+        }
+    ],
+    // Gitko HTTP Poller ?¤ì •
+    "gitko.enableHttpPoller": true,
+    "gitko.httpApiBase": "http://127.0.0.1:8091/api",
+    "gitko.httpPollingInterval": 2000,
+    // ?? Task Queue Server ?ë™ ?œì‘ (Workspace ?´ë¦´ ??
+    "task.runOnFolderOpen": "?¤ Comet-Gitko: Start Task Queue Server (Background)"
+}

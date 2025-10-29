@@ -1,0 +1,9 @@
+name: projects/naeda-genesis/metrics/lumen_cache_miss_total
+description: Lumen Gateway cache miss count (new cache sets)
+filter: |-
+  resource.type="cloud_run_revision"
+  resource.labels.service_name="lumen-gateway"
+  textPayload=~"\\[CACHE SET\\]"
+metricDescriptor:
+  metricKind: DELTA
+  valueType: INT64

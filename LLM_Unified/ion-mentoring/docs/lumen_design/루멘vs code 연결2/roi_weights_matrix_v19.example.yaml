@@ -1,0 +1,25 @@
+# roi_weights_matrix_v19.example.yaml
+# Env -> Service -> weights (0..1), score = 100*(w_success*success - w_rollback*rollback - w_burn*max(0,burn-1)/burn_norm)
+# burn_norm: normalize burn above 1.0 (at budget) to [0..1] scale. Example: 4.0 -> (4-1)/3 = 1.0
+prod:
+  default:
+    w_success: 0.6
+    w_rollback: 0.25
+    w_burn: 0.15
+    burn_norm: 3.0
+  api:
+    w_success: 0.55
+    w_rollback: 0.30
+    w_burn: 0.15
+    burn_norm: 3.0
+  web:
+    w_success: 0.60
+    w_rollback: 0.25
+    w_burn: 0.15
+    burn_norm: 3.0
+stage:
+  default:
+    w_success: 0.6
+    w_rollback: 0.25
+    w_burn: 0.15
+    burn_norm: 3.0

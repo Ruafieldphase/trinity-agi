@@ -1,0 +1,27 @@
+name: lumen_prod_cutover_gate
+on:
+  workflow_dispatch:
+    inputs:
+      metrics_url:
+        description: "Maturity exporter URL (prod)"
+        required: true
+      m_score_min:
+        description: "Minimum m_score"
+        required: false
+        default: "0.48"
+      h_eff_max:
+        description: "Maximum h_eff"
+        required: false
+        default: "0.70"
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Smoke check
+        run: |
+          bash scripts/smoke_check.sh "${{ github.event.inputs.metrics_url }}"                 || exit 2
+      - name: Quality gate (strict)
+        run: |
+          python scripts/release_gate.py                 --metrics-url "${{ github.event.inputs.metrics_url }}"                 --m-score-min "${{ github.event.inputs.m_score_min }}"                 --h-eff-max "${{ github.event.inputs.h_eff_max }}"

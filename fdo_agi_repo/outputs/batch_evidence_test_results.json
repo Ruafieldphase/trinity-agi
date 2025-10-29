@@ -1,0 +1,77 @@
+{
+  "total": 10,
+  "success_count": 10,
+  "success_rate_percent": 100.0,
+  "results": [
+    {
+      "task_id": "batch_evidence_01",
+      "title": "Standard RAG Test",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_02",
+      "title": "Broadened Retry Test",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_03",
+      "title": "Synthetic Fallback Test",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_04",
+      "title": "Knowledge-rich Test",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_05",
+      "title": "Domain-specific Test",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_06",
+      "title": "Code Context Test",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_07",
+      "title": "Multi-hop Reasoning",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_08",
+      "title": "Narrow Domain",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_09",
+      "title": "Broad Query",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    },
+    {
+      "task_id": "batch_evidence_10",
+      "title": "Technical Depth",
+      "success": true,
+      "citations_count": 6,
+      "summary_length": 71
+    }
+  ]
+}

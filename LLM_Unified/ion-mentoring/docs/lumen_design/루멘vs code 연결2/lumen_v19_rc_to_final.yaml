@@ -1,0 +1,57 @@
+name: lumen_v19_rc_to_final
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Final tag (e.g., v1.9.0)"
+        required: true
+      roi_success_min:
+        description: "Min deploy success rate"
+        default: "0.80"
+      roi_rollback_max:
+        description: "Max rollback rate"
+        default: "0.20"
+jobs:
+  rc-to-final:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start exporters (best-effort)
+        run: |
+          (cd lumen_v1_8_assets && (python roi_risk_exporter_v18.py &) && sleep 1) || true
+          (cd lumen_v1_9_assets && (python prod_roi_exporter_v19.py &) && sleep 1) || true
+      - name: ROI gate
+        env:
+          ROI_SUCCESS_MIN: "${{ github.event.inputs.roi_success_min }}"
+          ROI_ROLLBACK_MAX: "${{ github.event.inputs.roi_rollback_max }}"
+        run: |
+          python scripts/check_roi_thresholds_v19.py
+      - name: Build release notes (inject ROI snapshot)
+        run: |
+          python scripts/build_release_notes_v19.py
+          sed -n '1,120p' docs/RELEASE_NOTES_v1_9_FINAL.md
+      - name: Package chart (optional)
+        run: |
+          mkdir -p dist
+          helm package charts/lumen -d dist || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v19-final
+          path: |
+            docs/RELEASE_NOTES_v1_9_FINAL.md
+            dist/*.tgz
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
+          body_path: docs/RELEASE_NOTES_v1_9_FINAL.md
+          files: |
+            dist/*.tgz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

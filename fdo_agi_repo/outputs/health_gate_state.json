@@ -1,0 +1,9 @@
+{
+  "failure_streak": 0,
+  "success_streak": 2,
+  "cooldown_until": null,
+  "gate_open": true,
+  "last_updated": "2025-10-29T12:10:05.618832",
+  "manual_reset": true,
+  "reset_reason": "Manual reset via reset_health_gate.py"
+}

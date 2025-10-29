@@ -1,0 +1,18 @@
+# Lumen v1.2 — Canary Policy Gates
+# Evaluate staging over a recent window; if all gates pass, allow promotion to prod.
+window: 10m              # evaluation period
+min_samples: 200         # minimum request count in window
+
+gates:
+  latency_p95_ms_max: 500      # p95 must be <= this
+  error_rate_max: 0.02         # <= 2%
+  coherence_min: 0.58          # mapped coherence >= this
+  phase_diff_max: 0.40         # <= 0.40 recommended
+  regression_tolerance_pct: 5  # vs previous staging baseline
+
+labels:
+  env_label: env
+  env_staging: staging
+  env_prod: prod
+  service_label: service
+  service_name: ${SERVICE:-myapp}

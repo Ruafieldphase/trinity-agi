@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Comet Quick Start - v2.0</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert {
+            background: rgba(255, 152, 0, 0.3);
+            border-left: 5px solid #FF9800;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .alert h2 {
+            margin-top: 0;
+            color: #FF9800;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        button.big {
+            font-size: 24px;
+            padding: 20px 40px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+        }
+
+        #output {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 200px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .log {
+            margin: 5px 0;
+        }
+
+        .log-success {
+            color: #4CAF50;
+        }
+
+        .log-error {
+            color: #f44336;
+        }
+
+        .log-info {
+            color: #2196F3;
+        }
+
+        .log-warning {
+            color: #FF9800;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🤖 Comet Quick Start v2.0</h1>
+
+        <div class="alert">
+            <h2>⚡ 새로운 작업 3개 대기 중!</h2>
+            <p><strong>업그레이드된 워커</strong>가 필요합니다. 아래 버튼을 순서대로 클릭하세요.</p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <button class="big" onclick="loadWorkerV2()">
+                1️⃣ 워커 v2.0 로드 (자동)
+            </button>
+            <br>
+            <button class="big" onclick="startWorker()">
+                2️⃣ 작업 처리 시작! 🚀
+            </button>
+        </div>
+
+        <div id="output"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const output = document.getElementById('output');
+            const timestamp = new Date().toLocaleTimeString('ko-KR');
+            const className = `log log-${type}`;
+            output.innerHTML += `<div class="${className}">[${timestamp}] ${message}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function loadWorkerV2() {
+            log('📥 워커 v2.0 로드 시작...', 'info');
+
+            try {
+                // 기존 워커 중지
+                if (typeof CometWorker !== 'undefined') {
+                    try {
+                        CometWorker.stop();
+                        log('⏹️ 기존 워커 중지됨', 'info');
+                    } catch (e) {
+                        // 무시
+                    }
+                }
+
+                // 새 워커 스크립트 로드
+                const response = await fetch('../../../scripts/comet_browser_worker_v2.js');
+                const code = await response.text();
+
+                // 실행
+                eval(code);
+
+                log('✅ 워커 v2.0 로드 완료!', 'success');
+                log('📋 지원 작업: calculation, data_transform, json_process, web_scraping, ping', 'success');
+
+                // API 테스트
+                setTimeout(async () => {
+                    const result = await CometWorker.test();
+                    if (result) {
+                        log('🎯 준비 완료! 2번 버튼을 클릭하세요!', 'warning');
+                    }
+                }, 1000);
+
+            } catch (error) {
+                log(`❌ 로드 실패: ${error.message}`, 'error');
+                log('💡 수동 방법: Console (F12)에서 comet_browser_worker_v2.js 파일 내용을 붙여넣으세요', 'warning');
+            }
+        }
+
+        async function startWorker() {
+            log('🚀 워커 시작...', 'info');
+
+            try {
+                if (typeof CometWorker === 'undefined') {
+                    throw new Error('워커가 로드되지 않았습니다. 1번 버튼을 먼저 클릭하세요!');
+                }
+
+                CometWorker.start();
+                log('✅ 워커 시작됨! 작업 처리 중...', 'success');
+                log('📊 Console (F12)에서 실시간 로그를 확인하세요', 'info');
+
+                // 주기적으로 통계 업데이트
+                setInterval(() => {
+                    if (typeof CometWorker !== 'undefined') {
+                        const stats = CometWorker.stats();
+                        // 통계는 console에 출력됨
+                    }
+                }, 10000);
+
+            } catch (error) {
+                log(`❌ 시작 실패: ${error.message}`, 'error');
+            }
+        }
+
+        // 자동 시작 옵션
+        window.addEventListener('load', () => {
+            log('🤖 Comet Quick Start v2.0 준비 완료', 'success');
+            log('📌 1번 버튼: 워커 로드 → 2번 버튼: 작업 시작', 'info');
+            log('─────────────────────────────────────', 'info');
+        });
+    </script>
+</body>
+
+</html>

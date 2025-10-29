@@ -1,0 +1,63 @@
+# ============================================================================
+# ION Mentoring - 개발 환경 설정
+# base.yaml 설정을 오버라이드하는 개발환경 전용 설정
+# ============================================================================
+
+app:
+  debug: true
+
+logging:
+  level: "DEBUG"
+  format: "text"  # 개발시 가독성을 위해 텍스트 형식
+
+database:
+  type: "json"
+  path: "data/dev/"
+
+memory:
+  type: "local"
+  max_size: 100  # 개발 환경에서는 작은 크기
+
+rag:
+  enabled: true
+  type: "chromadb"
+  top_k: 3  # 개발시 응답 속도를 위해 감소
+
+backend:
+  type: "mock"  # 개발 환경에서는 Mock 백엔드
+  timeout_seconds: 10
+
+api:
+  host: "127.0.0.1"
+  port: 8000
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:3001"
+    - "http://localhost:8080"
+  rate_limit:
+    enabled: false  # 개발 환경에서 비활성화
+
+validation:
+  min_message_length: 0  # 개발 환경에서는 검증 느슨하게
+
+monitoring:
+  enabled: true
+  metrics_port: 9091
+  tracing_enabled: true  # 개발시 추적 활성화
+
+security:
+  jwt_enabled: false
+  api_key_enabled: false
+  require_auth: false
+
+cache:
+  enabled: true
+  type: "memory"
+  ttl_seconds: 60
+
+features:
+  persona_routing_enabled: true
+  memory_persistence_enabled: false  # 개발시 재시작시 초기화
+  rag_enabled: true
+  analytics_enabled: true
+  fallback_to_nana: true

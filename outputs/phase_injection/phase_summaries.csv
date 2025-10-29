@@ -1,0 +1,3 @@
+name,description,timeline_steps,recursion_limit,final_language_frame,final_affect,final_freedom,final_stability,affect_delta,freedom_delta,stability_delta,loop_count,symbol_memory_size,symbol_memory,last_injection_time
+baseline,Reference scenario with default affect amplitude.,3,25,default,0.3,0.57,0.67,0.08,-0.05,-0.05,1,2,"['low_affect', 'phase_injected']",2025-10-11T01:22:44.565915+00:00
+boosted,Higher affect amplitude with lower boundary window.,2,25,default,0.4,0.62,0.72,0.0,0.0,0.0,2,1,['seed'],2025-10-11T01:15:14.566584+00:00

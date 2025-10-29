@@ -1,0 +1,23 @@
+types:
+  - feat
+  - fix
+  - perf
+  - refactor
+  - docs
+  - chore
+  - ci
+  - test
+  - build
+  - revert
+scopes:
+  - stack
+  - helm
+  - deploy
+  - obs
+  - auto
+  - link
+  - docs
+  - ci
+  - security
+subject:
+  minLength: 5

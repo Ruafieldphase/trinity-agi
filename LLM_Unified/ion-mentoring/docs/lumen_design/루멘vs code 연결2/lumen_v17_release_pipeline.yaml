@@ -1,0 +1,105 @@
+name: lumen_v17_release_pipeline
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Final tag (e.g., v1.7.0)"
+        required: true
+      sym_min:
+        description: "Symmetry minimum (default 0.75)"
+        required: false
+        default: "0.75"
+      s_min:
+        description: "Stability index minimum (default 0.60)"
+        required: false
+        default: "0.60"
+      c_min:
+        description: "Creative index minimum (default 0.55)"
+        required: false
+        default: "0.55"
+      notify_webhook:
+        description: "(optional) Slack/Discord webhook URL"
+        required: false
+        default: ""
+jobs:
+  run-full-loop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.4
+      - name: Start v1.6 stack (native matrix)
+        working-directory: lumen_v1_6_assets
+        run: |
+          (python stream_enricher_v1.py < samples.jsonl &) && sleep 1
+          (python metrics_enrichment_exporter.py &) && sleep 1
+          (python resonance_adapter_v1_native_matrix.py &) && sleep 2
+          (python adaptation_metrics_exporter.py &) && sleep 1
+      - name: Build v1.7 graph + exporter
+        working-directory: lumen_v1_7_assets
+        run: |
+          python feedback_graph_core_v17.py
+          (python metrics_feedback_graph_exporter.py &) && sleep 1
+          curl -fsSL http://127.0.0.1:9153/metrics | head -n 20
+      - name: Gate (strict)
+        id: gate
+        working-directory: lumen_v1_7_assets
+        continue-on-error: true
+        run: |
+          python v17_gate.py --metrics-url http://127.0.0.1:9153/metrics             --sym-min ${{ github.event.inputs.sym_min }}             --s-min ${{ github.event.inputs.s_min }}             --c-min ${{ github.event.inputs.c_min }}
+      - name: Ledger ingest
+        if: steps.gate.outcome == 'success'
+        working-directory: lumen_v1_7_assets
+        run: |
+          python ledger_v17_ingestor.py
+          ls -lh ledger_v17.db
+      - name: Rollback on failure
+        if: steps.gate.outcome == 'failure'
+        working-directory: lumen_v1_7_assets
+        run: |
+          python v17_gate_rollback.py --state-file ../lumen_v1_6_assets/adaptation_state.json --window 1200 --alpha 0.12
+          echo "Gate failed — rolled back adapter state." >> release_summary.txt
+      - name: Package Helm chart
+        run: |
+          mkdir -p dist
+          helm package charts/lumen -d dist || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v17-full-loop
+          path: |
+            dist/*.tgz
+            lumen_v1_7_assets/feedback_graph.json
+            lumen_v1_7_assets/gain_alpha_matrix.json
+            lumen_v1_7_assets/indices.json
+            lumen_v1_7_assets/ledger_v17.db
+            lumen_v1_6_assets/adaptation_state.json
+      - name: Create GitHub Release
+        if: steps.gate.outcome == 'success'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
+          body: |
+            Lumen v1.7 Final — Full Loop Release
+            - Gate: PASS (sym ≥ ${{ github.event.inputs.sym_min }}, s ≥ ${{ github.event.inputs.s_min }}, c ≥ ${{ github.event.inputs.c_min }})
+            - Artifacts: Helm chart, graph, indices, ledger
+          files: |
+            dist/*.tgz
+            lumen_v1_7_assets/feedback_graph.json
+            lumen_v1_7_assets/gain_alpha_matrix.json
+            lumen_v1_7_assets/indices.json
+            lumen_v1_7_assets/ledger_v17.db
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Optional notify
+        if: ${{ github.event.inputs.notify_webhook != '' }}
+        run: |
+          echo '{"text":"Lumen v1.7 — '"${{ github.event.inputs.tag }}"' (Gate: '${{ steps.gate.outcome }}')"}' > payload.json
+          curl -X POST -H 'Content-Type: application/json' --data @payload.json '${{ github.event.inputs.notify_webhook }}'

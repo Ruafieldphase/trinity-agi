@@ -1,0 +1,455 @@
+# Lumen Gateway v1.0 - Prometheus Alert Rules
+#
+# Usage:
+#   1. Copy this file to your Prometheus server
+#   2. Add to prometheus.yml:
+#      rule_files:
+#        - "prometheus_rules.yml"
+#   3. Reload Prometheus: kill -HUP <prometheus-pid>
+#
+# Alert severity levels:
+#   - critical: Immediate attention required (page on-call)
+#   - warning: Should be addressed soon (ticket)
+#   - info: Informational, no action required
+
+groups:
+  - name: lumen_gateway_alerts
+    interval: 30s
+    rules:
+      # ========================================
+      # Critical Alerts
+      # ========================================
+
+      - alert: IONAPIDown
+        expr: lumen_ion_health == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: ion-api
+          team: backend
+        annotations:
+          summary: "ION API is DOWN"
+          description: |
+            ION API health check has failed for more than 2 minutes.
+            Current status: {{ $value }}
+            Time: {{ $labels.instance }}
+
+            Action Required:
+            1. Check ION API logs: `gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=ion-api" --limit 50`
+            2. Verify Cloud Run service status
+            3. Check Vertex AI quota and permissions
+            4. Restart service if necessary
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/ION-API-Down-Runbook
+
+      - alert: IONAPICanaryDown
+        expr: lumen_ion_canary_health == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: ion-api-canary
+          team: backend
+        annotations:
+          summary: "ION API Canary is DOWN"
+          description: |
+            ION API Canary health check has failed for more than 2 minutes.
+            Current status: {{ $value }}
+
+            Action Required:
+            1. Check Canary logs: `gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=ion-api-canary" --limit 50`
+            2. Verify Cloud Run service status
+            3. Compare with Main service status
+            4. Consider rollback if Main is healthy
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/ION-API-Down-Runbook
+
+      - alert: ServicePerformanceDegradation
+        expr: |
+          (
+            avg_over_time(lumen_ion_response_time_ms[5m]) 
+            / 
+            avg_over_time(lumen_ion_response_time_ms[1h] offset 1h)
+          ) > 1.5
+        for: 10m
+        labels:
+          severity: critical
+          component: performance
+          team: backend
+        annotations:
+          summary: "Service performance degraded significantly"
+          description: |
+            Response time has increased by 50% compared to 1 hour ago.
+            Current avg: {{ $value }}ms
+
+            Possible causes:
+            - Increased load
+            - Database issues
+            - Network problems
+            - Resource constraints
+
+            Action: Investigate recent changes and system metrics
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Performance-Degradation-Runbook
+
+      - alert: GatewayUnlocked
+        expr: lumen_gateway_status == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: gateway
+          team: infrastructure
+        annotations:
+          summary: "Lumen Gateway is UNLOCKED"
+          description: |
+            Gateway lock-in signature has been broken or reset.
+            Current status: {{ $value }} (0=initializing, 1=locked)
+
+            Possible causes:
+            - gateway_activation.yaml file was modified
+            - Manual reset performed
+            - File corruption
+
+            Action Required:
+            1. Run: cd gateway/scripts; python gateway_lockin.py
+            2. Verify signature: Check gateway_activation.yaml
+            3. Review logs: Get-Content ../logs/gateway_sync.log -Tail 50
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Gateway-Lock-Runbook
+
+      - alert: HighResponseTime
+        expr: lumen_ion_response_time_ms > 5000
+        for: 5m
+        labels:
+          severity: critical
+          component: ion-api
+          team: backend
+        annotations:
+          summary: "ION API response time is very high"
+          description: |
+            ION API is responding slowly (> 5 seconds) for more than 5 minutes.
+            Current response time: {{ $value }}ms
+
+            Impact:
+            - User experience degradation
+            - Potential timeout errors
+            - Gateway metrics collection delays
+
+            Action Required:
+            1. Check Cloud Run scaling: `gcloud run services describe ion-api --region=us-central1`
+            2. Review Vertex AI latency
+            3. Check database connections (if applicable)
+            4. Scale up instances if needed
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/High-Latency-Runbook
+
+      # ========================================
+      # Warning Alerts
+      # ========================================
+
+      - alert: MockModeDetected
+        expr: lumen_ion_mock_mode == 1
+        for: 1m
+        labels:
+          severity: warning
+          component: ion-api
+          team: backend
+        annotations:
+          summary: "ION API is running in MOCK mode"
+          description: |
+            ION API is returning mock responses instead of real AI.
+            Current mock mode: {{ $value }} (0=real, 1=mock)
+
+            Possible causes:
+            - VertexAIConnector not initialized
+            - Missing load_model() call
+            - Vertex AI authentication failure
+            - API quota exceeded
+
+            Action Required:
+            1. Check app/main.py initialization code
+            2. Verify Vertex AI credentials: `gcloud auth application-default login`
+            3. Check quota: `gcloud compute project-info describe --project=naeda-genesis`
+            4. Review deployment logs
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Mock-Mode-Runbook
+
+      - alert: LowConfidence
+        expr: lumen_ion_confidence < 0.3
+        for: 10m
+        labels:
+          severity: warning
+          component: ion-api
+          team: ml
+        annotations:
+          summary: "ION API confidence is low"
+          description: |
+            ION API responses have low confidence scores (< 0.3) for 10+ minutes.
+            Current confidence: {{ $value }}
+
+            This may indicate:
+            - Model quality issues
+            - Prompt engineering problems
+            - Input data issues
+            - Model needs retraining
+
+            Action Required:
+            1. Review recent API requests and responses
+            2. Check if confidence is contextual or systemic
+            3. Analyze PersonaPipeline logic
+            4. Consider prompt tuning or model updates
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Low-Confidence-Runbook
+
+      - alert: ModerateResponseTime
+        expr: lumen_ion_response_time_ms > 2000 and lumen_ion_response_time_ms <= 5000
+        for: 10m
+        labels:
+          severity: warning
+          component: ion-api
+          team: backend
+        annotations:
+          summary: "ION API response time is elevated"
+          description: |
+            ION API response time is between 2-5 seconds for 10+ minutes.
+            Current response time: {{ $value }}ms
+            Target: < 2000ms
+
+            Action Required:
+            1. Monitor for escalation
+            2. Check Cloud Run metrics
+            3. Review slow query logs
+            4. Consider preemptive scaling
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Moderate-Latency-Runbook
+
+      # ========================================
+      # Resonance Alerts
+      # ========================================
+
+      - alert: HighPhaseDiff
+        expr: lumen_phase_diff > 0.8
+        for: 15m
+        labels:
+          severity: warning
+          component: resonance
+          team: research
+        annotations:
+          summary: "Gateway resonance phase diff is high"
+          description: |
+            Phase difference between Gateway and ION is elevated (> 0.8).
+            Current phase diff: {{ $value }}
+            Optimal range: 0.3 - 0.6
+
+            This indicates potential misalignment between:
+            - Gateway expectations
+            - ION API responses
+            - Persona behavior consistency
+
+            Action: Monitor for patterns, review resonance logs
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Resonance-Runbook
+
+      - alert: HighEntropyRate
+        expr: lumen_entropy_rate > 0.7
+        for: 15m
+        labels:
+          severity: warning
+          component: resonance
+          team: research
+        annotations:
+          summary: "Gateway entropy rate is high"
+          description: |
+            System entropy (unpredictability) is high (> 0.7).
+            Current entropy rate: {{ $value }}
+            Optimal range: 0.1 - 0.4
+
+            This may indicate:
+            - Inconsistent API responses
+            - High variability in confidence scores
+            - Unstable persona behavior
+
+            Action: Review recent changes, check for outliers
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Resonance-Runbook
+
+      - alert: HighRiskBand
+        expr: lumen_risk_band > 0.6
+        for: 15m
+        labels:
+          severity: warning
+          component: resonance
+          team: research
+        annotations:
+          summary: "Gateway risk band is elevated"
+          description: |
+            Risk band metric is high (> 0.6), indicating potential instability.
+            Current risk band: {{ $value }}
+            Safe range: 0.0 - 0.3
+
+            This suggests:
+            - Increased error rates
+            - Confidence score volatility
+            - Potential degradation ahead
+
+            Action: Prepare contingency, review error logs
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Resonance-Runbook
+
+      # ========================================
+      # Feedback Loop Metrics (Lumen v1.7+)
+      # ========================================
+
+      - alert: CacheHitRateLow
+        expr: lumen_cache_hit_rate < 0.50
+        for: 5m
+        labels:
+          severity: warning
+          component: feedback-loop
+          team: backend
+        annotations:
+          summary: "Cache hit rate is below threshold"
+          description: |
+            Cache hit rate has been below 50% for 5+ minutes.
+            Current hit rate: {{ $value }}
+            Target: >= 0.50
+
+            This indicates:
+            - Cache is not effective
+            - Query patterns may have changed
+            - Cache size might be insufficient
+            - TTL settings may be too aggressive
+
+            Action Required:
+            1. Review cache configuration in feedback_orchestrator.py
+            2. Check cache memory usage
+            3. Analyze query patterns for cache misses
+            4. Consider increasing cache size or adjusting TTL
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Cache-Performance-Runbook
+
+      - alert: CacheMemoryHigh
+        expr: lumen_cache_memory_usage_percent > 90
+        for: 5m
+        labels:
+          severity: critical
+          component: feedback-loop
+          team: backend
+        annotations:
+          summary: "Cache memory usage is critical"
+          description: |
+            Cache memory usage exceeded 90% for 5+ minutes.
+            Current memory usage: {{ $value }}%
+            Critical threshold: 90%
+
+            This may cause:
+            - Cache evictions
+            - Performance degradation
+            - Potential OOM errors
+
+            Action Required:
+            1. Check feedback_orchestrator memory allocation
+            2. Review cache eviction policies
+            3. Reduce cache size or increase memory limits
+            4. Check for memory leaks
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Cache-Memory-Runbook
+
+      - alert: CacheAvgTTLLow
+        expr: lumen_cache_avg_ttl_seconds < 300
+        for: 10m
+        labels:
+          severity: info
+          component: feedback-loop
+          team: backend
+        annotations:
+          summary: "Cache average TTL is low"
+          description: |
+            Cache entries have a low average TTL (< 5 minutes) for 10+ minutes.
+            Current avg TTL: {{ $value }}s
+            Recommended: >= 300s (5 minutes)
+
+            This may indicate:
+            - Aggressive eviction policies
+            - Short-lived cache entries
+            - Frequent cache refreshes
+
+            Action: Review cache TTL configuration and eviction policies
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Cache-Performance-Runbook
+
+      - alert: UnifiedHealthScoreLow
+        expr: lumen_unified_health_score < 60
+        for: 5m
+        labels:
+          severity: warning
+          component: feedback-loop
+          team: backend
+        annotations:
+          summary: "Unified health score is below threshold"
+          description: |
+            Overall system health score has been below 60 for 5+ minutes.
+            Current health score: {{ $value }}
+            Target: >= 60
+
+            This composite metric reflects:
+            - Cache effectiveness (hit rate)
+            - Resource utilization (memory usage)
+            - System stability (TTL patterns)
+
+            Action Required:
+            1. Review cache hit rate metrics
+            2. Check cache memory usage
+            3. Analyze feedback loop logs
+            4. Verify feedback_orchestrator.py is running correctly
+            5. Check for errors in emit_feedback_metrics_once.py
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Unified-Health-Runbook
+
+      # ========================================
+      # Info Alerts (Notifications only)
+      # ========================================
+
+      - alert: LowCreativeBand
+        expr: lumen_creative_band < 0.2
+        for: 30m
+        labels:
+          severity: info
+          component: resonance
+          team: research
+        annotations:
+          summary: "Gateway creative band is low"
+          description: |
+            Creative band metric is low (< 0.2), responses may be conservative.
+            Current creative band: {{ $value }}
+            Optimal range: 0.3 - 0.6
+
+            This is informational only, no immediate action required.
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Resonance-Runbook
+
+      - alert: GatewayMetricsStale
+        expr: (time() - lumen_gateway_status) > 120
+        for: 5m
+        labels:
+          severity: warning
+          component: gateway
+          team: infrastructure
+        annotations:
+          summary: "Gateway metrics are not updating"
+          description: |
+            No new metrics received for more than 2 minutes.
+            Last update: {{ $value }} seconds ago
+
+            Possible causes:
+            - Collector process crashed
+            - Exporter process crashed
+            - Network issues
+            - Disk full (CSV write failure)
+
+            Action Required:
+            1. Check processes: Get-Process python
+            2. Restart Gateway: cd gateway/scripts; .\start_gateway.ps1 -KillExisting
+            3. Check disk space: Get-PSDrive C
+            4. Review logs
+
+          playbook: https://github.com/Ruafieldphase/LLM_Unified/wiki/Metrics-Stale-Runbook

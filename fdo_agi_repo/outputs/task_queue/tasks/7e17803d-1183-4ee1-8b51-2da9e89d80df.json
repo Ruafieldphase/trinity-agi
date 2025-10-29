@@ -1,0 +1,12 @@
+{
+  "id": "7e17803d-1183-4ee1-8b51-2da9e89d80df",
+  "type": "ping",
+  "requester": {
+    "test": "extension_ping_v2"
+  },
+  "data": {},
+  "status": "failed",
+  "created_at": "2025-10-28T21:59:47.986833",
+  "assigned_to": "comet-extension",
+  "updated_at": "2025-10-28T21:59:50.517775"
+}

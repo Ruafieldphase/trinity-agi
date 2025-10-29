@@ -1,0 +1,75 @@
+name: lumen_v19_pr_gate_extended
+on:
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  pr-gate:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Start exporters (best-effort)
+        run: |
+          (cd lumen_v1_8_assets && (python roi_risk_exporter_v18.py &) && sleep 1) || true
+          (cd lumen_v1_9_assets && (python prod_roi_exporter_v19.py &) && sleep 1) || true
+      - name: Readiness v2
+        id: ready
+        continue-on-error: true
+        run: |
+          python scripts/ops_readiness_check_v2.py
+          echo "report=docs/OPS_READINESS_REPORT_v2.md" >> $GITHUB_OUTPUT
+          echo "summary=docs/OPS_READINESS_SUMMARY_v2.json" >> $GITHUB_OUTPUT
+      - name: ROI Gate (stage env by default for PRs)
+        id: roi
+        continue-on-error: true
+        env:
+          ROI_ENV: stage
+          ROI_THRESHOLDS_FILE: docs/roi_thresholds_v19.example.yaml
+        run: |
+          python scripts/check_roi_thresholds_env_v19.py
+          echo "code=$?" >> $GITHUB_OUTPUT
+      - name: Summarize & comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            function read(path) { try { return fs.readFileSync(path, 'utf8'); } catch { return ''; } }
+            const readyMd = read('docs/OPS_READINESS_REPORT_v2.md');
+            const roiCode = `${{ steps.roi.outputs.code }}` || '0';
+            const body = [
+              '### Lumen v1.9 — PR Gate Report',
+              '',
+              '**Readiness v2:** attached report below.',
+              `**ROI Gate (env=stage):** ${roiCode !== '0' ? '❌ FAIL' : '✅ PASS'}`,
+              '',
+              '<details><summary>Readiness Report</summary>',
+              '',
+              readyMd || '_no report_',
+              '',
+              '</details>'
+            ].join('\n');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
+      - name: Add fail label on gate failure
+        if: steps.roi.outputs.code != '0'
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: do-not-merge
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-gate-artifacts
+          path: |
+            docs/OPS_READINESS_REPORT_v2.md
+            docs/OPS_READINESS_SUMMARY_v2.json

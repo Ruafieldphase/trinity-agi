@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-adapter-rules
+  namespace: custom-metrics
+data:
+  rules.yaml: |
+    rules:
+      # Expose lumen_m_score as custom metric (namespaced)
+      - seriesQuery: 'lumen_m_score'
+        resources:
+          template: <<.Resource>>
+        name:
+          matches: ""
+          as: "lumen_m_score"
+        metricsQuery: 'lumen_m_score'
+      # Expose 5m error ratio
+      - seriesQuery: 'err:lumen_maturity_error_ratio:5m'
+        resources:
+          template: <<.Resource>>
+        name:
+          matches: ""
+          as: "lumen_error_ratio_5m"
+        metricsQuery: 'err:lumen_maturity_error_ratio:5m'

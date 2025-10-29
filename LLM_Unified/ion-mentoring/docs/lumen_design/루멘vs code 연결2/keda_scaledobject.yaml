@@ -1,0 +1,19 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "lumen.fullname" . }}-maturity-autoscale
+spec:
+  scaleTargetRef:
+    name: {{ include "lumen.fullname" . }}
+    kind: Deployment
+  pollingInterval: 30
+  cooldownPeriod: 300
+  minReplicaCount: {{ .Values.autoscale.minReplicas | default 1 }}
+  maxReplicaCount: {{ .Values.autoscale.maxReplicas | default 5 }}
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: {{ .Values.autoscale.prometheus.url | default "http://prometheus-server" }}
+        metricName: lumen_error_ratio_5m
+        query: err:lumen_maturity_error_ratio:5m
+        threshold: "{{ .Values.autoscale.prometheus.threshold | default "0.10" }}"

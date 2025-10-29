@@ -1,0 +1,5 @@
+persona_id,persona_name,persona_role,backend,turns,injections,injection_rate,avg_affect_delta,avg_tokens,avg_characters
+antithesis,Boundary Challenger (E2),Critical reflector,local_ollama,4,0,0.0,0.06499999999999999,357.0,2563.0
+rune,RUNE Analyzer,Resonance,unknown,4,0,0.0,0.0,39.25,264.75
+synthesis,Fractal Synthesiser (E2),Integrator,local_ollama,4,0,0.0,0.09999999999999999,390.5,2892.0
+thesis,Dialectic Thesis (E2),Seed explorer,local_ollama,4,0,0.0,0.11999999999999997,288.0,2147.0

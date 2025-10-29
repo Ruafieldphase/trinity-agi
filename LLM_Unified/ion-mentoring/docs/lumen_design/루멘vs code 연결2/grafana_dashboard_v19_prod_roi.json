@@ -1,0 +1,110 @@
+{
+  "title": "Lumen v1.9 \u2014 Production ROI vs Drift",
+  "schemaVersion": 39,
+  "tags": [
+    "lumen",
+    "v1.9",
+    "roi",
+    "prod"
+  ],
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Prod Deploys (90d)",
+      "targets": [
+        {
+          "expr": "lumen_prod_deploy_count"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Prod Rollbacks (90d)",
+      "targets": [
+        {
+          "expr": "lumen_prod_rollback_count"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Deploy Success Rate",
+      "targets": [
+        {
+          "expr": "lumen_prod_deploy_success_rate"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Rollback Rate",
+      "targets": [
+        {
+          "expr": "lumen_prod_rollback_rate"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Prod vs Drift Rates",
+      "targets": [
+        {
+          "expr": "lumen_prod_deploy_success_rate"
+        },
+        {
+          "expr": "lumen_prod_rollback_rate"
+        },
+        {
+          "expr": "lumen_v18_release_success_rate"
+        },
+        {
+          "expr": "lumen_v18_rollback_rate"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      }
+    },
+    {
+      "type": "text",
+      "title": "Notes",
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "Prod ROI from real events; Drift ROI from proxy exporter (v1.8)."
+      }
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "title": "Lumen v1.6 \u2014 Enrichment & Adaptation",
+  "uid": "lumen-v16-enrich-adapt",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Semantic Density (latest & avg30)",
+      "targets": [
+        {
+          "expr": "lumen_enrichment_semantic_density"
+        },
+        {
+          "expr": "lumen_enrichment_semantic_density_avg30"
+        }
+      ],
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Entropy Score",
+      "targets": [
+        {
+          "expr": "lumen_enrichment_entropy_score"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Phase Diff (avg) \u2014 proxy",
+      "targets": [
+        {
+          "expr": "avg_over_time(lumen_m_score[2m])"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Window (ms)",
+      "targets": [
+        {
+          "expr": "lumen_window_ms"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Gain Alpha",
+      "targets": [
+        {
+          "expr": "lumen_gain_alpha"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 8,
+        "y": 14
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Gain Auto-Tune Rate",
+      "targets": [
+        {
+          "expr": "lumen_gain_auto_tune_rate"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 8,
+        "x": 16,
+        "y": 14
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Phase Resync Latency (ms)",
+      "targets": [
+        {
+          "expr": "lumen_phase_resync_latency"
+        }
+      ],
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      }
+    }
+  ]
+}

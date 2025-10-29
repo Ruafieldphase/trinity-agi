@@ -1,0 +1,24 @@
+
+route:
+  receiver: 'slack'
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 2h
+
+receivers:
+  - name: 'slack'
+    slack_configs:
+      - api_url_file: /etc/alertmanager/alertmanager_slack_url
+        channel: '#lumen-alerts'
+        send_resolved: true
+        title: '{{ .Status | toUpper }}: {{ .CommonLabels.alertname }}'
+        text: |-
+          *Status:* {{ .Status }}
+          *Summary:* {{ .CommonAnnotations.summary }}
+          *Description:* {{ .CommonAnnotations.description }}
+          *Labels:* {{ .CommonLabels }}
+          *StartsAt:* {{ .Alerts | first | .StartsAt }}
+          {{ template "lumen.slack.approval" . }}
+templates:
+  - /etc/alertmanager/templates/*.tmpl

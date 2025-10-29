@@ -1,0 +1,17 @@
+{
+  "task_id": "e4a4c317-82f5-41c9-b778-18f77cffd092",
+  "worker": "comet-extension",
+  "status": "success",
+  "data": {
+    "result": 210,
+    "calculation": "5*6*7=210",
+    "numbers": [
+      5,
+      6,
+      7
+    ],
+    "operation": "multiply"
+  },
+  "completed_at": "2025-10-28T22:06:12.297133",
+  "error_message": null
+}

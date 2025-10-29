@@ -1,0 +1,24 @@
+name: lumen_collect_proof
+on:
+  workflow_run:
+    workflows: ["lumen_release_gate"]
+    types: [completed]
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Create gate log
+        run: echo "Gate status: ${{ github.event.workflow_run.conclusion }}" > gate.log
+      - name: Build proof bundle
+        run: |
+          python scripts/proof_bundle.py --root . --gate-log gate.log
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-proof-bundle
+          path: proofd_bundles/*.tar.gz

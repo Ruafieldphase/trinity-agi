@@ -1,0 +1,14 @@
+# prometheus_v15.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: "lumen_maturity"
+    static_configs:
+      - targets: ["host.docker.internal:9158"]
+  - job_name: "lumen_slo"
+    static_configs:
+      - targets: ["host.docker.internal:9157"]
+  - job_name: "lumen_roi"
+    static_configs:
+      - targets: ["host.docker.internal:9156"]

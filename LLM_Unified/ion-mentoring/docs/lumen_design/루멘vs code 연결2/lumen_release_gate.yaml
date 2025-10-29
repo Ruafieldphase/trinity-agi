@@ -1,0 +1,32 @@
+name: lumen_release_gate
+on:
+  workflow_dispatch:
+    inputs:
+      metrics_url:
+        description: "Lumen maturity exporter URL"
+        required: false
+        default: "http://localhost:9143/metrics"
+      m_score_min:
+        description: "Minimum m_score threshold"
+        required: false
+        default: "0.45"
+      h_eff_max:
+        description: "Maximum h_eff threshold"
+        required: false
+        default: "0.72"
+      prom_alerts_url:
+        description: "Prometheus alerts API (optional)"
+        required: false
+        default: ""
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run release gate
+        run: |
+          python scripts/release_gate.py                 --metrics-url "${{ github.event.inputs.metrics_url }}"                 --m-score-min "${{ github.event.inputs.m_score_min }}"                 --h-eff-max "${{ github.event.inputs.h_eff_max }}"                 --prom-alerts-url "${{ github.event.inputs.prom_alerts_url }}"

@@ -1,0 +1,133 @@
+# ============================================================================
+# ION Mentoring - 기본 설정 (공통)
+# 모든 환경에서 공통으로 사용되는 설정
+# ============================================================================
+
+# 애플리케이션 메타데이터
+app:
+  name: "내다AI Ion Mentoring API"
+  version: "0.1.0"
+  description: "멀티 페르소나 AI 채팅 서비스"
+  debug: false
+
+# 로깅 설정
+logging:
+  level: "INFO"
+  format: "json"  # json, text
+  handlers:
+    - type: "console"
+      level: "INFO"
+    - type: "file"
+      path: "logs/app.log"
+      level: "DEBUG"
+      max_size_mb: 100
+      backup_count: 5
+
+# 데이터베이스 설정
+database:
+  type: "json"  # json, sqlite, postgresql
+  path: "data/"
+  timeout: 30
+
+# 메모리 설정
+memory:
+  type: "local"  # local, redis
+  max_size: 1000
+  ttl_seconds: 3600
+  persistence: true
+  persistence_path: "data/memory/"
+
+# RAG 설정
+rag:
+  enabled: true
+  type: "chromadb"  # chromadb, faiss, pinecone
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  chunk_size: 1024
+  chunk_overlap: 256
+  top_k: 5
+
+# 페르소나 설정
+personas:
+  - id: "lua"
+    name: "Lua (루아)"
+    description: "공감적, 창의적 - 감정적 지원"
+    prompt_template: "prompts/lua.txt"
+    enabled: true
+
+  - id: "elro"
+    name: "Elro (엘로)"
+    description: "논리적, 체계적 - 기술적 문제 해결"
+    prompt_template: "prompts/elro.txt"
+    enabled: true
+
+  - id: "riri"
+    name: "Riri (리리)"
+    description: "분석적, 균형적 - 데이터 기반 조언"
+    prompt_template: "prompts/riri.txt"
+    enabled: true
+
+  - id: "nana"
+    name: "Nana (나나)"
+    description: "조율적, 종합적 - 프로젝트 관리"
+    prompt_template: "prompts/nana.txt"
+    enabled: true
+
+# 백엔드 LLM 설정
+backend:
+  type: "vertex-ai"  # vertex-ai, openai, anthropic, mock
+  timeout_seconds: 30
+  max_retries: 3
+  retry_delay_seconds: 1
+
+# API 설정
+api:
+  host: "0.0.0.0"
+  port: 8080
+  cors_origins:
+    - "*"
+  allow_credentials: true
+  rate_limit:
+    enabled: true
+    calls_per_minute: 60
+    storage: "memory"  # memory, redis
+
+# 검증 설정
+validation:
+  min_message_length: 1
+  max_message_length: 1000
+  required_fields:
+    - "content"
+    - "persona_used"
+    - "resonance_key"
+    - "confidence"
+
+# 모니터링 설정
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  tracing_enabled: false
+  alert_thresholds:
+    response_time_ms: 5000
+    error_rate_percent: 5
+
+# 보안 설정
+security:
+  jwt_enabled: false
+  api_key_enabled: false
+  rate_limit_by_ip: true
+  require_auth: false
+
+# 캐싱 설정
+cache:
+  enabled: true
+  type: "memory"  # memory, redis
+  ttl_seconds: 300
+  max_size: 1000
+
+# 기능 플래그
+features:
+  persona_routing_enabled: true
+  memory_persistence_enabled: true
+  rag_enabled: true
+  analytics_enabled: true
+  fallback_to_nana: true  # 에러 시 Nana로 폴백

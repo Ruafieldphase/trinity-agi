@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Lumen — Session Restore (v1.8 Preview)
+export LUMEN_SESSION="v1.8_Preview"
+export LUMEN_ROOT="${LUMEN_ROOT:-$PWD}"
+export LUMEN_V17="${LUMEN_V17:-$LUMEN_ROOT/lumen_v1_7_assets}"
+export LUMEN_V18="${LUMEN_V18:-$LUMEN_ROOT/lumen_v1_8_assets}"
+
+l8.policy() {
+  (cd "$LUMEN_V18" && python ledger_analyzer_v18.py)
+  SYM=$(jq -r .sym_min "$LUMEN_V18/adaptive_gate_policy_v18.json" 2>/dev/null || echo "0.75")
+  S=$(jq -r .s_min "$LUMEN_V18/adaptive_gate_policy_v18.json" 2>/dev/null || echo "0.60")
+  C=$(jq -r .c_min "$LUMEN_V18/adaptive_gate_policy_v18.json" 2>/dev/null || echo "0.55")
+  export LUMEN_GATE_TARGET_SYM="$SYM"
+  export LUMEN_GATE_TARGET_S="$S"
+  export LUMEN_GATE_TARGET_C="$C"
+  echo ">> Applied policy: sym_min=$SYM s_min=$S c_min=$C"
+}
+
+l8.fractal() {
+  (cd "$LUMEN_V18" && python fractal_memory_injector_v18.py) &&   echo ">> Annotated graph: $LUMEN_V18/feedback_graph_v18_annotated.json"
+}
+
+echo "[Lumen] v1.8 Preview restored. Try: l8.policy && l8.fractal"

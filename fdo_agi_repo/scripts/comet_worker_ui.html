@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comet Worker - Browser Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .status {
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-label {
+            color: #666;
+        }
+
+        .status-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .log-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            color: #d4d4d4;
+        }
+
+        .log-timestamp {
+            color: #858585;
+        }
+
+        .log-info {
+            color: #4ec9b0;
+        }
+
+        .log-success {
+            color: #4ec9b0;
+        }
+
+        .log-error {
+            color: #f48771;
+        }
+
+        .log-task {
+            color: #dcdcaa;
+        }
+
+        .instruction {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .instruction-title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instruction-text {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🤖 Comet Worker</h1>
+        <p class="subtitle">Copilot ↔ Comet 협업 시스템 (Browser Edition)</p>
+
+        <div class="instruction">
+            <div class="instruction-title">📋 사용 방법 (Comet Browser AI)</div>
+            <div class="instruction-text">
+                1. 브라우저의 <strong>개발자 도구</strong>를 엽니다 (F12 또는 Ctrl+Shift+I)<br>
+                2. <strong>Console</strong> 탭으로 이동<br>
+                3. 아래 버튼 대신 <strong>Console에 직접 명령어 입력</strong>:<br>
+                <div class="code-block">await processOneCycle()</div>
+                4. 또는 자동 실행:<br>
+                <div class="code-block">await startAutoWorker()</div>
+            </div>
+        </div>
+
+        <div class="status">
+            <div class="status-item">
+                <span class="status-label">작업 큐 경로:</span>
+                <span class="status-value" id="queue-path">D:\nas_backup\fdo_agi_repo\outputs\task_queue</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">대기 작업:</span>
+                <span class="status-value" id="pending-tasks">확인 중...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">처리 완료:</span>
+                <span class="status-value" id="completed-tasks">0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">상태:</span>
+                <span class="status-value" id="worker-status">대기 중</span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="checkTasks()">📋 작업 확인</button>
+            <button onclick="processOneCycle()">▶️ 1회 처리</button>
+            <button onclick="startAutoWorker()" id="start-btn">🚀 자동 실행 시작</button>
+            <button onclick="stopAutoWorker()" id="stop-btn" disabled>⏹️ 중지</button>
+        </div>
+
+        <div class="log-container" id="log-container">
+            <div class="log-entry">
+                <span class="log-timestamp">[시스템]</span>
+                <span class="log-info">Comet Worker 준비 완료</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[안내]</span>
+                <span class="log-info">⚠️ 브라우저는 로컬 파일에 직접 접근할 수 없습니다</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[해결]</span>
+                <span class="log-info">→ Copilot이 HTTP API 서버를 실행해야 합니다</span>
+            </div>
+            <div class="log-entry">
+                <span class="log-timestamp">[대안]</span>
+                <span class="log-info">→ 또는 Comet이 로컬 Python 스크립트를 실행할 수 있어야 합니다</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let workerInterval = null;
+        let completedCount = 0;
+
+        // 실제로는 브라우저에서 로컬 파일을 읽을 수 없음
+        // 이것은 시연용 UI입니다
+
+        function log(message, type = 'info') {
+            const container = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+
+            const timestamp = new Date().toLocaleTimeString('ko-KR');
+            const timestampSpan = document.createElement('span');
+            timestampSpan.className = 'log-timestamp';
+            timestampSpan.textContent = `[${timestamp}]`;
+
+            const messageSpan = document.createElement('span');
+            messageSpan.className = `log-${type}`;
+            messageSpan.textContent = ' ' + message;
+
+            entry.appendChild(timestampSpan);
+            entry.appendChild(messageSpan);
+            container.appendChild(entry);
+
+            // 자동 스크롤
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function checkTasks() {
+            log('작업 확인 중...', 'info');
+
+            // 실제로는 API 호출 필요
+            log('⚠️ 브라우저는 로컬 파일에 접근할 수 없습니다', 'error');
+            log('→ Copilot에게 HTTP API 서버 실행을 요청하세요', 'info');
+
+            document.getElementById('pending-tasks').textContent = '확인 불가 (API 필요)';
+        }
+
+        async function processOneCycle() {
+            log('작업 처리 시도...', 'info');
+
+            // 실제 구현 필요
+            log('⚠️ 브라우저 환경에서는 파일 시스템 접근 불가', 'error');
+            log('💡 해결 방법:', 'info');
+            log('  1. Copilot이 HTTP API 서버 실행', 'info');
+            log('  2. fetch() API로 서버에 요청', 'info');
+            log('  3. 서버가 파일 시스템 대신 처리', 'info');
+        }
+
+        async function startAutoWorker() {
+            log('자동 실행 시작...', 'success');
+            document.getElementById('start-btn').disabled = true;
+            document.getElementById('stop-btn').disabled = false;
+            document.getElementById('worker-status').textContent = '실행 중';
+
+            log('⚠️ 현재는 시연 모드입니다', 'info');
+            log('→ HTTP API가 필요합니다', 'info');
+
+            // 시뮬레이션
+            workerInterval = setInterval(() => {
+                log('🔍 작업 확인 중... (시뮬레이션)', 'info');
+            }, 5000);
+        }
+
+        function stopAutoWorker() {
+            if (workerInterval) {
+                clearInterval(workerInterval);
+                workerInterval = null;
+            }
+
+            log('자동 실행 중지', 'info');
+            document.getElementById('start-btn').disabled = false;
+            document.getElementById('stop-btn').disabled = true;
+            document.getElementById('worker-status').textContent = '대기 중';
+        }
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', () => {
+            log('🌐 Comet Worker UI 로드 완료', 'success');
+            log('⚠️ 중요: 이 페이지만으로는 작동하지 않습니다', 'error');
+            log('', 'info');
+            log('📋 필요한 것:', 'info');
+            log('  1. Copilot이 HTTP API 서버 실행', 'info');
+            log('  2. API 엔드포인트:', 'info');
+            log('     GET /api/tasks - 대기 작업 목록', 'info');
+            log('     POST /api/tasks/:id/complete - 작업 완료', 'info');
+            log('', 'info');
+            log('💡 또는 Comet이 로컬 Python 스크립트를 실행할 수 있다면:', 'info');
+            log('  → comet_simple_worker.py 실행', 'info');
+        });
+    </script>
+</body>
+
+</html>

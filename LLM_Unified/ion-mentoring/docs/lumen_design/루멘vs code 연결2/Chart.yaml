@@ -1,0 +1,6 @@
+apiVersion: v2
+name: lumen-v15-preview
+description: Lumen v1.5 Preview — streaming ingestor, maturity spectrum, exporter
+type: application
+version: 0.1.0
+appVersion: "v1.5-rc"

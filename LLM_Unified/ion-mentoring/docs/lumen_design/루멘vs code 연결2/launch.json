@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python: maturity_exporter.py",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/maturity_exporter.py",
+      "args": [
+        "--port",
+        "9143"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

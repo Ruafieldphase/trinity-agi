@@ -1,0 +1,28 @@
+{
+  "timestamp": "2025-10-27T00:06:11.541671+00:00",
+  "health": {
+    "status": "CRITICAL",
+    "health_score": 15,
+    "total_tasks": 157,
+    "metrics": {
+      "corrections_enabled_rate": 0.7579617834394905,
+      "replan_rate": 0.5095541401273885,
+      "avg_quality": 0.6038216560509555,
+      "evidence_ok_rate": 0.49044585987261147,
+      "high_quality_rate": 0.49044585987261147
+    },
+    "counts": {
+      "corrections_enabled": 119,
+      "replan": 80,
+      "evidence_correction": 67,
+      "high_quality": 77,
+      "evidence_ok": 77
+    },
+    "issues": [
+      "CRITICAL: Corrections enabled rate: 75.8% (target: >= 95%)",
+      "CRITICAL: Replan rate: 51.0% (target: <= 10%)",
+      "Avg quality: 0.60 (target: >= 0.7)",
+      "CRITICAL: Evidence OK rate: 49.0% (target: >= 70%)"
+    ]
+  }
+}

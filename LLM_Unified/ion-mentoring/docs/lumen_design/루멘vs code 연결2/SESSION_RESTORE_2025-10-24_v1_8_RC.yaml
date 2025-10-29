@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Lumen — Session Restore (v1.8 RC)
+export LUMEN_SESSION="v1.8_RC"
+export LUMEN_ROOT="${LUMEN_ROOT:-$PWD}"
+export LUMEN_V16="${LUMEN_V16:-$LUMEN_ROOT/lumen_v1_6_assets}"
+export LUMEN_V17="${LUMEN_V17:-$LUMEN_ROOT/lumen_v1_7_assets}"
+export LUMEN_V18="${LUMEN_V18:-$LUMEN_ROOT/lumen_v1_8_assets}"
+
+l8.rc.run() {
+  set -e
+  echo ">> Deriving adaptive gate policy from ledger"
+  (cd "$LUMEN_V18" && python ledger_analyzer_v18.py && cat adaptive_gate_policy_v18.json)
+  echo ">> Starting v1.6 stack (native matrix)"
+  (cd "$LUMEN_V16" && (python stream_enricher_v1.py < samples.jsonl &) && sleep 1 && (python metrics_enrichment_exporter.py &) && sleep 1 && (python resonance_adapter_v1_native_matrix.py &) && sleep 1 && (python adaptation_metrics_exporter.py &) && sleep 1)
+  echo ">> Building v1.7 feedback graph & exporter"
+  (cd "$LUMEN_V17" && python feedback_graph_core_v17.py && (python metrics_feedback_graph_exporter.py &) && sleep 1)
+  echo ">> Gate with adaptive thresholds"
+  (cd "$LUMEN_V18" && python v18_gate_runner.py --metrics http://127.0.0.1:9153/metrics) || {     echo ">> Gate FAILED — rolling back adapter state";     (cd "$LUMEN_V17" && python v17_gate_rollback.py --state-file "$LUMEN_V16/adaptation_state.json" --window 1200 --alpha 0.12);     return 2;   }
+  echo ">> Gate PASS — ingesting to ledger"
+  (cd "$LUMEN_V17" && python ledger_v17_ingestor.py && ls -lh ledger_v17.db)
+}
+
+echo "[Lumen] v1.8 RC session restored. Run: l8.rc.run"

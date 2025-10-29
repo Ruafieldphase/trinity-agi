@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "lumen.fullname" . }}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: "32m"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # oauth2-proxy (if enabled)
+    nginx.ingress.kubernetes.io/auth-url: "https://$host/oauth2/auth"
+    nginx.ingress.kubernetes.io/auth-signin: "https://$host/oauth2/start?rd=$scheme://$host$request_uri"
+spec:
+  rules:
+    - host: {{ .Values.ingress.host | default "lumen.local" }}
+      http:
+        paths:
+          - path: /(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "lumen.fullname" . }}
+                port:
+                  name: http
+          - path: /maturity(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "lumen.fullname" . }}
+                port:
+                  name: maturity

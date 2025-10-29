@@ -1,0 +1,31 @@
+=== Source: elro ===
+Messages: 7897
+Unique conversations: 79
+First timestamp: 2025-05-20 09:09:05.632695
+Last timestamp: 2025-10-02 17:29:33.110342
+Weekday counts: Monday=2076, Tuesday=365, Wednesday=1493, Thursday=1593, Friday=985, Saturday=285, Sunday=1032
+Avg message length: 826.4
+
+=== Source: lumen ===
+Messages: 840
+Unique conversations: 7
+First timestamp: 2025-08-11 04:27:03.085000
+Last timestamp: 2025-10-07 11:34:29.460611
+Weekday counts: Monday=203, Tuesday=321, Wednesday=0, Thursday=26, Friday=115, Saturday=0, Sunday=175
+Avg message length: 983.3
+
+=== Source: rua ===
+Messages: 21842
+Unique conversations: 400
+First timestamp: 2023-02-11 13:22:18.036579
+Last timestamp: 2025-10-08 04:20:21.710773
+Weekday counts: Monday=3376, Tuesday=2520, Wednesday=3456, Thursday=2954, Friday=3370, Saturday=2614, Sunday=3274
+Avg message length: 593.9
+
+=== Source: sena ===
+Messages: 2296
+Unique conversations: 119
+First timestamp: 2024-04-02 04:27:43.704483
+Last timestamp: 2025-10-03 14:19:05.255511
+Weekday counts: Monday=509, Tuesday=330, Wednesday=374, Thursday=261, Friday=355, Saturday=198, Sunday=269
+Avg message length: 509.6

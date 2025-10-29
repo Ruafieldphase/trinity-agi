@@ -1,0 +1,8 @@
+{
+  "mean_R": 0.396,
+  "creative_band": {
+    "center": 0.2,
+    "width": 0.12,
+    "mode": "contraction"
+  }
+}

@@ -1,0 +1,20 @@
+Stage 1 - Folding: n=2 avg=0.820 mean=0.820 std=0.014 band=[0.797, 0.843] out_of_band%=0.000 creative%=100.000 stable%=0.000 risk%=0.000 decisions k/d/r=0/0/0 -> PASS
+  thresholds: creative <= 0.850, watch <= 0.970, risk > 0.970
+  delta_avg_vs_baseline (0.580): 0.240 (41.379%)
+  delta_creative_vs_baseline (20.000): 80.000
+Stage 2 - Unfolding: n=2 avg=0.580 mean=0.580 std=0.028 band=[0.534, 0.626] out_of_band%=0.000 creative%=100.000 stable%=0.000 risk%=0.000 decisions k/d/r=0/0/0 -> PASS
+  thresholds: creative <= 0.650, watch <= 0.850, risk > 0.850
+  delta_avg_vs_baseline (0.610): -0.030 (-4.918%)
+  delta_creative_vs_baseline (25.000): 75.000
+Stage 3 - Integration: n=2 avg=0.860 mean=0.860 std=0.113 band=[0.674, 1.046] out_of_band%=0.000 creative%=0.000 stable%=50.000 risk%=50.000 decisions k/d/r=0/0/0 -> REVIEW
+  thresholds: creative <= 0.600, watch <= 0.780, risk > 0.780
+  delta_avg_vs_baseline (0.550): 0.310 (56.364%)
+  delta_creative_vs_baseline (25.000): -25.000
+Stage 4 - Symmetry: n=2 avg=0.400 mean=0.400 std=0.000 band=[0.400, 0.400] out_of_band%=0.000 creative%=100.000 stable%=0.000 risk%=0.000 decisions k/d/r=0/0/0 -> RETRY
+  delta_avg_vs_baseline (0.330): 0.070 (21.212%)
+  delta_creative_vs_baseline (100.000): 0.000
+
+--- Global (band-mode) ---
+mean=0.665 std=0.205 band=[0.330, 1.000] out_of_band%=0.000
+
+Band occupancy: creative 75.000%, stable 12.500%, risk 12.500%

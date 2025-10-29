@@ -1,0 +1,168 @@
+{
+  "summary": {
+    "total_tasks": 10,
+    "successful_tasks": 10,
+    "failed_tasks": 0,
+    "success_rate_percent": 100.0,
+    "avg_quality_score": 0.8,
+    "avg_citations": 6.0,
+    "avg_citation_quality": 0.0,
+    "avg_elapsed_sec": 30.72
+  },
+  "comparison": {
+    "baseline_success_rate": 51.76,
+    "new_success_rate": 100.0,
+    "improvement_points": 48.24,
+    "improvement_percent": 93.2
+  },
+  "goal_achievement": {
+    "target_success_rate": 70.0,
+    "current_success_rate": 100.0,
+    "gap_to_target": -30.0,
+    "target_achieved": true,
+    "status": "[OK] TARGET ACHIEVED"
+  },
+  "per_category": {
+    "medium": {
+      "total": 10,
+      "successful": 10,
+      "failed": 0,
+      "success_rate_percent": 100.0,
+      "avg_quality_score": 0.8,
+      "avg_citations": 6.0,
+      "avg_elapsed_sec": 30.72
+    }
+  },
+  "task_results": [
+    {
+      "task_id": 1,
+      "goal": "Find all Python files that import the RAG module",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 32.96727705001831,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 2,
+      "goal": "List the main configuration parameters for the AGI pipeline",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 26.736663579940796,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 3,
+      "goal": "Identify which scripts generate monitoring reports",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 26.20840048789978,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 4,
+      "goal": "Show the relationship between PLAN, ANTI, and SYNTH personas",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 34.48862981796265,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 5,
+      "goal": "Find examples of successful evidence correction in recent logs",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 29.548897981643677,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 6,
+      "goal": "List all scheduled tasks and their execution frequency",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 24.175699710845947,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 7,
+      "goal": "Identify the main retry mechanisms in the codebase",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 35.25968956947327,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 8,
+      "goal": "Show how the system handles API timeouts",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 36.4927122592926,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 9,
+      "goal": "Find documentation for the ChatOps command system",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 33.431885957717896,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    },
+    {
+      "task_id": 10,
+      "goal": "List all environment variables used by the AGI pipeline",
+      "success": true,
+      "quality_score": 0.8,
+      "citations": 6,
+      "summary_length": 71,
+      "avg_citation_quality": 0.0,
+      "elapsed_sec": 27.89784264564514,
+      "ok": true,
+      "error": null,
+      "category": "medium"
+    }
+  ]
+}

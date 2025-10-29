@@ -1,0 +1,39 @@
+# Adaptive Feedback Rules v2 — with hysteresis & cooldown
+rules:
+  - id: "reduce_load"
+    enter:
+      all:
+        - "mapped.coherence < 0.55"
+        - "mapped.phase_diff > 0.45"
+    exit:
+      all:
+        - "mapped.coherence > 0.60"
+        - "mapped.phase_diff < 0.40"
+    cooldown: "2min"
+    actions:
+      - "scale_down_creative_band_weight by 5% for 2min"
+      - "increase_safety_weight by 3% for 2min"
+
+  - id: "latency_mitigation"
+    enter:
+      all:
+        - "mapped.phase_diff > 0.45"
+        - "metrics.latency_p95_ms > 400"
+    exit:
+      any:
+        - "mapped.phase_diff < 0.35"
+        - "metrics.latency_p95_ms < 350"
+    cooldown: "3min"
+    actions:
+      - "throttle_noncritical_tasks ${THROTTLE_PCT:10}% for 3min"
+      - "enable_circuit_breaker on ${SERVICE:myapp}"
+
+  - id: "exploration_resume"
+    enter:
+      all:
+        - "mapped.coherence > 0.70"
+        - "mapped.phase_diff < 0.30"
+    cooldown: "60s"
+    actions:
+      - "restore_creative_band_weight to baseline"
+      - "decrease_safety_weight to baseline"

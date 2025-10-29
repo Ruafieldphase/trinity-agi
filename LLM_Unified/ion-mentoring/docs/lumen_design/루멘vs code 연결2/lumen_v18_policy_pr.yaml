@@ -1,0 +1,36 @@
+name: lumen_v18_policy_pr
+on:
+  workflow_run:
+    workflows: ["lumen_v18_autotune_on_drift"]
+    types: [completed]
+  workflow_dispatch: {}
+jobs:
+  create-policy-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare branch
+        run: |
+          BR="chore/v18-policy-$(date +%Y%m%d%H%M%S)"
+          echo "BRANCH=$BR" >> $GITHUB_ENV
+          git checkout -b "$BR"
+          # Ensure files exist
+          test -f lumen_v1_8_assets/adaptive_gate_policy_v18.json && git add lumen_v1_8_assets/adaptive_gate_policy_v18.json
+          test -f lumen_v1_8_assets/grafana_annotations_v18.json && git add lumen_v1_8_assets/grafana_annotations_v18.json || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(v18): update adaptive policy & annotations" || echo "Nothing to commit"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ${{ env.BRANCH }}
+          title: "chore(v18): update adaptive policy & annotations"
+          commit-message: "chore(v18): update adaptive policy & annotations"
+          body: |
+            - Auto-generated after **autotune_on_drift** run.
+            - Files:
+              - `lumen_v1_8_assets/adaptive_gate_policy_v18.json`
+              - `lumen_v1_8_assets/grafana_annotations_v18.json`
+          labels: |
+            automation
+            v1.8

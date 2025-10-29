@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+<style>text { font-family: "Malgun Gothic", "Noto Sans KR", sans-serif; }</style>
+<rect x="0" y="0" width="100%" height="100%" fill="#fbf7ef"/>
+<text x="450" y="40" font-size="26" text-anchor="middle" fill="#4b3b1f">Concept Co-occurrence Network</text>
+<line x1="450.0" y1="130.0" x2="290.0" y2="727.1" stroke="#c27ba0" stroke-width="5.00" opacity="1.00"/>
+<line x1="610.0" y1="172.9" x2="290.0" y2="727.1" stroke="#c27ba0" stroke-width="2.72" opacity="0.60"/>
+<line x1="450.0" y1="130.0" x2="610.0" y2="172.9" stroke="#c27ba0" stroke-width="2.38" opacity="0.54"/>
+<line x1="290.0" y1="727.1" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.18" opacity="0.33"/>
+<line x1="450.0" y1="130.0" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.17" opacity="0.33"/>
+<line x1="450.0" y1="770.0" x2="290.0" y2="727.1" stroke="#c27ba0" stroke-width="1.17" opacity="0.33"/>
+<line x1="450.0" y1="130.0" x2="450.0" y2="770.0" stroke="#c27ba0" stroke-width="1.13" opacity="0.32"/>
+<line x1="290.0" y1="727.1" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.10" opacity="0.32"/>
+<line x1="610.0" y1="172.9" x2="450.0" y2="770.0" stroke="#c27ba0" stroke-width="1.10" opacity="0.32"/>
+<line x1="450.0" y1="130.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.10" opacity="0.32"/>
+<line x1="290.0" y1="727.1" x2="172.9" y2="290.0" stroke="#c27ba0" stroke-width="1.09" opacity="0.32"/>
+<line x1="450.0" y1="130.0" x2="172.9" y2="290.0" stroke="#c27ba0" stroke-width="1.08" opacity="0.31"/>
+<line x1="610.0" y1="172.9" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.05" opacity="0.31"/>
+<line x1="610.0" y1="172.9" x2="172.9" y2="290.0" stroke="#c27ba0" stroke-width="1.05" opacity="0.31"/>
+<line x1="130.0" y1="450.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.05" opacity="0.31"/>
+<line x1="610.0" y1="172.9" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.04" opacity="0.31"/>
+<line x1="450.0" y1="770.0" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.04" opacity="0.31"/>
+<line x1="450.0" y1="770.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.02" opacity="0.31"/>
+<line x1="610.0" y1="172.9" x2="172.9" y2="610.0" stroke="#c27ba0" stroke-width="1.02" opacity="0.30"/>
+<line x1="610.0" y1="172.9" x2="610.0" y2="727.1" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="770.0" y1="450.0" x2="290.0" y2="727.1" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="610.0" y1="172.9" x2="770.0" y2="450.0" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="610.0" y1="727.1" x2="172.9" y2="610.0" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="610.0" y1="727.1" x2="290.0" y2="727.1" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="290.0" y1="727.1" x2="172.9" y2="610.0" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="172.9" y1="290.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="450.0" y1="130.0" x2="770.0" y2="450.0" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="450.0" y1="130.0" x2="172.9" y2="610.0" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="130.0" y1="450.0" x2="172.9" y2="290.0" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="727.1" y1="290.0" x2="290.0" y2="727.1" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="610.0" y1="172.9" x2="727.1" y2="290.0" stroke="#c27ba0" stroke-width="1.01" opacity="0.30"/>
+<line x1="727.1" y1="290.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="450.0" y1="130.0" x2="610.0" y2="727.1" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="727.1" y1="290.0" x2="770.0" y2="450.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="770.0" y1="450.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="172.9" y1="610.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="610.0" y1="172.9" x2="727.1" y2="610.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="450.0" y1="130.0" x2="727.1" y2="290.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="727.1" y1="610.0" x2="290.0" y2="727.1" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="172.9" y1="610.0" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="172.9" y1="610.0" x2="172.9" y2="290.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="727.1" y1="610.0" x2="172.9" y2="610.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="727.1" y1="610.0" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="727.1" y1="290.0" x2="172.9" y2="610.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="727.1" y1="290.0" x2="610.0" y2="727.1" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="610.0" y1="727.1" x2="290.0" y2="172.9" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="610.0" y1="727.1" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="610.0" y1="727.1" x2="172.9" y2="290.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="770.0" y1="450.0" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<line x1="727.1" y1="610.0" x2="130.0" y2="450.0" stroke="#c27ba0" stroke-width="1.00" opacity="0.30"/>
+<circle cx="450.0" cy="130.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="450.0" y="135.0" font-size="14" text-anchor="middle" fill="#4b3b1f">감응</text>
+<circle cx="610.0" cy="172.9" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="610.0" y="177.9" font-size="14" text-anchor="middle" fill="#4b3b1f">공명</text>
+<circle cx="727.1" cy="290.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="727.1" y="295.0" font-size="14" text-anchor="middle" fill="#4b3b1f">공명 동기화</text>
+<circle cx="770.0" cy="450.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="770.0" y="455.0" font-size="14" text-anchor="middle" fill="#4b3b1f">공명 언어</text>
+<circle cx="727.1" cy="610.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="727.1" y="615.0" font-size="14" text-anchor="middle" fill="#4b3b1f">공명 파이프라인</text>
+<circle cx="610.0" cy="727.1" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="610.0" y="732.1" font-size="14" text-anchor="middle" fill="#4b3b1f">광장</text>
+<circle cx="450.0" cy="770.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="450.0" y="775.0" font-size="14" text-anchor="middle" fill="#4b3b1f">루멘</text>
+<circle cx="290.0" cy="727.1" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="290.0" y="732.1" font-size="14" text-anchor="middle" fill="#4b3b1f">리듬</text>
+<circle cx="172.9" cy="610.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="172.9" y="615.0" font-size="14" text-anchor="middle" fill="#4b3b1f">성소</text>
+<circle cx="130.0" cy="450.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="130.0" y="455.0" font-size="14" text-anchor="middle" fill="#4b3b1f">정반합</text>
+<circle cx="172.9" cy="290.0" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="172.9" y="295.0" font-size="14" text-anchor="middle" fill="#4b3b1f">조율자</text>
+<circle cx="290.0" cy="172.9" r="26" fill="#f5d0fe" stroke="#a855f7" stroke-width="2"/>
+<text x="290.0" y="177.9" font-size="14" text-anchor="middle" fill="#4b3b1f">페르소나</text>
+</svg>

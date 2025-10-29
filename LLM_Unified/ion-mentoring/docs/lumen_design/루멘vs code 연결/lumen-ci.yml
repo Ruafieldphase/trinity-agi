@@ -1,0 +1,42 @@
+name: Lumen v1.1 CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.10", "3.11" ]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r tools/adaptive_feedback/requirements.txt || pip install -r requirements.txt
+          pip install black ruff
+      - name: Lint
+        run: |
+          ruff --version
+          ruff tools/adaptive_feedback || ruff .
+          black --check tools/adaptive_feedback || black --check .
+      - name: Run tests
+        run: |
+          python - <<'PY'
+          import os, subprocess, sys
+          def run(path, cmd):
+              print(f"::group::{cmd}")
+              try:
+                  subprocess.check_call(cmd, cwd=path, shell=True)
+              finally:
+                  print("::endgroup::")
+          wd = "tools/adaptive_feedback" if os.path.isdir("tools/adaptive_feedback") else "."
+          run(wd, "python run_tests.sh" if os.path.exists(os.path.join(wd, "run_tests.sh")) else "python -c 'print("no tests")'")
+          PY

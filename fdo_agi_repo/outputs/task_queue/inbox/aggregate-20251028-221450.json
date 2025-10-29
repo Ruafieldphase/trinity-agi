@@ -1,0 +1,15 @@
+{
+  "id": "aggregate-20251028-221450",
+  "task_type": "json_process",
+  "data": {
+    "operation": "count_by_type",
+    "description": "레저 파일에서 최근 이벤트 타입별 카운트",
+    "note": "코멧 첫 실전 작업 - JSONL 집계 테스트"
+  },
+  "metadata": {
+    "priority": "normal",
+    "created_at": "2025-10-28T22:14:50.100638",
+    "created_by": "copilot",
+    "expected_worker": "comet-extension"
+  }
+}

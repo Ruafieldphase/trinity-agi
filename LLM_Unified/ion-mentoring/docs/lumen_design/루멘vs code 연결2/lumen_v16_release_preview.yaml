@@ -1,0 +1,55 @@
+name: lumen_v16_release_preview
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag for preview release (e.g., v1.6-preview1)"
+        required: true
+      changelog_path:
+        description: "Changelog path"
+        required: false
+        default: "docs/CHANGELOG_v1_6_PREVIEW.md"
+
+jobs:
+  smoke-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run v1.6 smoke
+        working-directory: lumen_v1_6_assets
+        run: |
+          (python stream_enricher_v1.py < samples.jsonl &) && sleep 1
+          (python metrics_enrichment_exporter.py &) && sleep 1
+          (python resonance_adapter_v1.py &) && sleep 2
+          (python adaptation_metrics_exporter.py &) && sleep 1
+          curl -fsSL http://127.0.0.1:9151/metrics | head -n 10
+          curl -fsSL http://127.0.0.1:9152/metrics | head -n 10
+          python resonance_memory_store.py
+          python history_tracker_v1.py
+      - name: Package chart
+        run: |
+          mkdir -p dist
+          helm package charts/lumen -d dist || true
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v16-preview
+          path: |
+            dist/*.tgz
+            docs/CHANGELOG_v1_6_PREVIEW.md
+            lumen_v1_6_assets/grafana_dashboard_v16_*.json
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
+          body_path: ${{ github.event.inputs.changelog_path }}
+          files: |
+            dist/*.tgz
+            lumen_v1_6_assets/grafana_dashboard_v16_*.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

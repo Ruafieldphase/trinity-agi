@@ -1,0 +1,346 @@
+﻿{
+    "displayName":  "ION Mentoring API Dashboard",
+    "etag":  "7256839e07d2977d0562d90acab37d73",
+    "mosaicLayout":  {
+                         "columns":  12,
+                         "tiles":  [
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Request Rate (requests/minute)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_SUM",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_RATE"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/request_count\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "Requests/min",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  6
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Error Rate (%)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_SUM",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_RATE"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/request_count\" AND metric.labels.response_code_class=\"5xx\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "5xx Errors/min",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  6,
+                                           "xPos":  6
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Request Latency P50 (ms)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_PERCENTILE_50",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_DELTA"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/request_latencies\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "Latency (ms)",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  4,
+                                           "yPos":  4
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Request Latency P95 (ms)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_PERCENTILE_95",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_DELTA"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/request_latencies\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "Latency (ms)",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  4,
+                                           "xPos":  4,
+                                           "yPos":  4
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Request Latency P99 (ms)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_PERCENTILE_99",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_DELTA"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/request_latencies\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "Latency (ms)",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  4,
+                                           "xPos":  8,
+                                           "yPos":  4
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Rate Limit Exceeded (429 Responses)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_SUM",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_RATE"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/request_count\" AND metric.labels.response_code=\"429\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "429 Responses/min",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  6,
+                                           "yPos":  8
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Active Instances (Auto-scaling)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_SUM",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_MEAN"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/container/instance_count\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "Instances",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  6,
+                                           "xPos":  6,
+                                           "yPos":  8
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Memory Utilization (%)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_MEAN",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_MEAN"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/container/memory/utilizations\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "Memory %",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  6,
+                                           "yPos":  12
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "CPU Utilization (%)",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "LINE",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_MEAN",
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_MEAN"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/container/cpu/utilizations\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "CPU %",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  6,
+                                           "xPos":  6,
+                                           "yPos":  12
+                                       },
+                                       {
+                                           "height":  4,
+                                           "widget":  {
+                                                          "title":  "Response Codes Distribution",
+                                                          "xyChart":  {
+                                                                          "chartOptions":  {
+                                                                                               "mode":  "COLOR"
+                                                                                           },
+                                                                          "dataSets":  [
+                                                                                           {
+                                                                                               "plotType":  "STACKED_AREA",
+                                                                                               "targetAxis":  "Y1",
+                                                                                               "timeSeriesQuery":  {
+                                                                                                                       "timeSeriesFilter":  {
+                                                                                                                                                "aggregation":  {
+                                                                                                                                                                    "alignmentPeriod":  "60s",
+                                                                                                                                                                    "crossSeriesReducer":  "REDUCE_SUM",
+                                                                                                                                                                    "groupByFields":  [
+                                                                                                                                                                                          "metric.label.response_code_class"
+                                                                                                                                                                                      ],
+                                                                                                                                                                    "perSeriesAligner":  "ALIGN_RATE"
+                                                                                                                                                                },
+                                                                                                                                                "filter":  "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"ion-api\" AND metric.type=\"run.googleapis.com/request_count\""
+                                                                                                                                            }
+                                                                                                                   }
+                                                                                           }
+                                                                                       ],
+                                                                          "yAxis":  {
+                                                                                        "label":  "Requests/min",
+                                                                                        "scale":  "LINEAR"
+                                                                                    }
+                                                                      }
+                                                      },
+                                           "width":  12,
+                                           "yPos":  16
+                                       }
+                                   ]
+                     },
+    "name":  "projects/64076350717/dashboards/03565e29-17dc-4fa7-affc-8ed9e04c2c16"
+}

@@ -1,0 +1,38 @@
+# argocd/kustomize/monitoring/prom-rules.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lumen-prom-rules
+  labels:
+    app.kubernetes.io/name: lumen-prom-rules
+data:
+  prom_rules_lumen.yaml: |
+    groups:
+    - name: lumen-ops-rules
+      rules:
+      - alert: LumenMaturityLow
+        expr: lumen_maturity_overall < 0.60
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Lumen maturity overall below 0.60"
+          description: "Overall maturity is {{ $value }} < 0.60"
+    
+      - alert: LumenSLOBurnHigh
+        expr: lumen_slo_burn_rate > 2.0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "SLO burn rate high"
+          description: "Burn rate is {{ $value }} (>2x budget)"
+    
+      - alert: LumenRollbackSpike
+        expr: lumen_prod_rollback_rate > 0.10
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Rollback rate high"
+          description: "Rollback rate is {{ $value }} (>10%)"

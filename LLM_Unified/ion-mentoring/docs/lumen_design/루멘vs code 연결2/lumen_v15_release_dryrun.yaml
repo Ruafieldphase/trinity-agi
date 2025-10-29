@@ -1,0 +1,72 @@
+name: lumen_v15_release_dryrun
+on:
+  workflow_dispatch: {}
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  qa_dryrun:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run Dual-Gate QA (dry-run)
+        run: |
+          mkdir -p logs docs
+          python scripts/integrated_gate_v19_v15.py --mode pre  --threshold_overall 0.65 --threshold_feedback 0.60 --threshold_release 0.60 --export logs/gate_pre.json || true
+          python scripts/integrated_gate_v19_v15.py --mode post --export logs/gate_post.json || true
+          python scripts/maturity_diff_v15.py             --pre logs/gate_pre.json             --post logs/gate_post.json             --report docs/V15_QA_DIFF_REPORT.md             --json-out docs/V15_QA_RESULT_CARD.json             --summary docs/V15_QA_SUMMARY.txt || true
+      - name: Determine status
+        id: status
+        run: |
+          if grep -q "PASS" docs/V15_QA_SUMMARY.txt; then
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+            echo "status=PASS" >> $GITHUB_OUTPUT
+          else
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+            echo "status=FAIL" >> $GITHUB_OUTPUT
+          fi
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lumen-v15-qa-dryrun
+          path: |
+            logs/**
+            docs/V15_QA_DIFF_REPORT.md
+            docs/V15_QA_RESULT_CARD.json
+            docs/V15_QA_SUMMARY.txt
+      - name: PR comment (dry-run result)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('docs/V15_QA_SUMMARY.txt','utf8');
+            const diff = fs.readFileSync('docs/V15_QA_DIFF_REPORT.md','utf8');
+            const emoji = '${{ steps.status.outputs.emoji }}';
+            const status = '${{ steps.status.outputs.status }}';
+            const body = [
+              `### ${emoji} Lumen v1.5 QA Dry-Run — ${status}`,
+              '',
+              '#### Summary',
+              '```',
+              summary,
+              '```',
+              '#### Diff Report (top)',
+              diff.split('\n').slice(0, 40).join('\n'),
+              '',
+              '> Full artifacts attached to the workflow run.'
+            ].join('\n');
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body
+            });

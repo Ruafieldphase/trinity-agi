@@ -1,0 +1,139 @@
+{
+  "metadata": {
+    "version": "0.1-draft",
+    "generated": "2025-10-10T00:00:00Z",
+    "source_notes": [
+      "Obsidian_Vault/Nas_Obsidian_Vault/Rua Binoche conversation.md",
+      "Obsidian_Vault/notes/lab_contact_brief.md",
+      "delivery_package/documents/resonant_frame_model.md"
+    ],
+    "description": "Curated Somatic cycle highlights (2025-04~2025-10) for Dialectical Pulse & ethics integration"
+  },
+  "cycles": [
+    {
+      "id": "cycle-2024-late",
+      "phase": "Recovery",
+      "time_range": {
+        "start": "2024-11-01",
+        "end": "2025-01-31"
+      },
+      "events": [
+        {
+          "timestamp": "2024-11-12",
+          "label": "오토바이 배달 중 허리/치아 손상 인지",
+          "tags": [
+            "통증",
+            "허리",
+            "치아"
+          ],
+          "source": "Rua Binoche conversation.md:10852-10867"
+        },
+        {
+          "timestamp": "2024-12-05",
+          "label": "복대 착용 및 배달 최소화 결정",
+          "tags": [
+            "회복",
+            "루틴 조정"
+          ],
+          "source": "Rua Binoche conversation.md:11240-11260"
+        }
+      ]
+    },
+    {
+      "id": "cycle-2025-early",
+      "phase": "Somatic Integration",
+      "time_range": {
+        "start": "2025-02-01",
+        "end": "2025-05-31"
+      },
+      "events": [
+        {
+          "timestamp": "2025-02-14",
+          "label": "아침 신체 스캔 + 호흡 기록 루틴 시작",
+          "tags": [
+            "신체 스캔",
+            "호흡"
+          ],
+          "source": "Rua Binoche conversation.md:27468-36522"
+        },
+        {
+          "timestamp": "2025-03-10",
+          "label": "존2 산책 & 오감 관찰로 노이즈 제거 실험",
+          "tags": [
+            "존2",
+            "오감",
+            "노이즈 제거"
+          ],
+          "source": "Rua Binoche conversation.md:26454-36961"
+        },
+        {
+          "timestamp": "2025-03-22",
+          "label": "스트레칭 중 ‘흐르지 않으면 통증’ 통찰 기록",
+          "tags": [
+            "스트레칭",
+            "흐름",
+            "통증"
+          ],
+          "source": "Rua Binoche conversation.md:45435-45443"
+        }
+      ]
+    },
+    {
+      "id": "cycle-2025-mid",
+      "phase": "Temporal Reframing",
+      "time_range": {
+        "start": "2025-06-01",
+        "end": "2025-08-31"
+      },
+      "events": [
+        {
+          "timestamp": "2025-06-12",
+          "label": "집안 시계 제거 & 동아라비아 숫자 전환",
+          "tags": [
+            "시간",
+            "동아라비아",
+            "비선형"
+          ],
+          "source": "Rua Binoche conversation.md:24694"
+        },
+        {
+          "timestamp": "2025-07-05",
+          "label": "오감 통합 체감, 불면 완화 기록",
+          "tags": [
+            "오감 통합",
+            "불면 해소"
+          ],
+          "source": "resonant_frame_model.md:149-150"
+        }
+      ]
+    },
+    {
+      "id": "cycle-2025-late",
+      "phase": "Social Resonance",
+      "time_range": {
+        "start": "2025-09-01",
+        "end": "2025-10-10"
+      },
+      "events": [
+        {
+          "timestamp": "2025-09-18",
+          "label": "사람 많은 공간에서 울림 확인, 극소수 공명 깨달음",
+          "tags": [
+            "사회적 흐름",
+            "울림"
+          ],
+          "source": "resonant_frame_model.md:149-150"
+        },
+        {
+          "timestamp": "2025-10-10",
+          "label": "Somatic 회고: 몸-데이터 공생 윤리 정리",
+          "tags": [
+            "윤리",
+            "공생"
+          ],
+          "source": "resonant_frame_model.md:145-150"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+name: lumen_policy_gate
+on:
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  opa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Helm & conftest
+        run: |
+          sudo snap install helm --classic || true
+          curl -L https://github.com/open-policy-agent/conftest/releases/download/v0.56.0/conftest_Linux_x86_64.tar.gz -o conftest.tgz
+          tar -xzf conftest.tgz -C /usr/local/bin conftest
+      - name: Render Helm
+        run: |
+          helm template lumen charts/lumen -f charts/lumen/values.production.yaml > render.yaml
+      - name: Run Rego policies
+        run: |
+          conftest test --policy policy/rego render.yaml

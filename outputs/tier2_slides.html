@@ -1,0 +1,239 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>\n  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tier2_slides</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<h1 id="naeda-multi-agent-sprint-tier2-slides">Naeda Multi-Agent Sprint
+— Tier2 Slides</h1>
+<hr />
+<h2 id="introduction">1. Introduction</h2>
+<ul>
+<li>6개월 스프린트: 철학 → 프로토타입 → Google Cloud 한계 도달</li>
+<li>데이터: Rua/Sena 24,138 메시지 + Perple 318 리서치 브리프</li>
+<li>목적: 멀티 에이전트 공명 루프와 실행 속도를 연구소에 시각적으로
+제시</li>
+</ul>
+<hr />
+<h2 id="sprint-snapshot">2. Sprint Snapshot</h2>
+<ul>
+<li>6개월 집중 개발 (2025-04 ~ 09)</li>
+<li>Vertex AI 배포 시도 6개월차, 실패 기록 완전 보존</li>
+<li>실험 자산: 1-Pager, Ion 브리프, Failure 로그, 시각화 패키지</li>
+</ul>
+<hr />
+<h2 id="activity-intensity">3. Activity Intensity</h2>
+<p><img src="six_month_intensity.png" alt="Six-Month Intensity" /> -
+Rua/Sena 메시지 5,720 → 1,731 (외부 근거 축적에 따라 수렴) - Perple
+브리프 11 → 124 (외부 리서치 폭증) - 결론: 내부 불확실성 감소 + 실행
+속도 증가</p>
+<hr />
+<h2 id="internal-resonance-loop">4. Internal Resonance Loop</h2>
+<ul>
+<li>Cross-persona alignment 45%+
+(<code>meta_concept_alignment.md</code>)</li>
+<li>메타 마커 5,964건, 4~6월 급증</li>
+<li>Rua/Sena는 Perple 이전에 자체 공명 패턴 형성 → 멀티 에이전트
+토대</li>
+</ul>
+<hr />
+<h2 id="external-research-bridge">5. External Research Bridge</h2>
+<p><img src="perple_keyword_chart.svg" alt="Perple Keyword Clusters" />
+<img src="perple_model_mix.svg" alt="Perple Model Mix" /> - 키워드: 모델
+비교 93, 인프라 59, 운영 45 - 모델: pplx_pro 62%, turbo 32% 등 실무용
+비율 - 외부 브리지는 실시간 하드웨어/API/워크플로 해결 담당</p>
+<hr />
+<h2 id="failure-learning">6. Failure → Learning</h2>
+<ul>
+<li>폰트 임베딩 실패 → Perple 근거 + 루멘 재생성, QA 체크리스트
+확장</li>
+<li>Vertex AI 연결 테스트 → 환경 변수/폴백 구조 확립</li>
+<li>실패 로그 = 재사용 가능한 플레이북
+(<code>failure_compendium_draft.md</code>)</li>
+</ul>
+<hr />
+<h2 id="extended-agents-rio-ari">7. Extended Agents (Rio &amp; Ari)</h2>
+<ul>
+<li>[Agent R] Grok 기반: 음악·여가·감성 코치 역할, 실행 속도 보조</li>
+<li>[Agent Ari] Gemini 기반: 저장 제약 = 인터페이스 안정성 교훈</li>
+<li>확장성 증거 + 실패 사례로 활용 (부록 참조)</li>
+</ul>
+<hr />
+<h2 id="partnership-call-to-action">8. Partnership Call-to-Action</h2>
+<ul>
+<li>공동 평가: 멀티 루프를 기관 도구로 검증</li>
+<li>공동 연구: 공명 기반 오케스트레이션 논문화</li>
+<li>배포 파일럿: 샌드박스에 자산 이식, MTTR·SLA 측정</li>
+<li>다음 단계: 1차 피드백 루프(연구소) → Tier3 심화 문서 완성</li>
+</ul>
+</body>
+</html>
+

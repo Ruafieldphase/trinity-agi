@@ -1,0 +1,50 @@
+﻿{
+    "version":  "1.0.0",
+    "timeout_sec":  10,
+    "timestamp":  "2025-10-29T19:16:51",
+    "endpoints":  [
+                      {
+                          "url":  "http://localhost:8080/v1/models",
+                          "mean_ms":  421.18,
+                          "min_ms":  11.62,
+                          "samples_ms":  [
+                                             2056.03,
+                                             12.32,
+                                             11.62,
+                                             12.91,
+                                             13.03
+                                         ],
+                          "success_count":  5,
+                          "max_ms":  2056.03,
+                          "p95_ms":  2056.03,
+                          "errors":  [
+
+                                     ],
+                          "fail_count":  0
+                      },
+                      {
+                          "url":  "http://localhost:18090/v1/models",
+                          "mean_ms":  null,
+                          "min_ms":  null,
+                          "samples_ms":  [
+
+                                         ],
+                          "success_count":  0,
+                          "max_ms":  null,
+                          "p95_ms":  null,
+                          "errors":  [
+                                         "원격 서버에 연결할 수 없습니다.",
+                                         "원격 서버에 연결할 수 없습니다.",
+                                         "원격 서버에 연결할 수 없습니다.",
+                                         "원격 서버에 연결할 수 없습니다.",
+                                         "원격 서버에 연결할 수 없습니다."
+                                     ],
+                          "fail_count":  5
+                      }
+                  ],
+    "requests":  5,
+    "notes":  {
+                  "description":  "Short-window latency probe using GET /v1/models",
+                  "rationale":  "Reconcile dashboard long-window baseline with immediate probe"
+              }
+}

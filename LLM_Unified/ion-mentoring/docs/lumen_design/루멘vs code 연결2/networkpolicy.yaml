@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "lumen.fullname" . }}-allow
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "lumen.name" . }}
+  policyTypes: ["Ingress","Egress"]
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: {{ .Values.service.port }}
+        - protocol: TCP
+          port: {{ .Values.maturity.port }}
+  egress:
+    - to:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 9092 # Kafka
+        - protocol: TCP
+          port: 3100 # Loki
