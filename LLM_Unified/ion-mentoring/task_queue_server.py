@@ -164,6 +164,29 @@ async def create_task(request: CreateTaskRequest):
     return {"task_id": task_id, "message": "Task created", "queue_position": len(task_queue)}
 
 
+# Compatibility endpoint for existing E2E scripts expecting /api/enqueue
+@app.post("/api/enqueue")
+async def enqueue_compat(request: Request):
+    """Compatibility shim to accept {task_type, params} and enqueue a task.
+
+    Maps to the canonical /api/tasks/create endpoint.
+    """
+    try:
+        payload = await request.json()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid JSON: {e}")
+
+    task_type = payload.get("task_type") or payload.get("type") or "generic"
+    data = payload.get("params") or payload.get("data") or {}
+
+    try:
+        req = CreateTaskRequest(type=task_type, data=data)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid payload: {e}")
+
+    return await create_task(req)
+
+
 @app.get("/api/tasks")
 async def list_tasks():
     """List all tasks in queue (for debugging)"""

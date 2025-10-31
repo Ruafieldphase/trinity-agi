@@ -187,6 +187,14 @@ async def get_system_status():
         )
     
     latest = latest_metrics[0]
+
+    # Derive success_rate when not persisted in snapshot JSON
+    if 'success_rate' in latest and isinstance(latest.get('success_rate'), (int, float)):
+        success_rate = float(latest.get('success_rate') or 0)
+    else:
+        total_tasks = int(latest.get('total_tasks', 0) or 0)
+        successful_tasks = int(latest.get('successful_tasks', 0) or 0)
+        success_rate = (successful_tasks / total_tasks * 100.0) if total_tasks > 0 else 0.0
     
     # 알림 심각도별 카운트
     alert_counts = {"critical": 0, "warning": 0, "info": 0}
@@ -197,7 +205,7 @@ async def get_system_status():
     
     return {
         "timestamp": latest.get('timestamp'),
-        "success_rate": latest.get('success_rate', 0),
+        "success_rate": success_rate,
         "error_rate": latest.get('error_rate', 0),
         "avg_response_time_ms": latest.get('avg_response_time_ms', 0),
         "active_workers": latest.get('active_workers', 0),
@@ -208,7 +216,7 @@ async def get_system_status():
         "memory_mb": latest.get('memory_mb', 0),
         "cpu_percent": latest.get('cpu_percent', 0),
         "alerts": alert_counts,
-        "health_status": "healthy" if latest.get('success_rate', 0) >= 80 else "degraded"
+        "health_status": "healthy" if success_rate >= 80 else "degraded"
     }
 
 

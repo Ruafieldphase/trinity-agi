@@ -1,8 +1,8 @@
 ﻿# Monitoring Report
 
-**Generated**: 2025-10-31 19:52:24
+**Generated**: 2025-10-31 21:54:16
 **Time Window**: Last 24 hours
-**Data Points**: 214 snapshots
+**Data Points**: 212 snapshots
 
 ---
 
@@ -10,19 +10,19 @@
 
 ```
   HEALTH: EXCELLENT
-  Availability: 99.69%  |  Alerts: 4  |  Warnings: 213  |  Spikes: 40
+  Availability: 99.69%  |  Alerts: 4  |  Warnings: 188  |  Spikes: 40
 
   Alert Severity:
-    [!] Critical: 4  |  [*] Warning: 0  |  [i] Info: 467
+    [!] Critical: 4  |  [*] Warning: 0  |  [i] Info: 419
 
-  Local LLM:     99.53% avail  |  2054.14ms mean
-  Cloud AI:      100% avail  |  284.09ms mean
-  Lumen Gateway: 99.53% avail  |  260.19ms mean
+  Local LLM:     99.53% avail  |  1834.59ms mean
+  Cloud AI:      100% avail  |  283.48ms mean
+  Lumen Gateway: 99.53% avail  |  261.1ms mean
 
   --- vs Previous Period (24h ago) ---
-  Local:   Latency =  |  Avail 0.5%
-  Cloud:   Latency ▲4.5%  |  Avail =
-  Gateway: Latency 0.7%  |  Avail 0.5%
+  Local:   Latency 10.5%  |  Avail 0.5%
+  Cloud:   Latency ▲2.4%  |  Avail =
+  Gateway: Latency ▲2.5%  |  Avail 0.5%
 ```
 
 ---
@@ -32,7 +32,7 @@
 - **Time Window**: Last 24 hours
 - **Peak Hours**: -
 - **Sparkline Length**: 30
-- **Data Points**: 214 snapshots
+- **Data Points**: 212 snapshots
 
 ---
 
@@ -41,7 +41,7 @@
 - **Status**: EXCELLENT
 - **Average Availability**: 99.69%
 - **Alerts**: 4
-- **Warnings**: 213
+- **Warnings**: 188
 - **Spikes**: 40
 
 ---
@@ -53,72 +53,72 @@
 | Metric | Value |
 |--------|-------|
 | Availability | 99.53% |
-| Mean Latency | 2054.14 ms |
+| Mean Latency | 1834.59 ms |
 | Median Latency | 2060 ms |
-| Min Latency | 20 ms |
+| Min Latency | 18 ms |
 | Max Latency | 3076 ms |
 | 95th Percentile | 2080 ms |
-| Std Deviation | +/- 156.54 ms |
+| Std Deviation | +/- 653.31 ms |
 | Spike Count | 8 |
 | Baseline Alerts | 0 |
-| Baseline Warns | 214 |
+| Baseline Warns | 191 |
 | Adaptive Alerts | 0 |
 | Adaptive Warns | 0 |
-| Sample Count | 214 |
+| Sample Count | 212 |
 
-Trend: == STABLE (short 1855.9ms vs long 1958.4ms; n=10/20)
-Sparkline (last 30): %%%%%%%%%%%%%@%%%%%%%%%%%%%%% 
-Hourly Latency Sparkline: %%%%%     %%%%%@%%%%%%%#
+Trend: == STABLE (short 21.6ms vs long 21ms; n=10/20)
+Sparkline (last 30): %%%%%@                        
+Hourly Latency Sparkline: %%%     %%%%%@%%%%%%%#  
 
-Time-of-day Baselines: Peak mean 2073.6 ms (+/- 98.29) [n=107] | Off-peak mean 2034.68 ms (+/- 197.01) [n=107]
+Time-of-day Baselines: Peak mean 2073.6 ms (+/- 98.29) [n=107] | Off-peak mean 1591.03 ms (+/- 858.74) [n=105]
 
 ### Cloud AI (ion-api)
 
 | Metric | Value |
 |--------|-------|
 | Availability | 100% |
-| Mean Latency | 284.09 ms |
+| Mean Latency | 283.48 ms |
 | Median Latency | 272 ms |
 | Min Latency | 231 ms |
 | Max Latency | 1205 ms |
-| 95th Percentile | 312 ms |
-| Std Deviation | +/- 71.49 ms |
-| Spike Count | 14 |
+| 95th Percentile | 315 ms |
+| Std Deviation | +/- 68.68 ms |
+| Spike Count | 15 |
 | Baseline Alerts | 0 |
 | Baseline Warns | 0 |
 | Adaptive Alerts | 0 |
 | Adaptive Warns | 0 |
-| Sample Count | 214 |
+| Sample Count | 212 |
 
-Trend: == STABLE (short 269ms vs long 269.4ms; n=10/20)
-Sparkline (last 30): @-.=::+-.=.- .* :.:.. ... -=.:
-Hourly Latency Sparkline: #####     ##@##########*
+Trend: == STABLE (short 289.2ms vs long 279.3ms; n=10/20)
+Sparkline (last 30):         @             .::. .  
+Hourly Latency Sparkline: ###     *#@####**###**##
 
-Time-of-day Baselines: Peak mean 279.7 ms (+/- 26.64) [n=107] | Off-peak mean 288.48 ms (+/- 97.58) [n=107]
+Time-of-day Baselines: Peak mean 279.7 ms (+/- 26.64) [n=107] | Off-peak mean 287.32 ms (+/- 93.89) [n=105]
 
 ### Lumen Gateway
 
 | Metric | Value |
 |--------|-------|
 | Availability | 99.53% |
-| Mean Latency | 260.19 ms |
-| Median Latency | 217 ms |
+| Mean Latency | 261.1 ms |
+| Median Latency | 218 ms |
 | Min Latency | 210 ms |
 | Max Latency | 5031 ms |
-| 95th Percentile | 249 ms |
-| Std Deviation | +/- 381.55 ms |
-| Spike Count | 18 |
+| 95th Percentile | 253 ms |
+| Std Deviation | +/- 383.29 ms |
+| Spike Count | 17 |
 | Baseline Alerts | 0 |
 | Baseline Warns | 0 |
 | Adaptive Alerts | 0 |
 | Adaptive Warns | 0 |
-| Sample Count | 214 |
+| Sample Count | 212 |
 
-Trend: == STABLE (short 216.2ms vs long 217.3ms; n=10/20)
-Sparkline (last 30): -:+-=-@::@%:#.-:#- .:-.-=.:== 
-Hourly Latency Sparkline: -----     ------=*-@----
+Trend: == STABLE (short 226.8ms vs long 224.4ms; n=10/20)
+Sparkline (last 30): .. .:: :.::. .-.--:-..:.-@%.::
+Hourly Latency Sparkline: ---     ------=*-@------
 
-Time-of-day Baselines: Peak mean 298.54 ms (+/- 538) [n=107] | Off-peak mean 221.83 ms (+/- 11.13) [n=107]
+Time-of-day Baselines: Peak mean 298.54 ms (+/- 538) [n=107] | Off-peak mean 222.95 ms (+/- 11.42) [n=105]
 
 ---
 
@@ -126,16 +126,16 @@ Time-of-day Baselines: Peak mean 298.54 ms (+/- 538) [n=107] | Off-peak mean 221
 
 | Metric | Value |
 |--------|-------|
-| Total Events | 239 |
+| Total Events | 698 |
 | Unique Tasks |  |
-| Avg Quality | ?뵶 0.693 |
+| Avg Quality | ?뵶 0.697 |
 | Success Rate | ?윟 100% |
-| Replan Rate | 39.61% |
-| Last Activity | 0.8 minutes ago |
+| Replan Rate | 39.51% |
+| Last Activity | 1.2 hours ago |
 
 **[WARN] AGI System Alerts:**
 
-- ?뵶 CRITICAL AGI Replan Rate: 39.61% (threshold: 10%)
+- ?뵶 CRITICAL AGI Replan Rate: 39.51% (threshold: 10%)
 
 ---
 
@@ -143,10 +143,10 @@ Time-of-day Baselines: Peak mean 298.54 ms (+/- 538) [n=107] | Off-peak mean 221
 
 | Channel | Baseline Alerts | Baseline Warns | Adaptive Alerts | Adaptive Warns | Spikes |
 |---------|------------------|----------------|------------------|----------------|--------|
-| Local   | 0 | 214 | 0 | 0 | 8 |
-| Cloud   | 0 | 0 | 0 | 0 | 14 |
-| Gateway | 0 | 0 | 0 | 0 | 18 |
-| Total   | 0 | 214 | 0 | 0 | 40 |
+| Local   | 0 | 191 | 0 | 0 | 8 |
+| Cloud   | 0 | 0 | 0 | 0 | 15 |
+| Gateway | 0 | 0 | 0 | 0 | 17 |
+| Total   | 0 | 191 | 0 | 0 | 40 |
 ---
 
 ### Alert Severity Details
@@ -160,7 +160,7 @@ Time-of-day Baselines: Peak mean 298.54 ms (+/- 538) [n=107] | Off-peak mean 221
 | 13:03:10 | ALERT: Lumen Gateway latency 2985ms |
 | 15:08:10 | Lumen Gateway offline (0) |
 
-#### [i] Info (467)
+#### [i] Info (419)
 
 _Minor alerts and informational messages. See JSON output for full details._
 
@@ -168,16 +168,16 @@ _Minor alerts and informational messages. See JSON output for full details._
 
 ### Alerts Trend (hourly)
 
-Alerts:                @  @ @ @     
-Warnings:  %%%@*      ##%#*####%#%# 
-Spikes:    *==@.       -=-... .*.#- 
+Alerts:              @  @ @ @       
+Warnings:  %@+     .#%%#*%###%%%# . 
+Spikes:    =#.       -*.... .*-*--@ 
 ---
 
 ### Availability Trend (hourly)
 
-Local:     @@@@@     @@@@@%@@@@@@@@
-Cloud:     @@@@@     @@@@@@@@@@@@@@
-Gateway:   @@@@@     @@@@@@@@@%@@@@
+Local:     @@@     @@@@@%@@@@@@@@@@
+Cloud:     @@@     @@@@@@@@@@@@@@@@
+Gateway:   @@@     @@@@@@@@@%@@@@@@
 ---
 
 ## Recommendations
@@ -187,16 +187,16 @@ Gateway:   @@@@@     @@@@@@@@@%@@@@
   - Action: Check system availability and response times
   - Action: Verify all services are online and responsive
 
-- **[MEDIUM] Local LLM**: High latency detected (avg 2054.14ms).
+- **[MEDIUM] Local LLM**: High latency detected (avg 1834.59ms).
   - Action: Check LM Studio process CPU/GPU usage and memory
   - Action: Consider model optimization or hardware upgrade
   - Action: Review recent logs for performance degradation patterns
 - **Spikes**: 40 latency spikes detected. Review system load and resource allocation.
-- **[MEDIUM] AGI System**: Low quality score (0.693).
+- **[MEDIUM] AGI System**: Low quality score (0.697).
   - Action: Review recent AGI task outputs for errors
   - Action: Check persona LLM configuration and prompts
   - Action: Verify synthesis/antithesis/thesis pipeline
-- **[HIGH] AGI System**: High replan rate (39.61%).
+- **[HIGH] AGI System**: High replan rate (39.51%).
   - Action: Investigate task complexity and initial planning quality
   - Action: Review rune event logs for replan patterns
   - Action: Consider adjusting AGI planning parameters

@@ -32,10 +32,12 @@ if ($Status -or (-not $Register -and -not $Unregister)) {
         $lastRun = (Get-ScheduledTaskInfo -TaskName $TaskName).LastRunTime
         if ($lastRun -gt (Get-Date).AddYears(-10)) {
             Write-Host "   마지막 실행: $lastRun" -ForegroundColor Gray
-        } else {
+        }
+        else {
             Write-Host "   마지막 실행: 없음" -ForegroundColor Yellow
         }
-    } else {
+    }
+    else {
         Write-Host "❌ 작업 등록 안 됨" -ForegroundColor Red
         Write-Host "`n   등록 명령: .\register_resonance_lumen_task.ps1 -Register`n" -ForegroundColor Yellow
     }
@@ -52,7 +54,8 @@ if ($Unregister) {
     if ($task) {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
         Write-Host "✅ 작업 제거 완료`n" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "⚠️ 등록된 작업이 없습니다`n" -ForegroundColor Yellow
     }
     
