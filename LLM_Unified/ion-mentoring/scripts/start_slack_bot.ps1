@@ -14,14 +14,14 @@ $botScript = Join-Path $PSScriptRoot "..\slack_bot_conversational.py"
 
 # Check if bot token is set
 if (-not $env:SLACK_BOT_TOKEN) {
-    Write-Host "⚠️  SLACK_BOT_TOKEN not set!" -ForegroundColor Yellow
+    Write-Host "[WARN]  SLACK_BOT_TOKEN not set!" -ForegroundColor Yellow
     Write-Host "   Set it with: [Environment]::SetEnvironmentVariable('SLACK_BOT_TOKEN', 'xoxb-...', 'User')" -ForegroundColor Yellow
     exit 1
 }
 
 # Kill existing processes
 if ($KillExisting) {
-    Write-Host "🔍 Checking for existing Slack bot processes..." -ForegroundColor Cyan
+    Write-Host "[SEARCH] Checking for existing Slack bot processes..." -ForegroundColor Cyan
     $processes = Get-Process -Name python -ErrorAction SilentlyContinue | Where-Object {
         $_.CommandLine -like "*slack_bot_server.py*"
     }
@@ -36,13 +36,13 @@ if ($KillExisting) {
 # Check if port is in use
 $listener = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
 if ($listener) {
-    Write-Host "⚠️  Port $Port is already in use!" -ForegroundColor Yellow
+    Write-Host "[WARN]  Port $Port is already in use!" -ForegroundColor Yellow
     Write-Host "   Use -KillExisting to stop existing processes" -ForegroundColor Yellow
     exit 1
 }
 
 # Start bot in background
-Write-Host "🚀 Starting Ion Canary Slack Bot on port $Port..." -ForegroundColor Green
+Write-Host "[DEPLOY] Starting Ion Canary Slack Bot on port $Port..." -ForegroundColor Green
 
 $startArgs = @{
     FilePath     = "powershell"
@@ -64,19 +64,19 @@ Start-Sleep -Seconds 3
 try {
     $response = Invoke-RestMethod -Uri "http://localhost:$Port/health" -TimeoutSec 5
     if ($response.status -eq "ok") {
-        Write-Host "✅ Slack bot started successfully!" -ForegroundColor Green
+        Write-Host "[OK] Slack bot started successfully!" -ForegroundColor Green
         Write-Host "   PID: $($process.Id)" -ForegroundColor Gray
         Write-Host "   Health: http://localhost:$Port/health" -ForegroundColor Gray
         Write-Host "   Bot Active: $($response.bot_active)" -ForegroundColor Gray
     }
 }
 catch {
-    Write-Host "❌ Failed to verify bot health check" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to verify bot health check" -ForegroundColor Red
     Write-Host "   Error: $_" -ForegroundColor Red
 }
 
 Write-Host ""
-Write-Host "📝 Next steps:" -ForegroundColor Cyan
+Write-Host "[LOG] Next steps:" -ForegroundColor Cyan
 Write-Host "   1. Set up ngrok: ngrok http $Port" -ForegroundColor Gray
 Write-Host "   2. Configure Slack Event URL: https://your-ngrok-url/slack/events" -ForegroundColor Gray
 Write-Host "   3. Test in Slack: @Ion Canary Bot status" -ForegroundColor Gray

@@ -178,5 +178,5 @@ Write-Log "Auto planner end (executed: $executed, completed: $completedCount, pe
 
 if ($executed -gt 0) {
     $tasks = ($backlog | Where-Object { $_.status -eq 'done' } | Select-Object -Last $executed | ForEach-Object { $_.name }) -join ', '
-    Send-SlackNotification "🤖 Planner: $executed 개 작업 완료 ($tasks)" -emoji ":robot_face:"
+    Send-SlackNotification "[BOT] Planner: $executed 개 작업 완료 ($tasks)" -emoji ":robot_face:"
 }

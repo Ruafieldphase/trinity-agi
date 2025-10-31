@@ -442,10 +442,10 @@ Remove-Item $tempFile -ErrorAction SilentlyContinue
 Write-Host "      ✓ 임시 파일 삭제 완료" -ForegroundColor Green
 
 Write-Host "`n╔═══════════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║  ✅ Phase 4 Feedback Loop 대시보드 생성 완료!                ║" -ForegroundColor Green
+Write-Host "║  [OK] Phase 4 Feedback Loop 대시보드 생성 완료!                ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════════╝`n" -ForegroundColor Green
 
-Write-Host "📊 대시보드 접근:" -ForegroundColor Cyan
+Write-Host "[METRICS] 대시보드 접근:" -ForegroundColor Cyan
 Write-Host "   URL: https://console.cloud.google.com/monitoring/dashboards/custom/$dashboardId`?project=$ProjectId`n" -ForegroundColor White
 
 Write-Host "📌 포함된 위젯 (10개):" -ForegroundColor Cyan
@@ -460,7 +460,7 @@ Write-Host "   8. Optimization Actions (24h)" -ForegroundColor White
 Write-Host "   9. Phase Integration Health (v1.7 Unified)" -ForegroundColor White
 Write-Host "  10. Feedback Loop Logs (Recent Events)`n" -ForegroundColor White
 
-Write-Host "💡 다음 단계:" -ForegroundColor Cyan
+Write-Host "[INFO] 다음 단계:" -ForegroundColor Cyan
 Write-Host "   1. feedback_loop_redis.py에서 Custom Metrics 로깅 구현" -ForegroundColor White
 Write-Host "   2. Cloud Logging으로 메트릭 전송 (structured logging)" -ForegroundColor White
 Write-Host "   3. 대시보드에서 실시간 데이터 확인" -ForegroundColor White

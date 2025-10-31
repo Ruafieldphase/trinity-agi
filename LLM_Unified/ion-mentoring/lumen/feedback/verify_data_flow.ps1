@@ -35,17 +35,17 @@ if ($taskInfo) {
     $lastResult = $taskInfo.LastTaskResult
     $nextRun = $taskInfo.NextRunTime
   
-    Write-Host "   ✅ Task exists" -ForegroundColor Green
+    Write-Host "   [OK] Task exists" -ForegroundColor Green
     Write-Host "   Last Run: $lastRun" -ForegroundColor Gray
     Write-Host "   Result: $lastResult (0 = success)" -ForegroundColor Gray
     Write-Host "   Next Run: $nextRun" -ForegroundColor Gray
   
     if ($lastResult -ne 0) {
-        Write-Host "   ⚠️  Non-zero exit code detected!" -ForegroundColor Red
+        Write-Host "   [WARN]  Non-zero exit code detected!" -ForegroundColor Red
     }
 }
 else {
-    Write-Host "   ❌ Task not found" -ForegroundColor Red
+    Write-Host "   [ERROR] Task not found" -ForegroundColor Red
     exit 1
 }
 
@@ -64,17 +64,17 @@ if ($LASTEXITCODE -eq 0) {
         $cacheHitRate = $latestLog.jsonPayload.cache_hit_rate
         $healthScore = $latestLog.jsonPayload.unified_health_score
     
-        Write-Host "   ✅ Recent logs found" -ForegroundColor Green
+        Write-Host "   [OK] Recent logs found" -ForegroundColor Green
         Write-Host "   Timestamp: $timestamp" -ForegroundColor Gray
         Write-Host "   Cache Hit Rate: $cacheHitRate" -ForegroundColor Gray
         Write-Host "   Health Score: $healthScore" -ForegroundColor Gray
     }
     else {
-        Write-Host "   ⚠️  No logs in last 10 minutes" -ForegroundColor Yellow
+        Write-Host "   [WARN]  No logs in last 10 minutes" -ForegroundColor Yellow
     }
 }
 else {
-    Write-Host "   ❌ Failed to query logs: $logJson" -ForegroundColor Red
+    Write-Host "   [ERROR] Failed to query logs: $logJson" -ForegroundColor Red
 }
 
 Write-Host ""
@@ -90,10 +90,10 @@ foreach ($metric in $metricsToCheck) {
     if ($LASTEXITCODE -eq 0) {
         $metricDesc = $descJson | ConvertFrom-Json
         $metricType = $metricDesc.metricDescriptor.valueType
-        Write-Host "   ✅ $metric ($metricType)" -ForegroundColor Green
+        Write-Host "   [OK] $metric ($metricType)" -ForegroundColor Green
     }
     else {
-        Write-Host "   ❌ $metric (not found)" -ForegroundColor Red
+        Write-Host "   [ERROR] $metric (not found)" -ForegroundColor Red
         $allValid = $false
     }
 }
@@ -109,12 +109,12 @@ Write-Host "   (Data may take 2-5 minutes to appear after log emission)" -Foregr
 
 Write-Host ""
 Write-Host "=== Summary ===" -ForegroundColor Cyan
-Write-Host "✅ Scheduled task running successfully" -ForegroundColor Green
-Write-Host "✅ Logs being written to Cloud Logging" -ForegroundColor Green
-Write-Host "✅ Metrics configuration valid" -ForegroundColor Green
-Write-Host "⏳ Dashboard ready (wait 2-5 min for data points)" -ForegroundColor Yellow
+Write-Host "[OK] Scheduled task running successfully" -ForegroundColor Green
+Write-Host "[OK] Logs being written to Cloud Logging" -ForegroundColor Green
+Write-Host "[OK] Metrics configuration valid" -ForegroundColor Green
+Write-Host "[WAIT] Dashboard ready (wait 2-5 min for data points)" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "💡 Next Steps:" -ForegroundColor Magenta
+Write-Host "[INFO] Next Steps:" -ForegroundColor Magenta
 Write-Host "   1. Open dashboard and verify data points appear" -ForegroundColor Gray
 Write-Host "   2. Wait 1-2 days to observe metric distributions" -ForegroundColor Gray
 Write-Host "   3. Tune alert policy thresholds based on actual values" -ForegroundColor Gray

@@ -68,7 +68,7 @@ Write-Host "   ✓ 디렉터리 구조 저장됨: directory_structure.csv" -Fore
 # =============================================================================
 # 2. 파일 분류 및 통계
 # =============================================================================
-Write-Host "`n📊 [2/8] 파일 분류 및 통계 생성 중..." -ForegroundColor Yellow
+Write-Host "`n[METRICS] [2/8] 파일 분류 및 통계 생성 중..." -ForegroundColor Yellow
 
 $allFiles = Get-ChildItem -Path $SourcePath -Recurse -File -ErrorAction SilentlyContinue
 Write-Host "   총 파일 수: $($allFiles.Count)" -ForegroundColor Gray
@@ -129,7 +129,7 @@ Write-Host "   ✓ 대용량 파일 목록 저장됨: large_files.csv ($($largeF
 # =============================================================================
 # 3. 문서 인벤토리
 # =============================================================================
-Write-Host "`n📝 [3/8] 문서 인벤토리 작성 중..." -ForegroundColor Yellow
+Write-Host "`n[LOG] [3/8] 문서 인벤토리 작성 중..." -ForegroundColor Yellow
 
 $docExtensions = @('.md', '.txt', '.pdf', '.docx', '.doc')
 $documents = $allFiles | Where-Object { $docExtensions -contains $_.Extension } | ForEach-Object {
@@ -179,7 +179,7 @@ Write-Host "   ✓ 카테고리별 통계 저장됨: document_categories.csv" -F
 # =============================================================================
 # 4. 스크립트 및 자동화
 # =============================================================================
-Write-Host "`n🔧 [4/8] 스크립트 분석 중..." -ForegroundColor Yellow
+Write-Host "`n[CONFIG] [4/8] 스크립트 분석 중..." -ForegroundColor Yellow
 
 $scriptExtensions = @('.ps1', '.py', '.sh', '.bat', '.cmd')
 $scripts = $allFiles | Where-Object { $scriptExtensions -contains $_.Extension } | ForEach-Object {
@@ -259,7 +259,7 @@ Write-Host "   ✓ 데이터 자산 목록 저장됨: data_assets.csv ($($dataFi
 # =============================================================================
 # 6. 설정 파일 분석
 # =============================================================================
-Write-Host "`n⚙️ [6/8] 설정 파일 분석 중..." -ForegroundColor Yellow
+Write-Host "`n[SETTINGS] [6/8] 설정 파일 분석 중..." -ForegroundColor Yellow
 
 $configExtensions = @('.yaml', '.yml', '.json', '.toml', '.ini', '.conf', '.config')
 $configFiles = $allFiles | Where-Object { 
@@ -289,7 +289,7 @@ Write-Host "   ✓ 설정 파일 목록 저장됨: config_files.csv ($($configFi
 # =============================================================================
 # 7. Python 코드베이스 분석
 # =============================================================================
-Write-Host "`n🧩 [7/8] Python 코드베이스 분석 중..." -ForegroundColor Yellow
+Write-Host "`n[MODULE] [7/8] Python 코드베이스 분석 중..." -ForegroundColor Yellow
 
 $pythonFiles = $allFiles | Where-Object { $_.Extension -eq '.py' }
 $pythonModules = @()
@@ -325,7 +325,7 @@ Write-Host "   ✓ Python 모듈 분석 저장됨: python_modules.csv ($($python
 # =============================================================================
 # 8. 시계열 분석
 # =============================================================================
-Write-Host "`n📈 [8/8] 시계열 분석 중..." -ForegroundColor Yellow
+Write-Host "`n[STATS] [8/8] 시계열 분석 중..." -ForegroundColor Yellow
 
 $timeline = $allFiles | ForEach-Object {
     [PSCustomObject]@{
@@ -387,7 +387,7 @@ $summary = @{
 
 $summary | ConvertTo-Json | Out-File (Join-Path $analysisDir "summary.json") -Encoding UTF8
 
-Write-Host "`n📊 전체 요약:" -ForegroundColor Cyan
+Write-Host "`n[METRICS] 전체 요약:" -ForegroundColor Cyan
 Write-Host "   총 파일: $($summary.TotalFiles)" -ForegroundColor White
 Write-Host "   총 디렉터리: $($summary.TotalDirectories)" -ForegroundColor White
 Write-Host "   총 크기: $($summary.TotalSizeGB) GB" -ForegroundColor White
@@ -411,4 +411,4 @@ Write-Host "   - timeline.csv" -ForegroundColor Gray
 Write-Host "   - monthly_activity.csv" -ForegroundColor Gray
 Write-Host "   - summary.json" -ForegroundColor Gray
 
-Write-Host "`n✅ 다음 단계: KNOWLEDGE_MAP.md 생성 스크립트 실행" -ForegroundColor Green
+Write-Host "`n[OK] 다음 단계: KNOWLEDGE_MAP.md 생성 스크립트 실행" -ForegroundColor Green

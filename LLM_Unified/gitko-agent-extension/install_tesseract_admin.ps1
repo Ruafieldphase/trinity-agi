@@ -89,7 +89,7 @@ if (-not $tessExe) {
 }
 
 if ($tessExe) {
-    Say "✅ Tesseract 설치 경로: $tessExe" "Installed path: $tessExe" ([ConsoleColor]::Green)
+    Say "[OK] Tesseract 설치 경로: $tessExe" "Installed path: $tessExe" ([ConsoleColor]::Green)
 }
 else {
     if ($English) { Write-Warning 'Could not locate tesseract.exe. Refresh PATH or log off/on and retry.' } else { Write-Warning 'Tesseract 실행 파일을 찾지 못했습니다. PATH를 새로고침하거나 로그아웃/로그인 후 다시 시도하세요.' }
@@ -99,8 +99,8 @@ else {
 $repoRoot = Split-Path -Parent $PSCommandPath
 $configScript = Join-Path $repoRoot 'configure_tesseract.ps1'
 if (Test-Path $configScript) {
-    Say '🔧 Python 환경에서 Tesseract 경로를 구성합니다...' 'Configure Tesseract path for Python backend...' ([ConsoleColor]::Cyan)
+    Say '[CONFIG] Python 환경에서 Tesseract 경로를 구성합니다...' 'Configure Tesseract path for Python backend...' ([ConsoleColor]::Cyan)
     if ($English) { & $configScript -Verbose:$false -English } else { & $configScript -Verbose:$false }
 }
 
-Say '🎉 Tesseract 설치가 완료되었습니다.' 'Tesseract installation completed.' ([ConsoleColor]::Green)
+Say '[SUCCESS] Tesseract 설치가 완료되었습니다.' 'Tesseract installation completed.' ([ConsoleColor]::Green)

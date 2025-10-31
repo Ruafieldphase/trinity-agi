@@ -27,7 +27,7 @@ Write-Host "5️⃣  설치 완료 후 이 스크립트 실행:" -ForegroundColo
 Write-Host "   .\configure_tesseract.ps1" -ForegroundColor Gray
 Write-Host ""
 
-Write-Host "💡 대체 방법 (Chocolatey):" -ForegroundColor Cyan
+Write-Host "[INFO] 대체 방법 (Chocolatey):" -ForegroundColor Cyan
 Write-Host "   관리자 PowerShell에서 실행:" -ForegroundColor Gray
 Write-Host "   .\install_tesseract_choco.ps1" -ForegroundColor Green
 Write-Host ""
@@ -36,5 +36,5 @@ Write-Host ""
 $openBrowser = Read-Host "브라우저로 다운로드 페이지를 여시겠습니까? (y/n)"
 if ($openBrowser -eq 'y') {
     Start-Process "https://github.com/UB-Mannheim/tesseract/releases/latest"
-    Write-Host "✅ 브라우저 열림" -ForegroundColor Green
+    Write-Host "[OK] 브라우저 열림" -ForegroundColor Green
 }

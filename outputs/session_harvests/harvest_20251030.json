@@ -1,0 +1,35 @@
+[
+    {
+        "conversations":  2,
+        "files_found":  2,
+        "persona":  "Gitko",
+        "timestamp":  "2025-10-29T15:34:17.225Z",
+        "role":  "VS Code Copilot (GitHub 湲곕컲)",
+        "location":  "C:\\Users\\kuirv\\AppData\\Roaming\\Code\\User\\workspaceStorage",
+        "key_points":  {
+
+                       }
+    },
+    {
+        "conversations":  0,
+        "files_found":  0,
+        "persona":  "Sena",
+        "timestamp":  "2025-10-29T15:34:17.225Z",
+        "role":  "Claude CLI (?곕???湲곕컲)",
+        "location":  "C:\\Users\\kuirv\\.claude\\projects",
+        "key_points":  {
+
+                       }
+    },
+    {
+        "conversations":  0,
+        "files_found":  0,
+        "persona":  "Lubit",
+        "timestamp":  "2025-10-29T15:34:17.225Z",
+        "role":  "GPT Codex (肄붾뵫 ?꾨Ц)",
+        "location":  "C:\\Users\\kuirv\\.codex\\sessions",
+        "key_points":  {
+
+                       }
+    }
+]

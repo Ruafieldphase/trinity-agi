@@ -31,7 +31,7 @@ if ($Json) {
 $PythonArgs += "--hours"
 $PythonArgs += $Hours.ToString()
 
-Write-Host "🚀 Running Ops Dashboard..." -ForegroundColor Cyan
+Write-Host "[DEPLOY] Running Ops Dashboard..." -ForegroundColor Cyan
 & $Python $DashboardScript @PythonArgs
 
 exit $LASTEXITCODE

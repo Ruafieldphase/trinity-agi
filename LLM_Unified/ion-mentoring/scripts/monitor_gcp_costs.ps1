@@ -42,7 +42,7 @@ Write-Host "💰 GCP Cost Monitor" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Host "📊 설정" -ForegroundColor Yellow
+Write-Host "[METRICS] 설정" -ForegroundColor Yellow
 Write-Host "  프로젝트: $ProjectId" -ForegroundColor Gray
 Write-Host "  조회 기간: 최근 $Days 일" -ForegroundColor Gray
 Write-Host "  월 예산: `$$MonthlyBudget USD" -ForegroundColor Gray
@@ -59,7 +59,7 @@ $Results = @{
 }
 
 # 1. Cloud Run 서비스 비용 추정
-Write-Host "🔍 1단계: Cloud Run 서비스 분석..." -ForegroundColor Yellow
+Write-Host "[SEARCH] 1단계: Cloud Run 서비스 분석..." -ForegroundColor Yellow
 Write-Host ""
 
 try {
@@ -85,18 +85,18 @@ try {
     $canaryCpu = $canaryService.spec.template.spec.containers[0].resources.limits.cpu
     $canaryMemory = $canaryService.spec.template.spec.containers[0].resources.limits.memory
     
-    Write-Host "📦 ion-api (Main)" -ForegroundColor Cyan
+    Write-Host "[PACKAGE] ion-api (Main)" -ForegroundColor Cyan
     Write-Host "  Min/Max: $mainMinInstances/$mainMaxInstances" -ForegroundColor Gray
     Write-Host "  CPU: $mainCpu, Memory: $mainMemory" -ForegroundColor Gray
     
     Write-Host ""
-    Write-Host "📦 ion-api-canary" -ForegroundColor Cyan
+    Write-Host "[PACKAGE] ion-api-canary" -ForegroundColor Cyan
     Write-Host "  Min/Max: $canaryMinInstances/$canaryMaxInstances" -ForegroundColor Gray
     Write-Host "  CPU: $canaryCpu, Memory: $canaryMemory" -ForegroundColor Gray
     Write-Host ""
 }
 catch {
-    Write-Host "⚠️  서비스 정보 조회 실패: $_" -ForegroundColor Yellow
+    Write-Host "[WARN]  서비스 정보 조회 실패: $_" -ForegroundColor Yellow
 }
 
 # 2. 비용 추정 (Cloud Run 가격 기준)
@@ -215,7 +215,7 @@ $Results.Summary = @{
 }
 
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "📊 전체 요약" -ForegroundColor Cyan
+Write-Host "[METRICS] 전체 요약" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
 
@@ -227,11 +227,11 @@ Write-Host ""
 
 # 4. 권장사항
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "💡 비용 최적화 권장사항" -ForegroundColor Yellow
+Write-Host "[INFO] 비용 최적화 권장사항" -ForegroundColor Yellow
 Write-Host ""
 
 if ($budgetUsagePercent -gt 100) {
-    Write-Host "⚠️  예산 초과 위험!" -ForegroundColor Red
+    Write-Host "[WARN]  예산 초과 위험!" -ForegroundColor Red
     Write-Host "  현재 추정치가 예산을 $([math]::Round($budgetUsagePercent - 100, 1))% 초과합니다." -ForegroundColor Red
     Write-Host ""
 }
@@ -290,5 +290,5 @@ if ($OutputJson) {
 }
 
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "✅ 비용 모니터링 완료!" -ForegroundColor Green
+Write-Host "[OK] 비용 모니터링 완료!" -ForegroundColor Green
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan

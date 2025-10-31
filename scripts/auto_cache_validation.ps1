@@ -21,6 +21,15 @@ param(
     [switch]$SendNotification
 )
 
+# UTF-8 console bootstrap
+try { chcp 65001 > $null 2> $null } catch {}
+try {
+    [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)
+    [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    $OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+}
+catch {}
+
 $ErrorActionPreference = "Continue"
 $RepoRoot = "C:\workspace\agi"
 $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
@@ -99,7 +108,7 @@ Interval: $Interval hour(s)
 
 RESULTS:
 - Hit Rate: $HitRate%
-- Status: $(if ($HitRate -ge 40) { "??SUCCESS" } elseif ($HitRate -ge 20) { "??IMPROVING" } elseif ($HitRate -ge 5) { "?†Ô∏è LOW" } else { "??NO EFFECT" })
+- Status: $(if ($HitRate -ge 40) { "SUCCESS" } elseif ($HitRate -ge 20) { "IMPROVING" } elseif ($HitRate -ge 5) { "LOW" } else { "NO EFFECT" })
 
 FILES GENERATED:
 - Timeline: outputs/cache_timeline_latest.md
@@ -108,7 +117,7 @@ FILES GENERATED:
 
 NEXT STEPS:
 $(if ($HitRate -ge 40) {
-    "?éâ Optimization successful! Monitor over next 7 days."
+    "Optimization successful! Monitor over next 7 days."
 } elseif ($HitRate -ge 20) {
     "Continue monitoring. Check again in 12 hours."
 } elseif ($HitRate -ge 5) {
@@ -126,7 +135,8 @@ Write-Log "Summary saved to: $SummaryFile"
 # 6. Send notification
 if ($SendNotification) {
     $NotificationTitle = "Cache Validation Complete"
-    $NotificationMessage = "Hit Rate: $HitRate% - Status: $(if ($HitRate -ge 40) { 'SUCCESS ?? } elseif ($HitRate -ge 20) { 'IMPROVING ?? } elseif ($HitRate -ge 5) { 'LOW ?†Ô∏è' } else { 'NO EFFECT ?? })"
+    $statusStr = if ($HitRate -ge 40) { 'SUCCESS' } elseif ($HitRate -ge 20) { 'IMPROVING' } elseif ($HitRate -ge 5) { 'LOW' } else { 'NO EFFECT' }
+    $NotificationMessage = "Hit Rate: $HitRate% - Status: $statusStr"
     
     # Windows 10/11 Toast Notification
     try {
@@ -161,7 +171,7 @@ if ($SendNotification) {
 
 Write-Log "=== Auto Cache Validation Completed ==="
 Write-Log "Review: $SummaryFile"
-Write-Host "`n??Validation complete! Check: $SummaryFile"
+Write-Host "`n** Validation complete! Check: $SummaryFile"
 
 # Open summary in VS Code (optional)
 if (Get-Command code -ErrorAction SilentlyContinue) {

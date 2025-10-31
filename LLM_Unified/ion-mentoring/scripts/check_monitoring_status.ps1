@@ -81,7 +81,7 @@ function Get-MonitoringStatus {
         $canary = $metrics.canary
         
         # 상태 출력
-        Write-Host "`n📊 Current Metrics:" -ForegroundColor Cyan
+        Write-Host "`n[METRICS] Current Metrics:" -ForegroundColor Cyan
         Write-Host "  Request Count: $($canary.request_count)" -ForegroundColor White
         Write-Host "  Error Count: $($canary.error_count)" -ForegroundColor $(if ($canary.error_count -eq 0) { 'Green' } else { 'Red' })
         # Normalize error rate accepting either numeric or percentage-string
@@ -98,7 +98,7 @@ function Get-MonitoringStatus {
         $errorRate = [double]$errorRateVal
         $p95 = [double]$canary.p95_response_time_ms
         
-        Write-Host "`n✅ Threshold Checks:" -ForegroundColor Cyan
+        Write-Host "`n[OK] Threshold Checks:" -ForegroundColor Cyan
         Write-Host "  Error Rate ≤ 0.5%: " -NoNewline
         if ($errorRate -le 0.5) {
             Write-Host "PASS ($errorRate%)" -ForegroundColor Green

@@ -30,7 +30,7 @@ try {
     
     if ($response.ok) {
         foreach ($channel in $response.channels) {
-            $isMember = if ($channel.is_member) { "✅ Member" } else { "⚠️  Not member" }
+            $isMember = if ($channel.is_member) { "[OK] Member" } else { "[WARN]  Not member" }
             Write-Host "  - $($channel.name) (ID: $($channel.id)) $isMember" -ForegroundColor $(if ($channel.is_member) { "Green" } else { "Gray" })
         }
     }
@@ -44,7 +44,7 @@ try {
     
     if ($response.ok -and $response.channels.Count -gt 0) {
         foreach ($channel in $response.channels) {
-            Write-Host "  - $($channel.name) (ID: $($channel.id)) ✅ Member" -ForegroundColor Green
+            Write-Host "  - $($channel.name) (ID: $($channel.id)) [OK] Member" -ForegroundColor Green
         }
     }
     else {
@@ -63,7 +63,7 @@ try {
     }
     
     Write-Host "`n" -NoNewline
-    Write-Host "💡 Tip: " -ForegroundColor Cyan -NoNewline
+    Write-Host "[INFO] Tip: " -ForegroundColor Cyan -NoNewline
     Write-Host "Use channel ID (e.g., C01234567) instead of #channel-name for better reliability"
     Write-Host "      Or invite bot to channel: " -NoNewline
     Write-Host "/invite @YourBotName" -ForegroundColor Yellow

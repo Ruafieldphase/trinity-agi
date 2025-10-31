@@ -33,7 +33,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "🔍 Redis Cache Performance Analyzer" -ForegroundColor Cyan
+Write-Host "[SEARCH] Redis Cache Performance Analyzer" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
 
@@ -64,14 +64,14 @@ $TestQueries = @(
     "Explain transformer architecture"
 )
 
-Write-Host "📊 테스트 설정" -ForegroundColor Yellow
+Write-Host "[METRICS] 테스트 설정" -ForegroundColor Yellow
 Write-Host "  - 서비스: $ServiceUrl" -ForegroundColor Gray
 Write-Host "  - 샘플: $Samples개" -ForegroundColor Gray
 Write-Host "  - 쿼리 종류: $($TestQueries.Count)개" -ForegroundColor Gray
 Write-Host ""
 
 # 1차: 캐시 워밍업 (각 쿼리 1회)
-Write-Host "🔥 1단계: 캐시 워밍업..." -ForegroundColor Yellow
+Write-Host "[HOT] 1단계: 캐시 워밍업..." -ForegroundColor Yellow
 
 foreach ($query in $TestQueries) {
     try {
@@ -105,7 +105,7 @@ Start-Sleep -Seconds 2
 
 # 2차: 실제 성능 측정
 Write-Host ""
-Write-Host "📈 2단계: 성능 측정 ($Samples 샘플)..." -ForegroundColor Yellow
+Write-Host "[STATS] 2단계: 성능 측정 ($Samples 샘플)..." -ForegroundColor Yellow
 Write-Host ""
 
 $ProgressCount = 0
@@ -203,11 +203,11 @@ $Results.AvgUncachedResponseTime = $AvgUncachedTime
 # 결과 출력
 Write-Host ""
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "📊 분석 결과" -ForegroundColor Cyan
+Write-Host "[METRICS] 분석 결과" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Host "🎯 캐시 효율성" -ForegroundColor Yellow
+Write-Host "[TARGET] 캐시 효율성" -ForegroundColor Yellow
 Write-Host "  - 총 요청: $TotalRequests" -ForegroundColor Gray
 Write-Host "  - 캐시 히트: $($Results.CacheHits) ($(if($HitRate -ge 80){"Green"}elseif($HitRate -ge 50){"Yellow"}else{"Red"}))" -ForegroundColor $(if ($HitRate -ge 80) { "Green" }elseif ($HitRate -ge 50) { "Yellow" }else { "Red" })
 Write-Host "  - 캐시 미스: $($Results.CacheMisses)" -ForegroundColor Gray
@@ -239,7 +239,7 @@ elseif ($HitRate -lt 80) {
     Write-Host "     - 자주 사용되는 쿼리를 사전 캐싱하세요" -ForegroundColor Gray
 }
 else {
-    Write-Host "  ✅ 캐시 히트율이 우수합니다 (≥80%)" -ForegroundColor Green
+    Write-Host "  [OK] 캐시 히트율이 우수합니다 (≥80%)" -ForegroundColor Green
 }
 
 if ($AvgCachedTime -gt 100) {

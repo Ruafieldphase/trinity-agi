@@ -19,7 +19,6 @@ from shared_task_queue import TaskQueue  # file-based queue
 
 
 API_BASE = "http://localhost:8091/api"
-HEALTH_URL = "http://localhost:8091/health"
 
 
 def _http_available() -> bool:
@@ -33,7 +32,7 @@ def _http_available() -> bool:
         return False
 
     try:
-        r = requests.get(HEALTH_URL, timeout=1.5)
+        r = requests.get(f"{API_BASE}/health", timeout=1.5)
         return r.status_code == 200
     except Exception:
         return False
@@ -46,8 +45,8 @@ def _submit_http_ping() -> Optional[str]:
     except Exception:
         return None
 
-    url = f"{API_BASE}/tasks"
-    payload = {"task_type": "ping", "data": {}, "requester": "copilot-http"}
+    url = f"{API_BASE}/tasks/create"
+    payload = {"type": "ping", "data": {}}
     try:
         resp = requests.post(url, json=payload, timeout=5)
         resp.raise_for_status()
@@ -63,7 +62,7 @@ def _wait_http_result(task_id: str, timeout: float = 10.0) -> Optional[dict]:
     except Exception:
         return None
 
-    url = f"{API_BASE}/tasks/{task_id}/result"
+    url = f"{API_BASE}/results/{task_id}"
     start = time.time()
     while time.time() - start < timeout:
         try:
@@ -85,10 +84,9 @@ def send_ping_task(force: Optional[str] = None, timeout: float = 10.0, api_base:
         timeout: 결과 대기 시간(초)
         api_base: 커스텀 API base URL (기본: http://localhost:8091/api)
     """
-    global API_BASE, HEALTH_URL
+    global API_BASE
     if api_base:
         API_BASE = api_base.rstrip("/")
-        HEALTH_URL = API_BASE.replace("/api", "/health")
 
     use_http = _http_available()
     if force == "http":
@@ -112,7 +110,7 @@ def send_ping_task(force: Optional[str] = None, timeout: float = 10.0, api_base:
                 print(f"[send_ping] HTTP 결과 -> status={status}, worker={worker}, message={msg}")
             else:
                 print(f"[send_ping] No result within {timeout}s. Verify Comet worker is running.")
-                print(f"[send_ping] 상태 URL: http://localhost:8091/api/tasks/{task_id}")
+                print(f"[send_ping] 상태 URL: {API_BASE}/results/{task_id}")
             return task_id or ""
 
     # Fallback: file-based queue

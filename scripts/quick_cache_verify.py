@@ -61,11 +61,17 @@ def analyze_recent_cache(events: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 def main():
-    print("?” Quick Cache Verification\n")
-    print(f"?“‚ Ledger: {LEDGER}\n")
+    import sys
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+    
+    print(">> Quick Cache Verification\n")
+    print(f">> Ledger: {LEDGER}\n")
     
     if not LEDGER.exists():
-        print("??Ledger file not found!")
+        print("-- Ledger file not found!")
         return 1
     
     # Check last 1 hour
@@ -73,36 +79,36 @@ def main():
     analysis = analyze_recent_cache(events)
     
     if "error" in analysis:
-        print(f"? ï¸  {analysis['error']}")
-        print("\n?’¡ This is normal if no AGI tasks ran in the last hour.")
+        print(f"-- {analysis['error']}")
+        print("\n-- This is normal if no AGI tasks ran in the last hour.")
         print("   Run an AGI task and check again.")
         return 0
     
-    print(f"??Time Window: Last {analysis['time_window_hours']} hour(s)")
-    print(f"?“Š Recent Evidence Events: {analysis['recent_events']}")
-    print(f"??Cache Hits: {analysis['cache_hits']}")
-    print(f"?“ˆ Hit Rate: **{analysis['hit_rate_percent']}%**")
+    print(f">> Time Window: Last {analysis['time_window_hours']} hour(s)")
+    print(f">> Recent Evidence Events: {analysis['recent_events']}")
+    print(f">> Cache Hits: {analysis['cache_hits']}")
+    print(f"** Hit Rate: **{analysis['hit_rate_percent']}%**")
     
     if analysis['latest_cache_stats']:
         stats = analysis['latest_cache_stats']
-        print(f"\n?“¦ Latest Cache Stats:")
+        print(f"\n>> Latest Cache Stats:")
         print(f"   Hits: {stats.get('hits', 0)}")
         print(f"   Misses: {stats.get('misses', 0)}")
         print(f"   Hit Rate: {stats.get('hit_rate_percent', 0)}%")
         print(f"   Evictions: {stats.get('evictions', 0)}")
         print(f"   Time Saved: {stats.get('total_time_saved_ms', 0):.1f}ms")
     
-    print("\n?’¡ Interpretation:")
+    print("\n>> Interpretation:")
     if analysis['hit_rate_percent'] >= 40:
-        print("   ??EXCELLENT - Cache is performing well!")
+        print("   ** EXCELLENT - Cache is performing well!")
     elif analysis['hit_rate_percent'] >= 20:
-        print("   ??GOOD - Cache is helping, room for improvement")
+        print("   ** GOOD - Cache is helping, room for improvement")
     elif analysis['hit_rate_percent'] >= 5:
-        print("   ? ï¸  MODERATE - Cache needs tuning")
+        print("   -- MODERATE - Cache needs tuning")
     else:
-        print("   ? ï¸  LOW - Consider increasing TTL or query normalization")
+        print("   -- LOW - Consider increasing TTL or query normalization")
     
-    print("\n?”„ To see improvement over time:")
+    print("\n>> To see improvement over time:")
     print("   1. Run AGI tasks for 6-12 hours")
     print("   2. Re-run this script")
     print("   3. Compare with full analysis: py -3 scripts/analyze_cache_effectiveness.py")

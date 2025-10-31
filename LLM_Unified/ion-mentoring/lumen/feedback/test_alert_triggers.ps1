@@ -61,7 +61,7 @@ $testData = @{
 function Emit-TestMetrics {
     param([hashtable]$metrics, [string]$description)
   
-    Write-Host "🔥 Emitting test metrics: $description" -ForegroundColor Yellow
+    Write-Host "[HOT] Emitting test metrics: $description" -ForegroundColor Yellow
     Write-Host "   Cache Hit Rate: $($metrics.cache_hit_rate)" -ForegroundColor Gray
     Write-Host "   Memory Usage: $($metrics.cache_memory_usage_percent)%" -ForegroundColor Gray
     Write-Host "   Health Score: $($metrics.unified_health_score)" -ForegroundColor Gray
@@ -90,7 +90,7 @@ payload = {
 }
 
 logger.log_struct(payload, severity='INFO')
-print(f"✅ Emitted test metrics to Cloud Logging")
+print(f"[OK] Emitted test metrics to Cloud Logging")
 "@
   
     Set-Content -Path $tempScript -Value $scriptContent
@@ -98,10 +98,10 @@ print(f"✅ Emitted test metrics to Cloud Logging")
     try {
         & $pythonExe $tempScript
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "   ✅ Metrics emitted successfully" -ForegroundColor Green
+            Write-Host "   [OK] Metrics emitted successfully" -ForegroundColor Green
         }
         else {
-            Write-Host "   ❌ Failed to emit metrics" -ForegroundColor Red
+            Write-Host "   [ERROR] Failed to emit metrics" -ForegroundColor Red
         }
     }
     finally {
@@ -113,7 +113,7 @@ print(f"✅ Emitted test metrics to Cloud Logging")
 
 # Execute tests
 if ($TestScenario -eq "all") {
-    Write-Host "🧪 Testing all alert scenarios..." -ForegroundColor Magenta
+    Write-Host "[TEST] Testing all alert scenarios..." -ForegroundColor Magenta
     Write-Host ""
   
     Emit-TestMetrics $testData["hit-rate"] "Low Cache Hit Rate (0.3 < 0.5)"
@@ -145,5 +145,5 @@ Write-Host ""
 Write-Host "4. View recent logs:" -ForegroundColor Gray
 Write-Host "   gcloud logging read 'jsonPayload.test_trigger=true' --project=$ProjectId --limit=10 --freshness=10m" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "💡 Tip: Emit normal metrics again to clear alerts:" -ForegroundColor Magenta
+Write-Host "[INFO] Tip: Emit normal metrics again to clear alerts:" -ForegroundColor Magenta
 Write-Host "   D:/nas_backup/LLM_Unified/ion-mentoring/lumen/feedback/run_emit_feedback_metrics_once.ps1" -ForegroundColor Gray

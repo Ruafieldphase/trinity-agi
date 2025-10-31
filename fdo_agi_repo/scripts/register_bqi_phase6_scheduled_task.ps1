@@ -62,10 +62,10 @@ $existingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyConti
 if ($Unregister) {
     if ($existingTask) {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
-        Write-Host "✅ Scheduled task unregistered: $TaskName" -ForegroundColor Green
+        Write-Host "[OK] Scheduled task unregistered: $TaskName" -ForegroundColor Green
     }
     else {
-        Write-Host "⚠️  Task not found: $TaskName" -ForegroundColor Yellow
+        Write-Host "[WARN]  Task not found: $TaskName" -ForegroundColor Yellow
     }
     exit 0
 }
@@ -73,7 +73,7 @@ if ($Unregister) {
 # Register
 if ($Register) {
     if ($existingTask) {
-        Write-Host "⚠️  Task already exists: $TaskName. Unregistering first..." -ForegroundColor Yellow
+        Write-Host "[WARN]  Task already exists: $TaskName. Unregistering first..." -ForegroundColor Yellow
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     }
 
@@ -98,7 +98,7 @@ if ($Register) {
         
         $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Highest
         
-        Write-Host "`n⚠️  WakeFromSleep mode enabled - requires admin privileges" -ForegroundColor Yellow
+        Write-Host "`n[WARN]  WakeFromSleep mode enabled - requires admin privileges" -ForegroundColor Yellow
     }
     else {
         # Standard mode: run when computer is awake
@@ -122,7 +122,7 @@ if ($Register) {
         -Description "BQI Phase 6: Binoche Persona Learning (Task Mining, Decision Learning, Pattern Recognition, Rule Automation)" `
     | Out-Null
 
-    Write-Host "`n✅ Scheduled task registered successfully!" -ForegroundColor Green
+    Write-Host "`n[OK] Scheduled task registered successfully!" -ForegroundColor Green
     Write-Host "   Task Name: $TaskName" -ForegroundColor Cyan
     Write-Host "   Run Time:  $Time (daily)" -ForegroundColor Cyan
     Write-Host "   Script:    $runnerScript" -ForegroundColor Cyan
@@ -130,15 +130,15 @@ if ($Register) {
     
     if ($WakeFromSleep) {
         Write-Host "`n🌙 Wake Mode: ENABLED" -ForegroundColor Magenta
-        Write-Host "   ✅ Will wake computer from sleep to run" -ForegroundColor Green
-        Write-Host "   ⚠️  Requires BIOS 'Wake Timers' enabled" -ForegroundColor Yellow
+        Write-Host "   [OK] Will wake computer from sleep to run" -ForegroundColor Green
+        Write-Host "   [WARN]  Requires BIOS 'Wake Timers' enabled" -ForegroundColor Yellow
     }
     else {
         Write-Host "`n� Standard Mode: StartWhenAvailable" -ForegroundColor Yellow
         Write-Host "   • Task runs when computer is awake" -ForegroundColor Gray
         Write-Host "   • If missed, runs at next boot/wake" -ForegroundColor Gray
         Write-Host "   • No admin privileges required" -ForegroundColor Gray
-        Write-Host "`n💡 To enable wake from sleep:" -ForegroundColor Cyan
+        Write-Host "`n[INFO] To enable wake from sleep:" -ForegroundColor Cyan
         Write-Host "   .\register_bqi_phase6_scheduled_task.ps1 -Register -WakeFromSleep" -ForegroundColor Gray
         Write-Host "   (requires running PowerShell as Administrator)" -ForegroundColor DarkGray
     }
@@ -151,7 +151,7 @@ if ($Register) {
         Write-Host "`n⏰ Next run: $nextRun" -ForegroundColor Magenta
     }
     catch {
-        Write-Host "`n⚠️  Could not get next run time: $_" -ForegroundColor Yellow
+        Write-Host "`n[WARN]  Could not get next run time: $_" -ForegroundColor Yellow
     }
 
     exit 0
@@ -159,7 +159,7 @@ if ($Register) {
 
 # Show status
 if ($existingTask) {
-    Write-Host "`n📊 Scheduled Task Status: $TaskName" -ForegroundColor Cyan
+    Write-Host "`n[METRICS] Scheduled Task Status: $TaskName" -ForegroundColor Cyan
     Write-Host "   State:     $($existingTask.State)" -ForegroundColor Gray
     
     $info = Get-ScheduledTaskInfo -TaskName $TaskName
@@ -167,13 +167,13 @@ if ($existingTask) {
     Write-Host "   Next Run:  $($info.NextRunTime)" -ForegroundColor Gray
     Write-Host "   Last Exit: $($info.LastTaskResult)" -ForegroundColor Gray
     
-    Write-Host "`n💡 Usage:" -ForegroundColor Yellow
+    Write-Host "`n[INFO] Usage:" -ForegroundColor Yellow
     Write-Host "   Register:   .\register_bqi_phase6_scheduled_task.ps1 -Register"
     Write-Host "   Unregister: .\register_bqi_phase6_scheduled_task.ps1 -Unregister"
 }
 else {
-    Write-Host "`n⚠️  Scheduled task not found: $TaskName" -ForegroundColor Yellow
-    Write-Host "`n💡 Usage:" -ForegroundColor Yellow
+    Write-Host "`n[WARN]  Scheduled task not found: $TaskName" -ForegroundColor Yellow
+    Write-Host "`n[INFO] Usage:" -ForegroundColor Yellow
     Write-Host "   Register:   .\register_bqi_phase6_scheduled_task.ps1 -Register [-Time HH:MM]"
     Write-Host "   Unregister: .\register_bqi_phase6_scheduled_task.ps1 -Unregister"
 }

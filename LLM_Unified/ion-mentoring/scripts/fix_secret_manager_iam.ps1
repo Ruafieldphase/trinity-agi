@@ -54,7 +54,7 @@ if ($LASTEXITCODE -ne 0) {
     Write-Host "      Error: $result" -ForegroundColor Gray
 }
 else {
-    Write-Host "      ✅ Role granted successfully on secret $SecretName" -ForegroundColor Green
+    Write-Host "      [OK] Role granted successfully on secret $SecretName" -ForegroundColor Green
 }
 
 Write-Host ""
@@ -77,15 +77,15 @@ foreach ($binding in $policy.bindings) {
 }
 
 if ($found) {
-    Write-Host "      ✅ IAM policy verified: Service account has secretAccessor role" -ForegroundColor Green
+    Write-Host "      [OK] IAM policy verified: Service account has secretAccessor role" -ForegroundColor Green
 }
 else {
-    Write-Warning "      ⚠️  Service account not found in IAM policy. This might be normal if using project-level permissions."
+    Write-Warning "      [WARN]  Service account not found in IAM policy. This might be normal if using project-level permissions."
 }
 
 Write-Host ""
 Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
-Write-Host "  ✅ Secret Manager IAM Fix Complete!" -ForegroundColor Green
+Write-Host "  [OK] Secret Manager IAM Fix Complete!" -ForegroundColor Green
 Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow

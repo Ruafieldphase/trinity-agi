@@ -67,17 +67,17 @@ function Write-Info {
 
 function Write-Success {
     param([string]$Message)
-    Write-ColorHost "✅ $Message" "Green"
+    Write-ColorHost "[OK] $Message" "Green"
 }
 
 function Write-Warning {
     param([string]$Message)
-    Write-ColorHost "⚠️  $Message" "Yellow"
+    Write-ColorHost "[WARN]  $Message" "Yellow"
 }
 
 function Write-Error {
     param([string]$Message)
-    Write-ColorHost "❌ $Message" "Red"
+    Write-ColorHost "[ERROR] $Message" "Red"
 }
 
 # 시작

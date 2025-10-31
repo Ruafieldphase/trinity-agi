@@ -41,12 +41,12 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "⚙️  Cloud Run Auto-scaling Optimizer" -ForegroundColor Cyan
+Write-Host "[SETTINGS]  Cloud Run Auto-scaling Optimizer" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
 
 # 현재 설정 조회
-Write-Host "🔍 1단계: 현재 설정 조회..." -ForegroundColor Yellow
+Write-Host "[SEARCH] 1단계: 현재 설정 조회..." -ForegroundColor Yellow
 Write-Host ""
 
 try {
@@ -68,7 +68,7 @@ try {
     $currentCpu = $service.spec.template.spec.containers[0].resources.limits.cpu
     $currentMemory = $service.spec.template.spec.containers[0].resources.limits.memory
 
-    Write-Host "📊 현재 설정" -ForegroundColor Cyan
+    Write-Host "[METRICS] 현재 설정" -ForegroundColor Cyan
     Write-Host "  - Min Instances: $currentMinInstances" -ForegroundColor Gray
     Write-Host "  - Max Instances: $currentMaxInstances" -ForegroundColor Gray
     Write-Host "  - Concurrency: $currentConcurrency" -ForegroundColor Gray
@@ -77,7 +77,7 @@ try {
     Write-Host ""
 }
 catch {
-    Write-Host "❌ 현재 설정 조회 실패: $_" -ForegroundColor Red
+    Write-Host "[ERROR] 현재 설정 조회 실패: $_" -ForegroundColor Red
     exit 1
 }
 
@@ -119,7 +119,7 @@ else {
     }
 }
 
-Write-Host "💡 권장 설정" -ForegroundColor Cyan
+Write-Host "[INFO] 권장 설정" -ForegroundColor Cyan
 Write-Host "  - Min Instances: $($recommendations.MinInstances)" -ForegroundColor Green
 Write-Host "  - Max Instances: $($recommendations.MaxInstances)" -ForegroundColor Green
 Write-Host "  - Concurrency: $($recommendations.Concurrency)" -ForegroundColor Green
@@ -127,7 +127,7 @@ Write-Host "  - CPU: $($recommendations.Cpu)" -ForegroundColor Green
 Write-Host "  - Memory: $($recommendations.Memory)" -ForegroundColor Green
 Write-Host ""
 
-Write-Host "📝 근거" -ForegroundColor Yellow
+Write-Host "[LOG] 근거" -ForegroundColor Yellow
 foreach ($reason in $recommendations.Reason) {
     Write-Host "  - $reason" -ForegroundColor Gray
 }
@@ -157,11 +157,11 @@ if ($currentMemory -ne $recommendations.Memory) {
 }
 
 if ($changes.Count -eq 0) {
-    Write-Host "✅ 현재 설정이 이미 최적입니다!" -ForegroundColor Green
+    Write-Host "[OK] 현재 설정이 이미 최적입니다!" -ForegroundColor Green
     exit 0
 }
 
-Write-Host "🔄 변경 사항" -ForegroundColor Yellow
+Write-Host "[SYNC] 변경 사항" -ForegroundColor Yellow
 foreach ($change in $changes) {
     Write-Host "  - $change" -ForegroundColor Cyan
 }
@@ -169,7 +169,7 @@ Write-Host ""
 
 # DryRun 모드
 if ($DryRun) {
-    Write-Host "🔍 DryRun 모드: 실제 적용하지 않음" -ForegroundColor Yellow
+    Write-Host "[SEARCH] DryRun 모드: 실제 적용하지 않음" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "실제 적용하려면 -DryRun 플래그를 제거하고 다시 실행하세요:" -ForegroundColor Gray
     Write-Host "  .\optimize_autoscaling.ps1 -ServiceName $ServiceName -ProjectId $ProjectId" -ForegroundColor Gray
@@ -178,7 +178,7 @@ if ($DryRun) {
 }
 
 # 실제 적용
-Write-Host "⚙️  3단계: 설정 적용 중..." -ForegroundColor Yellow
+Write-Host "[SETTINGS]  3단계: 설정 적용 중..." -ForegroundColor Yellow
 Write-Host ""
 
 try {
@@ -205,11 +205,11 @@ try {
         throw "설정 업데이트 실패: $updateOutput"
     }
 
-    Write-Host "✅ 설정 업데이트 완료!" -ForegroundColor Green
+    Write-Host "[OK] 설정 업데이트 완료!" -ForegroundColor Green
     Write-Host ""
 
     # 업데이트 후 상태 확인
-    Write-Host "🔍 업데이트 후 상태 확인..." -ForegroundColor Yellow
+    Write-Host "[SEARCH] 업데이트 후 상태 확인..." -ForegroundColor Yellow
     Start-Sleep -Seconds 5
 
     $newDescribe = gcloud run services describe $ServiceName `
@@ -222,14 +222,14 @@ try {
     $newConcurrency = $newDescribe.spec.template.spec.containerConcurrency
 
     Write-Host ""
-    Write-Host "✅ 적용 확인" -ForegroundColor Cyan
+    Write-Host "[OK] 적용 확인" -ForegroundColor Cyan
     Write-Host "  - Min Instances: $newMinInstances" -ForegroundColor Green
     Write-Host "  - Max Instances: $newMaxInstances" -ForegroundColor Green
     Write-Host "  - Concurrency: $newConcurrency" -ForegroundColor Green
     Write-Host ""
 }
 catch {
-    Write-Host "❌ 설정 적용 실패: $_" -ForegroundColor Red
+    Write-Host "[ERROR] 설정 적용 실패: $_" -ForegroundColor Red
     exit 1
 }
 
@@ -253,5 +253,5 @@ else {
 
 Write-Host ""
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "✅ 자동 스케일링 최적화 완료!" -ForegroundColor Green
+Write-Host "[OK] 자동 스케일링 최적화 완료!" -ForegroundColor Green
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan

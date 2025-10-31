@@ -51,13 +51,13 @@ function Test-ServiceHealth {
         $duration = ((Get-Date) - $startTime).TotalMilliseconds
         
         # 성공
-        Write-Host "✅ Status: " -NoNewline -ForegroundColor Green
+        Write-Host "[OK] Status: " -NoNewline -ForegroundColor Green
         Write-Host $response.status -ForegroundColor White
         
-        Write-Host "📦 Version: " -NoNewline -ForegroundColor Green
+        Write-Host "[PACKAGE] Version: " -NoNewline -ForegroundColor Green
         Write-Host $response.version -ForegroundColor White
         
-        Write-Host "🔧 Pipeline Ready: " -NoNewline -ForegroundColor Green
+        Write-Host "[CONFIG] Pipeline Ready: " -NoNewline -ForegroundColor Green
         Write-Host $response.pipeline_ready -ForegroundColor White
         
         Write-Host "⏱️  Response Time: " -NoNewline -ForegroundColor Green
@@ -66,7 +66,7 @@ function Test-ServiceHealth {
         return $true
     }
     catch {
-        Write-Host "❌ FAILED" -ForegroundColor Red
+        Write-Host "[ERROR] FAILED" -ForegroundColor Red
         Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
         
         # HTTP 상태 코드 확인
@@ -85,7 +85,7 @@ function Get-CloudRunServiceInfo {
     )
     
     try {
-        Write-Host "`n🔍 Cloud Run Service Info:" -ForegroundColor Cyan
+        Write-Host "`n[SEARCH] Cloud Run Service Info:" -ForegroundColor Cyan
         
         $serviceInfo = gcloud run services describe $ServiceName `
             --region=us-central1 `
@@ -140,10 +140,10 @@ Write-Host "Failed: $($totalChecks - $successfulChecks)" -ForegroundColor Red
 Write-Host "Success Rate: $([math]::Round($successfulChecks / $totalChecks * 100, 2))%" -ForegroundColor White
 
 if ($successfulChecks -eq $totalChecks) {
-    Write-Host "`n✅ All services are healthy!" -ForegroundColor Green
+    Write-Host "`n[OK] All services are healthy!" -ForegroundColor Green
     exit 0
 }
 else {
-    Write-Host "`n⚠️  Some services have issues" -ForegroundColor Yellow
+    Write-Host "`n[WARN]  Some services have issues" -ForegroundColor Yellow
     exit 1
 }

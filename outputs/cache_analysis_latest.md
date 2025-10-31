@@ -1,6 +1,6 @@
 # Cache Effectiveness Analysis
 
-Generated: 2025-10-29T11:31:26.267239+00:00
+Generated: 2025-10-30T01:56:21.292863+00:00
 
 ## Summary
 
@@ -24,12 +24,12 @@ Generated: 2025-10-29T11:31:26.267239+00:00
 
 ## Recommendations
 
-⚠️ WARN: Cache hit rate <20% - moderate improvement possible
-   ✅ Action: Increase TTL to 450-600s (7.5-10min)
-ℹ️ INFO: Very few repeated queries detected
-   ✅ Action: Consider query normalization (remove noise from cache keys)
-ℹ️ INFO: Average query repetition gap is 1965s (>32min)
-   ✅ Action: Consider increasing TTL to 2947s to capture patterns
+-- WARN: Cache hit rate <20% - moderate improvement possible
+   >> Action: Increase TTL to 450-600s (7.5-10min)
+-- INFO: Very few repeated queries detected
+   >> Action: Consider query normalization (remove noise from cache keys)
+-- INFO: Average query repetition gap is 1965s (>32min)
+   >> Action: Consider increasing TTL to 2947s to capture patterns
 
 ## Top Repeated Query Patterns
 

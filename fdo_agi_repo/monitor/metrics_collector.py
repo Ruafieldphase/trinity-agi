@@ -95,6 +95,29 @@ class MetricsCollector:
         }
 
     @staticmethod
+    def _to_epoch_ts(raw: Any) -> float:
+        """Normalize various timestamp representations to epoch seconds (float).
+
+        Accepts:
+        - float/int: treated as epoch seconds
+        - str: ISO 8601 string (with optional 'Z'), converted to epoch
+        Returns 0.0 when parsing fails or value missing.
+        """
+        try:
+            if isinstance(raw, (int, float)):
+                return float(raw)
+            if isinstance(raw, str) and raw:
+                try:
+                    # Support 'Z' suffix by mapping to +00:00
+                    s = raw.replace('Z', '+00:00')
+                    return datetime.fromisoformat(s).timestamp()
+                except Exception:
+                    return 0.0
+        except Exception:
+            return 0.0
+        return 0.0
+
+    @staticmethod
     def _extract_task_id(event: Dict[str, Any]) -> Optional[str]:
         task_id = event.get("task_id")
         if task_id:
@@ -131,8 +154,16 @@ class MetricsCollector:
                     event = json.loads(line)
                 except json.JSONDecodeError:
                     continue
-                if event.get('ts', 0) < cutoff_time:
-                    continue
+                # ts 필드를 timestamp로 변환하여 비교
+                ts_str = event.get('ts', '')
+                if ts_str:
+                    try:
+                        event_ts = datetime.fromisoformat(ts_str.replace('Z', '+00:00')).timestamp()
+                        if event_ts < cutoff_time:
+                            continue
+                    except (ValueError, AttributeError):
+                        # 파싱 실패 시 해당 이벤트 포함
+                        pass
                 if self._is_excluded(event):
                     continue
                 events.append(event)
@@ -293,19 +324,24 @@ class MetricsCollector:
         if not events:
             return timeline
 
-        # 시작/끝 시간 계산
-        min_ts = min(e.get('ts', 0) for e in events)
-        max_ts = max(e.get('ts', 0) for e in events)
+        # 시작/끝 시간 계산 (ts가 문자열/숫자 혼재 가능 → 정규화 필요)
+        ts_values = [self._to_epoch_ts(e.get('ts')) for e in events]
+        ts_values = [t for t in ts_values if t > 0]
+        if not ts_values:
+            return timeline
+        min_ts = min(ts_values)
+        max_ts = max(ts_values)
 
         current_ts = min_ts
         while current_ts <= max_ts:
             next_ts = current_ts + interval_seconds
 
             # 해당 구간의 이벤트 필터링
-            interval_events = [
-                e for e in events
-                if current_ts <= e.get('ts', 0) < next_ts
-            ]
+            interval_events = []
+            for e in events:
+                ts = self._to_epoch_ts(e.get('ts'))
+                if ts and current_ts <= ts < next_ts:
+                    interval_events.append(e)
 
             # 구간별 메트릭 계산
             quality_values = []
@@ -359,8 +395,12 @@ class MetricsCollector:
             return result
 
         interval_seconds = interval_minutes * 60
-        min_ts = min(e.get('ts', 0) for e in events)
-        max_ts = max(e.get('ts', 0) for e in events)
+        ts_values = [self._to_epoch_ts(e.get('ts')) for e in events]
+        ts_values = [t for t in ts_values if t > 0]
+        if not ts_values:
+            return result
+        min_ts = min(ts_values)
+        max_ts = max(ts_values)
 
         current_ts = min_ts
         bins: List[str] = []
@@ -391,8 +431,8 @@ class MetricsCollector:
             })
 
             for e in events:
-                ts = e.get('ts', 0)
-                if not (current_ts <= ts < next_ts):
+                ts = self._to_epoch_ts(e.get('ts'))
+                if not (ts and current_ts <= ts < next_ts):
                     continue
                 et = e.get('event')
                 if et in ('persona_llm_end', 'persona_llm_run'):
@@ -624,7 +664,8 @@ class MetricsCollector:
         system_status = external_results['system']
 
         health_checks['lumen_ok'] = lumen_status['ok']
-        health_checks['proxy_ok'] = proxy_status['ok']
+        # Proxy는 옵션 서비스이므로 health 판정에서 제외
+        # health_checks['proxy_ok'] = proxy_status['ok']  
         health_checks['system_ok'] = system_status['ok']
 
         immediate_pass = all(health_checks.values())

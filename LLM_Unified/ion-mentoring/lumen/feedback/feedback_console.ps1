@@ -38,20 +38,20 @@ function Show-Banner {
 function Show-Menu {
     Write-Host "═══ Main Menu ═══" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "  [1] 📊 View Live Metrics" -ForegroundColor Green
-    Write-Host "  [2] 📈 Open Dashboard" -ForegroundColor Green
+    Write-Host "  [1] [METRICS] View Live Metrics" -ForegroundColor Green
+    Write-Host "  [2] [STATS] Open Dashboard" -ForegroundColor Green
     Write-Host "  [3] 📉 Analyze Distribution" -ForegroundColor Green
     Write-Host ""
-    Write-Host "  [4] ⚙️  Check Scheduled Task Status" -ForegroundColor Cyan
+    Write-Host "  [4] [SETTINGS]  Check Scheduled Task Status" -ForegroundColor Cyan
     Write-Host "  [5] ⏯️  Emit Metrics Once (Manual)" -ForegroundColor Cyan
-    Write-Host "  [6] 🔄 Restart Scheduled Task" -ForegroundColor Cyan
+    Write-Host "  [6] [SYNC] Restart Scheduled Task" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "  [7] 🔔 View Alert Policies" -ForegroundColor Magenta
-    Write-Host "  [8] ⚠️  Test Alert Triggers" -ForegroundColor Magenta
+    Write-Host "  [8] [WARN]  Test Alert Triggers" -ForegroundColor Magenta
     Write-Host "  [9] 📧 Setup Notification Channels" -ForegroundColor Magenta
     Write-Host " [10] 💬 Test Slack Webhook" -ForegroundColor Magenta
     Write-Host ""
-    Write-Host " [11] 🔍 Verify Data Flow" -ForegroundColor Yellow
+    Write-Host " [11] [SEARCH] Verify Data Flow" -ForegroundColor Yellow
     Write-Host " [12] 📚 Open Operations Runbook" -ForegroundColor Yellow
     Write-Host " [13] 🛠️  Tune Alert Thresholds" -ForegroundColor Yellow
     Write-Host ""
@@ -145,7 +145,7 @@ while ($true) {
                 Write-Host "  Missed Runs: $($taskInfo.NumberOfMissedRuns)" -ForegroundColor Gray
             }
             else {
-                Write-Host "  ❌ Task not found!" -ForegroundColor Red
+                Write-Host "  [ERROR] Task not found!" -ForegroundColor Red
                 Write-Host ""
                 Write-Host "  Would you like to register it now? (y/n)" -ForegroundColor Yellow
                 $register = Read-Host

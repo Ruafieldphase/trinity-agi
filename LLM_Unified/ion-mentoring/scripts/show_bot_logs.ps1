@@ -43,7 +43,7 @@ $OUTPUTS_DIR = Join-Path $WORKSPACE_ROOT "LLM_Unified\ion-mentoring\outputs"
 $LOG_DIR = Join-Path $OUTPUTS_DIR "logs"
 
 if (-not (Test-Path $LOG_DIR)) {
-    Write-Host "❌ 로그 디렉토리가 없습니다: $LOG_DIR" -ForegroundColor Red
+    Write-Host "[ERROR] 로그 디렉토리가 없습니다: $LOG_DIR" -ForegroundColor Red
     exit 1
 }
 
@@ -62,7 +62,7 @@ function Show-Log {
     )
     
     if (-not (Test-Path $LogPath)) {
-        Write-Host "⚠️  $Title 로그를 찾을 수 없습니다." -ForegroundColor Yellow
+        Write-Host "[WARN]  $Title 로그를 찾을 수 없습니다." -ForegroundColor Yellow
         return
     }
     
@@ -82,10 +82,10 @@ function Show-Log {
         elseif ($_ -match "\[INFO\]") {
             Write-Host $_ -ForegroundColor White
         }
-        elseif ($_ -match "✅|🎉|✨") {
+        elseif ($_ -match "[OK]|[SUCCESS]|✨") {
             Write-Host $_ -ForegroundColor Green
         }
-        elseif ($_ -match "🌐|🚀") {
+        elseif ($_ -match "[WEB]|[DEPLOY]") {
             Write-Host $_ -ForegroundColor Cyan
         }
         else {
@@ -132,7 +132,7 @@ if ($Follow) {
             elseif ($line -match "\[WARN\]") {
                 Write-Host $line -ForegroundColor Yellow
             }
-            elseif ($line -match "✅|🎉") {
+            elseif ($line -match "[OK]|[SUCCESS]") {
                 Write-Host $line -ForegroundColor Green
             }
             else {

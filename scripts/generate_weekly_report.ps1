@@ -290,7 +290,7 @@ if ($BatchFiles.Count -gt 0) {
 
 ---
 
-## 🧪 Batch Validation Results
+## [TEST] Batch Validation Results
 
 ### Recent Batch Tests
 

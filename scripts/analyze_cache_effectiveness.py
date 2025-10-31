@@ -158,6 +158,11 @@ def generate_recommendations(hit_rate: float, ttl_eff: float,
 
 
 def main() -> int:
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+    
     entries = load_jsonl(LEDGER_PATH)
     analysis = analyze_cache_patterns(entries)
     
@@ -218,13 +223,13 @@ def main() -> int:
         
         for rec in analysis["recommendations"]:
             if rec.startswith("CRITICAL:"):
-                lines.append(f"?š¨ **{rec}**")
+                lines.append(f"-- **{rec}**")
             elif rec.startswith("WARN:"):
-                lines.append(f"? ï¸ {rec}")
+                lines.append(f"-- {rec}")
             elif rec.startswith("Action:"):
-                lines.append(f"   ??{rec}")
+                lines.append(f"   >> {rec}")
             else:
-                lines.append(f"?¹ï¸ {rec}")
+                lines.append(f"-- {rec}")
         
         lines.append("")
         lines.append("## Top Repeated Query Patterns")
@@ -235,7 +240,7 @@ def main() -> int:
     with open(OUT_MD, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
     
-    print(f"??Cache analysis complete")
+    print(">> Cache analysis complete")
     print(f"   JSON: {OUT_JSON}")
     print(f"   MD: {OUT_MD}")
     

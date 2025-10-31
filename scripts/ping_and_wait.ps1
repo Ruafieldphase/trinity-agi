@@ -14,7 +14,7 @@ try {
     Write-Host "[ping_and_wait] Created task: $taskId" -ForegroundColor Yellow
 }
 catch {
-    Write-Host "[ping_and_wait] ❌ Create failed: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[ping_and_wait] [ERROR] Create failed: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
 
@@ -24,7 +24,7 @@ while ((Get-Date) -lt $deadline) {
     try {
         $res = Invoke-RestMethod -Method Get -Uri ("$ApiBase/results/$taskId") -ErrorAction Stop
         if ($res) {
-            Write-Host "[ping_and_wait] ✅ Result found:" -ForegroundColor Green
+            Write-Host "[ping_and_wait] [OK] Result found:" -ForegroundColor Green
             $res | ConvertTo-Json -Depth 10
             exit 0
         }
@@ -35,5 +35,5 @@ while ((Get-Date) -lt $deadline) {
     }
 }
 
-Write-Host "[ping_and_wait] ❌ Timed out waiting for result (task_id: $taskId)" -ForegroundColor Red
+Write-Host "[ping_and_wait] [ERROR] Timed out waiting for result (task_id: $taskId)" -ForegroundColor Red
 exit 2

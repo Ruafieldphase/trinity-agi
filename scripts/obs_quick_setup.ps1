@@ -64,7 +64,7 @@ catch {
 }
 
 # VS Code 설정 추천
-Write-Host "`n⚙️  VS Code 최적화 권장사항:" -ForegroundColor Cyan
+Write-Host "`n[SETTINGS]  VS Code 최적화 권장사항:" -ForegroundColor Cyan
 Write-Host "   1. 폰트 크기 증가: Ctrl+= 또는 Ctrl+Shift+P → 'Zoom In'" -ForegroundColor White
 Write-Host "   2. 테마 변경: Ctrl+K Ctrl+T → Light+ (시청자 가독성)" -ForegroundColor White
 Write-Host "   3. Zen Mode: Ctrl+K Z (방해 요소 제거)" -ForegroundColor White

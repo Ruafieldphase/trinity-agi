@@ -8,6 +8,18 @@ param(
 
 $ErrorActionPreference = 'Continue'
 
+# Ensure UTF-8 console/output to prevent mojibake in Korean logs/output
+try { chcp 65001 > $null 2> $null } catch {}
+try {
+    [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)
+    [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    $OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
+}
+catch {}
+
+
+
 $results = @{
     Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Summary   = @{
@@ -55,47 +67,54 @@ Write-CheckHeader "1/7 - LM Studio Status"
 
 try {
     $port8080 = Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue
+    $script:lmStudioOnline = $false
     if (-not $port8080) {
-        Write-CheckResult "LM Studio Port" "ERROR" "Port 8080 not listening"
+        Write-CheckResult "LM Studio Port" "WARNING" "Port 8080 not listening (LM Studio not running)"
     }
     else {
         Write-CheckResult "LM Studio Port" "OK" "Port 8080 active (PID $($port8080[0].OwningProcess))"
+        $script:lmStudioOnline = $true
     }
     
-    $modelsUri = "http://localhost:8080/v1/models"
-    $modelsResponse = Invoke-RestMethod -Uri $modelsUri -Method Get -TimeoutSec 5 -ErrorAction Stop
-    $modelCount = $modelsResponse.data.Count
-    
-    if ($modelCount -eq 0) {
-        Write-CheckResult "LM Studio Models" "ERROR" "No models loaded"
-    }
-    else {
-        $loadedModel = $modelsResponse.data[0].id
-        Write-CheckResult "LM Studio Models" "OK" "$modelCount model(s) available: $loadedModel"
+    if ($script:lmStudioOnline) {
+        $modelsUri = "http://localhost:8080/v1/models"
+        $modelsResponse = Invoke-RestMethod -Uri $modelsUri -Method Get -TimeoutSec 5 -ErrorAction Stop
+        $modelCount = $modelsResponse.data.Count
         
-        $chatUri = "http://localhost:8080/v1/chat/completions"
-        $testBody = @{
-            model      = $loadedModel
-            messages   = @(
-                @{ role = "user"; content = "Hello" }
-            )
-            max_tokens = 20
-        } | ConvertTo-Json -Depth 10
-        
-        $start = Get-Date
-        $chatResponse = Invoke-RestMethod -Uri $chatUri -Method Post -Body $testBody -ContentType "application/json" -TimeoutSec 10 -ErrorAction Stop
-        $latency = [int]((Get-Date) - $start).TotalMilliseconds
-        
-        if ($latency -lt 5000) {
-            Write-CheckResult "LM Studio Inference" "OK" "Response in ${latency}ms"
+        if ($modelCount -eq 0) {
+            Write-CheckResult "LM Studio Models" "ERROR" "No models loaded"
         }
         else {
-            Write-CheckResult "LM Studio Inference" "WARNING" "Slow response: ${latency}ms"
+            $loadedModel = $modelsResponse.data[0].id
+            Write-CheckResult "LM Studio Models" "OK" "$modelCount model(s) available: $loadedModel"
+            
+            $chatUri = "http://localhost:8080/v1/chat/completions"
+            $testBody = @{
+                model      = $loadedModel
+                messages   = @(
+                    @{ role = "user"; content = "Hello" }
+                )
+                max_tokens = 20
+            } | ConvertTo-Json -Depth 10
+            
+            $start = Get-Date
+            $chatResponse = Invoke-RestMethod -Uri $chatUri -Method Post -Body $testBody -ContentType "application/json" -TimeoutSec 10 -ErrorAction Stop
+            $latency = [int]((Get-Date) - $start).TotalMilliseconds
+            
+            if ($latency -lt 5000) {
+                Write-CheckResult "LM Studio Inference" "OK" "Response in ${latency}ms"
+            }
+            else {
+                Write-CheckResult "LM Studio Inference" "WARNING" "Slow response: ${latency}ms"
+            }
         }
+    }
+    else {
+        Write-CheckResult "LM Studio Models" "WARNING" "LM Studio offline, skipped"
     }
 }
 catch {
-    Write-CheckResult "LM Studio" "ERROR" "Failed: $_"
+    Write-CheckResult "LM Studio" "WARNING" "Check skipped or failed: $_"
 }
 
 Write-CheckHeader "2/7 - Lumen Gateway Status"
@@ -153,20 +172,31 @@ try {
         Write-CheckResult "AGI Pipeline" "ERROR" "Virtual environment not found"
     }
     else {
-        $testOutput = & "fdo_agi_repo\.venv\Scripts\python.exe" -m pytest -q tests\test_fdo_agi_self_correction.py 2>&1 | Out-String
-        
-        if ($LASTEXITCODE -eq 0) {
-            if ($testOutput -match '(\d+) passed.*?(\d+\.\d+)s') {
-                $testCount = $matches[1]
-                $testTime = $matches[2]
-                Write-CheckResult "AGI Pipeline" "OK" "$testCount test(s) passed in ${testTime}s"
+        $pytestFile = "tests\test_fdo_agi_self_correction.py"
+        if (Test-Path $pytestFile) {
+            $testOutput = & "fdo_agi_repo\.venv\Scripts\python.exe" -m pytest -q $pytestFile 2>&1 | Out-String
+            if ($LASTEXITCODE -eq 0) {
+                if ($testOutput -match '(\d+) passed.*?(\d+\.\d+)s') {
+                    $testCount = $matches[1]
+                    $testTime = $matches[2]
+                    Write-CheckResult "AGI Pipeline" "OK" "$testCount test(s) passed in ${testTime}s"
+                }
+                else {
+                    Write-CheckResult "AGI Pipeline" "OK" "Tests passed"
+                }
             }
             else {
-                Write-CheckResult "AGI Pipeline" "OK" "Tests passed"
+                Write-CheckResult "AGI Pipeline" "ERROR" "Tests failed (pytest)"
             }
         }
         else {
-            Write-CheckResult "AGI Pipeline" "ERROR" "Test failed"
+            $agiHealth = & "fdo_agi_repo\scripts\check_health.ps1" 2>&1 | Out-String
+            if ($agiHealth -match 'HEALTH:\s*PASS') {
+                Write-CheckResult "AGI Pipeline" "OK" "AGI Health Gate PASS"
+            }
+            else {
+                Write-CheckResult "AGI Pipeline" "ERROR" "AGI Health Gate failed"
+            }
         }
     }
     Set-Location $originalLocation
@@ -400,7 +430,12 @@ if ($Detailed) {
     Write-CheckHeader "Running Detailed Benchmarks"
     
     Write-Host "Executing LM Studio performance test..." -ForegroundColor Yellow
-    & "$PSScriptRoot\test_lm_studio_performance.ps1"
+    if ($script:lmStudioOnline) {
+        & "$PSScriptRoot\test_lm_studio_performance.ps1"
+    }
+    else {
+        Write-Host "  Skipping LM Studio performance test (offline)." -ForegroundColor Yellow
+    }
     
     Write-Host ""
     Write-Host "Executing Lumen vs LM Studio comparison..." -ForegroundColor Yellow

@@ -15,7 +15,7 @@ try {
     Show-Json $health
 }
 catch {
-    Write-Host "[manual_submit_test] ❌ Health check failed: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[manual_submit_test] [ERROR] Health check failed: $($_.Exception.Message)" -ForegroundColor Red
 }
 
 try {
@@ -33,10 +33,10 @@ try {
     Show-Json $submit
 
     $result = Invoke-RestMethod -Method Get -Uri ("$ApiBase/results/$($task.task_id)") -ErrorAction Stop
-    Write-Host "[manual_submit_test] ✅ Retrieved stored result:" -ForegroundColor Green
+    Write-Host "[manual_submit_test] [OK] Retrieved stored result:" -ForegroundColor Green
     Show-Json $result
 }
 catch {
-    Write-Host "[manual_submit_test] ❌ Error: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[manual_submit_test] [ERROR] Error: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }

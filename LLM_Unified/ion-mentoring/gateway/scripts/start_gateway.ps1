@@ -63,19 +63,19 @@ Write-Host "========================================`n" -ForegroundColor Green
 
 # Validate Python executable
 if (-not (Test-Path $PythonExe)) {
-    Write-Host "❌ Python executable not found: $PythonExe" -ForegroundColor Red
+    Write-Host "[ERROR] Python executable not found: $PythonExe" -ForegroundColor Red
     Write-Host "   Please ensure virtual environment is set up" -ForegroundColor Yellow
     exit 1
 }
 
 # Validate scripts
 if (-not (Test-Path $CollectorScript)) {
-    Write-Host "❌ Collector script not found: $CollectorScript" -ForegroundColor Red
+    Write-Host "[ERROR] Collector script not found: $CollectorScript" -ForegroundColor Red
     exit 1
 }
 
 if (-not (Test-Path $ExporterScript)) {
-    Write-Host "❌ Exporter script not found: $ExporterScript" -ForegroundColor Red
+    Write-Host "[ERROR] Exporter script not found: $ExporterScript" -ForegroundColor Red
     exit 1
 }
 
@@ -114,7 +114,7 @@ function Stop-GatewayProcesses {
         }
     }
     
-    Write-Host "✅ Existing processes stopped`n" -ForegroundColor Green
+    Write-Host "[OK] Existing processes stopped`n" -ForegroundColor Green
 }
 
 # Function: Check if process is running
@@ -146,13 +146,13 @@ if ($KillExisting) {
 
 # Start Collector
 if (-not $SkipCollector) {
-    Write-Host "🚀 Starting Metrics Collector..." -ForegroundColor Cyan
+    Write-Host "[DEPLOY] Starting Metrics Collector..." -ForegroundColor Cyan
     Write-Host "   Interval: $CollectInterval seconds" -ForegroundColor Gray
     
     # Check if already running
     $collectorPid = Test-ProcessRunning "ion_metrics_collector.py"
     if ($collectorPid) {
-        Write-Host "⚠️  Collector already running (PID: $collectorPid)" -ForegroundColor Yellow
+        Write-Host "[WARN]  Collector already running (PID: $collectorPid)" -ForegroundColor Yellow
         Write-Host "   Use -KillExisting to restart`n" -ForegroundColor Gray
     }
     else {
@@ -167,23 +167,23 @@ if (-not $SkipCollector) {
         
         # Verify it's running
         if ($collectorProc.HasExited) {
-            Write-Host "❌ Collector failed to start" -ForegroundColor Red
+            Write-Host "[ERROR] Collector failed to start" -ForegroundColor Red
             exit 1
         }
         else {
-            Write-Host "✅ Collector started (PID: $($collectorProc.Id))`n" -ForegroundColor Green
+            Write-Host "[OK] Collector started (PID: $($collectorProc.Id))`n" -ForegroundColor Green
         }
     }
 }
 
 # Start Exporter
 if (-not $SkipExporter) {
-    Write-Host "🚀 Starting Health Exporter..." -ForegroundColor Cyan
+    Write-Host "[DEPLOY] Starting Health Exporter..." -ForegroundColor Cyan
     Write-Host "   Port: $ExporterPort" -ForegroundColor Gray
     
     # Check if port already in use
     if (Test-PortListening $ExporterPort) {
-        Write-Host "⚠️  Port $ExporterPort already in use" -ForegroundColor Yellow
+        Write-Host "[WARN]  Port $ExporterPort already in use" -ForegroundColor Yellow
         Write-Host "   Use -KillExisting to restart`n" -ForegroundColor Gray
     }
     else {
@@ -198,10 +198,10 @@ if (-not $SkipExporter) {
         
         # Verify port is listening
         if (Test-PortListening $ExporterPort) {
-            Write-Host "✅ Exporter started on port $ExporterPort (PID: $($exporterProc.Id))`n" -ForegroundColor Green
+            Write-Host "[OK] Exporter started on port $ExporterPort (PID: $($exporterProc.Id))`n" -ForegroundColor Green
         }
         else {
-            Write-Host "❌ Exporter failed to bind to port $ExporterPort" -ForegroundColor Red
+            Write-Host "[ERROR] Exporter failed to bind to port $ExporterPort" -ForegroundColor Red
             exit 1
         }
     }
@@ -237,22 +237,22 @@ if (-not $SkipExporter) {
     try {
         $response = Invoke-RestMethod -Uri "http://localhost:$ExporterPort/metrics" -TimeoutSec 5
         if ($response -match "lumen_gateway_status") {
-            Write-Host "✅ Prometheus endpoint responding`n" -ForegroundColor Green
+            Write-Host "[OK] Prometheus endpoint responding`n" -ForegroundColor Green
         }
         else {
-            Write-Host "⚠️  Prometheus endpoint up but no metrics" -ForegroundColor Yellow
+            Write-Host "[WARN]  Prometheus endpoint up but no metrics" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "❌ Prometheus endpoint not responding" -ForegroundColor Red
+        Write-Host "[ERROR] Prometheus endpoint not responding" -ForegroundColor Red
     }
 }
 
 Write-Host "========================================" -ForegroundColor Green
-Write-Host "✅ Gateway startup complete!" -ForegroundColor Green
+Write-Host "[OK] Gateway startup complete!" -ForegroundColor Green
 Write-Host "========================================`n" -ForegroundColor Green
 
-Write-Host "📊 Next steps:" -ForegroundColor Magenta
+Write-Host "[METRICS] Next steps:" -ForegroundColor Magenta
 Write-Host "  1. Check metrics CSV: $(Join-Path $LogsDir 'metrics.csv')"
 Write-Host "  2. View Prometheus metrics: http://localhost:$ExporterPort/metrics"
 Write-Host "  3. Tail logs: Get-Content $(Join-Path $LogsDir 'gateway_sync.log') -Wait`n"

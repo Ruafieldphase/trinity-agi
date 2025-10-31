@@ -1,4 +1,52 @@
-# 🚀 ChatOps 빠른 시작 가이드
+# � Daily Session Summary 자동화
+
+### 개요
+
+- `session_memory/generate_daily_summary.py` 스크립트는 최근 24시간 내 모든 세션을 집계하여 Markdown 요약 리포트를 자동 생성합니다.
+- 결과 파일은 `outputs/daily_summaries/YYYY-MM-DD.md`로 저장됩니다.
+
+### 사용법
+
+#### 터미널에서 직접 실행
+
+```powershell
+python session_memory/generate_daily_summary.py
+```
+
+#### 주요 기능
+
+- 24시간 내 세션 전체 요약 (상태, 퍼소나, resonance 등)
+- 퍼소나별/상태별 통계, resonance 최고/최저, 태그 분포 등 하이라이트
+- Markdown 포맷으로 자동 저장
+
+#### 예시 출력
+
+```
+# Daily Session Summary (2025-10-29)
+- Total sessions: **4**
+- Completed: 4  Active: 0  Paused: 0  Abandoned: 0
+- Avg Resonance: 0.90
+
+## Stats by Persona
+| Persona | Sessions | Completed | Avg Resonance | Avg Hours |
+|---------|----------|-----------|---------------|-----------|
+| Perple | 1 | 1 | 0.90 | 0.0 |
+
+## Session List (last 24h)
+| Title | Started | Ended | Status | Persona | Resonance | Tasks | Artifacts | Tags |
+|-------|---------|-------|--------|---------|-----------|-------|-----------|------|
+| Session Memory System - ChatOps  | 2025-10-29T13:17 | 2025-10-29T13:17 | completed | None | 0.95 | 5 | 5 | session-memory,chatops,phase-1-complete |
+| ... (생략)
+
+- Highest Resonance: 0.95
+- Lowest Resonance: 0.85
+```
+
+---
+
+# �🚀 ChatOps 빠른 시작 가이드
+
+> **English NL commands supported**: You can now say `start the session`, `add a task`, `end session`, `recent sessions`, `search sessions for bqi`, `session stats`, `session details`, `save conversations`, `wrap up the day`, `start the stream`, `stop the stream`, `start the bot`, `stop the bot`, `switch to ai dev`, `preflight`, or `install obs deps` directly in English and ChatOps will route them correctly.
 
 자연어로 스트리밍을 제어하는 원클릭 워크플로우입니다.
 
@@ -39,6 +87,8 @@ ChatOps Test: Dry-Run            # 테스트 모드
 ChatOps Test: Status             # 상태 확인 (안전)
 ChatOps Test: Preflight          # 의존성 점검
 ChatOps: Natural Command         # 자유 입력 (대화형)
+Lumen: Quick Health Probe        # Lumen 게이트(관문) 빠른 점검
+Monitoring: Generate Dashboard (24h HTML)  # 통합 대시보드 생성/열기
 ```
 
 ## 💬 터미널 명령어
@@ -59,7 +109,7 @@ chatops_router.ps1 -Say "온보딩 도와줘"
 
 ### 시나리오 1: 완전 새 사용자
 
-```
+```text
 1. 🎙️ ChatOps: Onboarding Guide    → 가이드 읽기
 2. 🔑 ChatOps: Install Secret       → Client Secret 등록
 3. ✅ ChatOps: OAuth Setup          → OAuth 인증
@@ -69,7 +119,7 @@ chatops_router.ps1 -Say "온보딩 도와줘"
 
 ### 시나리오 2: 일상 방송 시작
 
-```
+```text
 1. ChatOps Test: Status             → 빠른 상태 확인
 2. 📡 ChatOps: Start Streaming      → 방송 시작
 3. 🤖 ChatOps: Start Bot            → 자동응답 활성화
@@ -78,7 +128,7 @@ chatops_router.ps1 -Say "온보딩 도와줘"
 
 ### 시나리오 3: 문제 해결
 
-```
+```text
 1. ChatOps Test: Status             → 문제 파악
 2. ChatOps Test: Preflight          → 의존성 확인
 3. 🎙️ ChatOps: Onboarding Guide    → 설정 가이드 재확인
@@ -102,6 +152,11 @@ chatops_router.ps1 -Say "온보딩 도와줘"
 | "상태 보여줘" | 안전 상태 요약 |
 | "퀵 상태" | 빠른 확인 |
 | "obs 상태" | OBS 상세 정보 |
+| "루멘 관문을 열자" | Lumen 게이트 헬스 프로브 실행 |
+| "루멘 상태 확인" | Lumen 게이트 헬스 프로브 실행 |
+| "lumen health check" | Lumen 게이트 헬스 프로브 실행 |
+| "루멘 대시보드" | Lumen 24시간 대시보드(HTML) 생성/열기 |
+| "lumen dashboard" | Lumen 24시간 대시보드(HTML) 생성/열기 |
 
 ### 봇 제어
 
@@ -146,7 +201,17 @@ chatops_router.ps1 -Say "온보딩 도와줘"
 ### 자주 묻는 질문
 
 **Q: 한글이 깨져요**
-A: VS Code 통합 터미널 사용 권장. PowerShell 5.1 콘솔은 UTF-8 제한이 있지만 기능은 정상 작동합니다.
+A: 다음을 확인해 주세요.
+
+1) VS Code 통합 터미널 사용 권장 (기본 UTF-8)
+2) 이 저장소의 ChatOps 스크립트는 UTF-8 BOM을 적용하여 Windows PowerShell 5.1에서도 한글이 정상 표시됩니다.
+3) 외부 콘솔을 쓸 경우, 아래를 먼저 실행하세요:
+
+```powershell
+chcp 65001 > $null; [Console]::OutputEncoding = [Text.Encoding]::UTF8; $OutputEncoding = [Text.Encoding]::UTF8
+```
+
+여전히 문제가 있으면 PowerShell 7(pwsh) 사용을 권장합니다.
 
 **Q: OBS 연결 실패**
 A: OBS Studio → Tools → WebSocket Server Settings → Enable WebSocket server 체크 (Port 4455)
@@ -161,7 +226,25 @@ A:
 **Q: 상태 조회가 실패해도 괜찮나요?**
 A: 네! 모든 상태 조회는 "Zero-Fail"로 설계되어 환경 문제가 있어도 exit 0을 반환합니다.
 
-## 📚 더 알아보기
+## � 옵션: Lumen 프로브 모니터
+
+운영 중 상시로 Lumen 게이트 상태를 샘플링하고 싶다면 예약 작업을 등록하세요.
+관리자 권한이 필요할 수 있습니다.
+
+```powershell
+# 10분 주기로 수집, 즉시 1회 실행
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_lumen_probe_task.ps1 -Register -IntervalMinutes 10 -RunNow
+
+# 상태 확인
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_lumen_probe_task.ps1 -Status
+
+# 해제
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_lumen_probe_task.ps1 -Unregister
+```
+
+수집된 로그는 `outputs/lumen_probe_log.jsonl`에 JSONL 포맷으로 누적됩니다.
+
+## �📚 더 알아보기
 
 - [상세 사용자 가이드](./ChatOps_README.md)
 - [검증 보고서](./ChatOps_Verification_Report.md)

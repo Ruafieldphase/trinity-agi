@@ -2,6 +2,14 @@
 param(
     [int]$Iterations = 5
 )
+# Force UTF-8 console to prevent mojibake on Windows PowerShell
+try { chcp 65001 > $null 2> $null } catch {}
+try {
+    [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)
+    [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    $OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+}
+catch {}
 
 Write-Host "=" * 60 -ForegroundColor Cyan
 Write-Host "LM Studio eeve Model Performance Test" -ForegroundColor Cyan
@@ -22,7 +30,7 @@ $failCount = 0
 
 for ($i = 1; $i -le $Iterations; $i++) {
     $message = $testMessages[($i - 1) % $testMessages.Count]
-    Write-Host "[$i/$Iterations] Testing: '$message'" -ForegroundColor Yellow
+    Write-Host "[$i/$Iterations] Testing sample #$i" -ForegroundColor Yellow
     
     try {
         $body = @{

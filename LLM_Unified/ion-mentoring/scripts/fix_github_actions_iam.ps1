@@ -3,7 +3,7 @@
 $ProjectId = "naeda-genesis"
 $ServiceAccountEmail = "naedacodex-drive-service-accou@naeda-genesis.iam.gserviceaccount.com"
 
-Write-Host "🔧 GitHub Actions 서비스 계정에 IAM 역할 추가 중..." -ForegroundColor Cyan
+Write-Host "[CONFIG] GitHub Actions 서비스 계정에 IAM 역할 추가 중..." -ForegroundColor Cyan
 
 # 1. Artifact Registry 권한
 Write-Host "`n1️⃣  Artifact Registry Writer..." -ForegroundColor Yellow
@@ -40,7 +40,7 @@ gcloud projects add-iam-policy-binding $ProjectId `
     --role="roles/storage.admin" `
     --condition=None
 
-Write-Host "`n✅ IAM 역할 추가 완료!" -ForegroundColor Green
+Write-Host "`n[OK] IAM 역할 추가 완료!" -ForegroundColor Green
 Write-Host "`n📋 부여된 역할:" -ForegroundColor Cyan
 
 gcloud projects get-iam-policy $ProjectId `

@@ -45,7 +45,7 @@ function Invoke-LocustScenario {
     }
     else {
         $script:completedResults += "$csvPrefix.csv"
-        Write-Host "✅ Scenario complete. Results: $csvPrefix.csv" -ForegroundColor Green
+        Write-Host "[OK] Scenario complete. Results: $csvPrefix.csv" -ForegroundColor Green
     }
 }
 

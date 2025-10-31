@@ -127,18 +127,18 @@ function Stop-GitcoBotProcesses {
         Write-Log "실행 중인 봇이 없습니다."
     }
     else {
-        Write-Log "✅ $stopped 개 프로세스 종료 완료"
+        Write-Log "[OK] $stopped 개 프로세스 종료 완료"
         Start-Sleep -Seconds 2
     }
 }
 
 function Start-GitcoBot {
-    Write-Log "🤖 깃코 봇 서버 시작 중..."
+    Write-Log "[BOT] 깃코 봇 서버 시작 중..."
     
     # SLACK_BOT_TOKEN 확인
     $slackToken = [Environment]::GetEnvironmentVariable("SLACK_BOT_TOKEN", "User")
     if ([string]::IsNullOrEmpty($slackToken)) {
-        Write-Log "⚠️  SLACK_BOT_TOKEN 환경 변수가 설정되지 않았습니다!" "ERROR"
+        Write-Log "[WARN]  SLACK_BOT_TOKEN 환경 변수가 설정되지 않았습니다!" "ERROR"
         Write-Log "설정 방법: [Environment]::SetEnvironmentVariable('SLACK_BOT_TOKEN', 'xoxb-...', 'User')" "ERROR"
         return $null
     }
@@ -156,7 +156,7 @@ function Start-GitcoBot {
     $botProcess = [System.Diagnostics.Process]::Start($botStartInfo)
     
     if ($botProcess) {
-        Write-Log "✅ 봇 서버 시작됨 (PID: $($botProcess.Id))"
+        Write-Log "[OK] 봇 서버 시작됨 (PID: $($botProcess.Id))"
         
         # 로그 리다이렉션
         $null = Register-ObjectEvent -InputObject $botProcess -EventName OutputDataReceived -Action {
@@ -175,30 +175,30 @@ function Start-GitcoBot {
         $botProcess.BeginErrorReadLine()
         
         # 서버 시작 대기
-        Write-Log "⏳ 서버 시작 대기 중 (5초)..."
+        Write-Log "[WAIT] 서버 시작 대기 중 (5초)..."
         Start-Sleep -Seconds 5
         
         # 헬스 체크
         try {
             $response = Invoke-WebRequest -Uri "http://localhost:8080/health" -TimeoutSec 5 -UseBasicParsing
             if ($response.StatusCode -eq 200) {
-                Write-Log "✅ 봇 서버 헬스 체크 성공"
+                Write-Log "[OK] 봇 서버 헬스 체크 성공"
             }
         }
         catch {
-            Write-Log "⚠️  봇 서버 헬스 체크 실패 - 로그를 확인하세요" "WARN"
+            Write-Log "[WARN]  봇 서버 헬스 체크 실패 - 로그를 확인하세요" "WARN"
         }
         
         return $botProcess.Id
     }
     else {
-        Write-Log "❌ 봇 서버 시작 실패" "ERROR"
+        Write-Log "[ERROR] 봇 서버 시작 실패" "ERROR"
         return $null
     }
 }
 
 function Start-LocalTunnel {
-    Write-Log "🌐 Localtunnel 시작 중..."
+    Write-Log "[WEB] Localtunnel 시작 중..."
     
     $tunnelStartInfo = New-Object System.Diagnostics.ProcessStartInfo
     $tunnelStartInfo.FileName = "npx"
@@ -211,7 +211,7 @@ function Start-LocalTunnel {
     $tunnelProcess = [System.Diagnostics.Process]::Start($tunnelStartInfo)
     
     if ($tunnelProcess) {
-        Write-Log "✅ Localtunnel 시작됨 (PID: $($tunnelProcess.Id))"
+        Write-Log "[OK] Localtunnel 시작됨 (PID: $($tunnelProcess.Id))"
         
         # 로그 리다이렉션 및 URL 추출
         $tunnelUrl = $null
@@ -223,7 +223,7 @@ function Start-LocalTunnel {
                 # URL 추출
                 if ($data -match "your url is: (https://[^\s]+)") {
                     $script:tunnelUrl = $Matches[1]
-                    Write-Host "🌐 Public URL: $($Matches[1])" -ForegroundColor Green
+                    Write-Host "[WEB] Public URL: $($Matches[1])" -ForegroundColor Green
                 }
             }
         }
@@ -238,7 +238,7 @@ function Start-LocalTunnel {
         $tunnelProcess.BeginErrorReadLine()
         
         # URL 생성 대기
-        Write-Log "⏳ Public URL 생성 대기 중 (10초)..."
+        Write-Log "[WAIT] Public URL 생성 대기 중 (10초)..."
         Start-Sleep -Seconds 10
         
         # URL 추출 시도
@@ -246,7 +246,7 @@ function Start-LocalTunnel {
             $logContent = Get-Content $TUNNEL_LOG -Raw
             if ($logContent -match "your url is: (https://[^\s]+)") {
                 $tunnelUrl = $Matches[1]
-                Write-Log "🌐 Public URL: $tunnelUrl"
+                Write-Log "[WEB] Public URL: $tunnelUrl"
             }
         }
         
@@ -256,7 +256,7 @@ function Start-LocalTunnel {
         }
     }
     else {
-        Write-Log "❌ Localtunnel 시작 실패" "ERROR"
+        Write-Log "[ERROR] Localtunnel 시작 실패" "ERROR"
         return $null
     }
 }
@@ -303,19 +303,19 @@ if ($StopOnly) {
 }
 
 # 봇 시작
-Write-Log "🚀 깃코 봇 시작 중..."
+Write-Log "[DEPLOY] 깃코 봇 시작 중..."
 Write-Log "📂 로그 디렉토리: $LogDir"
 
 $botPid = Start-GitcoBot
 if (-not $botPid) {
-    Write-Log "❌ 봇 시작 실패" "ERROR"
+    Write-Log "[ERROR] 봇 시작 실패" "ERROR"
     exit 1
 }
 
 # Localtunnel 시작
 $tunnelInfo = Start-LocalTunnel
 if (-not $tunnelInfo) {
-    Write-Log "❌ Localtunnel 시작 실패" "ERROR"
+    Write-Log "[ERROR] Localtunnel 시작 실패" "ERROR"
     Write-Log "봇 서버만 실행 중입니다. 수동으로 터널을 설정하세요." "WARN"
 }
 
@@ -324,16 +324,16 @@ Save-BotState -BotPid $botPid -TunnelPid $tunnelInfo.Pid -TunnelUrl $tunnelInfo.
 
 Write-Host ""
 Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-Write-Host "║                    ✅ 시작 완료!                          ║" -ForegroundColor Green
+Write-Host "║                    [OK] 시작 완료!                          ║" -ForegroundColor Green
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
-Write-Host "📊 상태 정보:" -ForegroundColor Yellow
+Write-Host "[METRICS] 상태 정보:" -ForegroundColor Yellow
 Write-Host "  • 봇 PID: $botPid" -ForegroundColor White
 Write-Host "  • Tunnel PID: $($tunnelInfo.Pid)" -ForegroundColor White
 if ($tunnelInfo.Url) {
     Write-Host "  • Public URL: $($tunnelInfo.Url)" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "📝 Slack Event Subscriptions URL에 설정하세요:" -ForegroundColor Yellow
+    Write-Host "[LOG] Slack Event Subscriptions URL에 설정하세요:" -ForegroundColor Yellow
     Write-Host "   $($tunnelInfo.Url)/slack/events" -ForegroundColor Green
 }
 Write-Host ""
@@ -341,10 +341,10 @@ Write-Host "📄 로그 파일:" -ForegroundColor Yellow
 Write-Host "  • 봇: $BOT_LOG" -ForegroundColor White
 Write-Host "  • 터널: $TUNNEL_LOG" -ForegroundColor White
 Write-Host ""
-Write-Host "🔧 관리 명령어:" -ForegroundColor Yellow
+Write-Host "[CONFIG] 관리 명령어:" -ForegroundColor Yellow
 Write-Host "  • 재시작: .\start_gitco_bot.ps1 -KillExisting" -ForegroundColor White
 Write-Host "  • 종료: .\start_gitco_bot.ps1 -StopOnly" -ForegroundColor White
 Write-Host "  • 상태 확인: Get-Content '$STATE_FILE' | ConvertFrom-Json" -ForegroundColor White
 Write-Host ""
 
-Write-Log "🎉 깃코 봇이 백그라운드에서 실행 중입니다!"
+Write-Log "[SUCCESS] 깃코 봇이 백그라운드에서 실행 중입니다!"

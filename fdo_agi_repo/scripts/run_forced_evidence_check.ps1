@@ -46,11 +46,11 @@ if (-not (Test-Path $assertPs1)) { Write-Error "assert_evidence_gate_forced.ps1 
 $assertExit = $LASTEXITCODE
 
 if ($assertExit -eq 0) {
-    Write-Host "✅ Forced evidence check PASSED" -ForegroundColor Green
+    Write-Host "[OK] Forced evidence check PASSED" -ForegroundColor Green
     exit 0
 }
 else {
-    Write-Host "❌ Forced evidence check FAILED (exit=$assertExit)" -ForegroundColor Red
+    Write-Host "[ERROR] Forced evidence check FAILED (exit=$assertExit)" -ForegroundColor Red
     if ($SendAlert -and -not $NoAlert) {
         try {
             $alertPs1 = Join-Path $RepoRoot "scripts\alert_system.ps1"

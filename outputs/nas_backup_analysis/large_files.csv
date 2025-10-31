@@ -1,4 +1,4 @@
-﻿"Path","SizeMB","Extension","Modified"
+"Path","SizeMB","Extension","Modified"
 "\docker\Win_LocalLLM\lmstudio-community\Magistral-Small-2509-GGUF\Magistral-Small-2509-Q4_K_M.gguf","13669.88",".gguf","2025-09-20 02:11"
 "\docker\Win_LocalLLM\RichardErkhov\yanolja_-_EEVE-Korean-Instruct-10.8B-v1.0-gguf\EEVE-Korean-Instruct-10.8B-v1.0.Q4_K_S.gguf","5883.68",".gguf","2025-10-11 22:55"
 "\docker\Win_LocalLLM\RichardErkhov\beomi_-_Llama-3-Open-Ko-8B-Instruct-preview-gguf\Llama-3-Open-Ko-8B-Instruct-preview.Q4_K_S.gguf","4475.28",".gguf","2025-10-11 22:45"

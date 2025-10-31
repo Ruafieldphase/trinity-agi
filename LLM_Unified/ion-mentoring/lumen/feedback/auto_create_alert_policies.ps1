@@ -47,24 +47,24 @@ function Test-MetricExists {
 }
 
 function Invoke-PolicyCreation {
-    Write-Host "✅ Metrics detected! Creating alert policies..." -ForegroundColor Green
+    Write-Host "[OK] Metrics detected! Creating alert policies..." -ForegroundColor Green
     
     $scriptPath = Join-Path $PSScriptRoot "create_feedback_alert_policies.ps1"
     
     & $scriptPath
     
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "✅ Alert policies created successfully!" -ForegroundColor Green
+        Write-Host "[OK] Alert policies created successfully!" -ForegroundColor Green
         return $true
     }
     else {
-        Write-Host "❌ Failed to create alert policies (exit code: $LASTEXITCODE)" -ForegroundColor Red
+        Write-Host "[ERROR] Failed to create alert policies (exit code: $LASTEXITCODE)" -ForegroundColor Red
         return $false
     }
 }
 
 function Start-PolicyCreationLoop {
-    Write-Host "🔍 Monitoring for metric availability..." -ForegroundColor Cyan
+    Write-Host "[SEARCH] Monitoring for metric availability..." -ForegroundColor Cyan
     Write-Host "Project: $ProjectId" -ForegroundColor Gray
     Write-Host "Max Retries: $MaxRetries" -ForegroundColor Gray
     Write-Host "Retry Interval: $RetryIntervalSeconds seconds" -ForegroundColor Gray
@@ -79,27 +79,27 @@ function Start-PolicyCreationLoop {
         Write-Host "[$timestamp] Attempt $attempt/$MaxRetries - Checking metric: unified_health_score..." -ForegroundColor Cyan
         
         if (Test-MetricExists -MetricName "unified_health_score") {
-            Write-Host "[$timestamp] ✅ Metric 'unified_health_score' exists!" -ForegroundColor Green
+            Write-Host "[$timestamp] [OK] Metric 'unified_health_score' exists!" -ForegroundColor Green
             
             # Also check cache_hit_rate
             if (Test-MetricExists -MetricName "cache_hit_rate") {
-                Write-Host "[$timestamp] ✅ Metric 'cache_hit_rate' exists!" -ForegroundColor Green
+                Write-Host "[$timestamp] [OK] Metric 'cache_hit_rate' exists!" -ForegroundColor Green
                 
                 # Create policies
                 if (Invoke-PolicyCreation) {
                     return $true
                 }
                 else {
-                    Write-Host "⚠️ Policy creation failed, but metrics exist. Check script." -ForegroundColor Yellow
+                    Write-Host "[WARN] Policy creation failed, but metrics exist. Check script." -ForegroundColor Yellow
                     return $false
                 }
             }
             else {
-                Write-Host "[$timestamp] ⏳ Metric 'cache_hit_rate' not yet available..." -ForegroundColor Yellow
+                Write-Host "[$timestamp] [WAIT] Metric 'cache_hit_rate' not yet available..." -ForegroundColor Yellow
             }
         }
         else {
-            Write-Host "[$timestamp] ⏳ Metric 'unified_health_score' not yet available..." -ForegroundColor Yellow
+            Write-Host "[$timestamp] [WAIT] Metric 'unified_health_score' not yet available..." -ForegroundColor Yellow
         }
         
         if ($attempt -lt $MaxRetries) {
@@ -109,7 +109,7 @@ function Start-PolicyCreationLoop {
     }
     
     Write-Host ""
-    Write-Host "❌ Max retries reached. Metrics still not available." -ForegroundColor Red
+    Write-Host "[ERROR] Max retries reached. Metrics still not available." -ForegroundColor Red
     Write-Host "Possible causes:" -ForegroundColor Yellow
     Write-Host "  1. Orchestrator not emitting metrics (check scheduled task)" -ForegroundColor Yellow
     Write-Host "  2. Propagation taking longer than expected (wait 5 more minutes)" -ForegroundColor Yellow
@@ -127,7 +127,7 @@ if ($Background) {
         & $ScriptPath -MaxRetries $MaxRetries -RetryIntervalSeconds $RetryInterval
     } -ArgumentList $PSCommandPath, $MaxRetries, $RetryIntervalSeconds, $ProjectId
     
-    Write-Host "✅ Background job started: $($job.Name)" -ForegroundColor Green
+    Write-Host "[OK] Background job started: $($job.Name)" -ForegroundColor Green
     Write-Host "Monitor with: Receive-Job -Id $($job.Id) -Keep" -ForegroundColor Cyan
     Write-Host "Wait for completion: Wait-Job -Id $($job.Id)" -ForegroundColor Cyan
 }

@@ -67,7 +67,7 @@ function Get-OrCreateNotificationChannel {
     foreach ($channel in $channels) {
         if ($channel.labels.email_address -eq $Email) {
             $channelId = $channel.name
-            Write-ColorOutput "✅ 기존 Email Channel 발견: $channelId" "Green" "   "
+            Write-ColorOutput "[OK] 기존 Email Channel 발견: $channelId" "Green" "   "
             return $channelId
         }
     }
@@ -83,7 +83,7 @@ function Get-OrCreateNotificationChannel {
         --format=json | ConvertFrom-Json
     
     $channelId = $channel.name
-    Write-ColorOutput "✅ Email Channel 생성 완료: $channelId" "Green" "   "
+    Write-ColorOutput "[OK] Email Channel 생성 완료: $channelId" "Green" "   "
     
     return $channelId
 }
@@ -98,7 +98,7 @@ function Get-AlertPolicies {
         --project=$ProjectId `
         --format=json | ConvertFrom-Json
     
-    Write-ColorOutput "✅ 총 $($policies.Count)개 Alert Policies 발견`n" "Green"
+    Write-ColorOutput "[OK] 총 $($policies.Count)개 Alert Policies 발견`n" "Green"
     
     foreach ($policy in $policies) {
         $displayName = if ($policy.displayName) { $policy.displayName } else { "Unknown" }
@@ -118,7 +118,7 @@ function Remove-IonAlertPolicies {
     $ionPolicies = $policies | Where-Object { $_.displayName -like "*ION*" }
     
     if ($ionPolicies.Count -eq 0) {
-        Write-ColorOutput "✅ 삭제할 ION Alert Policy 없음" "Green"
+        Write-ColorOutput "[OK] 삭제할 ION Alert Policy 없음" "Green"
         return
     }
     
@@ -128,10 +128,10 @@ function Remove-IonAlertPolicies {
             gcloud alpha monitoring policies delete $policy.name `
                 --project=$ProjectId `
                 --quiet
-            Write-ColorOutput "   ✅ 삭제: $displayName" "Green"
+            Write-ColorOutput "   [OK] 삭제: $displayName" "Green"
         }
         catch {
-            Write-ColorOutput "   ❌ 삭제 실패: $displayName" "Red"
+            Write-ColorOutput "   [ERROR] 삭제 실패: $displayName" "Red"
         }
     }
 }
@@ -144,7 +144,7 @@ function New-Critical5xxErrorAlert {
         [string]$ServiceName
     )
     
-    Write-ColorOutput "`n🚨 Critical Alert 생성: $ServiceName 5xx Error Rate > 5%" "Red"
+    Write-ColorOutput "`n[ALERT] Critical Alert 생성: $ServiceName 5xx Error Rate > 5%" "Red"
     
     $displayName = "ION Critical - $ServiceName 5xx Error > 5%"
     $filter = "resource.type=`"cloud_run_revision`" AND resource.labels.service_name=`"$ServiceName`" AND metric.type=`"run.googleapis.com/request_count`" AND metric.labels.response_code_class=`"5xx`""
@@ -161,10 +161,10 @@ function New-Critical5xxErrorAlert {
             --combiner=OR `
             --format=json | Out-Null
         
-        Write-ColorOutput "   ✅ 생성 완료" "Green"
+        Write-ColorOutput "   [OK] 생성 완료" "Green"
     }
     catch {
-        Write-ColorOutput "   ❌ 생성 실패: $_" "Red"
+        Write-ColorOutput "   [ERROR] 생성 실패: $_" "Red"
     }
 }
 
@@ -176,7 +176,7 @@ function New-CriticalLatencyAlert {
         [string]$ServiceName
     )
     
-    Write-ColorOutput "`n🚨 Critical Alert 생성: $ServiceName P99 Latency > 2000ms" "Red"
+    Write-ColorOutput "`n[ALERT] Critical Alert 생성: $ServiceName P99 Latency > 2000ms" "Red"
     
     $displayName = "ION Critical - $ServiceName P99 Latency > 2s"
     $filter = "resource.type=`"cloud_run_revision`" AND resource.labels.service_name=`"$ServiceName`" AND metric.type=`"run.googleapis.com/request_latencies`""
@@ -193,10 +193,10 @@ function New-CriticalLatencyAlert {
             --combiner=OR `
             --format=json | Out-Null
         
-        Write-ColorOutput "   ✅ 생성 완료" "Green"
+        Write-ColorOutput "   [OK] 생성 완료" "Green"
     }
     catch {
-        Write-ColorOutput "   ❌ 생성 실패: $_" "Red"
+        Write-ColorOutput "   [ERROR] 생성 실패: $_" "Red"
     }
 }
 
@@ -208,7 +208,7 @@ function New-Warning4xxErrorAlert {
         [string]$ServiceName
     )
     
-    Write-ColorOutput "`n⚠️ Warning Alert 생성: $ServiceName 4xx Error Rate > 10%" "Yellow"
+    Write-ColorOutput "`n[WARN] Warning Alert 생성: $ServiceName 4xx Error Rate > 10%" "Yellow"
     
     $displayName = "ION Warning - $ServiceName 4xx Error > 10%"
     $filter = "resource.type=`"cloud_run_revision`" AND resource.labels.service_name=`"$ServiceName`" AND metric.type=`"run.googleapis.com/request_count`" AND metric.labels.response_code_class=`"4xx`""
@@ -225,10 +225,10 @@ function New-Warning4xxErrorAlert {
             --combiner=OR `
             --format=json | Out-Null
         
-        Write-ColorOutput "   ✅ 생성 완료" "Green"
+        Write-ColorOutput "   [OK] 생성 완료" "Green"
     }
     catch {
-        Write-ColorOutput "   ❌ 생성 실패: $_" "Red"
+        Write-ColorOutput "   [ERROR] 생성 실패: $_" "Red"
     }
 }
 
@@ -240,7 +240,7 @@ function New-WarningP95LatencyAlert {
         [string]$ServiceName
     )
     
-    Write-ColorOutput "`n⚠️ Warning Alert 생성: $ServiceName P95 Latency > 1500ms" "Yellow"
+    Write-ColorOutput "`n[WARN] Warning Alert 생성: $ServiceName P95 Latency > 1500ms" "Yellow"
     
     $displayName = "ION Warning - $ServiceName P95 Latency > 1.5s"
     $filter = "resource.type=`"cloud_run_revision`" AND resource.labels.service_name=`"$ServiceName`" AND metric.type=`"run.googleapis.com/request_latencies`""
@@ -257,20 +257,20 @@ function New-WarningP95LatencyAlert {
             --combiner=OR `
             --format=json | Out-Null
         
-        Write-ColorOutput "   ✅ 생성 완료" "Green"
+        Write-ColorOutput "   [OK] 생성 완료" "Green"
     }
     catch {
-        Write-ColorOutput "   ❌ 생성 실패: $_" "Red"
+        Write-ColorOutput "   [ERROR] 생성 실패: $_" "Red"
     }
 }
 
 # 메인 실행
 function Main {
     Write-ColorOutput "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" "Cyan"
-    Write-ColorOutput "🚀 GCP Alert Policies 관리" "Green"
+    Write-ColorOutput "[DEPLOY] GCP Alert Policies 관리" "Green"
     Write-ColorOutput "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" "Cyan"
-    Write-ColorOutput "📦 Project: $ProjectId" "White"
-    Write-ColorOutput "📦 Services: $($Services -join ', ')" "White"
+    Write-ColorOutput "[PACKAGE] Project: $ProjectId" "White"
+    Write-ColorOutput "[PACKAGE] Services: $($Services -join ', ')" "White"
     
     # List-only 모드
     if ($ListOnly) {
@@ -294,7 +294,7 @@ function Main {
     # 각 서비스별 Alert 생성
     foreach ($service in $Services) {
         Write-ColorOutput "`n─────────────────────────────────────────────────────" "Cyan"
-        Write-ColorOutput "📦 Service: $service" "White"
+        Write-ColorOutput "[PACKAGE] Service: $service" "White"
         Write-ColorOutput "─────────────────────────────────────────────────────" "Cyan"
         
         # Critical Alerts
@@ -307,13 +307,13 @@ function Main {
     }
     
     Write-ColorOutput "`n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" "Cyan"
-    Write-ColorOutput "✅ Alert Policies 생성 완료" "Green"
+    Write-ColorOutput "[OK] Alert Policies 생성 완료" "Green"
     Write-ColorOutput "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" "Cyan"
     
     # 최종 확인
     Get-AlertPolicies -ProjectId $ProjectId
     
-    Write-ColorOutput "`n📊 확인:" "Yellow"
+    Write-ColorOutput "`n[METRICS] 확인:" "Yellow"
     $url = "https://console.cloud.google.com/monitoring/alerting/policies?project=$ProjectId"
     Write-ColorOutput "   $url" "White"
 }

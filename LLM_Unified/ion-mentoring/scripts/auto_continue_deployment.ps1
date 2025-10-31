@@ -44,11 +44,11 @@ function Show-Countdown {
         Start-Sleep -Seconds 1
         $remaining--
     }
-    Write-Host "`r✅ Wait complete!                                                    " -ForegroundColor Green
+    Write-Host "`r[OK] Wait complete!                                                    " -ForegroundColor Green
 }
 
 # Show countdown
-Write-Host "⏳ Monitoring period in progress..." -ForegroundColor Cyan
+Write-Host "[WAIT] Monitoring period in progress..." -ForegroundColor Cyan
 Show-Countdown -TotalSeconds ($WaitMinutes * 60)
 
 Write-Host "`n`n=== Resuming Deployment Workflow ===" -ForegroundColor Green
@@ -59,10 +59,10 @@ Write-Host ""
 Write-Host "[TODO #5] Running log scan (30 minutes)..." -ForegroundColor Yellow
 try {
     & "$scriptDir\filter_logs_by_time.ps1" -Last "30m" -ShowSummary
-    Write-Host "✅ Log scan completed" -ForegroundColor Green
+    Write-Host "[OK] Log scan completed" -ForegroundColor Green
 }
 catch {
-    Write-Host "⚠️  Log scan failed: $_" -ForegroundColor Red
+    Write-Host "[WARN]  Log scan failed: $_" -ForegroundColor Red
 }
 
 Write-Host ""
@@ -75,23 +75,23 @@ $reportContent = @"
 # 카나리 25% 배포 중간 보고서
 **생성 시간**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
 
-## 📊 배포 현황
+## [METRICS] 배포 현황
 - **현재 비율**: 25%
 - **배포 시각**: 자동 기록됨
 - **모니터링 기간**: 30분 완료
 
-## ✅ 프로브 결과
+## [OK] 프로브 결과
 - Gentle (5회): 100% 성공
 - Normal (10회): 100% 성공
 - 평균 응답 시간: ~180-200ms
 
-## 📈 로그 분석
+## [STATS] 로그 분석
 - 최근 30분 로그 스캔 완료
 - (상세 내용은 자동 추가됨)
 
-## 🎯 다음 단계 권장사항
-- ✅ 25% 안정성 확인됨
-- 🚀 50% 확대 진행 가능
+## [TARGET] 다음 단계 권장사항
+- [OK] 25% 안정성 확인됨
+- [DEPLOY] 50% 확대 진행 가능
 - 📋 Aggressive 프로브로 부하 테스트 예정
 
 ---
@@ -99,14 +99,14 @@ $reportContent = @"
 "@
 
 Set-Content -Path $reportPath -Value $reportContent -Encoding UTF8
-Write-Host "✅ Report generated: $reportPath" -ForegroundColor Green
+Write-Host "[OK] Report generated: $reportPath" -ForegroundColor Green
 
 Write-Host ""
 
 # Prompt for 50% deployment approval
 if (-not $AutoApprove) {
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-    Write-Host "🔍 25% monitoring complete. Ready to proceed to 50%?" -ForegroundColor Yellow
+    Write-Host "[SEARCH] 25% monitoring complete. Ready to proceed to 50%?" -ForegroundColor Yellow
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
     $response = Read-Host "Continue to 50% deployment? (Y/n)"
     
@@ -125,10 +125,10 @@ Write-Host ""
 Write-Host "[TODO #7] Running 50% canary pre-check..." -ForegroundColor Yellow
 try {
     & "$scriptDir\check_monitoring_status.ps1"
-    Write-Host "✅ Pre-check completed" -ForegroundColor Green
+    Write-Host "[OK] Pre-check completed" -ForegroundColor Green
 }
 catch {
-    Write-Host "⚠️  Pre-check warning: $_" -ForegroundColor Yellow
+    Write-Host "[WARN]  Pre-check warning: $_" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -137,11 +137,11 @@ Write-Host ""
 Write-Host "[TODO #8] Deploying canary 50%..." -ForegroundColor Yellow
 try {
     & "$scriptDir\deploy_phase4_canary.ps1" -ProjectId "naeda-genesis" -CanaryPercentage 50
-    Write-Host "✅ 50% deployment completed" -ForegroundColor Green
+    Write-Host "[OK] 50% deployment completed" -ForegroundColor Green
 }
 catch {
-    Write-Host "❌ Deployment failed: $_" -ForegroundColor Red
-    Write-Host "🔄 Consider rollback: .\scripts\emergency_rollback.ps1" -ForegroundColor Yellow
+    Write-Host "[ERROR] Deployment failed: $_" -ForegroundColor Red
+    Write-Host "[SYNC] Consider rollback: .\scripts\emergency_rollback.ps1" -ForegroundColor Yellow
     exit 1
 }
 
@@ -151,21 +151,21 @@ Write-Host ""
 Write-Host "[TODO #9] Running aggressive probe (25 requests, 500ms delay)..." -ForegroundColor Yellow
 try {
     & "$scriptDir\rate_limit_probe.ps1" -RequestsPerSide 25 -DelayMsBetweenRequests 500 -CanaryEndpointPath "/health"
-    Write-Host "✅ Aggressive probe completed" -ForegroundColor Green
+    Write-Host "[OK] Aggressive probe completed" -ForegroundColor Green
 }
 catch {
-    Write-Host "⚠️  Probe completed with warnings: $_" -ForegroundColor Yellow
+    Write-Host "[WARN]  Probe completed with warnings: $_" -ForegroundColor Yellow
 }
 
 Write-Host ""
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
-Write-Host "✅ Auto-continue workflow completed!" -ForegroundColor Green
+Write-Host "[OK] Auto-continue workflow completed!" -ForegroundColor Green
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Green
 Write-Host ""
-Write-Host "📊 Status:" -ForegroundColor Cyan
+Write-Host "[METRICS] Status:" -ForegroundColor Cyan
 Write-Host "  - 50% deployment: LIVE" -ForegroundColor Green
 Write-Host "  - Next step: 1-hour monitoring (TODO #10)" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "🔄 To continue with 1-hour wait + 100% deployment:" -ForegroundColor Cyan
+Write-Host "[SYNC] To continue with 1-hour wait + 100% deployment:" -ForegroundColor Cyan
 Write-Host "  .\scripts\auto_continue_deployment.ps1 -WaitMinutes 60 -StartFromTodo 11 -AutoApprove" -ForegroundColor White
 Write-Host ""

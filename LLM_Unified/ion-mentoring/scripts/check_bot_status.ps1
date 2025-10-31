@@ -24,7 +24,7 @@ Write-Host ""
 
 # 상태 파일 확인
 if (-not (Test-Path $STATE_FILE)) {
-    Write-Host "❌ 봇이 실행되지 않았거나 상태 파일이 없습니다." -ForegroundColor Red
+    Write-Host "[ERROR] 봇이 실행되지 않았거나 상태 파일이 없습니다." -ForegroundColor Red
     Write-Host ""
     Write-Host "시작 방법: .\scripts\start_gitco_bot.ps1" -ForegroundColor Yellow
     exit 1
@@ -32,7 +32,7 @@ if (-not (Test-Path $STATE_FILE)) {
 
 $state = Get-Content $STATE_FILE | ConvertFrom-Json
 
-Write-Host "📊 상태 정보:" -ForegroundColor Yellow
+Write-Host "[METRICS] 상태 정보:" -ForegroundColor Yellow
 Write-Host "  • 시작 시간: $($state.started_at)" -ForegroundColor White
 
 # 봇 프로세스 확인
@@ -43,7 +43,7 @@ if ($state.bot_pid) {
         if ($botProcess) {
             $botRunning = $true
             $uptime = (Get-Date) - $botProcess.StartTime
-            Write-Host "  • 봇 서버: ✅ 실행 중 (PID: $($state.bot_pid))" -ForegroundColor Green
+            Write-Host "  • 봇 서버: [OK] 실행 중 (PID: $($state.bot_pid))" -ForegroundColor Green
             Write-Host "    - 업타임: $([math]::Floor($uptime.TotalHours))시간 $($uptime.Minutes)분" -ForegroundColor Gray
             Write-Host "    - 메모리: $([math]::Round($botProcess.WorkingSet64 / 1MB, 2)) MB" -ForegroundColor Gray
         }
@@ -52,7 +52,7 @@ if ($state.bot_pid) {
 }
 
 if (-not $botRunning) {
-    Write-Host "  • 봇 서버: ❌ 중지됨 (PID: $($state.bot_pid))" -ForegroundColor Red
+    Write-Host "  • 봇 서버: [ERROR] 중지됨 (PID: $($state.bot_pid))" -ForegroundColor Red
 }
 
 # 터널 프로세스 확인
@@ -62,7 +62,7 @@ if ($state.tunnel_pid) {
         $tunnelProcess = Get-Process -Id $state.tunnel_pid -ErrorAction SilentlyContinue
         if ($tunnelProcess) {
             $tunnelRunning = $true
-            Write-Host "  • Localtunnel: ✅ 실행 중 (PID: $($state.tunnel_pid))" -ForegroundColor Green
+            Write-Host "  • Localtunnel: [OK] 실행 중 (PID: $($state.tunnel_pid))" -ForegroundColor Green
             if ($state.tunnel_url) {
                 Write-Host "    - URL: $($state.tunnel_url)" -ForegroundColor Cyan
             }
@@ -72,22 +72,22 @@ if ($state.tunnel_pid) {
 }
 
 if (-not $tunnelRunning) {
-    Write-Host "  • Localtunnel: ❌ 중지됨 (PID: $($state.tunnel_pid))" -ForegroundColor Red
+    Write-Host "  • Localtunnel: [ERROR] 중지됨 (PID: $($state.tunnel_pid))" -ForegroundColor Red
 }
 
 Write-Host ""
 
 # 헬스 체크
 if ($botRunning) {
-    Write-Host "🔍 헬스 체크 중..." -ForegroundColor Yellow
+    Write-Host "[SEARCH] 헬스 체크 중..." -ForegroundColor Yellow
     try {
         $response = Invoke-WebRequest -Uri "http://localhost:8080/health" -TimeoutSec 5 -UseBasicParsing
         if ($response.StatusCode -eq 200) {
-            Write-Host "  • 봇 API: ✅ 정상 응답" -ForegroundColor Green
+            Write-Host "  • 봇 API: [OK] 정상 응답" -ForegroundColor Green
         }
     }
     catch {
-        Write-Host "  • 봇 API: ⚠️  응답 없음" -ForegroundColor Yellow
+        Write-Host "  • 봇 API: [WARN]  응답 없음" -ForegroundColor Yellow
     }
 }
 
@@ -112,18 +112,18 @@ Write-Host ""
 # 전체 상태 요약
 if ($botRunning -and $tunnelRunning) {
     Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║                    ✅ 정상 작동 중                        ║" -ForegroundColor Green
+    Write-Host "║                    [OK] 정상 작동 중                        ║" -ForegroundColor Green
     Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
 }
 elseif ($botRunning) {
     Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Yellow
-    Write-Host "║            ⚠️  봇 실행 중, 터널 중지됨                    ║" -ForegroundColor Yellow
+    Write-Host "║            [WARN]  봇 실행 중, 터널 중지됨                    ║" -ForegroundColor Yellow
     Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Yellow
     Write-Host "재시작: .\scripts\start_gitco_bot.ps1 -KillExisting" -ForegroundColor Gray
 }
 else {
     Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Red
-    Write-Host "║                    ❌ 봇 중지됨                           ║" -ForegroundColor Red
+    Write-Host "║                    [ERROR] 봇 중지됨                           ║" -ForegroundColor Red
     Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Red
     Write-Host "시작: .\scripts\start_gitco_bot.ps1" -ForegroundColor Gray
 }
@@ -131,7 +131,7 @@ else {
 Write-Host ""
 
 # 관리 명령어 안내
-Write-Host "🔧 관리 명령어:" -ForegroundColor Yellow
+Write-Host "[CONFIG] 관리 명령어:" -ForegroundColor Yellow
 Write-Host "  • 로그 보기: .\scripts\show_bot_logs.ps1" -ForegroundColor White
 Write-Host "  • 재시작: .\scripts\start_gitco_bot.ps1 -KillExisting" -ForegroundColor White
 Write-Host "  • 종료: .\scripts\start_gitco_bot.ps1 -StopOnly" -ForegroundColor White

@@ -173,7 +173,7 @@ def generate_markdown(data: Dict[str, Any], out_path: Path) -> None:
         lines.extend([
             "## Error",
             "",
-            f"⚠️ {data['error']}",
+            f"-- {data['error']}",
             ""
         ])
         if "total_events" in data and data["total_events"] > 0:
@@ -209,13 +209,13 @@ def generate_markdown(data: Dict[str, Any], out_path: Path) -> None:
         
         overall_rate = data.get("overall_hit_rate", 0.0)
         if overall_rate >= 40:
-            lines.append("✅ **EXCELLENT** - Cache optimization successful! Hit rate ≥40%")
+            lines.append("** EXCELLENT - Cache optimization successful! Hit rate >=40%")
         elif overall_rate >= 20:
-            lines.append("✅ **GOOD** - Cache showing improvement, hit rate 20-40%")
+            lines.append("** GOOD - Cache showing improvement, hit rate 20-40%")
         elif overall_rate >= 5:
-            lines.append("⚠️ **MODERATE** - Some cache benefit, but room for improvement (5-20%)")
+            lines.append("-- MODERATE - Some cache benefit, but room for improvement (5-20%)")
         else:
-            lines.append("⚠️ **LOW** - Cache not yet effective (<5%). Wait longer or increase TTL.")
+            lines.append("-- LOW - Cache not yet effective (<5%). Wait longer or increase TTL.")
         
         lines.extend([
             "",
@@ -253,13 +253,19 @@ def main():
                         help="Time bucket size (default: 1)")
     args = parser.parse_args()
     
-    print("🔍 Cache Performance Timeline Monitor")
-    print(f"📂 Ledger: {LEDGER}")
+    # Ensure UTF-8 output
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+    
+    print(">> Cache Performance Timeline Monitor")
+    print(f">> Ledger: {LEDGER}")
     print()
     
     # Load and analyze
     events = load_evidence_events()
-    print(f"📊 Total evidence events: {len(events)}")
+    print(f">> Total evidence events: {len(events)}")
     
     data = analyze_timeline(events, args.window_hours, args.interval_hours)
     
@@ -272,16 +278,16 @@ def main():
     
     generate_markdown(data, md_out)
     
-    print(f"✅ Timeline analysis complete")
+    print(f"** Timeline analysis complete")
     print(f"   JSON: {json_out}")
     print(f"   MD: {md_out}")
     print()
     
     if "error" not in data:
-        print(f"📈 Overall Hit Rate: **{data['overall_hit_rate']}%**")
-        print(f"📦 Time Buckets: {data['total_buckets']}")
+        print(f">> Overall Hit Rate: **{data['overall_hit_rate']}%**")
+        print(f">> Time Buckets: {data['total_buckets']}")
     else:
-        print(f"⚠️ {data['error']}")
+        print(f"-- {data['error']}")
 
 
 if __name__ == "__main__":

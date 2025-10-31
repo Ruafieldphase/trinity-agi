@@ -29,7 +29,7 @@ Write-Host ""
 $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if (-not $task) {
-    Write-Host "❌ Task '$TaskName' not found" -ForegroundColor Red
+    Write-Host "[ERROR] Task '$TaskName' not found" -ForegroundColor Red
     Write-Host ""
     Write-Host "Available Gateway/Lumen tasks:" -ForegroundColor Cyan
     $relatedTasks = Get-ScheduledTask | Where-Object { 
@@ -106,17 +106,17 @@ Where-Object { $_.CommandLine -like "*ion_metrics_collector*" }
 $exporterPort = Get-NetTCPConnection -LocalPort 9108 -State Listen -ErrorAction SilentlyContinue
 
 if ($collectorProcess) {
-    Write-Host "  ✅ Collector:  Running (PID: $($collectorProcess.Id))" -ForegroundColor Green
+    Write-Host "  [OK] Collector:  Running (PID: $($collectorProcess.Id))" -ForegroundColor Green
 }
 else {
-    Write-Host "  ❌ Collector:  Not running" -ForegroundColor Red
+    Write-Host "  [ERROR] Collector:  Not running" -ForegroundColor Red
 }
 
 if ($exporterPort) {
-    Write-Host "  ✅ Exporter:   Listening on port 9108 (PID: $($exporterPort.OwningProcess))" -ForegroundColor Green
+    Write-Host "  [OK] Exporter:   Listening on port 9108 (PID: $($exporterPort.OwningProcess))" -ForegroundColor Green
 }
 else {
-    Write-Host "  ❌ Exporter:   Not running" -ForegroundColor Red
+    Write-Host "  [ERROR] Exporter:   Not running" -ForegroundColor Red
 }
 
 Write-Host ""

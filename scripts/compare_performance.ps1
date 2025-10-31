@@ -1,8 +1,17 @@
 # 성능 비교 테스트 스크립트
 # LM Studio vs Lumen Gateway 응답 시간 비교
 
+# Force UTF-8 console to prevent mojibake on Windows PowerShell
+try { chcp 65001 > $null 2> $null } catch {}
+try {
+    [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)
+    [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    $OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+}
+catch {}
+
 Write-Host "=" * 60 -ForegroundColor Cyan
-Write-Host "성능 비교: LM Studio vs Lumen Gateway" -ForegroundColor Cyan
+Write-Host "Performance Comparison: LM Studio vs Lumen Gateway" -ForegroundColor Cyan
 Write-Host "=" * 60 -ForegroundColor Cyan
 Write-Host ""
 
@@ -10,7 +19,7 @@ Write-Host ""
 $testMessage = "안녕하세요. 간단한 테스트입니다."
 
 # Lumen Gateway 테스트
-Write-Host "[1/2] Lumen Gateway 테스트..." -ForegroundColor Yellow
+Write-Host "[1/2] Lumen Gateway test..." -ForegroundColor Yellow
 $lumenBody = @{
     message = $testMessage
 } | ConvertTo-Json
@@ -23,37 +32,48 @@ for ($i = 1; $i -le 5; $i++) {
         $sw.Stop()
         $elapsed = $sw.ElapsedMilliseconds
         $lumenTimes += $elapsed
-        Write-Host "  요청 $i : $elapsed ms" -ForegroundColor Green
+        Write-Host "  Request $i : $elapsed ms" -ForegroundColor Green
     }
     catch {
-        Write-Host "  요청 $i : 실패 - $_" -ForegroundColor Red
+        Write-Host "  Request $i : FAILED - $_" -ForegroundColor Red
     }
     Start-Sleep -Milliseconds 500
 }
 
 Write-Host ""
 
-# LM Studio 헬스체크 (모델 로드 상태 확인용)
-Write-Host "[2/2] LM Studio 헬스체크..." -ForegroundColor Yellow
+# LM Studio health check (model load status)
+Write-Host "[2/2] LM Studio health check..." -ForegroundColor Yellow
 $lmTimes = @()
-for ($i = 1; $i -le 5; $i++) {
-    try {
-        $sw = [System.Diagnostics.Stopwatch]::StartNew()
-        $response = Invoke-RestMethod -Uri "http://localhost:8080/v1/models" -Method GET -TimeoutSec 10
-        $sw.Stop()
-        $elapsed = $sw.ElapsedMilliseconds
-        $lmTimes += $elapsed
-        Write-Host "  요청 $i : $elapsed ms" -ForegroundColor Green
+$lmOnline = $false
+try {
+    $probe = Invoke-RestMethod -Uri "http://localhost:8080/v1/models" -Method GET -TimeoutSec 3 -ErrorAction Stop
+    $lmOnline = $true
+}
+catch {
+    Write-Host "  LM Studio offline: skipping health check." -ForegroundColor Yellow
+}
+
+if ($lmOnline) {
+    for ($i = 1; $i -le 5; $i++) {
+        try {
+            $sw = [System.Diagnostics.Stopwatch]::StartNew()
+            $response = Invoke-RestMethod -Uri "http://localhost:8080/v1/models" -Method GET -TimeoutSec 10
+            $sw.Stop()
+            $elapsed = $sw.ElapsedMilliseconds
+            $lmTimes += $elapsed
+            Write-Host "  Request $i : $elapsed ms" -ForegroundColor Green
+        }
+        catch {
+            Write-Host "  Request $i : FAILED - $_" -ForegroundColor Red
+        }
+        Start-Sleep -Milliseconds 500
     }
-    catch {
-        Write-Host "  요청 $i : 실패 - $_" -ForegroundColor Red
-    }
-    Start-Sleep -Milliseconds 500
 }
 
 Write-Host ""
 Write-Host "=" * 60 -ForegroundColor Cyan
-Write-Host "결과 요약" -ForegroundColor Cyan
+Write-Host "Summary" -ForegroundColor Cyan
 Write-Host "=" * 60 -ForegroundColor Cyan
 
 if ($lumenTimes.Count -gt 0) {
@@ -62,9 +82,9 @@ if ($lumenTimes.Count -gt 0) {
     $lumenMax = ($lumenTimes | Measure-Object -Maximum).Maximum
     
     Write-Host "Lumen Gateway:" -ForegroundColor Yellow
-    Write-Host "  평균: $([math]::Round($lumenAvg, 2)) ms" -ForegroundColor White
-    Write-Host "  최소: $lumenMin ms" -ForegroundColor White
-    Write-Host "  최대: $lumenMax ms" -ForegroundColor White
+    Write-Host "  Average: $([math]::Round($lumenAvg, 2)) ms" -ForegroundColor White
+    Write-Host "  Min: $lumenMin ms" -ForegroundColor White
+    Write-Host "  Max: $lumenMax ms" -ForegroundColor White
 }
 
 if ($lmTimes.Count -gt 0) {
@@ -72,10 +92,10 @@ if ($lmTimes.Count -gt 0) {
     $lmMin = ($lmTimes | Measure-Object -Minimum).Minimum
     $lmMax = ($lmTimes | Measure-Object -Maximum).Maximum
     
-    Write-Host "LM Studio (헬스체크):" -ForegroundColor Yellow
-    Write-Host "  평균: $([math]::Round($lmAvg, 2)) ms" -ForegroundColor White
-    Write-Host "  최소: $lmMin ms" -ForegroundColor White
-    Write-Host "  최대: $lmMax ms" -ForegroundColor White
+    Write-Host "LM Studio (health check):" -ForegroundColor Yellow
+    Write-Host "  Average: $([math]::Round($lmAvg, 2)) ms" -ForegroundColor White
+    Write-Host "  Min: $lmMin ms" -ForegroundColor White
+    Write-Host "  Max: $lmMax ms" -ForegroundColor White
 }
 
 Write-Host ""

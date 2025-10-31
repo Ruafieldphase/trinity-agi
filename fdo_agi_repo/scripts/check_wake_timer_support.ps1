@@ -22,14 +22,14 @@ Write-Host "`n[1] Devices armed to wake computer:" -ForegroundColor Yellow
 try {
     $wakeArmed = powercfg /devicequery wake_armed
     if ($wakeArmed -and $wakeArmed.Count -gt 0) {
-        $wakeArmed | ForEach-Object { Write-Host "   ✅ $_" -ForegroundColor Green }
+        $wakeArmed | ForEach-Object { Write-Host "   [OK] $_" -ForegroundColor Green }
     }
     else {
-        Write-Host "   ⚠️  No devices armed to wake" -ForegroundColor Yellow
+        Write-Host "   [WARN]  No devices armed to wake" -ForegroundColor Yellow
     }
 }
 catch {
-    Write-Host "   ❌ Failed to query: $_" -ForegroundColor Red
+    Write-Host "   [ERROR] Failed to query: $_" -ForegroundColor Red
 }
 
 # 2. Check current power scheme wake timer settings
@@ -46,19 +46,19 @@ try {
         
         if ($wakeTimerAC -match '0x([0-9a-f]+)') {
             $acValue = [int]"0x$($matches[1])"
-            $acStatus = if ($acValue -eq 0) { "❌ Disabled" } elseif ($acValue -eq 1) { "✅ Enabled" } else { "⚠️  Important timers only" }
+            $acStatus = if ($acValue -eq 0) { "[ERROR] Disabled" } elseif ($acValue -eq 1) { "[OK] Enabled" } else { "[WARN]  Important timers only" }
             Write-Host "   AC (Plugged in):  $acStatus" -ForegroundColor $(if ($acValue -eq 0) { "Red" } else { "Green" })
         }
         
         if ($wakeTimerDC -match '0x([0-9a-f]+)') {
             $dcValue = [int]"0x$($matches[1])"
-            $dcStatus = if ($dcValue -eq 0) { "❌ Disabled" } elseif ($dcValue -eq 1) { "✅ Enabled" } else { "⚠️  Important timers only" }
+            $dcStatus = if ($dcValue -eq 0) { "[ERROR] Disabled" } elseif ($dcValue -eq 1) { "[OK] Enabled" } else { "[WARN]  Important timers only" }
             Write-Host "   DC (Battery):     $dcStatus" -ForegroundColor $(if ($dcValue -eq 0) { "Red" } else { "Green" })
         }
     }
 }
 catch {
-    Write-Host "   ⚠️  Could not query power scheme: $_" -ForegroundColor Yellow
+    Write-Host "   [WARN]  Could not query power scheme: $_" -ForegroundColor Yellow
 }
 
 # 3. Check for scheduled tasks with wake timers
@@ -70,15 +70,15 @@ try {
     
     if ($wakeTasks) {
         $wakeTasks | ForEach-Object {
-            Write-Host "   ✅ $($_.TaskName) [$($_.State)]" -ForegroundColor Green
+            Write-Host "   [OK] $($_.TaskName) [$($_.State)]" -ForegroundColor Green
         }
     }
     else {
-        Write-Host "   ⚠️  No tasks configured to wake computer" -ForegroundColor Yellow
+        Write-Host "   [WARN]  No tasks configured to wake computer" -ForegroundColor Yellow
     }
 }
 catch {
-    Write-Host "   ⚠️  Could not query scheduled tasks: $_" -ForegroundColor Yellow
+    Write-Host "   [WARN]  Could not query scheduled tasks: $_" -ForegroundColor Yellow
 }
 
 # 4. Recommendations
@@ -88,16 +88,16 @@ $hasWakeDevice = $wakeArmed -and $wakeArmed.Count -gt 0
 $hasWakeTask = $wakeTasks -and $wakeTasks.Count -gt 0
 
 if (-not $hasWakeDevice) {
-    Write-Host "   ⚠️  Enable 'Wake Timers' in BIOS/UEFI settings" -ForegroundColor Yellow
+    Write-Host "   [WARN]  Enable 'Wake Timers' in BIOS/UEFI settings" -ForegroundColor Yellow
     Write-Host "      (Usually under Power Management or ACPI settings)" -ForegroundColor Gray
 }
 
 if (-not $hasWakeTask) {
-    Write-Host "   💡 No tasks with -WakeToRun enabled yet" -ForegroundColor Cyan
+    Write-Host "   [INFO] No tasks with -WakeToRun enabled yet" -ForegroundColor Cyan
     Write-Host "      Run: .\register_bqi_phase6_scheduled_task.ps1 -Register" -ForegroundColor Gray
 }
 
-Write-Host "`n💡 Alternative: Use 'Start When Available' instead" -ForegroundColor Cyan
+Write-Host "`n[INFO] Alternative: Use 'Start When Available' instead" -ForegroundColor Cyan
 Write-Host "   Task will run when you next wake/boot the computer" -ForegroundColor Gray
 Write-Host "   No BIOS changes or admin privileges required`n" -ForegroundColor Gray
 

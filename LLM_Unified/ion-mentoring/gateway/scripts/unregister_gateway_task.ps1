@@ -37,7 +37,7 @@ Write-Host ""
 $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if (-not $task) {
-    Write-Host "⚠️  Task '$TaskName' not found" -ForegroundColor Yellow
+    Write-Host "[WARN]  Task '$TaskName' not found" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Available tasks:" -ForegroundColor Cyan
     Get-ScheduledTask | Where-Object { $_.TaskName -like "*Gateway*" -or $_.TaskName -like "*Lumen*" } | 
@@ -55,7 +55,7 @@ Write-Host ""
 if (-not $Force) {
     $response = Read-Host "Are you sure you want to remove this task? (y/N)"
     if ($response -notmatch '^[Yy]') {
-        Write-Host "❌ Unregistration cancelled" -ForegroundColor Red
+        Write-Host "[ERROR] Unregistration cancelled" -ForegroundColor Red
         exit 0
     }
 }
@@ -64,10 +64,10 @@ if (-not $Force) {
 Write-Host "🛑 Stopping task if running..." -ForegroundColor Cyan
 try {
     Stop-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
-    Write-Host "✅ Task stopped" -ForegroundColor Green
+    Write-Host "[OK] Task stopped" -ForegroundColor Green
 }
 catch {
-    Write-Host "⚠️  Task was not running" -ForegroundColor Yellow
+    Write-Host "[WARN]  Task was not running" -ForegroundColor Yellow
 }
 
 # Unregister task
@@ -76,26 +76,26 @@ Write-Host "🗑️  Removing scheduled task..." -ForegroundColor Cyan
 
 try {
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction Stop
-    Write-Host "✅ Task removed successfully!" -ForegroundColor Green
+    Write-Host "[OK] Task removed successfully!" -ForegroundColor Green
 }
 catch {
-    Write-Host "❌ Failed to remove task: $_" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to remove task: $_" -ForegroundColor Red
     exit 1
 }
 
 # Verify removal
 Write-Host ""
-Write-Host "🔍 Verifying removal..." -ForegroundColor Cyan
+Write-Host "[SEARCH] Verifying removal..." -ForegroundColor Cyan
 
 $verifyTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if ($verifyTask) {
-    Write-Host "⚠️  Task still exists (removal may have failed)" -ForegroundColor Yellow
+    Write-Host "[WARN]  Task still exists (removal may have failed)" -ForegroundColor Yellow
 }
 else {
-    Write-Host "✅ Task removed successfully (verified)" -ForegroundColor Green
+    Write-Host "[OK] Task removed successfully (verified)" -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "✅ Unregistration complete!" -ForegroundColor Green
+Write-Host "[OK] Unregistration complete!" -ForegroundColor Green
 Write-Host ""

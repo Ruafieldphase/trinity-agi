@@ -56,8 +56,8 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host " Lumen Gateway Monitoring Stack Setup" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📦 Install Path: $InstallPath" -ForegroundColor Yellow
-Write-Host "🔧 Prometheus Version: $PrometheusVersion" -ForegroundColor Yellow
+Write-Host "[PACKAGE] Install Path: $InstallPath" -ForegroundColor Yellow
+Write-Host "[CONFIG] Prometheus Version: $PrometheusVersion" -ForegroundColor Yellow
 Write-Host "🔔 Alertmanager Version: $AlertmanagerVersion" -ForegroundColor Yellow
 Write-Host ""
 
@@ -65,7 +65,7 @@ Write-Host ""
 if (-not (Test-Path $InstallPath)) {
     Write-Host "📂 Creating install directory..." -ForegroundColor Yellow
     New-Item -ItemType Directory -Force -Path $InstallPath | Out-Null
-    Write-Host "✅ Directory created" -ForegroundColor Green
+    Write-Host "[OK] Directory created" -ForegroundColor Green
 }
 
 # === Prometheus 설치 ===
@@ -78,7 +78,7 @@ if (-not $SkipPrometheus) {
     $prometheusExe = Join-Path $InstallPath "prometheus\prometheus.exe"
     
     if (Test-Path $prometheusExe) {
-        Write-Host "⚠️  Prometheus already installed at $prometheusExe" -ForegroundColor Yellow
+        Write-Host "[WARN]  Prometheus already installed at $prometheusExe" -ForegroundColor Yellow
         $overwrite = Read-Host "Overwrite? (y/n)"
         if ($overwrite -ne 'y') {
             Write-Host "⏭️  Skipping Prometheus installation" -ForegroundColor Yellow
@@ -94,10 +94,10 @@ if (-not $SkipPrometheus) {
             
             Write-Host "📥 Downloading Prometheus $PrometheusVersion..." -ForegroundColor Yellow
             Invoke-WebRequest -Uri $url -OutFile $zipFile -UseBasicParsing
-            Write-Host "✅ Download complete" -ForegroundColor Green
+            Write-Host "[OK] Download complete" -ForegroundColor Green
             
             # 압축 해제
-            Write-Host "📦 Extracting..." -ForegroundColor Yellow
+            Write-Host "[PACKAGE] Extracting..." -ForegroundColor Yellow
             Expand-Archive -Path $zipFile -DestinationPath $InstallPath -Force
             
             # 파일 이동
@@ -111,7 +111,7 @@ if (-not $SkipPrometheus) {
             Move-Item $extractedDir $targetDir
             Remove-Item $zipFile -Force
             
-            Write-Host "✅ Prometheus installed" -ForegroundColor Green
+            Write-Host "[OK] Prometheus installed" -ForegroundColor Green
             
             # 설정 파일 생성
             $prometheusConfig = @"
@@ -146,7 +146,7 @@ scrape_configs:
             
             $configPath = Join-Path $InstallPath "prometheus\prometheus.yml"
             Set-Content -Path $configPath -Value $prometheusConfig -Encoding UTF8
-            Write-Host "✅ Configuration created" -ForegroundColor Green
+            Write-Host "[OK] Configuration created" -ForegroundColor Green
             
             # Rules 디렉토리 생성
             $rulesDir = Join-Path $InstallPath "prometheus\rules"
@@ -158,12 +158,12 @@ scrape_configs:
             $rulesFile = Join-Path $AlertsPath "prometheus_rules.yml"
             if (Test-Path $rulesFile) {
                 Copy-Item $rulesFile -Destination (Join-Path $rulesDir "gateway_rules.yml") -Force
-                Write-Host "✅ Alert rules copied" -ForegroundColor Green
+                Write-Host "[OK] Alert rules copied" -ForegroundColor Green
             }
             
         }
         catch {
-            Write-Host "❌ Failed to install Prometheus: $_" -ForegroundColor Red
+            Write-Host "[ERROR] Failed to install Prometheus: $_" -ForegroundColor Red
             exit 1
         }
     }
@@ -179,7 +179,7 @@ if (-not $SkipAlertmanager) {
     $alertmanagerExe = Join-Path $InstallPath "alertmanager\alertmanager.exe"
     
     if (Test-Path $alertmanagerExe) {
-        Write-Host "✅ Alertmanager already installed" -ForegroundColor Green
+        Write-Host "[OK] Alertmanager already installed" -ForegroundColor Green
     }
     else {
         try {
@@ -189,10 +189,10 @@ if (-not $SkipAlertmanager) {
             
             Write-Host "📥 Downloading Alertmanager $AlertmanagerVersion..." -ForegroundColor Yellow
             Invoke-WebRequest -Uri $url -OutFile $zipFile -UseBasicParsing
-            Write-Host "✅ Download complete" -ForegroundColor Green
+            Write-Host "[OK] Download complete" -ForegroundColor Green
             
             # 압축 해제
-            Write-Host "📦 Extracting..." -ForegroundColor Yellow
+            Write-Host "[PACKAGE] Extracting..." -ForegroundColor Yellow
             Expand-Archive -Path $zipFile -DestinationPath $InstallPath -Force
             
             # 파일 이동
@@ -206,11 +206,11 @@ if (-not $SkipAlertmanager) {
             Move-Item $extractedDir $targetDir
             Remove-Item $zipFile -Force
             
-            Write-Host "✅ Alertmanager installed" -ForegroundColor Green
+            Write-Host "[OK] Alertmanager installed" -ForegroundColor Green
             
         }
         catch {
-            Write-Host "❌ Failed to install Alertmanager: $_" -ForegroundColor Red
+            Write-Host "[ERROR] Failed to install Alertmanager: $_" -ForegroundColor Red
             exit 1
         }
     }
@@ -219,7 +219,7 @@ if (-not $SkipAlertmanager) {
     $alertmanagerConfig = Join-Path $AlertsPath "alertmanager.yml"
     if (Test-Path $alertmanagerConfig) {
         Copy-Item $alertmanagerConfig -Destination (Join-Path $InstallPath "alertmanager\alertmanager.yml") -Force
-        Write-Host "✅ Alertmanager configuration copied" -ForegroundColor Green
+        Write-Host "[OK] Alertmanager configuration copied" -ForegroundColor Green
     }
 }
 
@@ -230,10 +230,10 @@ Write-Host " Environment Check" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 
 if ($env:SLACK_WEBHOOK_URL) {
-    Write-Host "✅ SLACK_WEBHOOK_URL is configured" -ForegroundColor Green
+    Write-Host "[OK] SLACK_WEBHOOK_URL is configured" -ForegroundColor Green
 }
 else {
-    Write-Host "⚠️  SLACK_WEBHOOK_URL not set" -ForegroundColor Yellow
+    Write-Host "[WARN]  SLACK_WEBHOOK_URL not set" -ForegroundColor Yellow
     Write-Host "   Alerts will not be sent to Slack" -ForegroundColor Yellow
     Write-Host "   Set with: [Environment]::SetEnvironmentVariable('SLACK_WEBHOOK_URL', 'https://hooks.slack.com/...', 'User')" -ForegroundColor Gray
 }
@@ -254,7 +254,7 @@ if (-not (Test-Path `$logPath)) {
     New-Item -ItemType Directory -Force -Path `$logPath | Out-Null
 }
 
-Write-Host "🚀 Starting Prometheus..." -ForegroundColor Green
+Write-Host "[DEPLOY] Starting Prometheus..." -ForegroundColor Green
 Start-Process -FilePath "`$prometheusPath\prometheus.exe" ``
     -ArgumentList "--config.file=`$prometheusPath\prometheus.yml", ``
                   "--storage.tsdb.path=`$prometheusPath\data", ``
@@ -262,12 +262,12 @@ Start-Process -FilePath "`$prometheusPath\prometheus.exe" ``
     -WorkingDirectory `$prometheusPath ``
     -WindowStyle Hidden
 
-Write-Host "✅ Prometheus started on http://localhost:9090" -ForegroundColor Green
+Write-Host "[OK] Prometheus started on http://localhost:9090" -ForegroundColor Green
 "@
 
 $startPrometheusPath = Join-Path $InstallPath "start_prometheus.ps1"
 Set-Content -Path $startPrometheusPath -Value $prometheusStartScript -Encoding UTF8
-Write-Host "✅ Created: $startPrometheusPath" -ForegroundColor Green
+Write-Host "[OK] Created: $startPrometheusPath" -ForegroundColor Green
 
 # Alertmanager 시작 스크립트
 $alertmanagerStartScript = @"
@@ -279,7 +279,7 @@ if (-not (Test-Path `$logPath)) {
     New-Item -ItemType Directory -Force -Path `$logPath | Out-Null
 }
 
-Write-Host "🚀 Starting Alertmanager..." -ForegroundColor Green
+Write-Host "[DEPLOY] Starting Alertmanager..." -ForegroundColor Green
 Start-Process -FilePath "`$alertmanagerPath\alertmanager.exe" ``
     -ArgumentList "--config.file=`$alertmanagerPath\alertmanager.yml", ``
                   "--storage.path=`$alertmanagerPath\data", ``
@@ -287,12 +287,12 @@ Start-Process -FilePath "`$alertmanagerPath\alertmanager.exe" ``
     -WorkingDirectory `$alertmanagerPath ``
     -WindowStyle Hidden
 
-Write-Host "✅ Alertmanager started on http://localhost:9093" -ForegroundColor Green
+Write-Host "[OK] Alertmanager started on http://localhost:9093" -ForegroundColor Green
 "@
 
 $startAlertmanagerPath = Join-Path $InstallPath "start_alertmanager.ps1"
 Set-Content -Path $startAlertmanagerPath -Value $alertmanagerStartScript -Encoding UTF8
-Write-Host "✅ Created: $startAlertmanagerPath" -ForegroundColor Green
+Write-Host "[OK] Created: $startAlertmanagerPath" -ForegroundColor Green
 
 # 전체 시작 스크립트
 $startAllScript = @"
@@ -313,9 +313,9 @@ Start-Sleep -Seconds 2
 # Gateway Exporter 확인
 `$exporterRunning = Get-NetTCPConnection -LocalPort 9108 -ErrorAction SilentlyContinue
 if (`$exporterRunning) {
-    Write-Host "✅ Gateway Exporter is running on port 9108" -ForegroundColor Green
+    Write-Host "[OK] Gateway Exporter is running on port 9108" -ForegroundColor Green
 } else {
-    Write-Host "⚠️  Gateway Exporter not running - start it manually" -ForegroundColor Yellow
+    Write-Host "[WARN]  Gateway Exporter not running - start it manually" -ForegroundColor Yellow
     Write-Host "   cd $GatewayPath\scripts" -ForegroundColor Gray
     Write-Host "   .\start_gateway.ps1" -ForegroundColor Gray
 }
@@ -332,7 +332,7 @@ Write-Host ""
 
 $startAllPath = Join-Path $InstallPath "start_monitoring_stack.ps1"
 Set-Content -Path $startAllPath -Value $startAllScript -Encoding UTF8
-Write-Host "✅ Created: $startAllPath" -ForegroundColor Green
+Write-Host "[OK] Created: $startAllPath" -ForegroundColor Green
 
 # === 서비스 시작 ===
 if ($StartServices) {
@@ -353,7 +353,7 @@ Write-Host ""
 Write-Host "📂 Installation Path:" -ForegroundColor Yellow
 Write-Host "   $InstallPath" -ForegroundColor Gray
 Write-Host ""
-Write-Host "🚀 To start the monitoring stack:" -ForegroundColor Yellow
+Write-Host "[DEPLOY] To start the monitoring stack:" -ForegroundColor Yellow
 Write-Host "   & `"$startAllPath`"" -ForegroundColor Gray
 Write-Host ""
 Write-Host "🔗 Access URLs:" -ForegroundColor Yellow
@@ -361,7 +361,7 @@ Write-Host "   Prometheus:    http://localhost:9090" -ForegroundColor Gray
 Write-Host "   Alertmanager:  http://localhost:9093" -ForegroundColor Gray
 Write-Host "   Gateway:       http://localhost:9108/metrics" -ForegroundColor Gray
 Write-Host ""
-Write-Host "📝 Next Steps:" -ForegroundColor Yellow
+Write-Host "[LOG] Next Steps:" -ForegroundColor Yellow
 Write-Host "   1. Set SLACK_WEBHOOK_URL environment variable (for alerts)" -ForegroundColor Gray
 Write-Host "   2. Start Gateway Exporter if not running" -ForegroundColor Gray
 Write-Host "   3. Import Grafana dashboard (optional)" -ForegroundColor Gray

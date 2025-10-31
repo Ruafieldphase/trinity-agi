@@ -22,13 +22,13 @@ if (-not (Test-Path $LogDir)) {
 }
 
 function Register-Task {
-    Write-Host "🔧 Registering Scheduled Task: $TaskName" -ForegroundColor Cyan
+    Write-Host "[CONFIG] Registering Scheduled Task: $TaskName" -ForegroundColor Cyan
     Write-Host "   Schedule: Daily at $Time" -ForegroundColor Gray
     Write-Host "   Monitor window: Last $Hours hours" -ForegroundColor Gray
     
     # Check if Python exists
     if (-not (Test-Path $PythonExe)) {
-        Write-Host "❌ Python not found: $PythonExe" -ForegroundColor Red
+        Write-Host "[ERROR] Python not found: $PythonExe" -ForegroundColor Red
         Write-Host "   Please create virtual environment first:" -ForegroundColor Yellow
         Write-Host "   cd $RepoRoot; python -m venv .venv" -ForegroundColor Yellow
         exit 1
@@ -36,7 +36,7 @@ function Register-Task {
     
     # Check if script exists
     if (-not (Test-Path $ScriptPath)) {
-        Write-Host "❌ Monitor script not found: $ScriptPath" -ForegroundColor Red
+        Write-Host "[ERROR] Monitor script not found: $ScriptPath" -ForegroundColor Red
         exit 1
     }
     
@@ -68,19 +68,19 @@ function Register-Task {
             -Description "BQI Phase 6k: Daily Ensemble Success Rate Monitoring" `
             -Force
         
-        Write-Host "✅ Task registered successfully!" -ForegroundColor Green
+        Write-Host "[OK] Task registered successfully!" -ForegroundColor Green
         Write-Host "   Task Name: $TaskName" -ForegroundColor Gray
         Write-Host "   Next Run: $((Get-ScheduledTask -TaskName $TaskName).Triggers[0].StartBoundary)" -ForegroundColor Gray
         Write-Host ""
-        Write-Host "💡 To run manually:" -ForegroundColor Cyan
+        Write-Host "[INFO] To run manually:" -ForegroundColor Cyan
         Write-Host "   Start-ScheduledTask -TaskName '$TaskName'" -ForegroundColor Yellow
         Write-Host ""
-        Write-Host "💡 To check status:" -ForegroundColor Cyan
+        Write-Host "[INFO] To check status:" -ForegroundColor Cyan
         Write-Host "   Get-ScheduledTask -TaskName '$TaskName' | Get-ScheduledTaskInfo" -ForegroundColor Yellow
         
     }
     catch {
-        Write-Host "❌ Failed to register task: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Failed to register task: $_" -ForegroundColor Red
         exit 1
     }
 }
@@ -92,20 +92,20 @@ function Unregister-Task {
         $ExistingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
         if ($ExistingTask) {
             Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
-            Write-Host "✅ Task unregistered successfully!" -ForegroundColor Green
+            Write-Host "[OK] Task unregistered successfully!" -ForegroundColor Green
         }
         else {
             Write-Host "ℹ️ Task not found: $TaskName" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "❌ Failed to unregister task: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Failed to unregister task: $_" -ForegroundColor Red
         exit 1
     }
 }
 
 function Show-Status {
-    Write-Host "📊 Scheduled Task Status: $TaskName" -ForegroundColor Cyan
+    Write-Host "[METRICS] Scheduled Task Status: $TaskName" -ForegroundColor Cyan
     Write-Host ""
     
     try {
@@ -136,12 +136,12 @@ function Show-Status {
         else {
             Write-Host "ℹ️ Task not registered: $TaskName" -ForegroundColor Yellow
             Write-Host ""
-            Write-Host "💡 To register:" -ForegroundColor Cyan
+            Write-Host "[INFO] To register:" -ForegroundColor Cyan
             Write-Host "   .\register_ensemble_monitor_task.ps1 -Register" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "❌ Failed to get task status: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Failed to get task status: $_" -ForegroundColor Red
         exit 1
     }
 }

@@ -35,14 +35,14 @@ Write-Host "Time Range: Last $Hours hour(s)" -ForegroundColor Gray
 Write-Host ""
 
 # Query logs
-Write-Host "📊 Querying logs..." -ForegroundColor Yellow
+Write-Host "[METRICS] Querying logs..." -ForegroundColor Yellow
 $logFilter = "jsonPayload.component=`"feedback_loop`""
 $freshness = "${Hours}h"
 $logCmd = "gcloud logging read `"$logFilter`" --project=$ProjectId --format=json --freshness=$freshness 2>&1"
 $logJson = cmd /c $logCmd
 
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Failed to query logs: $logJson" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to query logs: $logJson" -ForegroundColor Red
     exit 1
 }
 
@@ -50,7 +50,7 @@ $logEntries = $logJson | ConvertFrom-Json
 $count = $logEntries.Count
 
 if ($count -eq 0) {
-    Write-Host "⚠️  No logs found in last $Hours hour(s)" -ForegroundColor Yellow
+    Write-Host "[WARN]  No logs found in last $Hours hour(s)" -ForegroundColor Yellow
     exit 0
 }
 
@@ -110,7 +110,7 @@ function Get-Stats {
 }
 
 # Analyze each metric
-Write-Host "📈 Metric Distributions:" -ForegroundColor Cyan
+Write-Host "[STATS] Metric Distributions:" -ForegroundColor Cyan
 Write-Host ""
 
 $analysis = @{}
@@ -215,7 +215,7 @@ Write-Host ""
 # Summary
 Write-Host "=== Recommendations ===" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "💡 Based on $count data points from last $Hours hour(s):" -ForegroundColor Magenta
+Write-Host "[INFO] Based on $count data points from last $Hours hour(s):" -ForegroundColor Magenta
 Write-Host ""
 
 if ($hitRateStats.count -gt 0) {
@@ -242,7 +242,7 @@ if ($healthStats.count -gt 0) {
     Write-Host ""
 }
 
-Write-Host "📝 To apply these thresholds:" -ForegroundColor Cyan
+Write-Host "[LOG] To apply these thresholds:" -ForegroundColor Cyan
 Write-Host "   D:/nas_backup/LLM_Unified/ion-mentoring/lumen/feedback/setup_alert_policies.ps1 ``" -ForegroundColor Gray
 Write-Host "     -ProjectId naeda-genesis ``" -ForegroundColor Gray
 if ($hitRateStats.count -gt 0) {
@@ -269,5 +269,5 @@ if ($OutputJson) {
         metrics        = $analysis
     }
     $output | ConvertTo-Json -Depth 10 | Set-Content $OutputJson
-    Write-Host "✅ Analysis saved to: $OutputJson" -ForegroundColor Green
+    Write-Host "[OK] Analysis saved to: $OutputJson" -ForegroundColor Green
 }

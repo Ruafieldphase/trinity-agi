@@ -1,0 +1,152 @@
+{
+  "task_id": "ecdaebb9-c7e4-4c53-92b0-132e85705975",
+  "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+  "status": "completed",
+  "created_at": "2025-10-31T03:51:24.193918",
+  "video_analysis": {
+    "video_id": "kqtD5dpn9C8",
+    "title": "Python for Beginners - Learn Coding with Python in 1 Hour",
+    "keywords": [
+      "this",
+      "that",
+      "python",
+      "have",
+      "going",
+      "let's",
+      "here",
+      "string",
+      "print",
+      "type",
+      "data",
+      "scionco",
+      "m디iemilne",
+      "learning"
+    ],
+    "summary": "Video covers topics related to: this, that, python, have, going. Duration: ~133.0 minutes."
+  },
+  "execution_steps_count": 20,
+  "execution_results_count": 0,
+  "execution_steps": [
+    {
+      "action": "click",
+      "timestamp": 94.72,
+      "description": "see this package simply double click it",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 110.96,
+      "description": "simply click on continue",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 143.28,
+      "description": "click on download",
+      "params": {}
+    },
+    {
+      "action": "open",
+      "timestamp": 151.28,
+      "description": "community edition which is free and open",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 161.36,
+      "description": "have this package let's double click it",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 167.12,
+      "description": "an installation wizard so simply click",
+      "params": {}
+    },
+    {
+      "action": "drag",
+      "timestamp": 173.519,
+      "description": "drag this pycharm and drop it onto the",
+      "params": {}
+    },
+    {
+      "action": "open",
+      "timestamp": 181.04,
+      "description": "let's open it",
+      "params": {}
+    },
+    {
+      "action": "open",
+      "timestamp": 182.879,
+      "description": "the first time you open pycharm you have",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 189.76,
+      "description": "we're going to click on skip remaining",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 206.959,
+      "description": "going to be saved so let's click on",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 233.439,
+      "description": "files so let's right click on the",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 245.68,
+      "description": "by clicking on this icon so now we have",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 305.759,
+      "description": "let's click on this",
+      "params": {}
+    },
+    {
+      "action": "type",
+      "timestamp": 356.319,
+      "description": "and then we type a value let's say 20.",
+      "params": {}
+    },
+    {
+      "action": "type",
+      "timestamp": 381.84,
+      "description": "and type age note that i'm not adding",
+      "params": {}
+    },
+    {
+      "action": "move",
+      "timestamp": 391.84,
+      "description": "age variable so let's remove the quote",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 398.72,
+      "description": "now here on the toolbar you can click on",
+      "params": {}
+    },
+    {
+      "action": "type",
+      "timestamp": 482.72,
+      "description": "we also have a special type of value",
+      "params": {}
+    },
+    {
+      "action": "type",
+      "timestamp": 566.08,
+      "description": "then we type in a string here we can",
+      "params": {}
+    }
+  ],
+  "execution_results": []
+}

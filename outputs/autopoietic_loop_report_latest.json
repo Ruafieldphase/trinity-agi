@@ -1,0 +1,98 @@
+{
+  "window_hours": 24,
+  "generated_at": "2025-10-31T11:45:07.288651",
+  "counts": {
+    "tasks_total": 4,
+    "complete_loops": 4,
+    "incomplete_loops": 0,
+    "evidence_gate_triggered": 0,
+    "second_pass": 0
+  },
+  "durations_avg_sec": {
+    "folding": 8.003267049999977,
+    "unfolding": 10.121598124999963,
+    "integration": 16.88092919999997,
+    "symmetry": 0.008535800000032623
+  },
+  "durations_p95_sec": {
+    "folding": 10.232851600000004,
+    "unfolding": 12.311429999999973,
+    "integration": 17.81234369999993,
+    "symmetry": 0.018311700000026576
+  },
+  "rates_pct": {
+    "loop_complete_rate": 100.0,
+    "evidence_gate_trigger_rate": 0.0,
+    "second_pass_rate": 0.0
+  },
+  "quality": {
+    "final_quality_avg": 0.85,
+    "final_evidence_ok_rate": 100.0
+  },
+  "samples": [
+    {
+      "task_id": "a0715249-cb6c-49ea-b68f-44cab0994e23",
+      "phases": {
+        "folding": 6.5222742999999355,
+        "unfolding": 9.658969400000046,
+        "integration": 16.982454899999993,
+        "symmetry": 0.018311700000026576
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    },
+    {
+      "task_id": "481e5035-334b-4d14-a5ed-d3e4f0e32c3c",
+      "phases": {
+        "folding": 10.232851600000004,
+        "unfolding": 7.852089599999999,
+        "integration": 15.473418300000048,
+        "symmetry": 0.00493970000002264
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    },
+    {
+      "task_id": "544fa1a3-6922-45be-b758-1f11f1100e95",
+      "phases": {
+        "folding": 7.196965500000033,
+        "unfolding": 12.311429999999973,
+        "integration": 17.81234369999993,
+        "symmetry": 0.005596100000047954
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    },
+    {
+      "task_id": "369e9910-af9f-4779-9641-db054d7d42a8",
+      "phases": {
+        "folding": 8.060976799999935,
+        "unfolding": 10.663903499999833,
+        "integration": 17.255499899999904,
+        "symmetry": 0.005295700000033321
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    }
+  ]
+}

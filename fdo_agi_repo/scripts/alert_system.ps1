@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 # Repo root 찾기
 $RepoRoot = Split-Path -Parent $PSScriptRoot
@@ -40,7 +41,7 @@ if ($ExcludePrefix) {
     }
 }
 
-Write-Host "🚨 Running Health Check & Alert System..." -ForegroundColor Yellow
+Write-Host "[ALERT] Running Health Check & Alert System..." -ForegroundColor Yellow
 & $Python $AlertScript @PythonArgs
 
 exit $LASTEXITCODE

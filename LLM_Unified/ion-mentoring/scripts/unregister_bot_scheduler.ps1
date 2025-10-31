@@ -25,7 +25,7 @@ $ErrorActionPreference = "Stop"
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 if (-not $isAdmin) {
-    Write-Host "❌ 관리자 권한이 필요합니다!" -ForegroundColor Red
+    Write-Host "[ERROR] 관리자 권한이 필요합니다!" -ForegroundColor Red
     Write-Host "PowerShell을 관리자 권한으로 실행한 후 다시 시도하세요." -ForegroundColor Yellow
     exit 1
 }
@@ -40,7 +40,7 @@ Write-Host ""
 $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if (-not $task) {
-    Write-Host "❌ 작업을 찾을 수 없습니다: $TaskName" -ForegroundColor Red
+    Write-Host "[ERROR] 작업을 찾을 수 없습니다: $TaskName" -ForegroundColor Red
     Write-Host ""
     Write-Host "등록된 깃코 관련 작업 검색 중..." -ForegroundColor Yellow
     $relatedTasks = Get-ScheduledTask | Where-Object { $_.TaskName -like "*Gitco*" -or $_.TaskName -like "*Bot*" }
@@ -68,7 +68,7 @@ if (-not $Force) {
     $response = Read-Host
     
     if ($response -ne 'Y' -and $response -ne 'y') {
-        Write-Host "❌ 취소되었습니다." -ForegroundColor Yellow
+        Write-Host "[ERROR] 취소되었습니다." -ForegroundColor Yellow
         exit 0
     }
 }
@@ -86,15 +86,15 @@ try {
     # 작업 삭제
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     
-    Write-Host "✅ 작업이 삭제되었습니다!" -ForegroundColor Green
+    Write-Host "[OK] 작업이 삭제되었습니다!" -ForegroundColor Green
     Write-Host ""
-    Write-Host "⚠️  시스템 시작 시 자동 실행이 비활성화되었습니다." -ForegroundColor Yellow
+    Write-Host "[WARN]  시스템 시작 시 자동 실행이 비활성화되었습니다." -ForegroundColor Yellow
     Write-Host "수동으로 봇을 시작하려면:" -ForegroundColor Gray
     Write-Host "  .\scripts\start_gitco_bot.ps1" -ForegroundColor White
     Write-Host ""
     
 }
 catch {
-    Write-Host "❌ 삭제 실패: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[ERROR] 삭제 실패: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }

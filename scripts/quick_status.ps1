@@ -14,11 +14,17 @@ param(
     [double]$SpikeSigma = 2.0,
     [double]$TrendThresholdPercent = 10.0,
     [switch]$UseAdaptiveThresholds,
-    [double]$AdaptiveWarnSigmas = 1.5,  # ?�균 + 1.5? (was 1.0?) - reduces false positives by ~50%
-    [double]$AdaptiveAlertSigmas = 2.5  # ?�균 + 2.5? (was 2.0?) - further reduces alert noise
+    [double]$AdaptiveWarnSigmas = 1.5,  # ?�균 + 1.5? (was 1.0?) - reduces false positives by ~50%
+    [double]$AdaptiveAlertSigmas = 2.5  # ?�균 + 2.5? (was 2.0?) - further reduces alert noise
 )
 
 $ErrorActionPreference = "Continue"
+
+# Emit system startup event
+& "$PSScriptRoot\emit_event.ps1" -EventType "system_startup" -Payload @{
+    component = "quick_status"
+    timestamp = (Get-Date).ToUniversalTime().ToString("o")
+} -PersonaId "monitoring"
 
 function Write-Header {
     Write-Host "`n================================================================" -ForegroundColor Cyan
@@ -201,7 +207,7 @@ function Send-AlertIfNeeded {
 
 Write-Header
 
-# ===== AGI ?�스??=====
+# ===== AGI ?�스??=====
 Write-Host "[1] AGI Orchestrator (fdo_agi_repo)" -ForegroundColor Yellow
 Write-Host "    Status Check..." -NoNewline
 
@@ -338,7 +344,7 @@ if (Test-Path $personaJsonPath) {
 
 Write-Host ""
 
-# ===== Lumen ?�스??=====
+# ===== Lumen ?�스??=====
 Write-Host "[2] Lumen Multi-Channel Gateway" -ForegroundColor Yellow
 
 $prev = if ($LogJsonl) { Read-LastSnapshot -Path $LogPath } else { $null }
@@ -633,6 +639,19 @@ $summary = @{
 }
 
 if ($AlertOnDegraded -and (-not $allGreen)) { Send-AlertIfNeeded -Summary $summary -Trend $trend }
+
+# Emit health check event
+& "$PSScriptRoot\emit_event.ps1" -EventType "health_check" -Payload @{
+    status = if ($allGreen) { "HEALTHY" } else { "UNHEALTHY" }
+    all_green = $allGreen
+    has_alerts = $hasAlerts
+    has_warnings = $hasWarns
+    agi_confidence = $agiMetrics.confidence
+    agi_quality = $agiMetrics.quality
+    agi_second_pass = $agiMetrics.second_pass_rate
+    lumen_latency_ms = $gatewayTest.Ms
+    timestamp = (Get-Date).ToUniversalTime().ToString("o")
+} -PersonaId "monitoring"
 
 Write-Host "`n================================================================`n" -ForegroundColor Cyan
 

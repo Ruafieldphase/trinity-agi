@@ -97,7 +97,7 @@ $Task = Register-ScheduledTask `
     -Principal $Principal `
     -Description "AGI 헬스 체크 및 알림 자동 실행 ($Frequency)"
 
-Write-Host "✅ 예약 작업 등록 완료!" -ForegroundColor Green
+Write-Host "[OK] 예약 작업 등록 완료!" -ForegroundColor Green
 Write-Host ""
 Write-Host "작업 이름: $TaskName" -ForegroundColor Cyan
 Write-Host "빈도: $Frequency" -ForegroundColor Cyan

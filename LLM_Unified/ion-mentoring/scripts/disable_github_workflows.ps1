@@ -75,7 +75,7 @@ Write-Host "커밋 생성 완료. GitHub에 푸시합니다..." -ForegroundColor
 git push origin master
 
 Write-Host ""
-Write-Host "✅ 완료! 워크플로우가 비활성화되었습니다." -ForegroundColor Green
+Write-Host "[OK] 완료! 워크플로우가 비활성화되었습니다." -ForegroundColor Green
 Write-Host ""
 Write-Host "📧 다음 커밋부터는 더 이상 실패 이메일이 오지 않습니다." -ForegroundColor Cyan
 Write-Host ""

@@ -80,8 +80,70 @@ class AlertSystem:
                 if system['warnings']['disk']:
                     issues.append(f"⚠️ Disk: {system['disk_percent']}%")
         
+        # 메타인지 경고율 계산 (최근 윈도우)
+        recent_hours = float(policy.get('recent_hours', 1.0))
+        rt = self.collector.get_realtime_metrics(hours=recent_hours)
+        total_tasks = int(rt.get('metrics', {}).get('total_tasks', 0))
+        meta_events = 0
+        try:
+            evs = self.collector.read_events(hours=recent_hours)
+            meta_events = sum(1 for e in evs if e.get('event') in ('meta_cognition_warning', 'meta_cognition_low_confidence'))
+        except Exception:
+            pass
+        meta_rate_pct = (meta_events / max(total_tasks, 1)) * 100.0
+        meta_warn_thr = float(os.getenv('META_WARNING_MAX_RATE_PCT', '15'))
+        if meta_rate_pct > meta_warn_thr:
+            issues.append(f"❌ Meta-cognition warning rate: {meta_rate_pct:.1f}% > {meta_warn_thr}% (events: {meta_events}, tasks: {total_tasks})")
+
+        # 오토포이에틱 루프 요약 확인 및 임계치 체크
+        auto_hours = float(os.getenv('AUTOPOIETIC_RECENT_HOURS', '24'))
+        auto_summary = self._ensure_autopoietic_summary(hours=auto_hours)
+        autopoietic_lines: List[str] = []
+        if auto_summary:
+            counts = auto_summary.get('counts', {})
+            rates = auto_summary.get('rates_pct', {})
+            d95 = auto_summary.get('durations_p95_sec', {})
+            quality = auto_summary.get('quality', {})
+
+            loop_complete_pct = float(rates.get('loop_complete_rate', 0.0))
+            ev_gate_pct = float(rates.get('evidence_gate_trigger_rate', 0.0))
+            second_pass_pct = float(rates.get('second_pass_rate', 0.0))
+            sym_p95 = float(d95.get('symmetry', 0.0))
+            final_evidence_ok_pct = float(quality.get('final_evidence_ok_rate', 0.0))
+
+            min_complete_pct = float(os.getenv('AUTOPOIETIC_MIN_COMPLETE_PCT', '70'))
+            max_sym_p95_sec = float(os.getenv('AUTOPOIETIC_MAX_SYMMETRY_P95_SEC', '30'))
+            max_ev_gate_pct = float(os.getenv('AUTOPOIETIC_MAX_EVIDENCE_GATE_TRIGGER_PCT', '35'))
+
+            if loop_complete_pct < min_complete_pct:
+                issues.append(f"❌ Loop complete rate: {loop_complete_pct:.1f}% < {min_complete_pct}% (tasks={counts.get('tasks_total',0)}, complete={counts.get('complete_loops',0)})")
+            if sym_p95 > max_sym_p95_sec:
+                issues.append(f"❌ Symmetry P95: {sym_p95:.1f}s > {max_sym_p95_sec}s")
+            if ev_gate_pct > max_ev_gate_pct:
+                issues.append(f"❌ Evidence gate trigger rate: {ev_gate_pct:.1f}% > {max_ev_gate_pct}%")
+
+            autopoietic_lines = [
+                f"• Loop Complete Rate: {loop_complete_pct:.1f}%",
+                f"• Evidence Gate Trigger Rate: {ev_gate_pct:.1f}%",
+                f"• Second Pass Rate: {second_pass_pct:.1f}%",
+                f"• Symmetry P95: {sym_p95:.2f}s",
+                f"• Final Evidence OK Rate: {final_evidence_ok_pct:.1f}%",
+            ]
+
+        meta_lines = [
+            f"• Meta-Cog Warnings: {meta_events} in {recent_hours}h",
+            f"• Meta-Cog Warning Rate: {meta_rate_pct:.1f}% (per tasks={total_tasks})",
+        ]
+
+        extra_text_parts: List[str] = []
+        if autopoietic_lines:
+            extra_text_parts.append("**Autopoietic Loop (latest)**\n" + "\n".join(autopoietic_lines))
+        if meta_lines:
+            extra_text_parts.append("**Meta-Cognition (latest)**\n" + "\n".join(meta_lines))
+        extra_text = "\n\n".join(extra_text_parts) if extra_text_parts else None
+
         # 알림 메시지 생성
-        alert_message = self._format_alert_message(issues, health)
+        alert_message = self._format_alert_message(issues, health, extra_text=extra_text)
         
         # 알림 발송
         self._send_alerts(alert_message, health)
@@ -92,7 +154,7 @@ class AlertSystem:
         print(f"🚨 알림 발송 완료: {len(issues)}개 이슈 발견")
         return False
 
-    def _format_alert_message(self, issues: list, health: Dict[str, Any]) -> str:
+    def _format_alert_message(self, issues: list, health: Dict[str, Any], extra_text: Optional[str] = None) -> str:
         """알림 메시지 포맷"""
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         policy = health.get('policy', {})
@@ -119,7 +181,11 @@ class AlertSystem:
 • Confidence: {health['current_values']['confidence']:.3f} (samples: {samples.get('confidence', 0)})
 • Quality: {health['current_values']['quality']:.3f} (samples: {samples.get('quality', 0)})
 • 2nd Pass Rate: {health['current_values']['second_pass_rate']:.3f}
+"""
+        if extra_text:
+            message += "\n" + extra_text + "\n"
 
+        message += """
 **조치 필요:**
 1. 대시보드 확인: `ops_dashboard.py`
 2. Ledger 분석: `summarize_ledger.py --last-hours 1` (기본 제외 적용). 원본 검토 시 `--no-default-excludes` 추가
@@ -155,7 +221,7 @@ class AlertSystem:
                 "icon_emoji": ":warning:"
             }
             response = requests.post(
-                self.slack_webhook,
+                str(self.slack_webhook),
                 json=payload,
                 timeout=10
             )
@@ -175,7 +241,7 @@ class AlertSystem:
                 "username": "AGI Health Monitor"
             }
             response = requests.post(
-                self.discord_webhook,
+                str(self.discord_webhook),
                 json=payload,
                 timeout=10
             )
@@ -215,6 +281,28 @@ class AlertSystem:
         
         with open(log_file, 'a', encoding='utf-8') as f:
             f.write(json.dumps(log_entry, ensure_ascii=False) + '\n')
+
+    def _ensure_autopoietic_summary(self, hours: float) -> Optional[Dict[str, Any]]:
+        """오토포이에틱 리포트를 생성/읽기하여 JSON 요약 반환"""
+        try:
+            analyzer = repo_root / "analysis" / "analyze_autopoietic_loop.py"
+            out_json = repo_root.parent / "outputs" / "autopoietic_loop_report_latest.json"
+            # 생성 시도 (sys.executable 사용)
+            cmd = [sys.executable, str(analyzer), "--hours", str(int(hours)), "--out-json", str(out_json)]
+            subprocess.run(cmd, capture_output=True, text=True, check=True)
+            with open(out_json, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"⚠️ Autopoietic summary generation failed: {e}")
+            # 기존 파일이 있으면 읽기 시도
+            try:
+                out_json = repo_root.parent / "outputs" / "autopoietic_loop_report_latest.json"
+                if out_json.exists():
+                    with open(out_json, 'r', encoding='utf-8') as f:
+                        return json.load(f)
+            except Exception:
+                pass
+            return None
 
 
 def main():

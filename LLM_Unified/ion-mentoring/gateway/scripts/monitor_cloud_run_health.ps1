@@ -129,7 +129,7 @@ function Send-SlackAlert {
     }
     
     $payload = @{
-        text        = "🚨 Cloud Run Health Alert"
+        text        = "[ALERT] Cloud Run Health Alert"
         attachments = @(
             @{
                 color  = $color
@@ -201,7 +201,7 @@ while ($true) {
         
         # Cloud Run 서비스 상태도 확인
         $serviceStatus = Get-ServiceStatus
-        $readyStatus = if ($serviceStatus.Ready) { "✅" } else { "⚠️" }
+        $readyStatus = if ($serviceStatus.Ready) { "[OK]" } else { "[WARN]" }
         
         Write-Log "Service healthy - Version: $($healthResult.Version) | Pipeline: $($healthResult.PipelineReady) | Revision: $($serviceStatus.Revision) $readyStatus" "SUCCESS"
         
@@ -226,7 +226,7 @@ while ($true) {
             # 5분 이내에는 중복 알림 방지
             if ($timeSinceLastAlert -gt 5) {
                 $alertMessage = @"
-🚨 ION API Health Alert
+[ALERT] ION API Health Alert
 
 Service: $ServiceUrl
 Status: $($healthResult.Status)

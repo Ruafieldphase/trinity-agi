@@ -24,7 +24,7 @@ if (Test-Path $VenvPath) {
     Write-Host "🐍 가상환경 활성화: $VenvPath" -ForegroundColor Yellow
     & "$VenvPath\Scripts\Activate.ps1"
 } else {
-    Write-Host "⚠️  가상환경 없음. 시스템 Python 사용" -ForegroundColor Yellow
+    Write-Host "[WARN]  가상환경 없음. 시스템 Python 사용" -ForegroundColor Yellow
 }
 
 # 테스트 정보 출력
@@ -51,7 +51,7 @@ if ($continue -ne 'y' -and $continue -ne 'Y') {
 
 # A/B 테스트 실행
 Write-Host ""
-Write-Host "🚀 Starting A/B Test..." -ForegroundColor Green
+Write-Host "[DEPLOY] Starting A/B Test..." -ForegroundColor Green
 Write-Host ""
 
 Set-Location $MonitorDir
@@ -76,7 +76,7 @@ result = tester.run_ab_test(
     task_goal='$TaskGoal'
 )
 
-print('\n✅ A/B Test completed!')
+print('\n[OK] A/B Test completed!')
 print(f'Results saved to: outputs/ab_test_*.json')
 "@
 
@@ -84,10 +84,10 @@ python -c $pythonScript
 
 Write-Host ""
 Write-Host "=" * 60 -ForegroundColor Green
-Write-Host "✅ A/B Test Completed" -ForegroundColor Green
+Write-Host "[OK] A/B Test Completed" -ForegroundColor Green
 Write-Host "=" * 60 -ForegroundColor Green
 Write-Host ""
-Write-Host "📊 결과 확인:" -ForegroundColor Cyan
+Write-Host "[METRICS] 결과 확인:" -ForegroundColor Cyan
 Write-Host "  - JSON: $RepoRoot\outputs\ab_test_*.json" -ForegroundColor Gray
 Write-Host "  - 대시보드: http://localhost:5000 (실행 중이면)" -ForegroundColor Gray
 Write-Host ""

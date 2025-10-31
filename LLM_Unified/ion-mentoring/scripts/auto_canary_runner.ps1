@@ -46,12 +46,12 @@ function Send-SlackNotification([string]$msg, [string]$emoji = ":information_sou
     try {
         # 이모지 매핑
         $emojiMap = @{
-            ":rocket:"             = "🚀"
-            ":white_check_mark:"   = "✅"
-            ":x:"                  = "❌"
+            ":rocket:"             = "[DEPLOY]"
+            ":white_check_mark:"   = "[OK]"
+            ":x:"                  = "[ERROR]"
             ":checkered_flag:"     = "🏁"
             ":information_source:" = "ℹ️"
-            ":warning:"            = "⚠️"
+            ":warning:"            = "[WARN]"
         }
         
         $displayEmoji = if ($emojiMap.ContainsKey($emoji)) { $emojiMap[$emoji] } else { "" }
@@ -160,7 +160,7 @@ try {
         "50-monitoring" {
             if (-not $endTime -or $now -ge $endTime) {
                 Log "50% monitoring gate passed; executing steps #11-15"
-                Send-SlackNotification "🚀 Canary Runner: 50% → 100% 배포 시작" ":rocket:"
+                Send-SlackNotification "[DEPLOY] Canary Runner: 50% → 100% 배포 시작" ":rocket:"
                 try { Invoke-LogScan "1h"; Log "Log scan (1h) done" } catch { Log "Log scan failed: $_" "WARN" }
                 try { Invoke-LightLoadTest; Log "Light load test + summarize done" } catch { Log "Load test failed: $_" "WARN" }
                 # Optional: generate brief summary marker
@@ -176,7 +176,7 @@ try {
                 $state.monitor_end = (Get-Date).AddHours(2).ToString("o")
                 Save-State $state
                 Log "Entered 100-monitoring; end $($state.monitor_end)"
-                Send-SlackNotification "✅ Canary 100% 배포 완료. 2시간 모니터링 시작 → $(Get-Date -Date $state.monitor_end -Format 'HH:mm') 종료 예정" ":white_check_mark:"
+                Send-SlackNotification "[OK] Canary 100% 배포 완료. 2시간 모니터링 시작 → $(Get-Date -Date $state.monitor_end -Format 'HH:mm') 종료 예정" ":white_check_mark:"
             }
             else {
                 $mins = [math]::Ceiling(($endTime - $now).TotalMinutes)
@@ -192,7 +192,7 @@ try {
                 $state.completed_at = (Get-Date).ToString("o")
                 Save-State $state
                 Log "All stages completed"
-                Send-SlackNotification "🎉 Canary 배포 전체 완료! Phase 4 종료 시각: $(Get-Date -Format 'HH:mm')" ":tada:"
+                Send-SlackNotification "[SUCCESS] Canary 배포 전체 완료! Phase 4 종료 시각: $(Get-Date -Format 'HH:mm')" ":tada:"
             }
             else {
                 $mins = [math]::Ceiling(($endTime - $now).TotalMinutes)

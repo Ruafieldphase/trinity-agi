@@ -71,7 +71,7 @@ function Test-SlackToken {
     
     # xoxb- 또는 xoxp-로 시작하는지 확인
     if ($Token -notmatch '^xox[bp]-') {
-        Write-ColorOutput "⚠️  경고: Slack Token은 'xoxb-' 또는 'xoxp-'로 시작해야 합니다." "Yellow"
+        Write-ColorOutput "[WARN]  경고: Slack Token은 'xoxb-' 또는 'xoxp-'로 시작해야 합니다." "Yellow"
         return $false
     }
     
@@ -87,7 +87,7 @@ function Test-SlackChannel {
     
     # #으로 시작하는지 확인
     if ($Channel -notmatch '^#') {
-        Write-ColorOutput "⚠️  경고: Slack 채널은 '#'으로 시작해야 합니다 (예: #deployments)." "Yellow"
+        Write-ColorOutput "[WARN]  경고: Slack 채널은 '#'으로 시작해야 합니다 (예: #deployments)." "Yellow"
         return $false
     }
     
@@ -112,27 +112,27 @@ if ($Verify) {
     if ($currentToken) {
         $maskedToken = $currentToken.Substring(0, [Math]::Min(10, $currentToken.Length)) + "..." + 
         $currentToken.Substring([Math]::Max(0, $currentToken.Length - 4))
-        Write-ColorOutput "  ✅ SLACK_BOT_TOKEN: $maskedToken" "Green"
+        Write-ColorOutput "  [OK] SLACK_BOT_TOKEN: $maskedToken" "Green"
     }
     else {
-        Write-ColorOutput "  ❌ SLACK_BOT_TOKEN: (설정되지 않음)" "Red"
+        Write-ColorOutput "  [ERROR] SLACK_BOT_TOKEN: (설정되지 않음)" "Red"
     }
     
     if ($currentChannel) {
-        Write-ColorOutput "  ✅ SLACK_ALERT_CHANNEL: $currentChannel" "Green"
+        Write-ColorOutput "  [OK] SLACK_ALERT_CHANNEL: $currentChannel" "Green"
     }
     else {
-        Write-ColorOutput "  ⚠️  SLACK_ALERT_CHANNEL: (설정되지 않음)" "Yellow"
+        Write-ColorOutput "  [WARN]  SLACK_ALERT_CHANNEL: (설정되지 않음)" "Yellow"
         Write-ColorOutput "     → 배포 알림을 받으려면 이 값을 설정하세요." "Gray"
     }
     
     Write-Host ""
     
     if ($currentToken) {
-        Write-ColorOutput "✅ Slack 환경 변수가 설정되어 있습니다!" "Green"
+        Write-ColorOutput "[OK] Slack 환경 변수가 설정되어 있습니다!" "Green"
     }
     else {
-        Write-ColorOutput "❌ SLACK_BOT_TOKEN이 설정되지 않았습니다." "Red"
+        Write-ColorOutput "[ERROR] SLACK_BOT_TOKEN이 설정되지 않았습니다." "Red"
         Write-ColorOutput "   실행하세요: .\setup_slack_env.ps1" "Yellow"
     }
     
@@ -189,7 +189,7 @@ if (-not $BotToken) {
 
 # Bot Token 검증
 if (-not (Test-SlackToken $BotToken)) {
-    Write-ColorOutput "❌ 유효하지 않은 Slack Bot Token입니다." "Red"
+    Write-ColorOutput "[ERROR] 유효하지 않은 Slack Bot Token입니다." "Red"
     exit 1
 }
 
@@ -224,29 +224,29 @@ Write-ColorOutput "💾 환경 변수 저장 중..." "Cyan"
 try {
     # Bot Token 저장
     Set-EnvironmentVariableUser "SLACK_BOT_TOKEN" $BotToken
-    Write-ColorOutput "  ✅ SLACK_BOT_TOKEN 저장 완료" "Green"
+    Write-ColorOutput "  [OK] SLACK_BOT_TOKEN 저장 완료" "Green"
     
     # Alert Channel 저장 (값이 있을 때만)
     if (-not [string]::IsNullOrWhiteSpace($AlertChannel)) {
         if (Test-SlackChannel $AlertChannel) {
             Set-EnvironmentVariableUser "SLACK_ALERT_CHANNEL" $AlertChannel
-            Write-ColorOutput "  ✅ SLACK_ALERT_CHANNEL 저장 완료: $AlertChannel" "Green"
+            Write-ColorOutput "  [OK] SLACK_ALERT_CHANNEL 저장 완료: $AlertChannel" "Green"
         }
         else {
-            Write-ColorOutput "  ⚠️  SLACK_ALERT_CHANNEL 형식이 올바르지 않아 건너뜁니다." "Yellow"
+            Write-ColorOutput "  [WARN]  SLACK_ALERT_CHANNEL 형식이 올바르지 않아 건너뜁니다." "Yellow"
         }
     }
     else {
-        Write-ColorOutput "  ⚠️  SLACK_ALERT_CHANNEL 건너뜀 (배포 알림 비활성화)" "Yellow"
+        Write-ColorOutput "  [WARN]  SLACK_ALERT_CHANNEL 건너뜀 (배포 알림 비활성화)" "Yellow"
     }
     
     Write-Host ""
     Write-ColorOutput "╔════════════════════════════════════════════════════════════╗" "Green"
-    Write-ColorOutput "║  ✅ Slack 환경 변수 설정 완료!                            ║" "Green"
+    Write-ColorOutput "║  [OK] Slack 환경 변수 설정 완료!                            ║" "Green"
     Write-ColorOutput "╚════════════════════════════════════════════════════════════╝" "Green"
     Write-Host ""
     
-    Write-ColorOutput "📝 다음 단계:" "Cyan"
+    Write-ColorOutput "[LOG] 다음 단계:" "Cyan"
     Write-Host ""
     Write-Host "  1. PowerShell 재시작 (또는 새 터미널 열기)"
     Write-Host "  2. 환경 변수 확인:"
@@ -264,12 +264,12 @@ try {
         Write-Host ""
     }
     
-    Write-ColorOutput "💡 팁: 설정 확인하려면 실행하세요:" "Yellow"
+    Write-ColorOutput "[INFO] 팁: 설정 확인하려면 실행하세요:" "Yellow"
     Write-Host "   .\setup_slack_env.ps1 -Verify"
     Write-Host ""
     
 }
 catch {
-    Write-ColorOutput "❌ 환경 변수 설정 실패: $_" "Red"
+    Write-ColorOutput "[ERROR] 환경 변수 설정 실패: $_" "Red"
     exit 1
 }

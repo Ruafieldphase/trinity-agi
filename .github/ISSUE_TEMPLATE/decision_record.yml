@@ -1,0 +1,60 @@
+name: Decision Record
+description: Record a design/product decision with evidence and actions
+title: "[Decision] <짧은 제목>"
+labels:
+  - decision
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        내부 시스템(SSOT)에 장문/원문/세부 근거를 보관하고, 이 이슈에는 결정 요약과 링크만 남겨 주세요.
+        자세한 정책: docs/COPILOT_CHAT_STORAGE_POLICY.md
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary (3~5줄)
+      description: 결정의 배경과 목적을 3~5줄로 적어 주세요.
+      placeholder: 배경/문제/목표 요약...
+    validations:
+      required: true
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision (핵심 1문장 + 근거 1~2)
+      description: 한 문장으로 핵심 결정을 쓰고, 내부 근거 링크 1~2개를 첨부하세요.
+      placeholder: "결정: ...\n- 근거: (내부 링크)\n- 근거: (내부 링크)"
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence (links)
+      description: 내부 리포트/대시보드/로그 링크 목록을 넣어 주세요.
+      placeholder: "- [리포트] https://...\n- [대시보드] https://...\n- [로그] ..."
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: 코드/릴리즈/운영/성능에 미치는 영향 요약.
+      placeholder: 영향 요약...
+    validations:
+      required: false
+  - type: checkboxes
+    id: actions
+    attributes:
+      label: Action Items
+      description: 실행 항목을 선택/추가하세요.
+      options:
+        - label: 담당자/마감일 지정 완료 (@owner, YYYY-MM-DD)
+        - label: 관련 PR/작업 이슈 생성 완료
+  - type: textarea
+    id: related
+    attributes:
+      label: Related
+      description: 관련 이슈/PR/문서 링크.
+      placeholder: "- #123\n- https://..."
+    validations:
+      required: false

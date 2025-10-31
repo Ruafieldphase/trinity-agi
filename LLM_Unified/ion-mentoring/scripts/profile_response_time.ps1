@@ -47,7 +47,7 @@ $Results = @{
     Summary = @{}
 }
 
-Write-Host "📊 설정" -ForegroundColor Yellow
+Write-Host "[METRICS] 설정" -ForegroundColor Yellow
 Write-Host "  서비스: $ServiceUrl" -ForegroundColor Gray
 Write-Host "  반복: $Iterations 회" -ForegroundColor Gray
 Write-Host ""
@@ -58,7 +58,7 @@ $endpoints = @{
     Chat = "$ServiceUrl/chat"
 }
 
-Write-Host "🔍 프로파일링 시작..." -ForegroundColor Yellow
+Write-Host "[SEARCH] 프로파일링 시작..." -ForegroundColor Yellow
 Write-Host ""
 
 # 각 엔드포인트에 대해 측정
@@ -147,7 +147,7 @@ foreach ($endpointName in $endpoints.Keys) {
         $endpointResults.Statistics = $stats
         
         Write-Host ""
-        Write-Host "  📊 통계" -ForegroundColor Yellow
+        Write-Host "  [METRICS] 통계" -ForegroundColor Yellow
         Write-Host "    최소: $($stats.Min)ms" -ForegroundColor Gray
         Write-Host "    최대: $($stats.Max)ms" -ForegroundColor Gray
         Write-Host "    평균: $($stats.Avg)ms" -ForegroundColor $(if($stats.Avg -lt 100){"Green"}elseif($stats.Avg -lt 500){"Yellow"}else{"Red"})
@@ -163,7 +163,7 @@ foreach ($endpointName in $endpoints.Keys) {
 
 # 전체 요약
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "📊 전체 요약" -ForegroundColor Cyan
+Write-Host "[METRICS] 전체 요약" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
 
@@ -195,7 +195,7 @@ foreach ($measurement in $Results.Measurements) {
 
 # 권장사항
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "💡 최적화 권장사항" -ForegroundColor Yellow
+Write-Host "[INFO] 최적화 권장사항" -ForegroundColor Yellow
 Write-Host ""
 
 $healthStats = ($Results.Measurements | Where-Object { $_.Name -eq "Health" }).Statistics
@@ -253,5 +253,5 @@ if ($OutputJson) {
 }
 
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "✅ 프로파일링 완료!" -ForegroundColor Green
+Write-Host "[OK] 프로파일링 완료!" -ForegroundColor Green
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan

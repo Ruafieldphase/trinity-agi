@@ -51,9 +51,12 @@ def load_ledger(ledger_path: Path, hours: int = 24) -> List[Dict[str, Any]]:
                 event = json.loads(line)
                 # Use 'ts' field (Unix timestamp)
                 event_ts = event.get('ts', 0)
+                # Convert to float if it's a string
+                if isinstance(event_ts, str):
+                    event_ts = float(event_ts)
                 if event_ts >= cutoff_timestamp:
                     events.append(event)
-            except (json.JSONDecodeError, ValueError):
+            except (json.JSONDecodeError, ValueError, TypeError):
                 continue
     
     print(f"[Monitor] Loaded {len(events)} events from last {hours}h")

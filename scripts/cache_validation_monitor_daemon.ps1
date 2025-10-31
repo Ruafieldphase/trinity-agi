@@ -7,6 +7,15 @@
     NO ADMIN REQUIRED - Pure PowerShell background job.
 #>
 
+# UTF-8 console bootstrap
+try { chcp 65001 > $null 2> $null } catch {}
+try {
+    [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)
+    [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+    $OutputEncoding = New-Object System.Text.UTF8Encoding($false)
+}
+catch {}
+
 $ErrorActionPreference = "Continue"
 $RepoRoot = "C:\workspace\agi"
 $LogFile = "$RepoRoot\outputs\cache_validation_monitor.log"
@@ -88,24 +97,24 @@ function Should-ExecuteValidation {
 function Execute-Validation {
     param([string]$Checkpoint, [int]$Hours)
     
-    Write-Log "?? Executing $Checkpoint validation..." "INFO"
+    Write-Log ">> Executing $Checkpoint validation..." "INFO"
     
     try {
         $output = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $ValidationScript -Hours $Hours -SendNotification 2>&1
         
-        Write-Log "??$Checkpoint validation completed" "INFO"
+        Write-Log "** $Checkpoint validation completed" "INFO"
         Write-Log "Output: $output" "INFO"
         
         return $true
     }
     catch {
-        Write-Log "??$Checkpoint validation failed: $_" "ERROR"
+        Write-Log "Validation failed for ${Checkpoint}: $_" "ERROR"
         return $false
     }
 }
 
 # Main daemon loop
-Write-Log "?¤– Cache Validation Monitor Daemon Started" "INFO"
+Write-Log ">> Cache Validation Monitor Daemon Started" "INFO"
 Write-Log "   PID: $PID" "INFO"
 Write-Log "   Check interval: 5 minutes" "INFO"
 
@@ -118,7 +127,7 @@ while ($true) {
         $schedule = Load-Schedule
         
         if (-not $schedule) {
-            Write-Log "? ï¸  No schedule found, waiting..." "WARN"
+            Write-Log "-- No schedule found, waiting..." "WARN"
             Start-Sleep -Seconds $checkInterval
             continue
         }
@@ -129,7 +138,7 @@ while ($true) {
         
         # Check 12h validation
         if (Should-ExecuteValidation -ScheduledTime $schedule.Check12h -AlreadyExecuted $state.executed_12h) {
-            Write-Log "??12h checkpoint reached!" "INFO"
+            Write-Log ">> 12h checkpoint reached" "INFO"
             if (Execute-Validation -Checkpoint "12h" -Hours 12) {
                 $state.executed_12h = $true
                 Save-State $state
@@ -138,7 +147,7 @@ while ($true) {
         
         # Check 24h validation
         if (Should-ExecuteValidation -ScheduledTime $schedule.Check24h -AlreadyExecuted $state.executed_24h) {
-            Write-Log "??24h checkpoint reached!" "INFO"
+            Write-Log ">> 24h checkpoint reached" "INFO"
             if (Execute-Validation -Checkpoint "24h" -Hours 24) {
                 $state.executed_24h = $true
                 Save-State $state
@@ -147,13 +156,13 @@ while ($true) {
         
         # Check 7d validation
         if (Should-ExecuteValidation -ScheduledTime $schedule.Check7d -AlreadyExecuted $state.executed_7d) {
-            Write-Log "??7d checkpoint reached!" "INFO"
+            Write-Log ">> 7d checkpoint reached" "INFO"
             if (Execute-Validation -Checkpoint "7d" -Hours 168) {
                 $state.executed_7d = $true
                 Save-State $state
                 
                 # All validations complete, daemon can stop
-                Write-Log "??All validations complete! Daemon stopping." "INFO"
+                Write-Log "** All validations complete. Daemon stopping." "INFO"
                 break
             }
         }
@@ -163,7 +172,7 @@ while ($true) {
         
         # Log heartbeat every 12 checks (1 hour)
         if ($loopCount % 12 -eq 0) {
-            Write-Log "?’“ Heartbeat #$loopCount - Next check in 5 minutes" "INFO"
+            Write-Log ">> Heartbeat #$loopCount - Next check in 5 minutes" "INFO"
             Write-Log "   Status: 12h=$($state.executed_12h) | 24h=$($state.executed_24h) | 7d=$($state.executed_7d)" "INFO"
         }
         
@@ -172,9 +181,9 @@ while ($true) {
         
     }
     catch {
-        Write-Log "??Error in monitor loop: $_" "ERROR"
+        Write-Log "Error in monitor loop: $_" "ERROR"
         Start-Sleep -Seconds 60 # Wait 1 minute on error
     }
 }
 
-Write-Log "?›‘ Cache Validation Monitor Daemon Stopped" "INFO"
+Write-Log ">> Cache Validation Monitor Daemon Stopped" "INFO"

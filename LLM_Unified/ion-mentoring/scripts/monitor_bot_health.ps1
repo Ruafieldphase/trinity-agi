@@ -73,7 +73,7 @@ function Write-Log {
 function Send-SlackAlert {
     param(
         [string]$Message,
-        [string]$Emoji = "🚨"
+        [string]$Emoji = "[ALERT]"
     )
     
     if (-not $SendSlackAlert) {
@@ -127,27 +127,27 @@ function Test-BotHealth {
 }
 
 function Restart-Bot {
-    Write-Log "🔄 봇 재시작 중..." "WARN"
-    Send-SlackAlert "깃코 봇이 응답하지 않아 재시작합니다..." "⚠️"
+    Write-Log "[SYNC] 봇 재시작 중..." "WARN"
+    Send-SlackAlert "깃코 봇이 응답하지 않아 재시작합니다..." "[WARN]"
     
     try {
         & $START_SCRIPT -KillExisting
         Start-Sleep -Seconds 10
         
         if (Test-BotHealth) {
-            Write-Log "✅ 봇 재시작 성공" "SUCCESS"
-            Send-SlackAlert "깃코 봇이 정상적으로 재시작되었습니다." "✅"
+            Write-Log "[OK] 봇 재시작 성공" "SUCCESS"
+            Send-SlackAlert "깃코 봇이 정상적으로 재시작되었습니다." "[OK]"
             return $true
         }
         else {
-            Write-Log "❌ 봇 재시작 실패 - 헬스 체크 실패" "ERROR"
-            Send-SlackAlert "깃코 봇 재시작 후에도 응답이 없습니다!" "❌"
+            Write-Log "[ERROR] 봇 재시작 실패 - 헬스 체크 실패" "ERROR"
+            Send-SlackAlert "깃코 봇 재시작 후에도 응답이 없습니다!" "[ERROR]"
             return $false
         }
     }
     catch {
-        Write-Log "❌ 봇 재시작 중 오류: $($_.Exception.Message)" "ERROR"
-        Send-SlackAlert "깃코 봇 재시작 실패: $($_.Exception.Message)" "❌"
+        Write-Log "[ERROR] 봇 재시작 중 오류: $($_.Exception.Message)" "ERROR"
+        Send-SlackAlert "깃코 봇 재시작 실패: $($_.Exception.Message)" "[ERROR]"
         return $false
     }
 }
@@ -162,7 +162,7 @@ Write-Host "║           깃코 봇 - 상태 모니터링 시작               
 Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
 Write-Host ""
 
-Write-Log "🔍 모니터링 시작" "INFO"
+Write-Log "[SEARCH] 모니터링 시작" "INFO"
 Write-Log "  • 체크 주기: $IntervalSeconds 초" "INFO"
 Write-Log "  • 최대 실패 허용: $MaxFailures 회" "INFO"
 Write-Log "  • Slack 알림: $(if($SendSlackAlert){'활성화'}else{'비활성화'})" "INFO"
@@ -198,27 +198,27 @@ try {
         # 헬스 체크
         if (Test-BotHealth) {
             if ($consecutiveFailures -gt 0) {
-                Write-Log "✅ 봇 복구됨 (이전 실패: $consecutiveFailures 회)" "SUCCESS"
+                Write-Log "[OK] 봇 복구됨 (이전 실패: $consecutiveFailures 회)" "SUCCESS"
                 $consecutiveFailures = 0
             }
             else {
-                Write-Log "✅ 봇 정상 (체크: $totalChecks, 실패: $totalFailures, 재시작: $totalRestarts)" "INFO"
+                Write-Log "[OK] 봇 정상 (체크: $totalChecks, 실패: $totalFailures, 재시작: $totalRestarts)" "INFO"
             }
         }
         else {
             $consecutiveFailures++
             $totalFailures++
-            Write-Log "❌ 헬스 체크 실패 ($consecutiveFailures/$MaxFailures)" "ERROR"
+            Write-Log "[ERROR] 헬스 체크 실패 ($consecutiveFailures/$MaxFailures)" "ERROR"
             
             if ($consecutiveFailures -ge $MaxFailures) {
-                Write-Log "🚨 최대 실패 횟수 도달 - 재시작 시도" "ERROR"
+                Write-Log "[ALERT] 최대 실패 횟수 도달 - 재시작 시도" "ERROR"
                 
                 if (Restart-Bot) {
                     $consecutiveFailures = 0
                     $totalRestarts++
                 }
                 else {
-                    Write-Log "⚠️  재시작 실패 - 다음 체크에서 재시도" "WARN"
+                    Write-Log "[WARN]  재시작 실패 - 다음 체크에서 재시도" "WARN"
                 }
             }
         }
@@ -234,7 +234,7 @@ catch {
     }
 }
 finally {
-    Write-Log "📊 모니터링 종료 통계" "INFO"
+    Write-Log "[METRICS] 모니터링 종료 통계" "INFO"
     Write-Log "  • 총 체크: $totalChecks 회" "INFO"
     Write-Log "  • 총 실패: $totalFailures 회" "INFO"
     Write-Log "  • 총 재시작: $totalRestarts 회" "INFO"

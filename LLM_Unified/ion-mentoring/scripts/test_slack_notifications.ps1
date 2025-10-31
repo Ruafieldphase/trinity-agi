@@ -51,11 +51,11 @@ function Write-ColorOutput {
 # Slack 모듈 로드
 $SlackModulePath = Join-Path $PSScriptRoot "SlackNotifications.ps1"
 if (-not (Test-Path $SlackModulePath)) {
-    Write-ColorOutput "❌ Slack 알림 모듈을 찾을 수 없습니다: $SlackModulePath" "Red"
+    Write-ColorOutput "[ERROR] Slack 알림 모듈을 찾을 수 없습니다: $SlackModulePath" "Red"
     exit 1
 }
 
-Write-ColorOutput "📦 Slack 알림 모듈 로딩..." "Cyan"
+Write-ColorOutput "[PACKAGE] Slack 알림 모듈 로딩..." "Cyan"
 . $SlackModulePath
 
 # 대시보드 스크립트 경로
@@ -69,11 +69,11 @@ Write-ColorOutput "╚═══════════════════�
 Write-Host ""
 
 # 환경 변수 확인
-Write-ColorOutput "🔍 환경 변수 확인 중..." "Cyan"
+Write-ColorOutput "[SEARCH] 환경 변수 확인 중..." "Cyan"
 $slackConfig = Get-SlackConfig
 
 if (-not $slackConfig.Token) {
-    Write-ColorOutput "❌ SLACK_BOT_TOKEN이 설정되지 않았습니다." "Red"
+    Write-ColorOutput "[ERROR] SLACK_BOT_TOKEN이 설정되지 않았습니다." "Red"
     Write-Host ""
     Write-Host "실행하세요:"
     Write-Host "  .\setup_slack_env.ps1"
@@ -90,13 +90,13 @@ if (-not $slackConfig.Token) {
 # 비대화형 환경에서의 안전한 기본값 처리: 채널 미설정 시 프롬프트 대신 합리적 기본값 사용
 if (-not $slackConfig.Channel -and -not $Channel) {
     $Channel = if ($env:SLACK_FALLBACK_CHANNEL) { $env:SLACK_FALLBACK_CHANNEL } else { "#deployments" }
-    Write-ColorOutput "⚠️  SLACK_ALERT_CHANNEL이 설정되지 않아 기본 채널을 사용합니다: $Channel" "Yellow"
+    Write-ColorOutput "[WARN]  SLACK_ALERT_CHANNEL이 설정되지 않아 기본 채널을 사용합니다: $Channel" "Yellow"
 }
 
 $targetChannel = if ($Channel) { $Channel } else { $slackConfig.Channel }
 
-Write-ColorOutput "  ✅ Bot Token: $(($slackConfig.Token).Substring(0, 10))..." "Green"
-Write-ColorOutput "  ✅ 대상 채널: $targetChannel" "Green"
+Write-ColorOutput "  [OK] Bot Token: $(($slackConfig.Token).Substring(0, 10))..." "Green"
+Write-ColorOutput "  [OK] 대상 채널: $targetChannel" "Green"
 Write-Host ""
 
 # 테스트 카운터
@@ -116,12 +116,12 @@ function Test-Notification {
     try {
         & $TestBlock
         $script:successCount++
-        Write-ColorOutput "  ✅ 성공" "Green"
+        Write-ColorOutput "  [OK] 성공" "Green"
         Start-Sleep -Seconds 2
     }
     catch {
         $script:failCount++
-        Write-ColorOutput "  ❌ 실패: $_" "Red"
+        Write-ColorOutput "  [ERROR] 실패: $_" "Red"
     }
     
     Write-Host ""
@@ -129,7 +129,7 @@ function Test-Notification {
 
 # 테스트 시작
 $startTime = Get-Date
-Write-ColorOutput "🚀 테스트 시작: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" "Yellow"
+Write-ColorOutput "[DEPLOY] 테스트 시작: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" "Yellow"
 Write-Host ""
 
 # 1. 배포 알림 테스트
@@ -168,7 +168,7 @@ if ($TestType -eq "all" -or $TestType -eq "dashboard") {
     Write-Host ""
     
     if (-not (Test-Path $DashboardScriptPath)) {
-        Write-ColorOutput "⚠️  대시보드 스크립트를 찾을 수 없습니다: $DashboardScriptPath" "Yellow"
+        Write-ColorOutput "[WARN]  대시보드 스크립트를 찾을 수 없습니다: $DashboardScriptPath" "Yellow"
     }
     else {
         Test-Notification "대시보드 - 배포 중 (25%)" {
@@ -290,14 +290,14 @@ Write-ColorOutput "소요 시간: $([Math]::Round($duration.TotalSeconds, 1))초
 Write-Host ""
 
 if ($script:failCount -eq 0) {
-    Write-ColorOutput "✅ 모든 테스트가 성공했습니다!" "Green"
+    Write-ColorOutput "[OK] 모든 테스트가 성공했습니다!" "Green"
     Write-Host ""
     Write-Host "이제 Slack 채널 ($targetChannel)에서 테스트 메시지를 확인하세요."
     Write-Host ""
     exit 0
 }
 else {
-    Write-ColorOutput "⚠️  일부 테스트가 실패했습니다." "Yellow"
+    Write-ColorOutput "[WARN]  일부 테스트가 실패했습니다." "Yellow"
     Write-Host ""
     Write-Host "문제 해결:"
     Write-Host "  1. Slack Bot Token이 유효한지 확인"

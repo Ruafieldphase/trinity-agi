@@ -168,7 +168,7 @@ $dashboardJson = @"
 $dashboardFile = Join-Path $PSScriptRoot "..\outputs\monitoring_dashboard.json"
 $dashboardJson | Out-File -FilePath $dashboardFile -Encoding utf8 -Force
 
-Write-Host "✅ Dashboard JSON saved: $dashboardFile" -ForegroundColor Green
+Write-Host "[OK] Dashboard JSON saved: $dashboardFile" -ForegroundColor Green
 
 # ============================================================================
 # 2. Create Dashboard
@@ -181,23 +181,23 @@ if ($DryRun) {
     Write-Host "  Dashboard file: $dashboardFile" -ForegroundColor White
 }
 else {
-    Write-Host "`n📊 Creating Cloud Monitoring Dashboard..." -ForegroundColor Cyan
+    Write-Host "`n[METRICS] Creating Cloud Monitoring Dashboard..." -ForegroundColor Cyan
     
     try {
         $result = gcloud monitoring dashboards create --config-from-file=$dashboardFile --project=$ProjectId 2>&1
         
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "✅ Dashboard created successfully!" -ForegroundColor Green
+            Write-Host "[OK] Dashboard created successfully!" -ForegroundColor Green
             Write-Host "`n🔗 Dashboard URL:" -ForegroundColor Cyan
             Write-Host "   https://console.cloud.google.com/monitoring/dashboards?project=$ProjectId" -ForegroundColor White
         }
         else {
-            Write-Host "⚠️  Dashboard creation failed or already exists" -ForegroundColor Yellow
+            Write-Host "[WARN]  Dashboard creation failed or already exists" -ForegroundColor Yellow
             Write-Host "   $result" -ForegroundColor Gray
         }
     }
     catch {
-        Write-Host "❌ Error creating dashboard: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Error creating dashboard: $_" -ForegroundColor Red
     }
 }
 
@@ -276,7 +276,7 @@ $alertHighError = @"
 $alertFile2 = Join-Path $PSScriptRoot "..\outputs\alert_high_error.json"
 $alertHighError | Out-File -FilePath $alertFile2 -Encoding utf8 -Force
 
-Write-Host "✅ Alert policy JSONs saved:" -ForegroundColor Green
+Write-Host "[OK] Alert policy JSONs saved:" -ForegroundColor Green
 Write-Host "   - $alertFile1" -ForegroundColor White
 Write-Host "   - $alertFile2" -ForegroundColor White
 
@@ -294,28 +294,28 @@ else {
     try {
         $result1 = gcloud alpha monitoring policies create --policy-from-file=$alertFile1 --project=$ProjectId 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "✅ High Response Time alert created" -ForegroundColor Green
+            Write-Host "[OK] High Response Time alert created" -ForegroundColor Green
         }
         else {
-            Write-Host "⚠️  Alert creation failed or already exists: $result1" -ForegroundColor Yellow
+            Write-Host "[WARN]  Alert creation failed or already exists: $result1" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "❌ Error creating alert 1: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Error creating alert 1: $_" -ForegroundColor Red
     }
     
     # Alert 2
     try {
         $result2 = gcloud alpha monitoring policies create --policy-from-file=$alertFile2 --project=$ProjectId 2>&1
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "✅ High Error Rate alert created" -ForegroundColor Green
+            Write-Host "[OK] High Error Rate alert created" -ForegroundColor Green
         }
         else {
-            Write-Host "⚠️  Alert creation failed or already exists: $result2" -ForegroundColor Yellow
+            Write-Host "[WARN]  Alert creation failed or already exists: $result2" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "❌ Error creating alert 2: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Error creating alert 2: $_" -ForegroundColor Red
     }
 }
 
@@ -343,26 +343,26 @@ $cacheHitMetric = @"
 $metricFile = Join-Path $PSScriptRoot "..\outputs\metric_cache_hit.json"
 $cacheHitMetric | Out-File -FilePath $metricFile -Encoding utf8 -Force
 
-Write-Host "✅ Log-based metric JSON saved: $metricFile" -ForegroundColor Green
+Write-Host "[OK] Log-based metric JSON saved: $metricFile" -ForegroundColor Green
 
 if ($DryRun) {
     Write-Host "`n[DRY RUN] Would create log-based metric for cache hits" -ForegroundColor Yellow
 }
 else {
-    Write-Host "`n📈 Creating Log-based Metric..." -ForegroundColor Cyan
+    Write-Host "`n[STATS] Creating Log-based Metric..." -ForegroundColor Cyan
     
     try {
         $result = gcloud logging metrics create cache_hit_rate --project=$ProjectId --description="Rate of cache hits for Lumen Gateway" --log-filter="resource.type=\""cloud_run_revision\"" AND resource.labels.service_name=\""$ServiceName\"" AND textPayload=~\`"CACHE HIT\`"" 2>&1
         
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "✅ Cache hit rate metric created" -ForegroundColor Green
+            Write-Host "[OK] Cache hit rate metric created" -ForegroundColor Green
         }
         else {
-            Write-Host "⚠️  Metric creation failed or already exists: $result" -ForegroundColor Yellow
+            Write-Host "[WARN]  Metric creation failed or already exists: $result" -ForegroundColor Yellow
         }
     }
     catch {
-        Write-Host "❌ Error creating metric: $_" -ForegroundColor Red
+        Write-Host "[ERROR] Error creating metric: $_" -ForegroundColor Red
     }
 }
 
@@ -374,7 +374,7 @@ Write-Host "`n━━━━━━━━━━━━━━━━━━━━━━
 Write-Host "  Setup Complete!" -ForegroundColor Green
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`n" -ForegroundColor Cyan
 
-Write-Host "✅ Created Resources:" -ForegroundColor Green
+Write-Host "[OK] Created Resources:" -ForegroundColor Green
 Write-Host "   1. Cloud Monitoring Dashboard" -ForegroundColor White
 Write-Host "   2. Alert Policy - High Response Time (>5s)" -ForegroundColor White
 Write-Host "   3. Alert Policy - High Error Rate (>5%)" -ForegroundColor White
@@ -386,7 +386,7 @@ Write-Host "   Alerts: https://console.cloud.google.com/monitoring/alerting?proj
 Write-Host "   Metrics: https://console.cloud.google.com/logs/metrics?project=$ProjectId" -ForegroundColor White
 Write-Host "   Upstash: https://console.upstash.com/redis/careful-mustang-35050" -ForegroundColor White
 
-Write-Host "`n📊 Next Steps:" -ForegroundColor Yellow
+Write-Host "`n[METRICS] Next Steps:" -ForegroundColor Yellow
 Write-Host "   1. Check dashboard for initial metrics" -ForegroundColor White
 Write-Host "   2. Send test requests to populate data" -ForegroundColor White
 Write-Host "   3. Configure notification channels for alerts" -ForegroundColor White

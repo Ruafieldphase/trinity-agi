@@ -1,0 +1,88 @@
+{
+  "task_id": "028a4086-0a73-428f-964d-c4cc999c53ce",
+  "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+  "status": "completed",
+  "created_at": "2025-10-31T03:04:18.598555",
+  "video_analysis": {
+    "video_id": "kqtD5dpn9C8",
+    "title": "Python for Beginners - Learn Coding with Python in 1 Hour",
+    "keywords": [
+      "this",
+      "that",
+      "python",
+      "have",
+      "going",
+      "let's",
+      "here",
+      "string",
+      "print",
+      "type"
+    ],
+    "summary": "Video covers topics related to: this, that, python, have, going. Duration: ~133.0 minutes."
+  },
+  "execution_steps_count": 10,
+  "execution_results_count": 0,
+  "execution_steps": [
+    {
+      "action": "click",
+      "timestamp": 94.72,
+      "description": "see this package simply double click it",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 110.96,
+      "description": "simply click on continue",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 143.28,
+      "description": "click on download",
+      "params": {}
+    },
+    {
+      "action": "open",
+      "timestamp": 151.28,
+      "description": "community edition which is free and open",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 161.36,
+      "description": "have this package let's double click it",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 167.12,
+      "description": "an installation wizard so simply click",
+      "params": {}
+    },
+    {
+      "action": "drag",
+      "timestamp": 173.519,
+      "description": "drag this pycharm and drop it onto the",
+      "params": {}
+    },
+    {
+      "action": "open",
+      "timestamp": 181.04,
+      "description": "let's open it",
+      "params": {}
+    },
+    {
+      "action": "open",
+      "timestamp": 182.879,
+      "description": "the first time you open pycharm you have",
+      "params": {}
+    },
+    {
+      "action": "click",
+      "timestamp": 189.76,
+      "description": "we're going to click on skip remaining",
+      "params": {}
+    }
+  ],
+  "execution_results": []
+}

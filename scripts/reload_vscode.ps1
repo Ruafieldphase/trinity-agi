@@ -22,7 +22,7 @@ function Send-Reload {
 }
 
 if (-not (Try-Activate @('Visual Studio Code', 'VS Code', 'Code'))) {
-    Write-Host '❌ VS Code window not found/activated.' -ForegroundColor Red
+    Write-Host '[ERROR] VS Code window not found/activated.' -ForegroundColor Red
     exit 1
 }
 
@@ -37,6 +37,6 @@ try {
     Write-Host "Reload command sent (one of the variants)." -ForegroundColor Green
 }
 catch {
-    Write-Host "❌ Failed to send reload command: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to send reload command: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }

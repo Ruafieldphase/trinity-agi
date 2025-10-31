@@ -279,11 +279,11 @@ Write-Host "Sending to Slack..." -ForegroundColor Yellow
 $success = Send-SlackMessage $payload
 
 if ($success) {
-    Write-Host "✅ Message sent successfully!" -ForegroundColor Green
+    Write-Host "[OK] Message sent successfully!" -ForegroundColor Green
     Write-Host ""
     Write-Host "Check your Slack channel for the test message." -ForegroundColor Cyan
 }
 else {
-    Write-Host "❌ Failed to send message" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to send message" -ForegroundColor Red
     exit 1
 }

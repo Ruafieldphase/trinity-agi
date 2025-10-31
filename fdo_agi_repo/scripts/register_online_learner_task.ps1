@@ -57,7 +57,7 @@ $ScriptPath = Join-Path $RepoRoot "fdo_agi_repo\scripts\rune\binoche_online_lear
 $VenvPython = Join-Path $RepoRoot "fdo_agi_repo\.venv\Scripts\python.exe"
 
 if (-not (Test-Path $ScriptPath)) {
-    Write-Host "❌ Script not found: $ScriptPath" -ForegroundColor Red
+    Write-Host "[ERROR] Script not found: $ScriptPath" -ForegroundColor Red
     exit 1
 }
 
@@ -65,7 +65,7 @@ if (-not (Test-Path $ScriptPath)) {
 $ExistingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if ($Register) {
-    Write-Host "🔧 Registering Binoche Online Learner Scheduled Task..." -ForegroundColor Cyan
+    Write-Host "[CONFIG] Registering Binoche Online Learner Scheduled Task..." -ForegroundColor Cyan
     Write-Host "   Task Name: $TaskName"
     Write-Host "   Schedule: Daily at $Time"
     Write-Host "   Window: $WindowHours hours"
@@ -75,11 +75,11 @@ if ($Register) {
     # Determine Python executable
     if (Test-Path $VenvPython) {
         $PythonExe = $VenvPython
-        Write-Host "✅ Using venv Python: $PythonExe" -ForegroundColor Green
+        Write-Host "[OK] Using venv Python: $PythonExe" -ForegroundColor Green
     }
     else {
         $PythonExe = "python"
-        Write-Host "⚠️ Using system Python (venv not found)" -ForegroundColor Yellow
+        Write-Host "[WARN] Using system Python (venv not found)" -ForegroundColor Yellow
     }
 
     # Build command
@@ -110,7 +110,7 @@ if ($Register) {
 
     # Register task
     if ($ExistingTask) {
-        Write-Host "⚠️ Task already exists. Updating..." -ForegroundColor Yellow
+        Write-Host "[WARN] Task already exists. Updating..." -ForegroundColor Yellow
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     }
 
@@ -123,15 +123,15 @@ if ($Register) {
         -Description "Binoche Online Learner (Phase 6l) - Updates ensemble judge weights daily based on prediction accuracy."
 
     Write-Host ""
-    Write-Host "✅ Scheduled Task registered successfully!" -ForegroundColor Green
+    Write-Host "[OK] Scheduled Task registered successfully!" -ForegroundColor Green
     Write-Host ""
     Write-Host "📋 Task Details:" -ForegroundColor Cyan
     Write-Host "   Name: $($Task.TaskName)"
     Write-Host "   State: $($Task.State)"
     Write-Host "   Next Run: $(Get-ScheduledTaskInfo -TaskName $TaskName | Select-Object -ExpandProperty NextRunTime)"
     Write-Host ""
-    Write-Host "💡 To manually trigger: Run-ScheduledTask -TaskName '$TaskName'" -ForegroundColor Gray
-    Write-Host "💡 To view logs: Check fdo_agi_repo\outputs\online_learning_log.jsonl" -ForegroundColor Gray
+    Write-Host "[INFO] To manually trigger: Run-ScheduledTask -TaskName '$TaskName'" -ForegroundColor Gray
+    Write-Host "[INFO] To view logs: Check fdo_agi_repo\outputs\online_learning_log.jsonl" -ForegroundColor Gray
     Write-Host ""
 
 }
@@ -141,36 +141,36 @@ elseif ($Unregister) {
     Write-Host ""
 
     if (-not $ExistingTask) {
-        Write-Host "⚠️ Task '$TaskName' not found." -ForegroundColor Yellow
+        Write-Host "[WARN] Task '$TaskName' not found." -ForegroundColor Yellow
         exit 0
     }
 
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
-    Write-Host "✅ Task unregistered successfully!" -ForegroundColor Green
+    Write-Host "[OK] Task unregistered successfully!" -ForegroundColor Green
     Write-Host ""
 
 }
 else {
     # Show status
-    Write-Host "📊 Binoche Online Learner Scheduled Task Status" -ForegroundColor Cyan
+    Write-Host "[METRICS] Binoche Online Learner Scheduled Task Status" -ForegroundColor Cyan
     Write-Host "================================================" -ForegroundColor Cyan
     Write-Host ""
 
     if ($ExistingTask) {
         $TaskInfo = Get-ScheduledTaskInfo -TaskName $TaskName
-        Write-Host "✅ Task is registered" -ForegroundColor Green
+        Write-Host "[OK] Task is registered" -ForegroundColor Green
         Write-Host "   Name: $($ExistingTask.TaskName)"
         Write-Host "   State: $($ExistingTask.State)"
         Write-Host "   Next Run: $($TaskInfo.NextRunTime)"
         Write-Host "   Last Run: $($TaskInfo.LastRunTime)"
         Write-Host "   Last Result: $($TaskInfo.LastTaskResult)"
         Write-Host ""
-        Write-Host "💡 To unregister: .\register_online_learner_task.ps1 -Unregister" -ForegroundColor Gray
+        Write-Host "[INFO] To unregister: .\register_online_learner_task.ps1 -Unregister" -ForegroundColor Gray
     }
     else {
-        Write-Host "❌ Task is not registered" -ForegroundColor Red
+        Write-Host "[ERROR] Task is not registered" -ForegroundColor Red
         Write-Host ""
-        Write-Host "💡 To register: .\register_online_learner_task.ps1 -Register" -ForegroundColor Gray
+        Write-Host "[INFO] To register: .\register_online_learner_task.ps1 -Register" -ForegroundColor Gray
     }
     Write-Host ""
 }

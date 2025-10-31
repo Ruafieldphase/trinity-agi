@@ -6,6 +6,7 @@ import time
 
 from .contracts import EvalReport, RUNEReport, TaskSpec, PersonaOutput
 from .memory_bus import append_ledger
+from .event_emitter import emit_event, emit_task_lifecycle
 from .evidence_cache import get_evidence_cache
 
 try:
@@ -181,6 +182,21 @@ def evidence_gate_correction(task: TaskSpec, outs: List[PersonaOutput], registry
         except Exception:
             cache_stats = {}
 
+        # Real-time event emission
+        emit_event("evidence_correction", {
+            "pass": used_pass,
+            "cache_hit": bool(cache_hit),
+            "rag_latency_ms": float(rag1_latency_ms),
+            "rag2_latency_ms": float(rag2_latency_ms),
+            "added": int(added),
+            "total_citations": int(after_cnt),
+            "min_relevance": float(min_rel),
+            "top_k": int(top_k),
+            "used_synthetic": bool(used_synthetic),
+            "cache": cache_stats,
+        }, task_id=task.task_id)
+
+        # Legacy ledger (keep for backward compatibility)
         append_ledger({
             "event": "evidence_correction",
             "task_id": task.task_id,
@@ -200,6 +216,10 @@ def evidence_gate_correction(task: TaskSpec, outs: List[PersonaOutput], registry
 
     except Exception as e:
         # 실패 시에도 파이프라인이 계속 돌도록 보수적으로 동작
+        emit_event("evidence_correction_error", {
+            "error": str(e)
+        }, task_id=getattr(task, "task_id", "unknown"))
+        
         append_ledger({
             "event": "evidence_correction_error",
             "task_id": getattr(task, "task_id", "unknown"),

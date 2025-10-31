@@ -94,6 +94,7 @@ def EVAL(outputs: List[PersonaOutput]) -> EvalReport:
 
 def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     task = TaskSpec(**spec)
+    t_start = time.perf_counter()  # Start duration tracking
     
     # BQI 좌표 생성 (Phase 1)
     bqi_coord = analyse_question(task.goal)
@@ -136,6 +137,17 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         "corrections": {"enabled": bool(corr_cfg.get("enabled", True)), "max_passes": int(corr_cfg.get("max_passes", 2))},
         "bqi_coord": bqi_coord.to_dict(),
     })
+    # Autopoietic Loop: Folding starts with Thesis phase (context folding)
+    try:
+        append_ledger({
+            "event": "autopoietic_phase",
+            "task_id": task.task_id,
+            "phase": "folding",
+            "stage": "start",
+            "context_count": int(len(relevant_context) if relevant_context else 0)
+        })
+    except Exception:
+        pass
 
     registry = ToolRegistry(tool_cfg)
     # Phase 3: BQI 좌표를 Registry에 설정 (RAG 호출 시 자동 전달)
@@ -188,12 +200,35 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         "duration_sec": float(t1 - t0),
         "citations": len(out_thesis.citations)
     })
+    # Autopoietic Loop: Folding end (after Thesis)
+    try:
+        append_ledger({
+            "event": "autopoietic_phase",
+            "task_id": task.task_id,
+            "phase": "folding",
+            "stage": "end",
+            "duration_sec": float(t1 - t0),
+            "citations": len(out_thesis.citations)
+        })
+    except Exception:
+        pass
 
     append_ledger({"event": "antithesis_start", "task_id": task.task_id})
     t2 = time.perf_counter()
     out_anti   = run_antithesis(task, out_thesis, registry, conversation_context=context_prompt or "")
     t3 = time.perf_counter()
     append_ledger({"event": "antithesis_end", "task_id": task.task_id, "duration_sec": float(t3 - t2)})
+    # Autopoietic Loop: Unfolding end (after Antithesis)
+    try:
+        append_ledger({
+            "event": "autopoietic_phase",
+            "task_id": task.task_id,
+            "phase": "unfolding",
+            "stage": "end",
+            "duration_sec": float(t3 - t2)
+        })
+    except Exception:
+        pass
 
     append_ledger({"event": "synthesis_start", "task_id": task.task_id})
     t4 = time.perf_counter()
@@ -205,6 +240,18 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         "duration_sec": float(t5 - t4),
         "citations": len(out_synth.citations)
     })
+    # Autopoietic Loop: Integration end (after Synthesis)
+    try:
+        append_ledger({
+            "event": "autopoietic_phase",
+            "task_id": task.task_id,
+            "phase": "integration",
+            "stage": "end",
+            "duration_sec": float(t5 - t4),
+            "citations": len(out_synth.citations)
+        })
+    except Exception:
+        pass
 
     eval_report = EVAL([out_thesis, out_anti, out_synth])
     rune = rune_from_eval(eval_report)
@@ -218,7 +265,59 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     })
     append_ledger({"event": "rune", "task_id": task.task_id, "rune": rune.model_dump()})
 
-    # Phase 6g-6j: Binoche Ensemble (BQI + Quality multi-model decision)
+    # Prepare Symmetry phase bookkeeping
+    evidence_gate_triggered = False
+    second_pass_executed = False
+    _sym_start = time.perf_counter()
+    try:
+        append_ledger({
+            "event": "autopoietic_phase",
+            "task_id": task.task_id,
+            "phase": "symmetry",
+            "stage": "start"
+        })
+    except Exception:
+        pass
+
+    # Phase 6b: Enhanced Binoche Decision Engine (Parallel A/B Test)
+    from .pipeline_binoche_adapter import enhanced_binoche_decision
+    
+    enhanced_decision = enhanced_binoche_decision(
+        task_goal=task.goal,
+        eval_report=eval_report.model_dump(),
+        bqi_coord=bqi_coord.to_dict(),
+        meta_confidence=float(thesis_eval.get("confidence") or 0.0)
+    )
+    
+    append_ledger({
+        "event": "binoche_enhanced_decision",
+        "task_id": task.task_id,
+        "enhanced_action": enhanced_decision["action"],
+        "enhanced_confidence": enhanced_decision["confidence"],
+        "enhanced_rule": enhanced_decision["rule_applied"],
+        "enhanced_reason": enhanced_decision["reason"],
+        "enhanced_pattern": enhanced_decision["bqi_pattern"]
+    })
+
+    # Meta-Cognition: warn on low confidence or ask_user action (Enhanced)
+    try:
+        if enhanced_decision["action"] == "ask_user" or float(enhanced_decision["confidence"]) < 0.6:
+            level = "warning" if float(enhanced_decision["confidence"]) >= 0.5 else "critical"
+            append_ledger({
+                "event": "meta_cognition_warning",
+                "task_id": task.task_id,
+                "source": "enhanced_binoche",
+                "level": level,
+                "action": enhanced_decision["action"],
+                "confidence": float(enhanced_decision["confidence"]),
+                "reason": enhanced_decision.get("reason"),
+                "rule": enhanced_decision.get("rule_applied"),
+                "bqi_pattern": enhanced_decision.get("bqi_pattern")
+            })
+    except Exception as mc_ex:
+        append_ledger({"event": "meta_cognition_warning_error", "task_id": task.task_id, "error": str(mc_ex)})
+
+    # Phase 6g-6j: Binoche Ensemble (BQI + Quality multi-model decision) - Legacy System
     from .binoche_recommender import get_binoche_recommendation
     from .binoche_config import should_auto_approve, should_auto_revise, get_pattern_threshold
     from .binoche_ensemble import get_ensemble_decision
@@ -272,6 +371,36 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         }
     })
     
+    # Phase 6k: A/B Comparison Logging
+    ab_comparison = {
+        "event": "binoche_ab_comparison",
+        "task_id": task.task_id,
+        "legacy_decision": ensemble_decision,
+        "legacy_confidence": float(ensemble_confidence),
+        "enhanced_decision": enhanced_decision["action"],
+        "enhanced_confidence": enhanced_decision["confidence"],
+        "decisions_match": ensemble_decision == enhanced_decision["action"],
+        "confidence_diff": enhanced_decision["confidence"] - float(ensemble_confidence)
+    }
+    append_ledger(ab_comparison)
+
+    # Meta-Cognition: warn on low confidence for Legacy Ensemble as well
+    try:
+        if float(ensemble_confidence) < 0.6:
+            level = "warning" if float(ensemble_confidence) >= 0.5 else "critical"
+            append_ledger({
+                "event": "meta_cognition_low_confidence",
+                "task_id": task.task_id,
+                "source": "legacy_ensemble",
+                "level": level,
+                "decision": ensemble_decision,
+                "confidence": float(ensemble_confidence),
+                "reason": ensemble_reason,
+                "bqi_pattern": pattern_key
+            })
+    except Exception as mc_legacy_ex:
+        append_ledger({"event": "meta_cognition_low_confidence_error", "task_id": task.task_id, "error": str(mc_legacy_ex)})
+    
     # Phase 6h+6j: Planning auto-revise with ensemble confidence
     planning_auto_revise_triggered = False
     if should_auto_revise(pattern_key, ensemble_confidence, float(eval_report.quality), bqi_coord.rhythm_phase):
@@ -313,7 +442,38 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
             bqi_coord=bqi_coord
         )
         
+        # Autopoietic Loop: Symmetry end (early auto-approve path)
+        try:
+            append_ledger({
+                "event": "autopoietic_phase",
+                "task_id": task.task_id,
+                "phase": "symmetry",
+                "stage": "end",
+                "duration_sec": float(time.perf_counter() - _sym_start),
+                "evidence_gate_triggered": False,
+                "second_pass": False,
+                "final_quality": float(eval_report.quality),
+                "final_evidence_ok": bool(eval_report.evidence_ok)
+            })
+        except Exception:
+            pass
+
         append_coordinate({"event": "task_end", "task_id": task.task_id, "result": result, "binoche_auto_approved": True})
+        
+        # Record resonance event (early exit path)
+        try:
+            from .resonance_bridge import record_task_resonance
+            task_duration = time.perf_counter() - t_start
+            record_task_resonance(
+                task_id=task.task_id,
+                task_goal=task.goal,
+                eval_report=eval_report.model_dump(),
+                bqi_coord=bqi_coord.to_dict() if bqi_coord else None,
+                duration_sec=task_duration,
+            )
+        except Exception:
+            pass
+        
         return result
 
     # Evidence gate: if evidence is missing OR forced (dev/test) OR planning auto-revise, attempt one lightweight corrective pass (citations via RAG)
@@ -412,6 +572,7 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
                 "citations": len(out_synth.citations)
             })
             append_ledger({"event": "second_pass", "task_id": task.task_id})
+            second_pass_executed = True
 
     result = {
         "task_id": task.task_id,
@@ -428,5 +589,36 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         bqi_coord=bqi_coord
     )
     
+    # Autopoietic Loop: Symmetry end (normal completion)
+    try:
+        append_ledger({
+            "event": "autopoietic_phase",
+            "task_id": task.task_id,
+            "phase": "symmetry",
+            "stage": "end",
+            "duration_sec": float(time.perf_counter() - _sym_start),
+            "evidence_gate_triggered": bool(evidence_gate_triggered),
+            "second_pass": bool(second_pass_executed),
+            "final_quality": float(eval_report.quality),
+            "final_evidence_ok": bool(eval_report.evidence_ok)
+        })
+    except Exception:
+        pass
+
     append_coordinate({"event": "task_end", "task_id": task.task_id, "result": result})
+    
+    # Record resonance event (Universal AGI Phase 1 integration)
+    try:
+        from .resonance_bridge import record_task_resonance
+        task_duration = time.perf_counter() - t_start
+        record_task_resonance(
+            task_id=task.task_id,
+            task_goal=task.goal,
+            eval_report=eval_report.model_dump(),
+            bqi_coord=bqi_coord.to_dict() if bqi_coord else None,
+            duration_sec=task_duration,
+        )
+    except Exception:
+        pass  # Silent fallback if resonance not initialized
+    
     return result

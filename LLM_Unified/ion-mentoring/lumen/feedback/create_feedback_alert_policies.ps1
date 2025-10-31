@@ -129,11 +129,11 @@ try {
         -Headers @{Authorization = "Bearer $token"; "Content-Type" = "application/json" } `
         -Body $healthAlertJson
     
-    Write-Host "✅ Created: $($healthResponse.displayName)" -ForegroundColor Green
+    Write-Host "[OK] Created: $($healthResponse.displayName)" -ForegroundColor Green
     Write-Host "   Policy ID: $($healthResponse.name)" -ForegroundColor Gray
 }
 catch {
-    Write-Host "❌ Failed to create Health Score alert: $_" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to create Health Score alert: $_" -ForegroundColor Red
 }
 
 # Create Cache Hit Rate Alert
@@ -148,12 +148,12 @@ try {
         -Headers @{Authorization = "Bearer $token"; "Content-Type" = "application/json" } `
         -Body $cacheAlertJson
     
-    Write-Host "✅ Created: $($cacheResponse.displayName)" -ForegroundColor Green
+    Write-Host "[OK] Created: $($cacheResponse.displayName)" -ForegroundColor Green
     Write-Host "   Policy ID: $($cacheResponse.name)" -ForegroundColor Gray
 }
 catch {
-    Write-Host "❌ Failed to create Cache Hit Rate alert: $_" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to create Cache Hit Rate alert: $_" -ForegroundColor Red
 }
 
-Write-Host "`n✅ Alert policies creation complete!" -ForegroundColor Green
+Write-Host "`n[OK] Alert policies creation complete!" -ForegroundColor Green
 Write-Host "`nVerify at: https://console.cloud.google.com/monitoring/alerting/policies?project=$ProjectId" -ForegroundColor Yellow

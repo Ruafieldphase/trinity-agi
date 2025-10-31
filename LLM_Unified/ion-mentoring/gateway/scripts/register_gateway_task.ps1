@@ -49,7 +49,7 @@ $StartScript = Join-Path $GatewayRoot "scripts\start_gateway.ps1"
 
 # Verify script exists
 if (-not (Test-Path $StartScript)) {
-    Write-Host "❌ Error: start_gateway.ps1 not found at: $StartScript" -ForegroundColor Red
+    Write-Host "[ERROR] Error: start_gateway.ps1 not found at: $StartScript" -ForegroundColor Red
     exit 1
 }
 
@@ -63,12 +63,12 @@ Write-Host ""
 $existingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if ($existingTask) {
-    Write-Host "⚠️  Task '$TaskName' already exists" -ForegroundColor Yellow
+    Write-Host "[WARN]  Task '$TaskName' already exists" -ForegroundColor Yellow
     
     if (-not $Force) {
         $response = Read-Host "Do you want to overwrite it? (y/N)"
         if ($response -notmatch '^[Yy]') {
-            Write-Host "❌ Registration cancelled" -ForegroundColor Red
+            Write-Host "[ERROR] Registration cancelled" -ForegroundColor Red
             exit 0
         }
     }
@@ -121,7 +121,7 @@ else {
 
 # Register task
 Write-Host ""
-Write-Host "📝 Registering scheduled task..." -ForegroundColor Cyan
+Write-Host "[LOG] Registering scheduled task..." -ForegroundColor Cyan
 
 try {
     Register-ScheduledTask `
@@ -133,21 +133,21 @@ try {
         -Description "Automatically start Lumen Gateway Collector and Exporter services" `
         -ErrorAction Stop | Out-Null
     
-    Write-Host "✅ Task registered successfully!" -ForegroundColor Green
+    Write-Host "[OK] Task registered successfully!" -ForegroundColor Green
 }
 catch {
-    Write-Host "❌ Failed to register task: $_" -ForegroundColor Red
+    Write-Host "[ERROR] Failed to register task: $_" -ForegroundColor Red
     exit 1
 }
 
 # Verify registration
 Write-Host ""
-Write-Host "🔍 Verifying task registration..." -ForegroundColor Cyan
+Write-Host "[SEARCH] Verifying task registration..." -ForegroundColor Cyan
 
 $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if ($task) {
-    Write-Host "✅ Task verified" -ForegroundColor Green
+    Write-Host "[OK] Task verified" -ForegroundColor Green
     Write-Host ""
     Write-Host "Task Details:" -ForegroundColor Cyan
     Write-Host "  Name:        $($task.TaskName)" -ForegroundColor White
@@ -171,7 +171,7 @@ if ($task) {
     }
 }
 else {
-    Write-Host "⚠️  Task verification failed (task not found)" -ForegroundColor Yellow
+    Write-Host "[WARN]  Task verification failed (task not found)" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -194,5 +194,5 @@ Write-Host ""
 Write-Host "5. Remove task:" -ForegroundColor White
 Write-Host "   Unregister-ScheduledTask -TaskName '$TaskName' -Confirm:`$false" -ForegroundColor Gray
 Write-Host ""
-Write-Host "✅ Registration complete!" -ForegroundColor Green
+Write-Host "[OK] Registration complete!" -ForegroundColor Green
 Write-Host ""

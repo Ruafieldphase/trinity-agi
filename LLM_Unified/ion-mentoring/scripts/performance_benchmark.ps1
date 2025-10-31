@@ -228,9 +228,9 @@ $results = @{
 $results | ConvertTo-Json -Depth 10 | Set-Content $OutputFile
 
 Write-Header "완료"
-Write-ColorHost "✅ 벤치마크 완료!" "Green"
+Write-ColorHost "[OK] 벤치마크 완료!" "Green"
 Write-ColorHost "  결과 파일: $OutputFile" "Gray"
 Write-Host ""
-Write-ColorHost "💡 권장 사항:" "Cyan"
+Write-ColorHost "[INFO] 권장 사항:" "Cyan"
 Write-ColorHost "  $($results.comparison.recommendation)" "Yellow"
 Write-Host ""

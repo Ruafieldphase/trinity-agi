@@ -1,0 +1,37 @@
+[
+    {
+        "conversations":  17,
+        "files_found":  17,
+        "persona":  "Gitko",
+        "timestamp":  "2025-10-29T22:58:51.270Z",
+        "role":  "VS Code Copilot (GitHub 湲곕컲)",
+        "location":  "C:\\Users\\kuirv\\AppData\\Roaming\\Code\\User\\workspaceStorage",
+        "key_points":  {
+
+                       }
+    },
+    {
+        "conversations":  3,
+        "files_found":  3,
+        "persona":  "Sena",
+        "timestamp":  "2025-10-29T22:58:51.270Z",
+        "role":  "Claude CLI (?곕???湲곕컲)",
+        "location":  "C:\\Users\\kuirv\\.claude\\projects",
+        "key_points":  {
+
+                       }
+    },
+    {
+        "conversations":  3,
+        "files_found":  3,
+        "persona":  "Lubit",
+        "timestamp":  "2025-10-29T22:58:51.270Z",
+        "role":  "GPT Codex (肄붾뵫 ?꾨Ц)",
+        "location":  "C:\\Users\\kuirv\\.codex\\sessions",
+        "key_points":  [
+                           "{\"timestamp\":\"2025-10-29T06:32:02.365Z\",\"type\":\"session_meta\",\"payload\":{\"id\":\"019a2eaa-80a2-72d0-81",
+                           "{\"timestamp\":\"2025-10-28T23:29:09.163Z\",\"type\":\"session_meta\",\"payload\":{\"id\":\"019a2d27-568e-7980-86",
+                           "{\"timestamp\":\"2025-10-27T11:35:19.959Z\",\"type\":\"session_meta\",\"payload\":{\"id\":\"019a2573-87f6-7811-96"
+                       ]
+    }
+]

@@ -1,46 +1,6 @@
 {
-  "window_hours": 24,
-  "interval_hours": 2,
-  "total_events": 18,
-  "total_buckets": 3,
-  "timeline": [
-    {
-      "bucket": "bucket_0",
-      "start_ts": 1761575258.3166463,
-      "end_ts": 1761582458.3166463,
-      "start_time": "2025-10-27T14:27:38.316646+00:00",
-      "end_time": "2025-10-27T16:27:38.316646+00:00",
-      "hits": 0,
-      "misses": 2,
-      "total": 2,
-      "hit_rate": 0.0,
-      "avg_latency_ms": 0.0
-    },
-    {
-      "bucket": "bucket_4",
-      "start_ts": 1761604058.3166463,
-      "end_ts": 1761611258.3166463,
-      "start_time": "2025-10-27T22:27:38.316646+00:00",
-      "end_time": "2025-10-28T00:27:38.316646+00:00",
-      "hits": 0,
-      "misses": 10,
-      "total": 10,
-      "hit_rate": 0.0,
-      "avg_latency_ms": 0.0
-    },
-    {
-      "bucket": "bucket_5",
-      "start_ts": 1761611258.3166463,
-      "end_ts": 1761618458.3166463,
-      "start_time": "2025-10-28T00:27:38.316646+00:00",
-      "end_time": "2025-10-28T02:27:38.316646+00:00",
-      "hits": 0,
-      "misses": 6,
-      "total": 6,
-      "hit_rate": 0.0,
-      "avg_latency_ms": 0.0
-    }
-  ],
-  "overall_hit_rate": 0.0,
-  "generated_at": "2025-10-28T03:08:50.779890+00:00"
+  "error": "No events in last 1 hours",
+  "total_events": 107,
+  "oldest_ts": "2025-10-26T09:46:36.528310+00:00",
+  "newest_ts": "2025-10-29T07:51:22.097621+00:00"
 }

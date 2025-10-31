@@ -55,11 +55,11 @@ if (-not (Test-Path $SlackModulePath)) {
 
 # 상태별 이모지 및 색상
 $statusInfo = switch ($Status) {
-    "deploying" { @{ emoji = "🔄"; text = "배포 중"; color = "#3498db" } }
+    "deploying" { @{ emoji = "[SYNC]"; text = "배포 중"; color = "#3498db" } }
     "monitoring" { @{ emoji = "👀"; text = "모니터링"; color = "#f39c12" } }
     "validating" { @{ emoji = "✔️"; text = "검증 중"; color = "#9b59b6" } }
-    "completed" { @{ emoji = "✅"; text = "완료"; color = "#2ecc71" } }
-    "failed" { @{ emoji = "❌"; text = "실패"; color = "#e74c3c" } }
+    "completed" { @{ emoji = "[OK]"; text = "완료"; color = "#2ecc71" } }
+    "failed" { @{ emoji = "[ERROR]"; text = "실패"; color = "#e74c3c" } }
 }
 
 # 진행 바 생성
@@ -144,7 +144,7 @@ $blocks = @(
         type = "section"
         text = @{
             type = "mrkdwn"
-            text = "*📊 실시간 메트릭*"
+            text = "*[METRICS] 실시간 메트릭*"
         }
     }
     @{
@@ -221,7 +221,7 @@ if ($Status -eq "monitoring") {
         type = "section"
         text = @{
             type = "mrkdwn"
-            text = "*🎉 배포 성공!*`nCanary $Phase% 배포가 성공적으로 완료되었습니다."
+            text = "*[SUCCESS] 배포 성공!*`nCanary $Phase% 배포가 성공적으로 완료되었습니다."
         }
     }
 } elseif ($Status -eq "failed") {
@@ -232,7 +232,7 @@ if ($Status -eq "monitoring") {
         type = "section"
         text = @{
             type = "mrkdwn"
-            text = "*⚠️ 즉시 확인 필요*`n배포에 문제가 발생했습니다. 로그를 확인하고 롤백을 고려하세요."
+            text = "*[WARN] 즉시 확인 필요*`n배포에 문제가 발생했습니다. 로그를 확인하고 롤백을 고려하세요."
         }
     }
 }
@@ -261,7 +261,7 @@ if ($Channel) {
 $result = Send-SlackMessage @params
 
 if ($result) {
-    Write-Host "✅ 대시보드 업데이트 성공" -ForegroundColor Green
+    Write-Host "[OK] 대시보드 업데이트 성공" -ForegroundColor Green
 } else {
     Write-Warning "대시보드 업데이트 실패"
     exit 1

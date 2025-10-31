@@ -60,7 +60,7 @@ while ($true) {
         
                 # Parse timestamp
                 $logTime = [DateTime]::Parse($timestamp).ToLocalTime()
-                Write-Host "📊 Latest Metrics" -ForegroundColor Yellow
+                Write-Host "[METRICS] Latest Metrics" -ForegroundColor Yellow
                 Write-Host "Timestamp: $logTime" -ForegroundColor Cyan
                 Write-Host ""
         
@@ -91,7 +91,7 @@ while ($true) {
                 Write-Host "  $healthStatus Health Score: ${health}/100" -ForegroundColor $healthColor
         
                 Write-Host ""
-                Write-Host "📈 Status Summary" -ForegroundColor Cyan
+                Write-Host "[STATS] Status Summary" -ForegroundColor Cyan
         
                 $allGreen = ($hitRate -ge 0.7) -and ($memUsage -le 75) -and ($avgTTL -ge 600) -and ($health -ge 80)
                 $anyRed = ($hitRate -lt 0.5) -or ($memUsage -gt 90) -or ($avgTTL -lt 300) -or ($health -lt 60)
@@ -111,11 +111,11 @@ while ($true) {
             }
         }
         else {
-            Write-Host "⏳ Waiting for new metrics..." -ForegroundColor Yellow
+            Write-Host "[WAIT] Waiting for new metrics..." -ForegroundColor Yellow
         }
     }
     else {
-        Write-Host "❌ Failed to query logs" -ForegroundColor Red
+        Write-Host "[ERROR] Failed to query logs" -ForegroundColor Red
     }
   
     Start-Sleep -Seconds $RefreshSeconds

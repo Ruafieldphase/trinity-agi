@@ -20,7 +20,7 @@ Write-Host "📁 Repo Root: $RepoRoot" -ForegroundColor Gray
 # Slack 웹훅 URL 확인
 if (-not $env:SLACK_WEBHOOK_URL) {
     Write-Host ""
-    Write-Host "⚠️  경고: SLACK_WEBHOOK_URL 환경변수가 설정되지 않았습니다." -ForegroundColor Yellow
+    Write-Host "[WARN]  경고: SLACK_WEBHOOK_URL 환경변수가 설정되지 않았습니다." -ForegroundColor Yellow
     Write-Host "   Slack 알림이 비활성화됩니다." -ForegroundColor Yellow
     Write-Host ""
     Write-Host "   설정 방법:" -ForegroundColor Gray
@@ -40,7 +40,7 @@ if (Test-Path $VenvPath) {
     Write-Host "🐍 가상환경 활성화: $VenvPath" -ForegroundColor Yellow
     & "$VenvPath\Scripts\Activate.ps1"
 } else {
-    Write-Host "⚠️  가상환경 없음. 시스템 Python 사용" -ForegroundColor Yellow
+    Write-Host "[WARN]  가상환경 없음. 시스템 Python 사용" -ForegroundColor Yellow
 }
 
 # 헬스 모니터 실행
@@ -51,9 +51,9 @@ Write-Host "=" * 60 -ForegroundColor Green
 Write-Host ""
 Write-Host "⏱️  체크 간격: $Interval 초" -ForegroundColor Cyan
 if ($Duration) {
-    Write-Host "⏳ 실행 시간: $Duration 초 ($([math]::Round($Duration/60, 1)) 분)" -ForegroundColor Cyan
+    Write-Host "[WAIT] 실행 시간: $Duration 초 ($([math]::Round($Duration/60, 1)) 분)" -ForegroundColor Cyan
 } else {
-    Write-Host "⏳ 실행 시간: 무한 (Ctrl+C로 종료)" -ForegroundColor Cyan
+    Write-Host "[WAIT] 실행 시간: 무한 (Ctrl+C로 종료)" -ForegroundColor Cyan
 }
 Write-Host "🔔 복구 알림: $(if ($NoRecoveryNotify) {'비활성'} else {'활성'})" -ForegroundColor Cyan
 Write-Host ""

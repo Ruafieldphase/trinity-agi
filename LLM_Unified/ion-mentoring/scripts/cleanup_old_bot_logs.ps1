@@ -47,7 +47,7 @@ $oldLogs = Get-ChildItem -Path $LOG_DIR -Filter "*.log" | Where-Object {
 }
 
 if ($oldLogs.Count -eq 0) {
-    Write-Host "✅ 삭제할 오래된 로그가 없습니다." -ForegroundColor Green
+    Write-Host "[OK] 삭제할 오래된 로그가 없습니다." -ForegroundColor Green
     exit 0
 }
 
@@ -55,13 +55,13 @@ $totalSize = ($oldLogs | Measure-Object -Property Length -Sum).Sum
 $totalSizeMB = [math]::Round($totalSize / 1MB, 2)
 
 Write-Host ""
-Write-Host "📊 정리 대상:" -ForegroundColor Yellow
+Write-Host "[METRICS] 정리 대상:" -ForegroundColor Yellow
 Write-Host "  • 파일 수: $($oldLogs.Count)" -ForegroundColor White
 Write-Host "  • 총 크기: $totalSizeMB MB" -ForegroundColor White
 Write-Host ""
 
 if ($DryRun) {
-    Write-Host "🔍 [DRY RUN] 다음 파일들이 삭제됩니다:" -ForegroundColor Yellow
+    Write-Host "[SEARCH] [DRY RUN] 다음 파일들이 삭제됩니다:" -ForegroundColor Yellow
     $oldLogs | ForEach-Object {
         $sizeMB = [math]::Round($_.Length / 1MB, 2)
         Write-Host "  • $($_.Name) ($sizeMB MB) - $($_.LastWriteTime.ToString('yyyy-MM-dd'))" -ForegroundColor Gray
@@ -76,8 +76,8 @@ else {
             $deleted++
         }
         catch {
-            Write-Host "  ⚠️  삭제 실패: $($log.Name)" -ForegroundColor Red
+            Write-Host "  [WARN]  삭제 실패: $($log.Name)" -ForegroundColor Red
         }
     }
-    Write-Host "✅ $deleted 개 파일 삭제 완료 ($totalSizeMB MB 확보)" -ForegroundColor Green
+    Write-Host "[OK] $deleted 개 파일 삭제 완료 ($totalSizeMB MB 확보)" -ForegroundColor Green
 }

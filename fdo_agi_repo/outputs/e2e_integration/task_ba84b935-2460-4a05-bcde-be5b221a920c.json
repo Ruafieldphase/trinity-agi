@@ -1,0 +1,16 @@
+{
+  "task_id": "ba84b935-2460-4a05-bcde-be5b221a920c",
+  "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8",
+  "status": "completed",
+  "created_at": "2025-10-31T02:57:58.609127",
+  "video_analysis": {
+    "video_id": "kqtD5dpn9C8",
+    "title": "Python for Beginners - Learn Coding with Python in 1 Hour",
+    "keywords": [],
+    "summary": "No subtitles available"
+  },
+  "execution_steps_count": 0,
+  "execution_results_count": 0,
+  "execution_steps": [],
+  "execution_results": []
+}

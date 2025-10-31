@@ -33,7 +33,7 @@ $ErrorActionPreference = "Stop"
 $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 if (-not $isAdmin) {
-    Write-Host "❌ 관리자 권한이 필요합니다!" -ForegroundColor Red
+    Write-Host "[ERROR] 관리자 권한이 필요합니다!" -ForegroundColor Red
     Write-Host ""
     Write-Host "PowerShell을 관리자 권한으로 실행한 후 다시 시도하세요:" -ForegroundColor Yellow
     Write-Host "  1. PowerShell 우클릭" -ForegroundColor Gray
@@ -46,7 +46,7 @@ $WORKSPACE_ROOT = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $START_SCRIPT = Join-Path $WORKSPACE_ROOT "LLM_Unified\ion-mentoring\scripts\start_gitco_bot.ps1"
 
 if (-not (Test-Path $START_SCRIPT)) {
-    Write-Host "❌ 시작 스크립트를 찾을 수 없습니다: $START_SCRIPT" -ForegroundColor Red
+    Write-Host "[ERROR] 시작 스크립트를 찾을 수 없습니다: $START_SCRIPT" -ForegroundColor Red
     exit 1
 }
 
@@ -61,11 +61,11 @@ $existingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyConti
 
 if ($existingTask) {
     if ($Force) {
-        Write-Host "⚠️  기존 작업 삭제 중: $TaskName" -ForegroundColor Yellow
+        Write-Host "[WARN]  기존 작업 삭제 중: $TaskName" -ForegroundColor Yellow
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     }
     else {
-        Write-Host "❌ 이미 작업이 등록되어 있습니다: $TaskName" -ForegroundColor Red
+        Write-Host "[ERROR] 이미 작업이 등록되어 있습니다: $TaskName" -ForegroundColor Red
         Write-Host ""
         Write-Host "옵션:" -ForegroundColor Yellow
         Write-Host "  • 덮어쓰기: .\register_bot_scheduler.ps1 -Force" -ForegroundColor White
@@ -106,7 +106,7 @@ $principal = New-ScheduledTaskPrincipal `
     -LogonType Interactive `
     -RunLevel Highest
 
-Write-Host "🔧 작업 스케줄러에 등록 중..." -ForegroundColor Yellow
+Write-Host "[CONFIG] 작업 스케줄러에 등록 중..." -ForegroundColor Yellow
 
 try {
     # 작업 등록
@@ -118,31 +118,31 @@ try {
         -Principal $principal `
         -Description "깃코 슬랙 봇 자동 시작 (배포 관리 AI 봇)" | Out-Null
     
-    Write-Host "✅ 작업 스케줄러 등록 완료!" -ForegroundColor Green
+    Write-Host "[OK] 작업 스케줄러 등록 완료!" -ForegroundColor Green
     Write-Host ""
     
     # 등록 확인
     $task = Get-ScheduledTask -TaskName $TaskName
-    Write-Host "📊 등록된 작업 정보:" -ForegroundColor Yellow
+    Write-Host "[METRICS] 등록된 작업 정보:" -ForegroundColor Yellow
     Write-Host "  • 상태: $($task.State)" -ForegroundColor White
     Write-Host "  • 마지막 실행: $($task.LastRunTime)" -ForegroundColor White
     Write-Host "  • 다음 실행: $($task.NextRunTime)" -ForegroundColor White
     Write-Host ""
     
     Write-Host "╔═══════════════════════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║                  ✅ 등록 완료!                            ║" -ForegroundColor Green
+    Write-Host "║                  [OK] 등록 완료!                            ║" -ForegroundColor Green
     Write-Host "╚═══════════════════════════════════════════════════════════╝" -ForegroundColor Green
     Write-Host ""
-    Write-Host "🎉 이제 시스템을 시작하거나 로그인하면 자동으로 깃코 봇이 실행됩니다!" -ForegroundColor Cyan
+    Write-Host "[SUCCESS] 이제 시스템을 시작하거나 로그인하면 자동으로 깃코 봇이 실행됩니다!" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "🔧 관리 명령어:" -ForegroundColor Yellow
+    Write-Host "[CONFIG] 관리 명령어:" -ForegroundColor Yellow
     Write-Host "  • 수동 시작: Start-ScheduledTask -TaskName '$TaskName'" -ForegroundColor White
     Write-Host "  • 중지: Stop-ScheduledTask -TaskName '$TaskName'" -ForegroundColor White
     Write-Host "  • 비활성화: Disable-ScheduledTask -TaskName '$TaskName'" -ForegroundColor White
     Write-Host "  • 활성화: Enable-ScheduledTask -TaskName '$TaskName'" -ForegroundColor White
     Write-Host "  • 삭제: .\unregister_bot_scheduler.ps1" -ForegroundColor White
     Write-Host ""
-    Write-Host "📝 작업 스케줄러 GUI에서 확인:" -ForegroundColor Yellow
+    Write-Host "[LOG] 작업 스케줄러 GUI에서 확인:" -ForegroundColor Yellow
     Write-Host "  taskschd.msc" -ForegroundColor White
     Write-Host ""
     
@@ -151,15 +151,15 @@ try {
     $response = Read-Host
     
     if ($response -eq 'Y' -or $response -eq 'y') {
-        Write-Host "🚀 봇 시작 중..." -ForegroundColor Cyan
+        Write-Host "[DEPLOY] 봇 시작 중..." -ForegroundColor Cyan
         Start-ScheduledTask -TaskName $TaskName
         Start-Sleep -Seconds 5
-        Write-Host "✅ 봇이 시작되었습니다!" -ForegroundColor Green
+        Write-Host "[OK] 봇이 시작되었습니다!" -ForegroundColor Green
         Write-Host "상태 확인: .\scripts\check_bot_status.ps1" -ForegroundColor Gray
     }
     
 }
 catch {
-    Write-Host "❌ 등록 실패: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[ERROR] 등록 실패: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
