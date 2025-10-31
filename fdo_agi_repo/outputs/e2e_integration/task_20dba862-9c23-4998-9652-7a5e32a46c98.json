@@ -1,0 +1,27 @@
+{
+  "task_id": "20dba862-9c23-4998-9652-7a5e32a46c98",
+  "youtube_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "status": "completed",
+  "created_at": "2025-10-31T08:23:52.861230",
+  "video_analysis": {
+    "video_id": "dQw4w9WgXcQ",
+    "title": "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)",
+    "keywords": [
+      "gonna",
+      "never",
+      "give",
+      "tell",
+      "make",
+      "down",
+      "around",
+      "desert",
+      "goodbye",
+      "hurt"
+    ],
+    "summary": "Video covers topics related to: gonna, never, give, tell, make. Duration: ~5.1 minutes."
+  },
+  "execution_steps_count": 0,
+  "execution_results_count": 0,
+  "execution_steps": [],
+  "execution_results": []
+}

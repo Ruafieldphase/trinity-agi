@@ -1,0 +1,1081 @@
+{
+  "total_steps": 35,
+  "successful": 35,
+  "failed": 0,
+  "skipped": 0,
+  "duration": 3.5578787326812744,
+  "dry_run": true,
+  "success_rate": "100.0%",
+  "results": [
+    {
+      "step_number": 1,
+      "step": {
+        "order": 50,
+        "action": "run",
+        "target": "a",
+        "value": null,
+        "timestamp": 622.399,
+        "description": "is run a docker command that pulls that",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00016808509826660156,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "a",
+          "description": "is run a docker command that pulls that",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 2,
+      "step": {
+        "order": 67,
+        "action": "run",
+        "target": "w",
+        "value": null,
+        "timestamp": 911.199,
+        "description": "ran here the docker run with the",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0002460479736328125,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "w",
+          "description": "ran here the docker run with the",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 3,
+      "step": {
+        "order": 105,
+        "action": "download",
+        "target": "a",
+        "value": null,
+        "timestamp": 1293.08,
+        "description": "when you download a docker image it",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "DOWNLOAD",
+      "result": {
+        "success": true,
+        "action_type": "DOWNLOAD",
+        "duration": 0.00043463706970214844,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "a",
+          "description": "when you download a docker image it",
+          "install_steps": [
+            "Download a installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 4,
+      "step": {
+        "order": 112,
+        "action": "install",
+        "target": "docker on different operating",
+        "value": null,
+        "timestamp": 1404.76,
+        "description": "install docker on different operating",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 6.839999999999918
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0014748573303222656,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker on different operating",
+          "description": "install docker on different operating",
+          "install_steps": [
+            "Download docker on different operating installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 5,
+      "step": {
+        "order": 116,
+        "action": "install",
+        "target": "docker on different",
+        "value": null,
+        "timestamp": 1439.0,
+        "description": "how to install docker on different",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0007433891296386719,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker on different",
+          "description": "how to install docker on different",
+          "install_steps": [
+            "Download docker on different installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 6,
+      "step": {
+        "order": 123,
+        "action": "install",
+        "target": "docker you",
+        "value": null,
+        "timestamp": 1500.159,
+        "description": "it so if you want to install docker you",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 26.75999999999999
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0008203983306884766,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker you",
+          "description": "it so if you want to install docker you",
+          "install_steps": [
+            "Download docker you installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 7,
+      "step": {
+        "order": 130,
+        "action": "install",
+        "target": "docker on",
+        "value": null,
+        "timestamp": 1544.0,
+        "description": "well so before you install docker on",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0008459091186523438,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker on",
+          "description": "well so before you install docker on",
+          "install_steps": [
+            "Download docker on installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 8,
+      "step": {
+        "order": 135,
+        "action": "run",
+        "target": "d",
+        "value": null,
+        "timestamp": 1600.159,
+        "description": "meet the requirements to run docker",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 15.639999999999873
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00023102760314941406,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "d",
+          "description": "meet the requirements to run docker",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 9,
+      "step": {
+        "order": 139,
+        "action": "install",
+        "target": "docker for mac",
+        "value": null,
+        "timestamp": 1634.96,
+        "description": "windows so let's install docker for mac",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 22.19900000000007
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0004723072052001953,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker for mac",
+          "description": "windows so let's install docker for mac",
+          "install_steps": [
+            "Download docker for mac installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 10,
+      "step": {
+        "order": 159,
+        "action": "download",
+        "target": "o",
+        "value": null,
+        "timestamp": 1781.96,
+        "description": "say you download or install docker and",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 10.95900000000006
+      },
+      "action": "DOWNLOAD",
+      "result": {
+        "success": true,
+        "action_type": "DOWNLOAD",
+        "duration": 0.00033402442932128906,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "o",
+          "description": "say you download or install docker and",
+          "install_steps": [
+            "Download o installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 11,
+      "step": {
+        "order": 167,
+        "action": "run",
+        "target": "d",
+        "value": null,
+        "timestamp": 1833.12,
+        "description": "all the criteria to run docker natively",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0002219676971435547,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "d",
+          "description": "all the criteria to run docker natively",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 12,
+      "step": {
+        "order": 174,
+        "action": "install",
+        "target": "docker for windows once the",
+        "value": null,
+        "timestamp": 1894.12,
+        "description": "install docker for windows once the",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0004703998565673828,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker for windows once the",
+          "description": "install docker for windows once the",
+          "install_steps": [
+            "Download docker for windows once the installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 13,
+      "step": {
+        "order": 183,
+        "action": "install",
+        "target": "docker on different linux",
+        "value": null,
+        "timestamp": 1929.519,
+        "description": "install docker on different linux",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.000492095947265625,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker on different linux",
+          "description": "install docker on different linux",
+          "install_steps": [
+            "Download docker on different linux installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 14,
+      "step": {
+        "order": 191,
+        "action": "install",
+        "target": "docker on",
+        "value": null,
+        "timestamp": 2002.48,
+        "description": "follow in order to install docker on",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0003669261932373047,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "docker on",
+          "description": "follow in order to install docker on",
+          "install_steps": [
+            "Download docker on installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 15,
+      "step": {
+        "order": 196,
+        "action": "download",
+        "target": "d",
+        "value": null,
+        "timestamp": 2049.599,
+        "description": "repository and download the docker from",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 2.9209999999998217
+      },
+      "action": "DOWNLOAD",
+      "result": {
+        "success": true,
+        "action_type": "DOWNLOAD",
+        "duration": 0.0004966259002685547,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "d",
+          "description": "repository and download the docker from",
+          "install_steps": [
+            "Download d installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 16,
+      "step": {
+        "order": 203,
+        "action": "download",
+        "target": "l",
+        "value": null,
+        "timestamp": 2096.52,
+        "description": "which is just download lo in the docker",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 3,
+        "time_span": 23.88000000000011
+      },
+      "action": "DOWNLOAD",
+      "result": {
+        "success": true,
+        "action_type": "DOWNLOAD",
+        "duration": 0.0007174015045166016,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "l",
+          "description": "which is just download lo in the docker",
+          "install_steps": [
+            "Download l installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 17,
+      "step": {
+        "order": 208,
+        "action": "install",
+        "target": "the docker c from",
+        "value": null,
+        "timestamp": 2214.48,
+        "description": "you can then install the docker c from",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 16.559999999999945
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.005240678787231445,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "the docker c from",
+          "description": "you can then install the docker c from",
+          "install_steps": [
+            "Download the docker c from installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 18,
+      "step": {
+        "order": 215,
+        "action": "run",
+        "target": "h",
+        "value": null,
+        "timestamp": 2269.28,
+        "description": "sudo docker run hello world which is",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00034546852111816406,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "h",
+          "description": "sudo docker run hello world which is",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 19,
+      "step": {
+        "order": 221,
+        "action": "install",
+        "target": "uh docker",
+        "value": null,
+        "timestamp": 2307.92,
+        "description": "so this is how to install uh docker",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 20.7199999999998
+      },
+      "action": "INSTALL",
+      "result": {
+        "success": true,
+        "action_type": "INSTALL",
+        "duration": 0.0005385875701904297,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "uh docker",
+          "description": "so this is how to install uh docker",
+          "install_steps": [
+            "Download uh docker installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 20,
+      "step": {
+        "order": 232,
+        "action": "run",
+        "target": "d",
+        "value": null,
+        "timestamp": 2366.04,
+        "description": "can actually run docker so so after",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 4,
+        "time_span": 26.440000000000055
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0001766681671142578,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "d",
+          "description": "can actually run docker so so after",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 21,
+      "step": {
+        "order": 243,
+        "action": "run",
+        "target": "o",
+        "value": null,
+        "timestamp": 2410.28,
+        "description": "enables docker to run on an older system",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 3.480000000000018
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00021028518676757812,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "o",
+          "description": "enables docker to run on an older system",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 22,
+      "step": {
+        "order": 257,
+        "action": "run",
+        "target": "h",
+        "value": null,
+        "timestamp": 2501.839,
+        "description": "will be docker run hello world which",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00015735626220703125,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "h",
+          "description": "will be docker run hello world which",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 23,
+      "step": {
+        "order": 290,
+        "action": "run",
+        "target": "c",
+        "value": null,
+        "timestamp": 2841.839,
+        "description": "option for docker run command that make",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0002155303955078125,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "c",
+          "description": "option for docker run command that make",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 24,
+      "step": {
+        "order": 314,
+        "action": "run",
+        "target": "d",
+        "value": null,
+        "timestamp": 3003.559,
+        "description": "pull redis um however if you run docker",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00015997886657714844,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "d",
+          "description": "pull redis um however if you run docker",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 25,
+      "step": {
+        "order": 336,
+        "action": "run",
+        "target": "a",
+        "value": null,
+        "timestamp": 3271.92,
+        "description": "to do it is you do docker run and you",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0006122589111328125,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "a",
+          "description": "to do it is you do docker run and you",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 26,
+      "step": {
+        "order": 360,
+        "action": "run",
+        "target": "w",
+        "value": null,
+        "timestamp": 3619.2,
+        "description": "another option of the docker run which",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00016498565673828125,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "w",
+          "description": "another option of the docker run which",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 27,
+      "step": {
+        "order": 387,
+        "action": "run",
+        "target": "i",
+        "value": null,
+        "timestamp": 3914.68,
+        "description": "them so basically docker run is where",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 3,
+        "time_span": 24.240000000000236
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00020766258239746094,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "i",
+          "description": "them so basically docker run is where",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 28,
+      "step": {
+        "order": 395,
+        "action": "run",
+        "target": "s",
+        "value": null,
+        "timestamp": 3987.72,
+        "description": "container using docker run so docker run",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0001571178436279297,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "s",
+          "description": "container using docker run so docker run",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 29,
+      "step": {
+        "order": 399,
+        "action": "download",
+        "target": "a",
+        "value": null,
+        "timestamp": 4064.319,
+        "description": "you download a docker container from the",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "DOWNLOAD",
+      "result": {
+        "success": true,
+        "action_type": "DOWNLOAD",
+        "duration": 0.0003733634948730469,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "program": "a",
+          "description": "you download a docker container from the",
+          "install_steps": [
+            "Download a installer",
+            "Run installer",
+            "Follow installation wizard",
+            "Verify installation"
+          ],
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 30,
+      "step": {
+        "order": 435,
+        "action": "run",
+        "target": "c",
+        "value": null,
+        "timestamp": 4623.28,
+        "description": "we run the container in the docker run",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 3,
+        "time_span": 14.640000000000327
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0001614093780517578,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "c",
+          "description": "we run the container in the docker run",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 31,
+      "step": {
+        "order": 501,
+        "action": "run",
+        "target": "c",
+        "value": null,
+        "timestamp": 5415.08,
+        "description": "docker run commands with all the options",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 19.639000000000124
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00018215179443359375,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "c",
+          "description": "docker run commands with all the options",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 32,
+      "step": {
+        "order": 506,
+        "action": "run",
+        "target": "c",
+        "value": null,
+        "timestamp": 5449.32,
+        "description": "docker run commands and that is docker",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 12.798999999999978
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00017642974853515625,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "c",
+          "description": "docker run commands and that is docker",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 33,
+      "step": {
+        "order": 671,
+        "action": "run",
+        "target": "a",
+        "value": null,
+        "timestamp": 8777.84,
+        "description": "docker containers to run all of your",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00023746490478515625,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "a",
+          "description": "docker containers to run all of your",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 34,
+      "step": {
+        "order": 686,
+        "action": "run",
+        "target": "t",
+        "value": null,
+        "timestamp": 8977.96,
+        "description": "command so in the docker run there is an",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 1,
+        "time_span": 0.0
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.00021767616271972656,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "t",
+          "description": "command so in the docker run there is an",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "step_number": 35,
+      "step": {
+        "order": 694,
+        "action": "run",
+        "target": "c",
+        "value": null,
+        "timestamp": 9093.479,
+        "description": "using docker run commands but if you're",
+        "confidence": 0.7,
+        "source": "subtitle",
+        "group_size": 2,
+        "time_span": 12.64100000000144
+      },
+      "action": "RUN",
+      "result": {
+        "success": true,
+        "action_type": "RUN",
+        "duration": 0.0002465248107910156,
+        "dry_run": true,
+        "error": null,
+        "metadata": {
+          "click_target": "c",
+          "description": "using docker run commands but if you're",
+          "simulated": true
+        }
+      }
+    }
+  ]
+}

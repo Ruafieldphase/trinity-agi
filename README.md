@@ -1,3 +1,47 @@
+
+---
+
+## 🎉 Phase 5 완료! Web Dashboard 런칭 (2025-10-31)
+
+**실시간 웹 대시보드**로 모니터링 시스템이 업그레이드되었습니다!
+
+### ✅ 완료된 작업
+
+- **FastAPI 웹 서버** (포트 8000) - REST API 6개 엔드포인트
+- **실시간 대시보드** - Chart.js 차트, 자동 새로고침
+- **Task Queue Server** (포트 8091) - 백그라운드 작업 처리
+- **통합 시작 스크립트** - 원클릭 실행
+
+### 🚀 빠른 시작
+
+```powershell
+# 전체 시스템 시작
+.\scripts\start_phase5_system.ps1
+
+# 브라우저에서 확인
+# http://127.0.0.1:8000
+```
+
+### 📊 시스템 상태 확인
+
+```powershell
+# Task Queue Server
+curl http://127.0.0.1:8091/api/health
+
+# Web Dashboard
+curl http://127.0.0.1:8000/api/health
+```
+
+자세한 내용: [PHASE_5_FINAL_SUMMARY.md](PHASE_5_FINAL_SUMMARY.md)
+
+---
+
+## ✅ Phase 2.5 전체 완료 (2025-10-31)
+
+모든 실전 튜토리얼, ActionMapper 고도화, 사용자 가이드, 테스트가 100% 완료되었습니다.
+
+---
+
 # 깃코(Gitko) AGI 프로젝트 🤖
 
 **자기교정(Self-Correcting) AGI 시스템 with YouTube Learning & RPA Automation**
@@ -18,24 +62,28 @@
 ### 핵심 기능
 
 #### 1. 🎓 YouTube Learning System
+
 - YouTube 영상에서 자동으로 학습
 - 자막, 메타데이터, 화면 캡처 분석
 - OCR을 통한 텍스트 추출
 - HTML 대시보드 자동 생성
 
 #### 2. 🤖 RPA (Robotic Process Automation)
+
 - PyAutoGUI 기반 자동화
 - 화면 인식 및 템플릿 매칭
 - 시행착오 학습 엔진
 - Windows 애플리케이션 자동 설치
 
 #### 3. 🔄 Self-Correcting Loop
+
 - Resonance Ledger: 모든 작업 기록
 - 패턴 인식 및 학습
 - 자동 개선 제안
 - 메타인지 경고 시스템
 
 #### 4. ⚙️ Task Queue System
+
 - FastAPI 기반 작업 큐 서버
 - 비동기 작업 처리
 - Worker 자동 복구
@@ -46,6 +94,7 @@
 ## 🚀 Quick Start
 
 ### 필수 요구사항
+
 - Windows 10/11
 - Python 3.10+
 - PowerShell 5.1+
@@ -213,6 +262,7 @@ python integrations/rpa_worker.py --server http://127.0.0.1:8091
 프로젝트에는 80개 이상의 사전 정의된 Tasks가 있습니다:
 
 **카테고리**:
+
 - 🎬 **YouTube**: 학습, 인덱스, 대시보드
 - 🤖 **RPA**: Worker, Queue 관리
 - 📊 **Monitoring**: 상태 확인, 보고서
@@ -220,6 +270,7 @@ python integrations/rpa_worker.py --server http://127.0.0.1:8091
 - 📦 **Queue**: 결과 조회, 스냅샷
 
 **실행 방법**:
+
 1. `Ctrl+Shift+P` (또는 `Cmd+Shift+P`)
 2. "Tasks: Run Task" 입력
 3. 원하는 Task 선택
@@ -306,6 +357,7 @@ python integrations/youtube_worker.py --server http://127.0.0.1:8091 --log-level
 - 한글: ~70% 정확도
 
 **해결 방법**:
+
 1. Tesseract 최신 버전 설치
 2. 이미지 전처리 강화
 3. EasyOCR 병행 사용 (향후 지원)
@@ -330,23 +382,28 @@ python integrations/youtube_worker.py --server http://127.0.0.1:8091 --log-level
 ### Phase 2.5 Week 2 (Day 8-14)
 
 #### Week 2 Day 8-9: E2E 테스트 ⏳
+
 - Docker Desktop 자동 설치 데모
 - YouTube 검색 → 영상 선택 자동화
 - Comet Browser Worker 재활성화
 
 #### Week 2 Day 10-11: 다양한 케이스
+
 - Python, VS Code, Git 설치 시나리오
 - 에러 처리 강화
 
 #### Week 2 Day 12: Resonance Ledger 통합
+
 - YouTube 분석 결과 자동 저장
 - 패턴 인식 및 학습
 
 #### Week 2 Day 13: 문서화 & 릴리스
+
 - 사용자 가이드 완성
 - v0.3.0 정식 릴리스
 
 ### Phase 3: 범용 AGI 확장 (예정)
+
 - Linux/Mac 지원
 - 클라우드 배포
 - 웹 인터페이스
@@ -366,6 +423,7 @@ python integrations/youtube_worker.py --server http://127.0.0.1:8091 --log-level
 5. Pull Request 생성
 
 **커밋 규칙**:
+
 - `feat:` 새로운 기능
 - `fix:` 버그 수정
 - `docs:` 문서 변경

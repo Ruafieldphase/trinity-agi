@@ -9,6 +9,7 @@ Lightweight YouTube analysis pipeline with optional OCR and robust fallbacks.
 - Optional OCR via EasyOCR on first N frames (CPU by default)
 - Keyword extraction + short summary
 - Results saved to `outputs/youtube_learner/` and events to resonance ledger
+- **Phase 3+: 자동 재시도/에러 복구, 장애 감지 및 복구, 검증 고도화(화면 캡처, OCR, 로그), 병렬 처리/캐싱 등 Robustness/Performance 기능 내장**
 
 ## Quick start
 
@@ -17,6 +18,12 @@ Lightweight YouTube analysis pipeline with optional OCR and robust fallbacks.
 ```powershell
 & C:\workspace\agi\.venv\Scripts\Activate.ps1
 ```
+
+- **Phase 3+ 주요 변경점**
+  - 자동 재시도/에러 복구: 실행 실패 시 자동 재시도 및 장애 복구(Worker/Task Queue/ActionMapper)
+  - 검증 고도화: 오류 발생 시 자동 화면 캡처, OCR, 로그 저장
+  - 병렬 처리/캐싱: Task Queue, ActionMapper 등에서 성능 최적화
+  - 문서 및 가이드 업데이트: 최신 장애 복구/검증/최적화 내용 반영
 
 - Run a smoke E2E (OCR enabled, small footprint):
 
@@ -97,6 +104,9 @@ Note: 일부 환경에서는 Windows 작업 스케줄러 등록에 관리자 권
 - `frame_interval` (float): seconds between sampled frames
 - `max_frames` (int): maximum total extracted frames
 - `sample_clip_seconds` (int): download only the first N seconds via yt-dlp (0 = full)
+- **robust_retry** (bool): Phase 3+ 자동 재시도/복구 활성화 (default: true)
+- **capture_on_error** (bool): 오류 발생 시 화면 캡처/로그 저장 (default: true)
+- **parallel_workers** (int): 병렬 처리 워커 수 (default: 1, 성능 최적화 시 2~4 권장)
 
 `E2EConfig` parameters:
 
@@ -114,6 +124,7 @@ Note: 일부 환경에서는 Windows 작업 스케줄러 등록에 관리자 권
 - If a task is created but never completes, ensure the YouTube worker is running against the same server/port as the task. Use 8092 flow to avoid contention with other workers.
 - If downloads hang, try adding `--clip-seconds 10` (or `-ClipSeconds 10` in the script) and re-run.
 - For OCR issues on first run, allow model downloads or pre-warm by running a small OCR job.
+- **Phase 3+ 장애/복구/검증**: 오류 발생 시 자동 재시도, 장애 복구, 화면 캡처 및 OCR 결과가 `outputs/youtube_learner/`에 저장됩니다. 장애 복구/검증 로그는 상세 분석에 활용할 수 있습니다.
 
 ## Results viewing (JSON → Markdown)
 

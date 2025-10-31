@@ -433,6 +433,14 @@ class YouTubeLearner:
             "title": analysis.title,
             "duration": analysis.duration,
             "subtitles_count": len(analysis.subtitles),
+            "subtitles": [
+                {
+                    "start": sub.start,
+                    "duration": sub.duration,
+                    "text": sub.text
+                }
+                for sub in analysis.subtitles
+            ],
             "frames_count": len(analysis.frames),
             "keywords": analysis.keywords,
             "summary": analysis.summary,

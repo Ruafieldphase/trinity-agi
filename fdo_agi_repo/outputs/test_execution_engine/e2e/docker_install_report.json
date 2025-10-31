@@ -1,0 +1,77 @@
+{
+  "success": false,
+  "mode": "dry_run",
+  "tutorial_name": "docker_install_e2e",
+  "total_actions": 9,
+  "executed_actions": 9,
+  "verified_actions": 0,
+  "failed_actions": 9,
+  "execution_time": 0.9126100540161133,
+  "action_results": [
+    {
+      "action_index": 1,
+      "action_type": "CLICK",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 2,
+      "action_type": "CLICK",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 3,
+      "action_type": "INSTALL",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 4,
+      "action_type": "CLICK",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 5,
+      "action_type": "CLICK",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 6,
+      "action_type": "CLICK",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 7,
+      "action_type": "INSTALL",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 8,
+      "action_type": "INSTALL",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    },
+    {
+      "action_index": 9,
+      "action_type": "CLICK",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    }
+  ],
+  "verification_results": [],
+  "errors": []
+}

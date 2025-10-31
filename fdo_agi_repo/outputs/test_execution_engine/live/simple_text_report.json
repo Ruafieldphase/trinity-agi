@@ -1,0 +1,21 @@
+{
+  "success": false,
+  "mode": "live",
+  "tutorial_name": "simple_text_input",
+  "total_actions": 1,
+  "executed_actions": 1,
+  "verified_actions": 0,
+  "failed_actions": 1,
+  "execution_time": 0.6025984287261963,
+  "action_results": [
+    {
+      "action_index": 1,
+      "action_type": "TYPE",
+      "success": false,
+      "duration": 0.0,
+      "error": null
+    }
+  ],
+  "verification_results": [],
+  "errors": []
+}

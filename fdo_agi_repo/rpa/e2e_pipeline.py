@@ -330,18 +330,28 @@ class E2EPipeline:
 # ============================================================================
 
 async def main():
-    """CLI 테스트"""
-    logging.basicConfig(level=logging.INFO)
+    """CLI 인터페이스"""
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="E2E Learning Pipeline - YouTube to RPA")
+    parser.add_argument("--url", required=True, help="YouTube video URL")
+    parser.add_argument("--dry-run", action="store_true", help="Dry run mode (no execution)")
+    parser.add_argument("--verbose", action="store_true", help="Verbose logging")
+    
+    args = parser.parse_args()
+    
+    # Set logging
+    log_level = logging.DEBUG if args.verbose else logging.INFO
+    logging.basicConfig(level=log_level)
     
     pipeline = E2EPipeline()
     
-    # 테스트 영상 (짧은 튜토리얼)
-    test_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-    
     print(f"\n🚀 Starting E2E Learning Task")
-    print(f"   URL: {test_url}")
+    print(f"   URL: {args.url}")
+    if args.dry_run:
+        print(f"   Mode: DRY RUN")
     
-    task = await pipeline.run_learning_task(test_url)
+    task = await pipeline.run_learning_task(args.url)
     
     print(f"\n✅ Task Completed:")
     print(f"   Task ID: {task.task_id}")

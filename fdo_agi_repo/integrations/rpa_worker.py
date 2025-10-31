@@ -31,7 +31,11 @@ import webbrowser
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+
 from typing import Any, Dict, Optional, Tuple, List
+
+# 에러 캡처 유틸
+from .error_capture_utils import capture_and_ocr_on_error
 
 import requests
 
@@ -276,35 +280,48 @@ class RPAWorker:
             self.logger.warning("Task Queue server not healthy yet. Proceeding with polling...")
 
         while True:
-            task = self._fetch_next_task()
-            if not task:
-                time.sleep(self.config.poll_interval)
-                continue
+            try:
+                task = self._fetch_next_task()
+                if not task:
+                    time.sleep(self.config.poll_interval)
+                    continue
 
-            raw_task_id = task.get("task_id") or task.get("id")
-            if not isinstance(raw_task_id, str) or not raw_task_id:
-                self.logger.error(f"Invalid task id in payload: {task}")
-                time.sleep(self.config.poll_interval)
-                continue
-            task_id: str = raw_task_id
-            task_type = task.get("type")
-            data = task.get("data", {})
-            self.logger.info(f"Dequeued task: {task_id} (type={task_type})")
+                raw_task_id = task.get("task_id") or task.get("id")
+                if not isinstance(raw_task_id, str) or not raw_task_id:
+                    self.logger.error(f"Invalid task id in payload: {task}")
+                    time.sleep(self.config.poll_interval)
+                    continue
+                task_id: str = raw_task_id
+                task_type = task.get("type")
+                data = task.get("data", {})
+                self.logger.info(f"Dequeued task: {task_id} (type={task_type})")
 
-            # Execute
-            if task_type == "ping":
-                result_data = {"message": "pong", "worker": self.config.worker_name, "timestamp": datetime.utcnow().isoformat() + "Z"}
-                ok = self._submit_result(task_id, True, result_data, None)
-                self.logger.info(f"Submitted ping result: {'OK' if ok else 'FAIL'}")
-            elif task_type in ("rpa_command", "rpa"):
-                exec_out = self._execute_rpa_command(data)
-                ok = self._submit_result(task_id, bool(exec_out.get("success", False)), exec_out.get("data") or {}, exec_out.get("error"))
-                self.logger.info(f"Submitted rpa result: {'OK' if ok else 'FAIL'} | success={exec_out.get('success')}")
-            else:
-                # Unknown task → mark failed
-                err = f"Unsupported task type: {task_type}"
-                ok = self._submit_result(task_id, False, {}, err)
-                self.logger.warning(f"Submitted failure for unknown task: {'OK' if ok else 'FAIL'} | {err}")
+                # Execute
+                if task_type == "ping":
+                    result_data = {"message": "pong", "worker": self.config.worker_name, "timestamp": datetime.utcnow().isoformat() + "Z"}
+                    ok = self._submit_result(task_id, True, result_data, None)
+                    self.logger.info(f"Submitted ping result: {'OK' if ok else 'FAIL'}")
+                elif task_type in ("rpa_command", "rpa"):
+                    exec_out = self._execute_rpa_command(data)
+                    ok = self._submit_result(task_id, bool(exec_out.get("success", False)), exec_out.get("data") or {}, exec_out.get("error"))
+                    self.logger.info(f"Submitted rpa result: {'OK' if ok else 'FAIL'} | success={exec_out.get('success')}")
+                else:
+                    # Unknown task → mark failed
+                    err = f"Unsupported task type: {task_type}"
+                    ok = self._submit_result(task_id, False, {}, err)
+                    self.logger.warning(f"Submitted failure for unknown task: {'OK' if ok else 'FAIL'} | {err}")
+            except Exception as e:
+                # 에러 발생 시 화면 캡처 및 OCR 결과 저장
+                capture_info = None
+                try:
+                    capture_info = capture_and_ocr_on_error(prefix=f"rpaworker_{task_id}")
+                except Exception as ce:
+                    self.logger.error(f"Error during error capture: {ce}")
+                err_msg = str(e)
+                if capture_info:
+                    err_msg += f"\n[ScreenCapture] {capture_info['screenshot_path']}\n[OCR] {capture_info['ocr_path']}\n[Preview] {capture_info['ocr_preview']}"
+                self._submit_result(task_id if 'task_id' in locals() else 'unknown', False, {}, err_msg)
+                self.logger.exception("Task failed (after retries)")
 
             # small breather to avoid tight loop
             time.sleep(self.config.poll_interval)

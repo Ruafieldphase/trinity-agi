@@ -1,0 +1,37 @@
+{
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "pass_rate": 1.0,
+    "total_time": 0.5
+  },
+  "verifications": [
+    {
+      "action_name": "test_click",
+      "action_type": "CLICK",
+      "success": true,
+      "screenshot_before": "outputs\\phase3_test\\verification\\screenshots\\test_action_before_20251031_204137.png",
+      "screenshot_after": "outputs\\phase3_test\\verification\\screenshots\\test_action_after_20251031_204138.png",
+      "comparison": {
+        "method": "SSIM",
+        "similarity": 0.9997693747137006,
+        "difference": 0.0002306252862993574,
+        "is_similar": true,
+        "threshold": 0.95
+      },
+      "execution_time": 0.5,
+      "timestamp": 1761910899.3370178,
+      "error_message": null,
+      "metadata": {
+        "expect_change": false,
+        "dry_run": false
+      }
+    }
+  ],
+  "config": {
+    "screenshots_enabled": true,
+    "comparison_enabled": true,
+    "comparison_method": "SSIM"
+  }
+}

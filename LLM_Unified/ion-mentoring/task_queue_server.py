@@ -207,6 +207,40 @@ async def get_task_result(task_id: str):
     return task_results[task_id]
 
 
+@app.get("/api/stats")
+async def get_stats():
+    """Get queue statistics for monitoring"""
+    with queue_lock:
+        # Calculate statistics
+        total_completed = len(task_results)
+        successful = sum(1 for r in task_results.values() if r.get("success"))
+        failed = total_completed - successful
+        
+        # Calculate average duration if available
+        durations = []
+        for result in task_results.values():
+            if result.get("data") and "duration_ms" in result["data"]:
+                durations.append(result["data"]["duration_ms"])
+        
+        avg_duration = sum(durations) / len(durations) if durations else 0
+        
+        # Worker count (unique workers from inflight tasks)
+        workers = set(meta.get("worker", "unknown") for meta in inflight_tasks.values())
+        active_workers = len([w for w in workers if w != "unknown"])
+        
+        return {
+            "pending": len(task_queue),
+            "inflight": len(inflight_tasks),
+            "completed": total_completed,
+            "successful": successful,
+            "failed": failed,
+            "success_rate": (successful / total_completed * 100) if total_completed > 0 else 0,
+            "workers": active_workers,
+            "avg_duration_ms": avg_duration,
+            "timestamp": datetime.now().isoformat()
+        }
+
+
 # === Main ===
 
 def main():

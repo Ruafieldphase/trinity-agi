@@ -1,0 +1,7306 @@
+{
+  "steps_count": 730,
+  "steps": [
+    {
+      "order": 1,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 22.519,
+      "description": "demos for you to follow along so get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 2,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 35.879,
+      "description": "start with the basic concepts of what",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 3,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 44.8,
+      "description": "machine and after installing docker we",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 4,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 49.239,
+      "description": "commands to start and stop containers",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 5,
+      "action": "run",
+      "target": "m",
+      "value": null,
+      "timestamp": 66.36,
+      "description": "we'll run multiple containers or",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 6,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 78.96,
+      "description": "finally we'll deploy our containerized",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 7,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 87.64,
+      "description": "learning the different volume types and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 8,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 89.92,
+      "description": "afterwards configure persistence for our",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 9,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 92.92,
+      "description": "demo project if you get stuck anywhere",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 10,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 117.0,
+      "description": "let's get started",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 11,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 140.44,
+      "description": "deployment process of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 12,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 161.599,
+      "description": "and moved around between a development",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 13,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 177.44,
+      "description": "deployment process more efficient",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 14,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 193.04,
+      "description": "can share them and move them around so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 15,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 198.159,
+      "description": "repository this is a special type of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 16,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 240.76,
+      "description": "so here if you scroll down you see that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 17,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 284.759,
+      "description": "repository is where you usually get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 18,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 287.84,
+      "description": "started when you're using or when you're",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 19,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 290.16,
+      "description": "starting to use the containers where you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 20,
+      "action": "install",
+      "target": "most of the services on your",
+      "value": null,
+      "timestamp": 313.12,
+      "description": "install most of the services on your",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 21,
+      "action": "install",
+      "target": "the binaries",
+      "value": null,
+      "timestamp": 329.24,
+      "description": "then have to go and install the binaries",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 22,
+      "action": "install",
+      "target": "t",
+      "value": null,
+      "timestamp": 334.28,
+      "description": "and configure them and run them on their",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 23,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 343.68,
+      "description": "they're using the installation process",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 24,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 349.16,
+      "description": "another thing with installing services",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 25,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 354.88,
+      "description": "steps of installation so you have a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 26,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 358.919,
+      "description": "execute and the chances of something",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 27,
+      "action": "install",
+      "target": "each",
+      "value": null,
+      "timestamp": 366.24,
+      "description": "number of steps required to install each",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 28,
+      "action": "install",
+      "target": "any of",
+      "value": null,
+      "timestamp": 393.479,
+      "description": "actually do not have to install any of",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 29,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 417.0,
+      "description": "and the start script inside of one",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 30,
+      "action": "download",
+      "target": "o",
+      "value": null,
+      "timestamp": 424.599,
+      "description": "download on your machine but rather you",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 31,
+      "action": "download",
+      "target": "o",
+      "value": null,
+      "timestamp": 431.639,
+      "description": "specific container and download on your",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 32,
+      "action": "download",
+      "target": "s",
+      "value": null,
+      "timestamp": 434.4,
+      "description": "local machine and the download step is",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 33,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 438.319,
+      "description": "just one docker command which fetches",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 34,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 440.879,
+      "description": "the container and starts it at the same",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 35,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 448.52,
+      "description": "command for starting the container will",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 36,
+      "action": "run",
+      "target": "1",
+      "value": null,
+      "timestamp": 457.56,
+      "description": "depends on you would just have to run 10",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 37,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 480.319,
+      "description": "of the same application running on your",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 38,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 490.039,
+      "description": "can improve the deployment process",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 39,
+      "action": "install",
+      "target": "ok",
+      "value": null,
+      "timestamp": 494.52,
+      "description": "deployment process will look like this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 40,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 500.479,
+      "description": "together with a set of instructions of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 41,
+      "action": "install",
+      "target": "and configure",
+      "value": null,
+      "timestamp": 502.96,
+      "description": "how to actually install and configure",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 42,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 519.44,
+      "description": "to configure and set it up on the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 43,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 531.24,
+      "description": "setting up the environment to deploy",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 44,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 539.72,
+      "description": "all you need to configure everything and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 45,
+      "action": "install",
+      "target": "everything directly on the",
+      "value": null,
+      "timestamp": 541.92,
+      "description": "install everything directly on the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 46,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 551.16,
+      "description": "versions and multiple services running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 47,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 569.16,
+      "description": "where developers forget to mention some",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 48,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 592.32,
+      "description": "successfully deployed on the server with",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 49,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 616.839,
+      "description": "configure any of this directly on the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 50,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 622.399,
+      "description": "is run a docker command that pulls that",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 51,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 630.32,
+      "description": "then run it this is of course a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 52,
+      "action": "install",
+      "target": "and",
+      "value": null,
+      "timestamp": 645.519,
+      "description": "need to do is you have to install and",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 53,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 647.44,
+      "description": "set up the docker runtime on the server",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 54,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 649.76,
+      "description": "before you will be able to run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 55,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 706.279,
+      "description": "application image that is going to run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 56,
+      "action": "download",
+      "target": "i",
+      "value": null,
+      "timestamp": 722.959,
+      "description": "install it and download it and run it on",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 57,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 774.44,
+      "description": "credentials or anything i can just get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 58,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 777.079,
+      "description": "started with simple docker command",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 59,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 790.199,
+      "description": "docker pole or i can even do docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 60,
+      "action": "run",
+      "target": "s",
+      "value": null,
+      "timestamp": 817.76,
+      "description": "start run so as you see the first line",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 61,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 837.36,
+      "description": "downloading and the this is what i",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 62,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 856.0,
+      "description": "separately downloading from the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 63,
+      "action": "download",
+      "target": "a",
+      "value": null,
+      "timestamp": 868.279,
+      "description": "have to download a newer version of",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 64,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 880.44,
+      "description": "not be downloaded again but only those",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 65,
+      "action": "download",
+      "target": "t",
+      "value": null,
+      "timestamp": 889.88,
+      "description": "minutes to download this one image",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 66,
+      "action": "download",
+      "target": "n",
+      "value": null,
+      "timestamp": 894.56,
+      "description": "but if i were to download the next",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 67,
+      "action": "run",
+      "target": "w",
+      "value": null,
+      "timestamp": 911.199,
+      "description": "ran here the docker run with the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 68,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 913.759,
+      "description": "container name and version it fetches or",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 69,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 920.399,
+      "description": "starts it so it executes the start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 70,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 924.759,
+      "description": "downloads it and here you see the output",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 71,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 927.32,
+      "description": "of the starting of the application so it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 72,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 929.759,
+      "description": "just gives some output about um starting",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 73,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 941.48,
+      "description": "launcher started so now let's open the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 74,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 948.88,
+      "description": "you can actually see all the running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 75,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 955.6,
+      "description": "postgress 96 is running and it actually",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 76,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 981.399,
+      "description": "package together with the configuration",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 77,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 997.199,
+      "description": "started so the application inside",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 78,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 999.8,
+      "description": "actually starts that creates the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 79,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1004.92,
+      "description": "running basically it's an image it's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 80,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 1009.12,
+      "description": "i start it and actually run it on my",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 81,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1018.92,
+      "description": "running containers with a container id",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 82,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1021.44,
+      "description": "image that it's running from and some",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 83,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1024.64,
+      "description": "entry commands that it executed and some",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 84,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1032.72,
+      "description": "now running on my local machine simple",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 85,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 1039.199,
+      "description": "say another version of pogress to run at",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 86,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1053.36,
+      "description": "10.10 running at the same time on my",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 87,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1055.88,
+      "description": "local machine i just do run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 88,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 1066.12,
+      "description": "run again it doesn't find it locally so",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 89,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1082.559,
+      "description": "same so i don't have to fetch those",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 90,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1087.28,
+      "description": "machine and it just fetches the layers",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 91,
+      "action": "wait",
+      "target": null,
+      "value": null,
+      "timestamp": 1100.2,
+      "description": "advantage so now we'll wait for other",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 92,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1109.48,
+      "description": "postgress version running and now you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 93,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1111.88,
+      "description": "see i have postgress 9.6 running in this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 94,
+      "action": "run",
+      "target": "next",
+      "value": null,
+      "timestamp": 1121.84,
+      "description": "version 10.10 running in the next one so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 95,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1127.0,
+      "description": "versions running and i can actually",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 96,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1131.6,
+      "description": "running and there's no conflict between",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 97,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 1133.72,
+      "description": "those two like i can actually run any",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 98,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1155.52,
+      "description": "is just for you to get the first visual",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 99,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1164.64,
+      "description": "you can actually start them on your",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 100,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1181.96,
+      "description": "yourself when i first started learning",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 101,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 1195.0,
+      "description": "and the difference is quite simple i",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 102,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1209.679,
+      "description": "works so let's get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 103,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1212.44,
+      "description": "started in order to understand how",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 104,
+      "action": "run",
+      "target": "o",
+      "value": null,
+      "timestamp": 1237.52,
+      "description": "the applications run on the kernel layer",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 105,
+      "action": "download",
+      "target": "a",
+      "value": null,
+      "timestamp": 1293.08,
+      "description": "when you download a docker image it",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 106,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1300.24,
+      "description": "applications installed on top of it and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 107,
+      "action": "download",
+      "target": "a",
+      "value": null,
+      "timestamp": 1321.08,
+      "description": "download a virtual machine image on your",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 108,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 1349.64,
+      "description": "is the speed so you can run and start",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 109,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1354.52,
+      "description": "vms because they every time you start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 110,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 1366.88,
+      "description": "run a virtual machine image of any",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 111,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 1383.159,
+      "description": "applications and you want to run a linux",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 112,
+      "action": "install",
+      "target": "docker on different operating",
+      "value": null,
+      "timestamp": 1404.76,
+      "description": "install docker on different operating",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 113,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 1411.6,
+      "description": "run docker natively which basically",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 114,
+      "action": "install",
+      "target": "a",
+      "value": null,
+      "timestamp": 1419.4,
+      "description": "workaround is that you install a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 115,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 1426.96,
+      "description": "possible for your host to run different",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 116,
+      "action": "install",
+      "target": "docker on different",
+      "value": null,
+      "timestamp": 1439.0,
+      "description": "how to install docker on different",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 117,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1440.72,
+      "description": "operating systems the installation will",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 118,
+      "action": "click",
+      "target": "select",
+      "value": null,
+      "timestamp": 1449.279,
+      "description": "watch this video selectively depending",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 119,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1456.48,
+      "description": "which installation step applies to you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 120,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1459.12,
+      "description": "in the before installing section which",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 121,
+      "action": "download",
+      "target": "install",
+      "value": null,
+      "timestamp": 1484.36,
+      "description": "get stuck installing the docker on your",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 122,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1491.24,
+      "description": "can um get back to you and help you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 123,
+      "action": "install",
+      "target": "docker you",
+      "value": null,
+      "timestamp": 1500.159,
+      "description": "it so if you want to install docker you",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 124,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1503.32,
+      "description": "can actually google it and you get an",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 125,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 1512.84,
+      "description": "and enterprise additions um for us to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 126,
+      "action": "install",
+      "target": "docker",
+      "value": null,
+      "timestamp": 1526.919,
+      "description": "order to install docker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 127,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1528.84,
+      "description": "so for example if we start with mac we",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 128,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 1531.679,
+      "description": "can click in here and we see the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 129,
+      "action": "install",
+      "target": "it on",
+      "value": null,
+      "timestamp": 1534.08,
+      "description": "documentation of how to install it on",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 130,
+      "action": "install",
+      "target": "docker on",
+      "value": null,
+      "timestamp": 1544.0,
+      "description": "well so before you install docker on",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 131,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1560.72,
+      "description": "met in order to support running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 132,
+      "action": "install",
+      "target": "for example one",
+      "value": null,
+      "timestamp": 1580.76,
+      "description": "know before you install for example one",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 133,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1586.48,
+      "description": "runs only on windows 10",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 134,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1591.08,
+      "description": "is less than 10 then docker cannot run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 135,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 1600.159,
+      "description": "meet the requirements to run docker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 136,
+      "action": "install",
+      "target": "a",
+      "value": null,
+      "timestamp": 1607.6,
+      "description": "you basically just have to install a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 137,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 1615.799,
+      "description": "enable you to run docker on your leg",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 138,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1625.039,
+      "description": "part where i explain how to install",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 139,
+      "action": "install",
+      "target": "docker for mac",
+      "value": null,
+      "timestamp": 1634.96,
+      "description": "windows so let's install docker for mac",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 140,
+      "action": "download",
+      "target": "t",
+      "value": null,
+      "timestamp": 1640.88,
+      "description": "channels that you can download the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 141,
+      "action": "install",
+      "target": "docker so here there is",
+      "value": null,
+      "timestamp": 1657.159,
+      "description": "actually install docker so here there is",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 142,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1662.64,
+      "description": "version you need um to be able to run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 143,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1668.24,
+      "description": "gab of ram and by installing docker you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 144,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1678.6,
+      "description": "important or which is necessary to run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 145,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1686.48,
+      "description": "enable you to execute some docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 146,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1702.84,
+      "description": "everything in a package installed so go",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 147,
+      "action": "download",
+      "target": "s",
+      "value": null,
+      "timestamp": 1705.679,
+      "description": "ahead and download the stable",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 148,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1712.48,
+      "description": "installed from the edge channel so i",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 149,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1716.32,
+      "description": "won't be installing it again but it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 150,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1719.88,
+      "description": "installation are the same for",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 151,
+      "action": "click",
+      "target": "download",
+      "value": null,
+      "timestamp": 1725.679,
+      "description": "downloaded you just double click on it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 152,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1736.679,
+      "description": "applications and it will be installed on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 153,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1742.72,
+      "description": "docker installed in your applications so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 154,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1748.44,
+      "description": "and start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 155,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 1757.0,
+      "description": "is starting here if you click on it you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 156,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 1762.72,
+      "description": "running and you can configure some",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 157,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 1769.799,
+      "description": "and so on and if you want to stop docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 158,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 1772.799,
+      "description": "or quit it on your mech you can just do",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 159,
+      "action": "download",
+      "target": "o",
+      "value": null,
+      "timestamp": 1781.96,
+      "description": "say you download or install docker and",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 160,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1789.88,
+      "description": "laptop you will actually get some errors",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 161,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 1792.919,
+      "description": "or conflicts if you run docker at the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 162,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 1804.0,
+      "description": "need docker i quit it from here and then",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 163,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1807.159,
+      "description": "i start it from other account so that i",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 164,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1810.24,
+      "description": "don't get any",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 165,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1819.96,
+      "description": "accounts so let's see how to install",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 166,
+      "action": "install",
+      "target": "section and to see that your",
+      "value": null,
+      "timestamp": 1827.399,
+      "description": "you install section and to see that your",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 167,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 1833.12,
+      "description": "all the criteria to run docker natively",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 168,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1836.6,
+      "description": "so if you're installing docker for the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 169,
+      "action": "download",
+      "target": "w",
+      "value": null,
+      "timestamp": 1880.039,
+      "description": "can scroll up and download the windows",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 170,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1883.24,
+      "description": "installer for from the stable",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 171,
+      "action": "install",
+      "target": "installer is",
+      "value": null,
+      "timestamp": 1886.279,
+      "description": "channel once they install installer is",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 172,
+      "action": "click",
+      "target": "download",
+      "value": null,
+      "timestamp": 1888.399,
+      "description": "downloaded you can just click on it and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 173,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1890.44,
+      "description": "follow the installation wizard to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 174,
+      "action": "install",
+      "target": "docker for windows once the",
+      "value": null,
+      "timestamp": 1894.12,
+      "description": "install docker for windows once the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 175,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1896.919,
+      "description": "installation is completed you have to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 176,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1899.84,
+      "description": "explicitly start docker because it's not",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 177,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1901.919,
+      "description": "going to start automatically so for that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 178,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 1909.48,
+      "description": "just click on it and you will see the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 179,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1912.48,
+      "description": "docker whale icon um starting and if you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 180,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 1915.799,
+      "description": "click on that icon you can actually see",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 181,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1920.519,
+      "description": "and running so this is basically it for",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 182,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1927.6,
+      "description": "installation now let's see how to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 183,
+      "action": "install",
+      "target": "docker on different linux",
+      "value": null,
+      "timestamp": 1929.519,
+      "description": "install docker on different linux",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 184,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1934.559,
+      "description": "get a little bit more complicated so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 185,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1945.0,
+      "description": "installation steps will differ but also",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 186,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 1948.24,
+      "description": "for example if we just click on auntu",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 187,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 1968.36,
+      "description": "architecture it's running in um also",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 188,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 1980.2,
+      "description": "docker installation process of every",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 189,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 1992.24,
+      "description": "process to get docker running on your",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 190,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 1997.639,
+      "description": "adjust it then for your specific setup",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 191,
+      "action": "install",
+      "target": "docker on",
+      "value": null,
+      "timestamp": 2002.48,
+      "description": "follow in order to install docker on",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 192,
+      "action": "install",
+      "target": "old",
+      "value": null,
+      "timestamp": 2018.919,
+      "description": "documentation to is to uninstall old",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 193,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2023.799,
+      "description": "you installing docker then you don't",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 194,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2032.919,
+      "description": "part of installing docker community",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 195,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2043.44,
+      "description": "installing docker will be the same so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 196,
+      "action": "download",
+      "target": "d",
+      "value": null,
+      "timestamp": 2049.599,
+      "description": "repository and download the docker from",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 197,
+      "action": "install",
+      "target": "it from the docker",
+      "value": null,
+      "timestamp": 2052.52,
+      "description": "and install it from the docker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 198,
+      "action": "install",
+      "target": "the packages manually however i",
+      "value": null,
+      "timestamp": 2058.52,
+      "description": "install the packages manually however i",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 199,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2067.0,
+      "description": "lot of steps of the installation and the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 200,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 2081.599,
+      "description": "is basically just downloading some",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 201,
+      "action": "install",
+      "target": "and",
+      "value": null,
+      "timestamp": 2083.879,
+      "description": "automated scripts that will install and",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 202,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 2087.159,
+      "description": "setup docker on your linux environment",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 203,
+      "action": "download",
+      "target": "l",
+      "value": null,
+      "timestamp": 2096.52,
+      "description": "which is just download lo in the docker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 204,
+      "action": "install",
+      "target": "docker using the first option",
+      "value": null,
+      "timestamp": 2102.52,
+      "description": "install docker using the first option",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 205,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 2105.359,
+      "description": "which is downloading it from the docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 206,
+      "action": "install",
+      "target": "the docker ce from that",
+      "value": null,
+      "timestamp": 2120.4,
+      "description": "and then install the docker ce from that",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 207,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2150.599,
+      "description": "install",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 208,
+      "action": "install",
+      "target": "the docker c from",
+      "value": null,
+      "timestamp": 2214.48,
+      "description": "you can then install the docker c from",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 209,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2218.44,
+      "description": "repositories so installing docker from",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 210,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 2220.839,
+      "description": "the setup repository is actually pretty",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 211,
+      "action": "install",
+      "target": "docker ce",
+      "value": null,
+      "timestamp": 2231.04,
+      "description": "and then you just say install docker ce",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 212,
+      "action": "download",
+      "target": "t",
+      "value": null,
+      "timestamp": 2234.88,
+      "description": "so this command will just download the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 213,
+      "action": "install",
+      "target": "a specific one which you will",
+      "value": null,
+      "timestamp": 2239.48,
+      "description": "install a specific one which you will",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 214,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2263.92,
+      "description": "installed um on your linux environment",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 215,
+      "action": "run",
+      "target": "h",
+      "value": null,
+      "timestamp": 2269.28,
+      "description": "sudo docker run hello world which is",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 216,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2275.64,
+      "description": "that docker is running and this will",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 217,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2277.96,
+      "description": "start hello world docker container on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 218,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2292.52,
+      "description": "running docker natively there is an",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 219,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2300.04,
+      "description": "an installer for docker environment",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 220,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 2303.359,
+      "description": "setup on those systems",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 221,
+      "action": "install",
+      "target": "uh docker",
+      "value": null,
+      "timestamp": 2307.92,
+      "description": "so this is how to install uh docker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 222,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2313.319,
+      "description": "package that comes with the installation",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 223,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2323.24,
+      "description": "installation and in on top of that you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 224,
+      "action": "download",
+      "target": "box",
+      "value": null,
+      "timestamp": 2325.72,
+      "description": "also get the oracle vm virtual box so in",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 225,
+      "action": "install",
+      "target": "the docker toolbox it's",
+      "value": null,
+      "timestamp": 2328.64,
+      "description": "order to install the docker toolbox it's",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 226,
+      "action": "download",
+      "target": "p",
+      "value": null,
+      "timestamp": 2346.319,
+      "description": "and you just download the package for",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 227,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 2348.64,
+      "description": "mac and once it's downloaded you just",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 228,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 2351.72,
+      "description": "click on it and go through the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 229,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2353.4,
+      "description": "installation wizard leave all the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 230,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2360.64,
+      "description": "installation you can just validate that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 231,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2363.44,
+      "description": "the installation is successful and you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 232,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 2366.04,
+      "description": "can actually run docker so so after",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 233,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2368.0,
+      "description": "seeing the installation was successful",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 234,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2371.68,
+      "description": "launch pad dock quick start terminal and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 235,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2375.119,
+      "description": "once you open it you should be able to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 236,
+      "action": "run",
+      "target": "u",
+      "value": null,
+      "timestamp": 2377.28,
+      "description": "run uh docker commands and you can just",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 237,
+      "action": "run",
+      "target": "h",
+      "value": null,
+      "timestamp": 2379.72,
+      "description": "try docker run hello world which should",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 238,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2382.44,
+      "description": "just start up or bring up um this hello",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 239,
+      "action": "install",
+      "target": "docker toolbox on windows here",
+      "value": null,
+      "timestamp": 2392.48,
+      "description": "install docker toolbox on windows here",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 240,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 2395.16,
+      "description": "see that you get the whole package of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 241,
+      "action": "download",
+      "target": "install",
+      "value": null,
+      "timestamp": 2402.2,
+      "description": "get on the uh native docker installation",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 242,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 2405.8,
+      "description": "and on top of that you get oracle vm",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 243,
+      "action": "run",
+      "target": "o",
+      "value": null,
+      "timestamp": 2410.28,
+      "description": "enables docker to run on an older system",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 244,
+      "action": "install",
+      "target": "docker tool books",
+      "value": null,
+      "timestamp": 2413.76,
+      "description": "so before you install docker tool books",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 245,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2428.04,
+      "description": "otherwise docker docker won't start so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 246,
+      "action": "install",
+      "target": "the locker",
+      "value": null,
+      "timestamp": 2455.76,
+      "description": "you can go ahead and install the locker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 247,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2464.64,
+      "description": "open so it's basically a list of the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 248,
+      "action": "download",
+      "target": "t",
+      "value": null,
+      "timestamp": 2472.16,
+      "description": "for windows you just download this",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 249,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 2474.2,
+      "description": "executable file click on it and go",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 250,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2477.0,
+      "description": "through the installation wizard once the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 251,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2479.359,
+      "description": "installation is completed there are just",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 252,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2484.599,
+      "description": "docker was installed or the toolbox was",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 253,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2486.8,
+      "description": "installed",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 254,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2489.599,
+      "description": "start terminal on your windows that app",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 255,
+      "action": "click",
+      "target": "install",
+      "value": null,
+      "timestamp": 2492.2,
+      "description": "must be installed and once you click on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 256,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2494.0,
+      "description": "it and open it you should be able to run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 257,
+      "action": "run",
+      "target": "h",
+      "value": null,
+      "timestamp": 2501.839,
+      "description": "will be docker run hello world which",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 258,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 2504.52,
+      "description": "will just fetch this basic uh docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 259,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 2509.96,
+      "description": "run it on your computer if that command",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 260,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 2515.2,
+      "description": "successfully installed on your computer",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 261,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2544.72,
+      "description": "enough to pull an image locally to start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 262,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 2546.839,
+      "description": "a container to configure a container and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 263,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 2552.599,
+      "description": "said let's get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 264,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2555.04,
+      "description": "started so what is the difference",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 265,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2569.24,
+      "description": "of a container runtime so container is",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 266,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2572.839,
+      "description": "the running environment for an image so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 267,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2578.8,
+      "description": "graphic the application image that runs",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 268,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2612.92,
+      "description": "which is running inside of a container",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 269,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 2674.64,
+      "description": "downloaded and this will take a couple",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 270,
+      "action": "download",
+      "target": "i",
+      "value": null,
+      "timestamp": 2679.04,
+      "description": "minutes so once the download is complete",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 271,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 2717.04,
+      "description": "that you get when you don't specify the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 272,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 2723.96,
+      "description": "actually choose the version you want and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 273,
+      "action": "click",
+      "target": "select",
+      "value": null,
+      "timestamp": 2727.0,
+      "description": "specified and you can select one from",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 274,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 2735.48,
+      "description": "image so i just downloaded the latest",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 275,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2748.16,
+      "description": "involved and there is no redish running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 276,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2751.359,
+      "description": "so now let's say i need red running so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 277,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2767.68,
+      "description": "i can do it by running the redis image",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 278,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2772.079,
+      "description": "so if i say docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 279,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2775.2,
+      "description": "red this will actually start the image",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 280,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2782.319,
+      "description": "container is a running environment of an",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 281,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2785.559,
+      "description": "image so now if i open a new tab and do",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 282,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 2791.92,
+      "description": "ps i will get status of all the running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 283,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2798.72,
+      "description": "container redis is running with a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 284,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2808.52,
+      "description": "example the port that it's running on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 285,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2813.88,
+      "description": "on so as you see here the docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 286,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2816.92,
+      "description": "redis command will start the redis",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 287,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 2828.319,
+      "description": "c you see that red application stops and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 288,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 2832.559,
+      "description": "the container will be stopped as well so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 289,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2838.359,
+      "description": "container is running so there is an",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 290,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 2841.839,
+      "description": "option for docker run command that make",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 291,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 2847.44,
+      "description": "makes it possible to run the container",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 292,
+      "action": "run",
+      "target": "m",
+      "value": null,
+      "timestamp": 2852.559,
+      "description": "so if i do dock run minus d",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 293,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 2855.28,
+      "description": "redis i will just get the id of the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 294,
+      "action": "run",
+      "target": "check",
+      "value": null,
+      "timestamp": 2860.88,
+      "description": "will stop running so if we check again",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 295,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2866.599,
+      "description": "id starting with 838 which is the same",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 296,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2870.359,
+      "description": "thing here is running so this is how you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 297,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2874.359,
+      "description": "can start it in the detached mode now",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 298,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2877.079,
+      "description": "for example if you would want to restart",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 299,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2885.52,
+      "description": "error happened so you want to restart it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 300,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 2898.599,
+      "description": "stop id of the container and that will",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 301,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 2901.44,
+      "description": "stop the docker container nothing",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 302,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2904.119,
+      "description": "running if you want to start it again",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 303,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2910.079,
+      "description": "id to start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 304,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 2916.52,
+      "description": "again so let's say you stop docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 305,
+      "action": "run",
+      "target": "next",
+      "value": null,
+      "timestamp": 2924.04,
+      "description": "home you come back the next day open",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 306,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2926.16,
+      "description": "your laptop and you want to restart the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 307,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 2929.799,
+      "description": "stopped container right so if you do",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 308,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2948.44,
+      "description": "containers which uh are running or not",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 309,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2951.44,
+      "description": "running so here you see the container id",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 310,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2955.119,
+      "description": "again and you can restart",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 311,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 2976.2,
+      "description": "running on your laptop right at",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 312,
+      "action": "click",
+      "target": "select",
+      "value": null,
+      "timestamp": 2991.119,
+      "description": "and select uh version let's say you need",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 313,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 3001.28,
+      "description": "downloaded the redis image we did docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 314,
+      "action": "run",
+      "target": "d",
+      "value": null,
+      "timestamp": 3003.559,
+      "description": "pull redis um however if you run docker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 315,
+      "action": "run",
+      "target": "w",
+      "value": null,
+      "timestamp": 3009.76,
+      "description": "run with redice image and the tech which",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 316,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3014.72,
+      "description": "4.0 it will pull the image and start the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 317,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3024.0,
+      "description": "docker pole that docker start in one one",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 318,
+      "action": "download",
+      "target": "download",
+      "value": null,
+      "timestamp": 3042.4,
+      "description": "downloaded and the container is started",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 319,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3053.359,
+      "description": "running so this is where it gets",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 320,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3061.079,
+      "description": "container that you just started so in",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 321,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3076.839,
+      "description": "open the same port which is what was",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 322,
+      "action": "run",
+      "target": "form",
+      "value": null,
+      "timestamp": 3086.72,
+      "description": "see the information running mode stand",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 323,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3097.48,
+      "description": "are running on the same port so to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 324,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3107.319,
+      "description": "environment running on your host and you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 325,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3110.04,
+      "description": "can have multiple containers running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 326,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3121.4,
+      "description": "available that you can open for certain",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 327,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3151.559,
+      "description": "have conflict if you open two 5,000",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 328,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3156.119,
+      "description": "ports on your host because you will get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 329,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3188.4,
+      "description": "running container using the port of the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 330,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3213.48,
+      "description": "their ports and they're both running on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 331,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 3236.559,
+      "description": "during the run command so i'm going to",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 332,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3242.839,
+      "description": "one container running now i'm going",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 333,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3245.4,
+      "description": "to stop the other one as well so we can",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 334,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3248.559,
+      "description": "start the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 335,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3255.04,
+      "description": "here so now we want to start them using",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 336,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 3271.92,
+      "description": "to do it is you do docker run and you",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 337,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3338.24,
+      "description": "start it in a detached",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 338,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3345.599,
+      "description": "again it's running again and now i want",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 339,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3348.88,
+      "description": "to start the second container let's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 340,
+      "action": "run",
+      "target": "o",
+      "value": null,
+      "timestamp": 3389.119,
+      "description": "run the other",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 341,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3395.559,
+      "description": "the same port on my laptop i would get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 342,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 3405.52,
+      "description": "60001 and run it again i'll run it in",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 343,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3421.28,
+      "description": "different radi versions running both of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 344,
+      "action": "run",
+      "target": "w",
+      "value": null,
+      "timestamp": 3448.559,
+      "description": "also saw run which basically combines",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 345,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3451.4,
+      "description": "docker pull and docker start pulls the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 346,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3456.599,
+      "description": "then starts it right away then we saw",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 347,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3459.68,
+      "description": "docker start and docker stop which makes",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 348,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3463.799,
+      "description": "it possible to restart a container if um",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 349,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3471.28,
+      "description": "possible to restart a container if you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 350,
+      "action": "run",
+      "target": "w",
+      "value": null,
+      "timestamp": 3472.799,
+      "description": "need to um we also saw docu run with",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 351,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3480.48,
+      "description": "minus d which is detach so you can run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 352,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3513.2,
+      "description": "containers no matter if they're running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 353,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3526.64,
+      "description": "to clean up your space and get rid of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 354,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3540.319,
+      "description": "anymore you can also get rid of them so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 355,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3554.839,
+      "description": "get inside of container get the terminal",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 356,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3557.48,
+      "description": "and execute some commands on it so let's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 357,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3563.44,
+      "description": "running right now we don't have any out",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 358,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3599.44,
+      "description": "name of the container and you can get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 359,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3611.839,
+      "description": "container is created you just get some",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 360,
+      "action": "run",
+      "target": "w",
+      "value": null,
+      "timestamp": 3619.2,
+      "description": "another option of the docker run which",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 361,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 3639.319,
+      "description": "that we choose so i'm going to stop this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 362,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 3647.799,
+      "description": "one from the same image so let's run it",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 363,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3650.52,
+      "description": "in the detached mode let's open the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 364,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3677.48,
+      "description": "container since we're running the docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 365,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3681.4,
+      "description": "one command again so if we execute this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 366,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3710.119,
+      "description": "i'll stop this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 367,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 3727.88,
+      "description": "i'm going to run it and let's",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 368,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3733.559,
+      "description": "running now i know r is older r is",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 369,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3742.0,
+      "description": "logs r is older and i can get get my",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 370,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3750.24,
+      "description": "debugging is docker exit so what we can",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 371,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3754.4,
+      "description": "do with docker exit is we can actually",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 372,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3757.279,
+      "description": "get the terminal of a running container",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 373,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3761.599,
+      "description": "containers running and let's say there",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 374,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3768.16,
+      "description": "latest container and i want to get a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 375,
+      "action": "scroll",
+      "target": "check",
+      "value": null,
+      "timestamp": 3774.079,
+      "description": "navigate a directory inside check uh the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 376,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3784.799,
+      "description": "in order to do that we use docker exit",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 377,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 3796.119,
+      "description": "id and i say in so i get the b and here",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 378,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 3823.039,
+      "description": "container and here i can um navigate the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 379,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3847.2,
+      "description": "running your own application that you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 380,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 3854.68,
+      "description": "kind of setup and you want to validate",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 381,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3860.92,
+      "description": "order to exit the terminal you just do",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 382,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3864.079,
+      "description": "exit and you're out",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 383,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 3890.4,
+      "description": "installed here for example you wouldn't",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 384,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3897.88,
+      "description": "sense so you can execute a lot of stuff",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 385,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3908.96,
+      "description": "review the difference between docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 386,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3910.96,
+      "description": "and docker start which might be",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 387,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 3914.68,
+      "description": "them so basically docker run is where",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 388,
+      "action": "run",
+      "target": "w",
+      "value": null,
+      "timestamp": 3922.44,
+      "description": "so docker run will take an image with a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 389,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3932.24,
+      "description": "start you not working with images but",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 390,
+      "action": "run",
+      "target": "h",
+      "value": null,
+      "timestamp": 3938.92,
+      "description": "as we saw docker run has a lot of",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 391,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 3970.92,
+      "description": "created and if you stop it and you want",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 392,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3973.559,
+      "description": "to restart it you just need to use the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 393,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3976.799,
+      "description": "command do start and specify the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 394,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3979.319,
+      "description": "container id and when you start it the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 395,
+      "action": "run",
+      "target": "s",
+      "value": null,
+      "timestamp": 3987.72,
+      "description": "container using docker run so docker run",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 396,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 3994.52,
+      "description": "start is to restart a stopped",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 397,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 4020.079,
+      "description": "and then eventually gets deployed on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 398,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 4061.64,
+      "description": "instead of installing it on your laptop",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 399,
+      "action": "download",
+      "target": "a",
+      "value": null,
+      "timestamp": 4064.319,
+      "description": "you download a docker container from the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 400,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4072.0,
+      "description": "and you start developing so now let's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 401,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4081.839,
+      "description": "deploy it on the uh development",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 402,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4102.359,
+      "description": "configured and jenkins build will",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 403,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 4120.4,
+      "description": "image once it gets created by jenkins",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 404,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 4123.719,
+      "description": "build it gets pushed to a private docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 405,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4140.799,
+      "description": "configured on jenkins or some other",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 406,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4147.759,
+      "description": "to be deployed on a development server",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 407,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4172.239,
+      "description": "running on dev server and they talk to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 408,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4174.64,
+      "description": "each other you have to configure it of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 409,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 4178.4,
+      "description": "other and run as an app so now if a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 410,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 4228.88,
+      "description": "so let's get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 411,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4232.36,
+      "description": "started so in this video we're going to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 412,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4264.159,
+      "description": "execute commands in in the terminal",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 413,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4266.679,
+      "description": "we're going to deploy a docker container",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 414,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4271.48,
+      "description": "express where we can see the database",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 415,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4279.08,
+      "description": "database so this development setup",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 416,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4312.04,
+      "description": "running here in the back end and we have",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 417,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4375.159,
+      "description": "container we're going to also deploy a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 418,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4380.44,
+      "description": "it's called express where we can",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 419,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 4395.12,
+      "description": "works so in order to get started let's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 420,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4412.44,
+      "description": "here actually and the express",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 421,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4444.32,
+      "description": "express which i also have i believe so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 422,
+      "action": "click",
+      "target": "next",
+      "value": null,
+      "timestamp": 4457.0,
+      "description": "express images so the next step is to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 423,
+      "action": "click",
+      "target": "b",
+      "value": null,
+      "timestamp": 4460.199,
+      "description": "run both and express uh",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 424,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4471.159,
+      "description": " express with the mongod db",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 425,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4491.32,
+      "description": "network where the containers are running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 426,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4493.96,
+      "description": "in so so when i deploy two containers in",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 427,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4500.0,
+      "description": " and express they can talk to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 428,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4513.28,
+      "description": "network and the applications that run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 429,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4518.84,
+      "description": "just runs from node server is going to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 430,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4538.8,
+      "description": "express container and we're going to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 431,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4552.88,
+      "description": "and the browser which is running on the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 432,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4585.36,
+      "description": "mongodb and the express and we're",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 433,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4614.28,
+      "description": "our m b container and the express",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 434,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 4617.32,
+      "description": "container run in this network we",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 435,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 4623.28,
+      "description": "we run the container in the docker run",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 436,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4627.8,
+      "description": "command so let's start with the so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 437,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 4631.44,
+      "description": "we all know that docker run is the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 438,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4633.719,
+      "description": "command to start a container from an",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 439,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4635.719,
+      "description": "image right so we have docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 440,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 4637.92,
+      "description": "which is the basic docker run command",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 441,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4650.719,
+      "description": "to open a port of mongodb the default",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 442,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 4663.96,
+      "description": "will run at this port inside of a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 443,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4666.159,
+      "description": "container and we open the same port on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 444,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 4670.679,
+      "description": "port then we will run it in a detach",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 445,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4677.4,
+      "description": "when starting up the container and these",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 446,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4700.6,
+      "description": "startup you can define what the root",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 447,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4707.88,
+      "description": "need those two for the express to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 448,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4718.159,
+      "description": "database from the express ui later",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 449,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 4750.92,
+      "description": "this way we can actually overwrite what",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 450,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 4757.6,
+      "description": "configure in this uh command our",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 451,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4766.56,
+      "description": "the express so we'll call this one",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 452,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4801.639,
+      "description": "it's going to start in detached mode uh",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 453,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4804.36,
+      "description": "we are opening the port on the host um",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 454,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4810.0,
+      "description": "mongodb to use uh in the startup process",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 455,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 4813.12,
+      "description": "we're going to rewrite or overwrite the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 456,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 4818.6,
+      "description": "is going to run in a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 457,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4820.36,
+      "description": "network and this should actually start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 458,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4835.48,
+      "description": "inside so as we see was started",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 459,
+      "action": "wait",
+      "target": null,
+      "value": null,
+      "timestamp": 4843.0,
+      "description": "waiting for connections on port",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 460,
+      "action": "run",
+      "target": "ok",
+      "value": null,
+      "timestamp": 4846.4,
+      "description": "27,7 okay so now let's start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 461,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4850.48,
+      "description": "express we want express to connect",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 462,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4853.159,
+      "description": "to the running mongod db be container on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 463,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4856.48,
+      "description": "startup and here we have an example of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 464,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 4859.04,
+      "description": "how to run it and here we have the list",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 465,
+      "action": "install",
+      "target": "ok",
+      "value": null,
+      "timestamp": 4863.52,
+      "description": "configure so let's quickly look at them",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 466,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4879.0,
+      "description": "because express will need some username",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 467,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4895.84,
+      "description": "container name that express will use to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 468,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4901.76,
+      "description": "running in the same network only because",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 469,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4917.92,
+      "description": "let's actually create the docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 470,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4920.44,
+      "description": "command for express as",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 471,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 4927.28,
+      "description": "let's start so again we run it in",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 472,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4937.76,
+      "description": "the express runs on that's 80",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 473,
+      "action": "run",
+      "target": "o",
+      "value": null,
+      "timestamp": 4944.199,
+      "description": "going to run on our laptop on port",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 474,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 4964.0,
+      "description": "when we started the mongodb container",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 475,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 4970.76,
+      "description": "well don't forget the network minus",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 476,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 4987.679,
+      "description": "express and let's see what else we might",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 477,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5001.84,
+      "description": "see it again toer ps the one running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 478,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 5009.48,
+      "description": "here so i'm going to write this here and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 479,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5016.36,
+      "description": "express so i'm just going to copy this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 480,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5023.08,
+      "description": "commands do express should be able",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 481,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 5028.52,
+      "description": "so let's run it and just to make sure",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 482,
+      "action": "wait",
+      "target": null,
+      "value": null,
+      "timestamp": 5036.04,
+      "description": "there waiting for mongodb welcome to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 483,
+      "action": "click",
+      "target": "ok",
+      "value": null,
+      "timestamp": 5039.36,
+      "description": " express it looks like it connected",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 484,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5044.92,
+      "description": "connected and the express is",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 485,
+      "action": "click",
+      "target": "check",
+      "value": null,
+      "timestamp": 5053.44,
+      "description": "check the express out at the port",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 486,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 5057.44,
+      "description": "881 so actually let's close these tabs",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 487,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5068.199,
+      "description": "express so these are the databases that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 488,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5073.36,
+      "description": "which are created on startup and using",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 489,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5083.719,
+      "description": "db on mongodb startup and that would",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 490,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5115.92,
+      "description": "container and the express",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 491,
+      "action": "run",
+      "target": "check",
+      "value": null,
+      "timestamp": 5117.56,
+      "description": "container running so let's check that we",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 492,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 5198.48,
+      "description": "demonstration purposes i will write the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 493,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5206.08,
+      "description": "went ahead and in the express user",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 494,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 5224.76,
+      "description": "get request so i'm just fetching",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 495,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 5250.199,
+      "description": "the data so i'm going to write here",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 496,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5265.159,
+      "description": "section here so all this was executed it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 497,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 5277.48,
+      "description": "going to refresh it now i fetched the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 498,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5376.92,
+      "description": "both of them running in a docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 499,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5394.88,
+      "description": "started two docker containers mongodb",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 500,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5397.28,
+      "description": "and mong express and these are the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 501,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 5415.08,
+      "description": "docker run commands with all the options",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 502,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5422.96,
+      "description": "uh this way of starting containers all",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 503,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 5428.52,
+      "description": "don't want to execute these run commands",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 504,
+      "action": "run",
+      "target": "y",
+      "value": null,
+      "timestamp": 5434.719,
+      "description": "of docker containers to run you probably",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 505,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5442.679,
+      "description": "that's that makes running multiple",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 506,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 5449.32,
+      "description": "docker run commands and that is docker",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 507,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 5462.119,
+      "description": "that so this is a docker run command of",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 508,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5465.0,
+      "description": "the mongodb that we executed",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 509,
+      "action": "run",
+      "target": "f",
+      "value": null,
+      "timestamp": 5485.639,
+      "description": "containers that you want to run for your",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 510,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 5491.119,
+      "description": "you can basically write all the run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 511,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5546.639,
+      "description": "specify which ports is going to open",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 512,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5572.719,
+      "description": "express that we executed it and how to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 513,
+      "action": "click",
+      "target": "c",
+      "value": null,
+      "timestamp": 5578.36,
+      "description": "run command for express and let's",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 514,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5590.119,
+      "description": "again names express will map map",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 515,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 5636.76,
+      "description": "some new options to the run command so",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 516,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 5676.199,
+      "description": "run in and we're going to see that in",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 517,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5716.679,
+      "description": "that so now compared to docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 518,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5741.48,
+      "description": "use it or how do i start the containers",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 519,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5745.92,
+      "description": "line and start docker containers using",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 520,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 5755.8,
+      "description": "compose command now if you've installed",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 521,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 5759.4,
+      "description": "docker on your laptop it usually gets",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 522,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 5762.8,
+      "description": "installed with the docker compose",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 523,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 5770.36,
+      "description": "installed as a package so docker compos",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 524,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5778.28,
+      "description": "i want to execute and in my case it's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 525,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5790.4,
+      "description": "which will start all the containers",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 526,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5797.719,
+      "description": "are no containers running so i don't",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 527,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5799.44,
+      "description": "have anything running here and i'm going",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 528,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5801.639,
+      "description": "to start those two",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 529,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 5817.199,
+      "description": "so let's scroll all the way up so we've",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 530,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 5824.52,
+      "description": "to run the containers inside and i said",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 531,
+      "action": "run",
+      "target": "t",
+      "value": null,
+      "timestamp": 5838.92,
+      "description": "going to run those two containers these",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 532,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5872.4,
+      "description": "starting both at the the same time as",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 533,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5875.239,
+      "description": "you see the express has to wait",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 534,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5878.84,
+      "description": "for mongod db to start because it needs",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 535,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 5888.48,
+      "description": "starting we still get connection refus",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 536,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5891.119,
+      "description": "because it's not started uh completely",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 537,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5897.639,
+      "description": "started and listening for connections",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 538,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5899.88,
+      "description": " express is able to connect to it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 539,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5910.159,
+      "description": "another one starting you can actually",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 540,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 5912.719,
+      "description": "configure this waiting logic in the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 541,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5922.119,
+      "description": "running so we have both of them here you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 542,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5930.4,
+      "description": "note is that the express actually",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 543,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5934.52,
+      "description": "started on port 8081 inside the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 544,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5941.52,
+      "description": "are opening a port 8080 on my laptop",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 545,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 5950.679,
+      "description": "you don't get confused because it was",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 546,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5956.679,
+      "description": "restarted the containers let's actually",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 547,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 5961.159,
+      "description": "express",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 548,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5964.88,
+      "description": "so it's running on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 549,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5973.04,
+      "description": "gone because we restarted the container",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 550,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 5980.719,
+      "description": "you restart a container everything that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 551,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 5983.44,
+      "description": "you configured in that container's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 552,
+      "action": "run",
+      "target": "ok",
+      "value": null,
+      "timestamp": 6012.04,
+      "description": "restarts okay so let's actually create",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 553,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6026.599,
+      "description": "let's actually start our",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 554,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 6054.36,
+      "description": "want to stop those",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 555,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 6059.0,
+      "description": "and say docker stop and i can provide",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 556,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 6080.199,
+      "description": "all and in addition to remove removing",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 557,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 6083.599,
+      "description": "the containers or stopping them removing",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 558,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 6085.599,
+      "description": "the containers it also removes the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 559,
+      "action": "run",
+      "target": "next",
+      "value": null,
+      "timestamp": 6088.28,
+      "description": "network so the next time we restarted",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 560,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 6105.04,
+      "description": "up see it gets recreated that should",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 561,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 6129.239,
+      "description": "and now you're ready to deploy it right",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 562,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 6131.76,
+      "description": "to deploy it your application should be",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 563,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 6147.08,
+      "description": "to be deployed on some environment to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 564,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6173.76,
+      "description": "integration that runs so the question is",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 565,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 6235.719,
+      "description": "image and we're going to configure it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 566,
+      "action": "run",
+      "target": "o",
+      "value": null,
+      "timestamp": 6280.679,
+      "description": "run our node",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 567,
+      "action": "install",
+      "target": "node ourselves on it so we are",
+      "value": null,
+      "timestamp": 6290.28,
+      "description": "install node ourselves on it so we are",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 568,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 6329.48,
+      "description": "installed inside of our image so when we",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 569,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 6332.84,
+      "description": "start a container and we actually get a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 570,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 6339.76,
+      "description": "there's node installed there this is",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 571,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 6346.28,
+      "description": "is we can configure environmental",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 572,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 6372.8,
+      "description": "changes you can actually overwrite it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 573,
+      "action": "run",
+      "target": "s",
+      "value": null,
+      "timestamp": 6390.639,
+      "description": "environment the next one is run so all",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 574,
+      "action": "run",
+      "target": "t",
+      "value": null,
+      "timestamp": 6397.639,
+      "description": "from in and run they're basically part",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 575,
+      "action": "run",
+      "target": "b",
+      "value": null,
+      "timestamp": 6403.04,
+      "description": "run basically you can execute any kind",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 576,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6422.28,
+      "description": "when i start a container from this image",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 577,
+      "action": "run",
+      "target": "b",
+      "value": null,
+      "timestamp": 6444.56,
+      "description": "laptop environment so with run basically",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 578,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6447.159,
+      "description": "you can execute any linux commands that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 579,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6458.4,
+      "description": "execute a copy command a linux copy",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 580,
+      "action": "run",
+      "target": "y",
+      "value": null,
+      "timestamp": 6460.84,
+      "description": "command using run yes you could but the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 581,
+      "action": "run",
+      "target": "f",
+      "value": null,
+      "timestamp": 6466.679,
+      "description": "these commands in run for example they",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 582,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 6470.88,
+      "description": "apply to they get executed in inside of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 583,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6476.159,
+      "description": "see here it actually uh executes on the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 584,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 6486.599,
+      "description": "app so source and the target so i can",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 585,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6495.599,
+      "description": "image because if i were to execute run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 586,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6503.4,
+      "description": "would execute inside of the docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 587,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6517.199,
+      "description": "what command does is basically executes",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 588,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6530.04,
+      "description": "actually do node server js so we start a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 589,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6543.599,
+      "description": "can then execute node server.js and we",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 590,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 6552.92,
+      "description": "pre-installed and we are going to see",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 591,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6557.599,
+      "description": "here what is the difference between run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 592,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6559.599,
+      "description": "and cmd because i could also say run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 593,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 6568.76,
+      "description": "you can have multiple run commands with",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 594,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6579.159,
+      "description": "execute as an entry point so that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 595,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6581.88,
+      "description": "basically runs the server and that's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 596,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 6636.04,
+      "description": "use as my base image let's actually stop",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 597,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 6665.36,
+      "description": "minus alpine and let's click inside and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 598,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 6693.679,
+      "description": "run and some other environmental",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 599,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6701.96,
+      "description": "execute the whole shell script instead",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 600,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 6756.119,
+      "description": "a lightweight base image then we install",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 601,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 6759.119,
+      "description": "node on top of it and then we install",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 602,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6789.92,
+      "description": "always called docker file starting with",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 603,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 6866.079,
+      "description": "execute this we're going to see that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 604,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 6967.04,
+      "description": "deployed on a development server right",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 605,
+      "action": "download",
+      "target": "i",
+      "value": null,
+      "timestamp": 6981.0,
+      "description": "tester maybe want to download the image",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 606,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 6991.119,
+      "description": "there so let's actually just run a",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 607,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 6997.119,
+      "description": "run the image name",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 608,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 7011.639,
+      "description": "going to run it",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 609,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 7058.079,
+      "description": "it says the docker is used by a stopped",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 610,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7110.84,
+      "description": "let's start it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 611,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 7117.239,
+      "description": "1.0 and let's run it and as you see the",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 612,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7123.56,
+      "description": "3000 so our app is running so this one",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 613,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 7138.44,
+      "description": "everything is cool to actually just get",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 614,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 7140.44,
+      "description": "a little bit more inside let's enter the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 615,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 7143.239,
+      "description": "containers or let's get the terminal the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 616,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 7151.32,
+      "description": "say docker exit interactive terminal i'm",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 617,
+      "action": "install",
+      "target": "install",
+      "value": null,
+      "timestamp": 7173.199,
+      "description": "containers do not have bash installed so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 618,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7295.599,
+      "description": "starting an application inside of a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 619,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 7340.56,
+      "description": "container terminal can actually exit so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 620,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 7355.599,
+      "description": "to first stop",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 621,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 7357.48,
+      "description": "it so now i can remove the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 622,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 7361.44,
+      "description": "container and now i can actually remove",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 623,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7372.84,
+      "description": "execute that build command",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 624,
+      "action": "run",
+      "target": "i",
+      "value": null,
+      "timestamp": 7380.84,
+      "description": "built let's actually run it so i'm going",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 625,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7387.52,
+      "description": "1.0 and of course i could have executed",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 626,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7395.199,
+      "description": "ps i see my um image container running",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 627,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 7399.28,
+      "description": "and now let's actually enter the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 628,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 7436.96,
+      "description": "application you would want to compress",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 629,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7454.96,
+      "description": "actually start it as a container and how",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 630,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7460.719,
+      "description": "usually we would start this container",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 631,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 7462.76,
+      "description": "from a docker compose as well together",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 632,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7469.679,
+      "description": "doesn't have any ports open so uh this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 633,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 7548.48,
+      "description": "repository click on get started and here",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 634,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 7645.679,
+      "description": "click on this one the view push commands",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 635,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7704.52,
+      "description": "so i'm going to execute this login",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 636,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7714.679,
+      "description": "to be able to execute this you need to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 637,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 7719.76,
+      "description": "credentials configured for it so if you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 638,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 7726.96,
+      "description": "description i have configured both of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 639,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7729.48,
+      "description": "them so i can execute this command",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 640,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 7818.04,
+      "description": "this command what actually gets executed",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 641,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7851.76,
+      "description": "execute docker pull the full registry",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 642,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7938.76,
+      "description": "us the command that we can execute",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 643,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 7962.76,
+      "description": "let's execute that and let's see what",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 644,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8009.0,
+      "description": "this address so when i execute this",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 645,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 8207.399,
+      "description": "build and do not forget that tag it's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 646,
+      "action": "wait",
+      "target": null,
+      "value": null,
+      "timestamp": 8268.479,
+      "description": "each repository has a capacity of hold",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 647,
+      "action": "wait",
+      "target": null,
+      "value": null,
+      "timestamp": 8270.8,
+      "description": "holding up to 1,000 uh image versions so",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 648,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8302.16,
+      "description": "commands executed on a docker on the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 649,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8313.559,
+      "description": "execute docker login depending on the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 650,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8347.319,
+      "description": "execute so in this video we're going to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 651,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8349.439,
+      "description": "see how to deploy an application that we",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 652,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8359.24,
+      "description": "repository you need to somehow deploy it",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 653,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8369.12,
+      "description": "deploy that application so let's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 654,
+      "action": "run",
+      "target": "o",
+      "value": null,
+      "timestamp": 8376.559,
+      "description": "server and we want to run our image that",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 655,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 8388.12,
+      "description": "the database and the express on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 656,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8415.479,
+      "description": "docker image right now in order to start",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 657,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 8426.6,
+      "description": "we have mongodb and express",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 658,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8509.72,
+      "description": "you execute this docker compost file has",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 659,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8526.2,
+      "description": "before we execute the docker compose and",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 660,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8539.2,
+      "description": "have to configure are the ports because",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 661,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8542.6,
+      "description": "obviously want to open the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 662,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8548.72,
+      "description": "application runs on port 3000 so the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 663,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8558.399,
+      "description": "here we can open the port on the host",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 664,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8571.08,
+      "description": "obviously we could have configured them",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 665,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8584.08,
+      "description": "deploy all the all the applications",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 666,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8610.84,
+      "description": "execute the docker compost file because",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 667,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8632.2,
+      "description": "now we can start all three containers",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 668,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8647.439,
+      "description": "up and here we see that app started on",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 669,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 8651.279,
+      "description": "3000 and mongodb and express started as",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 670,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8674.88,
+      "description": "restarts using docker volumes in the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 671,
+      "action": "run",
+      "target": "a",
+      "value": null,
+      "timestamp": 8777.84,
+      "description": "docker containers to run all of your",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 672,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8820.439,
+      "description": "started the whole application setup with",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 673,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8829.479,
+      "description": "which is how you would deploy an",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 674,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 8840.88,
+      "description": "just deployed or you can also use it for",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 675,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8869.279,
+      "description": "volumes so a container runs on a host",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 676,
+      "action": "scroll",
+      "target": null,
+      "value": null,
+      "timestamp": 8882.96,
+      "description": "so if i were to remove the container or",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 677,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8886.16,
+      "description": "stop it and restart the container then",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 678,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8891.08,
+      "description": "gone and it starts from a fresh state",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 679,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 8938.08,
+      "description": "writes to its file system it gets",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 680,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8953.12,
+      "description": "that's why when a container restarts",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 681,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8954.92,
+      "description": "even if it starts from a fresh state in",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 682,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 8957.72,
+      "description": "its own virtual file system it gets the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 683,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8965.88,
+      "description": "startup of a container every time you",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 684,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 8968.08,
+      "description": "restart now there are different types of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 685,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 8975.68,
+      "description": "docker volumes is using docker run",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 686,
+      "action": "run",
+      "target": "t",
+      "value": null,
+      "timestamp": 8977.96,
+      "description": "command so in the docker run there is an",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 687,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 8989.12,
+      "description": "the container directory and this type of",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 688,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 9008.76,
+      "description": "type is where you create a volume just",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 689,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 9033.68,
+      "description": "gets mounted automatically to the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 690,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 9035.96,
+      "description": "container and this type of volumes are",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 691,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 9047.56,
+      "description": "third volume type is actually an",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 692,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 9061.12,
+      "description": "directory and that type of volumes are",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 693,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 9075.96,
+      "description": "types the mostly used one and the one",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 694,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 9093.479,
+      "description": "using docker run commands but if you're",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 695,
+      "action": "run",
+      "target": "c",
+      "value": null,
+      "timestamp": 9106.12,
+      "description": "docker run commands so we have volumes",
+      "confidence": 0.7,
+      "source": "subtitle"
+    },
+    {
+      "order": 696,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9197.96,
+      "description": "data every time we restart start the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 697,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9204.96,
+      "description": "console and i'm going to start the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 698,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9211.0,
+      "description": "we're going to start the mongod tb uh",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 699,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 9212.92,
+      "description": "container and the express",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 700,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9217.319,
+      "description": "it so i'm going to execute the docker",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 701,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9223.56,
+      "description": "compost which is going to start mongodb",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 702,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 9226.68,
+      "description": "and the express",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 703,
+      "action": "run",
+      "target": "check",
+      "value": null,
+      "timestamp": 9231.52,
+      "description": "so when it started i'm going to check",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 704,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 9233.439,
+      "description": "that express is running on port",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 705,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9242.12,
+      "description": "default on startup um and we're going to",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 706,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9274.439,
+      "description": "let's start the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 707,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9277.319,
+      "description": "application which is running on port",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 708,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 9291.52,
+      "description": "we'll write the changes to my database",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 709,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9295.08,
+      "description": "now if i were to restart now the mongodb",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 710,
+      "action": "wait",
+      "target": null,
+      "value": null,
+      "timestamp": 9427.76,
+      "description": "holds but this is of course only the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 711,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9430.96,
+      "description": "container so when the container restarts",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 712,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 9433.2,
+      "description": "the data get regenerated so nothing",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 713,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9478.96,
+      "description": "startup on our host on this persistent",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 714,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9484.84,
+      "description": "versa meaning when a container restarts",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 715,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9496.279,
+      "description": "that let's actually restart the docum",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 716,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9503.8,
+      "description": "and restart",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 717,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9532.96,
+      "description": "volume defined if i were to restart all",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 718,
+      "action": "run",
+      "target": "next",
+      "value": null,
+      "timestamp": 9538.76,
+      "description": "persisted so in the next restart i",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 719,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9686.16,
+      "description": "execute this command here so this is",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 720,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9693.2,
+      "description": "stored but if i execute this command i",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 721,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 9696.08,
+      "description": "actually get the terminal of that",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 722,
+      "action": "download",
+      "target": null,
+      "value": null,
+      "timestamp": 9805.96,
+      "description": "uses so this will be where it gets the",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 723,
+      "action": "run",
+      "target": "next",
+      "value": null,
+      "timestamp": 9870.439,
+      "description": "that on the next startup of a container",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 724,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9886.0,
+      "description": "application again on startup and that's",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 725,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9895.439,
+      "description": "that we just started because exit",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 726,
+      "action": "click",
+      "target": null,
+      "value": null,
+      "timestamp": 9900.68,
+      "description": "mac you can actually click on control a",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 727,
+      "action": "type",
+      "target": null,
+      "value": null,
+      "timestamp": 9903.359,
+      "description": "k and then just type y and the session",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 728,
+      "action": "close",
+      "target": null,
+      "value": null,
+      "timestamp": 9907.439,
+      "description": "will be closed so when you do screen ls",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 729,
+      "action": "run",
+      "target": null,
+      "value": null,
+      "timestamp": 9924.319,
+      "description": "you can start building complex",
+      "confidence": 0.4,
+      "source": "subtitle"
+    },
+    {
+      "order": 730,
+      "action": "install",
+      "target": null,
+      "value": null,
+      "timestamp": 9931.479,
+      "description": "would need to be deployed across",
+      "confidence": 0.4,
+      "source": "subtitle"
+    }
+  ],
+  "generated_at": null
+}

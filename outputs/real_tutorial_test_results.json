@@ -1,0 +1,53 @@
+{
+  "timestamp": "2025-10-31 18:33:05",
+  "summary": {
+    "total_tutorials": 4,
+    "passed": 4,
+    "failed": 0,
+    "pass_rate": 100.0,
+    "avg_success_rate": 100.0,
+    "avg_actions_per_tutorial": 7.25
+  },
+  "results": [
+    {
+      "name": "notepad_simple",
+      "success": true,
+      "total_actions": 7,
+      "executed_actions": 7,
+      "failed_actions": 0,
+      "success_rate": 100.0,
+      "duration": 0.7094011306762695,
+      "errors": []
+    },
+    {
+      "name": "calculator_basic",
+      "success": true,
+      "total_actions": 8,
+      "executed_actions": 8,
+      "failed_actions": 0,
+      "success_rate": 100.0,
+      "duration": 0.9086465835571289,
+      "errors": []
+    },
+    {
+      "name": "browser_google",
+      "success": true,
+      "total_actions": 6,
+      "executed_actions": 6,
+      "failed_actions": 0,
+      "success_rate": 100.0,
+      "duration": 0.6071631908416748,
+      "errors": []
+    },
+    {
+      "name": "shortcut_screenshot",
+      "success": true,
+      "total_actions": 8,
+      "executed_actions": 8,
+      "failed_actions": 0,
+      "success_rate": 100.0,
+      "duration": 0.8181266784667969,
+      "errors": []
+    }
+  ]
+}
