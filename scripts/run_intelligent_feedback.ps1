@@ -35,7 +35,8 @@ if ($OpenReport) {
     if (Test-Path $reportFile) {
         Write-Host "📖 리포트 열기...`n" -ForegroundColor Cyan
         code $reportFile
-    } else {
+    }
+    else {
         Write-Host "⚠️ 리포트를 찾을 수 없습니다`n" -ForegroundColor Yellow
     }
 }
