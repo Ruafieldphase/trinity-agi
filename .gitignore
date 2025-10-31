@@ -27,7 +27,7 @@ ENV/
 env/
 
 # IDE
-.vscode/
+# .vscode/ - Keep VS Code settings for this project
 .idea/
 *.swp
 *.swo

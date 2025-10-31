@@ -22,6 +22,672 @@
 			}
 		},
 		{
+			"label": "YouTube: Start Worker (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"& '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/fdo_agi_repo/integrations/youtube_worker.py' --server 'http://127.0.0.1:8091' --interval 0.5 --worker-name 'youtube-worker' --log-level INFO"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "YouTube (8092): Start Task Queue Server",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"cd ${workspaceFolder}/LLM_Unified/ion-mentoring; if (Test-Path ./.venv/Scripts/python.exe) { & ./.venv/Scripts/python.exe task_queue_server.py --port 8092 } else { python task_queue_server.py --port 8092 }"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube (8092): Start Worker (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"& '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/fdo_agi_repo/integrations/youtube_worker.py' --server 'http://127.0.0.1:8092' --interval 0.5 --worker-name 'youtube-worker' --log-level INFO"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube (8092): Enqueue Learn (prompt)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/enqueue_youtube_learn.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-Server",
+				"http://127.0.0.1:8092",
+				"-ClipSeconds",
+				"10",
+				"-MaxFrames",
+				"3",
+				"-FrameInterval",
+				"30"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube (8092): Enqueue Learn (OCR, prompt)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/enqueue_youtube_learn.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-Server",
+				"http://127.0.0.1:8092",
+				"-EnableOcr",
+				"-ClipSeconds",
+				"10",
+				"-MaxFrames",
+				"3",
+				"-FrameInterval",
+				"30"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube (8092): Show Latest Results",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Invoke-RestMethod -Uri 'http://127.0.0.1:8092/api/results' -TimeoutSec 5 | ConvertTo-Json -Depth 6 | Write-Output"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube (8092): Smoke E2E",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_smoke_e2e_youtube.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube (8092): Smoke E2E (OCR)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_smoke_e2e_youtube.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-EnableOcr"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Open Latest Analysis (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_latest_youtube_analysis.ps1"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Open Latest Analysis (ensure MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_latest_youtube_analysis.ps1",
+				"-GenerateMdIfMissing"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Generate MD (from latest JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_youtube_md_from_json.ps1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Generate MD (latest, no open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_youtube_md_from_json.ps1",
+				"-NoOpen"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Generate MD (from current file)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_youtube_md_from_json.ps1",
+				"-File",
+				"${file}"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Generate MD (prompt path)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_youtube_md_from_json.ps1",
+				"-File",
+				"${input:jsonPathPrompt}"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Open Latest Analysis (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$latest = (Get-ChildItem -Path '${workspaceFolder}/outputs/youtube_learner' -Filter '*.md' -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1).FullName; if ($latest) { Start-Process code $latest } else { Write-Host 'No MD found' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Open Latest Folder",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_latest_youtube_analysis.ps1",
+				"-OpenFolder"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Build Index (open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_index.ps1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Build Index (no open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_index.ps1",
+				"-NoOpen"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Open Index",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/youtube_learner_index.md') { code ${workspaceFolder}/outputs/youtube_learner_index.md } else { Write-Host 'Index not found. Run: YouTube: Build Index (open)' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Build Index (prompt top)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_index.ps1",
+				"-Top",
+				"${input:topCountPrompt}"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Build Index (24h, with keywords)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_index.ps1",
+				"-SinceHours",
+				"24",
+				"-IncludeKeywords"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Build + Open Index (24h, keywords)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"& '${workspaceFolder}/scripts/build_youtube_index.ps1' -SinceHours 24 -IncludeKeywords; if ($LASTEXITCODE -eq 0) { code '${workspaceFolder}/outputs/youtube_learner_index.md' }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Enqueue Learn (URL, OCR off)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/enqueue_youtube_learn.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-ClipSeconds",
+				"10",
+				"-MaxFrames",
+				"3",
+				"-FrameInterval",
+				"30"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "YouTube: Enqueue Learn (URL, OCR on)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/enqueue_youtube_learn.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-EnableOcr",
+				"-ClipSeconds",
+				"10",
+				"-MaxFrames",
+				"3",
+				"-FrameInterval",
+				"30"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "YouTube: Build Index (grouped by date)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_index.ps1",
+				"-GroupByDate",
+				"-Top",
+				"30"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "YouTube: Build Index (grouped, with keywords)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_index.ps1",
+				"-GroupByDate",
+				"-IncludeKeywords",
+				"-Top",
+				"30"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "YouTube: E2E Pipeline Test (skip enqueue)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/test_youtube_pipeline_e2e.ps1",
+				"-SkipEnqueue"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "YouTube: E2E Pipeline Test (full)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/test_youtube_pipeline_e2e.ps1"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "YouTube: Generate Dashboard (HTML)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_dashboard.ps1"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "YouTube: Generate Dashboard (no open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_youtube_dashboard.ps1",
+				"-NoOpen"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "üé¨ YouTube: Learn from URL (Pipeline)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/youtube_learning_pipeline.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-ClipSeconds",
+				"30",
+				"-MaxFrames",
+				"5",
+				"-FrameInterval",
+				"30",
+				"-OpenReport"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "üé¨ YouTube: Quick Learn (10s demo)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/youtube_learning_pipeline.ps1",
+				"-Url",
+				"https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+				"-ClipSeconds",
+				"10",
+				"-MaxFrames",
+				"3",
+				"-FrameInterval",
+				"30",
+				"-OpenReport"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
 			"label": "BQI: Open Last Run Log",
 			"type": "shell",
 			"command": "powershell",
@@ -288,7 +954,7 @@
 			}
 		},
 		{
-			"label": "?éØ AGI: Verify Phase 1 (24h)",
+			"label": "?ÔøΩÔøΩ AGI: Verify Phase 1 (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -309,7 +975,7 @@
 			}
 		},
 		{
-			"label": "?éØ AGI: Verify Phase 1 (48h)",
+			"label": "?ÔøΩÔøΩ AGI: Verify Phase 1 (48h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -351,7 +1017,7 @@
 			}
 		},
 		{
-			"label": "?ö® Alert: Forced Evidence Check (Run Now)",
+			"label": "?ÔøΩÔøΩ Alert: Forced Evidence Check (Run Now)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1308,6 +1974,49 @@
 			"group": "build"
 		},
 		{
+			"label": "Task Queue Server: Register (At Logon)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_task_queue_server.ps1",
+				"-Register",
+				"-Force"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Task Queue Server: Unregister",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_task_queue_server.ps1",
+				"-Unregister"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Task Queue Server: Check Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_task_queue_server.ps1",
+				"-Status"
+			],
+			"group": "test"
+		},
+		{
 			"label": "Inbox Watcher: Stop (Scheduled Task)",
 			"type": "shell",
 			"command": "powershell",
@@ -1366,7 +2075,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?§ñ AGI: Start Session (Check Status)",
+			"label": "?ÔøΩÔøΩ AGI: Start Session (Check Status)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1387,7 +2096,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ñ AGI: Resume Phase 1 (Execute Test)",
+			"label": "?ÔøΩÔøΩ AGI: Resume Phase 1 (Execute Test)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1395,7 +2104,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe -m scripts.run_task --title 'demo' --goal 'AGI ?êÍ∏∞ÍµêÏ†ï Î£®ÌîÑ ?§Î™Ö 3Î¨∏Ïû•' } else { python -m scripts.run_task --title 'demo' --goal 'AGI ?êÍ∏∞ÍµêÏ†ï Î£®ÌîÑ ?§Î™Ö 3Î¨∏Ïû•' }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe -m scripts.run_task --title 'demo' --goal 'AGI ?ÔøΩÍ∏∞ÍµêÏ†ï Î£®ÌîÑ ?ÔøΩÎ™Ö 3Î¨∏Ïû•' } else { python -m scripts.run_task --title 'demo' --goal 'AGI ?ÔøΩÍ∏∞ÍµêÏ†ï Î£®ÌîÑ ?ÔøΩÎ™Ö 3Î¨∏Ïû•' }"
 			],
 			"group": "test",
 			"presentation": {
@@ -1407,7 +2116,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ñ AGI: Open Quick Start Guide",
+			"label": "?ÔøΩÔøΩ AGI: Open Quick Start Guide",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1415,7 +2124,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"code ${workspaceFolder}\\ÍπÉÏΩî_AGI_Îπ†Î•∏?úÏûë_2025-10-25.md"
+				"code ${workspaceFolder}\\ÍπÉÏΩî_AGI_Îπ†Î•∏?ÔøΩÏûë_2025-10-25.md"
 			],
 			"group": "none",
 			"presentation": {
@@ -1424,7 +2133,7 @@
 			}
 		},
 		{
-			"label": "?§ñ AGI: Open Master Plan",
+			"label": "?ÔøΩÔøΩ AGI: Open Master Plan",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1432,7 +2141,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"code ${workspaceFolder}\\ÍπÉÏΩî_AGI_Íµ¨Ï∂ï_ÎßàÏä§?∞Ìîå??2025-10-25.md"
+				"code ${workspaceFolder}\\ÍπÉÏΩî_AGI_Íµ¨Ï∂ï_ÎßàÏä§?ÔøΩÌîå??2025-10-25.md"
 			],
 			"group": "none",
 			"presentation": {
@@ -1442,7 +2151,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ñ AGI: Demo Self-Correction (PS1)",
+			"label": "?ÔøΩÔøΩ AGI: Demo Self-Correction (PS1)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1462,7 +2171,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ñ AGI: Assert Second Pass",
+			"label": "?ÔøΩÔøΩ AGI: Assert Second Pass",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1470,7 +2179,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\assert_second_pass.py } else { python scripts\\assert_second_pass.py }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\assert_second_pass.py } else { python scripts\\assert_second_pass.py }"
 			],
 			"group": "test",
 			"presentation": {
@@ -1482,7 +2191,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?ßæ AGI: Show Ledger Tail (last 100)",
+			"label": "?ÔøΩÔøΩ AGI: Show Ledger Tail (last 100)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1490,7 +2199,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"Get-Content -Path D:\\nas_backup\\fdo_agi_repo\\memory\\resonance_ledger.jsonl -Tail 100"
+				"Get-Content -Path ${workspaceFolder}\\fdo_agi_repo\\memory\\resonance_ledger.jsonl -Tail 100"
 			],
 			"group": "test",
 			"presentation": {
@@ -1502,7 +2211,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?ßæ AGI: Tail Ledger (follow)",
+			"label": "?ÔøΩÔøΩ AGI: Tail Ledger (follow)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1510,7 +2219,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"Get-Content -Path D:\\nas_backup\\fdo_agi_repo\\memory\\resonance_ledger.jsonl -Tail 100 -Wait"
+				"Get-Content -Path ${workspaceFolder}\\fdo_agi_repo\\memory\\resonance_ledger.jsonl -Tail 100 -Wait"
 			],
 			"group": "test",
 			"isBackground": true,
@@ -1523,7 +2232,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ñ AGI: Summarize Ledger (24h)",
+			"label": "?ÔøΩÔøΩ AGI: Summarize Ledger (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1531,13 +2240,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 24 } else { python scripts\\summarize_ledger.py --last-hours 24 }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 24 } else { python scripts\\summarize_ledger.py --last-hours 24 }"
 			],
 			"isBackground": false,
 			"group": "test"
 		},
 		{
-			"label": "?§ñ AGI: Summarize Ledger (12h)",
+			"label": "?ÔøΩÔøΩ AGI: Summarize Ledger (12h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1545,13 +2254,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 12 } else { python scripts\\summarize_ledger.py --last-hours 12 }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 12 } else { python scripts\\summarize_ledger.py --last-hours 12 }"
 			],
 			"isBackground": false,
 			"group": "test"
 		},
 		{
-			"label": "?§ñ AGI: Open Latest Ledger Summary (MD)",
+			"label": "?ÔøΩÔøΩ AGI: Open Latest Ledger Summary (MD)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1559,12 +2268,12 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"code D:\\nas_backup\\fdo_agi_repo\\outputs\\ledger_summary_latest.md"
+				"code ${workspaceFolder}\\fdo_agi_repo\\outputs\\ledger_summary_latest.md"
 			],
 			"group": "none"
 		},
 		{
-			"label": "?§ñ AGI: Open Latest Ledger Summary (JSON)",
+			"label": "?ÔøΩÔøΩ AGI: Open Latest Ledger Summary (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1572,7 +2281,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"code D:\\nas_backup\\fdo_agi_repo\\outputs\\ledger_summary_latest.json"
+				"code ${workspaceFolder}\\fdo_agi_repo\\outputs\\ledger_summary_latest.json"
 			],
 			"group": "none"
 		},
@@ -1593,6 +2302,69 @@
 				"focus": true,
 				"panel": "dedicated",
 				"showReuseMessage": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Lumen: Register Probe Monitor (10m)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_lumen_probe_task.ps1",
+				"-Register",
+				"-IntervalMinutes",
+				"10",
+				"-RunNow"
+			],
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Lumen: Unregister Probe Monitor",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_lumen_probe_task.ps1",
+				"-Unregister"
+			],
+			"group": "build",
+			"presentation": {
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Lumen: Check Probe Monitor Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_lumen_probe_task.ps1",
+				"-Status"
+			],
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
 			},
 			"problemMatcher": []
 		},
@@ -1638,7 +2410,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ñ AGI: Health Gate (Latest)",
+			"label": "?ÔøΩÔøΩ AGI: Health Gate (Latest)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1658,7 +2430,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ñ AGI: Summarize 24h + Health Gate",
+			"label": "?ÔøΩÔøΩ AGI: Summarize 24h + Health Gate",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1666,7 +2438,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 24 } else { python scripts\\summarize_ledger.py --last-hours 24 }; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & D:\\nas_backup\\fdo_agi_repo\\scripts\\check_health.ps1"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 24 } else { python scripts\\summarize_ledger.py --last-hours 24 }; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & ${workspaceFolder}\\fdo_agi_repo\\scripts\\check_health.ps1"
 			],
 			"group": "test",
 			"presentation": {
@@ -1719,7 +2491,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?ö® Alert: Health Check & Send Alerts",
+			"label": "?ÔøΩÔøΩ Alert: Health Check & Send Alerts",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1739,7 +2511,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?ö® Alert: Check Only (No Send)",
+			"label": "?ÔøΩÔøΩ Alert: Check Only (No Send)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1760,7 +2532,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?åê Web: Generate Dashboard (6h)",
+			"label": "?ÔøΩÔøΩ Web: Generate Dashboard (6h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1780,7 +2552,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?åê Web: Generate Dashboard (24h)",
+			"label": "?ÔøΩÔøΩ Web: Generate Dashboard (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1802,7 +2574,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?åê Web: Generate Dashboard (No Browser)",
+			"label": "?ÔøΩÔøΩ Web: Generate Dashboard (No Browser)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1899,7 +2671,7 @@
 			}
 		},
 		{
-			"label": "?§ñ AGI: Assert Evidence Gate (Forced 24h)",
+			"label": "?ÔøΩÔøΩ AGI: Assert Evidence Gate (Forced 24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1917,7 +2689,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?ö® Alert: Forced Evidence Check (Run Now)",
+			"label": "?ÔøΩÔøΩ Alert: Forced Evidence Check (Run Now)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2297,10 +3069,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"${input:chatopsPhrase}"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "${input:chatopsPhrase}"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2310,7 +3085,7 @@
 			}
 		},
 		{
-			"label": "?í¨ ChatOps: Unified Status (?µÌï© ?ÅÌÉú)",
+			"label": "ChatOps: Unified Status (ÌÜµÌï© ÏÉÅÌÉú)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2318,10 +3093,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"?µÌï© ?Ä?úÎ≥¥??
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÌÜµÌï© ÏÉÅÌÉú"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2331,7 +3109,7 @@
 			}
 		},
 		{
-			"label": "?§ñ ChatOps: AGI Health Check",
+			"label": "ChatOps: AGI Health Check",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2339,10 +3117,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"AGI ?ÅÌÉú"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "AGI ÏÉÅÌÉú"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2352,7 +3133,7 @@
 			}
 		},
 		{
-			"label": "?ß† ChatOps: AGI Summary (24h)",
+			"label": "ChatOps: AGI Summary (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2360,10 +3141,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"AGI 24?úÍ∞Ñ ?îÏïΩ"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "AGI 24ÏãúÍ∞Ñ ÏöîÏïΩ"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2373,7 +3157,7 @@
 			}
 		},
 		{
-			"label": "?ß¨ ChatOps: BQI Phase 6",
+			"label": "ChatOps: BQI Phase 6",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2381,10 +3165,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"BQI Phase 6 ?ôÏäµ"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "BQI Phase 6 ÌïôÏäµ"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2394,7 +3181,7 @@
 			}
 		},
 		{
-			"label": "?? ChatOps: Canary Status",
+			"label": "ChatOps: Canary Status",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2402,10 +3189,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"Ïπ¥ÎÇòÎ¶??ÅÌÉú"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Ïπ¥ÎÇòÎ¶¨ ÏÉÅÌÉú"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2415,7 +3205,7 @@
 			}
 		},
 		{
-			"label": "?ìà ChatOps: Canary Deploy 10%",
+			"label": "ChatOps: Canary Deploy 10%",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2423,10 +3213,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"Ïπ¥ÎÇòÎ¶?10% ?¨Î†§"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Ïπ¥ÎÇòÎ¶¨ 10% Ïò¨Î†§"
+				}
+			},
 			"group": "build",
 			"presentation": {
 				"echo": true,
@@ -2436,7 +3229,7 @@
 			}
 		},
 		{
-			"label": "?†Ô∏è ChatOps: Canary Rollback",
+			"label": "ChatOps: Canary Rollback",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2444,10 +3237,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"Ïπ¥ÎÇòÎ¶?Î°§Î∞±"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Ïπ¥ÎÇòÎ¶¨ Î°§Î∞±"
+				}
+			},
 			"group": "build",
 			"presentation": {
 				"echo": true,
@@ -2465,10 +3261,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"d:\\nas_backup\\scripts\\chatops_router.ps1",
-				"-Say",
-				"?ÑÎ¶¨?åÎùº?¥Ìä∏"
+				"${workspaceFolder}\\scripts\\chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÌîÑÎ¶¨ÌîåÎùºÏù¥Ìä∏"
+				}
+			},
 			"group": "test"
 		},
 		{
@@ -2480,10 +3279,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"d:\\nas_backup\\scripts\\chatops_router.ps1",
-				"-Say",
-				"?úÎùº?¥Îü∞ ?¥Ï§ò"
+				"${workspaceFolder}\\scripts\\chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÎìúÎùºÏù¥Îü∞ Ìï¥Ï§ò"
+				}
+			},
 			"group": "test"
 		},
 		{
@@ -2495,10 +3297,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"d:\\nas_backup\\scripts\\chatops_router.ps1",
-				"-Say",
-				"?ÅÌÉú Î≥¥Ïó¨Ï§?
+				"${workspaceFolder}\\scripts\\chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÏÉÅÌÉú Î≥¥Ïó¨Ï§ò"
+				}
+			},
 			"group": "test"
 		},
 		{
@@ -2510,10 +3315,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"d:\\nas_backup\\scripts\\chatops_router.ps1",
-				"-Say",
-				"?ÅÌÉú Î≥¥Ïó¨Ï§?
+				"${workspaceFolder}\\scripts\\chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÏÉÅÌÉú Î≥¥Ïó¨Ï§ò"
+				}
+			},
 			"group": "test"
 		},
 		{
@@ -2525,10 +3333,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"d:\\nas_backup\\scripts\\chatops_router.ps1",
-				"-Say",
-				"?ÅÌÉú Î≥¥Ïó¨Ï§?
+				"${workspaceFolder}\\scripts\\chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÏÉÅÌÉú Î≥¥Ïó¨Ï§ò"
+				}
+			},
 			"group": "test"
 		},
 		{
@@ -2540,10 +3351,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"d:\\nas_backup\\scripts\\chatops_router.ps1",
-				"-Say",
-				"?ÅÌÉú Î≥¥Ïó¨Ï§?
+				"${workspaceFolder}\\scripts\\chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÏÉÅÌÉú Î≥¥Ïó¨Ï§ò"
+				}
+			},
 			"group": "test"
 		},
 		{
@@ -2555,14 +3369,17 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"d:\\nas_backup\\scripts\\chatops_router.ps1",
-				"-Say",
-				"?ÅÌÉú Î≥¥Ïó¨Ï§?
+				"${workspaceFolder}\\scripts\\chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÏÉÅÌÉú Î≥¥Ïó¨Ï§ò"
+				}
+			},
 			"group": "test"
 		},
 		{
-			"label": "?éôÔ∏?ChatOps: Onboarding Guide",
+			"label": "ChatOps: Onboarding Guide",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2570,10 +3387,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"?®Î≥¥???ÑÏ?Ï§?
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Ïò®Î≥¥Îî© Í∞ÄÏù¥Îìú"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2583,7 +3403,7 @@
 			}
 		},
 		{
-			"label": "?îë ChatOps: Install Secret",
+			"label": "ChatOps: Install Secret",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2591,10 +3411,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"?úÌÅ¨Î¶??±Î°ù?¥Ï§ò"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "ÏãúÌÅ¨Î¶ø Îì±Î°ùÌï¥Ï§ò"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2604,7 +3427,7 @@
 			}
 		},
 		{
-			"label": "?ì° ChatOps: Start Streaming",
+			"label": "ChatOps: Start Streaming",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2612,10 +3435,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"Î∞©ÏÜ° ?úÏûë?¥Ï§ò"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Î∞©ÏÜ° ÏãúÏûëÌï¥Ï§ò"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2625,7 +3451,7 @@
 			}
 		},
 		{
-			"label": "?πÔ∏è ChatOps: Stop Streaming",
+			"label": "ChatOps: Stop Streaming",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2633,10 +3459,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"Î∞©ÏÜ° Î©àÏ∂∞"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Î∞©ÏÜ° Î©àÏ∂∞"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2646,7 +3475,7 @@
 			}
 		},
 		{
-			"label": "?§ñ ChatOps: Start Bot",
+			"label": "ChatOps: Start Bot",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2654,10 +3483,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"Î¥?ÏºúÏ§ò"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Î¥á ÏºúÏ§ò"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2667,7 +3499,7 @@
 			}
 		},
 		{
-			"label": "?õë ChatOps: Stop Bot",
+			"label": "ChatOps: Stop Bot",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2675,10 +3507,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"Î¥?Í∫ºÏ§ò"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "Î¥á Í∫ºÏ§ò"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2688,7 +3523,7 @@
 			}
 		},
 		{
-			"label": "?é¨ ChatOps: Switch Scene",
+			"label": "ChatOps: Switch Scene",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2696,7 +3531,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"$scene = Read-Host '???¥Î¶Ñ???ÖÎ†•?òÏÑ∏??(?? AI Dev, Coding, VS Code Stream)'; & '${workspaceFolder}/scripts/chatops_router.ps1' -Say \"??$scene Î°?Î∞îÍøîÏ§?""
+				"$scene = Read-Host 'Ïû•Î©¥ Ïù¥Î¶ÑÏùÑ ÏûÖÎ†•ÌïòÏÑ∏Ïöî (Ïòà: AI Dev, Coding, VS Code Stream)'; & '${workspaceFolder}/scripts/chatops_router.ps1' -Say \"Ïû•Î©¥ $scene Î°ú Î∞îÍøîÏ§ò\""
 			],
 			"group": "test",
 			"presentation": {
@@ -2707,7 +3542,7 @@
 			}
 		},
 		{
-			"label": "??ChatOps: OAuth Setup",
+			"label": "ChatOps: OAuth Setup",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2715,10 +3550,13 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/chatops_router.ps1",
-				"-Say",
-				"oauth"
+				"${workspaceFolder}/scripts/chatops_router.ps1"
 			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "oauth"
+				}
+			},
 			"group": "test",
 			"presentation": {
 				"echo": true,
@@ -2728,7 +3566,7 @@
 			}
 		},
 		{
-			"label": "?ßπ AGI: Sanitize Resonance Ledger",
+			"label": "?ÔøΩÔøΩ AGI: Sanitize Resonance Ledger",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2736,7 +3574,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\sanitize_ledger.py } else { python scripts\\sanitize_ledger.py }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\sanitize_ledger.py } else { python scripts\\sanitize_ledger.py }"
 			],
 			"group": "test"
 		},
@@ -2894,7 +3732,7 @@
 			"group": "build"
 		},
 		{
-			"label": "?ìä Analysis: Sena Correlation (10m window)",
+			"label": "?ÔøΩÔøΩ Analysis: Sena Correlation (10m window)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -2910,7 +3748,7 @@
 			}
 		},
 		{
-			"label": "?ìä Analysis: Sena Correlation (30m window)",
+			"label": "?ÔøΩÔøΩ Analysis: Sena Correlation (30m window)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -2928,7 +3766,7 @@
 			}
 		},
 		{
-			"label": "?ìä Analysis: Open Sena Correlation Report (MD)",
+			"label": "?ÔøΩÔøΩ Analysis: Open Sena Correlation Report (MD)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2939,7 +3777,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?ìä Analysis: Open Sena Correlation Report (JSON)",
+			"label": "?ÔøΩÔøΩ Analysis: Open Sena Correlation Report (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2950,7 +3788,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?õ°Ô∏?Guard: Enable Code Protection (ReadOnly)",
+			"label": "?ÔøΩÔøΩÔøΩ?Guard: Enable Code Protection (ReadOnly)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2964,7 +3802,7 @@
 			"group": "build"
 		},
 		{
-			"label": "?õ°Ô∏?Guard: Disable Code Protection (ReadOnly)",
+			"label": "?ÔøΩÔøΩÔøΩ?Guard: Disable Code Protection (ReadOnly)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2978,7 +3816,7 @@
 			"group": "build"
 		},
 		{
-			"label": "?õ°Ô∏?Guard: Check Protection Status (DryRun)",
+			"label": "?ÔøΩÔøΩÔøΩ?Guard: Check Protection Status (DryRun)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2993,7 +3831,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?ìà Analysis: Cache Effectiveness Report",
+			"label": "?ÔøΩÔøΩ Analysis: Cache Effectiveness Report",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3009,7 +3847,7 @@
 			}
 		},
 		{
-			"label": "?ìà Analysis: Open Cache Report (MD)",
+			"label": "?ÔøΩÔøΩ Analysis: Open Cache Report (MD)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3020,7 +3858,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?ìà Analysis: Open Cache Report (JSON)",
+			"label": "?ÔøΩÔøΩ Analysis: Open Cache Report (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3031,7 +3869,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?îç Quick: Cache Verification (1h recent)",
+			"label": "?ÔøΩÔøΩ Quick: Cache Verification (1h recent)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3047,7 +3885,7 @@
 			}
 		},
 		{
-			"label": "?ìä Quick: Open All Analysis Reports",
+			"label": "?ÔøΩÔøΩ Quick: Open All Analysis Reports",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3063,7 +3901,7 @@
 			}
 		},
 		{
-			"label": "?ìà Monitor: Cache Timeline (24h, 2h buckets)",
+			"label": "?ÔøΩÔøΩ Monitor: Cache Timeline (24h, 2h buckets)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3077,7 +3915,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?ìà Monitor: Cache Timeline (12h, 1h buckets)",
+			"label": "?ÔøΩÔøΩ Monitor: Cache Timeline (12h, 1h buckets)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3091,7 +3929,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?ìä Monitor: Open Cache Timeline Report",
+			"label": "?ÔøΩÔøΩ Monitor: Open Cache Timeline Report",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3146,7 +3984,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?ß™ Test: Run Cache Validation Now",
+			"label": "Test: Run Cache Validation Now",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3164,7 +4002,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?åô Monitor: Start Background Cache Validator",
+			"label": "Monitor: Start Background Cache Validator",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3178,7 +4016,7 @@
 			"group": "build"
 		},
 		{
-			"label": "?õë Monitor: Stop Background Cache Validator",
+			"label": "Monitor: Stop Background Cache Validator",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3186,20 +4024,20 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"Get-Process -Name 'pwsh','powershell' | Where-Object { $_.CommandLine -like '*cache_validation_monitor_daemon.ps1*' } | Stop-Process -Force; Write-Host '??Monitor stopped' -ForegroundColor Green"
+				"Get-Process -Name 'pwsh','powershell' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*cache_validation_monitor_daemon.ps1*' } | Stop-Process -Force; Write-Host 'Monitor stopped' -ForegroundColor Green"
 			],
 			"group": "build"
 		},
 		{
-			"label": "?ìä Monitor: Check Cache Validator Status",
+			"label": "Monitor: Check Cache Validator Status",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
 				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
-				"-Command",
-				"$monitor = Get-Process -Name 'pwsh','powershell' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*cache_validation_monitor_daemon.ps1*' }; if ($monitor) { Write-Host '??Monitor running (PID: ' $monitor.Id ')' -ForegroundColor Green; Get-Content '${workspaceFolder}/outputs/cache_validation_monitor.log' -Tail 20 } else { Write-Host '??Monitor not running' -ForegroundColor Red }"
+				"-File",
+				"${workspaceFolder}/scripts/check_cache_validator_status.ps1"
 			],
 			"group": "test"
 		},
@@ -3273,7 +4111,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\rune\\feedback_predictor.py } else { python scripts\\rune\\feedback_predictor.py }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\rune\\feedback_predictor.py } else { python scripts\\rune\\feedback_predictor.py }"
 			],
 			"group": "test",
 			"presentation": {
@@ -3325,7 +4163,7 @@
 			}
 		},
 		{
-			"label": "?§ñ Phase 6: Learn Binoche Persona",
+			"label": "?ÔøΩÔøΩ Phase 6: Learn Binoche Persona",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3333,7 +4171,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd D:\\nas_backup\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\rune\\binoche_persona_learner.py } else { python scripts\\rune\\binoche_persona_learner.py }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\rune\\binoche_persona_learner.py } else { python scripts\\rune\\binoche_persona_learner.py }"
 			],
 			"group": "test",
 			"presentation": {
@@ -3344,7 +4182,7 @@
 			}
 		},
 		{
-			"label": "?§ñ Phase 6: Open Binoche Persona Model",
+			"label": "?ÔøΩÔøΩ Phase 6: Open Binoche Persona Model",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3352,7 +4190,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"code D:\\nas_backup\\fdo_agi_repo\\outputs\\binoche_persona.json"
+				"code ${workspaceFolder}\\fdo_agi_repo\\outputs\\binoche_persona.json"
 			],
 			"group": "none",
 			"presentation": {
@@ -3385,7 +4223,7 @@
 			}
 		},
 		{
-			"label": "?îç BQI: Ensemble Monitor (24h)",
+			"label": "?ÔøΩÔøΩ BQI: Ensemble Monitor (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3404,7 +4242,7 @@
 			}
 		},
 		{
-			"label": "?îç BQI: Ensemble Monitor (7 days)",
+			"label": "?ÔøΩÔøΩ BQI: Ensemble Monitor (7 days)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3528,7 +4366,7 @@
 			}
 		},
 		{
-			"label": "?ß† BQI: Run Online Learner (24h)",
+			"label": "?ÔøΩÔøΩ BQI: Run Online Learner (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3547,7 +4385,7 @@
 			}
 		},
 		{
-			"label": "?ß† BQI: Run Online Learner (7 days)",
+			"label": "?ÔøΩÔøΩ BQI: Run Online Learner (7 days)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3566,7 +4404,7 @@
 			}
 		},
 		{
-			"label": "?ôÔ∏è BQI: View Current Weights",
+			"label": "?ÔøΩÔ∏è BQI: View Current Weights",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3585,7 +4423,7 @@
 			}
 		},
 		{
-			"label": "?ìà BQI: View Judge Performance",
+			"label": "?ÔøΩÔøΩ BQI: View Judge Performance",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3604,7 +4442,7 @@
 			}
 		},
 		{
-			"label": "?ìä BQI: Open Ensemble Report (TXT)",
+			"label": "?ÔøΩÔøΩ BQI: Open Ensemble Report (TXT)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3623,7 +4461,7 @@
 			}
 		},
 		{
-			"label": "?ìä BQI: Open Ensemble Metrics (JSON)",
+			"label": "?ÔøΩÔøΩ BQI: Open Ensemble Metrics (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3710,7 +4548,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?§ù Comet-Gitko: Start Task Queue Server (Background)",
+			"label": "?ÔøΩÔøΩ Comet-Gitko: Start Task Queue Server (Background)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3730,7 +4568,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?§ù Comet-Gitko: Stop Task Queue Server",
+			"label": "?ÔøΩÔøΩ Comet-Gitko: Stop Task Queue Server",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3738,7 +4576,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"$jobs = Get-Job | Where-Object { $_.Command -like '*task_queue_server*' }; if ($jobs) { $jobs | ForEach-Object { Stop-Job -Id $_.Id; Remove-Job -Id $_.Id }; Write-Host '??Task queue server stopped' -ForegroundColor Green } else { Write-Host '?†Ô∏è No running task queue server found' -ForegroundColor Yellow }"
+				"$jobs = Get-Job | Where-Object { $_.Command -like '*task_queue_server*' }; if ($jobs) { $jobs | ForEach-Object { Stop-Job -Id $_.Id; Remove-Job -Id $_.Id }; Write-Host '??Task queue server stopped' -ForegroundColor Green } else { Write-Host '?ÔøΩÔ∏è No running task queue server found' -ForegroundColor Yellow }"
 			],
 			"group": "build",
 			"presentation": {
@@ -3749,7 +4587,7 @@
 			}
 		},
 		{
-			"label": "?§ù Comet-Gitko: Check Server Status",
+			"label": "?ÔøΩÔøΩ Comet-Gitko: Check Server Status",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3766,26 +4604,1078 @@
 				"focus": false,
 				"panel": "shared"
 			}
+		},
+		{
+			"label": "Monitoring: Autopoietic Loop Report (24h) + Open",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"& \"${workspaceFolder}/scripts/generate_autopoietic_report.ps1\" -Hours 24; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; code ${workspaceFolder}/outputs/autopoietic_loop_report_latest.md"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Monitoring: Register Autopoietic Report (03:25)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_autopoietic_report_task.ps1",
+				"-Register",
+				"-Time",
+				"03:25"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Monitoring: Unregister Autopoietic Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_autopoietic_report_task.ps1",
+				"-Unregister"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Monitoring: Register Autopoietic Report (03:25, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_autopoietic_report_task.ps1",
+				"-Register",
+				"-Time",
+				"03:25",
+				"-OpenMd"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Autopoietic: Generate Loop Report (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_autopoietic_report.ps1",
+				"-Hours",
+				"24",
+				"-OpenMd"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Autopoietic: Evaluate Engine Promotion",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe ${workspaceFolder}/fdo_agi_repo/analysis/evaluate_engine_promotion.py"
+			],
+			"group": "test"
+		},
+		{
+			"label": "üîÑ Binoche: Invoke Continuation (Clipboard)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/invoke_binoche_continuation.ps1"
+			],
+			"group": "test"
+		},
+		{
+			"label": "üîÑ Binoche: Invoke Continuation (Dry-Run)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/invoke_binoche_continuation.ps1",
+				"-DryRun"
+			],
+			"group": "test"
+		},
+		{
+			"label": "üîÑ Binoche: Invoke Continuation (Task Queue)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/invoke_binoche_continuation.ps1",
+				"-Mode",
+				"taskqueue"
+			],
+			"group": "test"
+		},
+		{
+			"label": "AGI: Auto Resume on Workspace Open",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_resume_on_startup.ps1",
+				"-Silent"
+			],
+			"presentation": {
+				"reveal": "silent",
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "üîß AGI: Register Auto Resume (Permanent)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_auto_resume.ps1",
+				"-Register"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "üîß AGI: Unregister Auto Resume",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_auto_resume.ps1",
+				"-Unregister"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "üîç AGI: Check Auto Resume Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_auto_resume.ps1",
+				"-Status"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "üöÄ RPA Phase 2.5: Resume (Auto)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/resume_phase25_rpa.ps1"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "ü§ñ RPA: Start Comet + Check Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Comet + Status check completed.'"
+			],
+			"dependsOn": [
+				"üöÄ Comet-Gitko: Start Task Queue Server (Background)",
+				"üöÄ Comet-Gitko: Check Server Status"
+			],
+			"dependsOrder": "sequence",
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "üìñ RPA: Open Phase 2.5 Plan",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"code ${workspaceFolder}/PHASE_2_5_RPA_YOUTUBE_LEARNING_PLAN.md"
+			],
+			"group": "none",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "System: Fix UTF-8 Console (Now)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/fix_font_encoding.ps1",
+				"-OnlyTerminal"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Sanitize: Recent Text Files (outputs, 48h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/fix_font_encoding.ps1",
+				"-FixFiles",
+				"-ScanRoot",
+				"${workspaceFolder}/outputs",
+				"-ModifiedWithinHours",
+				"48"
+			],
+			"group": "test"
+		},
+		{
+			"label": "RPA: Start Worker (Background Job)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"cd ${workspaceFolder}\\fdo_agi_repo; Start-Job -ScriptBlock { Set-Location '${workspaceFolder}\\fdo_agi_repo'; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe integrations\\rpa_worker.py --server 'http://127.0.0.1:8091' --interval 0.3 --log-level INFO } else { python integrations\\rpa_worker.py --server 'http://127.0.0.1:8091' --interval 0.3 --log-level INFO } } -Name 'RPA_Worker' | Format-List Id,Name,State; Write-Host 'RPA Worker started in background (Job: RPA_Worker)' -ForegroundColor Green"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Diag: Binoche Agent (one-shot)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe",
+				"${workspaceFolder}/fdo_agi_repo/scripts/binoche_diagnostic_agent.py",
+				"--server",
+				"http://127.0.0.1:8091"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Recover: Auto-Recover (one-shot)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe",
+				"${workspaceFolder}/fdo_agi_repo/scripts/auto_recover.py",
+				"--server",
+				"http://127.0.0.1:8091",
+				"--once"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "RPA: Worker (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe C:\\workspace\\agi\\fdo_agi_repo\\integrations\\rpa_worker.py --server http://127.0.0.1:8091 --interval 0.5 --log-level INFO"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Task Queue Server (Fresh)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"cd C:\\workspace\\agi\\LLM_Unified\\ion-mentoring; .\\.venv\\Scripts\\python.exe task_queue_server.py --port 8091"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [
+				{
+					"owner": "uvicorn",
+					"pattern": [
+						{
+							"regexp": ".*",
+							"file": 1,
+							"location": 2,
+							"message": 0
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": ".*Starting Task Queue Server.*|.*Uvicorn running on.*",
+						"endsPattern": ".*Application startup complete.*|.*Started server process.*"
+					}
+				}
+			],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "dedicated",
+				"showReuseMessage": false,
+				"clear": false
+			}
+		},
+		{
+			"label": "Watchdog: Start Task Watchdog (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe",
+				"${workspaceFolder}/fdo_agi_repo/scripts/task_watchdog.py",
+				"--server",
+				"http://127.0.0.1:8091",
+				"--interval",
+				"60",
+				"--auto-recover"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Watchdog: Stop Task Watchdog",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Get-Process -Name 'pwsh','powershell' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*task_watchdog.py*' } | Stop-Process -Force; Write-Host 'Watchdog stopped' -ForegroundColor Green"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Watchdog: Check Task Watchdog Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Get-Process -Name 'pwsh','powershell' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*task_watchdog.py*' } | Format-Table Id,ProcessName,CPU,WorkingSet"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Watchdog: Start Task Watchdog (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe",
+				"${workspaceFolder}/fdo_agi_repo/scripts/task_watchdog.py",
+				"--server",
+				"http://127.0.0.1:8091",
+				"--interval",
+				"60",
+				"--auto-recover"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "Watchdog: Check Task Watchdog Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Get-Process -Name 'pwsh','powershell' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*task_watchdog.py*' } | Format-Table Id,ProcessName,CPU,WorkingSet"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Smoke Verify",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/enqueue_rpa_smoke.ps1",
+				"-Verify"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Health Check",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/queue_health_check.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Latest Results (Success 5)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/show_latest_results.ps1",
+				"-Server",
+				"http://127.0.0.1:8091",
+				"-Count",
+				"5",
+				"-SuccessOnly"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Open Latest Screenshot",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_latest_screenshot.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Quick E2E (Verify ‚Üí Results ‚Üí Open Screenshot)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Quick E2E chain completed.'"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Latest Results (Failed 5)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/show_latest_results.ps1",
+				"-Server",
+				"http://127.0.0.1:8091",
+				"-Count",
+				"5",
+				"-FailedOnly"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Quick E2E (Verify+OCR)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/enqueue_rpa_smoke.ps1",
+				"-Verify",
+				"-IncludeOcr"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Save Results Snapshot",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/save_results_snapshot.ps1",
+				"-Server",
+				"http://127.0.0.1:8091",
+				"-Count",
+				"20",
+				"-SuccessOnly"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Save Results Snapshot (Ensure Server)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Snapshot sequence completed.'"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Quick E2E (Ensure Server)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Quick E2E with ensure-server completed.'"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Ensure Worker",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_rpa_worker.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Quick E2E (Ensure Server+Worker)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Quick E2E (ensure server+worker) completed.'"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Ensure Single Worker (DryRun)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_rpa_worker.ps1",
+				"-EnforceSingle",
+				"-MaxWorkers",
+				"1",
+				"-DryRun"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Ensure Single Worker",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_rpa_worker.ps1",
+				"-EnforceSingle",
+				"-MaxWorkers",
+				"1"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Queue: Kill All Workers (DryRun)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_rpa_worker.ps1",
+				"-KillAll",
+				"-DryRun"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Results ‚Üí JSONL Append (Success 5)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/show_latest_results.ps1",
+				"-SuccessOnly",
+				"-Count",
+				"5",
+				"-OutJsonl",
+				"${workspaceFolder}/outputs/results_log.jsonl"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Queue: Open Results Log (JSONL)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"code ${workspaceFolder}/outputs/results_log.jsonl"
+			],
+			"problemMatcher": [],
+			"group": "none"
+		},
+		{
+			"label": "Monitor: Start Worker Monitor",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_worker_monitor.ps1",
+				"-KillExisting",
+				"-IntervalSeconds",
+				"5"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Monitor: Stop Worker Monitor",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_worker_monitor.ps1"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Monitor: Check Worker Monitor Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_worker_monitor_status.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Monitor: Start Worker Monitor (Daemon)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_worker_monitor_daemon.ps1",
+				"-KillExisting",
+				"-IntervalSeconds",
+				"5"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Monitor: Stop Worker Monitor (Daemon)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_worker_monitor_daemon.ps1"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Monitor: Check Worker Monitor (Daemon)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_worker_monitor_daemon_status.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Monitor: Worker (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/worker_monitor_foreground.ps1",
+				"-Server",
+				"http://127.0.0.1:8091",
+				"-IntervalSeconds",
+				"5"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Monitor: Stop Worker (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_worker_monitor_foreground.ps1"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Monitor: Worker (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/worker_monitor_foreground.ps1",
+				"-Server",
+				"http://127.0.0.1:8091",
+				"-IntervalSeconds",
+				"5"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "RPA: Smoke E2E (OCR)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_smoke_e2e_ocr.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "RPA: YouTube Learner Smoke (fast)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_youtube_learner.ps1",
+				"-Url",
+				"https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+				"-MaxFrames",
+				"1",
+				"-FrameInterval",
+				"30.0"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "RPA: YouTube Learner Register (daily)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_youtube_learner_task.ps1",
+				"-Register",
+				"-Time",
+				"04:10",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-MaxFrames",
+				"1",
+				"-FrameInterval",
+				"30.0"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "RPA: YouTube Learner Unregister",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_youtube_learner_task.ps1",
+				"-Unregister"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "RPA: YouTube Learner Run (manual)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_youtube_learner.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-MaxFrames",
+				"1",
+				"-FrameInterval",
+				"30.0"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "RPA: YouTube Learner Index (generate+open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_youtube_index.ps1",
+				"-Open"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
 		}
 	],
 	"inputs": [
 		{
-			"id": "obsSceneNamePrompt",
-			"type": "promptString",
-			"description": "Enter OBS scene name",
-			"default": "AI Dev"
-		},
-		{
 			"id": "chatopsPhrase",
 			"type": "promptString",
-			"description": "?êÏó∞?¥Î°ú ÏßÄ?úÎ? ?ÖÎ†•?òÏÑ∏??(AGI: AGI ?ÅÌÉú / Canary: Ïπ¥ÎÇòÎ¶?10% ?¨Î†§ / ?µÌï©: ?µÌï© ?Ä?úÎ≥¥??/ OBS: Î∞©ÏÜ° ?úÏûë / Bot: Î¥?ÏºúÏ§ò)",
-			"default": "?µÌï© ?Ä?úÎ≥¥??
+			"description": "ÏûêÏó∞Ïñ¥Î°ú ÏßÄÏãúÎ•º ÏûÖÎ†•ÌïòÏÑ∏Ïöî (AGI: AGI ÏÉÅÌÉú / Canary: Ïπ¥ÎÇòÎ¶¨ 10% Ïò¨Î†§ / ÌÜµÌï©: ÌÜµÌï© ÏÉÅÌÉú / OBS: Î∞©ÏÜ° ÏãúÏûë / Bot: Î¥á ÏºúÏ§ò)",
+			"default": "ÌÜµÌï© ÏÉÅÌÉú"
 		},
 		{
 			"id": "clientSecretPath",
 			"type": "promptString",
-			"description": "OAuth client_secret.json Í≤ΩÎ°ú ?ÖÎ†•",
+			"description": "OAuth client_secret.json Í≤ΩÎ°ú ÏûÖÎ†•",
 			"default": "C:\\path\\to\\client_secret.json"
+		},
+		{
+			"id": "youtubeUrlPrompt",
+			"type": "promptString",
+			"description": "Î∂ÑÏÑùÌï† YouTube URL ÏûÖÎ†•",
+			"default": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+		},
+		{
+			"id": "jsonPathPrompt",
+			"type": "promptString",
+			"description": "MarkdownÏúºÎ°ú Î≥ÄÌôòÌï† Î∂ÑÏÑù JSON ÌååÏùº Í≤ΩÎ°ú ÏûÖÎ†•",
+			"default": "${workspaceFolder}/outputs/youtube_learner/dQw4w9WgXcQ_analysis.json"
+		},
+		{
+			"id": "topCountPrompt",
+			"type": "promptString",
+			"description": "Ïù∏Îç±Ïä§Ïóê ÌëúÏãúÌï† ÏµúÏã† Ìï≠Î™© Í∞úÏàò (Ïòà: 20)",
+			"default": "20"
 		}
 	]
 }

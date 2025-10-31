@@ -13,27 +13,41 @@
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
-    // ?�� ?��????�동 ?�커??비활?�화
+    // ?�� ?��????�동 ?�커??비활?�화
     "terminal.integrated.automationProfile.windows": null,
     "terminal.integrated.focusAfterRun": "none",
     "task.autoDetect": "off",
     "task.alwaysRevealTaskTerminal": false,
     "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.env.windows": {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUTF8": "1"
+    },
+    "files.encoding": "utf8",
     "claudeCode.useTerminal": true,
-    // ?�� AGI ?�션 ?�동 ?�작
+    // ?�� AGI ?�션 ?�동 ?�작
     "window.restoreWindows": "all",
     "workbench.startupEditor": "readme",
-    // Gitko: Enable HTTP Poller 명령??VS Code ?�작 ???�동 ?�행
+    // Gitko: Enable HTTP Poller 명령??VS Code ?�작 ???�동 ?�행
     "auto-run-command.commands": [
         {
             "command": "gitko.enableHttpPoller",
             "args": []
+        },
+        {
+            "command": "workbench.action.tasks.runTask",
+            "args": [
+                "AGI: Auto Resume on Workspace Open"
+            ]
         }
     ],
-    // Gitko HTTP Poller ?�정
+    // Gitko HTTP Poller ?�정
     "gitko.enableHttpPoller": true,
     "gitko.httpApiBase": "http://127.0.0.1:8091/api",
     "gitko.httpPollingInterval": 2000,
-    // ?? Task Queue Server ?�동 ?�작 (Workspace ?�릴 ??
-    "task.runOnFolderOpen": "?�� Comet-Gitko: Start Task Queue Server (Background)"
+    // ?? Task Queue Server ?�동 ?�작 (Workspace ?�릴 ??
+    "task.runOnFolderOpen": "?�� Comet-Gitko: Start Task Queue Server (Background)",
+    // Fonts with CJK + Emoji coverage to avoid tofu/missing glyphs
+    "editor.fontFamily": "Cascadia Code, '맑은 고딕', 'Segoe UI Emoji', Consolas, 'Courier New', monospace",
+    "terminal.integrated.fontFamily": "Cascadia Code, '맑은 고딕', 'Segoe UI Emoji', Consolas, 'Courier New', monospace"
 }
