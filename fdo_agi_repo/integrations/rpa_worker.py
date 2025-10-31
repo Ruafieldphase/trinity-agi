@@ -35,7 +35,15 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Tuple, List
 
 # 에러 캡처 유틸
-from .error_capture_utils import capture_and_ocr_on_error
+try:
+    # Package execution
+    from .error_capture_utils import capture_and_ocr_on_error
+except ImportError:
+    # Direct script execution fallback
+    import sys as _sys
+    from pathlib import Path as _Path
+    _sys.path.insert(0, str(_Path(__file__).parent))
+    from error_capture_utils import capture_and_ocr_on_error
 
 import requests
 
@@ -305,6 +313,14 @@ class RPAWorker:
                     exec_out = self._execute_rpa_command(data)
                     ok = self._submit_result(task_id, bool(exec_out.get("success", False)), exec_out.get("data") or {}, exec_out.get("error"))
                     self.logger.info(f"Submitted rpa result: {'OK' if ok else 'FAIL'} | success={exec_out.get('success')}")
+                elif task_type in ("screenshot", "ocr", "wait", "open_browser"):
+                    # Compatibility: map simple task types to RPA command actions
+                    mapped_cmd = {"action": task_type, "params": data or {}}
+                    exec_out = self._execute_rpa_command(mapped_cmd)
+                    ok = self._submit_result(task_id, bool(exec_out.get("success", False)), exec_out.get("data") or {}, exec_out.get("error"))
+                    self.logger.info(
+                        f"Submitted mapped result: {'OK' if ok else 'FAIL'} | type={task_type} success={exec_out.get('success')}"
+                    )
                 else:
                     # Unknown task → mark failed
                     err = f"Unsupported task type: {task_type}"
