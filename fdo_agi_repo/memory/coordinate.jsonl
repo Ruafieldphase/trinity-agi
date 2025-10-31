@@ -3156,3 +3156,5 @@
 {"type": "rune_validation", "task_id": "test-002", "quality": 0.1, "replan": true, "risks": ["uncertain-response", "too-short-response", "insufficient-detail", "low-topic-coverage"], "ts": 1761911297.8244162}
 {"type": "rune_validation", "task_id": "test-001", "quality": 0.651, "replan": true, "risks": ["low-topic-coverage"], "ts": 1761917457.7344112}
 {"type": "rune_validation", "task_id": "test-002", "quality": 0.1, "replan": true, "risks": ["uncertain-response", "too-short-response", "insufficient-detail", "low-topic-coverage"], "ts": 1761917457.73531}
+{"type": "rune_validation", "task_id": "test-001", "quality": 0.651, "replan": true, "risks": ["low-topic-coverage"], "ts": 1761918124.7353783}
+{"type": "rune_validation", "task_id": "test-002", "quality": 0.1, "replan": true, "risks": ["uncertain-response", "too-short-response", "insufficient-detail", "low-topic-coverage"], "ts": 1761918124.735729}
