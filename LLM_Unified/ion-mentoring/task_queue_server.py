@@ -21,6 +21,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from threading import Lock
+import time
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
@@ -38,7 +39,11 @@ logger = logging.getLogger(__name__)
 # In-memory task queue
 task_queue: List[Dict[str, Any]] = []
 task_results: Dict[str, Dict[str, Any]] = {}
+inflight_tasks: Dict[str, Dict[str, Any]] = {}
 queue_lock = Lock()
+
+# Re-delivery lease for at-least-once semantics
+LEASE_TIMEOUT_SECONDS = 120
 
 app = FastAPI(title="Computer Use Task Queue Server", version="1.0.0")
 
@@ -90,12 +95,32 @@ async def get_next_task(request: Request):
     """Fetch next task from queue (FIFO) - Supports both GET and POST for compatibility"""
     logger.info(f"{request.method} /api/tasks/next - Client: {request.client}")
     with queue_lock:
+        # Requeue expired inflight tasks (lease timeout)
+        now = time.time()
+        expired: List[str] = []
+        for tid, meta in inflight_tasks.items():
+            leased_at = meta.get("leased_at", 0)
+            if now - float(leased_at) >= LEASE_TIMEOUT_SECONDS:
+                # push back to front for faster retry
+                task_queue.insert(0, meta["task"])  # front
+                expired.append(tid)
+                logger.warning(f"Lease expired -> requeued task: {tid}")
+        for tid in expired:
+            inflight_tasks.pop(tid, None)
+
         if not task_queue:
             # Empty object instead of 204 to prevent JSON parse error
             return {"task": None}
         
         task = task_queue.pop(0)
-        logger.info(f"Dequeued task: {task['task_id']} (type: {task['type']})")
+        # Register lease
+        worker_name = request.headers.get("X-Worker-Name") or "unknown"
+        inflight_tasks[task["task_id"]] = {
+            "task": task,
+            "leased_at": now,
+            "worker": worker_name,
+        }
+        logger.info(f"Dequeued task: {task['task_id']} (type: {task['type']}) | lease to {worker_name}")
         return task
 
 
@@ -103,6 +128,8 @@ async def get_next_task(request: Request):
 async def submit_task_result(task_id: str, result: TaskResult):
     """Submit task execution result"""
     with queue_lock:
+        # Clear from inflight on result
+        inflight_tasks.pop(task_id, None)
         task_results[task_id] = {
             "task_id": task_id,
             "success": result.success,
@@ -144,6 +171,22 @@ async def list_tasks():
         "queue": task_queue,
         "queue_size": len(task_queue)
     }
+
+
+@app.get("/api/inflight")
+async def list_inflight():
+    """List inflight leased tasks (for debugging/recovery visibility)"""
+    with queue_lock:
+        items = []
+        for tid, meta in inflight_tasks.items():
+            items.append({
+                "task_id": tid,
+                "type": meta["task"].get("type"),
+                "leased_at": meta.get("leased_at"),
+                "worker": meta.get("worker"),
+                "age_sec": time.time() - float(meta.get("leased_at", 0)),
+            })
+    return {"inflight": items, "count": len(items)}
 
 
 @app.get("/api/results")
