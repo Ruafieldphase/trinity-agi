@@ -2,7 +2,7 @@
 # 페르소나 협업을 자동으로 실행합니다
 
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$Topic,
     
     [switch]$OpenReport

@@ -21,7 +21,8 @@ if ($RunLearnerFirst) {
         
         if ($LASTEXITCODE -ne 0) {
             Write-Host "`n⚠️ BQI 학습 실패, 계속 진행합니다`n" -ForegroundColor Yellow
-        } else {
+        }
+        else {
             Write-Host "`n✅ BQI 학습 완료`n" -ForegroundColor Green
         }
     }
