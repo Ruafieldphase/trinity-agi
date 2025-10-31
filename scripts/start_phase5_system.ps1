@@ -142,7 +142,7 @@ else {
 Write-Host ""
 Write-Host "[3/3] Starting Monitoring Daemon..." -ForegroundColor Cyan
 
-$daemonScript = "$WORKSPACE\fdo_agi_repo\monitoring\daemon.py"
+$daemonScript = "$WORKSPACE\fdo_agi_repo\monitoring\monitoring_daemon.py"
 if (Test-Path $daemonScript) {
     Start-Job -Name 'MonitoringDaemon' -ScriptBlock {
         param($script, $workspace)
