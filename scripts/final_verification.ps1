@@ -13,11 +13,11 @@ Write-Host "   Gitko AGI Phase 5 - Final Verification" -ForegroundColor Yellow
 Write-Host "=============================================================`n" -ForegroundColor Cyan
 
 $verificationResults = @{
-    TotalChecks = 0
+    TotalChecks  = 0
     PassedChecks = 0
     FailedChecks = 0
-    Warnings = 0
-    Details = @()
+    Warnings     = 0
+    Details      = @()
 }
 
 function Test-Check {
@@ -40,11 +40,12 @@ function Test-Check {
                 Write-Host "   $SuccessMessage" -ForegroundColor Gray
             }
             $verificationResults.Details += @{
-                Check = $Name
-                Status = "PASS"
+                Check   = $Name
+                Status  = "PASS"
                 Message = $SuccessMessage
             }
-        } else {
+        }
+        else {
             if ($Critical) {
                 $verificationResults.FailedChecks++
                 Write-Host "❌ $Name" -ForegroundColor Red
@@ -52,30 +53,32 @@ function Test-Check {
                     Write-Host "   $FailureMessage" -ForegroundColor Red
                 }
                 $verificationResults.Details += @{
-                    Check = $Name
-                    Status = "FAIL"
+                    Check   = $Name
+                    Status  = "FAIL"
                     Message = $FailureMessage
                 }
-            } else {
+            }
+            else {
                 $verificationResults.Warnings++
                 Write-Host "⚠️  $Name" -ForegroundColor Yellow
                 if ($FailureMessage) {
                     Write-Host "   $FailureMessage" -ForegroundColor Yellow
                 }
                 $verificationResults.Details += @{
-                    Check = $Name
-                    Status = "WARNING"
+                    Check   = $Name
+                    Status  = "WARNING"
                     Message = $FailureMessage
                 }
             }
         }
-    } catch {
+    }
+    catch {
         $verificationResults.FailedChecks++
         Write-Host "❌ $Name" -ForegroundColor Red
         Write-Host "   오류: $($_.Exception.Message)" -ForegroundColor Red
         $verificationResults.Details += @{
-            Check = $Name
-            Status = "ERROR"
+            Check   = $Name
+            Status  = "ERROR"
             Message = $_.Exception.Message
         }
     }
@@ -150,7 +153,8 @@ Test-Check -Name "Task Queue Server Running" -Test {
     try {
         $response = Invoke-WebRequest -Uri "http://127.0.0.1:8091/api/health" -TimeoutSec 2 -UseBasicParsing -ErrorAction SilentlyContinue
         $response.StatusCode -eq 200
-    } catch {
+    }
+    catch {
         $false
     }
 } -SuccessMessage "Running on port 8091" -FailureMessage "Task Queue Server not running (normal, start if needed)"
@@ -199,10 +203,12 @@ Write-Host "`nSuccess Rate: $successRate%" -ForegroundColor $(if ($successRate -
 if ($verificationResults.FailedChecks -eq 0) {
     Write-Host "`nAll critical checks passed!" -ForegroundColor Green
     Write-Host "   Project is production-ready." -ForegroundColor Green
-} elseif ($verificationResults.FailedChecks -le 2) {
+}
+elseif ($verificationResults.FailedChecks -le 2) {
     Write-Host "`nSome issues found." -ForegroundColor Yellow
     Write-Host "   But most features are working normally." -ForegroundColor Yellow
-} else {
+}
+else {
     Write-Host "`nMultiple issues found." -ForegroundColor Red
     Write-Host "   Please resolve issues and verify again." -ForegroundColor Red
 }
@@ -229,6 +235,7 @@ if ($Verbose) {
 # Exit code
 if ($verificationResults.FailedChecks -eq 0) {
     exit 0
-} else {
+}
+else {
     exit 1
 }
