@@ -46,7 +46,8 @@ if (Test-Path $resonanceReport) {
 - **File**: [resonance_lumen_integration_latest.md](../fdo_agi_repo/outputs/resonance_lumen_integration_latest.md)
 
 "@
-} else {
+}
+else {
     $briefing += @"
 
 ### Resonance Loop
@@ -73,7 +74,8 @@ if (Test-Path $bqiReport) {
 - **File**: [bqi_lumen_integration_latest.md](../fdo_agi_repo/outputs/bqi_lumen_integration_latest.md)
 
 "@
-} else {
+}
+else {
     $briefing += @"
 
 ### BQI Phase 6
@@ -88,8 +90,8 @@ if (Test-Path $bqiReport) {
 Write-Host "3. Analyzing YouTube learning..." -ForegroundColor Cyan
 
 $youtubeFiles = Get-ChildItem "$outputDir\youtube_enhanced_*.md" -ErrorAction SilentlyContinue | 
-    Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-$Hours) } |
-    Sort-Object LastWriteTime -Descending
+Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-$Hours) } |
+Sort-Object LastWriteTime -Descending
 
 if ($youtubeFiles.Count -gt 0) {
     $latestYoutube = $youtubeFiles[0]
@@ -102,7 +104,8 @@ if ($youtubeFiles.Count -gt 0) {
 - **Status**: OK
 
 "@
-} else {
+}
+else {
     $briefing += @"
 
 ### YouTube Learning
@@ -132,7 +135,8 @@ if (Test-Path $feedbackLog) {
 - **Status**: OK
 
 "@
-    } catch {
+    }
+    catch {
         $briefing += @"
 
 ### Intelligent Feedback System
@@ -142,7 +146,8 @@ if (Test-Path $feedbackLog) {
 
 "@
     }
-} else {
+}
+else {
     $briefing += @"
 
 ### Intelligent Feedback System
@@ -168,7 +173,8 @@ if (Test-Path $orchestrationLog) {
 - **File**: [orchestration_latest.md](orchestration_latest.md)
 
 "@
-} else {
+}
+else {
     $briefing += @"
 
 ### Persona Orchestration
@@ -227,7 +233,8 @@ Continue with:
 - Review persona feedback
 
 "@
-} else {
+}
+else {
     $briefing += "`n"
     $briefing += $recommendations -join "`n"
     $briefing += "`n"

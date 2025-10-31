@@ -18,7 +18,8 @@ if ($Unregister) {
     try {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
         Write-Host "Task unregistered successfully!`n" -ForegroundColor Green
-    } catch {
+    }
+    catch {
         Write-Host "Task not found or already unregistered.`n" -ForegroundColor Gray
     }
     
@@ -89,7 +90,8 @@ if ($task) {
     
     Write-Host "Actions:" -ForegroundColor Yellow
     Write-Host "  To unregister: .\register_daily_briefing.ps1 -Unregister`n" -ForegroundColor Gray
-} else {
+}
+else {
     Write-Host "Status: NOT REGISTERED`n" -ForegroundColor Yellow
     
     Write-Host "To register:" -ForegroundColor Cyan

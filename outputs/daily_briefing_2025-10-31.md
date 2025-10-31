@@ -1,85 +1,43 @@
-﻿# Daily Briefing
+# Daily Briefing — 2025-10-31
 
-**Date**: 2025-10-31  
-**Generated**: 2025-10-31 22:48:10  
-**Period**: Last 24 hours
-
----
-
-## System Overview
-
-### Resonance Loop
-
-- **Status**: OK
-- **Last Report**: 0.1 hours ago
-- **File**: [resonance_lumen_integration_latest.md](../fdo_agi_repo/outputs/resonance_lumen_integration_latest.md)
-
-### BQI Phase 6
-
-- **Status**: OK
-- **Last Report**: 0.3 hours ago
-- **File**: [bqi_lumen_integration_latest.md](../fdo_agi_repo/outputs/bqi_lumen_integration_latest.md)
-
-### YouTube Learning
-
-- **Videos Analyzed**: 1
-- **Latest**: youtube_enhanced_3c-iBn73dDE.md
-- **Status**: OK
-
-### Intelligent Feedback System
-
-- **Feedbacks Analyzed**: 1
-- **Implementation Steps**: 1
-- **Last Update**: 0.1 hours ago
-- **Status**: OK
-
-### Persona Orchestration
-
-- **Status**: OK
-- **Last Run**: 0.3 hours ago
-- **File**: [orchestration_latest.md](orchestration_latest.md)
+Generated: 2025-10-31 22:50 (+09:00)
+Period: Last 24 hours
 
 ---
 
-## System Health
+## Phase 5 — Monitoring/Web (Key)
 
-| System | Status | Notes |
-|--------|--------|-------|
-| Resonance Loop | OK | Active |
-| BQI Phase 6 | OK | Active |
-| YouTube Learning | OK | 1 recent videos |
-| Feedback System | OK | Active |
-| Orchestration | OK | Active |
+- Health: healthy (success rate 86.08%)
+- Components: Queue 8091 ONLINE, Web 8000 ONLINE, Daemon RUNNING, Worker RUNNING (single)
+- Dashboard: http://127.0.0.1:8000
+- Snapshot: outputs/system_status_2025-10-31_2235.md
 
-**Overall Status**: OPERATIONAL
+## What Changed Today
 
----
+- Task Queue: added `POST /api/enqueue` for script/test compatibility
+- Worker: mapped simple task types (screenshot/ocr/wait/open_browser) → internal actions
+- Web: success_rate derived from totals; health computed from success_rate
+- Start script: monitoring daemon path fixed in `scripts/start_phase5_system.ps1`
+- Autostart: `scripts/register_phase5_autostart.ps1` added (optional)
 
-## Recommended Actions
+## Artifacts
 
-**All systems are operational!**
+- Final declaration: FINAL_COMPLETION_DECLARATION_2025-10-31.md
+- Success report update: PHASE_5_SUCCESS_REPORT_UPDATE_2025-10-31.md
+- Release notes update: RELEASE_NOTES_PHASE5_UPDATE_2025-10-31.md
+- Index: PHASE_5_FINAL_INDEX.md
+- Briefing: CURRENT_SYSTEM_STATUS_BRIEFING.md
 
-Continue with:
-- Regular monitoring
-- New YouTube video learning
-- Review persona feedback
+## Quick Actions (Ops)
 
----
-
-## Quick Links
-
-### Main Reports
-- [Resonance Loop](../fdo_agi_repo/outputs/resonance_lumen_integration_latest.md)
-- [BQI Phase 6](../fdo_agi_repo/outputs/bqi_lumen_integration_latest.md)
-- [Feedback Implementation Plan](feedback_implementation_plan.md)
-
-### Scripts
-- Resonance
-- BQI
-- YouTube
-- Feedback
-- Orchestration
+- Tag release: `git tag phase5-healthy-20251031 && git push --tags`
+- Ensure autostart: `./scripts/register_phase5_autostart.ps1`
+- Enforce single worker: `./scripts/ensure_rpa_worker.ps1 -EnforceSingle -MaxWorkers 1`
 
 ---
 
-*Auto-generated briefing - 2025-10-31 22:48:10*
+## Other Pipelines (Snapshot)
+
+- Resonance Loop: OK (active)
+- BQI Phase 6: OK (active)
+- YouTube Learning: OK (recent videos processed)
