@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+*.log.*
+*.err
+
+# Test outputs
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Project specific
+outputs/*.png
+outputs/*.jpg
+outputs/*.jpeg
+outputs/screenshot_*.png
+outputs/*.jsonl
+outputs/cache_validation_*.log
+outputs/cache_validation_*.txt
+outputs/worker_monitor.log
+outputs/rpa_worker_debug.log*
+
+# Keep important output files
+!outputs/youtube_learner_index.md
+!outputs/monitoring_report_latest.md
+!outputs/cache_analysis_latest.md
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.old
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
