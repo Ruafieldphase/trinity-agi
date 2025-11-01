@@ -130,6 +130,18 @@ class FeedbackOrchestrator:
         self.volume_tracker = RequestVolumeTracker(project_id, service_name)
         self._last_volume_trend = None
         
+        # Orchestration Bridge (Phase 5.5 통합)
+        try:
+            import sys
+            workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
+            sys.path.insert(0, workspace_root)
+            from scripts.orchestration_bridge import OrchestrationBridge
+            self.orchestration_bridge = OrchestrationBridge(workspace_root=workspace_root)
+            logger.info("OrchestrationBridge initialized successfully")
+        except Exception as e:
+            logger.warning(f"Failed to initialize OrchestrationBridge: {e}")
+            self.orchestration_bridge = None
+        
         # 상태 파일
         self.state_file = os.path.join(
             os.path.dirname(__file__),
@@ -153,6 +165,20 @@ class FeedbackOrchestrator:
         logger.info("=" * 60)
         logger.info("Starting Complete Feedback Loop (Lumen v1.7)")
         logger.info("=" * 60)
+
+        # === Phase 0: Monitoring Context (NEW - Phase 5.5) ===
+        monitoring_context = None
+        if self.orchestration_bridge:
+            try:
+                logger.info("\n[Phase 0] Fetching Monitoring Context...")
+                monitoring_context = self.orchestration_bridge.get_orchestration_context()
+                logger.info(f"  Overall Health: {monitoring_context.overall_health}")
+                logger.info(f"  Effective Availability: {monitoring_context.effective_availability:.2f}%")
+                logger.info(f"  Recommended Routing: {monitoring_context.recommended_primary} → {monitoring_context.recommended_fallback}")
+                if monitoring_context.recovery_needed:
+                    logger.warning(f"  🔴 Recovery Needed: {monitoring_context.recovery_reason}")
+            except Exception as e:
+                logger.warning(f"  Failed to fetch monitoring context: {e}")
 
         # === Phase 1: Maturity Metrics ===
         logger.info("\n[Phase 1] Collecting Maturity Metrics...")
@@ -207,7 +233,8 @@ class FeedbackOrchestrator:
 
         # === System Health Determination ===
         system_health = self._determine_system_health(
-            unified_gate_score, cost_rhythm_status, cache_health
+            unified_gate_score, cost_rhythm_status, cache_health,
+            monitoring_context=monitoring_context  # Phase 5.5 통합
         )
         logger.info(f"  System Health: {system_health.value}")
 
@@ -326,9 +353,23 @@ class FeedbackOrchestrator:
         self,
         unified_gate_score: float,
         cost_rhythm_status: str,
-        cache_health: str
+        cache_health: str,
+        monitoring_context=None  # NEW: Phase 5.5 모니터링 통합
     ) -> SystemHealthLevel:
         """전체 시스템 건강도 결정"""
+        # === NEW: Monitoring Context 우선 검증 ===
+        if monitoring_context:
+            # 채널 가용성이 심각하게 낮으면 CRITICAL
+            if monitoring_context.effective_availability < 80:
+                logger.warning(f"Critical: Effective availability {monitoring_context.effective_availability:.1f}% < 80%")
+                return SystemHealthLevel.CRITICAL
+            
+            # 복구 필요 신호가 있고 unified_gate_score도 낮으면 WARNING
+            if monitoring_context.recovery_needed and unified_gate_score < 70:
+                logger.warning(f"Warning: Recovery needed ({monitoring_context.recovery_reason}) + Low gate score")
+                return SystemHealthLevel.WARNING
+        
+        # === 기존 로직 ===
         # Critical 조건
         if cost_rhythm_status == RhythmStatus.CHAOTIC.value:
             return SystemHealthLevel.CRITICAL
@@ -346,10 +387,17 @@ class FeedbackOrchestrator:
         if unified_gate_score < 60:
             return SystemHealthLevel.WARNING
         
-        # Excellent 조건
+        # Excellent 조건 (모니터링 건강도도 고려)
+        monitoring_excellent = (
+            monitoring_context and
+            monitoring_context.effective_availability >= 99 and
+            not monitoring_context.recovery_needed
+        ) if monitoring_context else True  # monitoring_context 없으면 기존 로직 유지
+        
         if (unified_gate_score >= 85 and 
             cost_rhythm_status == RhythmStatus.RESONANT.value and
-            cache_health == CacheHealthStatus.OPTIMAL.value):
+            cache_health == CacheHealthStatus.OPTIMAL.value and
+            monitoring_excellent):
             return SystemHealthLevel.EXCELLENT
         
         # 그 외: Good

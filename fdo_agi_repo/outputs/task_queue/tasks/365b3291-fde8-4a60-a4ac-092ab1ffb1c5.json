@@ -1,0 +1,17 @@
+{
+  "id": "365b3291-fde8-4a60-a4ac-092ab1ffb1c5",
+  "type": "web_scraping",
+  "requester": "copilot-test",
+  "data": {
+    "url": "https://github.com/trending",
+    "selector": "article.Box-row h2 a",
+    "extract": [
+      "text",
+      "href"
+    ]
+  },
+  "status": "pending",
+  "created_at": "2025-11-01T05:59:24.799664",
+  "assigned_to": null,
+  "updated_at": null
+}

@@ -1,0 +1,64 @@
+{
+  "final_state": {
+    "info_density": -0.5469576539753404,
+    "resonance": 0.1915721899615897,
+    "entropy": 0.9240575082807531,
+    "coherence": 0.2983739873676253,
+    "ethics": 0.13004656200429307,
+    "phase": 66.32763962374021,
+    "horizon_crossings": 2
+  },
+  "phase_summary": {
+    "Monday": {
+      "info_density": -0.7580361489998713,
+      "resonance": 0.39895860530220145,
+      "entropy": 0.8353825085517164,
+      "coherence": 0.30714095154628934,
+      "horizon_crossings": 2.0
+    },
+    "Tuesday": {
+      "info_density": -1.1131017087460928,
+      "resonance": 0.360451209342968,
+      "entropy": 0.9257946991644116,
+      "coherence": 0.16758533709075962,
+      "horizon_crossings": 0.0
+    },
+    "Wednesday": {
+      "info_density": -1.1343145199643834,
+      "resonance": 0.32694902833309786,
+      "entropy": 0.9329545823638018,
+      "coherence": 0.15722065268512644,
+      "horizon_crossings": 0.0
+    },
+    "Thursday": {
+      "info_density": -1.0150500381240608,
+      "resonance": 0.33095225458327837,
+      "entropy": 0.9170385826091733,
+      "coherence": 0.2008714985368051,
+      "horizon_crossings": 0.0
+    },
+    "Friday": {
+      "info_density": -1.1349175841388528,
+      "resonance": 0.3656677530497466,
+      "entropy": 0.933033102913101,
+      "coherence": 0.16670376263547482,
+      "horizon_crossings": 0.0
+    },
+    "Saturday": {
+      "info_density": -1.1541742011238871,
+      "resonance": 0.336444998609279,
+      "entropy": 0.9338871281047493,
+      "coherence": 0.1635297275343454,
+      "horizon_crossings": 0.0
+    },
+    "Sunday": {
+      "info_density": -1.159348559919876,
+      "resonance": 0.3260231279016802,
+      "entropy": 0.9383448955907796,
+      "coherence": 0.15701618117918562,
+      "horizon_crossings": 0.0
+    }
+  },
+  "history_count": 336,
+  "horizon_crossings": 2
+}

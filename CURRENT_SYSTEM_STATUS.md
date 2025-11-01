@@ -32,6 +32,18 @@
 
 **시작 명령**:
 
+[CURRENT STATUS - ASCII SAFE]
+
+- Health: HEALTHY (success_rate: 86.08%)
+- Quick briefing: CURRENT_SYSTEM_STATUS_BRIEFING.md
+- Snapshots:
+  - outputs/system_status_2025-10-31_2235.md
+  - outputs/daily_briefing_2025-10-31.md
+- Dashboard: http://127.0.0.1:8000
+- Queue API: http://127.0.0.1:8091
+
+----------------------------------------------------------------
+
 ```powershell
 cd LLM_Unified\ion-mentoring
 .\.venv\Scripts\python.exe task_queue_server.py --port 8091

@@ -6,13 +6,13 @@
   "executed_actions": 1,
   "verified_actions": 0,
   "failed_actions": 0,
-  "execution_time": 0.10063290596008301,
+  "execution_time": 0.10060977935791016,
   "action_results": [
     {
       "action_index": 1,
       "action_type": "TYPE",
       "success": true,
-      "duration": 1.621246337890625e-05,
+      "duration": 4.291534423828125e-06,
       "error": null
     }
   ],

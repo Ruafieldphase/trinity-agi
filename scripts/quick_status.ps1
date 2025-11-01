@@ -2,6 +2,7 @@ param(
     [switch]$AlertOnDegraded,
     [string]$OutJson,
     [switch]$LogJsonl,
+    [switch]$Perf,
     [string]$LogPath = "C:\workspace\agi\outputs\status_snapshots.jsonl",
     [int]$WarnLocalMs = 1800,
     [int]$AlertLocalMs = 2500,
@@ -15,16 +16,30 @@ param(
     [double]$TrendThresholdPercent = 10.0,
     [switch]$UseAdaptiveThresholds,
     [double]$AdaptiveWarnSigmas = 1.5,  # ?�균 + 1.5? (was 1.0?) - reduces false positives by ~50%
-    [double]$AdaptiveAlertSigmas = 2.5  # ?�균 + 2.5? (was 2.0?) - further reduces alert noise
+    [double]$AdaptiveAlertSigmas = 2.5,  # ?�균 + 2.5? (was 2.0?) - further reduces alert noise
+    [switch]$HideOptional  # hide optional local channel (18090)
 )
+
+$PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
+try {
+    [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8
+    $OutputEncoding = [System.Text.UTF8Encoding]::UTF8
+}
+catch {}
 
 $ErrorActionPreference = "Continue"
 
-# Emit system startup event
-& "$PSScriptRoot\emit_event.ps1" -EventType "system_startup" -Payload @{
-    component = "quick_status"
-    timestamp = (Get-Date).ToUniversalTime().ToString("o")
-} -PersonaId "monitoring"
+# Emit system startup event (best-effort)
+try {
+    $emitPath = Join-Path $PSScriptRoot 'emit_event.ps1'
+    if (Test-Path -LiteralPath $emitPath) {
+        & $emitPath -EventType "system_startup" -Payload @{
+            component = "quick_status"
+            timestamp = (Get-Date).ToUniversalTime().ToString("o")
+        } -PersonaId "monitoring"
+    }
+}
+catch {}
 
 function Write-Header {
     Write-Host "`n================================================================" -ForegroundColor Cyan
@@ -121,13 +136,51 @@ function Read-RecentSnapshots {
     return $items
 }
 
+# Show concise performance dashboard summary (from latest JSON)
+function Show-PerfSummary {
+    try {
+        $perfPath = Join-Path (Split-Path -Parent $PSScriptRoot) 'outputs\performance_metrics_latest.json'
+        if (-not (Test-Path -LiteralPath $perfPath)) {
+            Write-Host "[Perf] performance_metrics_latest.json not found" -ForegroundColor DarkGray
+            return
+        }
+        $perf = Get-Content -LiteralPath $perfPath -Raw | ConvertFrom-Json
+        $eff = [double]$perf.OverallEffectiveSuccessRate
+        $overall = [double]$perf.OverallSuccessRate
+        $systems = [int]$perf.SystemsConsidered
+        $exAt = if ($perf.Thresholds -and $perf.Thresholds.ExcellentAt) { [double]$perf.Thresholds.ExcellentAt } else { 90 }
+        $gdAt = if ($perf.Thresholds -and $perf.Thresholds.GoodAt) { [double]$perf.Thresholds.GoodAt } else { 70 }
+        $band = $perf.BandCounts
+        $top = ''
+        if ($perf.PSObject.Properties.Name -contains 'TopAttention' -and $perf.TopAttention -and $perf.TopAttention.Count -gt 0) {
+            $t0 = $perf.TopAttention[0]
+            $top = ("{0} ({1}%)" -f $t0.System, ([double]$t0.EffectiveSuccessRate).ToString('F1'))
+        }
+        $color = if ($eff -ge $exAt) { 'Green' } elseif ($eff -ge $gdAt) { 'Yellow' } else { 'Red' }
+        $bandsText = if ($band) { ("E={0} G={1} N={2} ND={3}" -f $band.Excellent, $band.Good, $band.Needs, $band.NoData) } else { '' }
+        $topText = if ([string]::IsNullOrWhiteSpace($top)) { '' } else { " | Top: $top" }
+        Write-Host ("[Perf] Effective {0}% (Systems {1}) | {2}{3}" -f $eff.ToString('F1'), $systems, $bandsText, $topText) -ForegroundColor $color
+    }
+    catch {
+        Write-Host "[Perf] failed to load summary" -ForegroundColor DarkGray
+    }
+}
+
 function Append-Snapshot {
     param([string]$Path, [hashtable]$Snapshot)
     try {
         $dir = Split-Path -Parent $Path
         if ($dir -and -not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
         $json = ($Snapshot | ConvertTo-Json -Depth 6 -Compress)
-        Add-Content -LiteralPath $Path -Value $json
+        # Append as UTF-8 without BOM to keep JSONL portable on PS 5.1
+        try {
+            $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+            [System.IO.File]::AppendAllText($Path, $json + [Environment]::NewLine, $utf8NoBom)
+        }
+        catch {
+            # Fallback
+            Add-Content -LiteralPath $Path -Value $json -Encoding UTF8
+        }
     }
     catch { }
 }
@@ -168,17 +221,17 @@ function Send-AlertIfNeeded {
         if ($Trend.Local.Count -gt 0) {
             $arrow = Get-TrendArrow -direction $Trend.Local.Direction
             $dirText = if ($Trend.Local.LongCount -ge $LongTrendWindow) { " $arrow $($Trend.Local.Direction)" } else { "" }
-            $lines += ("??Local: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Local.ShortTermMeanMs, [int]$Trend.Local.StdMs, $Trend.Local.Count, $dirText)
+            $lines += ("Local: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Local.ShortTermMeanMs, [int]$Trend.Local.StdMs, $Trend.Local.Count, $dirText)
         }
         if ($Trend.Cloud.Count -gt 0) {
             $arrow = Get-TrendArrow -direction $Trend.Cloud.Direction
             $dirText = if ($Trend.Cloud.LongCount -ge $LongTrendWindow) { " $arrow $($Trend.Cloud.Direction)" } else { "" }
-            $lines += ("??Cloud: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Cloud.ShortTermMeanMs, [int]$Trend.Cloud.StdMs, $Trend.Cloud.Count, $dirText)
+            $lines += ("Cloud: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Cloud.ShortTermMeanMs, [int]$Trend.Cloud.StdMs, $Trend.Cloud.Count, $dirText)
         }
         if ($Trend.Gateway.Count -gt 0) {
             $arrow = Get-TrendArrow -direction $Trend.Gateway.Direction
             $dirText = if ($Trend.Gateway.LongCount -ge $LongTrendWindow) { " $arrow $($Trend.Gateway.Direction)" } else { "" }
-            $lines += ("??Gateway: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Gateway.ShortTermMeanMs, [int]$Trend.Gateway.StdMs, $Trend.Gateway.Count, $dirText)
+            $lines += ("Gateway: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Gateway.ShortTermMeanMs, [int]$Trend.Gateway.StdMs, $Trend.Gateway.Count, $dirText)
         }
     }
     
@@ -206,6 +259,9 @@ function Send-AlertIfNeeded {
 }
 
 Write-Header
+
+# Initialize AGI metrics container for event emission later
+$agiMetrics = @{ confidence = $null; quality = $null; second_pass_rate = $null }
 
 # ===== AGI ?�스??=====
 Write-Host "[1] AGI Orchestrator (fdo_agi_repo)" -ForegroundColor Yellow
@@ -237,13 +293,28 @@ try {
         if ($status -eq "HEALTHY") { Write-Host " HEALTHY" -ForegroundColor Green } elseif ($status -eq "UNHEALTHY") { Write-Host " UNHEALTHY" -ForegroundColor Red } else { Write-Host " UNKNOWN" -ForegroundColor Yellow }
 
         $m = [regex]::Match($agiText, "Confidence:\s*([0-9]+(?:\.[0-9]+)?)")
-        if ($m.Success) { $conf = $m.Groups[1].Value; Write-Host ("  Confidence: {0}" -f $conf) -ForegroundColor White; $summary += "Confidence: $conf" }
+        if ($m.Success) {
+            $conf = $m.Groups[1].Value
+            Write-Host ("  Confidence: {0}" -f $conf) -ForegroundColor White
+            $summary += "Confidence: $conf"
+            $agiMetrics.confidence = [double]$conf
+        }
 
         $m = [regex]::Match($agiText, "Quality:\s*([0-9]+(?:\.[0-9]+)?)")
-        if ($m.Success) { $qual = $m.Groups[1].Value; Write-Host ("  Quality:    {0}" -f $qual) -ForegroundColor White; $summary += "Quality: $qual" }
+        if ($m.Success) {
+            $qual = $m.Groups[1].Value
+            Write-Host ("  Quality:    {0}" -f $qual) -ForegroundColor White
+            $summary += "Quality: $qual"
+            $agiMetrics.quality = [double]$qual
+        }
 
         $m = [regex]::Match($agiText, "2nd Pass:\s*([0-9]+(?:\.[0-9]+)?)")
-        if ($m.Success) { $sec = $m.Groups[1].Value; Write-Host ("  2nd Pass:   {0}" -f $sec) -ForegroundColor White; $summary += "2nd Pass: $sec" }
+        if ($m.Success) {
+            $sec = $m.Groups[1].Value
+            Write-Host ("  2nd Pass:   {0}" -f $sec) -ForegroundColor White
+            $summary += "2nd Pass: $sec"
+            $agiMetrics.second_pass_rate = [double]$sec
+        }
 
         $m = [regex]::Match($agiText, "Port\s+(\d+):\s*([A-Za-z]+)")
         if ($m.Success) { $port = $m.Groups[1].Value; $pstatus = $m.Groups[2].Value; Write-Host ("  Port {0}: {1}" -f $port, $pstatus) -ForegroundColor White; $summary += ("Port {0}: {1}" -f $port, $pstatus) }
@@ -359,22 +430,32 @@ if ($prev -and $prev.Channels) {
 $localProbe = Test-Endpoint -Url "http://localhost:8080/v1/models" -TimeoutSec 3
 Show-LatencyLine -Label "Local LLM (8080)" -Probe $localProbe -WarnMs $WarnLocalMs -AlertMs $AlertLocalMs -PrevMs $prevLocalMs
 
-# Local LLM (secondary - 18090, if probe available)
+# Local LLM (secondary - 18090, optional; surface as non-blocking; allow hiding)
 $localProbe2 = $null
-$localProbeJson = "C:\workspace\agi\outputs\local_latency_probe_latest.json"
-if (Test-Path $localProbeJson) {
-    try {
-        $probeData = Get-Content -LiteralPath $localProbeJson -Raw | ConvertFrom-Json
-        $ep18090 = $probeData.endpoints | Where-Object { $_.url -like '*18090*' } | Select-Object -First 1
-        if ($ep18090) {
-            $isOnline = ($ep18090.success_count -gt 0)
-            $avgMs = if ($ep18090.mean_ms) { [int]$ep18090.mean_ms } else { $null }
-            $errMsg = if ($ep18090.errors -and $ep18090.errors.Count -gt 0) { $ep18090.errors[0] } else { $null }
-            $localProbe2 = @{ Online = $isOnline; Ms = $avgMs; Code = 200; Error = $errMsg }
-            Show-LatencyLine -Label "Local LLM (18090)" -Probe $localProbe2 -WarnMs $WarnLocalMs -AlertMs $AlertLocalMs
+if (-not $HideOptional) {
+    $localProbeJson = "C:\workspace\agi\outputs\local_latency_probe_latest.json"
+    if (Test-Path $localProbeJson) {
+        try {
+            $probeData = Get-Content -LiteralPath $localProbeJson -Raw | ConvertFrom-Json
+            $ep18090 = $probeData.endpoints | Where-Object { $_.url -like '*18090*' } | Select-Object -First 1
+            if ($ep18090) {
+                $isOnline = ($ep18090.success_count -gt 0)
+                $avgMs = if ($ep18090.mean_ms) { [int]$ep18090.mean_ms } else { $null }
+                $errMsg = if ($ep18090.errors -and $ep18090.errors.Count -gt 0) { $ep18090.errors[0] } else { $null }
+                $localProbe2 = @{ Online = $isOnline; Ms = $avgMs; Code = 200; Error = $errMsg }
+                $labelOpt = "Local LLM (18090) (optional)"
+                if ($localProbe2.Online) {
+                    Show-LatencyLine -Label $labelOpt -Probe $localProbe2 -WarnMs $WarnLocalMs -AlertMs $AlertLocalMs
+                }
+                else {
+                    # Render as non-blocking offline without noisy error stack
+                    Write-Host ("    {0,-24} " -f $labelOpt) -NoNewline
+                    Write-Host " OFFLINE (optional)" -ForegroundColor DarkGray
+                }
+            }
         }
+        catch { }
     }
-    catch { }
 }
 
 # Cloud AI
@@ -640,18 +721,28 @@ $summary = @{
 
 if ($AlertOnDegraded -and (-not $allGreen)) { Send-AlertIfNeeded -Summary $summary -Trend $trend }
 
-# Emit health check event
-& "$PSScriptRoot\emit_event.ps1" -EventType "health_check" -Payload @{
-    status = if ($allGreen) { "HEALTHY" } else { "UNHEALTHY" }
-    all_green = $allGreen
-    has_alerts = $hasAlerts
-    has_warnings = $hasWarns
-    agi_confidence = $agiMetrics.confidence
-    agi_quality = $agiMetrics.quality
-    agi_second_pass = $agiMetrics.second_pass_rate
-    lumen_latency_ms = $gatewayTest.Ms
-    timestamp = (Get-Date).ToUniversalTime().ToString("o")
-} -PersonaId "monitoring"
+if ($Perf) {
+    Write-Host ""; Show-PerfSummary; Write-Host ""
+}
+
+# Emit health check event (best-effort)
+try {
+    $emitPath = Join-Path $PSScriptRoot 'emit_event.ps1'
+    if (Test-Path -LiteralPath $emitPath) {
+        & $emitPath -EventType "health_check" -Payload @{
+            status           = if ($allGreen) { "HEALTHY" } else { "UNHEALTHY" }
+            all_green        = $allGreen
+            has_alerts       = $hasAlerts
+            has_warnings     = $hasWarns
+            agi_confidence   = $agiMetrics.confidence
+            agi_quality      = $agiMetrics.quality
+            agi_second_pass  = $agiMetrics.second_pass_rate
+            lumen_latency_ms = $gwProbe.Ms
+            timestamp        = (Get-Date).ToUniversalTime().ToString("o")
+        } -PersonaId "monitoring"
+    }
+}
+catch {}
 
 Write-Host "`n================================================================`n" -ForegroundColor Cyan
 

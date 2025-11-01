@@ -4,6 +4,8 @@ Phase 3 Day 1 통합 테스트
 - 검증 고도화 (화면 캡처, OCR)
 - 성능 최적화 (병렬 처리, 캐싱)
 """
+import pytest
+pytestmark = pytest.mark.skip(reason="duplicate of fdo_agi_repo/tests/test_phase3_integration.py (renamed)")
 import sys
 import time
 from pathlib import Path

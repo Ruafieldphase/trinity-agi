@@ -102,10 +102,33 @@ def summarize(events: List[Dict[str, Any]], hours: int) -> Dict[str, Any]:
     # Track timestamps for backfill estimation
     task_timestamps: Dict[str, Dict[str, Any]] = {}
 
+    # Aggregates: policy + closed-loop snapshot
+    policy_counts = {"allow": 0, "warn": 0, "block": 0}
+    last_policy: Dict[str, Any] = {}
+    last_closed_loop: Optional[Dict[str, Any]] = None
+
     for ev in events:
         if not within_window(ev, since):
             continue
         tid = ev.get("task_id")
+        # Some events (e.g., policy/snapshot) may not have task_id; handle below
+
+        # Track policy and closed-loop snapshot
+        et = ev.get("event")
+        if et == "resonance_policy":
+            act = str(ev.get("action") or "").lower()
+            if act in policy_counts:
+                policy_counts[act] += 1
+            last_policy = {
+                "mode": ev.get("mode"),
+                "policy": ev.get("policy"),
+                "reasons": ev.get("reasons"),
+            }
+        elif et == "closed_loop_snapshot":
+            snap = ev.get("snapshot")
+            if isinstance(snap, dict):
+                last_closed_loop = snap
+
         if not tid:
             continue
 
@@ -118,7 +141,6 @@ def summarize(events: List[Dict[str, Any]], hours: int) -> Dict[str, Any]:
         if tid not in task_timestamps:
             task_timestamps[tid] = {}
 
-        et = ev.get("event")
         # Support both 'timestamp' (ISO) and 'ts' (unix timestamp)
         ts = ev.get("timestamp") or ev.get("ts")
         
@@ -284,6 +306,11 @@ def summarize(events: List[Dict[str, Any]], hours: int) -> Dict[str, Any]:
             ) if complete else 0.0,
         },
         "samples": [asdict(r) for r in list(complete)[:5]],
+        "policy": {
+            "counts": policy_counts,
+            "last": last_policy,
+        },
+        "closed_loop": last_closed_loop or {},
     }
     return summary
 
@@ -294,7 +321,44 @@ def to_markdown(summary: Dict[str, Any]) -> str:
     durs_p95 = summary.get("durations_p95_sec", {})
     rates = summary.get("rates_pct", {})
     quality = summary.get("quality", {})
-    lines = []
+    lines: List[str] = []
+
+    # ASCII-safe digest header
+    gen = summary.get("generated_at", "")
+    gen_short = gen[:19] if isinstance(gen, str) else str(gen)
+    tasks_total = int(counts.get("tasks_total", 0) or 0)
+    complete_loops = int(counts.get("complete_loops", 0) or 0)
+    incomplete_loops = int(counts.get("incomplete_loops", 0) or 0)
+    loop_rate = float(rates.get("loop_complete_rate", 0.0) or 0.0)
+    eg = int(counts.get("evidence_gate_triggered", 0) or 0)
+    sp = int(counts.get("second_pass", 0) or 0)
+
+    lines.append("[AUTOPOIETIC LOOP DIGEST - ASCII SAFE]")
+    lines.append("")
+    lines.append(f"- Generated: {gen_short}")
+    lines.append(f"- Tasks seen: {tasks_total}")
+    lines.append(f"- Complete loops: {complete_loops} ({loop_rate:.1f}%)")
+    lines.append(f"- Incomplete loops: {incomplete_loops}")
+    lines.append(f"- Evidence gate: {eg}, Second pass: {sp}")
+    # Build At-a-glance line including policy warns/blocks if present
+    pol_counts = (summary.get("policy", {}) or {}).get("counts", {}) or {}
+    pol_warn = int(pol_counts.get("warn", 0) or 0)
+    pol_block = int(pol_counts.get("block", 0) or 0)
+    glance_bits: list[str] = []
+    if eg == 0 and sp == 0:
+        glance_bits.append("Stable loop flow")
+    else:
+        glance_bits.append("Loops active; gates/second pass present")
+    if pol_block > 0:
+        glance_bits.append(f"Policy blocks: {pol_block}")
+    elif pol_warn > 0:
+        glance_bits.append(f"Policy warns: {pol_warn}")
+    lines.append("- At-a-glance: " + "; ".join(glance_bits))
+    lines.append("")
+    lines.append("---")
+    lines.append("")
+
+    # Detailed section
     lines.append(f"# Autopoietic Loop Report (last {summary.get('window_hours')}h)\n")
     lines.append(f"Generated at: {summary.get('generated_at')}\n")
     lines.append("\n## Counts\n")
@@ -324,6 +388,31 @@ def to_markdown(summary: Dict[str, Any]) -> str:
     lines.append("## Quality\n")
     lines.append(f"- Final Quality Avg: {quality.get('final_quality_avg', 0.0):.3f}")
     lines.append(f"- Final Evidence OK Rate: {quality.get('final_evidence_ok_rate', 0.0):.1f}%\n")
+
+    # Resonance Policy (ASCII-safe)
+    pol = summary.get("policy", {}) or {}
+    pol_counts = pol.get("counts", {}) or {}
+    pol_last = pol.get("last", {}) or {}
+    lines.append("## Resonance Policy (counts)\n")
+    lines.append(f"- allow: {int(pol_counts.get('allow', 0) or 0)} | warn: {int(pol_counts.get('warn', 0) or 0)} | block: {int(pol_counts.get('block', 0) or 0)}")
+    last_mode = pol_last.get("mode") or "--"
+    last_policy = pol_last.get("policy") or "--"
+    reasons = pol_last.get("reasons")
+    if isinstance(reasons, list):
+        reasons_str = "; ".join(str(r) for r in reasons)
+    else:
+        reasons_str = str(reasons or "--")
+    lines.append(f"- last: mode={last_mode} policy={last_policy}")
+    lines.append(f"- reasons: {reasons_str}\n")
+
+    # Closed-loop Snapshot (ASCII-safe)
+    cls = summary.get("closed_loop", {}) or {}
+    if cls:
+        lines.append("## Closed-loop Snapshot\n")
+        rt = cls.get("realtime", {}) or {}
+        sim = cls.get("resonance_simulator", cls.get("simulator", {})) or {}
+        lines.append(f"- realtime: strength={rt.get('strength', '--')} coherence={rt.get('coherence', '--')} phase={rt.get('phase', '--')}")
+        lines.append(f"- simulator: last_resonance={sim.get('last_resonance', '--')} last_entropy={sim.get('last_entropy', '--')}\n")
 
     samples = summary.get("samples", [])
     if samples:

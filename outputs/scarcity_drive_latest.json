@@ -1,0 +1,17 @@
+﻿{
+    "window_hours":  24,
+    "timestamp":  "2025-11-01T21:09:54.7860558+09:00",
+    "recommended":  {
+                        "collapse_gain":  1,
+                        "recombination":  1,
+                        "exploration_temp":  0.9,
+                        "plasticity":  0.1
+                    },
+    "drive":  0,
+    "inputs":  {
+                   "cognitive":  0,
+                   "material":  0,
+                   "probe_outputs":  true,
+                   "novelty":  0
+               }
+}

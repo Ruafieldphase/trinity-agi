@@ -5,6 +5,7 @@ Auto-Recovery for Task Queue + RPA Worker
 - Checks server health, inflight tasks, and presence of worker process
 - Starts server (background) if down
 - Starts worker (background) if not running or not consuming
+- NEW (Phase 5.5): Integrates monitoring state via OrchestrationBridge
 
 Usage:
   python fdo_agi_repo/scripts/auto_recover.py --server http://127.0.0.1:8091 --once
@@ -13,6 +14,7 @@ Usage:
 Notes:
 - Uses PowerShell to start background jobs (same commands as VS Code tasks)
 - Idempotent: safely skips when components are already healthy
+- If --use-monitoring flag is set, checks OrchestrationBridge for recovery triggers
 """
 from __future__ import annotations
 
@@ -29,6 +31,39 @@ import requests
 
 THIS_DIR = Path(__file__).parent
 REPO_ROOT = THIS_DIR.parent
+
+
+class MonitoringClient:
+    """Phase 5.5: OrchestrationBridge 클라이언트"""
+    def __init__(self):
+        # OrchestrationBridge import
+        workspace_root = REPO_ROOT.parent
+        sys.path.insert(0, str(workspace_root / "scripts"))
+        try:
+            from orchestration_bridge import OrchestrationBridge
+            self.bridge = OrchestrationBridge(workspace_root=str(workspace_root))
+        except Exception as e:
+            print(f"⚠️  Failed to load OrchestrationBridge: {e}")
+            self.bridge = None
+    
+    def should_trigger_recovery(self) -> tuple[bool, str | None]:
+        """
+        모니터링 상태 기반 복구 트리거 판단
+        
+        Returns:
+            (should_trigger, reason)
+        """
+        if not self.bridge:
+            return (False, None)
+        
+        try:
+            context = self.bridge.get_orchestration_context()
+            if context.recovery_needed:
+                return (True, context.recovery_reason or "Monitoring triggered recovery")
+            return (False, None)
+        except Exception as e:
+            print(f"⚠️  Monitoring check failed: {e}")
+            return (False, None)
 
 
 class Client:
@@ -119,22 +154,47 @@ def is_worker_running() -> bool:
     return ec == 0
 
 
-def auto_recover_once(server: str) -> Dict[str, Any]:
+def auto_recover_once(server: str, use_monitoring: bool = True) -> Dict[str, Any]:
+    """
+    Auto-recovery with optional monitoring integration (Phase 5.5)
+    
+    Args:
+        server: Task queue server URL
+        use_monitoring: Enable monitoring-driven recovery (default: True)
+    
+    Returns:
+        Recovery status dict
+    """
     client = Client(server)
+    
     health = client.health()
     actions = []
+    
+    # Phase 5.5: Monitoring-based recovery trigger (optional)
+    monitoring_triggered = False
+    monitoring_reason = None
+    if use_monitoring:
+        monitoring = MonitoringClient()
+        monitoring_triggered, monitoring_reason = monitoring.should_trigger_recovery()
+    
     status: Dict[str, Any] = {
         "server": server,
         "health_ok": bool(health and health.get("status") == "ok"),
-        "before": {
+        "monitoring_enabled": use_monitoring,
+    }
+    if use_monitoring:
+        status["monitoring_triggered"] = monitoring_triggered
+        if monitoring_reason:
+            status["monitoring_reason"] = monitoring_reason
+    
+    status["before"] = {
             "health": health,
             "queue": client.queue_info(),
             "results": client.results_count(),
             "inflight": client.inflight(),
             "worker_running": is_worker_running(),
-        },
-        "actions": actions,
-    }
+        }
+    status["actions"] = actions
 
     # Start server if down
     if not status["health_ok"]:
@@ -171,21 +231,47 @@ def main(argv=None):
     p.add_argument("--loop", action="store_true", help="Run continuously with interval")
     p.add_argument("--interval", type=float, default=15.0, help="Loop interval seconds")
     p.add_argument("--out", default=str(REPO_ROOT / "outputs"), help="Output directory")
+    p.add_argument("--use-monitoring", action="store_true", default=True, 
+                   help="Enable monitoring-driven recovery (default: True)")
+    p.add_argument("--no-monitoring", dest="use_monitoring", action="store_false",
+                   help="Disable monitoring-driven recovery")
     args = p.parse_args(argv)
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Phase 5.5: 모니터링 기반 복구 확인
+    should_trigger = False
+    reason = None
+    if args.use_monitoring:
+        monitoring = MonitoringClient()
+        should_trigger, reason = monitoring.should_trigger_recovery()
+        if should_trigger:
+            print(f"🔴 Monitoring triggered recovery: {reason}")
+        else:
+            print("✅ Monitoring state: healthy (no recovery needed)")
+    else:
+        print("⚠️  Monitoring-driven recovery disabled")
+
     if not args.loop:
-        rep = auto_recover_once(args.server)
+        rep = auto_recover_once(args.server, use_monitoring=args.use_monitoring)
         (out_dir / "auto_recover_latest.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2), encoding="utf-8")
         print(json.dumps(rep, ensure_ascii=False, indent=2))
         return
 
     print(f"[Auto-Recover] Watching {args.server} every {args.interval}s ... (Ctrl+C to stop)")
+    if args.use_monitoring:
+        print("[Auto-Recover] Monitoring-driven recovery: ENABLED")
     try:
         while True:
-            rep = auto_recover_once(args.server)
+            # 모니터링 체크
+            if args.use_monitoring:
+                monitoring = MonitoringClient()
+                check_trigger, check_reason = monitoring.should_trigger_recovery()
+                if check_trigger:
+                    print(f"🔴 [{time.strftime('%H:%M:%S')}] Monitoring alert: {check_reason}")
+            
+            rep = auto_recover_once(args.server, use_monitoring=args.use_monitoring)
             (out_dir / "auto_recover_latest.json").write_text(json.dumps(rep, ensure_ascii=False, indent=2), encoding="utf-8")
             time.sleep(args.interval)
     except KeyboardInterrupt:
@@ -194,3 +280,5 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main()
+
+

@@ -1,0 +1,54 @@
+{
+  "timestamp": "2025-11-01T11:50:24Z",
+  "alive": false,
+  "dimensions": {
+    "difference_detection": {
+      "detecting": false,
+      "recent_events_24h": 0,
+      "last_event_hours_ago": null,
+      "score": 0.0
+    },
+    "relation_formation": {
+      "forming": true,
+      "task_queue_active": false,
+      "autopoietic_loop_recent": true,
+      "score": 0.7
+    },
+    "rhythm_maintenance": {
+      "rhythmic": false,
+      "recent_scheduled_outputs": [
+        "autopoietic_loop_report_latest.md"
+      ],
+      "expected_tasks": [
+        "BQI Phase 6",
+        "Ensemble Monitor",
+        "Online Learner",
+        "Autopoietic Report"
+      ],
+      "score": 0.3333333333333333
+    },
+    "energy_circulation": {
+      "circulating": true,
+      "recent_results_24h": 0,
+      "recent_learning_outputs": true,
+      "score": 0.6
+    },
+    "continuity_preservation": {
+      "preserving": true,
+      "latest_files_exist": 3,
+      "ledger_exists": true,
+      "backup_exists": false,
+      "score": 0.7249999999999999
+    }
+  },
+  "identity_check": {
+    "identity_intact": true,
+    "core_documents_exist": 4,
+    "philosophy_defined": true
+  },
+  "recommendations": [
+    "⚠️ 차이 감지 약함: 모니터링 시스템 점검 필요 (metrics collector, ledger)",
+    "⚠️ 리듬 약함: Scheduled tasks 실행 여부 확인 (BQI, Ensemble, Autopoietic)"
+  ],
+  "life_score": 0.435
+}

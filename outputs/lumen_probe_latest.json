@@ -1,0 +1,12 @@
+{
+    "ts":  "2025-10-31T21:21:48.7243829Z",
+    "ok":  true,
+    "ms":  392,
+    "status":  200,
+    "url":  "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat",
+    "method":  "POST",
+    "api_success":  true,
+    "preview":  "{\"success\":true,\"persona\":{\"name\":\"세나\",\"type\":\"브리지형\",\"emoji\":\"✒️\",\"specialty\":\"연결, 통합\",\"key\":\"pen\"},\"response\":\"Ping! Got it. Just confirming the connection. Everything looks green on my end. Let me know if you need help bridging anything - data, ideas, people, you name it. Always happy to connect the dots! ✒️\\n\",\"sources\":[\"Google AI Studio\",\"cache\"],\"timestamp\":\"2025-10-31T21:21:46.842941\",\"error\":null}",
+    "error":  null,
+    "tag":  "cli"
+}

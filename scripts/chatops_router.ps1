@@ -251,6 +251,71 @@ function Show-QuickStatus {
     }
 }
 
+function Show-OrchestrationStatus {
+    Info "[Orchestration Status]"
+    try {
+        $bridgeScript = Join-Path $workspace 'scripts/orchestration_bridge.py'
+        if (-not (Test-Path $bridgeScript)) {
+            Warn "orchestration_bridge.py not found"
+            return 1
+        }
+        
+        # Run orchestration bridge to get current state
+        # stderr 출력은 버리고 stdout(JSON)만 받기
+        $jsonOutput = & python $bridgeScript 2>$null
+        
+        if ($LASTEXITCODE -ne 0) {
+            Warn "Bridge execution failed"
+            return 1
+        }
+        
+        # Parse JSON output
+        try {
+            $state = $jsonOutput | ConvertFrom-Json
+            
+            Write-Host "`n채널 건강도:" -ForegroundColor Cyan
+            foreach ($ch in $state.channels) {
+                $color = switch ($ch.health) {
+                    'EXCELLENT' { 'Green' }
+                    'GOOD' { 'Cyan' }
+                    'DEGRADED' { 'Yellow' }
+                    'POOR' { 'Magenta' }
+                    'OFFLINE' { 'Red' }
+                    default { 'Gray' }
+                }
+                Write-Host "  $($ch.name): $($ch.health)" -ForegroundColor $color
+            }
+            
+            Write-Host "`n라우팅 추천:" -ForegroundColor Cyan
+            Write-Host "  Primary: $($state.routing.recommended_primary)" -ForegroundColor Green
+            if ($state.routing.fallback_channels.Count -gt 0) {
+                Write-Host "  Fallback: $($state.routing.fallback_channels -join ', ')" -ForegroundColor Yellow
+            }
+            
+            if ($state.recovery.should_trigger) {
+                Write-Host "`n복구 트리거:" -ForegroundColor Red
+                Write-Host "  사유: $($state.recovery.reason)" -ForegroundColor Yellow
+                Write-Host "  조치: $($state.recovery.recommended_actions -join ', ')" -ForegroundColor Cyan
+            }
+            else {
+                Write-Host "`n복구 트리거: 없음" -ForegroundColor Green
+            }
+            
+            Ok "오케스트레이션 상태 확인 완료"
+            return 0
+        }
+        catch {
+            Warn "JSON 파싱 실패: $_"
+            Write-Host $result
+            return 1
+        }
+    }
+    catch {
+        Warn "오케스트레이션 상태 확인 실패: $_"
+        return 1
+    }
+}
+
 function Run-Bot {
     param([switch]$DryRun)
     $botScript = Join-Path $workspace 'scripts/youtube_live_bot.py'
@@ -1026,6 +1091,10 @@ switch -Regex ($action) {
         Info '[Action] Quick status dashboard'
         exit (Run-And-Report { Show-QuickStatus })
     }
+    '^orchestration_status$' {
+        Info '[Action] Orchestration status (channels + routing + recovery)'
+        exit (Run-And-Report { Show-OrchestrationStatus })
+    }
     '^obs_status$' {
         Info '[Action] OBS stream status'
         exit (Run-And-Report { Show-ObsStatus })
@@ -1057,6 +1126,14 @@ switch -Regex ($action) {
     '^resume_context$' {
         Info '[Action] Resume from saved context'
         exit (Run-And-Report { Resume-SavedContext })
+    }
+    '^system_check$' {
+        Info '[Action] System health check'
+        exit (Run-And-Report { 
+            & powershell -NoProfile -ExecutionPolicy Bypass `
+                -File (Join-Path $workspace 'scripts/system_check_after_reboot.ps1')
+            return $LASTEXITCODE
+        })
     }
     '^bot_dryrun$' {
         Info '[Action] YouTube bot dry run'

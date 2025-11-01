@@ -51,14 +51,14 @@ class SessionHandover:
     def save(self, path: Path):
         """핸드오버 저장"""
         path.parent.mkdir(parents=True, exist_ok=True)
-        # UTF-8 BOM 없이 저장 (PowerShell ConvertFrom-Json 호환)
-        with open(path, 'w', encoding='utf-8-sig') as f:
+        # UTF-8 without BOM (PowerShell/Python compatible)
+        with open(path, 'w', encoding='utf-8') as f:
             json.dump(self.to_dict(), f, indent=2, ensure_ascii=False)
     
     @classmethod
     def load(cls, path: Path) -> 'SessionHandover':
-        """핸드오버 로드"""
-        with open(path, 'r', encoding='utf-8') as f:
+        """핸드오버 로드 (UTF-8 with/without BOM 모두 지원)"""
+        with open(path, 'r', encoding='utf-8-sig') as f:
             data = json.load(f)
         return cls(**data)
     

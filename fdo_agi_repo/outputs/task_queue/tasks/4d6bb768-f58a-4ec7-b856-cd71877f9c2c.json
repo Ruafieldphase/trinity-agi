@@ -1,0 +1,13 @@
+{
+  "id": "4d6bb768-f58a-4ec7-b856-cd71877f9c2c",
+  "type": "screenshot",
+  "requester": "copilot-test",
+  "data": {
+    "url": "https://github.com/trending",
+    "filename": "github_trending_screenshot.png"
+  },
+  "status": "pending",
+  "created_at": "2025-11-01T06:01:24.929419",
+  "assigned_to": null,
+  "updated_at": null
+}

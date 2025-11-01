@@ -1,4 +1,4 @@
-# Register/Unregister a Windows Scheduled Task to run Lumen probe collector periodically
+﻿# Register/Unregister a Windows Scheduled Task to run Lumen probe collector periodically
 [CmdletBinding(DefaultParameterSetName = 'status')]
 param(
     [Parameter(ParameterSetName = 'register')]
@@ -9,7 +9,16 @@ param(
     [switch]$Status,
     [string]$TaskName = 'LumenProbeCollector',
     [int]$IntervalMinutes = 10,
-    [switch]$RunNow
+    [switch]$RunNow,
+    # passthrough to collector
+    [string]$Url = '',
+    [ValidateSet('GET','POST')][string]$Method = 'POST',
+    [string]$Message = 'ping',
+    [string]$Tag = 'scheduled',
+    [int]$TimeoutSec = 8,
+    [int]$Attempts = 3,
+    [int]$BackoffMs = 300,
+    [switch]$WriteLatest
 )
 
 $ErrorActionPreference = 'Continue'
@@ -38,7 +47,17 @@ try {
         # Register using schtasks (more reliable than PowerShell cmdlets)
         # Use absolute PowerShell path and expand env vars before schtasks
         $pwsh = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
-        $cmd = "$pwsh -NoProfile -ExecutionPolicy Bypass -File `"$collector`""
+        $argList = @('-NoProfile','-ExecutionPolicy','Bypass','-File', '"' + $collector + '"',
+            '-TimeoutSec', $TimeoutSec,
+            '-Attempts', $Attempts,
+            '-BackoffMs', $BackoffMs,
+            '-Method', $Method,
+            '-Message', ('"' + $Message + '"'),
+            '-Tag', ('"' + $Tag + '"')
+        )
+        if (-not [string]::IsNullOrWhiteSpace($Url)) { $argList += @('-Url', ('"' + $Url + '"')) }
+        if ($WriteLatest) { $argList += '-WriteLatest' }
+        $cmd = $pwsh + ' ' + ($argList -join ' ')
         $user = $env:USERNAME
         
         $output = schtasks /create /tn $TaskName /tr $cmd /sc minute /mo $IntervalMinutes /ru $user /f 2>&1
@@ -82,3 +101,4 @@ catch {
     Err "Operation failed: $_"
     exit 2
 }
+

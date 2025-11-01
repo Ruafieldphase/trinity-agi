@@ -4,6 +4,12 @@
 **릴리스 일자**: 2025년 10월 31일  
 **코드명**: "Web Dashboard"
 
+## Health Update (ASCII)
+
+- Phase 5 reached HEALTHY state on 2025-10-31.
+- success_rate: 86.08% (derived in web_server from totals)
+- Details: RELEASE_NOTES_PHASE5_UPDATE_2025-10-31.md
+
 ---
 
 ## 🎉 주요 변경사항

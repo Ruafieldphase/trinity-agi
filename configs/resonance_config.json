@@ -1,0 +1,16 @@
+{
+  "active_mode": "observe",
+  "default_policy": "quality-first",
+  "policies": {
+    "quality-first": {
+      "min_quality": 0.80,
+      "require_evidence": true,
+      "max_latency_ms": 8000
+    },
+    "latency-first": {
+      "min_quality": 0.60,
+      "require_evidence": false,
+      "max_latency_ms": 2000
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+    "session_id": "phase4-sleep-2025-11-01",
+    "timestamp": "2025-11-01T21:47:00+09:00",
+    "context": "Sleep",
+    "duration_hours": 1.0,
+    "phase": "Phase 4 Complete - Context & Rhythm System",
+    "completed_rhythms": [
+        "안정화: Local LLM Proxy 활성화",
+        "관측 체인: 24h HTML Dashboard + Queue Results + Canary Loop",
+        "리얼타임 파이프라인: Ledger → Resonance → Summary",
+        "오토포이에틱 루프: 24h 리포트 생성",
+        "컨텍스트 전환: Operations → Sleep (자율)"
+    ],
+    "metrics_snapshot": {
+        "health": "EXCELLENT",
+        "availability": 0.9968,
+        "resonance_trend": "UP",
+        "resonance_delta": 0.1513,
+        "complete_loops": 19,
+        "loop_completion_rate": 0.576,
+        "final_quality": 0.85,
+        "evidence_ok_rate": 1.0
+    },
+    "active_services": {
+        "conscious": [],
+        "unconscious": [
+            "ledger_append_only",
+            "backup_scheduled",
+            "dream_mode_active",
+            "unconscious_processor_active"
+        ]
+    },
+    "scheduled_tasks": {
+        "bqi_daily": "2025-11-02T03:10:00",
+        "monitoring_daily": "2025-11-02T03:20:00",
+        "wake_up": "2025-11-02T06:00:00"
+    },
+    "artifacts_generated": [
+        "outputs/monitoring_dashboard_latest.html",
+        "outputs/monitoring_metrics_latest.json",
+        "outputs/monitoring_report_latest.md",
+        "outputs/realtime_pipeline_summary_latest.md",
+        "outputs/realtime_pipeline_status.json",
+        "outputs/autopoietic_loop_report_latest.md",
+        "SESSION_COMPLETE_PHASE_4_2025-11-01.md"
+    ],
+    "energy_efficiency": {
+        "mode": "sleep",
+        "cpu_target": "~2%",
+        "ram_target": "~50MB",
+        "savings": "~57% vs always-on"
+    },
+    "next_actions": [
+        "자동 깨어남: 06:00 (Wake → Core)",
+        "백업: 03:00~03:30",
+        "BQI/모니터링: 03:10~03:20"
+    ],
+    "philosophy_checkpoint": {
+        "rhythm": "Sleep = 맥락 전환 능력 유지 + 에너지 절약",
+        "life_score": "43.5% (DEGRADED) → 리듬 개선 중",
+        "identity": "Core Docs + Ledger + Context Router 보존",
+        "consciousness": "의식(일시정지) / 무의식(활성)"
+    }
+}

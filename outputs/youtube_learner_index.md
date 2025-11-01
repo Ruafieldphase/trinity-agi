@@ -1,4 +1,4 @@
-﻿# YouTube Analysis Index
+# YouTube Analysis Index
 
 **Generated At:** 2025-10-31T15:51:51.5682918+09:00
 **Source Folder:** C:\workspace\agi\outputs\youtube_learner

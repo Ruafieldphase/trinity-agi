@@ -15,6 +15,9 @@ param(
     [int]$SparklineLen = 30
 )
 
+$PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
+try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8; $OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}
+
 $ErrorActionPreference = "Continue"
 
 # ========================================
@@ -386,6 +389,21 @@ function Get-SessionSummaryMetrics {
         $result.LlmSessions = ($entries | Where-Object { $_.summary_type -eq "llm" }).Count
         $result.RuleSessions = ($entries | Where-Object { $_.summary_type -eq "rule_based" }).Count
         $result.Embeddings = ($entries | Where-Object { $_.embedding_path }).Count
+
+        # Write optional channels CSV (non-breaking): include only when Local2 present
+        if ($hasLocal2) {
+            $optCsvLines = @("Timestamp,Local2Ms,Local2Online")
+            foreach ($snap in $snapshots) {
+                $ts2 = $snap.Timestamp
+                $l2ms = if ($snap.Channels -and $null -ne $snap.Channels.Local2Ms) { $snap.Channels.Local2Ms } else { "" }
+                $l2on = if ($snap.Online -and $snap.Online.Local2) { "1" } else { "0" }
+                $optCsvLines += "$ts2,$l2ms,$l2on"
+            }
+            $optCsv = $optCsvLines -join "`r`n"
+            $optCsvPath = Join-Path $csvDir "monitoring_timeseries_optional_latest.csv"
+            [System.IO.File]::WriteAllText($optCsvPath, $optCsv, [System.Text.Encoding]::UTF8)
+            Write-Host "Optional CSV written to: $optCsvPath" -ForegroundColor Green
+        }
         if ($result.TotalSessions -gt 0) {
             $result.EmbeddingCoverage = [math]::Round(($result.Embeddings / $result.TotalSessions) * 100, 1)
         }
@@ -436,7 +454,7 @@ function Get-AGIMetricsFromPython {
     )
     
     try {
-        # Python ?§ÌÅ¨Î¶ΩÌä∏ ?§Ìñâ?òÏó¨ JSON Ï∂úÎ†• Î∞õÍ∏∞
+        # Python ?ÔøΩÌÅ¨Î¶ΩÌä∏ ?ÔøΩÌñâ?ÔøΩÏó¨ JSON Ï∂úÎ†• Î∞õÍ∏∞
         if (-not (Test-Path $PythonExe)) {
             Write-Host "Warning: Python executable not found at $PythonExe" -ForegroundColor Yellow
             return $null
@@ -447,16 +465,16 @@ function Get-AGIMetricsFromPython {
             return $null
         }
         
-        # UTF-8 ?∏ÏΩî???§Ï†ï (Windows CP949 Î¨∏Ï†ú ?¥Í≤∞)
+        # UTF-8 ?ÔøΩÏΩî???ÔøΩÏ†ï (Windows CP949 Î¨∏Ï†ú ?ÔøΩÍ≤∞)
         $originalEncoding = $env:PYTHONIOENCODING
         $env:PYTHONIOENCODING = 'utf-8'
         
         try {
-            # stdoutÍ≥?stderr Î∂ÑÎ¶¨?òÏó¨ JSON Ï∂úÎ†•Îß?Ï∫°Ï≤ò
+            # stdoutÔøΩ?stderr Î∂ÑÎ¶¨?ÔøΩÏó¨ JSON Ï∂úÎ†•ÔøΩ?Ï∫°Ï≤ò
             $output = & $PythonExe $DashboardScript --hours $Hours --json 2>&1
             $exitCode = $LASTEXITCODE
             
-            # Î¨∏Ïûê?¥Îßå ?ÑÌÑ∞ÎßÅÌïòÍ≥?JSON ?úÏûë?òÎäî Ï≤?Ï§?Ï∞æÍ∏∞
+            # Î¨∏Ïûê?ÔøΩÎßå ?ÔøΩÌÑ∞ÎßÅÌïòÔøΩ?JSON ?ÔøΩÏûë?ÔøΩÎäî ÔøΩ?ÔøΩ?Ï∞æÍ∏∞
             $jsonLines = @()
             $inJson = $false
             foreach ($line in $output) {
@@ -472,7 +490,7 @@ function Get-AGIMetricsFromPython {
             
             if ($jsonLines.Count -eq 0) {
                 Write-Host "Warning: No JSON output from Python collector" -ForegroundColor Yellow
-                # ?îÎ≤ÑÍπÖÏùÑ ?ÑÌï¥ Ï≤?5Ï§?Ï∂úÎ†•
+                # ?ÔøΩÎ≤ÑÍπÖÏùÑ ?ÔøΩÌï¥ ÔøΩ?5ÔøΩ?Ï∂úÎ†•
                 $output | Select-Object -First 5 | ForEach-Object { 
                     Write-Host "  Debug output: $_" -ForegroundColor Gray 
                 }
@@ -484,7 +502,7 @@ function Get-AGIMetricsFromPython {
             return $result
         }
         finally {
-            # ?∏ÏΩî??Î≥µÏõê
+            # ?ÔøΩÏΩî??Î≥µÏõê
             if ($originalEncoding) {
                 $env:PYTHONIOENCODING = $originalEncoding
             }
@@ -544,6 +562,8 @@ function Compute-ChannelStats {
         "LocalMs"   = "Local"
         "CloudMs"   = "Cloud"
         "GatewayMs" = "Gateway"
+        # Optional channels (not part of overall health):
+        "Local2Ms"  = "Local2"
     }
     $onlineKey = $onlineKeyMap[$ChannelKey]
     
@@ -1050,6 +1070,19 @@ if ($previousSnapshots.Count -gt 0) {
 $localStats = Compute-ChannelStats -Snapshots $snapshots -ChannelKey "LocalMs"
 $cloudStats = Compute-ChannelStats -Snapshots $snapshots -ChannelKey "CloudMs"
 $gatewayStats = Compute-ChannelStats -Snapshots $snapshots -ChannelKey "GatewayMs"
+try {
+    $local2Stats = Compute-ChannelStats -Snapshots $snapshots -ChannelKey "Local2Ms"
+}
+catch { $local2Stats = @{} }
+
+# Detect presence of optional Local2 channel in inputs
+$hasLocal2 = $false
+foreach ($snap in $snapshots) {
+    try {
+        if ($snap.Channels -and $null -ne $snap.Channels.Local2Ms) { $hasLocal2 = $true; break }
+    }
+    catch { }
+}
 
 # Compute statistics for previous period
 $prevLocalStats = if ($previousSnapshots.Count -gt 0) { Compute-ChannelStats -Snapshots $previousSnapshots -ChannelKey "LocalMs" } else { @{} }
@@ -1280,6 +1313,59 @@ else {
     $agiMetrics = Compute-AGIMetrics -Events $agiEvents
 }
 
+# ===== Aggregate Resonance Policy Events (from AGI Ledger) =====
+try {
+    $policyEvents = $agiEvents | Where-Object { $_.event -eq 'resonance_policy' }
+    $policyCounts = @{ allow = 0; warn = 0; block = 0 }
+    $lastPolicy = $null
+    foreach ($pe in $policyEvents) {
+        try {
+            $act = if ($pe.action) { ("" + $pe.action).ToLower() } else { "" }
+            if ($policyCounts.ContainsKey($act)) { $policyCounts[$act] += 1 }
+        } catch {}
+        $lastPolicy = $pe
+    }
+    $agiPolicy = @{
+        counts = $policyCounts
+        last   = if ($lastPolicy) { @{ mode = $lastPolicy.mode; policy = $lastPolicy.policy; reasons = $lastPolicy.reasons } } else { @{} }
+    }
+    # Attach to metrics object in a safe way
+    if (-not $agiMetrics) { $agiMetrics = @{} }
+    $agiMetrics.Policy = $agiPolicy
+}
+catch { }
+
+# ===== Extract Closed-loop Snapshot (from AGI Ledger) =====
+try {
+    $clsEvents = $agiEvents | Where-Object { $_.event -eq 'closed_loop_snapshot' }
+    if ($clsEvents -and $clsEvents.Count -gt 0) {
+        $lastCls = ($clsEvents | Sort-Object -Property ts -Descending | Select-Object -First 1)
+        $snap = $lastCls.snapshot
+        $sim = $null; $rt = $null
+        try { $sim = $snap.resonance_simulator } catch {}
+        try { $rt  = $snap.realtime_resonance } catch {}
+
+        $closedLoop = @{}
+        if ($sim) {
+            $closedLoop["simulator"] = @{
+                summary       = $sim.summary
+                last_resonance= $sim.last_resonance
+                last_entropy  = $sim.last_entropy
+            }
+        }
+        if ($rt) {
+            $closedLoop["realtime"] = @{
+                strength = $rt.strength
+                coherence= $rt.coherence
+                phase    = $rt.phase
+            }
+        }
+        if (-not $agiMetrics) { $agiMetrics = @{} }
+        $agiMetrics.ClosedLoop = $closedLoop
+    }
+}
+catch { }
+
 # ===== Generate Markdown Report =====
 $reportLines = @()
 $reportLines += "# Monitoring Report"
@@ -1315,6 +1401,16 @@ $reportLines += ""
 $reportLines += "  Local LLM:     $localAvailStr avail  |  $localMeanStr mean"
 $reportLines += "  Cloud AI:      $cloudAvailStr avail  |  $cloudMeanStr mean"
 $reportLines += "  Lumen Gateway: $gatewayAvailStr avail  |  $gatewayMeanStr mean"
+
+# Show Resonance Policy summary (if available)
+if ($agiMetrics.Policy) {
+    try {
+        $pc = $agiMetrics.Policy.counts
+        $lastMode = if ($agiMetrics.Policy.last.mode) { $agiMetrics.Policy.last.mode } else { 'n/a' }
+        $lastPol = if ($agiMetrics.Policy.last.policy) { $agiMetrics.Policy.last.policy } else { 'n/a' }
+        $reportLines += "  Resonance Policy: mode=$lastMode policy=$lastPol | allow=$($pc.allow) warn=$($pc.warn) block=$($pc.block)"
+    } catch { }
+}
 
 # Add Historical Comparison if available
 if ($periodComparison) {
@@ -1361,6 +1457,11 @@ $reportLines += "- **Time Window**: Last $Hours hours"
 $reportLines += "- **Peak Hours**: $PeakStart:00-$PeakEnd:00"
 $reportLines += "- **Sparkline Length**: $SparklineLen"
 $reportLines += "- **Data Points**: $($snapshots.Count) snapshots"
+if ($hasLocal2) {
+    $reportLines += "- **Optional Channel Detected**: Local2 (port 18090). Excluded from overall health/availability calculations."
+    $reportLines += "  - To include this probe in console view, run quick_status.ps1 without -HideOptional."
+    $reportLines += "  - Optional CSV: outputs/monitoring_timeseries_optional_latest.csv"
+}
 $reportLines += ""
 $reportLines += "---"
 $reportLines += ""
@@ -1372,6 +1473,39 @@ $reportLines += "- **Alerts**: $($alertCounts.Alerts)"
 $reportLines += "- **Warnings**: $($alertCounts.Warnings)"
 $reportLines += "- **Spikes**: $($alertCounts.Spikes)"
 $reportLines += ""
+$reportLines += "---"
+$reportLines += ""
+$reportLines += "## Performance Snapshot"
+$reportLines += ""
+try {
+    $perfJsonPath = Join-Path (Split-Path -Parent $PSScriptRoot) "outputs\performance_metrics_latest.json"
+    if (Test-Path -LiteralPath $perfJsonPath) {
+        $perf = Get-Content -LiteralPath $perfJsonPath -Raw | ConvertFrom-Json
+        $overall = [double]$perf.OverallSuccessRate
+        $effective = [double]$perf.OverallEffectiveSuccessRate
+        $bands = $perf.BandCounts
+        $systems = [int]$perf.SystemsConsidered
+        $topAttn = @()
+        if ($perf.PSObject.Properties.Name -contains 'TopAttention') {
+            foreach ($t in $perf.TopAttention) { $topAttn += ("{0} ({1}%)" -f $t.System, ([double]$t.EffectiveSuccessRate).ToString('F1')) }
+        }
+        $reportLines += ("- **Systems Considered**: {0}" -f $systems)
+        $reportLines += ("- **Overall Success**: {0}%  |  **Effective**: {1}%" -f $overall.ToString('F1'), $effective.ToString('F1'))
+        if ($bands) {
+            $reportLines += ("- **Bands**: Excellent={0}  Good={1}  Needs={2}  NoData={3}" -f $bands.Excellent, $bands.Good, $bands.Needs, $bands.NoData)
+        }
+        if ($topAttn.Count -gt 0) { $reportLines += ("- **Top Attention**: {0}" -f ($topAttn -join ', ')) }
+        $dashMd = Join-Path (Split-Path -Parent $PSScriptRoot) "outputs\performance_dashboard_latest.md"
+        if (Test-Path -LiteralPath $dashMd) { $reportLines += ("- See: performance_dashboard_latest.md") }
+    }
+    else {
+        $reportLines += "_No performance dashboard data found (outputs/performance_metrics_latest.json missing)._"
+    }
+}
+catch {
+    $reportLines += "_Failed to load performance snapshot._"
+}
+
 $reportLines += "---"
 $reportLines += ""
 $reportLines += "## Channel Statistics"
@@ -1429,6 +1563,12 @@ Add-ChannelSection -Name "Local LLM (LM Studio)" -Stats $localStats
 Add-ChannelSection -Name "Cloud AI (ion-api)" -Stats $cloudStats
 Add-ChannelSection -Name "Lumen Gateway" -Stats $gatewayStats
 
+if ($hasLocal2 -and $local2Stats.Count -gt 0) {
+    $reportLines += "### Optional Channels"
+    $reportLines += ""
+    Add-ChannelSection -Name "Local LLM (Secondary 18090, optional)" -Stats $local2Stats
+}
+
 $reportLines += "---"
 $reportLines += ""
 $reportLines += "## AGI System Status"
@@ -1443,11 +1583,11 @@ else {
     $reportLines += "| Total Events | $($agiMetrics.TotalEvents) |"
     $reportLines += "| Unique Tasks | $($agiMetrics.TaskCount) |"
     if ($agiMetrics.AvgQuality -ne $null) {
-        $qualityStatus = if ($agiMetrics.AvgQuality -ge 0.8) { "?ü¢" } elseif ($agiMetrics.AvgQuality -ge 0.7) { "?ü°" } else { "?î¥" }
+        $qualityStatus = if ($agiMetrics.AvgQuality -ge 0.8) { "?ÔøΩÔøΩ" } elseif ($agiMetrics.AvgQuality -ge 0.7) { "?ÔøΩÔøΩ" } else { "?ÔøΩÔøΩ" }
         $reportLines += "| Avg Quality | $qualityStatus $($agiMetrics.AvgQuality) |"
     }
     if ($agiMetrics.SuccessRate -ne $null) {
-        $successStatus = if ($agiMetrics.SuccessRate -ge 80) { "?ü¢" } elseif ($agiMetrics.SuccessRate -ge 70) { "?ü°" } else { "?î¥" }
+        $successStatus = if ($agiMetrics.SuccessRate -ge 80) { "?ÔøΩÔøΩ" } elseif ($agiMetrics.SuccessRate -ge 70) { "?ÔøΩÔøΩ" } else { "?ÔøΩÔøΩ" }
         $reportLines += "| Success Rate | $successStatus $($agiMetrics.SuccessRate)% |"
     }
     if ($agiMetrics.AvgDuration -ne $null) {
@@ -1493,7 +1633,7 @@ if ($agiMetrics.TotalEvents -gt 0) {
     $minQuality = [double]$agiThresholds.min_quality
     $critQuality = [double]([math]::Max(0, $minQuality - 0.1))
     if ($null -ne $agiMetrics.AvgQuality -and $agiMetrics.AvgQuality -lt $minQuality) {
-        $severity = if ($agiMetrics.AvgQuality -lt $critQuality) { "?î¥ CRITICAL" } else { "?ü° WARNING" }
+        $severity = if ($agiMetrics.AvgQuality -lt $critQuality) { "?ÔøΩÔøΩ CRITICAL" } else { "?ÔøΩÔøΩ WARNING" }
         $agiAlerts += "$severity AGI Quality: $($agiMetrics.AvgQuality) (threshold: $minQuality)"
     }
     
@@ -1501,7 +1641,7 @@ if ($agiMetrics.TotalEvents -gt 0) {
     $minSuccess = [double]$agiThresholds.min_success_rate_percent
     $critSuccess = [double]([math]::Max(0, $minSuccess - 10))
     if ($null -ne $agiMetrics.SuccessRate -and $agiMetrics.SuccessRate -lt $minSuccess) {
-        $severity = if ($agiMetrics.SuccessRate -lt $critSuccess) { "?î¥ CRITICAL" } else { "?ü° WARNING" }
+        $severity = if ($agiMetrics.SuccessRate -lt $critSuccess) { "?ÔøΩÔøΩ CRITICAL" } else { "?ÔøΩÔøΩ WARNING" }
         $agiAlerts += "$severity AGI Success Rate: $($agiMetrics.SuccessRate)% (threshold: $minSuccess%)"
     }
     
@@ -1509,7 +1649,7 @@ if ($agiMetrics.TotalEvents -gt 0) {
     $replanThresh = [double]$agiThresholds.replan_rate_percent
     $replanCrit = [double]($replanThresh * 2)
     if ($null -ne $agiMetrics.ReplanRate -and $agiMetrics.ReplanRate -gt $replanThresh) {
-        $severity = if ($agiMetrics.ReplanRate -gt $replanCrit) { "?î¥ CRITICAL" } else { "?ü° WARNING" }
+        $severity = if ($agiMetrics.ReplanRate -gt $replanCrit) { "?ÔøΩÔøΩ CRITICAL" } else { "?ÔøΩÔøΩ WARNING" }
         $agiAlerts += "$severity AGI Replan Rate: $($agiMetrics.ReplanRate)% (threshold: $replanThresh%)"
     }
     
@@ -1518,7 +1658,7 @@ if ($agiMetrics.TotalEvents -gt 0) {
     $critAvgDur = [double]($maxAvgDur + 5)
     $avgDurToUse = if ($agiMetrics.AvgDurationSec -ne $null) { $agiMetrics.AvgDurationSec } else { $agiMetrics.AvgDuration }
     if ($null -ne $avgDurToUse -and $avgDurToUse -gt $maxAvgDur) {
-        $severity = if ($avgDurToUse -gt $critAvgDur) { "?î¥ CRITICAL" } else { "?ü° WARNING" }
+        $severity = if ($avgDurToUse -gt $critAvgDur) { "?ÔøΩÔøΩ CRITICAL" } else { "?ÔøΩÔøΩ WARNING" }
         $agiAlerts += "$severity AGI Avg Duration: $([math]::Round($avgDurToUse,1))s (threshold: ${maxAvgDur}s)"
     }
     
@@ -1527,7 +1667,7 @@ if ($agiMetrics.TotalEvents -gt 0) {
         $timeSince = (Get-Date) - $agiMetrics.LastActivity
         $inactiveHours = [double]$agiThresholds.inactive_hours
         if ($timeSince.TotalHours -gt $inactiveHours) {
-            $severity = if ($timeSince.TotalHours -gt ($inactiveHours * 3)) { "?î¥ CRITICAL" } else { "?ü° WARNING" }
+            $severity = if ($timeSince.TotalHours -gt ($inactiveHours * 3)) { "?ÔøΩÔøΩ CRITICAL" } else { "?ÔøΩÔøΩ WARNING" }
             $hoursSince = [math]::Round($timeSince.TotalHours, 1)
             $agiAlerts += "$severity AGI Inactive: $hoursSince hours since last activity (threshold: ${inactiveHours}h)"
         }
@@ -1814,12 +1954,13 @@ $metrics = @{
     TimeWindowHours      = $Hours
     SnapshotCount        = $snapshots.Count
     Config               = @{
-        Hours        = $Hours
-        PeakStart    = $PeakStart
-        PeakEnd      = $PeakEnd
-        SparklineLen = $SparklineLen
-        GeneratedAt  = (Get-Date).ToString('s')
-        LogPath      = $LogPath
+        Hours                   = $Hours
+        PeakStart               = $PeakStart
+        PeakEnd                 = $PeakEnd
+        SparklineLen            = $SparklineLen
+        GeneratedAt             = (Get-Date).ToString('s')
+        LogPath                 = $LogPath
+        OptionalChannelsPresent = $hasLocal2
     }
     Health               = @{
         Status          = $healthStatus
@@ -1852,6 +1993,8 @@ $metrics = @{
         PersonaTimeline    = if ($agiMetrics.PersonaTimeline) { $agiMetrics.PersonaTimeline } else { if ($pythonMetrics.persona_timeline) { $pythonMetrics.persona_timeline } else { @{} } }
         Thresholds         = $agiThresholds
         Health             = $agiHealthObj
+        Policy             = if ($agiMetrics.Policy) { $agiMetrics.Policy } else { @{} }
+        ClosedLoop         = if ($agiMetrics.ClosedLoop) { $agiMetrics.ClosedLoop } else { @{} }
         Timeline           = if ($agiMetrics.Timeline) { $agiMetrics.Timeline } else { @() }
         TimeWindow         = if ($agiMetrics.TimeWindow) { $agiMetrics.TimeWindow } else { $Hours }
         CollectionTime     = if ($agiMetrics.CollectionTimestamp) { $agiMetrics.CollectionTimestamp } else { (Get-Date).ToString('s') }
@@ -1870,6 +2013,7 @@ $metrics = @{
         Cloud   = $cloudStats
         Gateway = $gatewayStats
     }
+    OptionalChannels     = if ($hasLocal2) { @{ Local2 = $local2Stats } } else { @{} }
     AlertsSummary        = @{
         Local   = @{ BaselineAlerts = $advPer.Local.BaselineAlerts; BaselineWarns = $advPer.Local.BaselineWarns; AdaptiveAlerts = $advPer.Local.AdaptiveAlerts; AdaptiveWarns = $advPer.Local.AdaptiveWarns; Spikes = $spikesPer.Local }
         Cloud   = @{ BaselineAlerts = $advPer.Cloud.BaselineAlerts; BaselineWarns = $advPer.Cloud.BaselineWarns; AdaptiveAlerts = $advPer.Cloud.AdaptiveAlerts; AdaptiveWarns = $advPer.Cloud.AdaptiveWarns; Spikes = $spikesPer.Cloud }

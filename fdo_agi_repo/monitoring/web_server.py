@@ -18,6 +18,11 @@ from typing import List, Dict, Any, Optional
 import json
 import asyncio
 import logging
+from fdo_agi_repo.orchestrator.resonance_bridge import (
+    load_resonance_config,
+    get_active_mode,
+    get_active_policy_name,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -216,7 +221,11 @@ async def get_system_status():
         "memory_mb": latest.get('memory_mb', 0),
         "cpu_percent": latest.get('cpu_percent', 0),
         "alerts": alert_counts,
-        "health_status": "healthy" if success_rate >= 80 else "degraded"
+        "health_status": "healthy" if success_rate >= 80 else "degraded",
+        "resonance": {
+            "mode": get_active_mode(),
+            "policy_name": get_active_policy_name(),
+        },
     }
 
 
@@ -245,6 +254,16 @@ async def websocket_metrics(websocket: WebSocket):
 # 정적 파일 서빙 (HTML, CSS, JS)
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+@app.get("/api/resonance/config")
+async def api_resonance_config():
+    """Expose current resonance configuration (active mode/policy + policies)."""
+    try:
+        cfg = load_resonance_config()
+        return cfg
+    except Exception:
+        return JSONResponse(content={"error": "config_unavailable"}, status_code=500)
 
 
 if __name__ == "__main__":

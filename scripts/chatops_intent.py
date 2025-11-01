@@ -88,6 +88,14 @@ def resolve_rules(utter: str) -> str:
         return "ops_dashboard"
     if re.search(r"(운영|시스템).*(상태|대시보드)", u):
         return "ops_dashboard"
+    
+    # Orchestration Status (Phase 5.5)
+    if re.search(r"(오케스트레이션|orchestration).*(상태|status|현황)", u):
+        return "orchestration_status"
+    if re.search(r"(채널|channel).*(상태|건강|health|status)", u):
+        return "orchestration_status"
+    if re.search(r"(라우팅|routing).*(추천|상태|recommend)", u):
+        return "orchestration_status"
 
     # Start/Stop stream
     if (
@@ -289,6 +297,14 @@ def resolve_rules(utter: str) -> str:
         return "resume_context"
     if re.search(r"(맥락|컨텍스트).*(복원|이어)", u):
         return "resume_context"
+    
+    # System health check: "시스템 점검", "system check", "상태 확인"
+    if re.search(r"(시스템|전체).*(점검|체크|확인|검사)", u):
+        return "system_check"
+    if re.search(r"system.*(check|health|status|verify)", u):
+        return "system_check"
+    if re.search(r"(재부팅|reboot|재시작).*(후|완료).*점검", u):
+        return "system_check"
 
     return "unknown"
 

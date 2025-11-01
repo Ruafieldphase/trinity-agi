@@ -1,0 +1,58 @@
+{
+  "profiles": {
+    "ops-daily": {
+      "Days": 7,
+      "IncludeSystems": [
+        "Orchestration",
+        "Monitoring",
+        "Daily Briefing"
+      ],
+      "ExcludeSystems": [],
+      "SortBy": "effective",
+      "Order": "asc",
+      "ExcellentAt": 90,
+      "GoodAt": 70,
+      "TopHistory": 10
+    },
+    "ops-focus": {
+      "Days": 3,
+      "IncludeSystems": [
+        "Orchestration"
+      ],
+      "ExcludeSystems": [],
+      "SortBy": "effective",
+      "Order": "desc",
+      "ExcellentAt": 92,
+      "GoodAt": 75,
+      "TopHistory": 15
+    },
+    "ops-attention": {
+      "Days": 7,
+      "IncludeSystems": [],
+      "ExcludeSystems": [],
+      "OnlyBands": [
+        "Needs",
+        "NoData"
+      ],
+      "AttentionRespectsBands": true,
+      "SortBy": "effective",
+      "Order": "asc",
+      "ExcellentAt": 90,
+      "GoodAt": 70,
+      "TopHistory": 10
+    },
+    "ops-excellent": {
+      "Days": 30,
+      "IncludeSystems": [],
+      "ExcludeSystems": [],
+      "OnlyBands": [
+        "Excellent"
+      ],
+      "SortBy": "effective",
+      "Order": "desc",
+      "ExcellentAt": 95,
+      "GoodAt": 80,
+      "TopHistory": 20
+    }
+  }
+}

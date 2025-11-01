@@ -1,6 +1,180 @@
-{
+﻿{
 	"version": "2.0.0",
 	"tasks": [
+		{
+			"label": "Original Data: Build Index (no open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/build_original_data_index.py' } else { python '${workspaceFolder}/scripts/build_original_data_index.py' }"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Original Data: Build Index (open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/build_original_data_index.py' } else { python '${workspaceFolder}/scripts/build_original_data_index.py' }; if ($LASTEXITCODE -eq 0) { code ${workspaceFolder}/outputs/original_data_index.md }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Original Data: Start API (8093)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/original_data_server.py' --port 8093 } else { python '${workspaceFolder}/scripts/original_data_server.py' --port 8093 }"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Original Data: API Health",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"try { Invoke-RestMethod -Uri 'http://127.0.0.1:8093/health' -TimeoutSec 2 | ConvertTo-Json -Depth 5 | Write-Output } catch { Write-Host 'API offline' -ForegroundColor Red; exit 1 }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Original Data: Quick Search (AGI, 14d, md)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/query_original_data.py' --query 'AGI' --ext md --since-days 14 --top 20 } else { python '${workspaceFolder}/scripts/query_original_data.py' --query 'AGI' --ext md --since-days 14 --top 20 }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Original Data: Open Index (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/original_data_index.md') { code ${workspaceFolder}/outputs/original_data_index.md } else { Write-Host 'No original_data_index.md found. Build index first.' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "?㎚ Life: Check Continuity",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_life_continuity.ps1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?㎚ Life: Check + Save Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_life_continuity.ps1",
+				"-OutFile",
+				"${workspaceFolder}/outputs/life_continuity_latest.json",
+				"-OpenReport"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "?㎚ Life: Open Latest Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/life_continuity_latest.json') { code ${workspaceFolder}/outputs/life_continuity_latest.json } else { Write-Host 'No life continuity report found. Run: Life: Check + Save Report' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "?㎚ Life: Open Philosophy Doc",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"code ${workspaceFolder}/docs/AGI_LIFE_CONTINUITY_PHILOSOPHY.md"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
 		{
 			"label": "Streaming: Check OBS + VS Code (dry-run)",
 			"type": "shell",
@@ -18,6 +192,262 @@
 				"echo": true,
 				"reveal": "always",
 				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Queue: Ensure Server (8091)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_task_queue_server.ps1",
+				"-Port",
+				"8091"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?? Master: Start Orchestrator",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/master_orchestrator.ps1"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?? Master: Register Auto-Start (Boot)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_master_orchestrator.ps1",
+				"-Register"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?? Master: Unregister Auto-Start",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_master_orchestrator.ps1",
+				"-Unregister"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?? Master: Check Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_master_orchestrator.ps1",
+				"-Status"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뵩 Upgrade: Detect and Apply",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_upgrade_detector.ps1"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뵩 Upgrade: Dry-Run",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_upgrade_detector.ps1",
+				"-DryRun"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?룯 Health: Full System Check",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/system_health_dashboard.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?룯 Health: Auto-Fix Issues",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/system_health_dashboard.ps1",
+				"-AutoFix"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뮶 Backup: Register Daily (03:30)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_auto_backup.ps1",
+				"-Register"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뮶 Backup: Run Now",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_backup.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Auto: Bring-up on VS Code Open (safe)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Auto bring-up chain executed.'"
+			],
+			"dependsOn": [
+				"Queue: Ensure Server (8091)",
+				"Queue: Ensure Worker",
+				"Lumen: Quick Health Probe",
+				"Monitoring: Generate Report (24h)",
+				"Realtime: Build ??Summarize ??Open (24h)"
+			],
+			"dependsOrder": "sequence",
+			"group": "test",
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "never",
+				"focus": false,
 				"panel": "shared"
 			}
 		},
@@ -636,7 +1066,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "🎬 YouTube: Learn from URL (Pipeline)",
+			"label": "?렗 YouTube: Learn from URL (Pipeline)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -665,7 +1095,7 @@
 			}
 		},
 		{
-			"label": "🎬 YouTube: Quick Learn (10s demo)",
+			"label": "?렗 YouTube: Quick Learn (10s demo)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -954,7 +1384,7 @@
 			}
 		},
 		{
-			"label": "?�� AGI: Verify Phase 1 (24h)",
+			"label": "?占쏙옙 AGI: Verify Phase 1 (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -975,7 +1405,7 @@
 			}
 		},
 		{
-			"label": "?�� AGI: Verify Phase 1 (48h)",
+			"label": "?占쏙옙 AGI: Verify Phase 1 (48h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -1017,7 +1447,7 @@
 			}
 		},
 		{
-			"label": "?�� Alert: Forced Evidence Check (Run Now)",
+			"label": "?占쏙옙 Alert: Forced Evidence Check (Run Now)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2075,7 +2505,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� AGI: Start Session (Check Status)",
+			"label": "?占쏙옙 AGI: Start Session (Check Status)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2096,7 +2526,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Resume Phase 1 (Execute Test)",
+			"label": "?占쏙옙 AGI: Resume Phase 1 (Execute Test)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2104,7 +2534,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe -m scripts.run_task --title 'demo' --goal 'AGI ?�기교정 루프 ?�명 3문장' } else { python -m scripts.run_task --title 'demo' --goal 'AGI ?�기교정 루프 ?�명 3문장' }"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe -m scripts.run_task --title 'demo' --goal 'AGI ?占쎄린援먯젙 猷⑦봽 ?占쎈챸 3臾몄옣' } else { python -m scripts.run_task --title 'demo' --goal 'AGI ?占쎄린援먯젙 猷⑦봽 ?占쎈챸 3臾몄옣' }"
 			],
 			"group": "test",
 			"presentation": {
@@ -2116,7 +2546,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Open Quick Start Guide",
+			"label": "?占쏙옙 AGI: Open Quick Start Guide",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2124,7 +2554,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"code ${workspaceFolder}\\깃코_AGI_빠른?�작_2025-10-25.md"
+				"code ${workspaceFolder}\\源껋퐫_AGI_鍮좊Ⅸ?占쎌옉_2025-10-25.md"
 			],
 			"group": "none",
 			"presentation": {
@@ -2133,7 +2563,7 @@
 			}
 		},
 		{
-			"label": "?�� AGI: Open Master Plan",
+			"label": "?占쏙옙 AGI: Open Master Plan",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2141,7 +2571,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"code ${workspaceFolder}\\깃코_AGI_구축_마스?�플??2025-10-25.md"
+				"code ${workspaceFolder}\\源껋퐫_AGI_援ъ텞_留덉뒪?占쏀뵆??2025-10-25.md"
 			],
 			"group": "none",
 			"presentation": {
@@ -2151,7 +2581,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Demo Self-Correction (PS1)",
+			"label": "?占쏙옙 AGI: Demo Self-Correction (PS1)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2171,7 +2601,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Assert Second Pass",
+			"label": "?占쏙옙 AGI: Assert Second Pass",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2191,7 +2621,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Show Ledger Tail (last 100)",
+			"label": "?占쏙옙 AGI: Show Ledger Tail (last 100)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2211,7 +2641,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Tail Ledger (follow)",
+			"label": "?占쏙옙 AGI: Tail Ledger (follow)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2232,7 +2662,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Summarize Ledger (24h)",
+			"label": "?占쏙옙 AGI: Summarize Ledger (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2246,7 +2676,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� AGI: Summarize Ledger (12h)",
+			"label": "?占쏙옙 AGI: Summarize Ledger (12h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2260,7 +2690,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� AGI: Open Latest Ledger Summary (MD)",
+			"label": "?占쏙옙 AGI: Open Latest Ledger Summary (MD)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2273,7 +2703,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?�� AGI: Open Latest Ledger Summary (JSON)",
+			"label": "?占쏙옙 AGI: Open Latest Ledger Summary (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2410,7 +2840,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Health Gate (Latest)",
+			"label": "?占쏙옙 AGI: Health Gate (Latest)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2430,7 +2860,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� AGI: Summarize 24h + Health Gate",
+			"label": "?占쏙옙 AGI: Summarize 24h + Health Gate",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2491,7 +2921,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� Alert: Health Check & Send Alerts",
+			"label": "?占쏙옙 Alert: Health Check & Send Alerts",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2511,7 +2941,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� Alert: Check Only (No Send)",
+			"label": "?占쏙옙 Alert: Check Only (No Send)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2532,7 +2962,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� Web: Generate Dashboard (6h)",
+			"label": "?占쏙옙 Web: Generate Dashboard (6h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2552,7 +2982,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� Web: Generate Dashboard (24h)",
+			"label": "?占쏙옙 Web: Generate Dashboard (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2574,7 +3004,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� Web: Generate Dashboard (No Browser)",
+			"label": "?占쏙옙 Web: Generate Dashboard (No Browser)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2671,7 +3101,7 @@
 			}
 		},
 		{
-			"label": "?�� AGI: Assert Evidence Gate (Forced 24h)",
+			"label": "?占쏙옙 AGI: Assert Evidence Gate (Forced 24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -2689,7 +3119,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� Alert: Forced Evidence Check (Run Now)",
+			"label": "?占쏙옙 Alert: Forced Evidence Check (Run Now)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3085,7 +3515,7 @@
 			}
 		},
 		{
-			"label": "ChatOps: Unified Status (통합 상태)",
+			"label": "ChatOps: Unified Status (?듯빀 ?곹깭)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3097,7 +3527,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "통합 상태"
+					"CHATOPS_SAY": "?듯빀 ?곹깭"
 				}
 			},
 			"group": "test",
@@ -3121,7 +3551,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "AGI 상태"
+					"CHATOPS_SAY": "AGI ?곹깭"
 				}
 			},
 			"group": "test",
@@ -3145,7 +3575,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "AGI 24시간 요약"
+					"CHATOPS_SAY": "AGI 24?쒓컙 ?붿빟"
 				}
 			},
 			"group": "test",
@@ -3169,7 +3599,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "BQI Phase 6 학습"
+					"CHATOPS_SAY": "BQI Phase 6 ?숈뒿"
 				}
 			},
 			"group": "test",
@@ -3193,7 +3623,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "카나리 상태"
+					"CHATOPS_SAY": "移대굹由??곹깭"
 				}
 			},
 			"group": "test",
@@ -3217,7 +3647,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "카나리 10% 올려"
+					"CHATOPS_SAY": "移대굹由?10% ?щ젮"
 				}
 			},
 			"group": "build",
@@ -3241,7 +3671,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "카나리 롤백"
+					"CHATOPS_SAY": "移대굹由?濡ㅻ갚"
 				}
 			},
 			"group": "build",
@@ -3265,7 +3695,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "프리플라이트"
+					"CHATOPS_SAY": "?꾨━?뚮씪?댄듃"
 				}
 			},
 			"group": "test"
@@ -3283,7 +3713,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "드라이런 해줘"
+					"CHATOPS_SAY": "?쒕씪?대윴 ?댁쨾"
 				}
 			},
 			"group": "test"
@@ -3301,7 +3731,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "상태 보여줘"
+					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
 				}
 			},
 			"group": "test"
@@ -3319,7 +3749,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "상태 보여줘"
+					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
 				}
 			},
 			"group": "test"
@@ -3337,7 +3767,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "상태 보여줘"
+					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
 				}
 			},
 			"group": "test"
@@ -3355,7 +3785,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "상태 보여줘"
+					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
 				}
 			},
 			"group": "test"
@@ -3373,7 +3803,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "상태 보여줘"
+					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
 				}
 			},
 			"group": "test"
@@ -3391,7 +3821,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "온보딩 가이드"
+					"CHATOPS_SAY": "?⑤낫??媛?대뱶"
 				}
 			},
 			"group": "test",
@@ -3415,7 +3845,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "시크릿 등록해줘"
+					"CHATOPS_SAY": "?쒗겕由??깅줉?댁쨾"
 				}
 			},
 			"group": "test",
@@ -3439,7 +3869,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "방송 시작해줘"
+					"CHATOPS_SAY": "諛⑹넚 ?쒖옉?댁쨾"
 				}
 			},
 			"group": "test",
@@ -3463,7 +3893,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "방송 멈춰"
+					"CHATOPS_SAY": "諛⑹넚 硫덉떠"
 				}
 			},
 			"group": "test",
@@ -3487,7 +3917,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "봇 켜줘"
+					"CHATOPS_SAY": "遊?耳쒖쨾"
 				}
 			},
 			"group": "test",
@@ -3511,7 +3941,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "봇 꺼줘"
+					"CHATOPS_SAY": "遊?爰쇱쨾"
 				}
 			},
 			"group": "test",
@@ -3531,7 +3961,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"$scene = Read-Host '장면 이름을 입력하세요 (예: AI Dev, Coding, VS Code Stream)'; & '${workspaceFolder}/scripts/chatops_router.ps1' -Say \"장면 $scene 로 바꿔줘\""
+				"$scene = Read-Host '?λ㈃ ?대쫫???낅젰?섏꽭??(?? AI Dev, Coding, VS Code Stream)'; & '${workspaceFolder}/scripts/chatops_router.ps1' -Say \"?λ㈃ $scene 濡?諛붽퓭以?""
 			],
 			"group": "test",
 			"presentation": {
@@ -3566,7 +3996,7 @@
 			}
 		},
 		{
-			"label": "?�� AGI: Sanitize Resonance Ledger",
+			"label": "?占쏙옙 AGI: Sanitize Resonance Ledger",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3732,7 +4162,7 @@
 			"group": "build"
 		},
 		{
-			"label": "?�� Analysis: Sena Correlation (10m window)",
+			"label": "?占쏙옙 Analysis: Sena Correlation (10m window)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3748,7 +4178,7 @@
 			}
 		},
 		{
-			"label": "?�� Analysis: Sena Correlation (30m window)",
+			"label": "?占쏙옙 Analysis: Sena Correlation (30m window)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3766,7 +4196,7 @@
 			}
 		},
 		{
-			"label": "?�� Analysis: Open Sena Correlation Report (MD)",
+			"label": "?占쏙옙 Analysis: Open Sena Correlation Report (MD)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3777,7 +4207,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?�� Analysis: Open Sena Correlation Report (JSON)",
+			"label": "?占쏙옙 Analysis: Open Sena Correlation Report (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3788,7 +4218,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?���?Guard: Enable Code Protection (ReadOnly)",
+			"label": "?占쏙옙占?Guard: Enable Code Protection (ReadOnly)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3802,7 +4232,7 @@
 			"group": "build"
 		},
 		{
-			"label": "?���?Guard: Disable Code Protection (ReadOnly)",
+			"label": "?占쏙옙占?Guard: Disable Code Protection (ReadOnly)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3816,7 +4246,7 @@
 			"group": "build"
 		},
 		{
-			"label": "?���?Guard: Check Protection Status (DryRun)",
+			"label": "?占쏙옙占?Guard: Check Protection Status (DryRun)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3831,7 +4261,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� Analysis: Cache Effectiveness Report",
+			"label": "?占쏙옙 Analysis: Cache Effectiveness Report",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3847,7 +4277,7 @@
 			}
 		},
 		{
-			"label": "?�� Analysis: Open Cache Report (MD)",
+			"label": "?占쏙옙 Analysis: Open Cache Report (MD)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3858,7 +4288,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?�� Analysis: Open Cache Report (JSON)",
+			"label": "?占쏙옙 Analysis: Open Cache Report (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3869,7 +4299,7 @@
 			"group": "none"
 		},
 		{
-			"label": "?�� Quick: Cache Verification (1h recent)",
+			"label": "?占쏙옙 Quick: Cache Verification (1h recent)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3885,7 +4315,7 @@
 			}
 		},
 		{
-			"label": "?�� Quick: Open All Analysis Reports",
+			"label": "?占쏙옙 Quick: Open All Analysis Reports",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3901,7 +4331,7 @@
 			}
 		},
 		{
-			"label": "?�� Monitor: Cache Timeline (24h, 2h buckets)",
+			"label": "?占쏙옙 Monitor: Cache Timeline (24h, 2h buckets)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3915,7 +4345,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� Monitor: Cache Timeline (12h, 1h buckets)",
+			"label": "?占쏙옙 Monitor: Cache Timeline (12h, 1h buckets)",
 			"type": "shell",
 			"command": "py",
 			"args": [
@@ -3929,7 +4359,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� Monitor: Open Cache Timeline Report",
+			"label": "?占쏙옙 Monitor: Open Cache Timeline Report",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4163,7 +4593,7 @@
 			}
 		},
 		{
-			"label": "?�� Phase 6: Learn Binoche Persona",
+			"label": "?占쏙옙 Phase 6: Learn Binoche Persona",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4182,7 +4612,7 @@
 			}
 		},
 		{
-			"label": "?�� Phase 6: Open Binoche Persona Model",
+			"label": "?占쏙옙 Phase 6: Open Binoche Persona Model",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4223,7 +4653,7 @@
 			}
 		},
 		{
-			"label": "?�� BQI: Ensemble Monitor (24h)",
+			"label": "?占쏙옙 BQI: Ensemble Monitor (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4242,7 +4672,7 @@
 			}
 		},
 		{
-			"label": "?�� BQI: Ensemble Monitor (7 days)",
+			"label": "?占쏙옙 BQI: Ensemble Monitor (7 days)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4366,7 +4796,7 @@
 			}
 		},
 		{
-			"label": "?�� BQI: Run Online Learner (24h)",
+			"label": "?占쏙옙 BQI: Run Online Learner (24h)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4385,7 +4815,7 @@
 			}
 		},
 		{
-			"label": "?�� BQI: Run Online Learner (7 days)",
+			"label": "?占쏙옙 BQI: Run Online Learner (7 days)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4404,7 +4834,7 @@
 			}
 		},
 		{
-			"label": "?�️ BQI: View Current Weights",
+			"label": "?占쏙툘 BQI: View Current Weights",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4423,7 +4853,7 @@
 			}
 		},
 		{
-			"label": "?�� BQI: View Judge Performance",
+			"label": "?占쏙옙 BQI: View Judge Performance",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4442,7 +4872,7 @@
 			}
 		},
 		{
-			"label": "?�� BQI: Open Ensemble Report (TXT)",
+			"label": "?占쏙옙 BQI: Open Ensemble Report (TXT)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4461,7 +4891,7 @@
 			}
 		},
 		{
-			"label": "?�� BQI: Open Ensemble Metrics (JSON)",
+			"label": "?占쏙옙 BQI: Open Ensemble Metrics (JSON)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4548,7 +4978,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?�� Comet-Gitko: Start Task Queue Server (Background)",
+			"label": "?占쏙옙 Comet-Gitko: Start Task Queue Server (Background)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4568,7 +4998,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "?�� Comet-Gitko: Stop Task Queue Server",
+			"label": "?占쏙옙 Comet-Gitko: Stop Task Queue Server",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4576,7 +5006,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"$jobs = Get-Job | Where-Object { $_.Command -like '*task_queue_server*' }; if ($jobs) { $jobs | ForEach-Object { Stop-Job -Id $_.Id; Remove-Job -Id $_.Id }; Write-Host '??Task queue server stopped' -ForegroundColor Green } else { Write-Host '?�️ No running task queue server found' -ForegroundColor Yellow }"
+				"$jobs = Get-Job | Where-Object { $_.Command -like '*task_queue_server*' }; if ($jobs) { $jobs | ForEach-Object { Stop-Job -Id $_.Id; Remove-Job -Id $_.Id }; Write-Host '??Task queue server stopped' -ForegroundColor Green } else { Write-Host '?占쏙툘 No running task queue server found' -ForegroundColor Yellow }"
 			],
 			"group": "build",
 			"presentation": {
@@ -4587,7 +5017,7 @@
 			}
 		},
 		{
-			"label": "?�� Comet-Gitko: Check Server Status",
+			"label": "?占쏙옙 Comet-Gitko: Check Server Status",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4695,7 +5125,7 @@
 			"group": "test"
 		},
 		{
-			"label": "🔄 Binoche: Invoke Continuation (Clipboard)",
+			"label": "?봽 Binoche: Invoke Continuation (Clipboard)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4708,7 +5138,7 @@
 			"group": "test"
 		},
 		{
-			"label": "🔄 Binoche: Invoke Continuation (Dry-Run)",
+			"label": "?봽 Binoche: Invoke Continuation (Dry-Run)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4722,7 +5152,7 @@
 			"group": "test"
 		},
 		{
-			"label": "🔄 Binoche: Invoke Continuation (Task Queue)",
+			"label": "?봽 Binoche: Invoke Continuation (Task Queue)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4760,7 +5190,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "🔧 AGI: Register Auto Resume (Permanent)",
+			"label": "?뵩 AGI: Register Auto Resume (Permanent)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4780,7 +5210,7 @@
 			}
 		},
 		{
-			"label": "🔧 AGI: Unregister Auto Resume",
+			"label": "?뵩 AGI: Unregister Auto Resume",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4800,7 +5230,7 @@
 			}
 		},
 		{
-			"label": "🔍 AGI: Check Auto Resume Status",
+			"label": "?뵇 AGI: Check Auto Resume Status",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4820,7 +5250,7 @@
 			}
 		},
 		{
-			"label": "🚀 RPA Phase 2.5: Resume (Auto)",
+			"label": "?? RPA Phase 2.5: Resume (Auto)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4840,7 +5270,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "🤖 RPA: Start Comet + Check Status",
+			"label": "?쨼 RPA: Start Comet + Check Status",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -4849,8 +5279,8 @@
 				"Write-Host 'Comet + Status check completed.'"
 			],
 			"dependsOn": [
-				"🚀 Comet-Gitko: Start Task Queue Server (Background)",
-				"🚀 Comet-Gitko: Check Server Status"
+				"?? Comet-Gitko: Start Task Queue Server (Background)",
+				"?? Comet-Gitko: Check Server Status"
 			],
 			"dependsOrder": "sequence",
 			"group": "test",
@@ -4862,7 +5292,7 @@
 			}
 		},
 		{
-			"label": "📖 RPA: Open Phase 2.5 Plan",
+			"label": "?뱰 RPA: Open Phase 2.5 Plan",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -5167,7 +5597,7 @@
 			"group": "test"
 		},
 		{
-			"label": "Queue: Quick E2E (Verify → Results → Open Screenshot)",
+			"label": "Queue: Quick E2E (Verify ??Results ??Open Screenshot)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -5334,7 +5764,7 @@
 			"group": "test"
 		},
 		{
-			"label": "Queue: Results → JSONL Append (Success 5)",
+			"label": "Queue: Results ??JSONL Append (Success 5)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -5644,38 +6074,735 @@
 				"focus": true,
 				"panel": "shared"
 			}
+		},
+		{
+			"label": "Realtime: Summarize + Open",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/summarize_realtime_pipeline.ps1",
+				"-Open"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Realtime: Open Latest Summary (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/realtime_pipeline_summary_latest.md') { code ${workspaceFolder}/outputs/realtime_pipeline_summary_latest.md } else { Write-Host 'No summary found. Run: Realtime: Summarize + Open' -ForegroundColor Yellow }"
+			],
+			"problemMatcher": [],
+			"group": "none",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Realtime: Build Pipeline (24h, no open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_realtime_pipeline.ps1",
+				"-Hours",
+				"24"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Realtime: Summarize (24h|spark60) + Open",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/summarize_realtime_pipeline.ps1",
+				"-Lookback",
+				"24",
+				"-SparkLen",
+				"60",
+				"-OutJson",
+				"${workspaceFolder}/outputs/realtime_pipeline_summary_latest.json",
+				"-Open"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Realtime: Open Latest Summary (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/realtime_pipeline_summary_latest.json') { code ${workspaceFolder}/outputs/realtime_pipeline_summary_latest.json } else { Write-Host 'No summary JSON found. Run: Realtime: Summarize (24h|spark60) + Open' -ForegroundColor Yellow }"
+			],
+			"problemMatcher": [],
+			"group": "none",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Realtime: Build ??Summarize ??Open (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Realtime pipeline chain complete.'"
+			],
+			"dependsOn": [
+				"Realtime: Build Pipeline (24h, no open)",
+				"Realtime: Summarize (24h|spark60) + Open"
+			],
+			"dependsOrder": "sequence",
+			"group": "test"
+		},
+		{
+			"label": "Realtime: Open Latest (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_realtime_output.ps1",
+				"-Kind",
+				"json",
+				"-WorkspaceFolder",
+				"${workspaceFolder}"
+			],
+			"problemMatcher": [],
+			"group": "none",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뮶 Session: Save with Changes",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/save_session_with_changes.ps1"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?룯 System: Check After Restart",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_system_after_restart.ps1"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?룯 System: Check After Restart (AutoFix)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_system_after_restart.ps1",
+				"-AutoFix"
+			],
+			"problemMatcher": [],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뙔 End of Day: Backup",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/end_of_day_backup.ps1"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뙔 End of Day: Backup (with note)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/end_of_day_backup.ps1",
+				"-Note",
+				"${input:endOfDayNote}"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?? Master: Register Auto-Start (5min delay)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_master_orchestrator.ps1",
+				"-Register"
+			],
+			"problemMatcher": [],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뮶 Session: End Day (Save & Backup)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/end_daily_session.ps1",
+				"-Note",
+				"${input:endOfDayNote}"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뵇 System: Health Check (Full)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/system_health_check.ps1",
+				"-Full"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?봽 Session: Apply Changes (Manual)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/apply_system_changes.ps1",
+				"-Verbose"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뱷 Session: Show Recent Context",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Get-ChildItem '${workspaceFolder}/outputs/session_memory' -Recurse -File | Sort-Object LastWriteTime -Descending | Select-Object -First 10 | Format-Table Name, Length, LastWriteTime"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?똿 Quick: Morning Startup (Auto-Resume)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Morning startup sequence completed.'"
+			],
+			"dependsOn": [
+				"System: Health Check (Full)",
+				"ChatOps: Unified Status (?듯빀 ?곹깭)"
+			],
+			"dependsOrder": "sequence",
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "?뙔 Quick: Evening Shutdown (Full Backup)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Evening shutdown sequence completed.'"
+			],
+			"dependsOn": [
+				"Session: End Day (Save & Backup)",
+				"Performance: Dashboard (ops-daily)",
+				"Autopoietic: Generate Loop Report (24h latest + open)"
+			],
+			"dependsOrder": "sequence",
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Original Data: Build Index (open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_original_data_index.ps1",
+				"-OpenMd",
+				"-AllowEmpty"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Original Data: Build Index (no open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/build_original_data_index.ps1",
+				"-AllowEmpty",
+				"-NoOpen"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Original Data: Open Index (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/original_data_index.md') { code ${workspaceFolder}/outputs/original_data_index.md } else { Write-Host 'No original_data_index.md found. Run: Original Data: Build Index (open)' -ForegroundColor Yellow }"
+			],
+			"group": "none"
+		},
+		{
+			"label": "Original Data: Open Index (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/original_data_index.json') { code ${workspaceFolder}/outputs/original_data_index.json } else { Write-Host 'No original_data_index.json found. Run: Original Data: Build Index (open)' -ForegroundColor Yellow }"
+			],
+			"group": "none"
 		}
 	],
 	"inputs": [
 		{
 			"id": "chatopsPhrase",
 			"type": "promptString",
-			"description": "자연어로 지시를 입력하세요 (AGI: AGI 상태 / Canary: 카나리 10% 올려 / 통합: 통합 상태 / OBS: 방송 시작 / Bot: 봇 켜줘)",
-			"default": "통합 상태"
+			"description": "?먯뿰?대줈 吏?쒕? ?낅젰?섏꽭??(AGI: AGI ?곹깭 / Canary: 移대굹由?10% ?щ젮 / ?듯빀: ?듯빀 ?곹깭 / OBS: 諛⑹넚 ?쒖옉 / Bot: 遊?耳쒖쨾)",
+			"default": "?듯빀 ?곹깭"
 		},
 		{
 			"id": "clientSecretPath",
 			"type": "promptString",
-			"description": "OAuth client_secret.json 경로 입력",
+			"description": "OAuth client_secret.json 寃쎈줈 ?낅젰",
 			"default": "C:\\path\\to\\client_secret.json"
 		},
 		{
 			"id": "youtubeUrlPrompt",
 			"type": "promptString",
-			"description": "분석할 YouTube URL 입력",
+			"description": "遺꾩꽍??YouTube URL ?낅젰",
 			"default": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 		},
 		{
 			"id": "jsonPathPrompt",
 			"type": "promptString",
-			"description": "Markdown으로 변환할 분석 JSON 파일 경로 입력",
+			"description": "Markdown?쇰줈 蹂?섑븷 遺꾩꽍 JSON ?뚯씪 寃쎈줈 ?낅젰",
 			"default": "${workspaceFolder}/outputs/youtube_learner/dQw4w9WgXcQ_analysis.json"
 		},
 		{
 			"id": "topCountPrompt",
 			"type": "promptString",
-			"description": "인덱스에 표시할 최신 항목 개수 (예: 20)",
+			"description": "?몃뜳?ㅼ뿉 ?쒖떆??理쒖떊 ??ぉ 媛쒖닔 (?? 20)",
 			"default": "20"
+		},
+		{
+			"id": "endOfDayNote",
+			"type": "promptString",
+			"description": "?ㅻ뒛???묒뾽 ?댁슜??媛꾨떒???낅젰?섏꽭??,
+			"default": "Phase 6 ?묒뾽 吏꾪뻾"
 		}
-	]
+	],
+	"taskDefinitions": [
+		{
+			"label": "?뱤 Context: Show State",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/show_context_state.ps1"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "?뱤 Context: Show State (Verbose)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/show_context_state.ps1",
+				"-Verbose"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "?봽 Context: Manual Resume",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_resume_on_startup.ps1"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "?벀 Handover: Create Manual",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$task = Read-Host 'Task description'; $progress = Read-Host 'Current progress'; $next = Read-Host 'Next steps (comma-separated)'; python '${workspaceFolder}/session_memory/session_handover.py' create --task \"$task\" --progress \"$progress\" --next $next.Split(',')"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "?벀 Handover: Show Latest",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"python '${workspaceFolder}/session_memory/session_handover.py' load"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "?렞 Context: Full Restore Chain",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Write-Host 'Context Restore Chain Started' -ForegroundColor Cyan; & '${workspaceFolder}/scripts/show_context_state.ps1'; Write-Host ''; & '${workspaceFolder}/scripts/auto_resume_on_startup.ps1'; Write-Host ''; python '${workspaceFolder}/session_memory/session_handover.py' load"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": [],
+			"dependsOrder": "sequence"
+		},
+		{
+			"label": "Realtime: Run Resonance Bridge (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_realtime_resonance.ps1",
+				"-WindowHours",
+				"24"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Realtime: Run Resonance Bridge (24h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_realtime_resonance.ps1",
+				"-WindowHours",
+				"24",
+				"-OpenJson"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Realtime: Open Latest (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_realtime_output.ps1",
+				"-Kind",
+				"json",
+				"-WorkspaceFolder",
+				"${workspaceFolder}"
+			],
+			"group": "none",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		}
+	],
+{
+"label": " Context: Status",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-Status"],
+"group": "test"
+},
+{
+"label": " Context: Auto (Smart)",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/auto_context.ps1"],
+"group": "test"
+},
+{
+"label": " Context: Switch to Learning",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Learning"],
+"group": "build"
+},
+{
+"label": " Context: Switch to Operations",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Operations"],
+"group": "build"
+},
+{
+"label": " Context: Switch to Development",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Development"],
+"group": "build"
+},
+{
+"label": " Context: Switch to Sleep",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Sleep"],
+"group": "build"
+}
+]
 }

@@ -1,228 +1,230 @@
-# 🚀 Gitko AGI 운영 가이드
+# Operations Guide (Phase 5)
 
-**최종 업데이트**: 2025-10-31  
-**버전**: Phase 5 완료
-
----
-
-## 📋 목차
-
-1. [시스템 시작](#시스템-시작)
-2. [상태 확인](#상태-확인)
-3. [일상 운영](#일상-운영)
-4. [트러블슈팅](#트러블슈팅)
-5. [백업 및 복구](#백업-및-복구)
+Last Updated: 2025-10-31  
+Version: Phase 5 Complete
 
 ---
 
-## 🚀 시스템 시작
+Note: For a concise, ASCII-safe checklist, see scripts/OPERATIONS_QUICK_GUIDE.md
 
-### 전체 시스템 시작 (원클릭)
+## Quick Start
+
+### All-in-one startup
 
 ```powershell
-# 모든 서비스 자동 시작
+# Start all Phase 5 services
 .\scripts\start_phase5_system.ps1
 
-# 확인
+# Verify endpoints
 # Task Queue Server: http://127.0.0.1:8091
-# Web Dashboard: http://127.0.0.1:8000
+# Web Dashboard:      http://127.0.0.1:8000
 ```
 
-### 개별 서비스 시작
+### Start components individually
 
 ```powershell
-# 1. Task Queue Server (먼저 실행)
+# 1) Task Queue Server
 cd LLM_Unified\ion-mentoring
 .\.venv\Scripts\python.exe task_queue_server.py --port 8091
 
-# 2. Web Dashboard
+# 2) Web Dashboard
 cd fdo_agi_repo
 python monitoring\web_server.py
 
-# 3. RPA Worker (옵션)
+# 3) RPA Worker
 cd fdo_agi_repo
 .venv\Scripts\python.exe integrations\rpa_worker.py --server http://127.0.0.1:8091
 ```
 
----
-
-## 📊 상태 확인
-
-### 빠른 헬스 체크
+## Health Checks
 
 ```powershell
-# Task Queue Server
+# Service health
 curl http://127.0.0.1:8091/api/health
-
-# Web Dashboard  
 curl http://127.0.0.1:8000/api/health
 
-# 통합 상태
+# Quick system status
 .\scripts\quick_status.ps1
-```
 
-### 포트 사용 확인
-
-```powershell
-# 포트 8091 확인
+# Ports in use
 netstat -ano | findstr ":8091"
-
-# 포트 8000 확인
 netstat -ano | findstr ":8000"
 ```
 
-### PowerShell Job 확인
+## PowerShell Jobs
 
 ```powershell
-# 실행 중인 Job 확인
 Get-Job | Format-Table Id, Name, State
-
-# Job 로그 확인
 Receive-Job -Id 1 -Keep
-
-# Job 종료
 Stop-Job -Id 1
 Remove-Job -Id 1
 ```
 
 ---
 
-## 🔧 일상 운영
+The following sections may contain legacy content with encoding artifacts. They remain for reference and will be cleaned up incrementally.
 
-### YouTube 학습 실행
+## Autostart (ASCII)
+
+- Register Phase 5 services to start on login:
+  - scripts/register_phase5_autostart.ps1 -Install
+
+- Optional: schedule a daily briefing artifact (runs at user logon):
+  - scripts/register_daily_briefing.ps1 -Install
+
+Notes:
+- Uses Windows Task Scheduler; run PowerShell as Administrator for install.
+- To remove: run the same scripts with -Uninstall.
 
 ```powershell
-# 수동 실행
+# ?ㅽ뻾 以묒씤 Job ?뺤씤
+Get-Job | Format-Table Id, Name, State
+
+# Job 濡쒓렇 ?뺤씤
+Receive-Job -Id 1 -Keep
+
+# Job 醫낅즺
+Stop-Job -Id 1
+Remove-Job -Id 1
+```
+
+---
+
+## ?뵩 ?쇱긽 ?댁쁺
+
+### YouTube ?숈뒿 ?ㅽ뻾
+
+```powershell
+# ?섎룞 ?ㅽ뻾
 .\scripts\run_youtube_learner.ps1 -Url "https://youtube.com/watch?v=..." -MaxFrames 3
 
-# 결과 확인
+# 寃곌낵 ?뺤씤
 .\scripts\youtube_learner_index.ps1 -Open
 ```
 
-### RPA 작업 실행
+### RPA ?묒뾽 ?ㅽ뻾
 
 ```powershell
-# 스모크 테스트
+# ?ㅻえ???뚯뒪??
 .\scripts\run_smoke_e2e_ocr.ps1
 
-# 결과 확인
+# 寃곌낵 ?뺤씤
 Invoke-RestMethod -Uri 'http://127.0.0.1:8091/api/results' | ConvertTo-Json
 ```
 
-### 모니터링 리포트 생성
+### 紐⑤땲?곕쭅 由ы룷???앹꽦
 
 ```powershell
-# 24시간 리포트
+# 24?쒓컙 由ы룷??
 .\scripts\generate_monitoring_report.ps1 -Hours 24
 
-# 7일 리포트
+# 7??由ы룷??
 .\scripts\generate_monitoring_report.ps1 -Hours 168
 
-# 결과 열기
+# 寃곌낵 ?닿린
 code .\outputs\monitoring_report_latest.md
 ```
 
 ---
 
-## 🔍 트러블슈팅
+## ?뵇 ?몃윭釉붿뒋??
 
-### 서버가 시작되지 않는 경우
+### ?쒕쾭媛 ?쒖옉?섏? ?딅뒗 寃쎌슦
 
-**증상**: `curl` 명령이 실패하거나 연결 거부
+**利앹긽**: `curl` 紐낅졊???ㅽ뙣?섍굅???곌껐 嫄곕?
 
-**해결 방법**:
+**?닿껐 諛⑸쾿**:
 
 ```powershell
-# 1. 포트가 이미 사용 중인지 확인
+# 1. ?ы듃媛 ?대? ?ъ슜 以묒씤吏 ?뺤씤
 netstat -ano | findstr ":8091"
 netstat -ano | findstr ":8000"
 
-# 2. 프로세스 종료 (PID는 위 명령 결과에서 확인)
+# 2. ?꾨줈?몄뒪 醫낅즺 (PID????紐낅졊 寃곌낵?먯꽌 ?뺤씤)
 taskkill /PID <PID> /F
 
-# 3. 재시작
+# 3. ?ъ떆??
 .\scripts\start_phase5_system.ps1
 ```
 
-### Web Dashboard가 데이터를 표시하지 않는 경우
+### Web Dashboard媛 ?곗씠?곕? ?쒖떆?섏? ?딅뒗 寃쎌슦
 
-**증상**: 차트나 메트릭이 "--" 또는 비어있음
+**利앹긽**: 李⑦듃??硫뷀듃由?씠 "--" ?먮뒗 鍮꾩뼱?덉쓬
 
-**해결 방법**:
+**?닿껐 諛⑸쾿**:
 
 ```powershell
-# 1. 메트릭 파일 존재 확인
+# 1. 硫뷀듃由??뚯씪 議댁옱 ?뺤씤
 Test-Path .\fdo_agi_repo\outputs\monitoring_metrics.jsonl
 
-# 2. 파일이 없으면 생성
+# 2. ?뚯씪???놁쑝硫??앹꽦
 New-Item -ItemType File -Path .\fdo_agi_repo\outputs\monitoring_metrics.jsonl -Force
 
-# 3. 테스트 데이터 생성
+# 3. ?뚯뒪???곗씠???앹꽦
 .\scripts\test_monitoring_success_path.ps1 -TaskCount 5 -Duration 0.3
 ```
 
-### Job이 응답하지 않는 경우
+### Job???묐떟?섏? ?딅뒗 寃쎌슦
 
-**증상**: `Get-Job`에서 Running 상태지만 작동하지 않음
+**利앹긽**: `Get-Job`?먯꽌 Running ?곹깭吏留??묐룞?섏? ?딆쓬
 
-**해결 방법**:
+**?닿껐 諛⑸쾿**:
 
 ```powershell
-# 1. Job 강제 종료
+# 1. Job 媛뺤젣 醫낅즺
 Get-Job | Stop-Job
 Get-Job | Remove-Job
 
-# 2. 프로세스 직접 종료
+# 2. ?꾨줈?몄뒪 吏곸젒 醫낅즺
 Get-Process python* | Stop-Process -Force
 
-# 3. 재시작
+# 3. ?ъ떆??
 .\scripts\start_phase5_system.ps1
 ```
 
-### Python 의존성 에러
+### Python ?섏〈???먮윭
 
-**증상**: `ModuleNotFoundError: No module named 'fastapi'`
+**利앹긽**: `ModuleNotFoundError: No module named 'fastapi'`
 
-**해결 방법**:
+**?닿껐 諛⑸쾿**:
 
 ```powershell
-# 1. 가상환경 활성화 확인
+# 1. 媛?곹솚寃??쒖꽦???뺤씤
 cd fdo_agi_repo
 .\.venv\Scripts\Activate.ps1
 
-# 2. 의존성 재설치
+# 2. 以묐났 ?먮━ 移댄뀒怨좊━ ?앹꽦
+python -m pip install -U pip
+pip install -r requirements.txt
 pip install -r requirements_rpa.txt
-
-# 3. FastAPI 직접 설치
-pip install fastapi uvicorn
 ```
 
 ---
 
-## 💾 백업 및 복구
+## ?뮶 諛깆뾽 諛?蹂듦뎄
 
-### 중요 파일 백업
+### 以묒슂 ?뚯씪 諛깆뾽
 
 ```powershell
-# 백업 디렉토리 생성
+# 諛깆뾽 ?붾젆?좊━ ?앹꽦
 $backupDir = ".\backups\$(Get-Date -Format 'yyyy-MM-dd_HHmmss')"
 New-Item -ItemType Directory -Path $backupDir -Force
 
-# 1. 메모리 파일
+# 1. 硫붾え由??뚯씪
 Copy-Item .\fdo_agi_repo\memory\* -Destination $backupDir\memory -Recurse
 
-# 2. 출력 파일
+# 2. 異쒕젰 ?뚯씪
 Copy-Item .\fdo_agi_repo\outputs\* -Destination $backupDir\outputs -Recurse
 
-# 3. 설정 파일
+# 3. ?ㅼ젙 ?뚯씪
 Copy-Item .\configs\* -Destination $backupDir\configs -Recurse
 ```
 
-### 복구
+### 蹂듦뎄
 
 ```powershell
-# 백업에서 복구
-$backupDir = ".\backups\2025-10-31_205500"  # 백업 디렉토리
+# 諛깆뾽?먯꽌 蹂듦뎄
+$backupDir = ".\backups\2025-10-31_205500"  # 諛깆뾽 ?붾젆?좊━
 
 Copy-Item $backupDir\memory\* -Destination .\fdo_agi_repo\memory\ -Force -Recurse
 Copy-Item $backupDir\outputs\* -Destination .\fdo_agi_repo\outputs\ -Force -Recurse
@@ -231,99 +233,100 @@ Copy-Item $backupDir\configs\* -Destination .\configs\ -Force -Recurse
 
 ---
 
-## 📊 모니터링 메트릭
+## ?뱤 紐⑤땲?곕쭅 硫뷀듃由?
 
-### 주요 지표
+### 二쇱슂 吏??
 
-| 메트릭 | 정상 범위 | 경고 임계값 |
+| 硫뷀듃由?| ?뺤긽 踰붿쐞 | 寃쎄퀬 ?꾧퀎媛?|
 |--------|----------|-----------|
-| 성공률 | > 90% | < 80% |
-| 평균 응답 시간 | < 5초 | > 10초 |
-| 큐 크기 | < 10 | > 50 |
-| 워커 수 | ≥ 1 | = 0 |
+| ?깃났瑜?| > 90% | < 80% |
+| ?됯퇏 ?묐떟 ?쒓컙 | < 5珥?| > 10珥?|
+| ???ш린 | < 10 | > 50 |
+| ?뚯빱 ??| ??1 | = 0 |
 
-### 메트릭 파일 위치
+### 硫뷀듃由??뚯씪 ?꾩튂
 
 ```
 fdo_agi_repo/outputs/
-├── monitoring_metrics.jsonl       # 원시 메트릭 데이터
-├── monitoring_events.jsonl        # 이벤트 로그
-├── monitoring_report_latest.md    # 리포트 (Markdown)
-├── monitoring_metrics_latest.json # 리포트 (JSON)
-└── monitoring_dashboard_latest.html # 대시보드 (HTML)
+?쒋?? monitoring_metrics.jsonl       # ?먯떆 硫뷀듃由??곗씠??
+?쒋?? monitoring_events.jsonl        # ?대깽??濡쒓렇
+?쒋?? monitoring_report_latest.md    # 由ы룷??(Markdown)
+?쒋?? monitoring_metrics_latest.json # 由ы룷??(JSON)
+?붴?? monitoring_dashboard_latest.html # ??쒕낫??(HTML)
 ```
 
 ---
 
-## 🔐 보안 고려사항
+## ?뵍 蹂댁븞 怨좊젮?ы빆
 
-### 기본 설정 (개발 환경)
+### 湲곕낯 ?ㅼ젙 (媛쒕컻 ?섍꼍)
 
-현재 시스템은 **localhost에서만 접근 가능**합니다:
+?꾩옱 ?쒖뒪?쒖? **localhost?먯꽌留??묎렐 媛??*?⑸땲??
 
 - Task Queue Server: `127.0.0.1:8091`
 - Web Dashboard: `127.0.0.1:8000`
 
-### 프로덕션 배포 시 추가 필요
+### ?꾨줈?뺤뀡 諛고룷 ??異붽? ?꾩슂
 
 ```powershell
-# 1. HTTPS 설정
-# 2. 인증/인가 (JWT, OAuth)
-# 3. CORS 정책 강화
+# 1. HTTPS ?ㅼ젙
+# 2. ?몄쬆/?멸? (JWT, OAuth)
+# 3. CORS ?뺤콉 媛뺥솕
 # 4. Rate Limiting
-# 5. 로그 암호화
+# 5. 濡쒓렇 ?뷀샇??
 ```
 
 ---
 
-## 📞 지원 및 문의
+## ?뱸 吏??諛?臾몄쓽
 
-### 문서
+### 臾몄꽌
 
-- [Phase 5 완료 요약](PHASE_5_FINAL_SUMMARY.md)
-- [Phase 5 완료 리포트](PHASE_5_COMPLETION_REPORT.md)
-- [프로젝트 README](README.md)
+- [Phase 5 ?꾨즺 ?붿빟](PHASE_5_FINAL_SUMMARY.md)
+- [Phase 5 ?꾨즺 由ы룷??(PHASE_5_COMPLETION_REPORT.md)
+- [?꾨줈?앺듃 README](README.md)
 
-### 빠른 참조
+### 鍮좊Ⅸ 李몄“
 
 ```powershell
-# 시스템 시작
+# ?쒖뒪???쒖옉
 .\scripts\start_phase5_system.ps1
 
-# 상태 확인
+# ?곹깭 ?뺤씤
 .\scripts\quick_status.ps1
 
-# 리포트 생성
+# 由ы룷???앹꽦
 .\scripts\generate_monitoring_report.ps1 -Hours 24
 
-# 브라우저 접속
+# 釉뚮씪?곗? ?묒냽
 Start-Process http://127.0.0.1:8000
 ```
 
 ---
 
-## ✅ 체크리스트
+## ??泥댄겕由ъ뒪??
 
-### 매일
+### 留ㅼ씪
 
-- [ ] Web Dashboard 접속 확인 (<http://127.0.0.1:8000>)
-- [ ] 성공률 > 90% 확인
-- [ ] 워커 상태 확인
+- [ ] Web Dashboard ?묒냽 ?뺤씤 (<http://127.0.0.1:8000>)
+- [ ] ?깃났瑜?> 90% ?뺤씤
+- [ ] ?뚯빱 ?곹깭 ?뺤씤
 
-### 매주
+### 留ㅼ＜
 
-- [ ] 7일 모니터링 리포트 생성
-- [ ] 메모리 파일 백업
-- [ ] 오래된 로그 정리 (14일 이상)
+- [ ] 7??紐⑤땲?곕쭅 由ы룷???앹꽦
+- [ ] 硫붾え由??뚯씪 諛깆뾽
+- [ ] ?ㅻ옒??濡쒓렇 ?뺣━ (14???댁긽)
 
-### 매월
+### 留ㅼ썡
 
-- [ ] 전체 시스템 백업
-- [ ] 성능 메트릭 분석
-- [ ] 의존성 업데이트 검토
+- [ ] ?꾩껜 ?쒖뒪??諛깆뾽
+- [ ] ?깅뒫 硫뷀듃由?遺꾩꽍
+- [ ] ?섏〈???낅뜲?댄듃 寃??
 
 ---
 
-**작성**: GitHub Copilot  
-**최종 업데이트**: 2025-10-31  
-**버전**: Phase 5 완료
+**?묒꽦**: GitHub Copilot  
+**理쒖쥌 ?낅뜲?댄듃**: 2025-10-31  
+**踰꾩쟾**: Phase 5 ?꾨즺
+

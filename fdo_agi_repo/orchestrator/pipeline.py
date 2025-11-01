@@ -460,10 +460,29 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
 
         append_coordinate({"event": "task_end", "task_id": task.task_id, "result": result, "binoche_auto_approved": True})
         
-        # Record resonance event (early exit path)
+        # Policy evaluation + closed-loop snapshot (early exit path)
         try:
-            from .resonance_bridge import record_task_resonance
+            from .resonance_bridge import record_task_resonance, evaluate_resonance_policy, get_closed_loop_snapshot
             task_duration = time.perf_counter() - t_start
+            # Evaluate against active policy (observe by default)
+            try:
+                pol_eval = evaluate_resonance_policy(eval_report.model_dump(), task_duration)
+                append_ledger({
+                    "event": "resonance_policy",
+                    "task_id": task.task_id,
+                    **pol_eval,
+                })
+                from .resonance_bridge import should_emit_closed_loop
+                if should_emit_closed_loop():
+                    cls = get_closed_loop_snapshot()
+                    if cls:
+                        append_ledger({
+                            "event": "closed_loop_snapshot",
+                            "task_id": task.task_id,
+                            "snapshot": cls,
+                        })
+            except Exception:
+                pass
             record_task_resonance(
                 task_id=task.task_id,
                 task_goal=task.goal,
@@ -607,10 +626,28 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
 
     append_coordinate({"event": "task_end", "task_id": task.task_id, "result": result})
     
-    # Record resonance event (Universal AGI Phase 1 integration)
+    # Policy evaluation + closed-loop snapshot, then record resonance event
     try:
-        from .resonance_bridge import record_task_resonance
+        from .resonance_bridge import record_task_resonance, evaluate_resonance_policy, get_closed_loop_snapshot
         task_duration = time.perf_counter() - t_start
+        try:
+            pol_eval = evaluate_resonance_policy(eval_report.model_dump(), task_duration)
+            append_ledger({
+                "event": "resonance_policy",
+                "task_id": task.task_id,
+                **pol_eval,
+            })
+            from .resonance_bridge import should_emit_closed_loop
+            if should_emit_closed_loop():
+                cls = get_closed_loop_snapshot()
+                if cls:
+                    append_ledger({
+                        "event": "closed_loop_snapshot",
+                        "task_id": task.task_id,
+                        "snapshot": cls,
+                    })
+        except Exception:
+            pass
         record_task_resonance(
             task_id=task.task_id,
             task_goal=task.goal,

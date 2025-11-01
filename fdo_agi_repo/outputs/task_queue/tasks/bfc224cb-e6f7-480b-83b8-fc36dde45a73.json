@@ -1,0 +1,17 @@
+{
+  "id": "bfc224cb-e6f7-480b-83b8-fc36dde45a73",
+  "type": "web_scraping",
+  "requester": "copilot-test",
+  "data": {
+    "url": "https://www.youtube.com/feed/trending",
+    "selector": "ytd-video-renderer h3 a",
+    "extract": [
+      "text",
+      "href"
+    ]
+  },
+  "status": "pending",
+  "created_at": "2025-11-01T06:00:24.867770",
+  "assigned_to": null,
+  "updated_at": null
+}
