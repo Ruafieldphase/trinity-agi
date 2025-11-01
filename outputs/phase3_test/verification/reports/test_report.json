@@ -11,17 +11,17 @@
       "action_name": "test_click",
       "action_type": "CLICK",
       "success": true,
-      "screenshot_before": "outputs\\phase3_test\\verification\\screenshots\\test_action_before_20251101_213121.png",
-      "screenshot_after": "outputs\\phase3_test\\verification\\screenshots\\test_action_after_20251101_213122.png",
+      "screenshot_before": "outputs\\phase3_test\\verification\\screenshots\\test_action_before_20251101_215917.png",
+      "screenshot_after": "outputs\\phase3_test\\verification\\screenshots\\test_action_after_20251101_215918.png",
       "comparison": {
         "method": "SSIM",
-        "similarity": 0.9992924436304448,
-        "difference": 0.0007075563695552178,
+        "similarity": 0.9522393859361754,
+        "difference": 0.04776061406382459,
         "is_similar": true,
         "threshold": 0.95
       },
       "execution_time": 0.5,
-      "timestamp": 1762000283.3107543,
+      "timestamp": 1762001959.5269172,
       "error_message": null,
       "metadata": {
         "expect_change": false,

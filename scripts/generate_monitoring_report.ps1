@@ -1325,9 +1325,17 @@ try {
         } catch {}
         $lastPolicy = $pe
     }
+    $lastPolTimeIso = $null
+    if ($lastPolicy -and $lastPolicy.ts) {
+        try {
+            $unixEpoch = [datetime]::new(1970, 1, 1, 0, 0, 0, 0, [System.DateTimeKind]::Utc)
+            $lastPolTimeIso = $unixEpoch.AddSeconds([double]$lastPolicy.ts).ToString('s')
+        } catch { $lastPolTimeIso = $null }
+    }
     $agiPolicy = @{
-        counts = $policyCounts
-        last   = if ($lastPolicy) { @{ mode = $lastPolicy.mode; policy = $lastPolicy.policy; reasons = $lastPolicy.reasons } } else { @{} }
+        counts    = $policyCounts
+        last      = if ($lastPolicy) { @{ mode = $lastPolicy.mode; policy = $lastPolicy.policy; reasons = $lastPolicy.reasons } } else { @{} }
+        last_time = $lastPolTimeIso
     }
     # Attach to metrics object in a safe way
     if (-not $agiMetrics) { $agiMetrics = @{} }
@@ -1360,6 +1368,11 @@ try {
                 phase    = $rt.phase
             }
         }
+        # Add last snapshot time (ISO)
+        try {
+            $unixEpoch = [datetime]::new(1970, 1, 1, 0, 0, 0, 0, [System.DateTimeKind]::Utc)
+            $closedLoop["last_time"] = $unixEpoch.AddSeconds([double]$lastCls.ts).ToString('s')
+        } catch {}
         if (-not $agiMetrics) { $agiMetrics = @{} }
         $agiMetrics.ClosedLoop = $closedLoop
     }
@@ -1409,6 +1422,9 @@ if ($agiMetrics.Policy) {
         $lastMode = if ($agiMetrics.Policy.last.mode) { $agiMetrics.Policy.last.mode } else { 'n/a' }
         $lastPol = if ($agiMetrics.Policy.last.policy) { $agiMetrics.Policy.last.policy } else { 'n/a' }
         $reportLines += "  Resonance Policy: mode=$lastMode policy=$lastPol | allow=$($pc.allow) warn=$($pc.warn) block=$($pc.block)"
+        if ($pc.block -gt 0) {
+            $reportLines += "  !!! POLICY BLOCKS DETECTED: $($pc.block) in window !!!"
+        }
     } catch { }
 }
 

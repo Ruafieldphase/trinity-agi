@@ -88,3 +88,17 @@
 - 구성 활성화: 예시 구성만 존재하던 공명 구성 파일을 운영 기본값으로 추가 → `configs/resonance_config.json` 생성(`active_mode=observe`, `quality-first`/`latency-first` 정책 포함). 오케스트레이터 브리지가 자동 로드.
 - 코어 경로 검증: 오케스트레이터/공명 핵심 테스트 7개 통과(`fdo_agi_repo/tests/...`). 전체 루트 테스트는 e2e·CLI 의존으로 실패 케이스 존재(의도된 범위 외). 기본 실행은 코어 스위트 기준 유지.
 - Phase 4 와이어링(관찰 모드): `pipeline.py`에 정책 게이트 평가(`resonance_policy`)와 폐루프 스냅샷(`closed_loop_snapshot`) 이벤트를 Ledger로 방출. 기본 `observe` 모드라 동작 변화 없음(차단은 enforce에서만).
+### Latest Updates (Resonance wiring)
+
+- Throttle configurability: added `closed_loop_snapshot_period_sec` to `configs/resonance_config.json` (default 300s).
+- Pipeline now passes the configured period into `should_emit_closed_loop(period)`, avoiding over-logging.
+- Monitoring report: Executive Summary highlights when any policy `block` occurred, and JSON now includes `AGI.Policy.last_time` and `AGI.ClosedLoop.last_time`.
+- Tests: added `fdo_agi_repo/tests/test_policy_closed_loop_ledger.py` to verify ledger events and throttle behavior.
+
+### Resonance Profiles Update (2025-11-01)
+- Added ctive_policy to configs and new policies: ops-safety, perf-fast (kept quality-first, latency-first).
+- Enhanced scripts/toggle_resonance_mode.ps1 with -Policy <name> to switch active policy.
+- Dashboard now shows policy/closed-loop timestamps and includes a color legend for Allow/Warn/Block.
+
+- Added scripts/run_sample_task.py for quick ledger generation (policy/closed-loop).
+

@@ -89,7 +89,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Closed-loop Snapshot</h5>
+                        <h5 class="mb-0">Closed-loop Snapshot <small class="text-muted ms-2" id="clsLastTime">--</small></h5>
                     </div>
                     <div class="card-body">
                         <div class="row text-center">
@@ -327,7 +327,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Resonance Policy</h5>
+                        <h5 class="mb-0">Resonance Policy <small class="text-muted ms-2" id="policyLastTime">--</small></h5>
                         <span class="badge bg-secondary" id="policyMode">mode: --</span>
                     </div>
                     <div class="card-body">
@@ -352,6 +352,20 @@
                             <div class="metric-label">Last Reasons</div>
                             <pre id="policyReasons" class="mb-0" style="white-space: pre-wrap; background:#f3f4f6; padding: 0.75rem; border-radius: 8px;">--</pre>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body py-2">
+                        <span class="badge bg-success me-2">Allow</span>
+                        <span class="badge bg-warning text-dark me-2">Warn</span>
+                        <span class="badge bg-danger me-2">Block</span>
+                        <span class="ms-3 text-muted">Color reflects counts in current window</span>
                     </div>
                 </div>
             </div>
@@ -423,6 +437,7 @@
                 setText('clsPhase', rt.phase);
                 setText('clsSimRes', sim.last_resonance);
                 setText('clsSimEntropy', sim.last_entropy);
+                if (cls.last_time) { setText('clsLastTime', cls.last_time); }
             } catch {}
         }
         window.addEventListener('DOMContentLoaded', loadClosedLoopSnapshot);
@@ -451,6 +466,7 @@
                 setText('policyName', `${last.policy ?? '--'}`);
                 const reasons = Array.isArray(last.reasons) ? last.reasons.join('\n') : (last.reasons ?? '--');
                 setText('policyReasons', reasons || '--');
+                if (policy.last_time) { setText('policyLastTime', policy.last_time); }
 
                 // Badge coloring: block>0 => danger, warn>0 => warning, else success
                 const badge = document.getElementById('policyMode');

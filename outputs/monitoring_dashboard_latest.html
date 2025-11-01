@@ -83,6 +83,44 @@
                 </div>
             </div>
         </div>
+
+        <!-- Closed-loop Snapshot -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Closed-loop Snapshot <small class="text-muted ms-2" id="clsLastTime">--</small></h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="metric-label">Realtime Strength</div>
+                                <div class="metric-value" id="clsStrength">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-label">Realtime Coherence</div>
+                                <div class="metric-value" id="clsCoherence">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-label">Realtime Phase</div>
+                                <div class="metric-value" id="clsPhase">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-label">Sim Resonance</div>
+                                <div class="metric-value" id="clsSimRes">--</div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12 text-center">
+                                <div class="metric-label">Sim Entropy</div>
+                                <div class="metric-value" id="clsSimEntropy">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="container">
@@ -284,6 +322,55 @@
             </div>
         </div>
 
+        <!-- Resonance Policy Summary -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Resonance Policy <small class="text-muted ms-2" id="policyLastTime">--</small></h5>
+                        <span class="badge bg-secondary" id="policyMode">mode: --</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="metric-label">Allow</div>
+                                <div class="metric-value" id="policyAllow">--</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-label">Warn</div>
+                                <div class="metric-value" id="policyWarn">--</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-label">Block</div>
+                                <div class="metric-value" id="policyBlock">--</div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+                            <div class="metric-label">Active Policy</div>
+                            <div id="policyName" class="mb-2">--</div>
+                            <div class="metric-label">Last Reasons</div>
+                            <pre id="policyReasons" class="mb-0" style="white-space: pre-wrap; background:#f3f4f6; padding: 0.75rem; border-radius: 8px;">--</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body py-2">
+                        <span class="badge bg-success me-2">Allow</span>
+                        <span class="badge bg-warning text-dark me-2">Warn</span>
+                        <span class="badge bg-danger me-2">Block</span>
+                        <span class="ms-3 text-muted">Color reflects counts in current window</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -332,7 +419,71 @@
             if (st) st.textContent = '갱신됨';
         }
     </script>
+
+    <script>
+        // Load Closed-loop Snapshot from metrics JSON
+        async function loadClosedLoopSnapshot() {
+            try {
+                let res = await fetch('../outputs/monitoring_metrics_latest.json').catch(() => null);
+                if (!res || !res.ok) { res = await fetch('outputs/monitoring_metrics_latest.json').catch(() => null); }
+                if (!res || !res.ok) return;
+                const data = await res.json();
+                const cls = (data && data.AGI && data.AGI.ClosedLoop) ? data.AGI.ClosedLoop : {};
+                const rt = cls.realtime || {};
+                const sim = cls.simulator || {};
+                const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = (val ?? '--'); };
+                setText('clsStrength', rt.strength);
+                setText('clsCoherence', rt.coherence);
+                setText('clsPhase', rt.phase);
+                setText('clsSimRes', sim.last_resonance);
+                setText('clsSimEntropy', sim.last_entropy);
+                if (cls.last_time) { setText('clsLastTime', cls.last_time); }
+            } catch {}
+        }
+        window.addEventListener('DOMContentLoaded', loadClosedLoopSnapshot);
+    </script>
+
+    <script>
+        // Lightweight fetch to populate Resonance Policy from metrics JSON
+        async function loadPolicySummary() {
+            try {
+                let res = await fetch('../outputs/monitoring_metrics_latest.json').catch(() => null);
+                if (!res || !res.ok) {
+                    res = await fetch('outputs/monitoring_metrics_latest.json').catch(() => null);
+                }
+                if (!res || !res.ok) return;
+                const data = await res.json();
+                const policy = (data && data.AGI && data.AGI.Policy) ? data.AGI.Policy : {};
+                const counts = policy.counts || { allow: 0, warn: 0, block: 0 };
+                const last = policy.last || {};
+
+                const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+                setText('policyAllow', counts.allow ?? 0);
+                setText('policyWarn', counts.warn ?? 0);
+                setText('policyBlock', counts.block ?? 0);
+                const modeText = `mode: ${last.mode ?? '--'}`;
+                setText('policyMode', modeText);
+                setText('policyName', `${last.policy ?? '--'}`);
+                const reasons = Array.isArray(last.reasons) ? last.reasons.join('\n') : (last.reasons ?? '--');
+                setText('policyReasons', reasons || '--');
+                if (policy.last_time) { setText('policyLastTime', policy.last_time); }
+
+                // Badge coloring: block>0 => danger, warn>0 => warning, else success
+                const badge = document.getElementById('policyMode');
+                if (badge) {
+                    badge.classList.remove('bg-secondary','bg-success','bg-warning','bg-danger');
+                    if ((counts.block ?? 0) > 0) {
+                        badge.classList.add('bg-danger');
+                    } else if ((counts.warn ?? 0) > 0) {
+                        badge.classList.add('bg-warning');
+                    } else {
+                        badge.classList.add('bg-success');
+                    }
+                }
+            } catch {}
+        }
+        window.addEventListener('DOMContentLoaded', loadPolicySummary);
+    </script>
 </body>
 
 </html>
-

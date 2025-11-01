@@ -72,6 +72,12 @@ def load_resonance_config(force_reload: bool = False) -> Dict[str, Any]:
         cfg["policies"] = {
             "quality-first": {"min_quality": 0.8, "require_evidence": True, "max_latency_ms": 8000}
         }
+    # Throttle period for closed-loop snapshot (sec)
+    try:
+        period = int(cfg.get("closed_loop_snapshot_period_sec", 300))
+        cfg["closed_loop_snapshot_period_sec"] = max(1, period)
+    except Exception:
+        cfg["closed_loop_snapshot_period_sec"] = 300
 
     _RESONANCE_CONFIG = cfg
     return cfg
@@ -89,6 +95,15 @@ def get_active_policy_name() -> str:
     cfg = load_resonance_config()
     name = str(cfg.get("active_policy") or cfg.get("default_policy") or "quality-first")
     return name
+
+
+def get_closed_loop_period_sec() -> int:
+    """Return configured closed-loop snapshot throttle period in seconds."""
+    cfg = load_resonance_config()
+    try:
+        return int(cfg.get("closed_loop_snapshot_period_sec", 300))
+    except Exception:
+        return 300
 
 
 def get_active_policy() -> Dict[str, Any]:

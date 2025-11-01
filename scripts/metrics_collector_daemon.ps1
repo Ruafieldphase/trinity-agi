@@ -4,9 +4,9 @@ $interval = 300
 while ($true) {
     try {
         & $scriptPath
-        Write-Host "[\20:22:36] Metrics collected" -ForegroundColor Green
+        Write-Host "[\07:09:22] Metrics collected" -ForegroundColor Green
     } catch {
-        Write-Host "[\20:22:36] Error: $_" -ForegroundColor Red
+        Write-Host "[\07:09:23] Error: $_" -ForegroundColor Red
     }
     Start-Sleep -Seconds $interval
 }

@@ -1,46 +1,46 @@
 [AUTOPOIETIC LOOP DIGEST - ASCII SAFE]
 
-- Generated: 2025-11-01T21:49:56
-- Tasks seen: 23
-- Complete loops: 9 (39.1%)
+- Generated: 2025-11-02T03:25:02
+- Tasks seen: 27
+- Complete loops: 13 (48.1%)
 - Incomplete loops: 14
 - Evidence gate: 0, Second pass: 0
-- At-a-glance: Stable loop flow; Policy warns: 3
+- At-a-glance: Stable loop flow; Policy warns: 9
 
 ---
 
 # Autopoietic Loop Report (last 24h)
 
-Generated at: 2025-11-01T21:49:56.888091
+Generated at: 2025-11-02T03:25:02.402073
 
 
 ## Counts
 
-- Tasks Seen: 23
-- Complete Loops: 9
+- Tasks Seen: 27
+- Complete Loops: 13
 - Incomplete Loops: 14
 - Evidence Gate Triggered: 0
 - Second Pass Executed: 0
 
 ## Rates (%)
 
-- Loop Complete Rate: 39.1%
+- Loop Complete Rate: 48.1%
 - Evidence Gate Trigger Rate: 0.0%
 - Second Pass Rate: 0.0%
 
 ## Avg Durations (sec)
 
-- Folding (Thesis): 7.079
-- Unfolding (Antithesis): 9.927
-- Integration (Synthesis): 15.661
-- Symmetry (Decision+Correction): 0.006
+- Folding (Thesis): 6.866
+- Unfolding (Antithesis): 10.787
+- Integration (Synthesis): 16.085
+- Symmetry (Decision+Correction): 0.005
 
 ## P95 Durations (sec)
 
-- Folding (Thesis) P95: 10.299
-- Unfolding (Antithesis) P95: 15.123
-- Integration (Synthesis) P95: 20.154
-- Symmetry (Decision+Correction) P95: 0.027
+- Folding (Thesis) P95: 9.423
+- Unfolding (Antithesis) P95: 15.517
+- Integration (Synthesis) P95: 18.518
+- Symmetry (Decision+Correction) P95: 0.007
 
 ## Quality
 
@@ -49,9 +49,9 @@ Generated at: 2025-11-01T21:49:56.888091
 
 ## Resonance Policy (counts)
 
-- allow: 0 | warn: 3 | block: 0
+- allow: 0 | warn: 9 | block: 0
 - last: mode=observe policy=quality-first
-- reasons: latency 23234ms > max_latency_ms 8000ms
+- reasons: latency 41228ms > max_latency_ms 8000ms
 
 ## Closed-loop Snapshot
 

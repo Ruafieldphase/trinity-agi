@@ -1,6 +1,7 @@
 param(
     [ValidateSet('disabled','observe','enforce')]
-    [string]$Mode = 'observe'
+    [string]$Mode = 'observe',
+    [string]$Policy
 )
 
 $ErrorActionPreference = 'Stop'
@@ -28,12 +29,26 @@ $json = Get-Content -LiteralPath $cfgPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $prev = $json.active_mode
 $json | Add-Member -NotePropertyName 'active_mode' -NotePropertyValue $Mode -Force
 
+if ($Policy) {
+    # Validate against existing policies
+    $hasPolicies = $json.PSObject.Properties.Name -contains 'policies'
+    if ($hasPolicies -and $json.policies.PSObject.Properties.Name -contains $Policy) {
+        $json | Add-Member -NotePropertyName 'active_policy' -NotePropertyValue $Policy -Force
+    } else {
+        Write-Host ("Warning: Policy '{0}' not found in configs. Keeping existing active_policy." -f $Policy) -ForegroundColor Yellow
+    }
+}
+
 $tmp = $json | ConvertTo-Json -Depth 6
 [System.IO.File]::WriteAllText($cfgPath, $tmp, [System.Text.Encoding]::UTF8)
 
-Write-Host "Resonance mode updated:" -ForegroundColor Green
-Write-Host ("  {0} -> {1}" -f ($prev ? $prev : 'unknown'), $Mode) -ForegroundColor Green
+Write-Host "Resonance configuration updated:" -ForegroundColor Green
+$prevMode = if ($null -ne $prev -and "$prev" -ne "") { $prev } else { 'unknown' }
+Write-Host ("  {0} -> {1}" -f $prevMode, $Mode) -ForegroundColor Green
 Write-Host ("  Path: {0}" -f (Resolve-Path $cfgPath)) -ForegroundColor DarkGray
+if ($Policy) {
+    $ap = if ($null -ne $json.active_policy -and "$($json.active_policy)" -ne "") { $json.active_policy } else { 'unchanged' }
+    Write-Host ("  Active policy: {0}" -f $ap) -ForegroundColor DarkGray
+}
 
 exit 0
-

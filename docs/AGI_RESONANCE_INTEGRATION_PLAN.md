@@ -179,3 +179,11 @@
   - Ledger → Seasonality → Scheduler → Resonance 통합 테스트
   - 대시보드에 3종 메트릭 반영
 - **보류**: Resonance 문서 Phase 0 - 8개 문서 UTF-8 복구 (필요 시)
+
+---
+
+## Notes (2025-11-01)
+
+- Config adds closed_loop_snapshot_period_sec to control closed-loop snapshot throttle (default 300s). Present in both configs/resonance_config.json and example.
+- Orchestrator pipeline reads the configured period and passes it to should_emit_closed_loop(period) to avoid over-logging snapshots.
+

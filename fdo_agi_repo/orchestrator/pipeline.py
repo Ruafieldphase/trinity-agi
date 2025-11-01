@@ -462,7 +462,12 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         
         # Policy evaluation + closed-loop snapshot (early exit path)
         try:
-            from .resonance_bridge import record_task_resonance, evaluate_resonance_policy, get_closed_loop_snapshot
+            from .resonance_bridge import (
+                record_task_resonance,
+                evaluate_resonance_policy,
+                get_closed_loop_snapshot,
+                get_closed_loop_period_sec,
+            )
             task_duration = time.perf_counter() - t_start
             # Evaluate against active policy (observe by default)
             try:
@@ -473,7 +478,8 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
                     **pol_eval,
                 })
                 from .resonance_bridge import should_emit_closed_loop
-                if should_emit_closed_loop():
+                period = get_closed_loop_period_sec()
+                if should_emit_closed_loop(period):
                     cls = get_closed_loop_snapshot()
                     if cls:
                         append_ledger({
@@ -628,7 +634,12 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     
     # Policy evaluation + closed-loop snapshot, then record resonance event
     try:
-        from .resonance_bridge import record_task_resonance, evaluate_resonance_policy, get_closed_loop_snapshot
+        from .resonance_bridge import (
+            record_task_resonance,
+            evaluate_resonance_policy,
+            get_closed_loop_snapshot,
+            get_closed_loop_period_sec,
+        )
         task_duration = time.perf_counter() - t_start
         try:
             pol_eval = evaluate_resonance_policy(eval_report.model_dump(), task_duration)
@@ -638,7 +649,8 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
                 **pol_eval,
             })
             from .resonance_bridge import should_emit_closed_loop
-            if should_emit_closed_loop():
+            period = get_closed_loop_period_sec()
+            if should_emit_closed_loop(period):
                 cls = get_closed_loop_snapshot()
                 if cls:
                     append_ledger({

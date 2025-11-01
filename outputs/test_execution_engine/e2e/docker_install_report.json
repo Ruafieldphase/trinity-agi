@@ -6,69 +6,69 @@
   "executed_actions": 9,
   "verified_actions": 0,
   "failed_actions": 0,
-  "execution_time": 0.903052806854248,
+  "execution_time": 0.9031686782836914,
   "action_results": [
     {
       "action_index": 1,
       "action_type": "CLICK",
       "success": true,
-      "duration": 3.5762786865234375e-06,
+      "duration": 2.6226043701171875e-06,
       "error": null
     },
     {
       "action_index": 2,
       "action_type": "CLICK",
       "success": true,
-      "duration": 5.9604644775390625e-06,
+      "duration": 6.4373016357421875e-06,
       "error": null
     },
     {
       "action_index": 3,
       "action_type": "INSTALL",
       "success": true,
-      "duration": 3.552436828613281e-05,
+      "duration": 2.384185791015625e-05,
       "error": null
     },
     {
       "action_index": 4,
       "action_type": "CLICK",
       "success": true,
-      "duration": 5.0067901611328125e-06,
+      "duration": 6.198883056640625e-06,
       "error": null
     },
     {
       "action_index": 5,
       "action_type": "CLICK",
       "success": true,
-      "duration": 5.0067901611328125e-06,
+      "duration": 5.9604644775390625e-06,
       "error": null
     },
     {
       "action_index": 6,
       "action_type": "CLICK",
       "success": true,
-      "duration": 6.198883056640625e-06,
+      "duration": 5.245208740234375e-06,
       "error": null
     },
     {
       "action_index": 7,
       "action_type": "INSTALL",
       "success": true,
-      "duration": 1.8358230590820312e-05,
+      "duration": 1.5497207641601562e-05,
       "error": null
     },
     {
       "action_index": 8,
       "action_type": "INSTALL",
       "success": true,
-      "duration": 1.1205673217773438e-05,
+      "duration": 1.2874603271484375e-05,
       "error": null
     },
     {
       "action_index": 9,
       "action_type": "CLICK",
       "success": true,
-      "duration": 6.198883056640625e-06,
+      "duration": 5.7220458984375e-06,
       "error": null
     }
   ],

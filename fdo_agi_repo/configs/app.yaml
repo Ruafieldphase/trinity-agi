@@ -10,3 +10,7 @@ corrections:
   max_passes: 2 # 최대 패스 수 (1차 + 추가 1회)
 evaluation:
   min_quality: 0.6 # replan 판단에 사용하는 최소 품질 임계값 (환경변수 EVAL_MIN_QUALITY 로 오버라이드 가능)
+orchestration:
+  async_thesis:
+    enabled: true # Thesis 단계 비동기 실행 (7.7% 레이턴시 감소 검증됨)
+    timeout_sec: 120 # Async 타임아웃 (순차 실행으로 fallback)
