@@ -420,6 +420,61 @@ function Show-AgiHealth {
     }
 }
 
+function Start-MorningKickoff {
+    <#
+    .SYNOPSIS
+    Morning Kickoff: 하루 시작 리포트 생성 및 요약
+    #>
+    try {
+        Info "================================================"
+        Info "  🌅 좋은 아침입니다!"
+        Info "================================================"
+        Write-Host ""
+        
+        $kickoffScript = Join-Path $workspace 'scripts/morning_kickoff.ps1'
+        if (-not (Test-Path $kickoffScript)) {
+            Warn "Morning Kickoff script not found: $kickoffScript"
+            return 2
+        }
+        
+        Info "Morning Kickoff를 시작합니다..."
+        Write-Host ""
+        
+        # Run morning kickoff with 1 hour lookback
+        & powershell -NoProfile -ExecutionPolicy Bypass `
+            -File $kickoffScript -Hours 1
+        
+        $code = $LASTEXITCODE
+        Write-Host ""
+        
+        if ($code -eq 0) {
+            Ok "================================================"
+            Ok "  ✨ Morning Kickoff 완료!"
+            Ok "================================================"
+            Write-Host ""
+            Info "📊 생성된 리포트:"
+            Info "   - outputs/monitoring_dashboard_latest.html"
+            Info "   - outputs/monitoring_report_latest.md"
+            Write-Host ""
+            Info "💡 다음 명령어로 확인:"
+            Info "   • 'AGI 상태 보여줘' - 시스템 헬스"
+            Info "   • '통합 대시보드' - 전체 현황"
+            Write-Host ""
+        }
+        else {
+            Warn "Morning Kickoff 완료 (일부 경고 발생, exit=$code)"
+        }
+        
+        $global:LASTEXITCODE = 0
+        return 0
+    }
+    catch {
+        Warn "Morning Kickoff failed: $_"
+        $global:LASTEXITCODE = 0
+        return 0
+    }
+}
+
 function Show-AgiDashboard {
     try {
         $opsDash = Join-Path $workspace 'fdo_agi_repo/scripts/ops_dashboard.ps1'
@@ -1133,6 +1188,10 @@ Emit-ChatOpsEvent -Type "chatops_resolved" -Payload @{
 }
 
 switch -Regex ($action) {
+    '^morning_kickoff$' {
+        Info '[Action] 🌅 Morning Kickoff'
+        exit (Run-And-Report { Start-MorningKickoff })
+    }
     '^agi_health$' {
         Info '[Action] AGI health check'
         exit (Run-And-Report { Show-AgiHealth })

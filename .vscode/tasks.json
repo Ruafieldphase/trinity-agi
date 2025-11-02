@@ -4119,6 +4119,30 @@
 			}
 		},
 		{
+			"label": "ChatOps: 좋은 아침 🌅",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/chatops_router.ps1"
+			],
+			"options": {
+				"env": {
+					"CHATOPS_SAY": "좋은 아침이야"
+				}
+			},
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
 			"label": "ChatOps: AGI Summary (24h)",
 			"type": "shell",
 			"command": "powershell",

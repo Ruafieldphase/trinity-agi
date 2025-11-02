@@ -186,6 +186,12 @@ def resolve_rules(utter: str) -> str:
     if re.search(r"(대화|로그).*(요약|보고서|리포트)", u) or re.search(r"\b요약\b", u):
         return "conversation_summary"
 
+    # Morning Kickoff
+    if re.search(r"(좋은\s*아침|굿\s*모닝|good\s*morning|아침이야)", u):
+        return "morning_kickoff"
+    if re.search(r"(morning|아침).*(kickoff|킥오프|시작)", u):
+        return "morning_kickoff"
+    
     # Session Memory Operations
     if (
         re.search(r"\bstart\b.*\bsession\b", u)

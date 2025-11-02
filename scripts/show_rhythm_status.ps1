@@ -36,7 +36,8 @@ try {
     
     Write-Host "  Next Run: " -NoNewline -ForegroundColor Gray
     Write-Host $info.NextRunTime -ForegroundColor White
-} catch {
+}
+catch {
     Write-Host "  ⚠ NOT REGISTERED" -ForegroundColor Yellow
     Write-Host "  Run: .\scripts\register_morning_kickoff.ps1 -Register" -ForegroundColor Gray
 }
@@ -63,7 +64,8 @@ try {
         Write-Host "  Latest Report: " -NoNewline -ForegroundColor Gray
         Write-Host "$([math]::Round($reportAge.TotalHours, 1))h ago" -ForegroundColor White
     }
-} catch {
+}
+catch {
     Write-Host "  ⚠ NOT REGISTERED" -ForegroundColor Yellow
     Write-Host "  Observation period not started" -ForegroundColor Gray
 }
@@ -96,10 +98,12 @@ if (Test-Path $healthPath) {
         $age = (Get-Date) - (Get-Item $healthPath).LastWriteTime
         Write-Host "  Updated: " -NoNewline -ForegroundColor Gray
         Write-Host "$([math]::Round($age.TotalMinutes, 0))m ago" -ForegroundColor White
-    } catch {
+    }
+    catch {
         Write-Host "  ⚠ Could not parse health status" -ForegroundColor Yellow
     }
-} else {
+}
+else {
     Write-Host "  ⚠ No health check available" -ForegroundColor Yellow
     Write-Host "  Run: .\scripts\system_health_check.ps1" -ForegroundColor Gray
 }
@@ -112,8 +116,8 @@ $ledgerPath = Join-Path $PSScriptRoot "..\fdo_agi_repo\memory\resonance_ledger.j
 if (Test-Path $ledgerPath) {
     try {
         $recent = Get-Content $ledgerPath -Tail 100 | 
-            Where-Object { $_ -match '"duration_sec"' } |
-            Select-Object -Last 1
+        Where-Object { $_ -match '"duration_sec"' } |
+        Select-Object -Last 1
         
         if ($recent) {
             $entry = $recent | ConvertFrom-Json
@@ -129,10 +133,12 @@ if (Test-Path $ledgerPath) {
                 Write-Host "${ttftMs}ms" -ForegroundColor White
             }
         }
-    } catch {
+    }
+    catch {
         Write-Host "  ⚠ Could not parse ledger" -ForegroundColor Yellow
     }
-} else {
+}
+else {
     Write-Host "  ⚠ No ledger found" -ForegroundColor Yellow
 }
 
@@ -149,7 +155,8 @@ if (Test-Path $dashboardPath) {
     Write-Host "$([math]::Round($age.TotalHours, 1))h ago" -ForegroundColor White
     Write-Host "  Open: " -NoNewline -ForegroundColor Gray
     Write-Host "Start-Process $dashboardPath" -ForegroundColor Cyan
-} else {
+}
+else {
     Write-Host "  ⚠ Not generated yet" -ForegroundColor Yellow
     Write-Host "  Will be created at next Morning Kickoff (10:00)" -ForegroundColor Gray
 }

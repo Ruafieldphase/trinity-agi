@@ -78,3 +78,75 @@
                     "memory_usage":  46.1
                 }
 }
+{
+    "timestamp":  "2025-11-02 22:49:36",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:49:35",
+                    "cpu_load":  21,
+                    "memory_usage":  45.9
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:50:38",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:50:37",
+                    "cpu_load":  34,
+                    "memory_usage":  46.2
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:51:40",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:51:39",
+                    "cpu_load":  18,
+                    "memory_usage":  45.7
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:52:42",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:52:41",
+                    "cpu_load":  34,
+                    "memory_usage":  46
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:53:44",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:53:43",
+                    "cpu_load":  31,
+                    "memory_usage":  46.2
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:54:46",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:54:45",
+                    "cpu_load":  28,
+                    "memory_usage":  46.4
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:55:48",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:55:47",
+                    "cpu_load":  31,
+                    "memory_usage":  46.1
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:56:50",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:56:49",
+                    "cpu_load":  37,
+                    "memory_usage":  46.5
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:57:52",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:57:51",
+                    "cpu_load":  22,
+                    "memory_usage":  46.3
+                }
+}

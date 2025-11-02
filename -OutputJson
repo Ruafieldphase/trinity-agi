@@ -1,31 +1,31 @@
 ﻿{
     "Summary":  {
-                    "Warnings":  2,
-                    "Passed":  9,
+                    "Warnings":  1,
+                    "Passed":  10,
                     "StatusText":  "OPERATIONAL WITH WARNINGS",
                     "TotalChecks":  11,
                     "Failed":  0,
-                    "PassRate":  81.8
+                    "PassRate":  90.9
                 },
-    "Timestamp":  "2025-11-02 22:37:41",
+    "Timestamp":  "2025-11-02 22:55:22",
     "Checks":  {
                    "Cloud AI API":  {
                                         "Status":  "OK",
-                                        "Message":  "Response in 173ms",
+                                        "Message":  "Response in 174ms",
                                         "Details":  {
 
                                                     }
                                     },
                    "Python Processes":  {
                                             "Status":  "OK",
-                                            "Message":  "36 process(es) running",
+                                            "Message":  "44 process(es) running",
                                             "Details":  {
 
                                                         }
                                         },
                    "Lumen Gateway":  {
-                                         "Status":  "WARNING",
-                                         "Message":  "High latency: 3080ms",
+                                         "Status":  "OK",
+                                         "Message":  "Response in 177ms",
                                          "Details":  {
 
                                                      }
@@ -46,7 +46,7 @@
                                     },
                    "LM Studio Inference":  {
                                                "Status":  "OK",
-                                               "Message":  "Response in 3938ms",
+                                               "Message":  "Response in 4498ms",
                                                "Details":  {
 
                                                            }
@@ -74,7 +74,7 @@
                                        },
                    "LM Studio Memory":  {
                                             "Status":  "OK",
-                                            "Message":  "2 process(es), 55MB total",
+                                            "Message":  "2 process(es), 56MB total",
                                             "Details":  {
 
                                                         }

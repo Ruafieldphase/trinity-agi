@@ -5,12 +5,14 @@
 ## 🎵 현재 리듬 상태
 
 **자동화 시스템 안정 운영 중**:
+
 - ✅ **Morning Kickoff**: 매일 10:00 자동 실행 (다음: 11/3 10:00)
 - ✅ **Async Thesis Monitor**: 매시간 헬스 체크 (마지막: 0.8h ago)
 - ✅ **Performance Dashboard**: 7일 누적 (최근: 0.1h ago)
 - ✅ **System Health**: 대부분 PASS
 
 **현재 메트릭**:
+
 - Task Latency: 1.3s (목표 <8s) ✅
 - TTFT: 0.6s (90%+ 체감 개선) ✅
 - Pass Rate: 90%+
@@ -18,6 +20,7 @@
 **상태 확인**: `.\scripts\show_rhythm_status.ps1`
 
 **다음 액션**:
+
 - 🔄 Async Thesis 7일 관찰 진행 중 (11/2~11/9)
 - 📊 Morning Kickoff 산출물 품질 검증 (3일)
 - 📈 일일 히스토리 누적 및 트렌드 분석
@@ -26,7 +29,55 @@
 
 ## 요약
 
-- **NEW (2025-11-02 13:45)**: � Morning Kickoff 통합 완료 (일일 자동 시작 워크플로우) ✅
+# AGENT HANDOFF (루빛 → 다음 에이전트)
+
+최종 업데이트: 2025-11-02 23:00 KST
+
+## 🎵 현재 리듬 상태
+
+**자동화 시스템 안정 운영 중**:
+
+- ✅ **Morning Kickoff**: 매일 10:00 자동 실행 (다음: 11/3 10:00)
+  - 🆕 **ChatOps 통합**: "좋은 아침이야" 자연어 트리거 추가
+- ✅ **Async Thesis Monitor**: 매시간 헬스 체크 (마지막: 0.8h ago)
+- ✅ **Performance Dashboard**: 7일 누적 (최근: 0.1h ago)
+- ✅ **System Health**: 대부분 PASS
+
+**현재 메트릭**:
+
+- Task Latency: 1.3s (목표 <8s) ✅
+- TTFT: 0.6s (90%+ 체감 개선) ✅
+- Pass Rate: 90%+
+
+**상태 확인**: `.\scripts\show_rhythm_status.ps1`
+
+**다음 액션**:
+
+- 🔄 Async Thesis 7일 관찰 진행 중 (11/2~11/9)
+- 📊 Morning Kickoff 산출물 품질 검증 (3일)
+- 📈 일일 히스토리 누적 및 트렌드 분석
+
+---
+
+## 요약
+
+- **NEW (2025-11-02 23:00)**: 🌅 Morning Greeting Feature 추가 ✅
+  - **트리거**: "좋은 아침이야", "good morning", "굿모닝", "아침이야"
+  - **동작**: Morning Kickoff 자동 실행
+  - **구현**:
+    - Intent: `scripts/chatops_intent.py` → `morning_kickoff` 액션
+    - Handler: `scripts/chatops_router.ps1` → `Start-MorningKickoff` 함수
+    - Task: `.vscode/tasks.json` → "ChatOps: 좋은 아침 🌅"
+  - **사용 예**:
+    ```powershell
+    $env:CHATOPS_SAY = "좋은 아침이야"
+    .\scripts\chatops_router.ps1
+    ```
+  - **자동 vs 수동**:
+    - 자동: 매일 10:00 (Scheduled Task)
+    - 수동: "좋은 아침이야" (원하는 시간에)
+  - **문서**: `MORNING_GREETING_FEATURE.md`
+- **NEW (2025-11-02 13:45)**: 📅 Morning Kickoff 통합 완료 (일일 자동 시작 워크플로우) ✅
   - **단계 1**: Quick health/status (통합 대시보드)
   - **단계 2**: Daily health snapshot (타임스탬프 + latest 이중 저장)
   - **단계 3**: Monitoring report (1시간/24시간 윈도우, HTML/JSON/MD)
@@ -36,6 +87,12 @@
   - **출력**: `outputs/system_health_latest.*`, `outputs/health_snapshots/YYYY-MM-DD_*`, `monitoring_report_latest.*`, `performance_dashboard_latest.*`, `morning_resonance_digest_latest.md`
   - **자동화**: VS Code 태스크 "Morning: Kickoff (1h, open)" 또는 Scheduled Task 등록 가능
   - **검증**: 2025-11-02 모든 단계 통과 ✅ (1h 윈도우, 통합 지표: 90.9% 헬스 + 100% 모니터링 + 93.3% 성능)
+- **NEW (2025-11-02 13:40)**: 🏥 Daily Health Snapshot 래퍼 추가
+  - `scripts/daily_health_snapshot.ps1` — 헬스 체크 자동 실행 + 이중 저장
+  - **latest**: `outputs/system_health_latest.(json|md)` (항상 덮어쓰기, 빠른 참조)
+  - **timestamped**: `outputs/health_snapshots/YYYY-MM-DD_system_health.(json|md)` (히스토리 보관)
+  - **메트릭**: 11개 체크 항목, Pass rate, 상세 벤치마크
+  - **용도**: EOD backup에도 통합됨
 - **NEW (2025-11-02 13:40)**: 🏥 Daily Health Snapshot 래퍼 추가
   - `scripts/daily_health_snapshot.ps1` — 헬스 체크 자동 실행 + 이중 저장
   - **latest**: `outputs/system_health_latest.(json|md)` (항상 덮어쓰기, 빠른 참조)
@@ -259,7 +316,7 @@
    - ✅ Morning Kickoff 자동화 완료
    - 🔄 Async Thesis 관찰 진행 중
    - 📊 일일 Performance Dashboard 트렌드 분석
-   
+
 2. **중기 (1주)**:
    - Async Thesis 7일 관찰 완료 후 안정성 평가
    - Morning Kickoff 산출물 품질 검증
