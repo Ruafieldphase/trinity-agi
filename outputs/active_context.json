@@ -1,4 +1,4 @@
-﻿{
+{
     "current":  "Operations",
     "enabled_services":  [
                              "metrics_collector_detailed",

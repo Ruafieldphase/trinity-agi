@@ -48,7 +48,7 @@ function Register-Monitor {
         -Settings $settings `
         -Description "Async Thesis 24/7 health monitoring (every $IntervalMinutes min)" `
         -User $env:USERNAME `
-        | Out-Null
+    | Out-Null
     
     Write-Host "✓ Monitor registered: $TaskName" -ForegroundColor Green
     Write-Host "  Interval: Every $IntervalMinutes minutes" -ForegroundColor Cyan
@@ -75,14 +75,15 @@ function Unregister-Monitor {
     if ($existing) {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
         Write-Host "✓ Monitor unregistered" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "  Task not found" -ForegroundColor Yellow
     }
 }
 
 function Show-Status {
     Write-Host "Async Thesis Health Monitor Status" -ForegroundColor Cyan
-    Write-Host ("="*70) -ForegroundColor Cyan
+    Write-Host ("=" * 70) -ForegroundColor Cyan
     
     $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
     
@@ -129,10 +130,13 @@ function Show-Status {
 # Main
 if ($Register) {
     Register-Monitor
-} elseif ($Unregister) {
+}
+elseif ($Unregister) {
     Unregister-Monitor
-} elseif ($Status) {
+}
+elseif ($Status) {
     Show-Status
-} else {
+}
+else {
     Show-Status
 }

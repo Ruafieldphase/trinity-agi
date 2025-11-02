@@ -1,9 +1,19 @@
 import uuid
 import time
 from pathlib import Path
+import sys
 
 
 def main():
+    # Ensure repo root on sys.path for direct script invocation
+    here = Path(__file__).resolve()
+    root = here.parents[1]
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    fdo = root / "fdo_agi_repo"
+    if str(fdo) not in sys.path:
+        sys.path.insert(0, str(fdo))
+
     from fdo_agi_repo.orchestrator import pipeline
 
     task_id = f"runtime-test-{int(time.time())}-{uuid.uuid4().hex[:6]}"
@@ -33,4 +43,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

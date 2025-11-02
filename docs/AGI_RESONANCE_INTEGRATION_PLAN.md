@@ -1,6 +1,29 @@
-# AGI 레조넌스·윤리·시뮬레이션 통합 작업계획 (v0.1)
+# AGI 레조넌스·윤리·시뮬레이션 통합 작업계획 (v0.2)
+
+최종 업데이트: 2025-11-02 07:45
 
 본 문서는 상위 개념 문서(윤리/공포 분석/자연법/레조넌스/토탈 시뮬레이션)를 실행 가능한 구성(스키마·로더·브리지·검증)로 연결하기 위한 단계별 실행 계획입니다. 문서는 작업 진행에 따라 지속적으로 갱신됩니다.
+
+## 최근 변경 사항 (2025-11-02)
+
+### 레이턴시 최적화 진단
+
+- **문제**: LLM 호출 평균 30.5초, 최대 41.2초 (임계값 8초 대비)
+- **원인**: thesis → antithesis → synthesis 순차 실행 (합산 26-40초)
+- **분석 도구**:
+  - `scripts/analyze_latency_warnings.py` (10건 경고, 6개 태스크 분석)
+  - `scripts/analyze_task_durations.py` (단계별 duration 분해)
+- **권장 사항**:
+  1. 단기: 타임아웃 임계값 8초 → 45초 상향
+  2. 중기: thesis/antithesis 병렬 실행 구현
+  3. 장기: 모델 프리워밍/캐싱 전략
+
+### 세션 관리 개선
+
+- `scripts/save_session_with_changes.ps1` UTF-8 인코딩 오류 수정
+- Evidence Gate 검증: 24시간 내 0건 트리거 (품질 기준 통과)
+- 큐/워커 상태: 정상 (서버, 워커, 헬스체크 PASS)
+- 테스트: 전체 테스트 통과 (pytest PASS)
 
 ---
 
@@ -9,9 +32,11 @@
 - 목표
   - 개념 문서의 규범/정책/모드를 머신-리더블 스키마로 정의하고, 런타임(파이프라인/검증/대시보드)에 연결
   - 운영 가시성 확보(활성 모드/정책/차단·완화 통계)
+  - **성능 최적화**: 레이턴시 30초+ → 15초 이하로 단축
 - 배경(현재 상태)
   - 구조·운영(큐, 감시/경보, 대시보드, 테스트)은 양호하나, 개념→코드로 내려가는 연결층 부재
   - 참고 문서 다수가 인코딩 깨짐 상태로 해독과 요구사항 추출이 저해
+  - **새로 발견**: LLM 호출 순차 실행이 레이턴시 병목 (병렬화 필요)
 
 참고 문서(인코딩 복구 필요)
 
@@ -30,6 +55,7 @@
 ## 2) 범위
 
 - 포함: 스키마 정의, 구성 로더, 파이프라인 연결, 검증/테스트, 대시보드/리포트 반영
+- **NEW**: LLM 호출 병렬화 구현, 타임아웃 임계값 조정
 - 제외: 외부 클라우드 의존 통합 실험 전면 확장(후속 단계 제안), 모델 교체/학습 자체는 범위외
 
 ---
@@ -42,11 +68,15 @@
   - `fdo_agi_repo/orchestrator/resonance_bridge.py:1` (스키마 로드 + 검증 + 런타임 주입)
 - 파이프라인 연결:
   - `fdo_agi_repo/orchestrator/pipeline.py:1` (레조넌스 기어 적용 분기/게이트)
+  - **NEW**: 병렬 LLM 호출 구현 (thesis/antithesis 동시 실행)
   - `fdo_agi_repo/rpa/verifier.py:1`, `fdo_agi_repo/rpa/failsafe.py:1` (정책 기반 검증/완화)
 - 테스트/운영:
   - `fdo_agi_repo/tests/test_e2e_scenarios.py:1` (모드별 경로 차이)
   - `scripts/generate_monitoring_report.ps1:1`, `scripts/quick_status.ps1:1` (활성 모드 요약 표시)
   - `scripts/monitoring_dashboard_template.html:1` (활성 모드/정책 배지/통계 반영)
+- **NEW 분석 도구**:
+  - `scripts/analyze_latency_warnings.py` (레이턴시 경고 분석)
+  - `scripts/analyze_task_durations.py` (단계별 duration 분해)
 
 ---
 
@@ -187,3 +217,15 @@
 - Config adds closed_loop_snapshot_period_sec to control closed-loop snapshot throttle (default 300s). Present in both configs/resonance_config.json and example.
 - Orchestrator pipeline reads the configured period and passes it to should_emit_closed_loop(period) to avoid over-logging snapshots.
 
+## Notes (2025-11-02)
+
+- Metrics JSON now includes `AGI.Policy.active` (configured active policy) for clearer visibility across reports/UI.
+- Monitoring dashboard shows both Configured Policy and Last Observed policy, and renders last reasons.
+- Config loader (`fdo_agi_repo/orchestrator/resonance_bridge.py`) auto-refreshes when `configs/resonance_config.json` mtime changes, reducing stale reads after quick toggles.
+ - Monitoring report surfaces `AGI.Config.Evaluation.min_quality` (pulled via Python loader) to validate config freshness end-to-end.
+
+### Tests Added (2025-11-02)
+
+- `fdo_agi_repo/tests/test_config_freshness.py`: Validates `get_app_config()` mtime-based reload, safe defaults when missing, and env overrides.
+- `fdo_agi_repo/tests/test_resonance_reload_and_throttle.py`: Validates resonance config mtime reload and `should_emit_closed_loop()` throttle behavior.
+- Run: `python -m pytest -q` (core suites only per pytest.ini).

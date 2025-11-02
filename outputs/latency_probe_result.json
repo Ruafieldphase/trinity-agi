@@ -1,0 +1,45 @@
+{
+    "canary":  {
+                   "request_count":  5,
+                   "success_count":  0,
+                   "error_count":  5,
+                   "error_rate_percent":  100,
+                   "mean_ms":  207.486,
+                   "p50_ms":  187.829,
+                   "p95_ms":  269.574,
+                   "p99_ms":  285.812,
+                   "status_code_hist":  {
+                                            "422":  5
+                                        }
+               },
+    "legacy":  {
+                   "request_count":  5,
+                   "success_count":  0,
+                   "error_count":  5,
+                   "error_rate_percent":  100,
+                   "mean_ms":  174.333,
+                   "p50_ms":  164.223,
+                   "p95_ms":  206.641,
+                   "p99_ms":  214.886,
+                   "status_code_hist":  {
+                                            "422":  5
+                                        }
+               },
+    "comparison":  {
+                       "status":  "fail",
+                       "thresholds":  {
+                                          "max_error_rate_delta_pct_points":  0.5,
+                                          "max_p95_latency_delta_percent":  10,
+                                          "min_success_rate_percent":  80
+                                      },
+                       "deltas":  {
+                                      "error_rate_delta_pct_points":  0,
+                                      "p95_latency_delta_percent":  30.455
+                                  },
+                       "success_rates":  {
+                                             "canary":  0,
+                                             "legacy":  0
+                                         }
+                   },
+    "measured_at":  "2025-11-02T07:31:19"
+}

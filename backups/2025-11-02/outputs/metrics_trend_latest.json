@@ -1,0 +1,53 @@
+{
+    "uptime":  {
+                   "schedulerPercent":  0,
+                   "opsManagerPercent":  100,
+                   "queuePercent":  100
+               },
+    "timeRange":  {
+                      "hours":  24,
+                      "actualHours":  0.57,
+                      "sampleCount":  10
+                  },
+    "generatedAt":  "2025-11-01T10:40:16.5454277+09:00",
+    "performance":  {
+                        "agiQuality":  null,
+                        "queueLatencyMs":  {
+                                               "min":  9,
+                                               "max":  43,
+                                               "count":  10,
+                                               "avg":  20.4
+                                           },
+                        "agiConfidence":  null,
+                        "agi2ndPassRate":  null
+                    },
+    "lumen":  {
+                  "cloudMs":  null,
+                  "localMs":  {
+                                  "min":  8,
+                                  "max":  15,
+                                  "count":  10,
+                                  "avg":  10.3
+                              },
+                  "gatewayMs":  {
+                                    "min":  224,
+                                    "max":  278,
+                                    "count":  10,
+                                    "avg":  251.3
+                                }
+              },
+    "system":  {
+                   "cpuPercent":  {
+                                      "min":  22.1,
+                                      "max":  49.2,
+                                      "count":  10,
+                                      "avg":  34.53
+                                  },
+                   "memoryPercent":  {
+                                         "min":  45.2,
+                                         "max":  47.8,
+                                         "count":  10,
+                                         "avg":  46.09
+                                     }
+               }
+}

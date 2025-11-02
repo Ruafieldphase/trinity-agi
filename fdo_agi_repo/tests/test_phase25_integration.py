@@ -8,11 +8,14 @@ import sys
 from pathlib import Path
 
 # RPA 모듈 추가
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # UTF-8 강제 설정
-from rpa.utf8_utils import force_utf8
-force_utf8()
+try:
+    from rpa.utf8_utils import force_utf8
+    force_utf8()
+except ImportError:
+    pass  # UTF-8 유틸리티가 없어도 테스트 진행
 
 
 async def test_youtube_learner():

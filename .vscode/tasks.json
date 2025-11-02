@@ -2,6 +2,295 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Morning: Kickoff (1h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/morning_kickoff.ps1",
+				"-Hours",
+				"1",
+				"-OpenHtml"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Morning: Kickoff + Status (1h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/morning_kickoff.ps1",
+				"-Hours",
+				"1",
+				"-OpenHtml",
+				"-WithStatus"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Morning: Kickoff (2h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/morning_kickoff.ps1",
+				"-Hours",
+				"2",
+				"-OpenHtml"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "End of Day: Backup",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/end_of_day_backup.ps1",
+				"-Note",
+				"VSCode Task"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Open: Monitoring Dashboard",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p='${workspaceFolder}/outputs/monitoring_dashboard_latest.html'; if (Test-Path $p) { Start-Process $p } else { Write-Host 'Dashboard not found. Run morning kickoff or generate report first.' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Resonance: Observe (ops-safety)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/toggle_resonance_mode.ps1",
+				"-Mode",
+				"observe",
+				"-Policy",
+				"ops-safety"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "silent", "panel": "shared" }
+		},
+		{
+			"label": "Resonance: Enforce (ops-safety)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/toggle_resonance_mode.ps1",
+				"-Mode",
+				"enforce",
+				"-Policy",
+				"ops-safety"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "silent", "panel": "shared" }
+		},
+		{
+			"label": "Resonance: Observe (quality-first)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/toggle_resonance_mode.ps1",
+				"-Mode",
+				"observe",
+				"-Policy",
+				"quality-first"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "silent", "panel": "shared" }
+		},
+		{
+			"label": "Resonance: Generate Sample Events",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/.venv/Scripts/python.exe') { & '${workspaceFolder}/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/run_sample_task.py' } else { python '${workspaceFolder}/scripts/run_sample_task.py' }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+		},
+		{
+			"label": "Policy Smoke: Enforce latency-first (1h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_policy_smoke.ps1",
+				"-Mode",
+				"enforce",
+				"-Policy",
+				"latency-first",
+				"-Hours",
+				"1",
+				"-OpenMd"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+		},
+		{
+			"label": "Policy Smoke: Observe quality-first (1h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_policy_smoke.ps1",
+				"-Mode",
+				"observe",
+				"-Policy",
+				"quality-first",
+				"-Hours",
+				"1",
+				"-OpenMd"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+		},
+		{
+			"label": "Monitoring: Regenerate report (1h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_monitoring_report.ps1",
+				"-Hours",
+				"1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+		},
+		{
+			"label": "Policy Smoke: Restore last config + report (1h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_policy_smoke.ps1",
+				"-Restore",
+				"-Hours",
+				"1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+		},
+		{
+			"label": "Latency: Summarize last task",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/.venv/Scripts/python.exe') { & '${workspaceFolder}/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/summarize_last_task_latency.py' } else { python '${workspaceFolder}/scripts/summarize_last_task_latency.py' }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+		},
+		{
+			"label": "Resonance: Quick Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/quick_resonance_status.ps1",
+				"-ShowLedger"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+		},
+		{
 			"label": "Original Data: Build Index (no open)",
 			"type": "shell",
 			"command": "powershell",

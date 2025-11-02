@@ -1,4 +1,4 @@
-﻿# Realtime Pipeline Summary
+# Realtime Pipeline Summary
 Generated at: 2025-11-01T16:53:05.895190  
 Window: last 24h  
 Metrics JSON: C:\workspace\agi\outputs\monitoring_metrics_latest.json (OK)\n

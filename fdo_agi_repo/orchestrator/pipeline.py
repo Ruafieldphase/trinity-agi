@@ -1,5 +1,6 @@
 from __future__ import annotations
 import uuid
+import os
 from typing import Dict, Any, List
 import time
 import sys
@@ -17,7 +18,7 @@ from .self_correction import rune_from_eval, evidence_gate_correction, is_eviden
 from .learning import adaptive_replan_with_learning
 from .meta_cognition import MetaCognitionSystem
 from .tool_registry import ToolRegistry
-from .config import is_corrections_enabled, get_corrections_config, get_evaluation_config
+from .config import is_corrections_enabled, get_corrections_config, get_evaluation_config, is_async_thesis_enabled
 
 # BQI 통합 (Phase 1)
 from scripts.rune.bqi_adapter import analyse_question
@@ -192,7 +193,69 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     # 타이밍 계측 및 단계별 이벤트 로깅
     t0 = time.perf_counter()
     append_ledger({"event": "thesis_start", "task_id": task.task_id})
-    out_thesis = run_thesis(task, plan, registry, conversation_context=context_prompt or "")
+
+    # Async Thesis (feature-flagged, 기본 비활성)
+    out_thesis = None  # type: ignore
+    antithesis_prep_context = None  # type: ignore
+    
+    # Check if parallel antithesis prep is enabled
+    parallel_anti_prep_enabled = False
+    try:
+        import yaml
+        _cfg_path = Path(__file__).parent.parent / "configs" / "app.yaml"
+        if _cfg_path.exists():
+            with open(_cfg_path, "r", encoding="utf-8") as _f:
+                _cfg = yaml.safe_load(_f)
+            parallel_anti_prep_enabled = _cfg.get("orchestration", {}).get("parallel_antithesis_prep", {}).get("enabled", False)
+    except Exception:
+        parallel_anti_prep_enabled = os.environ.get("PARALLEL_ANTITHESIS_PREP_ENABLED", "").lower() == "true"
+    
+    if is_async_thesis_enabled():
+        try:
+            from concurrent.futures import ThreadPoolExecutor
+            append_ledger({
+                "event": "thesis_async_enabled",
+                "task_id": task.task_id,
+            })
+            
+            # Phase 2: Parallel Antithesis Prep (optional)
+            if parallel_anti_prep_enabled:
+                append_ledger({
+                    "event": "parallel_antithesis_prep_enabled",
+                    "task_id": task.task_id
+                })
+                from fdo_agi_repo.orchestrator.parallel_antithesis import prepare_antithesis_context
+                
+                with ThreadPoolExecutor(max_workers=2) as _exec:
+                    # Future 1: Thesis 실행
+                    _thesis_future = _exec.submit(run_thesis, task, plan, registry, conversation_context=context_prompt or "")
+                    # Future 2: Antithesis 준비 (thesis_out 없이 가능한 부분)
+                    _prep_future = _exec.submit(prepare_antithesis_context, task, context_prompt or "")
+                    
+                    # 병렬 실행 완료 대기
+                    out_thesis = _thesis_future.result()
+                    antithesis_prep_context = _prep_future.result()
+                    
+                    append_ledger({
+                        "event": "parallel_antithesis_prep_done",
+                        "task_id": task.task_id
+                    })
+            else:
+                # 기존 Async Thesis만 (Antithesis 준비 병렬화 없음)
+                with ThreadPoolExecutor(max_workers=1) as _exec:
+                    _future = _exec.submit(run_thesis, task, plan, registry, conversation_context=context_prompt or "")
+                    out_thesis = _future.result()
+        except Exception as _async_ex:
+            append_ledger({
+                "event": "thesis_async_fallback",
+                "task_id": task.task_id,
+                "error": str(_async_ex)
+            })
+            out_thesis = run_thesis(task, plan, registry, conversation_context=context_prompt or "")
+            antithesis_prep_context = None  # Fallback 시 준비 컨텍스트 무효화
+    else:
+        out_thesis = run_thesis(task, plan, registry, conversation_context=context_prompt or "")
+
     t1 = time.perf_counter()
     append_ledger({
         "event": "thesis_end",
@@ -215,7 +278,22 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
 
     append_ledger({"event": "antithesis_start", "task_id": task.task_id})
     t2 = time.perf_counter()
-    out_anti   = run_antithesis(task, out_thesis, registry, conversation_context=context_prompt or "")
+    
+    # Use prepared context if available (Phase 2: Parallel Antithesis Prep)
+    if antithesis_prep_context is not None:
+        append_ledger({
+            "event": "antithesis_using_prep_context",
+            "task_id": task.task_id
+        })
+        from fdo_agi_repo.orchestrator.parallel_antithesis import run_antithesis_with_prep
+        out_anti = run_antithesis_with_prep(
+            task, out_thesis, registry,
+            conversation_context=context_prompt or "",
+            prep_context=antithesis_prep_context
+        )
+    else:
+        out_anti = run_antithesis(task, out_thesis, registry, conversation_context=context_prompt or "")
+    
     t3 = time.perf_counter()
     append_ledger({"event": "antithesis_end", "task_id": task.task_id, "duration_sec": float(t3 - t2)})
     # Autopoietic Loop: Unfolding end (after Antithesis)

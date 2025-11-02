@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 import os
 from functools import lru_cache
 from typing import Any, Dict
@@ -26,32 +26,45 @@ try:
     import vertexai
     _vx_project = os.getenv("VERTEX_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCP_PROJECT")
     _vx_location = os.getenv("VERTEX_LOCATION") or os.getenv("GCP_LOCATION") or os.getenv("GOOGLE_CLOUD_REGION")
-    _vx_api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
     if _vx_project and _vx_location:
-        if _vx_api_key:
-            vertexai.init(project=_vx_project, location=_vx_location, api_key=_vx_api_key)
-        else:
-            vertexai.init(project=_vx_project, location=_vx_location)
+        # 일부 버전의 vertexai.init은 api_key 매개변수를 지원하지 않으므로 보수적으로 기본 시그니처만 사용
+        vertexai.init(project=_vx_project, location=_vx_location)
     # else: skip init; downstream code can handle defaults or ADC
 except Exception:
     # Library not installed or init failure; allow downstream fallbacks
     pass
 
 _APP_CONFIG_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "configs", "app.yaml")
+_APP_CONFIG_CACHE = None  # simple in-process cache
+_APP_CONFIG_MTIME = None  # last known mtime
 
 
-@lru_cache(maxsize=1)
+# @lru_cache(maxsize=1)
+
 def get_app_config() -> Dict[str, Any]:
+    """Load app config with mtime-based freshness and safe defaults."""
+    global _APP_CONFIG_CACHE, _APP_CONFIG_MTIME
     path = _APP_CONFIG_PATH
+    try:
+        if (_APP_CONFIG_CACHE is not None) and os.path.exists(path):
+            cur = os.path.getmtime(path)
+            if (_APP_CONFIG_MTIME is not None) and (cur == _APP_CONFIG_MTIME):
+                return _APP_CONFIG_CACHE  # type: ignore[return-value]
+    except Exception:
+        pass
+
     if not os.path.exists(path):
-        # 기본값 반환 (파일 없을 때도 안전하게 동작)
-        return {
+        data: Dict[str, Any] = {
             "llm": {"enabled": False, "persona_overrides": {}},
             "corrections": {"enabled": True, "max_passes": 2},
         }
+        _APP_CONFIG_CACHE = data
+        _APP_CONFIG_MTIME = None
+        return data
+
     with open(path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f) or {}
-    # 합리적 기본값 보강 - LLM
+    # Defaults - LLM
     llm = data.get("llm", {})
     if "enabled" not in llm:
         llm["enabled"] = False
@@ -63,16 +76,20 @@ def get_app_config() -> Dict[str, Any]:
         llm["persona_overrides"] = {}
     data["llm"] = llm
 
-    # 합리적 기본값 보강 - 자기교정(corrections)
+    # Defaults - corrections
     corrections = data.get("corrections", {})
     if "enabled" not in corrections:
-        corrections["enabled"] = True  # 현 동작과 호환: 기본 on
+        corrections["enabled"] = True
     if "max_passes" not in corrections:
-        corrections["max_passes"] = 2  # 1차 + 추가 1회 재시도
+        corrections["max_passes"] = 2
     data["corrections"] = corrections
 
+    try:
+        _APP_CONFIG_MTIME = os.path.getmtime(path)
+    except Exception:
+        _APP_CONFIG_MTIME = None
+    _APP_CONFIG_CACHE = data
     return data
-
 
 def is_llm_enabled() -> bool:
     cfg = get_app_config()
@@ -94,7 +111,7 @@ def _env_to_bool(val: str) -> bool:
 
 
 def is_corrections_enabled() -> bool:
-    # 환경변수 우선 적용, 없으면 설정 파일 사용
+    # ?섍꼍蹂???곗꽑 ?곸슜, ?놁쑝硫??ㅼ젙 ?뚯씪 ?ъ슜
     env_val = os.environ.get("CORRECTIONS_ENABLED")
     if env_val is not None:
         try:
@@ -110,15 +127,15 @@ def get_corrections_config() -> Dict[str, Any]:
         "enabled": is_corrections_enabled(),
         "max_passes": int(cfg.get("max_passes", 2)),
     }
-    # 환경변수로 max_passes 오버라이드 지원 (선택)
+    # ?섍꼍蹂?섎줈 max_passes ?ㅻ쾭?쇱씠??吏??(?좏깮)
     env_mp = os.environ.get("CORRECTIONS_MAX_PASSES")
     if env_mp and env_mp.isdigit():
         out["max_passes"] = int(env_mp)
     return out
 
 def get_evaluation_config() -> Dict[str, Any]:
-    """평가 관련 설정: 최소 품질 임계값 등.
-    우선순위: 환경변수(EVAL_MIN_QUALITY) > 설정파일(evaluation.min_quality) > 기본값(0.6)
+    """?됯? 愿???ㅼ젙: 理쒖냼 ?덉쭏 ?꾧퀎媛???
+    ?곗꽑?쒖쐞: ?섍꼍蹂??EVAL_MIN_QUALITY) > ?ㅼ젙?뚯씪(evaluation.min_quality) > 湲곕낯媛?0.6)
     """
     cfg = get_app_config().get("evaluation", {})
     default_min_q = 0.6
@@ -129,3 +146,28 @@ def get_evaluation_config() -> Dict[str, Any]:
     except Exception:
         pass
     return {"min_quality": float(cfg.get("min_quality", default_min_q))}
+
+
+def is_async_thesis_enabled() -> bool:
+    """Async Thesis ?ㅽ뻾 ?щ? ?뚮옒洹?
+    ?곗꽑?쒖쐞: ?섍꼍蹂??ASYNC_THESIS_ENABLED) > ?ㅼ젙?뚯씪(orchestration.async_thesis.enabled) > 湲곕낯媛?False)
+    """
+    # 1) ?섍꼍蹂???곗꽑
+    env_val = os.environ.get("ASYNC_THESIS_ENABLED")
+    if env_val is not None:
+        try:
+            return _env_to_bool(env_val)
+        except Exception:
+            pass
+
+    # 2) ?ㅼ젙 ?뚯씪
+    try:
+        cfg = get_app_config()
+        orch = cfg.get("orchestration", {})
+        async_cfg = orch.get("async_thesis", {})
+        return bool(async_cfg.get("enabled", False))
+    except Exception:
+        return False
+
+
+

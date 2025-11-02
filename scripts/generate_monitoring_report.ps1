@@ -1337,11 +1337,58 @@ try {
         last      = if ($lastPolicy) { @{ mode = $lastPolicy.mode; policy = $lastPolicy.policy; reasons = $lastPolicy.reasons } } else { @{} }
         last_time = $lastPolTimeIso
     }
+    
+    # Also surface currently configured active policy from configs/resonance_config.json (or example)
+    try {
+        $cfgDir = Join-Path (Split-Path -Parent $PSScriptRoot) 'configs'
+        $primaryCfg = Join-Path $cfgDir 'resonance_config.json'
+        $exampleCfg = Join-Path $cfgDir 'resonance_config.example.json'
+        $cfgPath = if (Test-Path -LiteralPath $primaryCfg) { $primaryCfg } elseif (Test-Path -LiteralPath $exampleCfg) { $exampleCfg } else { $null }
+        if ($cfgPath) {
+            $cfgJson = Get-Content -LiteralPath $cfgPath -Raw | ConvertFrom-Json -ErrorAction Stop
+            $activePol = $null
+            if ($cfgJson.active_policy) { $activePol = [string]$cfgJson.active_policy }
+            elseif ($cfgJson.default_policy) { $activePol = [string]$cfgJson.default_policy }
+            if ($activePol) { $agiPolicy.active = $activePol }
+        }
+    } catch { }
     # Attach to metrics object in a safe way
     if (-not $agiMetrics) { $agiMetrics = @{} }
     $agiMetrics.Policy = $agiPolicy
+
+    # Derive last task latency (ms): prefer last policy observed.latency_ms, fallback to recent duration fields
+    $lastLatencyMs = $null
+    try {
+        if ($lastPolicy -and $lastPolicy.observed -and $lastPolicy.observed.latency_ms) {
+            $lastLatencyMs = [double]$lastPolicy.observed.latency_ms
+        }
+    } catch { $lastLatencyMs = $null }
+    if ($null -eq $lastLatencyMs) {
+        try {
+            $rev = $agiEvents | Sort-Object -Property ts -Descending
+            foreach ($ev in $rev) {
+                if ($ev.duration_ms) { $lastLatencyMs = [double]$ev.duration_ms; break }
+                elseif ($ev.duration_sec) { $lastLatencyMs = [double]$ev.duration_sec * 1000.0; break }
+                elseif ($ev.duration) { $lastLatencyMs = [double]$ev.duration * 1000.0; break }
+            }
+        } catch { $lastLatencyMs = $null }
+    }
+    try { $agiMetrics.LastTaskLatencyMs = $lastLatencyMs } catch { }
 }
 catch { }
+
+# ===== Read Evaluation Config (min_quality) via Python loader (best-effort) =====
+$evalMinQ = $null
+try {
+    $pyCmd = "import json; from fdo_agi_repo.orchestrator.config import get_evaluation_config as g; print(json.dumps(g()))"
+    $pyOut = & python -c $pyCmd 2>$null
+    if ($LASTEXITCODE -eq 0 -and $pyOut) {
+        try {
+            $evObj = $pyOut | ConvertFrom-Json -ErrorAction Stop
+            if ($evObj.min_quality -ne $null) { $evalMinQ = [double]$evObj.min_quality }
+        } catch {}
+    }
+} catch {}
 
 # ===== Extract Closed-loop Snapshot (from AGI Ledger) =====
 try {
@@ -1421,11 +1468,24 @@ if ($agiMetrics.Policy) {
         $pc = $agiMetrics.Policy.counts
         $lastMode = if ($agiMetrics.Policy.last.mode) { $agiMetrics.Policy.last.mode } else { 'n/a' }
         $lastPol = if ($agiMetrics.Policy.last.policy) { $agiMetrics.Policy.last.policy } else { 'n/a' }
-        $reportLines += "  Resonance Policy: mode=$lastMode policy=$lastPol | allow=$($pc.allow) warn=$($pc.warn) block=$($pc.block)"
+        $activePol = if ($agiMetrics.Policy.active) { $agiMetrics.Policy.active } else { 'n/a' }
+        $reportLines += "  Resonance Policy: mode=$lastMode active=$activePol last=$lastPol | allow=$($pc.allow) warn=$($pc.warn) block=$($pc.block)"
         if ($pc.block -gt 0) {
             $reportLines += "  !!! POLICY BLOCKS DETECTED: $($pc.block) in window !!!"
         }
     } catch { }
+}
+
+# Show last task latency (if available)
+if ($agiMetrics.LastTaskLatencyMs) {
+    try {
+        $reportLines += ("  Last Task: {0}ms" -f [int]$agiMetrics.LastTaskLatencyMs)
+    } catch { }
+}
+
+# Show Evaluation Config summary (if available)
+if ($evalMinQ -ne $null) {
+    $reportLines += "  AGI Eval: min_quality=$evalMinQ"
 }
 
 # Add Historical Comparison if available
@@ -2009,12 +2069,14 @@ $metrics = @{
         PersonaTimeline    = if ($agiMetrics.PersonaTimeline) { $agiMetrics.PersonaTimeline } else { if ($pythonMetrics.persona_timeline) { $pythonMetrics.persona_timeline } else { @{} } }
         Thresholds         = $agiThresholds
         Health             = $agiHealthObj
+        LastTaskLatencyMs  = if ($agiMetrics.LastTaskLatencyMs) { [double]$agiMetrics.LastTaskLatencyMs } else { $null }
         Policy             = if ($agiMetrics.Policy) { $agiMetrics.Policy } else { @{} }
         ClosedLoop         = if ($agiMetrics.ClosedLoop) { $agiMetrics.ClosedLoop } else { @{} }
         Timeline           = if ($agiMetrics.Timeline) { $agiMetrics.Timeline } else { @() }
         TimeWindow         = if ($agiMetrics.TimeWindow) { $agiMetrics.TimeWindow } else { $Hours }
         CollectionTime     = if ($agiMetrics.CollectionTimestamp) { $agiMetrics.CollectionTimestamp } else { (Get-Date).ToString('s') }
         EvidenceCorrection = if ($agiMetrics.EvidenceCorrection) { $agiMetrics.EvidenceCorrection } else { @{} }
+        Config             = @{ Evaluation = @{ min_quality = $evalMinQ } }
         Alerts             = @{
             LowQuality      = ($null -ne $agiMetrics.AvgQuality -and $agiMetrics.AvgQuality -lt [double]$agiThresholds.min_quality)
             LowSuccessRate  = ($null -ne $agiMetrics.SuccessRate -and $agiMetrics.SuccessRate -lt [double]$agiThresholds.min_success_rate_percent)

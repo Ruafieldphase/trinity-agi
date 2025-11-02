@@ -1,0 +1,55 @@
+{
+  "timestamp": "2025-11-01T11:54:19.273737",
+  "overall_health": "UNKNOWN",
+  "effective_availability": 0.0,
+  "channels": {
+    "Local": {
+      "name": "Local",
+      "health": "DEGRADED",
+      "availability": 100,
+      "mean_latency_ms": 978.28,
+      "p95_latency_ms": 2076,
+      "trend_direction": "IMPROVING",
+      "baseline_alerts": 0,
+      "adaptive_alerts": 0,
+      "spikes": 12,
+      "routing_priority": 3,
+      "optional": false
+    },
+    "Cloud": {
+      "name": "Cloud",
+      "health": "DEGRADED",
+      "availability": 100,
+      "mean_latency_ms": 273.85,
+      "p95_latency_ms": 302,
+      "trend_direction": "STABLE",
+      "baseline_alerts": 0,
+      "adaptive_alerts": 0,
+      "spikes": 17,
+      "routing_priority": 3,
+      "optional": false
+    },
+    "Gateway": {
+      "name": "Gateway",
+      "health": "DEGRADED",
+      "availability": 99.52,
+      "mean_latency_ms": 261.49,
+      "p95_latency_ms": 252,
+      "trend_direction": "STABLE",
+      "baseline_alerts": 0,
+      "adaptive_alerts": 0,
+      "spikes": 16,
+      "routing_priority": 3,
+      "optional": false
+    }
+  },
+  "routing": {
+    "recommended_primary": "Gateway",
+    "recommended_fallback": "Cloud"
+  },
+  "recovery": {
+    "needed": true,
+    "reason": "Primary channel Gateway is DEGRADED"
+  },
+  "monitoring_metrics_path": "C:\\workspace\\agi\\outputs\\monitoring_metrics_latest.json"
+}

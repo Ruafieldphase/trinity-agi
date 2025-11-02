@@ -88,8 +88,13 @@
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Closed-loop Snapshot <small class="text-muted ms-2" id="clsLastTime">--</small></h5>
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0 d-inline">Closed-loop Snapshot</h5>
+                            <small class="text-muted ms-2" id="clsLastTime">--</small>
+                            <small class="text-muted ms-2" id="clsStatusMsg"></small>
+                            <span class="spinner-border spinner-border-sm text-light ms-2" role="status" aria-hidden="true" id="clsSpinner" style="display:none;"></span>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row text-center">
@@ -327,8 +332,15 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Resonance Policy <small class="text-muted ms-2" id="policyLastTime">--</small></h5>
-                        <span class="badge bg-secondary" id="policyMode">mode: --</span>
+                        <div>
+                            <h5 class="mb-0 d-inline">Resonance Policy</h5>
+                            <small class="text-muted ms-2" id="policyLastTime">--</small>
+                            <small class="text-muted ms-2" id="policyStatusMsg"></small>
+                        </div>
+                        <div>
+                            <span class="spinner-border spinner-border-sm text-light me-2" role="status" aria-hidden="true" id="policySpinner" style="display:none;"></span>
+                            <span class="badge bg-secondary" id="policyMode">mode: --</span>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="row text-center">
@@ -347,8 +359,10 @@
                         </div>
                         <hr />
                         <div>
-                            <div class="metric-label">Active Policy</div>
-                            <div id="policyName" class="mb-2">--</div>
+                            <div class="metric-label">Configured Policy</div>
+                            <div id="policyActive" class="mb-2">--</div>
+                            <div class="metric-label">Last Observed</div>
+                            <div id="policyObserved" class="mb-2">--</div>
                             <div class="metric-label">Last Reasons</div>
                             <pre id="policyReasons" class="mb-0" style="white-space: pre-wrap; background:#f3f4f6; padding: 0.75rem; border-radius: 8px;">--</pre>
                         </div>
@@ -424,9 +438,15 @@
         // Load Closed-loop Snapshot from metrics JSON
         async function loadClosedLoopSnapshot() {
             try {
+                const sp = document.getElementById('clsSpinner'); if (sp) sp.style.display = '';
                 let res = await fetch('../outputs/monitoring_metrics_latest.json').catch(() => null);
                 if (!res || !res.ok) { res = await fetch('outputs/monitoring_metrics_latest.json').catch(() => null); }
-                if (!res || !res.ok) return;
+                if (!res || !res.ok) {
+                    const m = document.getElementById('clsStatusMsg');
+                    if (m) m.textContent = 'no data (fetch failed)';
+                    if (sp) sp.style.display = 'none';
+                    return;
+                }
                 const data = await res.json();
                 const cls = (data && data.AGI && data.AGI.ClosedLoop) ? data.AGI.ClosedLoop : {};
                 const rt = cls.realtime || {};
@@ -438,6 +458,12 @@
                 setText('clsSimRes', sim.last_resonance);
                 setText('clsSimEntropy', sim.last_entropy);
                 if (cls.last_time) { setText('clsLastTime', cls.last_time); }
+                const m = document.getElementById('clsStatusMsg');
+                if (m) {
+                    const anyVal = (rt.strength ?? rt.coherence ?? rt.phase ?? sim.last_resonance ?? sim.last_entropy);
+                    m.textContent = anyVal ? '' : 'no snapshot in window';
+                }
+                if (sp) sp.style.display = 'none';
             } catch {}
         }
         window.addEventListener('DOMContentLoaded', loadClosedLoopSnapshot);
@@ -447,11 +473,17 @@
         // Lightweight fetch to populate Resonance Policy from metrics JSON
         async function loadPolicySummary() {
             try {
+                const sp = document.getElementById('policySpinner'); if (sp) sp.style.display = '';
                 let res = await fetch('../outputs/monitoring_metrics_latest.json').catch(() => null);
                 if (!res || !res.ok) {
                     res = await fetch('outputs/monitoring_metrics_latest.json').catch(() => null);
                 }
-                if (!res || !res.ok) return;
+                if (!res || !res.ok) {
+                    const m = document.getElementById('policyStatusMsg');
+                    if (m) m.textContent = 'no data (fetch failed)';
+                    if (sp) sp.style.display = 'none';
+                    return;
+                }
                 const data = await res.json();
                 const policy = (data && data.AGI && data.AGI.Policy) ? data.AGI.Policy : {};
                 const counts = policy.counts || { allow: 0, warn: 0, block: 0 };
@@ -463,7 +495,8 @@
                 setText('policyBlock', counts.block ?? 0);
                 const modeText = `mode: ${last.mode ?? '--'}`;
                 setText('policyMode', modeText);
-                setText('policyName', `${last.policy ?? '--'}`);
+                setText('policyActive', `${policy.active ?? '--'}`);
+                setText('policyObserved', `${last.policy ?? '--'}`);
                 const reasons = Array.isArray(last.reasons) ? last.reasons.join('\n') : (last.reasons ?? '--');
                 setText('policyReasons', reasons || '--');
                 if (policy.last_time) { setText('policyLastTime', policy.last_time); }
@@ -480,6 +513,12 @@
                         badge.classList.add('bg-success');
                     }
                 }
+                const m = document.getElementById('policyStatusMsg');
+                if (m) {
+                    const total = (counts.allow ?? 0) + (counts.warn ?? 0) + (counts.block ?? 0);
+                    m.textContent = total > 0 ? '' : 'no policy events in window';
+                }
+                if (sp) sp.style.display = 'none';
             } catch {}
         }
         window.addEventListener('DOMContentLoaded', loadPolicySummary);

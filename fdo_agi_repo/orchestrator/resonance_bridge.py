@@ -17,6 +17,8 @@ except ModuleNotFoundError:
 
 _RESONANCE_STORE: Optional[ResonanceStore] = None
 _RESONANCE_CONFIG: Optional[Dict[str, Any]] = None
+_RESONANCE_CONFIG_MTIME: Optional[float] = None
+_RESONANCE_CONFIG_PATH: Optional[Path] = None
 _LAST_SNAPSHOT_TS: Optional[float] = None
 
 
@@ -44,16 +46,30 @@ def load_resonance_config(force_reload: bool = False) -> Dict[str, Any]:
 
     Returns sane defaults when none found or invalid.
     """
-    global _RESONANCE_CONFIG
+    global _RESONANCE_CONFIG, _RESONANCE_CONFIG_MTIME, _RESONANCE_CONFIG_PATH
     if _RESONANCE_CONFIG is not None and not force_reload:
-        return _RESONANCE_CONFIG
+        # If we have a cached path, check mtime and reload when changed
+        try:
+            if _RESONANCE_CONFIG_PATH is not None and _RESONANCE_CONFIG_PATH.exists():
+                current_mtime = _RESONANCE_CONFIG_PATH.stat().st_mtime
+                if _RESONANCE_CONFIG_MTIME is not None and current_mtime == _RESONANCE_CONFIG_MTIME:
+                    return _RESONANCE_CONFIG
+        except Exception:
+            # If mtime check fails, fall back to returning cache
+            return _RESONANCE_CONFIG
 
     import os
     cfg_path = os.environ.get("RESONANCE_CONFIG")
     if cfg_path:
-        cfg = _load_json(Path(cfg_path))
+        path_obj = Path(cfg_path)
+        cfg = _load_json(path_obj)
         if isinstance(cfg, dict):
             _RESONANCE_CONFIG = cfg
+            _RESONANCE_CONFIG_PATH = path_obj
+            try:
+                _RESONANCE_CONFIG_MTIME = path_obj.stat().st_mtime
+            except Exception:
+                _RESONANCE_CONFIG_MTIME = None
             return cfg
 
     # Default locations
@@ -61,6 +77,8 @@ def load_resonance_config(force_reload: bool = False) -> Dict[str, Any]:
     primary = base / "resonance_config.json"
     example = base / "resonance_config.example.json"
 
+    # Prefer primary; remember which path was chosen for mtime tracking
+    chosen_path = primary if primary.exists() else (example if example.exists() else None)
     cfg = _load_json(primary) or _load_json(example) or {}
 
     # Defaults
@@ -80,6 +98,11 @@ def load_resonance_config(force_reload: bool = False) -> Dict[str, Any]:
         cfg["closed_loop_snapshot_period_sec"] = 300
 
     _RESONANCE_CONFIG = cfg
+    _RESONANCE_CONFIG_PATH = chosen_path
+    try:
+        _RESONANCE_CONFIG_MTIME = chosen_path.stat().st_mtime if chosen_path else None
+    except Exception:
+        _RESONANCE_CONFIG_MTIME = None
     return cfg
 
 

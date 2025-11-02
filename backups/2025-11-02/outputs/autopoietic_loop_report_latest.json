@@ -1,0 +1,140 @@
+{
+  "window_hours": 24,
+  "generated_at": "2025-11-01T21:49:56.888091",
+  "counts": {
+    "tasks_total": 23,
+    "complete_loops": 9,
+    "incomplete_loops": 14,
+    "evidence_gate_triggered": 0,
+    "second_pass": 0
+  },
+  "durations_avg_sec": {
+    "folding": 7.07944482222231,
+    "unfolding": 9.927082911111079,
+    "integration": 15.66078182222226,
+    "symmetry": 0.006265977777830913
+  },
+  "durations_p95_sec": {
+    "folding": 10.299469499999987,
+    "unfolding": 15.122814099999687,
+    "integration": 20.153852400000005,
+    "symmetry": 0.027424599999903876
+  },
+  "rates_pct": {
+    "loop_complete_rate": 39.130434782608695,
+    "evidence_gate_trigger_rate": 0.0,
+    "second_pass_rate": 0.0
+  },
+  "quality": {
+    "final_quality_avg": 0.85,
+    "final_evidence_ok_rate": 100.0
+  },
+  "samples": [
+    {
+      "task_id": "bqi-test-001",
+      "phases": {
+        "folding": 5.068592600000102,
+        "unfolding": 8.637683299999935,
+        "integration": 16.472026899999946,
+        "symmetry": 0.027424599999903876
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    },
+    {
+      "task_id": "bqi-test-002",
+      "phases": {
+        "folding": 5.561184099999991,
+        "unfolding": 8.65596510000023,
+        "integration": 17.887862099999893,
+        "symmetry": 0.003001099999892176
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    },
+    {
+      "task_id": "test-phase2-1",
+      "phases": {
+        "folding": 9.42308120000007,
+        "unfolding": 9.717200999999932,
+        "integration": 16.53518609999992,
+        "symmetry": 0.0030018000002201006
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    },
+    {
+      "task_id": "test-phase2-2",
+      "phases": {
+        "folding": 8.72923660000015,
+        "unfolding": 9.063110399999914,
+        "integration": 14.81029290000015,
+        "symmetry": 0.004114299999855575
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    },
+    {
+      "task_id": "integration_test_1761944629",
+      "phases": {
+        "folding": 10.299469499999987,
+        "unfolding": 7.833322699999826,
+        "integration": 12.077032200000076,
+        "symmetry": 0.0034582000000682456
+      },
+      "context_count": 0,
+      "citations_thesis": 3,
+      "citations_synthesis": 6,
+      "evidence_gate_triggered": false,
+      "second_pass": false,
+      "final_quality": 0.85,
+      "final_evidence_ok": true
+    }
+  ],
+  "policy": {
+    "counts": {
+      "allow": 0,
+      "warn": 3,
+      "block": 0
+    },
+    "last": {
+      "mode": "observe",
+      "policy": "quality-first",
+      "reasons": [
+        "latency 23234ms > max_latency_ms 8000ms"
+      ]
+    }
+  },
+  "closed_loop": {
+    "resonance_simulator": {
+      "summary": null,
+      "last_resonance": null,
+      "last_entropy": null
+    },
+    "realtime_resonance": {
+      "strength": null,
+      "coherence": null,
+      "phase": null
+    }
+  }
+}
