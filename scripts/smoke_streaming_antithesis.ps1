@@ -16,7 +16,8 @@ Write-Host "Mode: $Mode" -ForegroundColor Yellow
 if ($Mode -eq "baseline") {
     $env:ANTITHESIS_STREAMING = "false"
     Write-Host "ANTITHESIS_STREAMING=false (Baseline)" -ForegroundColor Gray
-} else {
+}
+else {
     $env:ANTITHESIS_STREAMING = "true"
     Write-Host "ANTITHESIS_STREAMING=true (Streaming)" -ForegroundColor Green
 }

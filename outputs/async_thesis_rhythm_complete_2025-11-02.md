@@ -531,6 +531,7 @@ else:
 ```
 
 **메트릭 기록**:
+
 - `ttft_sec`: Time To First Token
 - `perceived_improvement_pct`: Perceived Latency 개선율
 
@@ -544,6 +545,7 @@ else:
 | Streaming | 8.37s | 0.80s | **90.5%** ✅ |
 
 **핵심 성과**:
+
 - ✅ **90.5% Perceived Improvement** (목표 60-70% 초과!)
 - ✅ TTFT 0.80s (빠른 첫 응답)
 - ✅ Thesis와 동일 패턴 (일관성)
@@ -578,6 +580,7 @@ else:
 **변경 파일**: `fdo_agi_repo/personas/synthesis.py`
 
 **핵심 코드**:
+
 ```python
 use_streaming = os.environ.get("SYNTHESIS_STREAMING", "true").lower() == "true"
 
@@ -600,6 +603,7 @@ if use_streaming:
 | Streaming | 12.53s | 0.86s | **93.2%** ✅ |
 
 **핵심 성과**:
+
 - ✅ **93.2% Perceived Improvement** (최고 기록!)
 - ✅ TTFT 0.86s
 - ✅ **삼위일체 완성** (Thesis/Antithesis/Synthesis 모두 Streaming)

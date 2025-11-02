@@ -792,6 +792,207 @@ class MetricsCollector:
                 'error': str(e)[:100],
             }
 
+    def get_information_flow_score(self, hours: float = 1.0) -> Dict[str, Any]:
+        """정보이론 기반 AI 리듬 분석
+        
+        기존 메트릭을 활용하여:
+        - 엔트로피 (패턴 다양성)
+        - 상호정보량 (맥락 활용도)  
+        - 채널 품질 (SNR)
+        를 계산하여 "흐름" 상태 진단
+        
+        Args:
+            hours: 분석 시간 윈도우
+            
+        Returns:
+            flow_score: 0.0-1.0 (흐름 건강도)
+            entropy: 0.0-1.0 (패턴 다양성)
+            mutual_info: 0.0-1.0 (맥락 활용도)
+            channel_quality: 0.0-1.0 (신호 품질)
+            diversity: 0.0-1.0 (행동 다양성)
+            recommendation: 권장사항
+        """
+        import math
+        
+        # 기존 메트릭 활용
+        metrics = self.get_realtime_metrics(hours=hours)
+        
+        # 1. 엔트로피 계산 (패턴 다양성)
+        entropy_score = self._calculate_entropy(metrics)
+        
+        # 2. 상호정보량 (맥락 활용도)
+        mutual_info = self._calculate_mutual_information(metrics)
+        
+        # 3. 채널 품질 (SNR: Signal-to-Noise Ratio)
+        channel_quality = self._calculate_channel_quality(metrics)
+        
+        # 4. 패턴 다양성 (행동 분포)
+        diversity = self._calculate_pattern_diversity(metrics)
+        
+        # 종합 흐름 점수
+        flow_score = (
+            entropy_score * 0.3 +
+            mutual_info * 0.3 +
+            channel_quality * 0.2 +
+            diversity * 0.2
+        )
+        
+        # 권장사항 생성
+        recommendation = self._generate_flow_recommendation(
+            flow_score, entropy_score, mutual_info, diversity
+        )
+        
+        return {
+            'flow_score': round(flow_score, 3),
+            'components': {
+                'entropy': round(entropy_score, 3),
+                'mutual_info': round(mutual_info, 3),
+                'channel_quality': round(channel_quality, 3),
+                'diversity': round(diversity, 3),
+            },
+            'status': 'flowing' if flow_score > 0.6 else 'stagnant' if flow_score < 0.4 else 'moderate',
+            'recommendation': recommendation,
+            'timestamp': datetime.now().isoformat(),
+        }
+    
+    def _calculate_entropy(self, metrics: Dict[str, Any]) -> float:
+        """엔트로피 계산 (패턴 다양성)
+        
+        낮은 엔트로피 = 예측 가능 (고인 물)
+        높은 엔트로피 = 다양함 (흐르는 물)
+        """
+        import math
+        
+        # Persona 사용 패턴 분석
+        personas = metrics.get('persona_performance', {})
+        if not personas:
+            return 0.5  # 중립
+        
+        # 각 persona의 호출 횟수
+        counts = [p.get('total_calls', 0) for p in personas.values()]
+        total = sum(counts)
+        if total == 0:
+            return 0.5
+        
+        # Shannon Entropy
+        entropy = 0.0
+        for count in counts:
+            if count > 0:
+                p = count / total
+                entropy -= p * math.log2(p)
+        
+        # Normalize (0-1)
+        max_entropy = math.log2(len(personas)) if len(personas) > 1 else 1.0
+        normalized = entropy / max_entropy if max_entropy > 0 else 0.5
+        
+        return min(1.0, max(0.0, normalized))
+    
+    def _calculate_mutual_information(self, metrics: Dict[str, Any]) -> float:
+        """상호정보량 계산 (맥락 활용도)
+        
+        높은 상호정보량 = 맥락에 잘 반응
+        낮은 상호정보량 = 맥락 무시
+        """
+        # 성공률과 Persona의 상관관계
+        personas = metrics.get('persona_performance', {})
+        if not personas or len(personas) < 2:
+            return 0.5
+        
+        # 각 Persona의 성공률 차이가 크면 맥락 의존적
+        success_rates = [p.get('success_rate', 0.5) for p in personas.values()]
+        if not success_rates:
+            return 0.5
+        
+        mean = sum(success_rates) / len(success_rates)
+        variance = sum((x - mean) ** 2 for x in success_rates) / len(success_rates)
+        std_dev = variance ** 0.5
+        
+        # 정규화 (높은 분산 = 맥락 의존적)
+        normalized = min(1.0, std_dev * 2)  # 0-0.5 범위를 0-1로 확장
+        
+        return normalized
+    
+    def _calculate_channel_quality(self, metrics: Dict[str, Any]) -> float:
+        """채널 품질 (SNR) 계산
+        
+        높은 품질 = 낮은 에러율, 높은 성공률
+        낮은 품질 = 높은 에러율, 불안정
+        """
+        # Persona별 평균 성공률
+        personas = metrics.get('persona_performance', {})
+        if not personas:
+            return 0.5
+        
+        success_rates = [p.get('success_rate', 0.0) for p in personas.values()]
+        if not success_rates:
+            return 0.5
+        
+        avg_success = sum(success_rates) / len(success_rates)
+        return avg_success  # 이미 0-1 범위
+    
+    def _calculate_pattern_diversity(self, metrics: Dict[str, Any]) -> float:
+        """패턴 다양성 계산
+        
+        높은 다양성 = 여러 패턴 사용
+        낮은 다양성 = 한 패턴에 편향
+        """
+        personas = metrics.get('persona_performance', {})
+        if not personas:
+            return 0.5
+        
+        # Gini 계수 역수 (1 - Gini)
+        counts = sorted([p.get('total_calls', 0) for p in personas.values()], reverse=True)
+        n = len(counts)
+        total = sum(counts)
+        
+        if total == 0 or n == 0:
+            return 0.5
+        
+        gini_sum = 0
+        for i, count in enumerate(counts):
+            gini_sum += (n - i) * count
+        
+        gini = (2 * gini_sum) / (n * total) - (n + 1) / n
+        diversity = 1.0 - gini
+        
+        return min(1.0, max(0.0, diversity))
+    
+    def _generate_flow_recommendation(
+        self, 
+        flow_score: float,
+        entropy: float,
+        mutual_info: float,
+        diversity: float
+    ) -> str:
+        """흐름 상태 기반 권장사항 생성"""
+        
+        if flow_score > 0.7:
+            return "✅ Optimal flow state. Continue current rhythm."
+        
+        issues = []
+        
+        if entropy < 0.3:
+            issues.append("Low entropy (pattern repetition)")
+        
+        if mutual_info < 0.3:
+            issues.append("Low context utilization")
+        
+        if diversity < 0.3:
+            issues.append("Low pattern diversity")
+        
+        if issues:
+            action = "Consider: "
+            if "pattern" in str(issues):
+                action += "Explore new approaches. "
+            if "context" in str(issues):
+                action += "Increase contextual awareness. "
+            if "diversity" in str(issues):
+                action += "Vary action patterns. "
+            
+            return f"⚠️ Flow issues detected: {', '.join(issues)}. {action}"
+        
+        return "🔄 Moderate flow. Room for improvement in pattern variation."
+
 
 def main():
     """CLI 인터페이스 - JSON 출력"""
@@ -823,3 +1024,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
