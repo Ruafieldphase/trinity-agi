@@ -6,6 +6,30 @@
 ![CI](https://github.com/Ruafieldphase/agi/actions/workflows/ci.yml/badge.svg)
 ![PR Template Check](https://github.com/Ruafieldphase/agi/actions/workflows/check_pr_template.yml/badge.svg)
 
+### 🛠️ 개발자 도구
+
+**로컬 CI 검증** (푸시 전 필수):
+
+```powershell
+# 빠른 검증 (~14초)
+.\scripts\local_ci_check.ps1 -Fast
+
+# 전체 검증 (~23초)
+.\scripts\local_ci_check.ps1
+```
+
+**VS Code Tasks**: `Ctrl+Shift+P` → `Tasks: Run Task`
+
+- `Dev: Local CI Check (Fast)` - 빠른 검증
+- `Dev: Local CI Check (Full)` - 전체 검증
+
+**Pre-commit Hooks** (선택적):
+
+```powershell
+pip install pre-commit
+pre-commit install
+```
+
 ---
 
 ## 🎯 **NEW!** Original Data Phase 4 완료 (2025-11-01)
