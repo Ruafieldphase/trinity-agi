@@ -63,20 +63,42 @@ def run_antithesis(task: TaskSpec, thesis_out: PersonaOutput, tools, conversatio
     user_prompt = f"검토할 제안:\n---\n{thesis_comp}\n---\n\n요구사항: 제안의 근거, 실행가능성, 산출물 경로의 적절성을 검증하고, 논리적 비약이나 빠진 부분을 지적하여 보강할 점을 제시하세요."
 
     # 2. Gemini LLM 호출 (Google AI Studio API)
+    # Streaming 옵션 (환경변수로 제어)
+    use_streaming = os.environ.get("ANTITHESIS_STREAMING", "true").lower() == "true"
+    
     summary = ""
     err_text = None
+    ttft = None  # Time To First Token
     t_llm0 = time.perf_counter()
+    
     try:
         model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(f"{system_prompt}\n\n{user_prompt}")
-        summary = f"[ANTITHESIS] 비판 결과\n{response.text}"
+        prompt = f"{system_prompt}\n\n{user_prompt}"
+        
+        if use_streaming:
+            # Streaming: 첫 토큰 빠른 반환
+            chunks = []
+            response = model.generate_content(prompt, stream=True)
+            for chunk in response:
+                if ttft is None:
+                    ttft = time.perf_counter() - t_llm0
+                if hasattr(chunk, 'text'):
+                    chunks.append(chunk.text)
+            summary = f"[ANTITHESIS] 비판 결과\n{''.join(chunks)}"
+        else:
+            # Baseline: 전통적 방식
+            response = model.generate_content(prompt)
+            summary = f"[ANTITHESIS] 비판 결과\n{response.text}"
+            
     except Exception as e:
         err_text = f"{type(e).__name__}: {e}"
         # LLM 호출 실패 시, 기존 placeholder 로직으로 폴백
         summary = _heuristic_critique(thesis_out)
 
     t_llm1 = time.perf_counter()
-    append_ledger({
+    
+    # Ledger 기록
+    log_entry = {
         "event": "persona_llm_run",
         "task_id": task.task_id,
         "persona": "antithesis",
@@ -85,8 +107,17 @@ def run_antithesis(task: TaskSpec, thesis_out: PersonaOutput, tools, conversatio
         "duration_sec": float(t_llm1 - t_llm0),
         "ok": bool(bool(summary) and not err_text),
         "error": err_text,
-        "prompt_chars": len(system_prompt) + len(user_prompt)
-    })
+        "prompt_chars": len(system_prompt) + len(user_prompt),
+        "streaming": use_streaming
+    }
+    
+    # TTFT 메트릭 추가 (streaming 시에만)
+    if use_streaming and ttft is not None:
+        log_entry["ttft_sec"] = float(ttft)
+        perceived_improvement = ((t_llm1 - t_llm0 - ttft) / (t_llm1 - t_llm0)) * 100
+        log_entry["perceived_improvement_pct"] = float(perceived_improvement)
+    
+    append_ledger(log_entry)
 
     # 3. PersonaOutput 반환
     return PersonaOutput(
