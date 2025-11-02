@@ -101,6 +101,7 @@ $env:CHATOPS_SAY = "good morning"
 ### 구현 위치
 
 1. **Intent 매칭**: `scripts/chatops_intent.py`
+
    ```python
    # Morning Kickoff
    if re.search(r"(좋은\s*아침|굿\s*모닝|good\s*morning|아침이야)", u):
@@ -108,6 +109,7 @@ $env:CHATOPS_SAY = "good morning"
    ```
 
 2. **Action 핸들러**: `scripts/chatops_router.ps1`
+
    ```powershell
    function Start-MorningKickoff {
        # Morning Kickoff 실행 로직
@@ -115,6 +117,7 @@ $env:CHATOPS_SAY = "good morning"
    ```
 
 3. **라우팅**: `chatops_router.ps1` switch 문
+
    ```powershell
    '^morning_kickoff$' {
        Info '[Action] 🌅 Morning Kickoff'

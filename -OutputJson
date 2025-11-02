@@ -7,7 +7,7 @@
                     "Failed":  0,
                     "PassRate":  90.9
                 },
-    "Timestamp":  "2025-11-02 22:55:22",
+    "Timestamp":  "2025-11-02 22:58:13",
     "Checks":  {
                    "Cloud AI API":  {
                                         "Status":  "OK",
@@ -25,7 +25,7 @@
                                         },
                    "Lumen Gateway":  {
                                          "Status":  "OK",
-                                         "Message":  "Response in 177ms",
+                                         "Message":  "Response in 195ms",
                                          "Details":  {
 
                                                      }
@@ -46,7 +46,7 @@
                                     },
                    "LM Studio Inference":  {
                                                "Status":  "OK",
-                                               "Message":  "Response in 4498ms",
+                                               "Message":  "Response in 3587ms",
                                                "Details":  {
 
                                                            }

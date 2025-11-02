@@ -69,10 +69,12 @@
     - Handler: `scripts/chatops_router.ps1` → `Start-MorningKickoff` 함수
     - Task: `.vscode/tasks.json` → "ChatOps: 좋은 아침 🌅"
   - **사용 예**:
+
     ```powershell
     $env:CHATOPS_SAY = "좋은 아침이야"
     .\scripts\chatops_router.ps1
     ```
+
   - **자동 vs 수동**:
     - 자동: 매일 10:00 (Scheduled Task)
     - 수동: "좋은 아침이야" (원하는 시간에)

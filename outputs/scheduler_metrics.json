@@ -150,3 +150,59 @@
                     "memory_usage":  46.3
                 }
 }
+{
+    "timestamp":  "2025-11-02 22:58:54",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:58:53",
+                    "cpu_load":  35,
+                    "memory_usage":  47.5
+                }
+}
+{
+    "timestamp":  "2025-11-02 22:59:56",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:59:55",
+                    "cpu_load":  43,
+                    "memory_usage":  46.3
+                }
+}
+{
+    "timestamp":  "2025-11-02 23:01:53",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 23:00:57",
+                    "cpu_load":  15,
+                    "memory_usage":  46.4
+                }
+}
+{
+    "timestamp":  "2025-11-02 23:02:55",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 23:02:54",
+                    "cpu_load":  6,
+                    "memory_usage":  46.3
+                }
+}
+{
+    "timestamp":  "2025-11-02 23:03:57",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 23:03:56",
+                    "cpu_load":  47,
+                    "memory_usage":  46.8
+                }
+}
+{
+    "timestamp":  "2025-11-02 23:04:59",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 23:04:58",
+                    "cpu_load":  28,
+                    "memory_usage":  46.7
+                }
+}
+{
+    "timestamp":  "2025-11-02 23:06:01",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 23:06:00",
+                    "cpu_load":  22,
+                    "memory_usage":  46
+                }
+}
