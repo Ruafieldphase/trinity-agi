@@ -150,9 +150,9 @@ def get_evaluation_config() -> Dict[str, Any]:
 
 def is_async_thesis_enabled() -> bool:
     """Async Thesis ?ㅽ뻾 ?щ? ?뚮옒洹?
-    ?곗꽑?쒖쐞: ?섍꼍蹂??ASYNC_THESIS_ENABLED) > ?ㅼ젙?뚯씪(orchestration.async_thesis.enabled) > 湲곕낯媛?False)
+    ?곗꽑?쒖쐞: ?섍꼍蹂??ASYNC_THESIS_ENABLED) > ?ㅼ젙?뚯씪(orchestration.async_thesis.enabled) > 湲곕낯媛?False)
     """
-    # 1) ?섍꼍蹂???곗꽑
+    # 1) ?섍꼍蹂???곗꽑
     env_val = os.environ.get("ASYNC_THESIS_ENABLED")
     if env_val is not None:
         try:
@@ -168,6 +168,43 @@ def is_async_thesis_enabled() -> bool:
         return bool(async_cfg.get("enabled", False))
     except Exception:
         return False
+
+
+def is_response_cache_enabled() -> bool:
+    """Response Cache (LLM ?묒떟 罹먯떛) ?щ? ?뚮옒洹?
+    ?곗꽑?쒖쐞: ?섍꼍蹂??RESPONSE_CACHE_ENABLED) > ?ㅼ젙?뚯씪(orchestration.response_cache.enabled) > 湲곕낯媛?True)
+    
+    Default: True (?덈럩 ?ㅽ듃 ?덉뼱蹂대굹 罹먯떛 ?먰낵媛?梨됱?
+    """
+    # 1) ?섍꼍蹂???곗꽑
+    env_val = os.environ.get("RESPONSE_CACHE_ENABLED")
+    if env_val is not None:
+        try:
+            return _env_to_bool(env_val)
+        except Exception:
+            pass
+
+    # 2) ?ㅼ젙 ?뚯씪
+    try:
+        cfg = get_app_config()
+        orch = cfg.get("orchestration", {})
+        cache_cfg = orch.get("response_cache", {})
+        return bool(cache_cfg.get("enabled", True))  # Default: True
+    except Exception:
+        return True  # Fail-safe: enable by default
+
+
+def get_response_cache_config() -> Dict[str, Any]:
+    """Response Cache ?ㅼ젙 媛??몄삤湲?
+    Returns:
+        dict: {enabled: bool, ttl_seconds: int, max_entries: int}
+    """
+    cfg = get_app_config().get("orchestration", {}).get("response_cache", {})
+    return {
+        "enabled": is_response_cache_enabled(),
+        "ttl_seconds": int(cfg.get("ttl_seconds", 3600)),  # Default: 1 hour
+        "max_entries": int(cfg.get("max_entries", 500))
+    }
 
 
 

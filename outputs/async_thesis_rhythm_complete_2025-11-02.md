@@ -238,17 +238,21 @@ TESTS: ✓ 5 production tasks, 100% success
 | Antithesis | 7.27s | 7.16s | -1.5% ⚪ |
 
 ### 실패 원인
+
 1. Antithesis 준비 작업은 이미 매우 빠름 (~0.02s)
 2. ThreadPoolExecutor 오버헤드 (~0.15s)가 더 큼  
 3. I/O-bound LLM 호출은 CPU 병렬화 효과 없음
 
 ### 교훈
+
 - ✅ **측정 없이 최적화하지 말 것** (가정 검증 필수)
 - ✅ **오버헤드 < 절약** 조건 확인  
 - ✅ **빠른 실패, 빠른 전환** (20분 실험 → 5분 롤백)
 
 ### 다음 방향
+
 **Phase 2 Alternative**: LLM Call Batching  
+
 - Thesis/Antithesis/Synthesis를 1회 LLM 호출로 통합
 - 예상 효과: +30-40% (RTT 절약)
 - 리스크: Prompt 복잡도, 품질 저하 가능성
@@ -259,5 +263,6 @@ TESTS: ✓ 5 production tasks, 100% success
 **Generated**: 2025-11-02 09:25 KST  
 **Total Duration**: Phase 1 (24분) + Phase 2 (25분) = 49분  
 **Outcomes**:  
+
 - ✅ Phase 1: Production Ready (10.7% 개선)  
 - ❌ Phase 2: Failed Experiment (학습 가치 확보)

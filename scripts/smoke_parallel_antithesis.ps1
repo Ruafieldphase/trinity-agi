@@ -24,7 +24,8 @@ if ($EnableParallel) {
         Set-Content $configPath -Value $config -Encoding UTF8
         Write-Host "✅ app.yaml updated (parallel_antithesis_prep: enabled: true)" -ForegroundColor Green
     }
-} else {
+}
+else {
     $env:PARALLEL_ANTITHESIS_PREP_ENABLED = "false"
 }
 
@@ -38,8 +39,8 @@ if (-not (Test-Path $pythonExe)) {
 Write-Host "Running smoke test task..." -ForegroundColor Cyan
 $taskJson = @{
     task_id = "smoke-parallel-anti-$(Get-Date -Format 'HHmmss')"
-    title = "Parallel Antithesis Prep Smoke Test"
-    goal = "AGI 리듬 검증 (간단한 3문장)"
+    title   = "Parallel Antithesis Prep Smoke Test"
+    goal    = "AGI 리듬 검증 (간단한 3문장)"
 } | ConvertTo-Json -Compress
 
 $scriptPath = Join-Path $WorkspaceRoot "fdo_agi_repo\scripts\run_task.py"
@@ -61,11 +62,13 @@ try {
     
     if ($exitCode -eq 0) {
         Write-Host "✅ Task completed successfully" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "❌ Task failed (exit code: $exitCode)" -ForegroundColor Red
         exit 1
     }
-} catch {
+}
+catch {
     Write-Host "❌ Error running task: $_" -ForegroundColor Red
     exit 1
 }
@@ -107,7 +110,8 @@ if ($EnableParallel) {
         Write-Host "   - prep_enabled: YES" -ForegroundColor Gray
         Write-Host "   - prep_done: YES" -ForegroundColor Gray
         Write-Host "   - using_prep_context: YES" -ForegroundColor Gray
-    } else {
+    }
+    else {
         Write-Host ""
         Write-Host "⚠️  Parallel Antithesis Prep: INCOMPLETE" -ForegroundColor Yellow
         Write-Host "   - prep_enabled: $(if ($prepEnabled) { 'YES' } else { 'NO' })" -ForegroundColor Gray

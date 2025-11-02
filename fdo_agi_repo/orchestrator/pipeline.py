@@ -18,7 +18,10 @@ from .self_correction import rune_from_eval, evidence_gate_correction, is_eviden
 from .learning import adaptive_replan_with_learning
 from .meta_cognition import MetaCognitionSystem
 from .tool_registry import ToolRegistry
-from .config import is_corrections_enabled, get_corrections_config, get_evaluation_config, is_async_thesis_enabled
+from .config import is_corrections_enabled, get_corrections_config, get_evaluation_config, is_async_thesis_enabled, is_response_cache_enabled, get_response_cache_config
+
+# Response Cache (Phase 2.5)
+from .response_cache import get_response_cache
 
 # BQI 통합 (Phase 1)
 from scripts.rune.bqi_adapter import analyse_question
@@ -36,6 +39,76 @@ except ModuleNotFoundError:
 def PLAN(task: TaskSpec, memory_snapshot: Dict[str, Any]) -> Dict[str, Any]:
     steps = ["thesis","antithesis","synthesis"]
     return {"steps": steps, "memory_snapshot": memory_snapshot}
+
+
+def _run_with_cache(
+    persona: str,
+    task: TaskSpec,
+    runner_func,
+    *args,
+    cache_context: str = "",
+    **kwargs
+) -> PersonaOutput:
+    """
+    Response Cache wrapper for Thesis/Antithesis/Synthesis
+    
+    Args:
+        persona: "thesis", "antithesis", or "synthesis"
+        task: TaskSpec
+        runner_func: run_thesis, run_antithesis, or run_synthesis
+        cache_context: Additional context for cache key (e.g., thesis output for antithesis)
+        *args, **kwargs: Arguments for runner_func
+        
+    Returns:
+        PersonaOutput (from cache or fresh call)
+    """
+    # Check if cache is enabled
+    if not is_response_cache_enabled():
+        return runner_func(*args, **kwargs)
+    
+    # Get cache instance
+    cache_cfg = get_response_cache_config()
+    cache = get_response_cache(
+        ttl_seconds=cache_cfg["ttl_seconds"],
+        max_entries=cache_cfg["max_entries"]
+    )
+    
+    # Try to get from cache
+    goal_str = task.goal if isinstance(task.goal, str) else str(task.goal)
+    cached_response = cache.get(persona, goal_str, cache_context)
+    
+    if cached_response is not None:
+        # Cache hit! Reconstruct PersonaOutput
+        append_ledger({
+            "event": f"{persona}_cache_hit",
+            "task_id": task.task_id,
+            "cache_context_len": len(cache_context)
+        })
+        return PersonaOutput(**cached_response)
+    
+    # Cache miss - run actual LLM call
+    t_start = time.perf_counter()
+    result = runner_func(*args, **kwargs)
+    t_end = time.perf_counter()
+    latency_ms = (t_end - t_start) * 1000
+    
+    # Store in cache
+    cache.put(
+        persona,
+        goal_str,
+        result.__dict__,
+        cache_context,
+        latency_ms=latency_ms
+    )
+    
+    append_ledger({
+        "event": f"{persona}_cache_miss",
+        "task_id": task.task_id,
+        "latency_ms": round(latency_ms, 2)
+    })
+    
+    return result
+
 
 def EVAL(outputs: List[PersonaOutput]) -> EvalReport:
     """
@@ -227,8 +300,15 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
                 from fdo_agi_repo.orchestrator.parallel_antithesis import prepare_antithesis_context
                 
                 with ThreadPoolExecutor(max_workers=2) as _exec:
-                    # Future 1: Thesis 실행
-                    _thesis_future = _exec.submit(run_thesis, task, plan, registry, conversation_context=context_prompt or "")
+                    # Future 1: Thesis 실행 (with cache)
+                    _thesis_future = _exec.submit(
+                        _run_with_cache,
+                        "thesis",
+                        task,
+                        run_thesis,
+                        task, plan, registry,
+                        conversation_context=context_prompt or ""
+                    )
                     # Future 2: Antithesis 준비 (thesis_out 없이 가능한 부분)
                     _prep_future = _exec.submit(prepare_antithesis_context, task, context_prompt or "")
                     
@@ -241,9 +321,16 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
                         "task_id": task.task_id
                     })
             else:
-                # 기존 Async Thesis만 (Antithesis 준비 병렬화 없음)
+                # 기존 Async Thesis만 (Antithesis 준비 병렬화 없음, with cache)
                 with ThreadPoolExecutor(max_workers=1) as _exec:
-                    _future = _exec.submit(run_thesis, task, plan, registry, conversation_context=context_prompt or "")
+                    _future = _exec.submit(
+                        _run_with_cache,
+                        "thesis",
+                        task,
+                        run_thesis,
+                        task, plan, registry,
+                        conversation_context=context_prompt or ""
+                    )
                     out_thesis = _future.result()
         except Exception as _async_ex:
             append_ledger({
@@ -251,10 +338,24 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
                 "task_id": task.task_id,
                 "error": str(_async_ex)
             })
-            out_thesis = run_thesis(task, plan, registry, conversation_context=context_prompt or "")
+            # Fallback with cache
+            out_thesis = _run_with_cache(
+                "thesis",
+                task,
+                run_thesis,
+                task, plan, registry,
+                conversation_context=context_prompt or ""
+            )
             antithesis_prep_context = None  # Fallback 시 준비 컨텍스트 무효화
     else:
-        out_thesis = run_thesis(task, plan, registry, conversation_context=context_prompt or "")
+        # Sync mode with cache
+        out_thesis = _run_with_cache(
+            "thesis",
+            task,
+            run_thesis,
+            task, plan, registry,
+            conversation_context=context_prompt or ""
+        )
 
     t1 = time.perf_counter()
     append_ledger({
@@ -286,13 +387,28 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
             "task_id": task.task_id
         })
         from fdo_agi_repo.orchestrator.parallel_antithesis import run_antithesis_with_prep
-        out_anti = run_antithesis_with_prep(
+        # Cache key includes thesis output for determinism
+        thesis_summary = out_thesis.summary[:200] if out_thesis.summary else ""
+        out_anti = _run_with_cache(
+            "antithesis",
+            task,
+            run_antithesis_with_prep,
             task, out_thesis, registry,
             conversation_context=context_prompt or "",
-            prep_context=antithesis_prep_context
+            prep_context=antithesis_prep_context,
+            cache_context=thesis_summary
         )
     else:
-        out_anti = run_antithesis(task, out_thesis, registry, conversation_context=context_prompt or "")
+        # Standard antithesis with cache
+        thesis_summary = out_thesis.summary[:200] if out_thesis.summary else ""
+        out_anti = _run_with_cache(
+            "antithesis",
+            task,
+            run_antithesis,
+            task, out_thesis, registry,
+            conversation_context=context_prompt or "",
+            cache_context=thesis_summary
+        )
     
     t3 = time.perf_counter()
     append_ledger({"event": "antithesis_end", "task_id": task.task_id, "duration_sec": float(t3 - t2)})
@@ -310,7 +426,21 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
 
     append_ledger({"event": "synthesis_start", "task_id": task.task_id})
     t4 = time.perf_counter()
-    out_synth = run_synthesis(task, [out_thesis, out_anti], registry, conversation_context=context_prompt or "")
+    
+    # Synthesis with cache (context = thesis + antithesis summaries)
+    thesis_summary = out_thesis.summary[:100] if out_thesis.summary else ""
+    anti_summary = out_anti.summary[:100] if out_anti.summary else ""
+    synth_context = f"{thesis_summary}|{anti_summary}"
+    
+    out_synth = _run_with_cache(
+        "synthesis",
+        task,
+        run_synthesis,
+        task, [out_thesis, out_anti], registry,
+        conversation_context=context_prompt or "",
+        cache_context=synth_context
+    )
+    
     t5 = time.perf_counter()
     append_ledger({
         "event": "synthesis_end",
