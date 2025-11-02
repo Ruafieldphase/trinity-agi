@@ -1,31 +1,21 @@
-﻿{
-    "recommendation":  "Lumen is 58.6x faster. Use for latency-sensitive tasks. ⚠️ LM Studio performance is degrading.",
-    "recent_records":  6,
-    "lm_studio":  {
-                      "availability_percent":  100,
-                      "stats":  {
-                                    "median":  10196.67,
-                                    "stddev":  4769.3,
-                                    "min":  3513,
-                                    "trend":  "degrading",
-                                    "mean":  10109.96,
-                                    "count":  6,
-                                    "max":  16750.33
-                                }
-                  },
-    "window_hours":  24,
-    "total_records":  6,
-    "generated_at":  "2025-11-02T10:13:31Z",
-    "lumen":  {
-                  "availability_percent":  100,
-                  "stats":  {
-                                "median":  173.17,
-                                "stddev":  4.45,
-                                "min":  165.67,
-                                "trend":  "stable",
-                                "mean":  172.5,
-                                "count":  6,
-                                "max":  179
-                            }
-              }
+{
+    "health_score":  92,
+    "memory":  {
+                   "current":  47.2,
+                   "min":  45.5,
+                   "max":  47.5,
+                   "trend":  "STABLE",
+                   "average":  46.3
+               },
+    "timestamp":  "2025-11-02 23:10:33",
+    "samples":  30,
+    "analysis_time_ms":  150,
+    "lookback_hours":  24,
+    "cpu":  {
+                "current":  7,
+                "min":  6,
+                "max":  74,
+                "trend":  "UP",
+                "average":  29.1
+            }
 }
