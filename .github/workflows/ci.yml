@@ -1,42 +1,52 @@
 name: CI
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+    push:
+        branches: [main, develop]
+    pull_request:
+        branches: [main, develop]
 
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.13'
-          cache: 'pip'
-      
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          if [ -f fdo_agi_repo/requirements.txt ]; then
-            pip install -r fdo_agi_repo/requirements.txt
-          fi
-          pip install pytest pytest-asyncio
-      
-      - name: Run tests
-        run: python -m pytest -q
-        working-directory: ${{ github.workspace }}
-      
-      - name: Test summary
-        if: always()
-        run: |
-          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "Tests completed with exit code: $?" >> $GITHUB_STEP_SUMMARY
+    test:
+        name: Run Tests
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.13"
+                  cache: "pip"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  if [ -f fdo_agi_repo/requirements.txt ]; then
+                    pip install -r fdo_agi_repo/requirements.txt
+                  fi
+                  pip install pytest pytest-asyncio pytest-cov pytest-xdist
+
+            - name: Run tests (parallel with coverage)
+              run: |
+                  python -m pytest -q -n auto --tb=short \
+                    --basetemp=fdo_agi_repo/.pytest_tmp \
+                    --cov=fdo_agi_repo --cov-report=xml --cov-report=term-missing:skip-covered
+              working-directory: ${{ github.workspace }}
+
+            - name: Upload coverage.xml
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-xml
+                  path: coverage.xml
+
+            - name: Test summary
+              if: always()
+              run: |
+                  echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+                  echo "Tests completed with exit code: $?" >> $GITHUB_STEP_SUMMARY

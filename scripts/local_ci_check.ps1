@@ -3,7 +3,9 @@
 # Usage: .\scripts\local_ci_check.ps1 [-Fast]
 
 param(
-    [switch]$Fast = $false
+    [switch]$Fast = $false,
+    [switch]$Parallel = $false,
+    [switch]$Coverage = $false
 )
 
 $ErrorActionPreference = "Stop"
@@ -19,7 +21,8 @@ $gitStatus = git status --porcelain
 if ($gitStatus) {
     Write-Host "   ⚠️  Uncommitted changes detected:" -ForegroundColor Yellow
     $gitStatus | ForEach-Object { Write-Host "      $_" -ForegroundColor Gray }
-} else {
+}
+else {
     Write-Host "   ✅ Working directory clean" -ForegroundColor Green
 }
 Write-Host ""
@@ -30,7 +33,8 @@ $currentBranch = git branch --show-current
 Write-Host "   📍 Branch: $currentBranch" -ForegroundColor Cyan
 if ($currentBranch -eq "main") {
     Write-Host "   ⚠️  You're on main branch - consider using feature branch" -ForegroundColor Yellow
-} else {
+}
+else {
     Write-Host "   ✅ Feature branch in use" -ForegroundColor Green
 }
 Write-Host ""
@@ -39,21 +43,28 @@ Write-Host ""
 Write-Host "3️⃣  Running Python tests..." -ForegroundColor Yellow
 $testStart = Get-Date
 try {
+    $pytestArgs = @('-q','--tb=short','--basetemp','fdo_agi_repo/.pytest_tmp')
+    if ($Parallel) { $pytestArgs += @('-n','auto') }
+    if ($Coverage) { $pytestArgs += @('--cov=fdo_agi_repo','--cov-report','term-missing:skip-covered') }
+
     if ($Fast) {
         Write-Host "   ⚡ Fast mode: Running core tests only" -ForegroundColor Cyan
-        python -m pytest -q --tb=short fdo_agi_repo/tests/test_phase3_integration.py
-    } else {
-        python -m pytest -q --tb=short
+        $pytestArgs += 'fdo_agi_repo/tests/test_phase3_integration.py'
     }
+
+    Write-Host ("   ▶️  pytest {0}" -f ($pytestArgs -join ' ')) -ForegroundColor DarkGray
+    python -m pytest @pytestArgs
     
     if ($LASTEXITCODE -eq 0) {
         $testDuration = [math]::Round(((Get-Date) - $testStart).TotalSeconds, 1)
         Write-Host "   ✅ All tests passed ($testDuration seconds)" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "   ❌ Tests failed with exit code $LASTEXITCODE" -ForegroundColor Red
         exit 1
     }
-} catch {
+}
+catch {
     Write-Host "   ❌ Test execution error: $_" -ForegroundColor Red
     exit 1
 }
@@ -67,14 +78,17 @@ try {
         python -m black --check --quiet fdo_agi_repo/ 2>&1 | Out-Null
         if ($LASTEXITCODE -eq 0) {
             Write-Host "   ✅ Code formatting OK" -ForegroundColor Green
-        } else {
+        }
+        else {
             Write-Host "   ⚠️  Code formatting issues detected" -ForegroundColor Yellow
             Write-Host "      Run: python -m black fdo_agi_repo/" -ForegroundColor Gray
         }
-    } else {
+    }
+    else {
         Write-Host "   ℹ️  Black not installed (optional)" -ForegroundColor Gray
     }
-} catch {
+}
+catch {
     Write-Host "   ℹ️  Skipping formatting check" -ForegroundColor Gray
 }
 Write-Host ""
@@ -88,12 +102,13 @@ try {
                 $size = (Get-Item -LiteralPath $_).Length / 1MB
                 if ($size -gt 1) {
                     [PSCustomObject]@{
-                        File = $_
+                        File   = $_
                         SizeMB = [math]::Round($size, 2)
                     }
                 }
             }
-        } catch {
+        }
+        catch {
             # Skip files with invalid paths
         }
     } | Where-Object { $_ -ne $null }
@@ -103,10 +118,12 @@ try {
         $largeFiles | ForEach-Object { 
             Write-Host "      $($_.File) - $($_.SizeMB) MB" -ForegroundColor Gray 
         }
-    } else {
+    }
+    else {
         Write-Host "   ✅ No large files" -ForegroundColor Green
     }
-} catch {
+}
+catch {
     Write-Host "   ℹ️  Skipping file size check" -ForegroundColor Gray
 }
 Write-Host ""

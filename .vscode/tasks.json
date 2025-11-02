@@ -2266,6 +2266,34 @@
 			"problemMatcher": []
 		},
 		{
+			"label": "Python: Run All Tests (parallel)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q -n auto --tb=short --basetemp fdo_agi_repo/.pytest_tmp } else { python -m pytest -q -n auto --tb=short --basetemp fdo_agi_repo/.pytest_tmp }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Python: Coverage Report (repo venv)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report term-missing:skip-covered } else { python -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report term-missing:skip-covered }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
 			"label": "Python: Run Vertex AI Test (repo venv)",
 			"type": "shell",
 			"command": "powershell",

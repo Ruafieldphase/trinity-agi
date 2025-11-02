@@ -22,6 +22,21 @@
 
 - `Dev: Local CI Check (Fast)` - 빠른 검증
 - `Dev: Local CI Check (Full)` - 전체 검증
+- `Python: Run All Tests (parallel)` - 코어 테스트 병렬 실행(-n auto)
+- `Python: Coverage Report (repo venv)` - 커버리지 요약 출력
+
+병렬/커버리지를 로컬 스크립트에서 직접 쓰려면:
+
+```powershell
+# 병렬 실행
+.\scripts\local_ci_check.ps1 -Parallel
+
+# 커버리지 요약(스킵커버드)
+.\scripts\local_ci_check.ps1 -Coverage
+
+# 함께 사용 가능
+.\scripts\local_ci_check.ps1 -Parallel -Coverage
+```
 
 **Pre-commit Hooks** (선택적):
 
