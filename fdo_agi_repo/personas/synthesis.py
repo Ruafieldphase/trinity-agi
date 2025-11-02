@@ -92,20 +92,42 @@ def run_synthesis(task: TaskSpec, outs: List[PersonaOutput], tools, conversation
     )
 
     # 3. Gemini LLM 호출 (Google AI Studio API)
+    # Streaming 옵션 (환경변수로 제어)
+    use_streaming = os.environ.get("SYNTHESIS_STREAMING", "true").lower() == "true"
+    
     doc: str
     err_text = None
+    ttft = None  # Time To First Token
     t_llm0 = time.perf_counter()
+    
     try:
         model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(f"{system_prompt}\n\n{user_prompt}")
-        doc = response.text
+        prompt = f"{system_prompt}\n\n{user_prompt}"
+        
+        if use_streaming:
+            # Streaming: 첫 토큰 빠른 반환
+            chunks = []
+            response = model.generate_content(prompt, stream=True)
+            for chunk in response:
+                if ttft is None:
+                    ttft = time.perf_counter() - t_llm0
+                if hasattr(chunk, 'text'):
+                    chunks.append(chunk.text)
+            doc = ''.join(chunks)
+        else:
+            # Baseline: 전통적 방식
+            response = model.generate_content(prompt)
+            doc = response.text
+            
     except Exception as e:
         err_text = f"{type(e).__name__}: {e}"
         # LLM 호출 실패 시, 기존 placeholder 로직으로 폴백
         doc = _compose_markdown(task, thesis_txt, anti_txt, cites)
 
     t_llm1 = time.perf_counter()
-    append_ledger({
+    
+    # Ledger 기록
+    log_entry = {
         "event": "persona_llm_run",
         "task_id": task.task_id,
         "persona": "synthesis",
@@ -114,8 +136,17 @@ def run_synthesis(task: TaskSpec, outs: List[PersonaOutput], tools, conversation
         "duration_sec": float(t_llm1 - t_llm0),
         "ok": bool(bool(doc) and not err_text),
         "error": err_text,
-        "prompt_chars": len(system_prompt) + len(user_prompt)
-    })
+        "prompt_chars": len(system_prompt) + len(user_prompt),
+        "streaming": use_streaming
+    }
+    
+    # TTFT 메트릭 추가 (streaming 시에만)
+    if use_streaming and ttft is not None:
+        log_entry["ttft_sec"] = float(ttft)
+        perceived_improvement = ((t_llm1 - t_llm0 - ttft) / (t_llm1 - t_llm0)) * 100
+        log_entry["perceived_improvement_pct"] = float(perceived_improvement)
+    
+    append_ledger(log_entry)
 
     # 4. 결과물 파일로 저장 및 PersonaOutput 반환
     tools.call("fileio", {"op":"write", "path":"sandbox/docs/result.md", "text": doc})
