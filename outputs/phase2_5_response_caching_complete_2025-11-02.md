@@ -1,4 +1,5 @@
 # Phase 2.5: Response Caching — Complete ✅
+
 **날짜**: 2025-11-02  
 **시간**: 18분 (18:00-18:18)  
 **상태**: ✅ SUCCESS
@@ -6,11 +7,13 @@
 ---
 
 ## 🎯 목표
+
 LLM 응답(Thesis/Antithesis/Synthesis) 캐싱으로 **반복 호출 시 +50-70% 성능 향상**
 
 ## 📦 구현 내역
 
 ### 1. `response_cache.py` 생성
+
 - **Cache Key**: `hash(persona + goal + context)`
   - Thesis: `goal + evidence_summary`
   - Antithesis: `goal + thesis_output[:200]`
@@ -20,20 +23,24 @@ LLM 응답(Thesis/Antithesis/Synthesis) 캐싱으로 **반복 호출 시 +50-70%
 - **Per-Persona Stats**: `thesis_hits`, `antithesis_hits`, `synthesis_hits`
 
 ### 2. `config.py` 업데이트
+
 ```python
 is_response_cache_enabled() -> bool  # Default: True
 get_response_cache_config() -> Dict  # ttl_seconds, max_entries
 ```
+
 - 환경변수: `RESPONSE_CACHE_ENABLED=true/false`
 - Fail-safe: 기본값 `True` (Evidence Cache와 동일한 안전한 패턴)
 
 ### 3. `pipeline.py` 통합
+
 - `_run_with_cache()` 헬퍼 함수 추가
 - Thesis/Antithesis/Synthesis 모든 호출에 캐시 래퍼 적용
 - Ledger 이벤트: `thesis_cache_hit`, `antithesis_cache_miss` 등
 - 병렬 실행(Async Thesis) 호환
 
 ### 4. 테스트
+
 ```bash
 $ python scripts/test_response_cache.py
 ✅ ALL TESTS PASSED
@@ -46,16 +53,19 @@ $ python scripts/test_response_cache.py
 ## 📊 측정 결과 (예상)
 
 ### Baseline (Cache OFF)
+
 - Task 1회: ~10.5s
 - Task 3회: ~31.5s
 
 ### With Cache (Cache ON)
+
 - Task 1회 (cold): ~10.5s
 - Task 2회 (warm): ~5.2s (**-50%**)
 - Task 3회 (warm): ~5.2s (**-50%**)
 - **총 시간**: ~20.9s (**전체 -34%**)
 
 ### Cache Hit 시나리오
+
 1. **같은 goal 반복**: Thesis/Antithesis/Synthesis 모두 캐시 히트
 2. **유사한 goal**: Goal 해시가 다르면 캐시 미스 (의도된 동작)
 3. **TTL 만료** (1시간 후): 자동 eviction → 신선한 응답 생성
@@ -78,20 +88,24 @@ $ python scripts/test_response_cache.py
 ## 🎓 학습 내용
 
 ### What Worked
+
 1. **Evidence Cache 패턴 재사용**: `ttl_seconds`, `max_entries`, `get_stats()` 동일 구조
 2. **Context-aware Cache Key**: Persona별 다른 컨텍스트로 정확한 캐싱
 3. **Default ON**: Phase 1 실패 교훈 → 안전한 기본값 선택
 
 ### Phase 1 (Parallel Antithesis) 실패 교훈 적용
+
 - ❌ Phase 1: 복잡한 병렬화 → 24% 느려짐
 - ✅ Phase 2.5: **단순한 캐싱** → 측정 가능한 효과, 낮은 리스크
 
 ### Architecture Insight
+
 ```
 [Goal] ──┬──> [Thesis] ──┐
          │                ├──> [Cache Key: goal+thesis_summary]
          └──> [Context]──┘
 ```
+
 - Thesis: Evidence만 캐시 키에 포함 (Evidence Cache와 협력)
 - Antithesis: Thesis 출력 포함 (determinism 보장)
 - Synthesis: Thesis + Antithesis 포함 (full context)
@@ -132,17 +146,20 @@ CONFIG: RESPONSE_CACHE_ENABLED=true (default)
 ## 🎵 Rhythm Notes
 
 **Duration**: 18분 (매우 빠른 구현)
+
 - 00-05분: response_cache.py 작성
 - 05-10분: config.py + pipeline.py 통합
 - 10-15분: 테스트 스크립트 작성
 - 15-18분: 단위 테스트 실행 + 문서화
 
 **Why Fast?**
+
 - Evidence Cache 패턴 재사용 (코드 복사+수정)
 - 헬퍼 함수 `_run_with_cache()` 설계로 통합 단순화
 - Ledger 이벤트 기존 패턴 활용
 
 **Rhythm Flow**: 🎵 Smooth & Steady
+
 - No blockers
 - No refactoring needed
 - All tests green first try

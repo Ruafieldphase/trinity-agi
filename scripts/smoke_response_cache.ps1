@@ -46,10 +46,12 @@ Write-Host ""
 if ($improvement -gt 20) {
     Write-Host "✅ PASS: Cache improved by $([math]::Round($improvement, 1))%" -ForegroundColor Green
     exit 0
-} elseif ($improvement -gt 5) {
+}
+elseif ($improvement -gt 5) {
     Write-Host "⚠️ MARGINAL: Cache improved by $([math]::Round($improvement, 1))% (expected >20%)" -ForegroundColor Yellow
     exit 0
-} else {
+}
+else {
     Write-Host "❌ FAIL: Cache only improved by $([math]::Round($improvement, 1))% (expected >20%)" -ForegroundColor Red
     Write-Host "   (May be false negative if LLM already fast)" -ForegroundColor Gray
     exit 1
