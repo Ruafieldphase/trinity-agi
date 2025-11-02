@@ -1972,6 +1972,43 @@
 			}
 		},
 		{
+			"label": "🚀 Dashboard: Enhanced (GPU+Queue+LLM)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_enhanced_dashboard.ps1",
+				"-OpenBrowser"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "📊 Dashboard: Enhanced (no browser)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_enhanced_dashboard.ps1"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
 			"label": "Monitoring: Open Latest Metrics (JSON)",
 			"type": "shell",
 			"command": "powershell",
@@ -2001,10 +2038,11 @@
 			],
 			"group": "test",
 			"presentation": {
-				"echo": true,
-				"reveal": "always",
+				"echo": false,
+				"reveal": "never",
 				"focus": false,
-				"panel": "shared"
+				"panel": "shared",
+				"showReuseMessage": false
 			}
 		},
 		{
@@ -2021,10 +2059,11 @@
 			],
 			"group": "test",
 			"presentation": {
-				"echo": true,
-				"reveal": "always",
+				"echo": false,
+				"reveal": "never",
 				"focus": false,
-				"panel": "shared"
+				"panel": "shared",
+				"showReuseMessage": false
 			}
 		},
 		{
@@ -2316,10 +2355,38 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"$p='${workspaceFolder}/outputs/coverage_html/index.html'; if (Test-Path $p) { $codeCmd = Get-Command code -ErrorAction SilentlyContinue; if ($codeCmd) { & code $p } else { Start-Process $p } } else { Write-Host 'coverage_html not found. Run Python: Coverage HTML (generate) first.' -ForegroundColor Yellow; exit 1 }"
+				"$ws='${workspaceFolder}'; $p=Join-Path $ws 'outputs\\coverage_html\\index.html'; if (Test-Path -LiteralPath $p) { Invoke-Item -LiteralPath $p } else { Write-Host 'coverage_html not found. Run Python: Coverage HTML (generate) first.' -ForegroundColor Yellow; exit 0 }"
 			],
 			"group": "none",
-			"problemMatcher": []
+			"problemMatcher": [],
+			"presentation": {
+				"echo": false,
+				"reveal": "never",
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			}
+		},
+		{
+			"label": "Python: Coverage HTML (ensure + open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$ws='${workspaceFolder}'; $p=Join-Path $ws 'outputs\\coverage_html\\index.html'; $covDir=Join-Path $ws 'outputs\\coverage_html'; $venvPy=Join-Path $ws 'LLM_Unified\\.venv\\Scripts\\python.exe'; if (Test-Path -LiteralPath $p) { Invoke-Item -LiteralPath $p; exit 0 }; if (Test-Path -LiteralPath $venvPy) { & $venvPy -m pytest -q --tb=short --maxfail=0 --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report html:outputs/coverage_html fdo_agi_repo/tests } else { python -m pytest -q --tb=short --maxfail=0 --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report html:outputs/coverage_html fdo_agi_repo/tests }; if (Test-Path -LiteralPath $p) { Invoke-Item -LiteralPath $p; exit 0 }; if (Test-Path -LiteralPath (Join-Path $ws '.coverage')) { if (!(Test-Path -LiteralPath $covDir)) { New-Item -ItemType Directory -Path $covDir -Force | Out-Null }; if (Test-Path -LiteralPath $venvPy) { & $venvPy -m coverage html -d $covDir } else { python -m coverage html -d $covDir } }; if (Test-Path -LiteralPath $p) { Invoke-Item -LiteralPath $p; exit 0 } else { Write-Host 'coverage_html not found after generation and coverage fallback.' -ForegroundColor Yellow; exit 0 }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": false,
+				"reveal": "never",
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			}
 		},
 		{
 			"label": "Python: Run Vertex AI Test (repo venv)",
@@ -5779,18 +5846,16 @@
 				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
-				"-File",
-				"${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe",
-				"${workspaceFolder}/fdo_agi_repo/scripts/binoche_diagnostic_agent.py",
-				"--server",
-				"http://127.0.0.1:8091"
+				"-Command",
+				"$py=\"${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe\"; if (!(Test-Path -LiteralPath $py)) { $py = 'python' }; & $py \"${workspaceFolder}/fdo_agi_repo/scripts/binoche_diagnostic_agent.py\" --server http://127.0.0.1:8091"
 			],
 			"group": "test",
 			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false
 			}
 		},
 		{
@@ -5801,19 +5866,16 @@
 				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
-				"-File",
-				"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe",
-				"${workspaceFolder}/fdo_agi_repo/scripts/auto_recover.py",
-				"--server",
-				"http://127.0.0.1:8091",
-				"--once"
+				"-Command",
+				"$py=\"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe\"; if (!(Test-Path -LiteralPath $py)) { $py = 'python' }; & $py \"${workspaceFolder}/fdo_agi_repo/scripts/auto_recover.py\" --server http://127.0.0.1:8091 --once"
 			],
 			"group": "build",
 			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false
 			}
 		},
 		{
@@ -5878,17 +5940,19 @@
 				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
-				"-File",
-				"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe",
-				"${workspaceFolder}/fdo_agi_repo/scripts/task_watchdog.py",
-				"--server",
-				"http://127.0.0.1:8091",
-				"--interval",
-				"60",
-				"--auto-recover"
+				"-Command",
+				"$py=\"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe\"; if (!(Test-Path -LiteralPath $py)) { $py = 'python' }; & $py \"${workspaceFolder}/fdo_agi_repo/scripts/task_watchdog.py\" --server http://127.0.0.1:8091 --interval 60 --auto-recover"
 			],
 			"isBackground": true,
-			"group": "build"
+			"group": "build",
+			"presentation": {
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			}
 		},
 		{
 			"label": "Watchdog: Stop Task Watchdog",
@@ -5924,17 +5988,19 @@
 				"-NoProfile",
 				"-ExecutionPolicy",
 				"Bypass",
-				"-File",
-				"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe",
-				"${workspaceFolder}/fdo_agi_repo/scripts/task_watchdog.py",
-				"--server",
-				"http://127.0.0.1:8091",
-				"--interval",
-				"60",
-				"--auto-recover"
+				"-Command",
+				"$py=\"${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe\"; if (!(Test-Path -LiteralPath $py)) { $py = 'python' }; & $py \"${workspaceFolder}/fdo_agi_repo/scripts/task_watchdog.py\" --server http://127.0.0.1:8091 --interval 60 --auto-recover"
 			],
 			"isBackground": true,
-			"group": "build"
+			"group": "build",
+			"presentation": {
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			}
 		},
 		{
 			"label": "Watchdog: Check Task Watchdog Status",
@@ -6799,10 +6865,11 @@
 			],
 			"group": "test",
 			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
+				"echo": false,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false
 			}
 		},
 		{
