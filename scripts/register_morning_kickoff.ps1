@@ -17,7 +17,7 @@ param(
     [switch]$Unregister,
     [switch]$Status,
     [string]$TaskName = "AGI_Morning_Kickoff",
-    [string]$Time = "09:00",
+    [string]$Time = "10:00",
     [int]$Hours = 1,
     [switch]$OpenHtml
 )
@@ -71,7 +71,7 @@ if ($Register) {
     }
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
 
-    $argList = @("-NoProfile","-ExecutionPolicy","Bypass","-WindowStyle","Hidden","-File","`"$KickoffScript`"","-Hours","$Hours")
+    $argList = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", "`"$KickoffScript`"", "-Hours", "$Hours")
     if ($OpenHtml) { $argList += "-OpenHtml" }
     $argStr = ($argList -join ' ')
 
@@ -84,7 +84,7 @@ if ($Register) {
         -RunOnlyIfNetworkAvailable:$false `
         -DontStopOnIdleEnd `
         -ExecutionTimeLimit (New-TimeSpan -Minutes 15)
-    $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Highest
+    $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive -RunLevel Limited
 
     try {
         Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Settings $settings -Principal $principal -Description "AGI Morning Kickoff - Daily health/report at $Time" -Force | Out-Null

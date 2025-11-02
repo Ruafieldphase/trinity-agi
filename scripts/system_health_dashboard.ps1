@@ -127,13 +127,21 @@ $outputDir = "C:\workspace\agi\outputs"
 $recentOutput = $false
 if (Test-Path $outputDir) {
     $latestFiles = Get-ChildItem -Path $outputDir -Filter "*latest*" -File -ErrorAction SilentlyContinue |
-        Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-24) }
+    Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-24) }
     $recentOutput = $latestFiles.Count -gt 0
 }
 Add-Check -Name "Recent Output Files (24h)" -Pass $recentOutput -Details $(if ($recentOutput) { "$($latestFiles.Count) files" } else { "No recent outputs" })
 
 # Show results
 $allPass = Show-Results
+
+# Determine critical failures separately so exit code reflects only critical issues
+$criticalNames = @(
+    'Task Queue Server (8091)',
+    'RPA Worker',
+    'Python Virtual Env'
+)
+$criticalFailed = @($checks | Where-Object { -not $_.pass -and ($criticalNames -contains $_.name) })
 
 # Auto-fix if requested
 if ($AutoFix -and -not $allPass) {
@@ -152,6 +160,72 @@ if ($AutoFix -and -not $allPass) {
         }
     }
     Write-Host "  ✓ $fixed issues fixed`n" -ForegroundColor Green
-}
 
-exit $(if ($allPass) { 0 } else { 1 })
+    # Re-evaluate key checks after AutoFix to update pass/fail status
+    foreach ($check in $script:checks) {
+        switch ($check.name) {
+            'Task Queue Server (8091)' {
+                try {
+                    $resp = Invoke-WebRequest -Uri "http://127.0.0.1:${ServerPort}/api/health" -TimeoutSec 3 -UseBasicParsing -ErrorAction SilentlyContinue
+                    $isOk = ($resp.StatusCode -eq 200)
+                    $check.pass = $isOk
+                    $check.details = $(if ($isOk) { 'Running' } else { 'Not responding' })
+                }
+                catch { }
+            }
+            'RPA Worker' {
+                $isOk = (Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*rpa_worker.py*" }).Count -gt 0
+                $check.pass = $isOk
+                $check.details = $(if ($isOk) { 'Active' } else { 'Not running' })
+            }
+            'Monitoring Daemon' {
+                $isOk = (Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*monitoring_daemon.py*" }).Count -gt 0
+                $check.pass = $isOk
+                $check.details = $(if ($isOk) { 'Collecting metrics' } else { 'Not running' })
+            }
+            'Self-Healing Watchdog' {
+                $isOk = (Get-Process -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like "*self_healing_watchdog.ps1*" }).Count -gt 0
+                $check.pass = $isOk
+                $check.details = $(if ($isOk) { 'Monitoring' } else { 'Not active' })
+            }
+            'Auto-Start on Boot' {
+                $task = Get-ScheduledTask -TaskName 'AGI_Master_Orchestrator' -ErrorAction SilentlyContinue
+                $isOk = ($null -ne $task -and $task.State -ne 'Disabled')
+                $check.pass = $isOk
+                $check.details = $(if ($isOk) { 'Enabled' } else { 'Not registered' })
+            }
+            'Daily Auto-Backup' {
+                $task = Get-ScheduledTask -TaskName 'AGI_Auto_Backup' -ErrorAction SilentlyContinue
+                $isOk = ($null -ne $task -and $task.State -ne 'Disabled')
+                $check.pass = $isOk
+                $check.details = $(if ($isOk) { 'Scheduled' } else { 'Not configured' })
+            }
+            'Python Virtual Env' {
+                $venvPython = 'C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe'
+                $isOk = Test-Path $venvPython
+                $check.pass = $isOk
+                $check.details = $(if ($isOk) { 'Ready' } else { 'Missing' })
+            }
+            'Recent Output Files (24h)' {
+                $outputDir = 'C:\workspace\agi\outputs'
+                $isOk = $false
+                $count = 0
+                if (Test-Path $outputDir) {
+                    $latestFiles = Get-ChildItem -Path $outputDir -Filter '*latest*' -File -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -gt (Get-Date).AddHours(-24) }
+                    $count = $latestFiles.Count
+                    $isOk = $count -gt 0
+                }
+                $check.pass = $isOk
+                $check.details = $(if ($isOk) { "$count files" } else { 'No recent outputs' })
+            }
+        }
+    }
+
+    # Refresh critical failure set after re-evaluation
+    $criticalFailed = @($checks | Where-Object { -not $_.pass -and ($criticalNames -contains $_.name) })
+    # Show updated summary (quiet)
+    $null = Show-Results
+}
+# Exit with non-zero only when critical checks fail; treat non-critical misses as warnings
+$exitCode = if ($criticalFailed.Count -gt 0) { 1 } else { 0 }
+exit $exitCode

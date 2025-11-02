@@ -116,7 +116,27 @@ if ($recentOutputs) {
 Write-Host "  Outputs: $outputCount backed up" -ForegroundColor Green
 
 # 5. 시스템 상태 스냅샷
-Write-Host "\n[5/6] Saving system status snapshot..." -ForegroundColor Yellow
+Write-Host "\n[5/7] Saving system health snapshot..." -ForegroundColor Yellow
+
+$healthScript = "$WorkspaceRoot\scripts\system_health_check.ps1"
+$healthJson = "$todayBackup\system_health_eod.json"
+$healthMd = "$todayBackup\system_health_eod.md"
+
+if (Test-Path $healthScript) {
+    try {
+        & $healthScript -OutputJson $healthJson -OutputMarkdown $healthMd | Out-Null
+        Write-Host "  Health snapshot saved (JSON + MD)." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "  Warning: Health snapshot failed (continuing)." -ForegroundColor Yellow
+    }
+}
+else {
+    Write-Host "  Warning: Health script not found (skipped)." -ForegroundColor Yellow
+}
+
+# 6. 시스템 상태 스냅샷 (기존)
+Write-Host "\n[6/7] Saving system status snapshot..." -ForegroundColor Yellow
 
 $statusSnapshot = @{
     timestamp        = $timestamp
@@ -134,8 +154,8 @@ $snapshotFile = "$todayBackup\end_of_day_snapshot.json"
 $statusSnapshot | ConvertTo-Json -Depth 5 | Out-File -FilePath $snapshotFile -Encoding UTF8
 Write-Host "  Snapshot saved: $snapshotFile" -ForegroundColor Green
 
-# 6. 백업 아카이브 생성 (선택)
-Write-Host "\n[6/6] Creating backup archive..." -ForegroundColor Yellow
+# 7. 백업 아카이브 생성 (선택)
+Write-Host "\n[7/7] Creating backup archive..." -ForegroundColor Yellow
 
 if (-not $SkipArchive) {
     $archiveFile = "$backupRoot\backup_$dateStamp.zip"

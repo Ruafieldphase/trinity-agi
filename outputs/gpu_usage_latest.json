@@ -1,14 +1,4 @@
 ﻿{
-    "memory_utilization_percent":  26.92,
-    "power_utilization_percent":  18.32,
-    "temperature_celsius":  52,
-    "gpu_name":  "NVIDIA GeForce RTX 2070 SUPER",
-    "power_draw_watts":  39.39,
-    "memory_used_mb":  2205,
-    "power_limit_watts":  215,
-    "timestamp":  "2025-11-02T19:48:36.0246305+09:00",
-    "memory_total_mb":  8192,
-    "gpu_index":  0,
-    "gpu_utilization_percent":  14,
-    "available":  true
+    "error":  "nvidia-smi command failed: ERROR: Option noheader is not recognized. Please run \u0027nvidia-smi -h\u0027 for help. ",
+    "available":  false
 }

@@ -1,45 +1,45 @@
 [AUTOPOIETIC LOOP DIGEST - ASCII SAFE]
 
-- Generated: 2025-11-02T12:51:31
-- Tasks seen: 60
-- Complete loops: 36 (60.0%)
-- Incomplete loops: 24
+- Generated: 2025-11-02T18:24:39
+- Tasks seen: 99
+- Complete loops: 74 (74.7%)
+- Incomplete loops: 25
 - Evidence gate: 0, Second pass: 0
-- At-a-glance: Stable loop flow; Policy warns: 48
+- At-a-glance: Stable loop flow; Policy warns: 89
 
 ---
 
 # Autopoietic Loop Report (last 24h)
 
-Generated at: 2025-11-02T12:51:31.420495
+Generated at: 2025-11-02T18:24:39.568126
 
 
 ## Counts
 
-- Tasks Seen: 60
-- Complete Loops: 36
-- Incomplete Loops: 24
+- Tasks Seen: 99
+- Complete Loops: 74
+- Incomplete Loops: 25
 - Evidence Gate Triggered: 0
 - Second Pass Executed: 0
 
 ## Rates (%)
 
-- Loop Complete Rate: 60.0%
+- Loop Complete Rate: 74.7%
 - Evidence Gate Trigger Rate: 0.0%
 - Second Pass Rate: 0.0%
 
 ## Avg Durations (sec)
 
-- Folding (Thesis): 5.744
-- Unfolding (Antithesis): 9.263
-- Integration (Synthesis): 13.232
+- Folding (Thesis): 4.208
+- Unfolding (Antithesis): 6.739
+- Integration (Synthesis): 9.854
 - Symmetry (Decision+Correction): 0.003
 
 ## P95 Durations (sec)
 
-- Folding (Thesis) P95: 9.126
-- Unfolding (Antithesis) P95: 13.462
-- Integration (Synthesis) P95: 17.888
+- Folding (Thesis) P95: 7.954
+- Unfolding (Antithesis) P95: 11.620
+- Integration (Synthesis) P95: 17.725
 - Symmetry (Decision+Correction) P95: 0.006
 
 ## Quality
@@ -49,9 +49,9 @@ Generated at: 2025-11-02T12:51:31.420495
 
 ## Resonance Policy (counts)
 
-- allow: 0 | warn: 48 | block: 0
+- allow: 19 | warn: 89 | block: 0
 - last: mode=observe policy=quality-first
-- reasons: latency 24024ms > max_latency_ms 8000ms
+- reasons: 
 
 ## Closed-loop Snapshot
 
@@ -60,7 +60,7 @@ Generated at: 2025-11-02T12:51:31.420495
 
 ## Samples (first 5)
 
-- runtime-test-001: F=3.469480400000009 U=8.526128299999982 I=9.401579000000027 S=0.012369100000000799 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
+- runtime-test-001: F=3.537813199998709 U=5.855360499999733 I=8.152799100000266 S=0.01926599999933387 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
 - test-ledger-1762001967: F=7.953638399999818 U=9.320614599999772 I=14.238916100000097 S=0.002258800000163319 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
 - test-ledger-1762001967-2: F=5.334339199999704 U=8.209606100000201 I=13.020016699999815 S=0.0018045000001620792 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
 - test-ledger-1762002062: F=4.649791000000278 U=15.548172099999647 I=18.518116299999747 S=0.00626109999984692 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True

@@ -1,11 +1,7 @@
-# Performance Metrics CSV - 2025-11-02 12:52:32
-# Period: Last 7 days
-# Systems Considered: 6
-
 "System","Band","TotalRuns","Passed","Failed","Skipped","SuccessRate","EffectiveRuns","EffectiveSuccessRate","LastStatus"
-"Intelligent Feedback","Excellent","2","2","0","0","100","2","100","PASS"
-"Daily Briefing","Excellent","2","2","0","0","100","2","100","PASS"
-"Orchestration","Needs Attention","2","1","1","0","50","2","50","PASS"
-"Resonance Loop","Excellent","2","2","0","0","100","2","100","PASS"
-"BQI Phase 6","Excellent","2","2","0","0","100","2","100","PASS"
-"YouTube Learning","No Data","2","0","0","2","0","0","0","SKIP"
+"Intelligent Feedback","Excellent","3","3","0","0","100","3","100","PASS"
+"Daily Briefing","Excellent","3","3","0","0","100","3","100","PASS"
+"Orchestration","Needs Attention","3","2","1","0","66.6666666666667","3","66.6666666666667","PASS"
+"Resonance Loop","Excellent","3","3","0","0","100","3","100","PASS"
+"BQI Phase 6","Excellent","3","3","0","0","100","3","100","PASS"
+"YouTube Learning","No Data","3","0","0","3","0","0","0","SKIP"

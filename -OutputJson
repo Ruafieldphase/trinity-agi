@@ -1,0 +1,90 @@
+﻿{
+    "Summary":  {
+                    "Warnings":  2,
+                    "Passed":  9,
+                    "StatusText":  "OPERATIONAL WITH WARNINGS",
+                    "TotalChecks":  11,
+                    "Failed":  0,
+                    "PassRate":  81.8
+                },
+    "Timestamp":  "2025-11-02 22:37:41",
+    "Checks":  {
+                   "Cloud AI API":  {
+                                        "Status":  "OK",
+                                        "Message":  "Response in 173ms",
+                                        "Details":  {
+
+                                                    }
+                                    },
+                   "Python Processes":  {
+                                            "Status":  "OK",
+                                            "Message":  "36 process(es) running",
+                                            "Details":  {
+
+                                                        }
+                                        },
+                   "Lumen Gateway":  {
+                                         "Status":  "WARNING",
+                                         "Message":  "High latency: 3080ms",
+                                         "Details":  {
+
+                                                     }
+                                     },
+                   "Luon Watcher":  {
+                                        "Status":  "WARNING",
+                                        "Message":  "Not running (optional component)",
+                                        "Details":  {
+
+                                                    }
+                                    },
+                   "AGI Pipeline":  {
+                                        "Status":  "OK",
+                                        "Message":  "AGI Health Gate PASS",
+                                        "Details":  {
+
+                                                    }
+                                    },
+                   "LM Studio Inference":  {
+                                               "Status":  "OK",
+                                               "Message":  "Response in 3938ms",
+                                               "Details":  {
+
+                                                           }
+                                           },
+                   "LM Studio Port":  {
+                                          "Status":  "OK",
+                                          "Message":  "Port 8080 active (PID 33344)",
+                                          "Details":  {
+
+                                                      }
+                                      },
+                   "Settings.json":  {
+                                         "Status":  "OK",
+                                         "Message":  "Valid JSON, 270.2KB, 0 commands",
+                                         "Details":  {
+
+                                                     }
+                                     },
+                   "Scheduler Tasks":  {
+                                           "Status":  "OK",
+                                           "Message":  "38 task(s): 30 Ready,  Running",
+                                           "Details":  {
+
+                                                       }
+                                       },
+                   "LM Studio Memory":  {
+                                            "Status":  "OK",
+                                            "Message":  "2 process(es), 55MB total",
+                                            "Details":  {
+
+                                                        }
+                                        },
+                   "LM Studio Models":  {
+                                            "Status":  "OK",
+                                            "Message":  "1 model(s) available: /models/eeve.gguf",
+                                            "Details":  {
+
+                                                        }
+                                        }
+               }
+}

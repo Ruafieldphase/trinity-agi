@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Optional
 from threading import Lock
 import time
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 import uvicorn
@@ -36,16 +36,68 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# In-memory task queue
-task_queue: List[Dict[str, Any]] = []
+# In-memory task queue with priority support
+# Priority queues: urgent (P0), normal (P1), low (P2)
+task_queue_urgent: List[Dict[str, Any]] = []
+task_queue_normal: List[Dict[str, Any]] = []
+task_queue_low: List[Dict[str, Any]] = []
 task_results: Dict[str, Dict[str, Any]] = {}
 inflight_tasks: Dict[str, Dict[str, Any]] = {}
 queue_lock = Lock()
+
+# Priority levels
+PRIORITY_URGENT = "urgent"
+PRIORITY_NORMAL = "normal"
+PRIORITY_LOW = "low"
+VALID_PRIORITIES = {PRIORITY_URGENT, PRIORITY_NORMAL, PRIORITY_LOW}
 
 # Re-delivery lease for at-least-once semantics
 LEASE_TIMEOUT_SECONDS = 120
 
 app = FastAPI(title="Computer Use Task Queue Server", version="1.0.0")
+
+
+# === Helper Functions ===
+
+def _get_queue_by_priority(priority: str) -> List[Dict[str, Any]]:
+    """Get the appropriate queue based on priority"""
+    if priority == PRIORITY_URGENT:
+        return task_queue_urgent
+    elif priority == PRIORITY_LOW:
+        return task_queue_low
+    else:  # default to normal
+        return task_queue_normal
+
+
+def _get_total_queue_size() -> int:
+    """Get total queue size across all priorities"""
+    return len(task_queue_urgent) + len(task_queue_normal) + len(task_queue_low)
+
+
+def _get_next_task_from_queue() -> Optional[Dict[str, Any]]:
+    """Get next task from queue respecting priority: urgent > normal > low"""
+    if task_queue_urgent:
+        return task_queue_urgent.pop(0)
+    elif task_queue_normal:
+        return task_queue_normal.pop(0)
+    elif task_queue_low:
+        return task_queue_low.pop(0)
+    return None
+
+
+def _requeue_task(task: Dict[str, Any]) -> None:
+    """Requeue task to front of appropriate priority queue"""
+    priority = task.get("priority", PRIORITY_NORMAL)
+    queue = _get_queue_by_priority(priority)
+    queue.insert(0, task)
+
+
+def _enqueue_task(task: Dict[str, Any], priority: str = PRIORITY_NORMAL) -> int:
+    """Enqueue task to appropriate priority queue"""
+    task["priority"] = priority  # Store priority in task
+    queue = _get_queue_by_priority(priority)
+    queue.append(task)
+    return _get_total_queue_size()
 
 # === Request Logging Middleware ===
 @app.middleware("http")
@@ -84,7 +136,10 @@ async def health_check():
     return {
         "status": "ok",
         "service": "task-queue-server",
-        "queue_size": len(task_queue),
+        "queue_size": _get_total_queue_size(),
+        "queue_urgent": len(task_queue_urgent),
+        "queue_normal": len(task_queue_normal),
+        "queue_low": len(task_queue_low),
         "results_count": len(task_results),
         "timestamp": datetime.now().isoformat()
     }
@@ -92,7 +147,7 @@ async def health_check():
 
 @app.api_route("/api/tasks/next", methods=["GET", "POST"])
 async def get_next_task(request: Request):
-    """Fetch next task from queue (FIFO) - Supports both GET and POST for compatibility"""
+    """Fetch next task from queue (priority-based) - Supports both GET and POST for compatibility"""
     logger.info(f"{request.method} /api/tasks/next - Client: {request.client}")
     with queue_lock:
         # Requeue expired inflight tasks (lease timeout)
@@ -102,17 +157,18 @@ async def get_next_task(request: Request):
             leased_at = meta.get("leased_at", 0)
             if now - float(leased_at) >= LEASE_TIMEOUT_SECONDS:
                 # push back to front for faster retry
-                task_queue.insert(0, meta["task"])  # front
+                _requeue_task(meta["task"])
                 expired.append(tid)
                 logger.warning(f"Lease expired -> requeued task: {tid}")
         for tid in expired:
             inflight_tasks.pop(tid, None)
 
-        if not task_queue:
+        # Get next task respecting priority
+        task = _get_next_task_from_queue()
+        if not task:
             # Empty object instead of 204 to prevent JSON parse error
             return {"task": None}
         
-        task = task_queue.pop(0)
         # Register lease
         worker_name = request.headers.get("X-Worker-Name") or "unknown"
         inflight_tasks[task["task_id"]] = {
@@ -120,7 +176,8 @@ async def get_next_task(request: Request):
             "leased_at": now,
             "worker": worker_name,
         }
-        logger.info(f"Dequeued task: {task['task_id']} (type: {task['type']}) | lease to {worker_name}")
+        priority = task.get("priority", PRIORITY_NORMAL)
+        logger.info(f"Dequeued task: {task['task_id']} (type: {task['type']}, priority: {priority}) | lease to {worker_name}")
         return task
 
 
@@ -147,29 +204,44 @@ async def submit_task_result(task_id: str, result: TaskResult):
 
 
 @app.post("/api/tasks/create")
-async def create_task(request: CreateTaskRequest):
-    """Create new task (for testing)"""
+async def create_task(
+    request: CreateTaskRequest,
+    priority: str = Query(default=PRIORITY_NORMAL, description="Task priority: urgent, normal, or low")
+):
+    """Create new task with optional priority (urgent, normal, low)"""
+    # Validate priority
+    if priority not in VALID_PRIORITIES:
+        logger.warning(f"Invalid priority '{priority}', defaulting to 'normal'")
+        priority = PRIORITY_NORMAL
+    
     task_id = str(uuid.uuid4())
     task = {
         "task_id": task_id,
         "type": request.type,
         "data": request.data,
+        "priority": priority,
         "created_at": datetime.now().isoformat()
     }
     
     with queue_lock:
-        task_queue.append(task)
+        queue_position = _enqueue_task(task, priority)
     
-    logger.info(f"Created task: {task_id} (type: {request.type})")
-    return {"task_id": task_id, "message": "Task created", "queue_position": len(task_queue)}
+    logger.info(f"Created task: {task_id} (type: {request.type}, priority: {priority})")
+    return {
+        "task_id": task_id,
+        "message": "Task created",
+        "priority": priority,
+        "queue_position": queue_position
+    }
 
 
 # Compatibility endpoint for existing E2E scripts expecting /api/enqueue
 @app.post("/api/enqueue")
 async def enqueue_compat(request: Request):
-    """Compatibility shim to accept {task_type, params} and enqueue a task.
+    """Compatibility shim to accept {task_type, params, priority} and enqueue a task.
 
     Maps to the canonical /api/tasks/create endpoint.
+    Supports optional priority parameter (urgent, normal, low).
     """
     try:
         payload = await request.json()
@@ -178,21 +250,29 @@ async def enqueue_compat(request: Request):
 
     task_type = payload.get("task_type") or payload.get("type") or "generic"
     data = payload.get("params") or payload.get("data") or {}
+    priority = payload.get("priority", PRIORITY_NORMAL)
+
+    # Validate priority
+    if priority not in VALID_PRIORITIES:
+        logger.warning(f"Invalid priority '{priority}' in /api/enqueue, defaulting to 'normal'")
+        priority = PRIORITY_NORMAL
 
     try:
         req = CreateTaskRequest(type=task_type, data=data)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Invalid payload: {e}")
 
-    return await create_task(req)
+    return await create_task(req, priority=priority)
 
 
 @app.get("/api/tasks")
 async def list_tasks():
-    """List all tasks in queue (for debugging)"""
+    """List all tasks in queue by priority (for debugging)"""
     return {
-        "queue": task_queue,
-        "queue_size": len(task_queue)
+        "queue_urgent": task_queue_urgent,
+        "queue_normal": task_queue_normal,
+        "queue_low": task_queue_low,
+        "total_queue_size": _get_total_queue_size()
     }
 
 
@@ -252,7 +332,10 @@ async def get_stats():
         active_workers = len([w for w in workers if w != "unknown"])
         
         return {
-            "pending": len(task_queue),
+            "pending": _get_total_queue_size(),
+            "pending_urgent": len(task_queue_urgent),
+            "pending_normal": len(task_queue_normal),
+            "pending_low": len(task_queue_low),
             "inflight": len(inflight_tasks),
             "completed": total_completed,
             "successful": successful,

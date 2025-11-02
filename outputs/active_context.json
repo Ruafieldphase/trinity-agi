@@ -1,12 +1,12 @@
-{
-    "current":  "Operations",
+﻿{
+    "current":  "Sleep",
     "enabled_services":  [
-                             "metrics_collector_detailed",
-                             "monitoring_report_ready",
-                             "performance_dashboard_ready",
-                             "health_check_ready"
+                             "ledger_append_only",
+                             "backup_scheduled",
+                             "dream_mode_active",
+                             "unconscious_processor_active"
                          ],
-    "previous":  "Core",
+    "previous":  "Operations",
     "auto_switch_rules":  {
                               "youtube_url_detected":  "Learning",
                               "life_score_below_50":  "Operations",
@@ -16,5 +16,5 @@
     "disabled_services":  [
 
                           ],
-    "active_since":  "2025-11-02T07:09:23.0776060+09:00"
+    "active_since":  "2025-11-02T22:00:05.3453983+09:00"
 }

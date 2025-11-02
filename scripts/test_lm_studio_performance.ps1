@@ -1,6 +1,8 @@
 # LM Studio Performance Test Script
 param(
-    [int]$Iterations = 5
+    [int]$Iterations = 5,
+    [int]$MaxTokens = 100,
+    [switch]$Warmup
 )
 # Force UTF-8 console to prevent mojibake on Windows PowerShell
 try { chcp 65001 > $null 2> $null } catch {}
@@ -25,8 +27,24 @@ $testMessages = @(
 )
 
 $allTimes = @()
+$allTokens = @()
 $successCount = 0
 $failCount = 0
+
+if ($Warmup) {
+    try {
+        $warmBody = @{
+            model      = "yanolja_-_eeve-korean-instruct-10.8b-v1.0"
+            messages   = @(@{ role = "user"; content = "ping" })
+            max_tokens = 8
+        } | ConvertTo-Json -Depth 10
+        # Unmeasured warmup to mitigate cold start
+        $null = Invoke-RestMethod -Uri "http://localhost:8080/v1/chat/completions" -Method POST -Body $warmBody -ContentType "application/json" -TimeoutSec 30
+        Write-Host "Warmup completed" -ForegroundColor DarkGray
+        Write-Host ""
+    }
+    catch { Write-Host "Warmup skipped: $_" -ForegroundColor DarkYellow }
+}
 
 for ($i = 1; $i -le $Iterations; $i++) {
     $message = $testMessages[($i - 1) % $testMessages.Count]
@@ -39,7 +57,7 @@ for ($i = 1; $i -le $Iterations; $i++) {
                     role    = "user"
                     content = $message
                 })
-            max_tokens = 100
+            max_tokens = $MaxTokens
         } | ConvertTo-Json -Depth 10
         
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
@@ -52,10 +70,17 @@ for ($i = 1; $i -le $Iterations; $i++) {
         $successCount++
         
         $content = $response.choices[0].message.content
-        $tokens = $response.usage.total_tokens
+        $tokens = $null
+        try { $tokens = $response.usage.total_tokens } catch {}
+        if ($tokens -eq $null) {
+            # Fallback: approximate tokens by content length / 4
+            $tokens = [int]([math]::Ceiling($content.Length / 4.0))
+        }
+        $allTokens += $tokens
         
+        $tps = if ($elapsed -gt 0) { [math]::Round(($tokens / ($elapsed / 1000)), 2) } else { 0 }
         Write-Host "  Response: $elapsed ms" -ForegroundColor Green
-        Write-Host "  Tokens: $tokens" -ForegroundColor DarkGray
+        Write-Host "  Tokens: $tokens (≈ $tps tok/s)" -ForegroundColor DarkGray
         Write-Host "  Preview: $($content.Substring(0, [Math]::Min(50, $content.Length)))..." -ForegroundColor DarkGray
     }
     catch {
@@ -75,11 +100,14 @@ if ($allTimes.Count -gt 0) {
     $avg = ($allTimes | Measure-Object -Average).Average
     $min = ($allTimes | Measure-Object -Minimum).Minimum
     $max = ($allTimes | Measure-Object -Maximum).Maximum
+    $avgTok = if ($allTokens.Count -gt 0) { ($allTokens | Measure-Object -Average).Average } else { $null }
+    $avgTps = if ($avgTok -ne $null -and $avg -gt 0) { [math]::Round(($avgTok / ($avg / 1000)), 2) } else { $null }
     
     Write-Host "Success Rate: $successCount/$Iterations ($([math]::Round($successCount/$Iterations*100, 1))%)" -ForegroundColor Green
     Write-Host "Average Response Time: $([math]::Round($avg, 2)) ms" -ForegroundColor White
     Write-Host "Min Response Time: $min ms" -ForegroundColor White
     Write-Host "Max Response Time: $max ms" -ForegroundColor White
+    if ($avgTps -ne $null) { Write-Host "Average Throughput: $avgTps tok/s" -ForegroundColor White }
     
     if ($failCount -gt 0) {
         Write-Host "Failed Requests: $failCount" -ForegroundColor Red

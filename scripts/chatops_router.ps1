@@ -64,9 +64,11 @@ if (-not $utterance -and $PSBoundParameters.ContainsKey('Say') -and $Say) {
     $utterance = $Say.Trim()
 }
 
+$script:preResolvedAction = $null
 if (-not $utterance) {
-    Write-Host "No utterance provided. Set CHATOPS_SAY or CHATOPS_SAY_B64 env, or pass -Say/-SayB64." -ForegroundColor Yellow
-    exit 2
+    Info "No utterance provided; defaulting to AGI health."
+    $script:preResolvedAction = 'agi_health'
+    $utterance = '[default]'
 }
 $workspace = Split-Path -Parent $PSScriptRoot
 
@@ -137,6 +139,46 @@ function Invoke-ObsHelper {
     }
 }
 
+# Generic process invoker with hard timeout (prevents indefinite hangs)
+function Invoke-PSWithTimeout {
+    param(
+        [Parameter(Mandatory = $true)][string]$ScriptPath,
+        [string[]]$Arguments,
+        [int]$TimeoutSec = 10
+    )
+    try {
+        if (-not (Test-Path $ScriptPath)) {
+            return @{ code = 2; timedOut = $false; stdout = ''; stderr = "Script not found: $ScriptPath" }
+        }
+        $argLine = '-NoProfile -ExecutionPolicy Bypass -File ' + ('"{0}"' -f $ScriptPath)
+        if ($Arguments -and $Arguments.Count -gt 0) {
+            $argLine += ' ' + ($Arguments -join ' ')
+        }
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        $psi.FileName = 'powershell'
+        $psi.Arguments = $argLine
+        $psi.RedirectStandardOutput = $true
+        $psi.RedirectStandardError = $true
+        $psi.UseShellExecute = $false
+        $proc = [System.Diagnostics.Process]::Start($psi)
+        if (-not $proc) {
+            return @{ code = 2; timedOut = $false; stdout = ''; stderr = 'Failed to start process' }
+        }
+        if (-not $proc.WaitForExit($TimeoutSec * 1000)) {
+            try { $proc.Kill() } catch {}
+            $stdout = ''
+            $stderr = 'Timed out'
+            return @{ code = 1460; timedOut = $true; stdout = $stdout; stderr = $stderr }
+        }
+        $stdout = $proc.StandardOutput.ReadToEnd()
+        $stderr = $proc.StandardError.ReadToEnd()
+        return @{ code = $proc.ExitCode; timedOut = $false; stdout = $stdout; stderr = $stderr }
+    }
+    catch {
+        return @{ code = 2; timedOut = $false; stdout = ''; stderr = ("$_") }
+    }
+}
+
 function Start-Stream {
     try {
         & powershell -NoProfile -ExecutionPolicy Bypass `
@@ -202,13 +244,11 @@ function Open-LumenGate {
 function Open-LumenDashboard {
     param([int]$Hours = 24)
     try {
-        # Generate monitoring dashboard and open HTML
-        & powershell -NoProfile -ExecutionPolicy Bypass `
-            -File (Join-Path $workspace 'scripts/generate_monitoring_report.ps1') `
-            -Hours $Hours
-        if ($LASTEXITCODE -ne 0) {
-            Warn "Monitoring report generation failed."
-            return 2
+        # Generate monitoring dashboard with hard timeout and open HTML if available
+        $gen = Join-Path $workspace 'scripts/generate_monitoring_report.ps1'
+        $res = Invoke-PSWithTimeout -ScriptPath $gen -Arguments @('-Hours', $Hours) -TimeoutSec 15
+        if ($res.timedOut -or $res.code -ne 0) {
+            Warn "Monitoring report generation issue (code=$($res.code), timedOut=$($res.timedOut))"
         }
         $html = (Join-Path $workspace 'outputs/monitoring_dashboard_latest.html')
         if (Test-Path $html) {
@@ -239,8 +279,11 @@ function Run-Preflight {
 
 function Show-QuickStatus {
     try {
-        & powershell -NoProfile -ExecutionPolicy Bypass `
-            -File (Join-Path $workspace 'scripts/quick_stream_status.ps1')
+        $qs = Join-Path $workspace 'scripts/quick_stream_status.ps1'
+        $res = Invoke-PSWithTimeout -ScriptPath $qs -Arguments @() -TimeoutSec 10
+        if ($res.timedOut -or $res.code -ne 0) {
+            Warn "Quick status returned code=$($res.code); timedOut=$($res.timedOut)"
+        }
         $global:LASTEXITCODE = 0
         return 0
     }
@@ -260,12 +303,26 @@ function Show-OrchestrationStatus {
             return 1
         }
         
-        # Run orchestration bridge to get current state
-        # stderr 출력은 버리고 stdout(JSON)만 받기
-        $jsonOutput = & python $bridgeScript 2>$null
-        
-        if ($LASTEXITCODE -ne 0) {
-            Warn "Bridge execution failed"
+        # Run orchestration bridge with hard timeout and capture stdout
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        $psi.FileName = 'python'
+        $psi.Arguments = ('"{0}"' -f $bridgeScript)
+        $psi.RedirectStandardOutput = $true
+        $psi.RedirectStandardError = $true
+        $psi.UseShellExecute = $false
+        $proc = [System.Diagnostics.Process]::Start($psi)
+        if (-not $proc) {
+            Warn "Bridge process failed to start"
+            return 1
+        }
+        if (-not $proc.WaitForExit(8000)) {
+            try { $proc.Kill() } catch {}
+            Warn "Bridge execution timed out"
+            return 1
+        }
+        $jsonOutput = $proc.StandardOutput.ReadToEnd()
+        if ($proc.ExitCode -ne 0) {
+            Warn "Bridge execution failed (exit=$($proc.ExitCode))"
             return 1
         }
         
@@ -336,8 +393,23 @@ function Stop-Bot {
 
 function Show-AgiHealth {
     try {
-        & powershell -NoProfile -ExecutionPolicy Bypass `
-            -File (Join-Path $workspace 'fdo_agi_repo/scripts/check_health.ps1')
+        # Prefer fast, non-blocking wrapper with hard timeout
+        $quick = Join-Path $workspace 'scripts/run_quick_health.ps1'
+        if (Test-Path $quick) {
+            & powershell -NoProfile -ExecutionPolicy Bypass `
+                -File $quick -JsonOnly -Fast -TimeoutSec 10 -MaxDuration 8
+            $code = $LASTEXITCODE
+        }
+        else {
+            # Fallback to direct health script with safe flags
+            $direct = Join-Path $workspace 'fdo_agi_repo/scripts/check_health.ps1'
+            & powershell -NoProfile -ExecutionPolicy Bypass `
+                -File $direct -JsonOnly -MaxDuration 10 -HardTimeoutSec 10
+            $code = $LASTEXITCODE
+        }
+        if ($code -ne 0) {
+            Warn "AGI health indicates issues or timed out (exit=$code)."
+        }
         $global:LASTEXITCODE = 0
         return 0
     }
@@ -350,8 +422,11 @@ function Show-AgiHealth {
 
 function Show-AgiDashboard {
     try {
-        & powershell -NoProfile -ExecutionPolicy Bypass `
-            -File (Join-Path $workspace 'fdo_agi_repo/scripts/ops_dashboard.ps1')
+        $opsDash = Join-Path $workspace 'fdo_agi_repo/scripts/ops_dashboard.ps1'
+        $res = Invoke-PSWithTimeout -ScriptPath $opsDash -Arguments @() -TimeoutSec 15
+        if ($res.timedOut -or $res.code -ne 0) {
+            Warn "AGI dashboard script issue (code=$($res.code), timedOut=$($res.timedOut))"
+        }
         $global:LASTEXITCODE = 0
         return 0
     }
@@ -536,6 +611,16 @@ function Show-OpsDashboard {
         }
         
         Info "`n[INFO] View detailed HTML dashboard: monitoring_dashboard_latest.html"
+
+        # Try to open dashboard; if missing, generate then open (hard timeout path inside Open-LumenDashboard)
+        $html = Join-Path $workspace 'outputs/monitoring_dashboard_latest.html'
+        if (Test-Path $html) {
+            try { Start-Process $html | Out-Null } catch { Warn "Failed to open dashboard: $_" }
+        }
+        else {
+            Info "Dashboard not found. Generating 24h dashboard and opening..."
+            Open-LumenDashboard -Hours 24 | Out-Null
+        }
         $global:LASTEXITCODE = 0
         return 0
     }
@@ -1028,7 +1113,17 @@ function Resolve-Intent {
     }
 }
 
-$action = Resolve-Intent -Text $utterance
+$action = $null
+if ($script:preResolvedAction) {
+    $action = $script:preResolvedAction
+}
+else {
+    $action = Resolve-Intent -Text $utterance
+}
+if ($action -eq 'unknown') {
+    Info '[Fallback] Intent unknown; defaulting to AGI health'
+    $action = 'agi_health'
+}
 
 # Emit resolved intent event
 Emit-ChatOpsEvent -Type "chatops_resolved" -Payload @{
@@ -1130,10 +1225,10 @@ switch -Regex ($action) {
     '^system_check$' {
         Info '[Action] System health check'
         exit (Run-And-Report { 
-            & powershell -NoProfile -ExecutionPolicy Bypass `
-                -File (Join-Path $workspace 'scripts/system_check_after_reboot.ps1')
-            return $LASTEXITCODE
-        })
+                & powershell -NoProfile -ExecutionPolicy Bypass `
+                    -File (Join-Path $workspace 'scripts/system_check_after_reboot.ps1')
+                return $LASTEXITCODE
+            })
     }
     '^bot_dryrun$' {
         Info '[Action] YouTube bot dry run'

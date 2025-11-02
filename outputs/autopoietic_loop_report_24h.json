@@ -1,27 +1,27 @@
 {
   "window_hours": 24,
-  "generated_at": "2025-11-02T12:51:31.420495",
+  "generated_at": "2025-11-02T18:24:39.568126",
   "counts": {
-    "tasks_total": 60,
-    "complete_loops": 36,
-    "incomplete_loops": 24,
+    "tasks_total": 99,
+    "complete_loops": 74,
+    "incomplete_loops": 25,
     "evidence_gate_triggered": 0,
     "second_pass": 0
   },
   "durations_avg_sec": {
-    "folding": 5.74355914166669,
-    "unfolding": 9.262544491666537,
-    "integration": 13.232106311111496,
-    "symmetry": 0.0034936333338480255
+    "folding": 4.207684697297332,
+    "unfolding": 6.739292752702553,
+    "integration": 9.854129951351482,
+    "symmetry": 0.0028062972975272113
   },
   "durations_p95_sec": {
-    "folding": 9.126262000005227,
-    "unfolding": 13.462448199999926,
-    "integration": 17.887901299999612,
-    "symmetry": 0.00626109999984692
+    "folding": 7.953638399999818,
+    "unfolding": 11.619577600000412,
+    "integration": 17.72532030000002,
+    "symmetry": 0.005998399999953108
   },
   "rates_pct": {
-    "loop_complete_rate": 60.0,
+    "loop_complete_rate": 74.74747474747475,
     "evidence_gate_trigger_rate": 0.0,
     "second_pass_rate": 0.0
   },
@@ -33,10 +33,10 @@
     {
       "task_id": "runtime-test-001",
       "phases": {
-        "folding": 3.469480400000009,
-        "unfolding": 8.526128299999982,
-        "integration": 9.401579000000027,
-        "symmetry": 0.012369100000000799
+        "folding": 3.537813199998709,
+        "unfolding": 5.855360499999733,
+        "integration": 8.152799100000266,
+        "symmetry": 0.01926599999933387
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -113,16 +113,14 @@
   ],
   "policy": {
     "counts": {
-      "allow": 0,
-      "warn": 48,
+      "allow": 19,
+      "warn": 89,
       "block": 0
     },
     "last": {
       "mode": "observe",
       "policy": "quality-first",
-      "reasons": [
-        "latency 24024ms > max_latency_ms 8000ms"
-      ]
+      "reasons": []
     }
   },
   "closed_loop": {

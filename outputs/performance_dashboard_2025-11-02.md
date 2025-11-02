@@ -1,25 +1,25 @@
 [PERFORMANCE DIGEST - ASCII SAFE]
 
-- Generated: 2025-11-02 12:52:32
+- Generated: 2025-11-02 22:38:05
 - Period: Last 7 days
- - Total test runs: 2
+ - Total test runs: 3
  - Systems considered: 6
-- Overall success: 75.0%
-- Effective overall success: 90.0%
+- Overall success: 77.8%
+- Effective overall success: 93.3%
 - Thresholds: ExcellentAt=90%  GoodAt=70%
 - Systems flagged (<90%): Orchestration
  - Flagged count: 1
   - Band counts: Excellent=4, Good=0, Needs=1, NoData=1
 
-   - Top attention: Orchestration (50.0%)
+   - Top attention: Orchestration (66.7%)
 
 ---
 
 # Performance Metrics Dashboard
 
-**Generated**: 2025-11-02 12:52:32  
+**Generated**: 2025-11-02 22:38:05  
 **Period**: Last 7 days  
-**Total Test Runs**: 2  
+**Total Test Runs**: 3  
 **Systems Considered**: 6
 
 
@@ -29,17 +29,17 @@
 
 ### [PASS] Orchestration
 
-RED **Health Score**: 50.0%
+RED **Health Score**: 66.7%
 Band: Needs Attention
 
 | Metric | Value |
 |--------|-------|
-| Total Runs | 2 |
-| Passed | 1 |
+| Total Runs | 3 |
+| Passed | 2 |
 | Failed | 1 |
 | Skipped | 0 |
-| Success Rate | 50.0% |
-| Effective Success Rate | 50.0% |
+| Success Rate | 66.7% |
+| Effective Success Rate | 66.7% |
 
 ### [PASS] Resonance Loop
 
@@ -48,8 +48,8 @@ Band: Excellent
 
 | Metric | Value |
 |--------|-------|
-| Total Runs | 2 |
-| Passed | 2 |
+| Total Runs | 3 |
+| Passed | 3 |
 | Failed | 0 |
 | Skipped | 0 |
 | Success Rate | 100.0% |
@@ -62,8 +62,8 @@ Band: Excellent
 
 | Metric | Value |
 |--------|-------|
-| Total Runs | 2 |
-| Passed | 2 |
+| Total Runs | 3 |
+| Passed | 3 |
 | Failed | 0 |
 | Skipped | 0 |
 | Success Rate | 100.0% |
@@ -76,8 +76,8 @@ Band: Excellent
 
 | Metric | Value |
 |--------|-------|
-| Total Runs | 2 |
-| Passed | 2 |
+| Total Runs | 3 |
+| Passed | 3 |
 | Failed | 0 |
 | Skipped | 0 |
 | Success Rate | 100.0% |
@@ -90,8 +90,8 @@ Band: Excellent
 
 | Metric | Value |
 |--------|-------|
-| Total Runs | 2 |
-| Passed | 2 |
+| Total Runs | 3 |
+| Passed | 3 |
 | Failed | 0 |
 | Skipped | 0 |
 | Success Rate | 100.0% |
@@ -104,10 +104,10 @@ Band: No Data
 
 | Metric | Value |
 |--------|-------|
-| Total Runs | 2 |
+| Total Runs | 3 |
 | Passed | 0 |
 | Failed | 0 |
-| Skipped | 2 |
+| Skipped | 3 |
 | Success Rate | N/A |
 | Effective Success Rate | N/A |
 
@@ -116,11 +116,11 @@ Band: No Data
 ## Overall System Health
 
 **Status**: Excellent  
-**Average Success Rate**: 75.0%  
-**Effective Average Success** (excluding SKIPs): 90.0%
+**Average Success Rate**: 77.8%  
+**Effective Average Success** (excluding SKIPs): 93.3%
 
 ### Recommendations
-- [Must fix] **Orchestration**: 50.0% - stabilize failing paths.
+- [Must fix] **Orchestration**: 66.7% - stabilize failing paths.
 
 ---
 
@@ -134,6 +134,7 @@ _No failures with error messages in selected period/scope._
 
 | Timestamp | Total | Passed | Failed | Skipped |
 |-----------|-------|--------|--------|---------|
+| 2025-11-02_220027 | 6 | 5 | 0 | 1 |
 | 2025-11-01_054135 | 6 | 5 | 0 | 1 |
 | 2025-11-01_054044 | 6 | 4 | 1 | 1 |
 

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-01T21:45:22.834485",
+  "generated_at": "2025-11-02T18:23:19.755515",
   "metrics_path": "C:\\workspace\\agi\\outputs\\monitoring_metrics_latest.json",
   "window_hours": 24,
   "seeds": {
@@ -52,8 +52,8 @@
     ]
   },
   "next_runs": {
-    "bqi_daily": "2025-11-02T03:10:00",
-    "monitoring_daily": "2025-11-02T03:20:00",
-    "health_hourly": "2025-11-01T22:00:00"
+    "bqi_daily": "2025-11-03T03:10:00",
+    "monitoring_daily": "2025-11-03T03:20:00",
+    "health_hourly": "2025-11-02T19:00:00"
   }
 }

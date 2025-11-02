@@ -88,6 +88,12 @@ def resolve_rules(utter: str) -> str:
         return "ops_dashboard"
     if re.search(r"(운영|시스템).*(상태|대시보드)", u):
         return "ops_dashboard"
+    # English variants: 'ops dashboard', 'operations dashboard', 'ops status', 'operations overview'
+    if re.search(r"\b(ops?|operations?)\s*(dashboard|status|overview)\b", u):
+        return "ops_dashboard"
+    # Generic 'dashboard show/open' patterns
+    if re.search(r"(대시보드|현황판).*(보여|열어|오픈|띄워)", u) or re.search(r"\bdashboard\b.*\b(show|open|display)\b", u):
+        return "ops_dashboard"
     
     # Orchestration Status (Phase 5.5)
     if re.search(r"(오케스트레이션|orchestration).*(상태|status|현황)", u):

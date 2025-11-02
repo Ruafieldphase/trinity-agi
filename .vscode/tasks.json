@@ -109,6 +109,25 @@
 			}
 		},
 		{
+			"label": "Monitoring: Open Dashboard (auto generate)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_or_generate_dashboard.ps1"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
 			"label": "Resonance: Observe (ops-safety)",
 			"type": "shell",
 			"command": "powershell",
@@ -438,6 +457,32 @@
 				"if (Test-Path '${workspaceFolder}/outputs/original_data_index.md') { code ${workspaceFolder}/outputs/original_data_index.md } else { Write-Host 'No original_data_index.md found. Build index first.' -ForegroundColor Yellow }"
 			],
 			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "AGI: Quick Health Check (fast)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_quick_health.ps1",
+				"-JsonOnly",
+				"-Fast",
+				"-TimeoutSec",
+				"10",
+				"-MaxDuration",
+				"8"
+			],
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"focus": true,
+				"panel": "dedicated",
+				"showReuseMessage": false
+			},
 			"problemMatcher": []
 		},
 		{
@@ -2046,6 +2091,30 @@
 			}
 		},
 		{
+			"label": "AGI: Quick Health Check (fast)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/run_quick_health.ps1",
+				"-JsonOnly",
+				"-Fast",
+				"-TimeoutSec",
+				"10",
+				"-MaxDuration",
+				"8"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
 			"label": "System: Health Check (Detailed)",
 			"type": "shell",
 			"command": "powershell",
@@ -3330,7 +3399,12 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/fdo_agi_repo/scripts/check_health.ps1"
+				"${workspaceFolder}/fdo_agi_repo/scripts/check_health.ps1",
+				"-JsonOnly",
+				"-MaxDuration",
+				"10",
+				"-HardTimeoutSec",
+				"10"
 			],
 			"group": "test",
 			"presentation": {
@@ -3350,7 +3424,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 24 } else { python scripts\\summarize_ledger.py --last-hours 24 }; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & ${workspaceFolder}\\fdo_agi_repo\\scripts\\check_health.ps1"
+				"cd ${workspaceFolder}\\fdo_agi_repo; if (Test-Path .venv\\Scripts\\python.exe) { .venv\\Scripts\\python.exe scripts\\summarize_ledger.py --last-hours 24 } else { python scripts\\summarize_ledger.py --last-hours 24 }; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & ${workspaceFolder}\\fdo_agi_repo\\scripts\\check_health.ps1 -JsonOnly -MaxDuration 10 -HardTimeoutSec 10"
 			],
 			"group": "test",
 			"presentation": {

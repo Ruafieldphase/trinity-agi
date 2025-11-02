@@ -1,0 +1,48 @@
+﻿{
+    "generated_at":  "2025-11-02T10:14:06Z",
+    "recent_activity":  {
+                            "ledger_entries_24h":  100,
+                            "autopoietic_report_age_hours":  0.8,
+                            "last_ledger_update":  "2025-11-02T10:13:07.7179513Z"
+                        },
+    "performance":  {
+                        "recommendation":  "Use Lumen (faster by 6104.00ms)",
+                        "timestamp":  "2025-11-02T10:13:31Z",
+                        "lm_studio":  {
+                                          "avg_latency_ms":  6278.33,
+                                          "success_rate":  1,
+                                          "tokens_per_sec":  10.19,
+                                          "available":  true
+                                      },
+                        "lumen":  {
+                                      "avg_latency_ms":  174.33,
+                                      "success_rate":  1,
+                                      "available":  true
+                                  }
+                    },
+    "system_status":  {
+                          "routing_policy":  {
+                                                 "auto_adjust":  true,
+                                                 "latency_threshold_ms":  500,
+                                                 "fallback_backend":  "lm_studio",
+                                                 "primary_backend":  "lumen",
+                                                 "last_updated":  "2025-11-02T09:43:25Z"
+                                             },
+                          "queue":  {
+                                        "pending_tasks":  0,
+                                        "workers":  0,
+                                        "completed_tasks":  0,
+                                        "online":  true,
+                                        "success_rate":  0,
+                                        "inflight_tasks":  0
+                                    },
+                          "health_score":  100,
+                          "scheduled_tasks":  {
+                                                  "ready":  11,
+                                                  "running":  0,
+                                                  "total":  11,
+                                                  "disabled":  0
+                                              },
+                          "health_status":  "Healthy"
+                      }
+}

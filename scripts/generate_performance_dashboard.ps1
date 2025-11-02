@@ -46,11 +46,11 @@ $ErrorActionPreference = "Continue"
 
 # Helpers: band normalization and canonicalization
 function Normalize-BandInput {
-    param([Parameter(Mandatory=$true)][string]$Band)
+    param([Parameter(Mandatory = $true)][string]$Band)
     switch ($Band) {
         'NoData' { 'No Data'; break }
-        'Needs'  { 'Needs Attention'; break }
-        default  { $Band }
+        'Needs' { 'Needs Attention'; break }
+        default { $Band }
     }
 }
 function Get-CanonicalBandFromRates {
@@ -673,10 +673,16 @@ if ($ExportCsv) {
                 LastStatus           = "$($val.LastStatus)"
             }
         }
-        # Write metadata as comments then CSV
-        $csvContent = ($metaLines -join "`n") + "`n"
-        $csvContent += ($rows | ConvertTo-Csv -NoTypeInformation | Out-String)
-        [System.IO.File]::WriteAllText($csvPath, $csvContent, $utf8NoBom)
+        # Write CSV (header first row, no comment lines to preserve Import-Csv compatibility)
+        $csvContent = ($rows | ConvertTo-Csv -NoTypeInformation)
+        [System.IO.File]::WriteAllLines($csvPath, $csvContent, $utf8NoBom)
+
+        # Optionally persist metadata to a sidecar file for human reference
+        try {
+            $metaPath = "$csvPath.meta"
+            [System.IO.File]::WriteAllLines($metaPath, $metaLines, $utf8NoBom)
+        }
+        catch {}
         Write-Host "  CSV exported: $csvPath" -ForegroundColor Green
 
         if ($WriteLatest) {

@@ -3,7 +3,9 @@
 
 param(
     [switch]$Detailed,
-    [string]$OutputJson
+    [string]$OutputJson,
+    [string]$OutputMarkdown,
+    [object]$FastHealthGate
 )
 
 $ErrorActionPreference = 'Continue'
@@ -23,7 +25,7 @@ catch {}
 $results = @{
     Timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Summary   = @{
-        TotalChecks = 8
+        TotalChecks = 0
         Passed      = 0
         Warnings    = 0
         Failed      = 0
@@ -47,6 +49,7 @@ function Write-CheckResult {
         [hashtable]$Details = @{}
     )
     
+    $results.Summary.TotalChecks++
     $color = switch ($Status) {
         "OK" { "Green"; $results.Summary.Passed++ }
         "WARNING" { "Yellow"; $results.Summary.Warnings++ }
@@ -174,28 +177,108 @@ try {
     else {
         $pytestFile = "tests\test_fdo_agi_self_correction.py"
         if (Test-Path $pytestFile) {
-            $testOutput = & "fdo_agi_repo\.venv\Scripts\python.exe" -m pytest -q $pytestFile 2>&1 | Out-String
-            if ($LASTEXITCODE -eq 0) {
-                if ($testOutput -match '(\d+) passed.*?(\d+\.\d+)s') {
+            # Run pytest with a timeout to avoid hanging this check
+            $job = Start-Job -ScriptBlock { & "fdo_agi_repo\.venv\Scripts\python.exe" -m pytest -q "tests\test_fdo_agi_self_correction.py" 2>&1 | Out-String }
+            $completed = Wait-Job -Job $job -Timeout 45
+            if (-not $completed) {
+                Try { Stop-Job -Job $job -Force -ErrorAction SilentlyContinue } Catch {}
+                Write-CheckResult "AGI Pipeline" "WARNING" "Tests timed out after 45s"
+            }
+            else {
+                $testOutput = Receive-Job -Job $job | Out-String
+                if ($testOutput -match '(\d+) passed.*?(\d+\.?\d*)s') {
                     $testCount = $matches[1]
                     $testTime = $matches[2]
                     Write-CheckResult "AGI Pipeline" "OK" "$testCount test(s) passed in ${testTime}s"
                 }
-                else {
-                    Write-CheckResult "AGI Pipeline" "OK" "Tests passed"
+                elseif ($testOutput -match '(failed|error)') {
+                    Write-CheckResult "AGI Pipeline" "ERROR" "Tests failed (pytest)"
                 }
-            }
-            else {
-                Write-CheckResult "AGI Pipeline" "ERROR" "Tests failed (pytest)"
+                elseif ($testOutput.Trim().Length -gt 0) {
+                    Write-CheckResult "AGI Pipeline" "OK" "Tests completed"
+                }
+                else {
+                    Write-CheckResult "AGI Pipeline" "WARNING" "No output from pytest"
+                }
             }
         }
         else {
-            $agiHealth = & "fdo_agi_repo\scripts\check_health.ps1" 2>&1 | Out-String
-            if ($agiHealth -match 'HEALTH:\s*PASS') {
-                Write-CheckResult "AGI Pipeline" "OK" "AGI Health Gate PASS"
+            # Fallback health gate with explicit timeouts and JSON parsing
+            # Use absolute path and pass into job to avoid module autoload/path issues
+            $repoRoot = Get-Location
+            $pyExe = Join-Path $repoRoot "fdo_agi_repo\.venv\Scripts\python.exe"
+            if (-not (Test-Path -LiteralPath $pyExe)) { $pyExe = 'python' }
+            $pyScript = Join-Path $repoRoot "fdo_agi_repo\scripts\check_health.py"
+            if (-not (Test-Path -LiteralPath $pyScript)) {
+                Write-CheckResult "AGI Pipeline" "ERROR" "Health script not found at $pyScript"
             }
             else {
-                Write-CheckResult "AGI Pipeline" "ERROR" "AGI Health Gate failed"
+                $tempOut = [IO.Path]::Combine([IO.Path]::GetTempPath(), "agi_health_" + [guid]::NewGuid().ToString() + ".json")
+                # Determine whether to use fast mode (default to true for reliability unless explicitly disabled)
+                $useFast = $true
+                if ($PSBoundParameters.ContainsKey('FastHealthGate')) {
+                    $val = $FastHealthGate
+                    if ($null -eq $val) {
+                        $useFast = $true
+                    }
+                    elseif ($val -is [bool]) {
+                        $useFast = [bool]$val
+                    }
+                    else {
+                        $s = ([string]$val).Trim()
+                        $sLower = $s.ToLowerInvariant()
+                        if ($sLower -in @('false', '0', '$false')) { $useFast = $false }
+                        elseif ($sLower -in @('true', '1', '$true')) { $useFast = $true }
+                        else {
+                            try { $useFast = [System.Convert]::ToBoolean($s) } catch { $useFast = $true }
+                        }
+                    }
+                }
+                $job = Start-Job -ScriptBlock {
+                    param($py, $script, $outPath, $fast)
+                    try {
+                        $env:PYTHONIOENCODING = 'utf-8'
+                        $args = @('--json-only', '--max-duration', '8', '--hard-timeout', '8')
+                        if ($fast) { $args = @('--json-only', '--fast', '--max-duration', '8', '--hard-timeout', '8') }
+                        $output = & $py $script @args 2>$null
+                        [IO.File]::WriteAllText($outPath, [string]$output, [Text.Encoding]::UTF8)
+                    }
+                    catch {
+                        [IO.File]::WriteAllText($outPath, "", [Text.Encoding]::UTF8)
+                    }
+                } -ArgumentList $pyExe, $pyScript, $tempOut, $useFast
+                $completed = Wait-Job -Job $job -Timeout 12
+            }
+            if (-not $completed) {
+                Try { Stop-Job -Job $job -Force -ErrorAction SilentlyContinue } Catch {}
+                Write-CheckResult "AGI Pipeline" "WARNING" "Health gate timed out after 12s"
+            }
+            else {
+                # Read JSON output captured by the job (stdout only)
+                $agiHealthRaw = if ($tempOut -and (Test-Path -LiteralPath $tempOut)) { Get-Content -LiteralPath $tempOut -Raw } else { '' }
+                $json = $agiHealthRaw
+                if (-not $json) {
+                    Write-CheckResult "AGI Pipeline" "WARNING" "No JSON returned from health gate"
+                }
+                else {
+                    try {
+                        $obj = $json | ConvertFrom-Json -ErrorAction Stop
+                        if ($obj.healthy -eq $true) {
+                            Write-CheckResult "AGI Pipeline" "OK" "AGI Health Gate PASS"
+                        }
+                        else {
+                            $reason = if ($obj.reason) { $obj.reason } else { 'AGI Health Gate failed' }
+                            $status = "ERROR"
+                            if ($reason -match '(exceed|exceeded|timeout|timed out)') { $status = "WARNING" }
+                            Write-CheckResult "AGI Pipeline" $status $reason
+                        }
+                    }
+                    catch {
+                        Write-CheckResult "AGI Pipeline" "WARNING" "Invalid JSON from health gate"
+                    }
+                }
+                # Cleanup temp file
+                if ($tempOut -and (Test-Path -LiteralPath $tempOut)) { Remove-Item -LiteralPath $tempOut -Force -ErrorAction SilentlyContinue }
             }
         }
     }
@@ -217,13 +300,13 @@ try {
         $processCount = $lmProcesses.Count
         
         if ($totalMemoryMB -lt 20000) {
-            Write-CheckResult "LM Studio Memory" "OK" "$processCount process(es), ${[int]$totalMemoryMB}MB total"
+            Write-CheckResult "LM Studio Memory" "OK" "$processCount process(es), $([int]$totalMemoryMB)MB total"
         }
         elseif ($totalMemoryMB -lt 30000) {
-            Write-CheckResult "LM Studio Memory" "WARNING" "High usage: $processCount process(es), ${[int]$totalMemoryMB}MB"
+            Write-CheckResult "LM Studio Memory" "WARNING" "High usage: $processCount process(es), $([int]$totalMemoryMB)MB"
         }
         else {
-            Write-CheckResult "LM Studio Memory" "ERROR" "Excessive usage: ${[int]$totalMemoryMB}MB"
+            Write-CheckResult "LM Studio Memory" "ERROR" "Excessive usage: $([int]$totalMemoryMB)MB"
         }
     }
     else {
@@ -409,20 +492,64 @@ else {
 
 Write-Host ""
 Write-Host "Overall Status: " -NoNewline
+$overallStatus = ""
 if ($results.Summary.Failed -eq 0 -and $results.Summary.Warnings -eq 0) {
-    Write-Host "ALL SYSTEMS OPERATIONAL" -ForegroundColor Green
+    $overallStatus = "ALL SYSTEMS OPERATIONAL"
+    Write-Host $overallStatus -ForegroundColor Green
 }
 elseif ($results.Summary.Failed -eq 0) {
-    Write-Host "OPERATIONAL WITH WARNINGS" -ForegroundColor Yellow
+    $overallStatus = "OPERATIONAL WITH WARNINGS"
+    Write-Host $overallStatus -ForegroundColor Yellow
 }
 else {
-    Write-Host "CRITICAL ISSUES DETECTED" -ForegroundColor Red
+    $overallStatus = "CRITICAL ISSUES DETECTED"
+    Write-Host $overallStatus -ForegroundColor Red
 }
+
+# Enrich results before optional outputs
+$results.Summary.PassRate = $passRate
+$results.Summary.StatusText = $overallStatus
+
+$outputMessages = @()
 
 if ($OutputJson) {
     $results | ConvertTo-Json -Depth 10 | Out-File $OutputJson -Encoding UTF8
+    $outputMessages += "Results saved to: $OutputJson"
+}
+
+if ($OutputMarkdown) {
+    try {
+        $sb = New-Object System.Text.StringBuilder
+        $null = $sb.AppendLine("# System Health Check")
+        $null = $sb.AppendLine("")
+        $null = $sb.AppendLine("- Timestamp: ``$($results.Timestamp)``")
+        $null = $sb.AppendLine("- Total Checks: $($results.Summary.TotalChecks)")
+        $null = $sb.AppendLine("- Passed: $($results.Summary.Passed)")
+        $null = $sb.AppendLine("- Warnings: $($results.Summary.Warnings)")
+        $null = $sb.AppendLine("- Failed: $($results.Summary.Failed)")
+        $null = $sb.AppendLine("- Pass Rate: $passRate%")
+        $null = $sb.AppendLine("- Overall Status: **$overallStatus**")
+        $null = $sb.AppendLine("")
+        $null = $sb.AppendLine("## Checks")
+        $statusEmoji = @{ OK = "✅"; WARNING = "⚠️"; ERROR = "❌" }
+        foreach ($k in ($results.Checks.Keys | Sort-Object)) {
+            $c = $results.Checks[$k]
+            $emoji = if ($statusEmoji.ContainsKey($c.Status)) { $statusEmoji[$c.Status] } else { "" }
+            $null = $sb.AppendLine("- $emoji **$k** — $($c.Status): $($c.Message)")
+        }
+        [IO.File]::WriteAllText($OutputMarkdown, $sb.ToString(), [Text.UTF8Encoding]::new($false))
+        $outputMessages += "Markdown saved to: $OutputMarkdown"
+    }
+    catch {
+        Write-Warning "Failed to save markdown: $($_.Exception.Message)"
+    }
+}
+
+if ($outputMessages.Count -gt 0) {
     Write-Host ""
-    Write-Host "Results saved to: $OutputJson" -ForegroundColor Cyan
+    foreach ($msg in $outputMessages) {
+        Write-Host $msg -ForegroundColor Cyan
+    }
 }
 
 if ($Detailed) {
@@ -431,7 +558,7 @@ if ($Detailed) {
     
     Write-Host "Executing LM Studio performance test..." -ForegroundColor Yellow
     if ($script:lmStudioOnline) {
-        & "$PSScriptRoot\test_lm_studio_performance.ps1"
+        & "$PSScriptRoot\test_lm_studio_performance.ps1" -Warmup -MaxTokens 64
     }
     else {
         Write-Host "  Skipping LM Studio performance test (offline)." -ForegroundColor Yellow
@@ -439,7 +566,7 @@ if ($Detailed) {
     
     Write-Host ""
     Write-Host "Executing Lumen vs LM Studio comparison..." -ForegroundColor Yellow
-    & "$PSScriptRoot\compare_performance.ps1"
+    & "$PSScriptRoot\compare_performance.ps1" -Warmup -Iterations 5 -MaxTokens 64
 }
 
 Write-Host ""

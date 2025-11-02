@@ -1,6 +1,6 @@
 # Async Thesis Health Monitor
 
-Generated: 2025-11-02 16:54:47
+Generated: 2025-11-02 21:54:47
 Period: Last 1 hours
 
 ## Status: 🟢 HEALTHY
@@ -11,8 +11,8 @@ Period: Last 1 hours
 
 ## Executive Summary
 
-- **Total Tasks**: 21
-- **Async Tasks**: 21 (100.0%)
+- **Total Tasks**: 3
+- **Async Tasks**: 3 (100.0%)
 - **Sequential Tasks**: 0 (0.0%)
 
 ---
@@ -31,14 +31,14 @@ Period: Last 1 hours
 
 | Mode | Count | Avg Latency | Samples |
 |------|-------|-------------|---------|
-| **Async** | 21 | 14.43s | 21 |
+| **Async** | 3 | 15.14s | 3 |
 | **Sequential** | 0 | 0.00s | 0 |
 
 ---
 
 ## Detailed Counts
 
-- Async enabled events: 21
+- Async enabled events: 3
 - Fallback events: 0
 - Error events: 0
 - Second pass events: 0

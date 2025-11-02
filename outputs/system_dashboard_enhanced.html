@@ -124,7 +124,7 @@
             <h1>🤖 AGI System Dashboard</h1>
             <div class="timestamp">
                 <span class="live-indicator"></span>
-                Last Updated: 2025-11-02 19:48:36
+                Last Updated: 2025-11-02 19:55:28
             </div>
         </div>
         
@@ -132,42 +132,14 @@
             <!-- GPU Card -->
             <div class="card">
                 <h2><span class="icon">🎮</span> GPU Status</h2>                <div class="metric">
-                    <span class="metric-label">GPU Model</span>
-                    <span class="metric-value">NVIDIA GeForce RTX 2070 SUPER</span>
-                </div>
-                <div class="metric">
-                    <span class="metric-label">Utilization</span>
+                    <span class="metric-label">Status</span>
                     <span class="metric-value">
-                        14%
+                        <span class="status-badge status-offline">Not Available</span>
                     </span>
                 </div>
-                <div class="progress-bar">
-                    <div class="progress-fill progress-green" style="width: 14%"></div>
-                </div>
-                
-                <div class="metric">
-                    <span class="metric-label">Memory Usage</span>
-                    <span class="metric-value">
-                        2205 MB / 8192 MB (26.92%)
-                    </span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill progress-green" style="width: 26.92%"></div>
-                </div>
-                
-                <div class="metric">
-                    <span class="metric-label">Temperature</span>
-                    <span class="metric-value">52°C</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill progress-green" style="width: 52%"></div>
-                </div>
-                
-                <div class="metric">
-                    <span class="metric-label">Power Draw</span>
-                    <span class="metric-value">
-                        39.39 W / 215 W (18.32%)
-                    </span>
+                <div class="metric" style="border-bottom: none;">
+                    <span class="metric-label">Reason</span>
+                    <span class="metric-value" style="font-size: 0.9em; opacity: 0.8;">nvidia-smi command failed: ERROR: Option noheader is not recognized. Please run 'nvidia-smi -h' for help. </span>
                 </div>            </div>
             
             <!-- Task Queue Card -->

@@ -1,16 +1,16 @@
 {
   "analysis": {
     "summary": {
-      "total_runes": 11,
+      "total_runes": 3,
       "replan_count": 0,
       "replan_rate_percent": 0.0,
-      "no_replan_count": 11
+      "no_replan_count": 3
     },
     "replan_triggers": {},
     "quality_comparison": {
       "replan_avg": 0,
-      "no_replan_avg": 0.8,
-      "delta": 0.8
+      "no_replan_avg": 0.85,
+      "delta": 0.85
     },
     "confidence_comparison": {
       "replan_avg": 0,
@@ -20,9 +20,9 @@
     "replan_examples": []
   },
   "recommendations": [
-    "🎯 Quality Gap: Replan avg=0.00, No-replan avg=0.80. Strengthen PLAN persona evidence scope specification.",
+    "🎯 Quality Gap: Replan avg=0.00, No-replan avg=0.85. Strengthen PLAN persona evidence scope specification.",
     "⚠️ Confidence Gap: Replan avg=0.00, No-replan avg=0.50. Add task complexity pre-assessment in PLAN.",
     "🎉 Low Replan Rate: 0.0% (target achieved!)."
   ],
-  "generated_at": "2025-10-27T15:47:22.399013"
+  "generated_at": "2025-11-02T22:01:07.680675"
 }

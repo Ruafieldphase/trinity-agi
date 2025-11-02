@@ -1,6 +1,6 @@
 # Real-time Resonance Pipeline
 
-Generated: 2025-11-01T21:45:22.835033
+Generated: 2025-11-02T18:23:19.756162
 
 
 ## Seeds
@@ -41,8 +41,8 @@ Generated: 2025-11-01T21:45:22.835033
 
 ## Scheduler (next runs)
 
-- bqi_daily: 2025-11-02T03:10:00
+- bqi_daily: 2025-11-03T03:10:00
 
-- monitoring_daily: 2025-11-02T03:20:00
+- monitoring_daily: 2025-11-03T03:20:00
 
-- health_hourly: 2025-11-01T22:00:00
+- health_hourly: 2025-11-02T19:00:00

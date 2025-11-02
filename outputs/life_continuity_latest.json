@@ -1,12 +1,12 @@
 {
-  "timestamp": "2025-11-01T22:09:23Z",
-  "alive": true,
+  "timestamp": "2025-11-02T13:00:05Z",
+  "alive": false,
   "dimensions": {
     "difference_detection": {
-      "detecting": true,
-      "recent_events_24h": 2,
-      "last_event_hours_ago": -9.0,
-      "score": 1.0
+      "detecting": false,
+      "recent_events_24h": 0,
+      "last_event_hours_ago": null,
+      "score": 0.0
     },
     "relation_formation": {
       "forming": true,
@@ -47,7 +47,8 @@
     "philosophy_defined": true
   },
   "recommendations": [
+    "⚠️ 차이 감지 약함: 모니터링 시스템 점검 필요 (metrics collector, ledger)",
     "⚠️ 리듬 약함: Scheduled tasks 실행 여부 확인 (BQI, Ensemble, Autopoietic)"
   ],
-  "life_score": 0.685
+  "life_score": 0.435
 }
