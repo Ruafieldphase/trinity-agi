@@ -70,3 +70,11 @@
                     "memory_usage":  45.5
                 }
 }
+{
+    "timestamp":  "2025-11-02 22:48:34",
+    "metrics":  {
+                    "timestamp":  "2025-11-02 22:48:34",
+                    "cpu_load":  17,
+                    "memory_usage":  46.1
+                }
+}
