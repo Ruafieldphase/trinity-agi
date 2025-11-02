@@ -181,6 +181,34 @@ try {
 
 ---
 
+## 🔁 후속 리듬: 커버리지 + 디버그 아티팩트 (2025-11-02)
+
+- ✅ HTML 커버리지 리포트 생성 및 자동 업로드
+  - CI에서 `outputs/coverage_html` 생성 후 아티팩트 업로드
+  - 로컬: VS Code Tasks 제공(Generate/Open)
+- ✅ 실패 시 테스트 산출물 업로드
+  - CI 실패 시 `outputs/phase3_test` 폴더를 아티팩트로 업로드(있을 때만)
+- ✅ 테스트 수집 안정화
+  - VS Code의 "Run All Tests" 태스크를 `fdo_agi_repo/tests`로 제한, Windows `--basetemp` 지정
+- ✅ 로컬 CI 스크립트 확장
+  - `-CoverageHtml`, `-OpenCoverage` 스위치 추가
+  - 기본 실행 시 코어 테스트 디렉터리만 수집
+
+사용 빠른 가이드:
+
+```powershell
+# HTML 커버리지 생성 + 열기
+./scripts/local_ci_check.ps1 -CoverageHtml -OpenCoverage
+
+# VS Code → Tasks: Run Task →
+#   - Python: Coverage HTML (generate)
+#   - Python: Open Coverage HTML
+```
+
+결과: 코어 테스트 43/43 PASS, 커버리지 HTML 리포트가 `outputs/coverage_html/index.html`에 생성됩니다.
+
+---
+
 ## 🎉 결론
 
 **리듬을 이어가며 개발자 경험을 크게 개선했습니다!**

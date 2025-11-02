@@ -5,7 +5,9 @@
 param(
     [switch]$Fast = $false,
     [switch]$Parallel = $false,
-    [switch]$Coverage = $false
+    [switch]$Coverage = $false,
+    [switch]$CoverageHtml = $false,
+    [switch]$OpenCoverage = $false
 )
 
 $ErrorActionPreference = "Stop"
@@ -43,13 +45,28 @@ Write-Host ""
 Write-Host "3️⃣  Running Python tests..." -ForegroundColor Yellow
 $testStart = Get-Date
 try {
-    $pytestArgs = @('-q','--tb=short','--basetemp','fdo_agi_repo/.pytest_tmp')
-    if ($Parallel) { $pytestArgs += @('-n','auto') }
-    if ($Coverage) { $pytestArgs += @('--cov=fdo_agi_repo','--cov-report','term-missing:skip-covered') }
+    $pytestArgs = @('-q', '--tb=short', '--basetemp', 'fdo_agi_repo/.pytest_tmp')
+    if ($Parallel) { $pytestArgs += @('-n', 'auto') }
+    if ($Coverage -or $CoverageHtml) {
+        # Ensure cov target added once
+        $pytestArgs += @('--cov=fdo_agi_repo')
+    }
+    if ($Coverage) {
+        $pytestArgs += @('--cov-report', 'term-missing:skip-covered')
+    }
+    if ($CoverageHtml) {
+        $covOut = 'outputs/coverage_html'
+        if (-not (Test-Path $covOut)) { New-Item -ItemType Directory -Path $covOut -Force | Out-Null }
+        $pytestArgs += @('--cov-report', "html:$covOut")
+    }
 
     if ($Fast) {
         Write-Host "   ⚡ Fast mode: Running core tests only" -ForegroundColor Cyan
         $pytestArgs += 'fdo_agi_repo/tests/test_phase3_integration.py'
+    }
+    else {
+        # Constrain discovery to core test suite
+        $pytestArgs += 'fdo_agi_repo/tests'
     }
 
     Write-Host ("   ▶️  pytest {0}" -f ($pytestArgs -join ' ')) -ForegroundColor DarkGray
@@ -58,6 +75,10 @@ try {
     if ($LASTEXITCODE -eq 0) {
         $testDuration = [math]::Round(((Get-Date) - $testStart).TotalSeconds, 1)
         Write-Host "   ✅ All tests passed ($testDuration seconds)" -ForegroundColor Green
+        if ($CoverageHtml -and $OpenCoverage) {
+            $indexPath = Join-Path 'outputs/coverage_html' 'index.html'
+            if (Test-Path $indexPath) { Start-Process $indexPath }
+        }
     }
     else {
         Write-Host "   ❌ Tests failed with exit code $LASTEXITCODE" -ForegroundColor Red

@@ -46,8 +46,12 @@ class AutonomousWorkPlanner:
             'monitor_24h': timedelta(hours=24),
             'autopoietic_report': timedelta(hours=24),
             'performance_dashboard': timedelta(hours=6),
+            # SiAN 추론 점검은 12시간마다 재실행
+            'sian_thinking': timedelta(hours=12),
         }
         self._load_work_queue()
+        # 기존 큐가 있는 경우에도 신규 기본 작업을 보강
+        self._ensure_backfill_items()
     
     def _load_work_queue(self):
         """작업 대기열 로드"""
@@ -76,6 +80,38 @@ class AutonomousWorkPlanner:
             logger.info(f"Saved {len(self.work_queue)} work items")
         except Exception as e:
             logger.error(f"Failed to save work queue: {e}")
+
+    def _ensure_backfill_items(self):
+        """기존 큐에 누락된 신규 기본 작업을 보강한다 (역호환)."""
+        try:
+            existing_ids = {item.id for item in self.work_queue}
+            now = datetime.utcnow().isoformat()
+
+            backfilled = False
+            # SiAN 추론 점검 작업이 없다면 추가
+            if 'sian_thinking' not in existing_ids:
+                self.work_queue.append(
+                    WorkItem(
+                        id="sian_thinking",
+                        title="SiAN Meta Layer Quick Thinking Probe",
+                        description="Gemini 추론 모델로 메타층 상태 점검용 간단 질의 실행",
+                        priority=8,
+                        category="learning",
+                        estimated_duration_minutes=1,
+                        dependencies=[],
+                        auto_execute=True,
+                        created_at=now,
+                        last_updated=now,
+                        status="pending"
+                    )
+                )
+                backfilled = True
+
+            if backfilled:
+                self._save_work_queue()
+                logger.info("Backfilled missing default items into work queue")
+        except Exception as e:
+            logger.warning(f"Backfill ensure failed: {e}")
     
     def _initialize_default_queue(self):
         """기본 작업 대기열 초기화"""
@@ -89,6 +125,19 @@ class AutonomousWorkPlanner:
                 priority=8,
                 category="monitoring",
                 estimated_duration_minutes=5,
+                dependencies=[],
+                auto_execute=True,
+                created_at=now,
+                last_updated=now,
+                status="pending"
+            ),
+            WorkItem(
+                id="sian_thinking",
+                title="SiAN Meta Layer Quick Thinking Probe",
+                description="Gemini 추론 모델로 메타층 상태 점검용 간단 질의 실행",
+                priority=8,
+                category="learning",
+                estimated_duration_minutes=1,
                 dependencies=[],
                 auto_execute=True,
                 created_at=now,

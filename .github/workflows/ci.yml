@@ -35,7 +35,11 @@ jobs:
               run: |
                   python -m pytest -q -n auto --tb=short \
                     --basetemp=fdo_agi_repo/.pytest_tmp \
-                    --cov=fdo_agi_repo --cov-report=xml --cov-report=term-missing:skip-covered
+                    --cov=fdo_agi_repo \
+                    --cov-report=xml \
+                    --cov-report=term-missing:skip-covered \
+                    --cov-report=html:outputs/coverage_html \
+                    fdo_agi_repo/tests
               working-directory: ${{ github.workspace }}
 
             - name: Upload coverage.xml
@@ -44,6 +48,22 @@ jobs:
               with:
                   name: coverage-xml
                   path: coverage.xml
+
+            - name: Upload coverage HTML
+              if: always()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: coverage-html
+                  path: outputs/coverage_html
+                  if-no-files-found: ignore
+
+            - name: Upload phase3 test outputs (on failure)
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: phase3-test-outputs
+                  path: outputs/phase3_test
+                  if-no-files-found: ignore
 
             - name: Test summary
               if: always()

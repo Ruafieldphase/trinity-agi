@@ -24,6 +24,8 @@
 - `Dev: Local CI Check (Full)` - 전체 검증
 - `Python: Run All Tests (parallel)` - 코어 테스트 병렬 실행(-n auto)
 - `Python: Coverage Report (repo venv)` - 커버리지 요약 출력
+- `Python: Coverage HTML (generate)` - HTML 리포트 생성(`outputs/coverage_html`)
+- `Python: Open Coverage HTML` - 기본 브라우저로 리포트 열기
 
 병렬/커버리지를 로컬 스크립트에서 직접 쓰려면:
 
@@ -34,8 +36,11 @@
 # 커버리지 요약(스킵커버드)
 .\scripts\local_ci_check.ps1 -Coverage
 
+# HTML 리포트 생성 + 자동 열기
+.\scripts\local_ci_check.ps1 -CoverageHtml -OpenCoverage
+
 # 함께 사용 가능
-.\scripts\local_ci_check.ps1 -Parallel -Coverage
+.\scripts\local_ci_check.ps1 -Parallel -Coverage -CoverageHtml -OpenCoverage
 ```
 
 **Pre-commit Hooks** (선택적):

@@ -142,6 +142,8 @@ class SimpleAutonomousWorker:
             'monitor_24h': ('generate_monitoring_report.ps1', ['-Hours', '24'], 600),
             'autopoietic_report': ('generate_autopoietic_report.ps1', ['-Hours', '24'], 600),
             'performance_dashboard': ('generate_performance_dashboard.ps1', ['-WriteLatest', '-ExportJson'], 600),
+            # SiAN 추론 점검: 기본 추론 프롬프트로 빠르게 상태 확인
+            'sian_thinking': ('sian.ps1', ['-Thinking', '-Quiet', '상태 점검용 간단 추론', '-OutMd'], 180),
             # Phase 6 최적화: BQI 파이프라인 구동 (무거울 수 있으므로 타임아웃 여유 설정)
             'phase6_optimization': ('fdo_agi_repo/scripts/run_bqi_learner.ps1', ['-Phase', '6', '-VerboseLog'], 1800),
         }

@@ -2232,7 +2232,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q } else { python -m pytest -q }"
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp fdo_agi_repo/tests } else { python -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp fdo_agi_repo/tests }"
 			],
 			"group": "test"
 		},
@@ -2291,6 +2291,34 @@
 				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report term-missing:skip-covered } else { python -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report term-missing:skip-covered }"
 			],
 			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Python: Coverage HTML (generate)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report html:outputs/coverage_html fdo_agi_repo/tests } else { python -m pytest -q --tb=short --basetemp fdo_agi_repo/.pytest_tmp --cov fdo_agi_repo --cov-report html:outputs/coverage_html fdo_agi_repo/tests }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Python: Open Coverage HTML",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p='${workspaceFolder}/outputs/coverage_html/index.html'; if (Test-Path $p) { Start-Process $p } else { Write-Host 'coverage_html not found. Run Python: Coverage HTML (generate) first.' -ForegroundColor Yellow }"
+			],
+			"group": "none",
 			"problemMatcher": []
 		},
 		{
