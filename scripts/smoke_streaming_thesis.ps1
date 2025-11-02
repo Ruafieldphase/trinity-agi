@@ -13,7 +13,8 @@ Write-Host ""
 # 환경변수 설정
 if ($Mode -eq "baseline") {
     $env:THESIS_STREAMING = "false"
-} else {
+}
+else {
     $env:THESIS_STREAMING = "true"
 }
 
@@ -63,7 +64,8 @@ if ($ledgerLines) {
     if ($entry.PSObject.Properties.Name -contains "ttft_sec") {
         Write-Host "   TTFT: $($entry.ttft_sec)s" -ForegroundColor Green
         Write-Host "   Perceived Improvement: $($entry.perceived_improvement_pct)%" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "   TTFT: N/A (non-streaming)" -ForegroundColor Gray
     }
     

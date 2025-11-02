@@ -264,6 +264,11 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         })
 
     # 타이밍 계측 및 단계별 이벤트 로깅
+    # Pipeline-level TTFT measurement (Phase 2.9: End-to-End Streaming)
+    # Streaming이 활성화되면 첫 번째 persona(thesis)의 TTFT가 전체 파이프라인의 TTFT
+    pipeline_ttft = None
+    pipeline_start = time.perf_counter()
+    
     t0 = time.perf_counter()
     append_ledger({"event": "thesis_start", "task_id": task.task_id})
 
@@ -358,6 +363,18 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         )
 
     t1 = time.perf_counter()
+    
+    # Pipeline TTFT: Thesis의 TTFT를 전체 파이프라인 TTFT로 기록 (Phase 2.9)
+    # Ledger에서 마지막 thesis_end 이벤트 확인 및 TTFT 추출
+    try:
+        recent_logs = tail_ledger(n=5)
+        for log in reversed(recent_logs):
+            if log.get("persona") == "thesis" and "ttft_sec" in log:
+                pipeline_ttft = log["ttft_sec"]
+                break
+    except Exception:
+        pass
+    
     append_ledger({
         "event": "thesis_end",
         "task_id": task.task_id,
@@ -442,12 +459,37 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     )
     
     t5 = time.perf_counter()
+    
+    # Pipeline-level metrics (Phase 2.9: End-to-End Streaming)
+    pipeline_total = t5 - pipeline_start
+    pipeline_streaming_enabled = (
+        os.environ.get("THESIS_STREAMING", "true").lower() == "true" and
+        os.environ.get("ANTITHESIS_STREAMING", "true").lower() == "true" and
+        os.environ.get("SYNTHESIS_STREAMING", "true").lower() == "true"
+    )
+    
     append_ledger({
         "event": "synthesis_end",
         "task_id": task.task_id,
         "duration_sec": float(t5 - t4),
         "citations": len(out_synth.citations)
     })
+    
+    # Pipeline summary event
+    pipeline_log = {
+        "event": "pipeline_e2e_complete",
+        "task_id": task.task_id,
+        "total_duration_sec": float(pipeline_total),
+        "streaming_enabled": pipeline_streaming_enabled
+    }
+    
+    if pipeline_ttft is not None:
+        pipeline_log["pipeline_ttft_sec"] = float(pipeline_ttft)
+        # Perceived improvement: (전체시간 - TTFT) / 전체시간
+        perceived = ((pipeline_total - pipeline_ttft) / pipeline_total) * 100
+        pipeline_log["pipeline_perceived_improvement_pct"] = float(perceived)
+    
+    append_ledger(pipeline_log)
     # Autopoietic Loop: Integration end (after Synthesis)
     try:
         append_ledger({
