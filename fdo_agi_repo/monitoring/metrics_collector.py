@@ -11,6 +11,7 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from collections import deque
 from threading import Lock
+import numpy as np  # Added: required for entropy/mean calculations
 
 
 @dataclass
@@ -172,6 +173,54 @@ class MetricsCollector:
                 "failed_tasks": snapshots[-1].failed_tasks if snapshots else 0,
             }
     
+    def get_health_status(self) -> Dict[str, Any]:
+        """Health check with information flow"""
+        with self._lock:
+            # Get recent stats
+            stats = self.get_statistics(window_seconds=3600)  # Last hour
+            
+            # Thresholds
+            MIN_SUCCESS = 90.0
+            MAX_ERROR = 10.0
+            MAX_RESPONSE_TIME = 5000.0
+            
+            checks = {
+                "success_rate": stats['avg_success_rate'] >= MIN_SUCCESS,
+                "error_rate": stats['avg_error_rate'] <= MAX_ERROR,
+                "response_time": stats['avg_response_time_ms'] <= MAX_RESPONSE_TIME,
+            }
+            
+            # Calculate information flow
+            flow_score = self.calculate_information_flow_score()
+            flow_status = self.get_flow_status(flow_score)
+            
+            return {
+                "healthy": all(checks.values()),
+                "checks": checks,
+                "current_values": {
+                    "confidence": stats['avg_success_rate'] / 100.0,
+                    "quality": 1.0 - (stats['avg_error_rate'] / 100.0),
+                    "second_pass_rate": 0.0,  # TODO: track separately
+                },
+                "information_flow": {
+                    "score": flow_score,
+                    "status": flow_status,
+                    "healthy": flow_score >= 0.4,  # MODERATE or better
+                    "recommendation": self._get_flow_recommendation(flow_status),
+                },
+                "timestamp": time.time(),
+            }
+    
+    def _get_flow_recommendation(self, status: str) -> str:
+        """Get recommendation based on flow status"""
+        recommendations = {
+            "STAGNANT": "Increase task variety and learning rate",
+            "TURBULENT": "Reduce noise and focus on quality",
+            "MODERATE": "System is stable, monitor for changes",
+            "FLOWING": "Optimal state, maintain current operations",
+        }
+        return recommendations.get(status, "Unknown status")
+    
     def reset(self):
         """모든 메트릭 초기화"""
         with self._lock:
@@ -182,6 +231,65 @@ class MetricsCollector:
             self._snapshots.clear()
             self._active_workers = 0
             self._queue_size = 0
+    
+    # ========== Information Theory Methods ==========
+    
+    def calculate_entropy(self, values: List[float], bins: int = 10) -> float:
+        """Calculate Shannon entropy of a distribution"""
+        if not values or len(values) < 2:
+            return 0.0
+        
+        hist, _ = np.histogram(values, bins=bins)
+        probs = hist / hist.sum()
+        probs = probs[probs > 0]  # Remove zeros
+        return -np.sum(probs * np.log2(probs))
+    
+    def calculate_information_flow_score(self) -> float:
+        """
+        Calculate information flow score based on:
+        - Entropy of success rates (diversity)
+        - Confidence (avg success rate)
+        - Quality (low error rate)
+        """
+        with self._lock:
+            if not self._snapshots:
+                return 0.0
+            
+            # Get recent data (last hour)
+            cutoff = time.time() - 3600
+            recent = [s for s in self._snapshots if s.timestamp >= cutoff]
+            
+            if len(recent) < 2:
+                return 0.0
+            
+            success_rates = [s.success_rate for s in recent]
+            error_rates = [s.error_rate for s in recent]
+            
+            # 1. Diversity (entropy)
+            entropy = self.calculate_entropy(success_rates)
+            max_entropy = np.log2(min(len(success_rates), 10))  # Normalize
+            diversity = entropy / max_entropy if max_entropy > 0 else 0.0
+            
+            # 2. Confidence (average success)
+            confidence = np.mean(success_rates) / 100.0
+            
+            # 3. Quality (low errors)
+            quality = 1.0 - (np.mean(error_rates) / 100.0)
+            
+            # Weighted combination
+            flow_score = (0.3 * diversity) + (0.4 * confidence) + (0.3 * quality)
+            return float(flow_score)
+    
+    def get_flow_status(self, score: float) -> str:
+        """Get qualitative flow status"""
+        if score >= 0.7:
+            return "FLOWING"
+        elif score >= 0.4:
+            return "MODERATE"
+        elif score >= 0.2:
+            return "TURBULENT"
+        else:
+            return "STAGNANT"
 
 
 class DashboardRenderer:
@@ -252,6 +360,66 @@ class DashboardRenderer:
             f"| Workers: {snapshot.active_workers} "
             f"| Queue: {snapshot.queue_size}"
         )
+
+
+    # ========== Information Theory Methods ==========
+    
+    def calculate_entropy(self, values: List[float], bins: int = 10) -> float:
+        """Calculate Shannon entropy of a distribution"""
+        if not values or len(values) < 2:
+            return 0.0
+        
+        hist, _ = np.histogram(values, bins=bins)
+        probs = hist / hist.sum()
+        probs = probs[probs > 0]  # Remove zeros
+        return -np.sum(probs * np.log2(probs))
+    
+    def calculate_information_flow_score(self) -> float:
+        """
+        Calculate information flow score based on:
+        - Entropy of success rates (diversity)
+        - Confidence (avg success rate)
+        - Quality (low error rate)
+        """
+        with self._lock:
+            if not self._snapshots:
+                return 0.0
+            
+            # Get recent data (last hour)
+            cutoff = time.time() - 3600
+            recent = [s for s in self._snapshots if s.timestamp >= cutoff]
+            
+            if len(recent) < 2:
+                return 0.0
+            
+            success_rates = [s.success_rate for s in recent]
+            error_rates = [s.error_rate for s in recent]
+            
+            # 1. Diversity (entropy)
+            entropy = self.calculate_entropy(success_rates)
+            max_entropy = np.log2(min(len(success_rates), 10))  # Normalize
+            diversity = entropy / max_entropy if max_entropy > 0 else 0.0
+            
+            # 2. Confidence (average success)
+            confidence = np.mean(success_rates) / 100.0
+            
+            # 3. Quality (low errors)
+            quality = 1.0 - (np.mean(error_rates) / 100.0)
+            
+            # Weighted combination
+            flow_score = (0.3 * diversity) + (0.4 * confidence) + (0.3 * quality)
+            return float(flow_score)
+    
+    def get_flow_status(self, score: float) -> str:
+        """Get qualitative flow status"""
+        if score >= 0.7:
+            return "FLOWING"
+        elif score >= 0.4:
+            return "MODERATE"
+        elif score >= 0.2:
+            return "TURBULENT"
+        else:
+            return "STAGNANT"
 
 
 def demo_metrics_collector():

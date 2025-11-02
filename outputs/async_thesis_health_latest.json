@@ -1,20 +1,16 @@
 {
-  "timestamp": "2025-11-02T09:54:46.590287",
+  "timestamp": "2025-11-02T14:54:47.002220",
   "hours": 1,
   "metrics": {
-    "total_tasks": 3,
-    "async_tasks": 3,
+    "total_tasks": 0,
+    "async_tasks": 0,
     "sequential_tasks": 0,
     "fallback_count": 0,
     "error_count": 0,
     "second_pass_count": 0,
-    "avg_latency_async": 23.785459566666912,
+    "avg_latency_async": 0.0,
     "avg_latency_seq": 0.0,
-    "async_durations": [
-      22.502725000000282,
-      25.895394300000135,
-      22.958259400000316
-    ],
+    "async_durations": [],
     "seq_durations": [],
     "fallback_rate": 0.0,
     "error_rate": 0.0,

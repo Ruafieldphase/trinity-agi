@@ -1,0 +1,72 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "🔍 Session: Check Capacity",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/scripts/session_capacity_monitor.ps1",
+                "-CheckOnly"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "💾 Session: Force Save & Handoff",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/scripts/session_capacity_monitor.ps1",
+                "-SaveHandoff"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "📄 Session: Open Handoff Document",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "code ${workspaceFolder}/outputs/session_memory/handoff_latest.md"
+            ],
+            "group": "none"
+        },
+        {
+            "label": "🔄 Session: Auto-Monitor Loop",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-Command",
+                "while ($true) { & '${workspaceFolder}/scripts/session_capacity_monitor.ps1' -CheckOnly; Start-Sleep -Seconds 300 }"
+            ],
+            "isBackground": true,
+            "group": "build",
+            "presentation": {
+                "reveal": "silent",
+                "panel": "dedicated"
+            }
+        }
+    ]
+}

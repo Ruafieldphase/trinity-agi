@@ -1,0 +1,409 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TaskQueueMonitor = void 0;
+const vscode = __importStar(require("vscode"));
+const axios_1 = __importDefault(require("axios"));
+/**
+ * Task Queue Monitor Panel
+ * Port 8091의 Task Queue Server를 실시간 모니터링
+ */
+class TaskQueueMonitor {
+    static createOrShow(extensionUri, serverUrl = 'http://127.0.0.1:8091') {
+        const column = vscode.ViewColumn.Two;
+        // 이미 패널이 있으면 표시
+        if (TaskQueueMonitor.currentPanel) {
+            TaskQueueMonitor.currentPanel._panel.reveal(column);
+            return;
+        }
+        // 새 패널 생성
+        const panel = vscode.window.createWebviewPanel('taskQueueMonitor', '🎯 Task Queue Monitor', column, {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            localResourceRoots: [extensionUri]
+        });
+        TaskQueueMonitor.currentPanel = new TaskQueueMonitor(panel, extensionUri, serverUrl);
+    }
+    constructor(panel, extensionUri, serverUrl) {
+        this._disposables = [];
+        this._panel = panel;
+        this._extensionUri = extensionUri;
+        this._serverUrl = serverUrl;
+        // 초기 컨텐츠 설정
+        this._update();
+        // 2초마다 업데이트
+        this._updateInterval = setInterval(() => {
+            this._update();
+        }, 2000);
+        // 패널이 닫힐 때 정리
+        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+        // 웹뷰 메시지 처리
+        this._panel.webview.onDidReceiveMessage(message => {
+            switch (message.command) {
+                case 'refresh':
+                    this._update();
+                    return;
+                case 'clearCompleted':
+                    this._clearCompleted();
+                    return;
+            }
+        }, null, this._disposables);
+    }
+    async _update() {
+        try {
+            const [health, tasks, inflight, results] = await Promise.all([
+                this._fetchHealth(),
+                this._fetchTasks(),
+                this._fetchInflight(),
+                this._fetchResults()
+            ]);
+            this._panel.webview.html = this._getHtmlContent(health, tasks, inflight, results);
+        }
+        catch (error) {
+            this._panel.webview.html = this._getErrorHtml(error);
+        }
+    }
+    async _fetchHealth() {
+        const response = await axios_1.default.get(`${this._serverUrl}/api/health`);
+        return response.data;
+    }
+    async _fetchTasks() {
+        const response = await axios_1.default.get(`${this._serverUrl}/api/tasks`);
+        return response.data;
+    }
+    async _fetchInflight() {
+        const response = await axios_1.default.get(`${this._serverUrl}/api/inflight`);
+        return response.data;
+    }
+    async _fetchResults() {
+        const response = await axios_1.default.get(`${this._serverUrl}/api/results`);
+        return response.data;
+    }
+    async _clearCompleted() {
+        try {
+            await axios_1.default.post(`${this._serverUrl}/api/clear-completed`);
+            vscode.window.showInformationMessage('✅ Completed tasks cleared');
+            this._update();
+        }
+        catch (error) {
+            vscode.window.showErrorMessage(`❌ Failed to clear tasks: ${error}`);
+        }
+    }
+    _getHtmlContent(health, tasks, inflight, results) {
+        const pendingCount = tasks.length;
+        const inflightCount = inflight?.count || 0;
+        const completedCount = results.filter((r) => r.status === 'completed').length;
+        const failedCount = results.filter((r) => r.status === 'failed').length;
+        const healthColor = health.status === 'healthy' ? '#4CAF50' : '#FF5722';
+        const successRate = (health.success_rate * 100).toFixed(1);
+        return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Queue Monitor</title>
+    <style>
+        body {
+            font-family: var(--vscode-font-family);
+            padding: 20px;
+            color: var(--vscode-foreground);
+            background-color: var(--vscode-editor-background);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .button {
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .button:hover {
+            background: var(--vscode-button-hoverBackground);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--vscode-editor-inactiveSelectionBackground);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid var(--vscode-button-background);
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .health-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: ${healthColor};
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--vscode-panel-border);
+            padding-bottom: 8px;
+        }
+        .task-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .task-item {
+            background: var(--vscode-editor-inactiveSelectionBackground);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .task-id {
+            font-family: monospace;
+            opacity: 0.7;
+            font-size: 11px;
+        }
+        .task-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-left: 8px;
+            background: var(--vscode-button-secondaryBackground);
+        }
+        .status-pending { color: #FFC107; }
+        .status-inflight { color: #2196F3; }
+        .status-completed { color: #4CAF50; }
+        .status-failed { color: #FF5722; }
+        .timestamp {
+            font-size: 11px;
+            opacity: 0.6;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Task Queue Monitor</h1>
+        <div>
+            <button class="button" onclick="refresh()">🔄 Refresh</button>
+            <button class="button" onclick="clearCompleted()">🗑️ Clear Completed</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-label">
+                <span class="health-indicator"></span>
+                Health Status
+            </div>
+            <div class="stat-value">${health.status.toUpperCase()}</div>
+            <div class="stat-label">Success Rate: ${successRate}%</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">⏳ Pending</div>
+            <div class="stat-value status-pending">${pendingCount}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">🔄 In Flight</div>
+            <div class="stat-value status-inflight">${inflightCount}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">✅ Completed</div>
+            <div class="stat-value status-completed">${completedCount}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">❌ Failed</div>
+            <div class="stat-value status-failed">${failedCount}</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">⏱️ Avg Duration</div>
+            <div class="stat-value">${health.avg_duration_ms.toFixed(0)}ms</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Pending Tasks (${pendingCount})</h2>
+        <div class="task-list">
+            ${tasks.slice(0, 10).map((task) => `
+                <div class="task-item">
+                    <div>
+                        <strong>${task.task_type || 'unknown'}</strong>
+                        <span class="task-type">${task.priority || 'normal'}</span>
+                    </div>
+                    <div class="task-id">ID: ${task.task_id}</div>
+                    <div class="timestamp">Created: ${new Date(task.created_at).toLocaleString()}</div>
+                </div>
+            `).join('') || '<div class="task-item">No pending tasks</div>'}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🔄 In Flight Tasks (${inflightCount})</h2>
+        <div class="task-list">
+            ${inflight?.tasks?.slice(0, 5).map((task) => `
+                <div class="task-item">
+                    <div>
+                        <strong>${task.task_type || 'unknown'}</strong>
+                        <span class="task-type status-inflight">RUNNING</span>
+                    </div>
+                    <div class="task-id">ID: ${task.task_id}</div>
+                    <div class="timestamp">Started: ${new Date(task.leased_at).toLocaleString()}</div>
+                </div>
+            `).join('') || '<div class="task-item">No tasks in flight</div>'}
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📊 Recent Results</h2>
+        <div class="task-list">
+            ${results.slice(0, 10).map((result) => `
+                <div class="task-item">
+                    <div>
+                        <strong>${result.task_type || 'unknown'}</strong>
+                        <span class="task-type status-${result.status}">${result.status?.toUpperCase()}</span>
+                    </div>
+                    <div class="task-id">ID: ${result.task_id}</div>
+                    ${result.error ? `<div style="color: #FF5722; margin-top: 4px;">Error: ${result.error}</div>` : ''}
+                    <div class="timestamp">Completed: ${new Date(result.completed_at || result.created_at).toLocaleString()}</div>
+                </div>
+            `).join('') || '<div class="task-item">No results yet</div>'}
+        </div>
+    </div>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        
+        function refresh() {
+            vscode.postMessage({ command: 'refresh' });
+        }
+        
+        function clearCompleted() {
+            vscode.postMessage({ command: 'clearCompleted' });
+        }
+    </script>
+</body>
+</html>`;
+    }
+    _getErrorHtml(error) {
+        return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: var(--vscode-font-family);
+            padding: 20px;
+            color: var(--vscode-foreground);
+            background-color: var(--vscode-editor-background);
+        }
+        .error {
+            background: var(--vscode-inputValidation-errorBackground);
+            border: 1px solid var(--vscode-inputValidation-errorBorder);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1 { margin-top: 0; }
+        pre {
+            background: var(--vscode-editor-background);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="error">
+        <h1>❌ Connection Error</h1>
+        <p>Failed to connect to Task Queue Server at <code>${this._serverUrl}</code></p>
+        <p>Please ensure:</p>
+        <ul>
+            <li>Task Queue Server is running on port 8091</li>
+            <li>Run: <code>cd LLM_Unified\\ion-mentoring && .venv\\Scripts\\python.exe task_queue_server.py</code></li>
+        </ul>
+        <details>
+            <summary>Error Details</summary>
+            <pre>${error instanceof Error ? error.message : String(error)}</pre>
+        </details>
+    </div>
+</body>
+</html>`;
+    }
+    dispose() {
+        TaskQueueMonitor.currentPanel = undefined;
+        if (this._updateInterval) {
+            clearInterval(this._updateInterval);
+        }
+        this._panel.dispose();
+        while (this._disposables.length) {
+            const disposable = this._disposables.pop();
+            if (disposable) {
+                disposable.dispose();
+            }
+        }
+    }
+}
+exports.TaskQueueMonitor = TaskQueueMonitor;
+//# sourceMappingURL=taskQueueMonitor.js.map

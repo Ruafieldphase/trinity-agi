@@ -1,8 +1,8 @@
 {
     "name": "gitko-agent-extension",
     "displayName": "Gitko AI Agent Orchestrator",
-    "description": "Multi-agent orchestration for GitHub Copilot Chat",
-    "version": "0.1.0",
+    "description": "Multi-agent orchestration for GitHub Copilot Chat with real-time monitoring",
+    "version": "0.2.0",
     "publisher": "naeda",
     "engines": {
         "vscode": "^1.90.0"
@@ -31,6 +31,18 @@
                 "command": "gitko.showPollerOutput",
                 "title": "Gitko: Show HTTP Poller Output",
                 "category": "Gitko"
+            },
+            {
+                "command": "gitko.showTaskQueueMonitor",
+                "title": "Gitko: Show Task Queue Monitor",
+                "category": "Gitko",
+                "icon": "$(pulse)"
+            },
+            {
+                "command": "gitko.showResonanceLedger",
+                "title": "Gitko: Show Resonance Ledger",
+                "category": "Gitko",
+                "icon": "$(graph)"
             },
             {
                 "command": "gitko.computerUse.clickByText",
@@ -194,6 +206,12 @@
                     "description": "Task Queue API base URL (without trailing slash). Default connects to local API server from Phase 7c.",
                     "order": 11
                 },
+                "gitko.taskQueueUrl": {
+                    "type": "string",
+                    "default": "http://127.0.0.1:8091",
+                    "description": "Task Queue Server base URL for monitoring",
+                    "order": 12
+                },
                 "gitko.httpPollingInterval": {
                     "type": "number",
                     "default": 2000,
@@ -229,9 +247,12 @@
     "devDependencies": {
         "@types/node": "^20.x",
         "@types/vscode": "^1.90.0",
-        "typescript": "^5.4.0",
         "@typescript-eslint/eslint-plugin": "^7.0.0",
         "@typescript-eslint/parser": "^7.0.0",
-        "eslint": "^8.57.0"
+        "eslint": "^8.57.0",
+        "typescript": "^5.4.0"
+    },
+    "dependencies": {
+        "axios": "^1.13.1"
     }
 }

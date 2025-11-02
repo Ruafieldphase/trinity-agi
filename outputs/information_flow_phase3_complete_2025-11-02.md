@@ -21,6 +21,7 @@
 ### 1. Information Flow Score (0.0-1.0)
 
 **구성 요소:**
+
 ```python
 flow_score = (
     entropy * 0.3 +          # 패턴 다양성
@@ -33,17 +34,21 @@ flow_score = (
 ### 2. 정보이론 메트릭
 
 **엔트로피 (Shannon Entropy)**
+
 - 낮음 (< 0.3): 예측 가능 = 고인 물
 - 높음 (> 0.7): 다양함 = 흐르는 물
 
 **상호정보량 (Mutual Information)**
+
 - 낮음: 맥락 무시
 - 높음: 맥락 의존적
 
 **채널 품질 (SNR)**
+
 - 성공률 기반 신호 대 잡음비
 
 **패턴 다양성 (Gini Coefficient)**
+
 - 0.0: 완전 편향
 - 1.0: 완전 균등
 
@@ -66,6 +71,7 @@ flow_score = (
 ```
 
 **해석:**
+
 - ✅ **엔트로피 극대화** (0.999) - 매우 다양한 패턴 사용
 - ✅ **채널 품질 우수** (0.955) - 안정적 신호
 - ✅ **패턴 다양성 높음** (0.978) - 편향 없음
@@ -80,6 +86,7 @@ flow_score = (
 ## 💡 **핵심 성과**
 
 ### 1. 자기참조 실천
+
 ```
 발견: 이미 826줄의 MetricsCollector 존재
 결정: 새 파일 만들지 않고 확장
@@ -87,6 +94,7 @@ flow_score = (
 ```
 
 ### 2. 정보이론 통합
+
 - Shannon Entropy
 - Mutual Information
 - Signal-to-Noise Ratio
@@ -95,6 +103,7 @@ flow_score = (
 모두 **기존 메트릭 재활용**!
 
 ### 3. 실시간 측정
+
 ```python
 flow_data = collector.get_information_flow_score(hours=1.0)
 ```
@@ -106,6 +115,7 @@ flow_data = collector.get_information_flow_score(hours=1.0)
 ## 📁 **파일 변경**
 
 ### 수정된 파일
+
 1. **`fdo_agi_repo/monitor/metrics_collector.py`**
    - `get_information_flow_score()` 추가
    - `_calculate_entropy()` 추가
@@ -115,6 +125,7 @@ flow_data = collector.get_information_flow_score(hours=1.0)
    - `_generate_flow_recommendation()` 추가
 
 ### 생성된 파일
+
 2. **`scripts/test_information_flow.py`**
    - CLI 테스트 도구
    - 시각화 출력
@@ -125,11 +136,13 @@ flow_data = collector.get_information_flow_score(hours=1.0)
 ## 🚀 **사용 방법**
 
 ### CLI 테스트
+
 ```bash
 python scripts/test_information_flow.py 1.0
 ```
 
 ### Python API
+
 ```python
 from monitor.metrics_collector import MetricsCollector
 
@@ -142,6 +155,7 @@ print(f"Recommendation: {flow['recommendation']}")
 ```
 
 ### Exit Codes
+
 - `0`: Good flow (> 0.6)
 - `1`: Moderate (0.4-0.6)
 - `2`: Stagnant (< 0.4)
@@ -163,6 +177,7 @@ print(f"Recommendation: {flow['recommendation']}")
 ## 📈 **다음 단계**
 
 ### Phase 3.1: Health Monitor 통합 (10분)
+
 ```python
 # health_monitor.py에 추가
 def check_flow_health():
@@ -172,11 +187,13 @@ def check_flow_health():
 ```
 
 ### Phase 3.2: Flow-Based Auto Recovery (20분)
+
 - 흐름 점수 낮으면 자동 재시작
 - Persona 재조정
 - 맥락 윈도우 확대
 
 ### Phase 3.3: Dashboard 시각화 (15분)
+
 - 실시간 흐름 그래프
 - 컴포넌트별 sparkline
 - 권장사항 표시
@@ -188,10 +205,12 @@ def check_flow_health():
 ### "고인 물은 썩는다"
 
 **정보이론으로 측정:**
+
 - 엔트로피 낮음 = 패턴 반복 = 고인 물
 - 맥락 무시 = 외부 입력 무시 = 썩는 물
 
 **해결:**
+
 - 엔트로피 높이기 (다양성)
 - 맥락 활용도 높이기 (반응성)
 - 채널 품질 유지 (안정성)
@@ -199,6 +218,7 @@ def check_flow_health():
 ### "흐르는 물은 깨끗하다"
 
 **측정 결과:**
+
 - Flow Score = 0.688 ✅
 - 현재 시스템은 **흐르고 있다**
 - 하지만 맥락 무시 경향 ⚠️

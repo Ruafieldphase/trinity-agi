@@ -1,4 +1,4 @@
-﻿{
+{
 	"version": "2.0.0",
 	"tasks": [
 		{
@@ -125,7 +125,11 @@
 			],
 			"group": "none",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "silent", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Resonance: Enforce (ops-safety)",
@@ -144,7 +148,11 @@
 			],
 			"group": "none",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "silent", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Resonance: Observe (quality-first)",
@@ -163,7 +171,11 @@
 			],
 			"group": "none",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "silent", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Resonance: Generate Sample Events",
@@ -178,7 +190,11 @@
 			],
 			"group": "test",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Policy Smoke: Enforce latency-first (1h, open)",
@@ -200,7 +216,11 @@
 			],
 			"group": "test",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Policy Smoke: Observe quality-first (1h, open)",
@@ -222,7 +242,11 @@
 			],
 			"group": "test",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Monitoring: Regenerate report (1h, open)",
@@ -239,7 +263,11 @@
 			],
 			"group": "test",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Policy Smoke: Restore last config + report (1h)",
@@ -257,7 +285,11 @@
 			],
 			"group": "test",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Latency: Summarize last task",
@@ -272,7 +304,11 @@
 			],
 			"group": "test",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Resonance: Quick Status",
@@ -288,7 +324,11 @@
 			],
 			"group": "test",
 			"problemMatcher": [],
-			"presentation": { "echo": true, "reveal": "always", "panel": "shared" }
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Original Data: Build Index (no open)",
@@ -725,6 +765,7 @@
 				"Queue: Ensure Server (8091)",
 				"Queue: Ensure Worker",
 				"Lumen: Quick Health Probe",
+				"Watchdog: Start Task Watchdog (Background)",
 				"Monitoring: Generate Report (24h)",
 				"Realtime: Build ??Summarize ??Open (24h)"
 			],
@@ -4020,7 +4061,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
+					"CHATOPS_SAY": "상태 보여줘"
 				}
 			},
 			"group": "test"
@@ -4038,7 +4079,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
+					"CHATOPS_SAY": "상태 보여줘"
 				}
 			},
 			"group": "test"
@@ -4056,7 +4097,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
+					"CHATOPS_SAY": "상태 보여줘"
 				}
 			},
 			"group": "test"
@@ -4074,7 +4115,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
+					"CHATOPS_SAY": "상태 보여줘"
 				}
 			},
 			"group": "test"
@@ -4092,7 +4133,7 @@
 			],
 			"options": {
 				"env": {
-					"CHATOPS_SAY": "?곹깭 蹂댁뿬以?
+					"CHATOPS_SAY": "상태 보여줘"
 				}
 			},
 			"group": "test"
@@ -4250,7 +4291,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"$scene = Read-Host '?λ㈃ ?대쫫???낅젰?섏꽭??(?? AI Dev, Coding, VS Code Stream)'; & '${workspaceFolder}/scripts/chatops_router.ps1' -Say \"?λ㈃ $scene 濡?諛붽퓭以?""
+				"$scene = Read-Host 'Choose scene (e.g., AI Dev, Coding, VS Code Stream)'; & '${workspaceFolder}/scripts/chatops_router.ps1' -Say \"Switch scene to $scene\""
 			],
 			"group": "test",
 			"presentation": {
@@ -6854,8 +6895,8 @@
 		{
 			"id": "endOfDayNote",
 			"type": "promptString",
-			"description": "?ㅻ뒛???묒뾽 ?댁슜??媛꾨떒???낅젰?섏꽭??,
-			"default": "Phase 6 ?묒뾽 吏꾪뻾"
+			"description": "End of day note (optional)",
+			"default": "Phase 6 진행"
 		}
 	],
 	"taskDefinitions": [
@@ -7051,6 +7092,7 @@
 			"problemMatcher": []
 		}
 	],
+	/*
 {
 "label": " Context: Status",
 "type": "shell",
@@ -7092,6 +7134,63 @@
 "command": "powershell",
 "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Sleep"],
 "group": "build"
+},
+{
+"label": "🤖 AI: Bootstrap Self-Managing System (Once)",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/bootstrap_autonomous_system.ps1"],
+"group": "build",
+"problemMatcher": [],
+"presentation": {
+"echo": true,
+"reveal": "always",
+"focus": true,
+"panel": "shared"
+}
+},
+{
+"label": "🤖 AI: Bootstrap Self-Managing System (Dry-Run)",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/bootstrap_autonomous_system.ps1", "-DryRun"],
+"group": "test",
+"problemMatcher": [],
+"presentation": {
+"echo": true,
+"reveal": "always",
+"focus": true,
+"panel": "shared"
+}
+},
+{
+"label": "🤖 AI: Check Self-Managing Status",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe ${workspaceFolder}/fdo_agi_repo/orchestrator/self_managing_agent.py --no-auto-fix"],
+"group": "test",
+"problemMatcher": [],
+"presentation": {
+"echo": true,
+"reveal": "always",
+"panel": "shared"
+}
+},
+{
+"label": "🤖 AI: Open Self-Managing Report (MD)",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "if (Test-Path '${workspaceFolder}/outputs/self_managing_agent_latest.md') { code ${workspaceFolder}/outputs/self_managing_agent_latest.md } else { Write-Host 'No report found. Run: AI: Bootstrap Self-Managing System' -ForegroundColor Yellow }"],
+"group": "none"
+},
+{
+"label": "🤖 AI: Open Self-Managing Report (JSON)",
+"type": "shell",
+"command": "powershell",
+"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "if (Test-Path '${workspaceFolder}/outputs/self_managing_agent_latest.json') { code ${workspaceFolder}/outputs/self_managing_agent_latest.json } else { Write-Host 'No report found. Run: AI: Bootstrap Self-Managing System' -ForegroundColor Yellow }"],
+"group": "none"
 }
 ]
+}
+*/
 }

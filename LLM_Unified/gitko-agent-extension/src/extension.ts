@@ -3,6 +3,8 @@ import { spawn } from 'child_process';
 import * as path from 'path';
 import { registerComputerUseCommands } from './computerUse';
 import { HttpTaskPoller } from './httpTaskPoller';
+import { TaskQueueMonitor } from './taskQueueMonitor';
+import { ResonanceLedgerViewer } from './resonanceLedgerViewer';
 
 interface AgentResult {
     agent: string;
@@ -40,7 +42,18 @@ export function activate(context: vscode.ExtensionContext) {
         httpPollerOutputChannel?.show();
     });
 
-    context.subscriptions.push(enableHttpPollerCmd, disableHttpPollerCmd, showPollerOutputCmd);
+    // 🎯 Task Queue Monitor 명령어 등록
+    const showTaskQueueMonitorCmd = vscode.commands.registerCommand('gitko.showTaskQueueMonitor', () => {
+        const serverUrl = vscode.workspace.getConfiguration('gitko').get<string>('taskQueueUrl', 'http://127.0.0.1:8091');
+        TaskQueueMonitor.createOrShow(context.extensionUri, serverUrl);
+    });
+
+    // 🌊 Resonance Ledger Viewer 명령어 등록
+    const showResonanceLedgerCmd = vscode.commands.registerCommand('gitko.showResonanceLedger', () => {
+        ResonanceLedgerViewer.createOrShow(context.extensionUri);
+    });
+
+    context.subscriptions.push(enableHttpPollerCmd, disableHttpPollerCmd, showPollerOutputCmd, showTaskQueueMonitorCmd, showResonanceLedgerCmd);
 
     // 🚀 HTTP Poller 자동 시작 (설정 기반)
     // gitko.enableHttpPoller=true일 때만 자동 시작 (기본값 true)

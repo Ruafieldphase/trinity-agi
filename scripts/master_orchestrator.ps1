@@ -132,8 +132,32 @@ else {
     Write-Host "`n[4/5] Watchdog skipped (-SkipWatchdog)" -ForegroundColor Gray
 }
 
-# Step 5: Generate Status Dashboard
-Write-Host "`n[5/5] Status Dashboard..." -ForegroundColor Cyan
+# Step 5: Run Self-Managing Agent (자율 점검 및 복구)
+Write-Host "`n[5/6] Self-Managing Agent (AI Self-Check)..." -ForegroundColor Cyan
+$pythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
+$agentScript = "$WorkspaceRoot\fdo_agi_repo\orchestrator\self_managing_agent.py"
+
+if ((Test-Path $pythonExe) -and (Test-Path $agentScript)) {
+    try {
+        & $pythonExe $agentScript --quiet
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  ✓ All dependencies verified" -ForegroundColor Green
+        }
+        else {
+            Write-Host "  ⚠️  Some manual steps may be needed" -ForegroundColor Yellow
+            Write-Host "     Check: outputs\self_managing_agent_latest.md" -ForegroundColor Gray
+        }
+    }
+    catch {
+        Write-Host "  ✗ Agent failed: $($_.Exception.Message)" -ForegroundColor Red
+    }
+}
+else {
+    Write-Host "  ⚠️  Self-Managing Agent not available (Python venv or script missing)" -ForegroundColor Yellow
+}
+
+# Step 6: Generate Status Dashboard
+Write-Host "`n[6/6] Status Dashboard..." -ForegroundColor Cyan
 try {
     & "$WorkspaceRoot\scripts\quick_status.ps1" -HideOptional -Perf | Out-Null
     Write-Host "  ✓ Dashboard generated" -ForegroundColor Green
@@ -147,6 +171,7 @@ $endTime = Get-Date
 $elapsed = ($endTime - $startTime).TotalSeconds
 Write-Host "`n=== Master Orchestrator Complete ===" -ForegroundColor Cyan
 Write-Host "Elapsed: ${elapsed}s" -ForegroundColor Gray
-Write-Host "All systems should now be running autonomously.`n" -ForegroundColor Green
+Write-Host "All systems should now be running autonomously." -ForegroundColor Green
+Write-Host "AI is self-managing. You just code. 🤖`n" -ForegroundColor Cyan
 
 exit 0

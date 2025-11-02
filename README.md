@@ -1,6 +1,13 @@
 
 ---
 
+## 품질 게이트 현황
+
+![CI](https://github.com/Ruafieldphase/agi/actions/workflows/ci.yml/badge.svg)
+![PR Template Check](https://github.com/Ruafieldphase/agi/actions/workflows/check_pr_template.yml/badge.svg)
+
+---
+
 ## 🎯 **NEW!** Original Data Phase 4 완료 (2025-11-01)
 
 **Ledger → Resonance → Dashboard 실시간 파이프라인** 완성! 🎉

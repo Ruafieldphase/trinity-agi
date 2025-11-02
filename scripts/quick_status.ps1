@@ -325,6 +325,22 @@ try {
         $m = [regex]::Match($agiText, "Memory:\s*([0-9]+(?:\.[0-9]+)?)%")
         if ($m.Success) { $mem = $m.Groups[1].Value; Write-Host ("  Memory: {0}%" -f $mem) -ForegroundColor White; $summary += "Memory: $mem%" }
         $agiSummaryText = ($summary -join "\n")
+
+        # Information Flow Score
+        $mFlow = [regex]::Match($agiText, "Flow:\s*([0-9]+(?:\.[0-9]+)?)\s*\(([A-Za-z_]+)\)")
+        if ($mFlow.Success) {
+            $flowScore = $mFlow.Groups[1].Value
+            $flowStatus = $mFlow.Groups[2].Value
+            $flowColor = switch ($flowStatus) {
+                "FLOWING" { "Green" }
+                "MODERATE" { "Yellow" }
+                "TURBULENT" { "Red" }
+                "STAGNANT" { "DarkGray" }
+                default { "Gray" }
+            }
+            Write-Host ("  Flow:       {0} ({1})" -f $flowScore, $flowStatus) -ForegroundColor $flowColor
+            $summary += "Flow: $flowScore ($flowStatus)"
+        }
     }
     else {
         Write-Host " ERROR" -ForegroundColor Red

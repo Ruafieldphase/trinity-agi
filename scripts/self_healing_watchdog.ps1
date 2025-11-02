@@ -156,7 +156,47 @@ while ($true) {
         Restart-MonitoringDaemon | Out-Null
     }
     
-    # All checks passed
+    # Information-theoretic stall detection (StallGuard)
+    try {
+        $venvPython = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
+        $py = if (Test-Path $venvPython) { $venvPython } else { "python" }
+        $stallGuard = "$WorkspaceRoot\fdo_agi_repo\monitoring\stall_guard.py"
+        $paths = @()
+        $cand = @(
+            "$WorkspaceRoot\outputs\results_log.jsonl",
+            "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl",
+            "$WorkspaceRoot\fdo_agi_repo\outputs\online_learning_log.jsonl"
+        )
+        foreach ($p in $cand) { if (Test-Path $p) { $paths += $p } }
+        $urls = @("http://127.0.0.1:${ServerPort}/api/health")
+
+        if (Test-Path $stallGuard -and $paths.Count -gt 0) {
+            $args = @($stallGuard,
+                "--paths") + $paths + @(
+                "--urls") + $urls + @(
+                "--window-seconds", "300",
+                "--min-entropy", "2.5",
+                "--min-compression-ratio", "1.05",
+                "--out-json", "$WorkspaceRoot\outputs\stall_guard_report.json"
+            )
+
+            $proc = Start-Process -FilePath $py -ArgumentList $args -NoNewWindow -PassThru -Wait
+            $exitCode = $proc.ExitCode
+            if ($exitCode -ne 0) {
+                Write-WatchdogLog -Action "stall_detected" -Target "system" -Status "recovering" -Details "exit=$exitCode"
+                # Targeted recovery: restart worker first, then server if still failing next loop
+                Restart-RpaWorker | Out-Null
+            }
+            else {
+                Write-WatchdogLog -Action "stall_check" -Target "system" -Status "ok"
+            }
+        }
+    }
+    catch {
+        Write-WatchdogLog -Action "stall_check" -Target "system" -Status "error" -Details $_.Exception.Message
+    }
+
+    # All checks passed (or handled)
     Write-WatchdogLog -Action "check" -Target "all" -Status "ok"
     
     Start-Sleep -Seconds $CheckInterval

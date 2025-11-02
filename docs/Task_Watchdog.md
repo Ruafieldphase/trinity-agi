@@ -46,3 +46,35 @@ cd .\fdo_agi_repo
 - queue_stuck 임계값: 30~60초부터 시작, 환경에 맞춰 조정
 - Self-test는 문제 발생 시점에만 주입되도록 간격을 길게 설정하거나 필요 시 수동으로 사용
 - 상태 파일(JSON/MD)을 대시보드에서 집계하여 경보로 연결할 수 있음
+
+## StallGuard (정보이론 기반 루프/정지 감지)
+
+StallGuard는 최근 활동의 정보량(Shannon entropy)과 압축 가능성, 파일 갱신 신호를 결합하여 시스템이 의미 있는 진전을 내고 있는지 판단합니다. 다음 자산을 기본으로 모니터링합니다:
+
+- `outputs/results_log.jsonl` 실행 결과 로그(있을 경우)
+- `fdo_agi_repo/memory/resonance_ledger.jsonl` 레저
+- `fdo_agi_repo/outputs/online_learning_log.jsonl` 온라인 러너 로그(있을 경우)
+- 헬스 URL: `http://127.0.0.1:8091/api/health`
+
+통합:
+
+- PowerShell 워치독(`scripts/self_healing_watchdog.ps1`) 루프에서 주기적으로 `fdo_agi_repo/monitoring/stall_guard.py`를 호출하여 스톨 여부를 판정하고, 스톨 시 워커 재기동을 우선 시도합니다.
+
+수동 실행:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\stall_guard.ps1 -OpenReport
+```
+
+판정 기준(기본값):
+
+- 최근 5분(window=300s) 내 파일 갱신 없음(stale)이고, 꼬리(tail) 샘플이 충분(>=64B)이며 저엔트로피/고압축성(low-information)이면 스톨로 분류
+- 헬스 URL이 비정상이어도 스톨로 분류
+
+출력:
+
+- `outputs/stall_guard_report.json` JSON 리포트와 표준출력
+
+튜닝 포인트:
+
+- `--window-seconds`, `--min-entropy`, `--min-compression-ratio` 파라미터로 환경별 민감도 조정

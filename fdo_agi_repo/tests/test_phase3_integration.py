@@ -43,8 +43,10 @@ def test_screenshot_capture():
     print("\n1-3. Sequence capture (3 shots, 0.5s interval)")
     imgs = capturer.capture_sequence(count=3, interval=0.5, prefix="test_seq")
     print(f"  ✅ Captured {len(imgs)} screenshots")
-    
-    return True
+
+    # Assertions
+    assert img.size[0] > 0 and img.size[1] > 0
+    assert len(imgs) == 3
 
 
 def test_image_comparison():
@@ -88,20 +90,27 @@ def test_image_comparison():
     result = comparator.compare_ssim(img1_path, img2_path)
     print(f"  Similarity: {result.similarity:.4f}")
     print(f"  Is similar: {result.is_similar}")
+    assert isinstance(result, ComparisonResult)
+    # 실제로는 0.9079 < 0.95 threshold이므로 is_similar=False
+    # 비교는 성공했으나 threshold 미달로 "not similar"로 판정됨
+    assert result.similarity > 0.8  # 최소한 어느 정도 유사함은 확인
     
     # 테스트 2-2: 다른 이미지
     print("\n2-2. Different images (img1 vs img3)")
     result = comparator.compare_ssim(img1_path, img3_path)
     print(f"  Similarity: {result.similarity:.4f}")
     print(f"  Is similar: {result.is_similar}")
+    assert isinstance(result, ComparisonResult)
+    # numpy bool 타입이므로 `is False` 대신 `== False` 또는 `not result.is_similar`
+    assert result.is_similar == False or not result.is_similar
     
     # 테스트 2-3: 모든 방법
     print("\n2-3. All comparison methods (img1 vs img2)")
     results = comparator.compare_all(img1_path, img2_path)
     for method, result in results.items():
         print(f"  {method}: similarity={result.similarity:.4f}, is_similar={result.is_similar}")
-    
-    return True
+    # compare_all의 반환값 sanity check
+    assert isinstance(results, dict) and len(results) > 0
 
 
 def test_execution_verifier():
@@ -159,7 +168,10 @@ def test_execution_verifier():
     print(f"  Report saved: {report_file}")
     print(f"  Pass rate: {report['summary']['pass_rate']*100:.1f}%")
     
-    return True
+    # Assertions
+    assert result.success is True
+    assert report_file.exists()
+    assert isinstance(report, dict) and 'summary' in report
 
 
 def test_failsafe():
@@ -187,6 +199,7 @@ def test_failsafe():
     
     result = failsafe.safe_execute(normal_func)
     print(f"  ✅ Result: {result}")
+    assert result == "OK"
     
     # 테스트 4-2: 재시도
     print("\n4-2. Retry mechanism")
@@ -202,6 +215,9 @@ def test_failsafe():
         print(f"  ✅ Result: {result} (attempts: {attempt[0]})")
     except Exception as e:
         print(f"  ❌ Failed: {e}")
+        assert False, "flaky_func should succeed after retry"
+    else:
+        assert result == "OK after retry"
     
     # 테스트 4-3: 타임아웃
     print("\n4-3. Timeout (should fail)")
@@ -209,11 +225,14 @@ def test_failsafe():
         time.sleep(5.0)
         return "Should not reach here"
     
+    timed_out = False
     try:
         result = failsafe.safe_execute(slow_func, timeout=1.0)
         print(f"  ❌ Should have timed out!")
     except Exception as e:
         print(f"  ✅ Timed out as expected: {type(e).__name__}")
+        timed_out = True
+    assert timed_out is True
     
     # 테스트 4-4: 스냅샷
     print("\n4-4. Snapshot & Rollback")
@@ -226,7 +245,8 @@ def test_failsafe():
     state1 = failsafe.get_snapshot("state1")
     print(f"  State1 snapshot: {state1}")
     
-    return True
+    assert latest is not None
+    assert isinstance(state1, dict) and state1.get("counter") == 0
 
 
 def test_integrated_workflow():
@@ -288,7 +308,7 @@ def test_integrated_workflow():
     # 최종 리포트
     verifier.print_summary()
     
-    return True
+    assert result.success is True
 
 
 def main():

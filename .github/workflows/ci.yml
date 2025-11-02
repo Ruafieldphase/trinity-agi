@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f fdo_agi_repo/requirements.txt ]; then
+            pip install -r fdo_agi_repo/requirements.txt
+          fi
+          pip install pytest pytest-asyncio
+      
+      - name: Run tests
+        run: python -m pytest -q
+        working-directory: ${{ github.workspace }}
+      
+      - name: Test summary
+        if: always()
+        run: |
+          echo "### Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "Tests completed with exit code: $?" >> $GITHUB_STEP_SUMMARY

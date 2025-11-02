@@ -1,42 +1,42 @@
 {
   "window_hours": 24,
-  "generated_at": "2025-11-02T03:25:02.402073",
+  "generated_at": "2025-11-02T12:51:31.420495",
   "counts": {
-    "tasks_total": 27,
-    "complete_loops": 13,
-    "incomplete_loops": 14,
+    "tasks_total": 60,
+    "complete_loops": 36,
+    "incomplete_loops": 24,
     "evidence_gate_triggered": 0,
     "second_pass": 0
   },
   "durations_avg_sec": {
-    "folding": 6.865944830769299,
-    "unfolding": 10.786600615384573,
-    "integration": 16.085097753846114,
-    "symmetry": 0.005421492307732478
+    "folding": 5.74355914166669,
+    "unfolding": 9.262544491666537,
+    "integration": 13.232106311111496,
+    "symmetry": 0.0034936333338480255
   },
   "durations_p95_sec": {
-    "folding": 9.42308120000007,
-    "unfolding": 15.516904000000068,
-    "integration": 18.518116299999747,
-    "symmetry": 0.0072753999997985375
+    "folding": 9.126262000005227,
+    "unfolding": 13.462448199999926,
+    "integration": 17.887901299999612,
+    "symmetry": 0.00626109999984692
   },
   "rates_pct": {
-    "loop_complete_rate": 48.148148148148145,
+    "loop_complete_rate": 60.0,
     "evidence_gate_trigger_rate": 0.0,
     "second_pass_rate": 0.0
   },
   "quality": {
-    "final_quality_avg": 0.8499999999999999,
+    "final_quality_avg": 0.85,
     "final_evidence_ok_rate": 100.0
   },
   "samples": [
     {
-      "task_id": "bqi-test-001",
+      "task_id": "runtime-test-001",
       "phases": {
-        "folding": 5.068592600000102,
-        "unfolding": 8.637683299999935,
-        "integration": 16.472026899999946,
-        "symmetry": 0.027424599999903876
+        "folding": 3.469480400000009,
+        "unfolding": 8.526128299999982,
+        "integration": 9.401579000000027,
+        "symmetry": 0.012369100000000799
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -47,12 +47,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "bqi-test-002",
+      "task_id": "test-ledger-1762001967",
       "phases": {
-        "folding": 5.561184099999991,
-        "unfolding": 8.65596510000023,
-        "integration": 17.887862099999893,
-        "symmetry": 0.003001099999892176
+        "folding": 7.953638399999818,
+        "unfolding": 9.320614599999772,
+        "integration": 14.238916100000097,
+        "symmetry": 0.002258800000163319
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -63,12 +63,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "test-phase2-1",
+      "task_id": "test-ledger-1762001967-2",
       "phases": {
-        "folding": 9.42308120000007,
-        "unfolding": 9.717200999999932,
-        "integration": 16.53518609999992,
-        "symmetry": 0.0030018000002201006
+        "folding": 5.334339199999704,
+        "unfolding": 8.209606100000201,
+        "integration": 13.020016699999815,
+        "symmetry": 0.0018045000001620792
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -79,12 +79,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "test-phase2-2",
+      "task_id": "test-ledger-1762002062",
       "phases": {
-        "folding": 8.72923660000015,
-        "unfolding": 9.063110399999914,
-        "integration": 14.81029290000015,
-        "symmetry": 0.004114299999855575
+        "folding": 4.649791000000278,
+        "unfolding": 15.548172099999647,
+        "integration": 18.518116299999747,
+        "symmetry": 0.00626109999984692
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -95,12 +95,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "integration_test_1761944629",
+      "task_id": "test-ledger-1762002062-2",
       "phases": {
-        "folding": 10.299469499999987,
-        "unfolding": 7.833322699999826,
-        "integration": 12.077032200000076,
-        "symmetry": 0.0034582000000682456
+        "folding": 6.804210000000239,
+        "unfolding": 15.516904000000068,
+        "integration": 17.887901299999612,
+        "symmetry": 0.0015864000001784007
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -114,14 +114,14 @@
   "policy": {
     "counts": {
       "allow": 0,
-      "warn": 9,
+      "warn": 48,
       "block": 0
     },
     "last": {
       "mode": "observe",
       "policy": "quality-first",
       "reasons": [
-        "latency 41228ms > max_latency_ms 8000ms"
+        "latency 24024ms > max_latency_ms 8000ms"
       ]
     }
   },

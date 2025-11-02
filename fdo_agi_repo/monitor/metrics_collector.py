@@ -672,8 +672,12 @@ class MetricsCollector:
         gate_snapshot = self._apply_health_gate(immediate_pass)
         overall_healthy = gate_snapshot["gate_open"] and gate_snapshot["immediate_pass"]
 
+        # Information Flow 추가
+        flow_data = self.get_information_flow_score(hours=recent_hours)
+        flow_healthy = flow_data['flow_score'] > 0.4  # Moderate 이상이면 OK
+        
         return {
-            'healthy': overall_healthy,
+            'healthy': overall_healthy and flow_healthy,
             'checks': health_checks,
             'thresholds': THRESHOLDS,
             'current_values': {
@@ -692,6 +696,13 @@ class MetricsCollector:
                 'lumen': lumen_status,
                 'proxy': proxy_status,
                 'system': system_status,
+            },
+            'information_flow': {
+                'healthy': flow_healthy,
+                'score': flow_data['flow_score'],
+                'status': flow_data['status'],
+                'components': flow_data['components'],
+                'recommendation': flow_data['recommendation'],
             },
             'filters': self._filters_snapshot(),
             'health_gate': gate_snapshot,
