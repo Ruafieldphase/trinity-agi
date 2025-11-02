@@ -2232,9 +2232,38 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe -m pytest -q"
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q } else { python -m pytest -q }"
 			],
 			"group": "test"
+		},
+		{
+			"label": "Dev: Local CI Check (Fast)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/local_ci_check.ps1",
+				"-Fast"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Dev: Local CI Check (Full)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/local_ci_check.ps1"
+			],
+			"group": "test",
+			"problemMatcher": []
 		},
 		{
 			"label": "Python: Run Vertex AI Test (repo venv)",
@@ -2245,7 +2274,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe -m pytest -q LLM_Unified/ion-mentoring/tests/test_ion_first_vertex_ai.py"
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' -m pytest -q LLM_Unified/ion-mentoring/tests/test_ion_first_vertex_ai.py } else { python -m pytest -q LLM_Unified/ion-mentoring/tests/test_ion_first_vertex_ai.py }"
 			],
 			"group": "test"
 		},
