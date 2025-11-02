@@ -49,6 +49,15 @@ desktop.ini
 htmlcov/
 .tox/
 
+# Local coverage artifacts (uploaded by CI as artifacts, not committed)
+outputs/coverage_html/
+
+# fdo_agi_repo runtime/test artifacts
+fdo_agi_repo/.pytest_tmp/
+fdo_agi_repo/memory/*.jsonl
+fdo_agi_repo/outputs/*.jsonl
+fdo_agi_repo/outputs/phase3_test/**
+
 # Project specific
 outputs/*.png
 outputs/*.jpg

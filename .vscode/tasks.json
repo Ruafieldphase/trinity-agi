@@ -2316,7 +2316,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-Command",
-				"$p='${workspaceFolder}/outputs/coverage_html/index.html'; if (Test-Path $p) { Start-Process $p } else { Write-Host 'coverage_html not found. Run Python: Coverage HTML (generate) first.' -ForegroundColor Yellow }"
+				"$p='${workspaceFolder}/outputs/coverage_html/index.html'; if (Test-Path $p) { $codeCmd = Get-Command code -ErrorAction SilentlyContinue; if ($codeCmd) { & code $p } else { Start-Process $p } } else { Write-Host 'coverage_html not found. Run Python: Coverage HTML (generate) first.' -ForegroundColor Yellow; exit 1 }"
 			],
 			"group": "none",
 			"problemMatcher": []
