@@ -24,6 +24,93 @@
 			}
 		},
 		{
+			"label": "Policy: Bump Lumen Constitution (minor)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/bump_lumen_constitution.ps1",
+				"-Bump",
+				"minor",
+				"-Note",
+				"auto-review"
+			],
+			"group": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Control Hub: Start (Tray)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/control_hub_tray.ps1"
+			],
+			"isBackground": true,
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Control Hub: Stop (Tray)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*control_hub_tray.ps1*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Control Hub: Restart (Tray)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-Command",
+				"Write-Host 'Restarting Control Hub tray...'"
+			],
+			"dependsOn": [
+				"Control Hub: Stop (Tray)",
+				"Control Hub: Start (Tray)"
+			],
+			"dependsOrder": "sequence",
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "never",
+				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
 			"label": "Morning: Kickoff + Status (1h, open)",
 			"type": "shell",
 			"command": "powershell",
@@ -216,6 +303,25 @@
 			}
 		},
 		{
+			"label": "Policy: Refresh snapshot (batch+report)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/policy_ab_refresh.ps1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
 			"label": "Policy Smoke: Enforce latency-first (1h, open)",
 			"type": "shell",
 			"command": "powershell",
@@ -303,6 +409,87 @@
 				"1"
 			],
 			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Auto Stabilizer: Start (daemon)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_auto_stabilizer_daemon.ps1",
+				"-KillExisting"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Auto Stabilizer: Start (auto-execute, 5min)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_auto_stabilizer_daemon.ps1",
+				"-KillExisting",
+				"-AutoExecute",
+				"-IntervalSeconds",
+				"300"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Auto Stabilizer: Stop (daemon)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_auto_stabilizer_daemon.ps1"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Auto Stabilizer: Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_auto_stabilizer_status.ps1"
+			],
+			"group": "build",
 			"problemMatcher": [],
 			"presentation": {
 				"echo": true,
@@ -560,6 +747,49 @@
 				"-File",
 				"${workspaceFolder}/scripts/start_ai_dev_stream.ps1",
 				"-CheckOnly"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Lumen: Daily Rhythm Prompt (print)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/lumen_daily_rhythm.ps1"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Lumen: Daily Rhythm Guide (1 cycle)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/lumen_daily_rhythm.ps1",
+				"-Guide",
+				"-Cycles",
+				"1",
+				"-BeatSeconds",
+				"4"
 			],
 			"group": "test",
 			"presentation": {
@@ -2068,6 +2298,44 @@
 			"presentation": {
 				"reveal": "never",
 				"focus": false
+			}
+		},
+		{
+			"label": "AI: Rest Cycle (10m safe)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"& \"${workspaceFolder}/scripts/quick_status.ps1\" -OutJson \"${workspaceFolder}/outputs/quick_status_rest_prep.json\"; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & \"${workspaceFolder}/scripts/rotate_status_snapshots.ps1\" -Zip; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & \"${workspaceFolder}/scripts/cleanup_snapshot_archives.ps1\" -KeepDays 14 -DryRun; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & \"${workspaceFolder}/scripts/generate_monitoring_report.ps1\" -Hours 1"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Policy: Lumen Constitution Guard (dry-run)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_constitution_guard.ps1"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
 			}
 		},
 		{
@@ -5692,6 +5960,191 @@
 			"group": "test"
 		},
 		{
+			"label": "🎭 Emotion: Test Stabilizer (elevated)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/test_emotion_stabilizer.ps1",
+				"-Scenario",
+				"elevated"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎭 Emotion: Test Stabilizer (high)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/test_emotion_stabilizer.ps1",
+				"-Scenario",
+				"high"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎭 Emotion: Test Stabilizer (critical)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/test_emotion_stabilizer.ps1",
+				"-Scenario",
+				"critical"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎭 Emotion: Start Stabilizer (5min, dry-run)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_emotion_stabilizer.ps1",
+				"-CheckInterval",
+				"300",
+				"-DryRun"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "🎭 Emotion: Start Stabilizer (5min, auto-execute)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_emotion_stabilizer.ps1",
+				"-CheckInterval",
+				"300",
+				"-AutoExecute"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "🎭 Emotion: Check Once",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_emotion_stabilizer.ps1",
+				"-Once",
+				"-DryRun"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🔄 Trinity: Autopoietic Cycle (24h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/autopoietic_trinity_cycle.ps1",
+				"-Hours",
+				"24",
+				"-OpenReport"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🔄 Trinity: Autopoietic Cycle (24h, verbose)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/autopoietic_trinity_cycle.ps1",
+				"-Hours",
+				"24",
+				"-VerboseLog",
+				"-OpenReport"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🔄 Trinity: Autopoietic Cycle (48h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/autopoietic_trinity_cycle.ps1",
+				"-Hours",
+				"48"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🕒 Trinity: Register Auto-Run (10:00)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_trinity_cycle_task.ps1",
+				"-Register",
+				"-Time",
+				"10:00"
+			],
+			"group": "build"
+		},
+		{
+			"label": "🕒 Trinity: Unregister Auto-Run",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_trinity_cycle_task.ps1",
+				"-Unregister"
+			],
+			"group": "build"
+		},
+		{
+			"label": "🕒 Trinity: Check Auto-Run Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/register_trinity_cycle_task.ps1"
+			],
+			"group": "test"
+		},
+		{
 			"label": "Autopoietic: Evaluate Engine Promotion",
 			"type": "shell",
 			"command": "powershell",
@@ -5903,6 +6356,24 @@
 				"-OnlyTerminal"
 			],
 			"group": "test"
+		},
+		{
+			"label": "Keyboard: Release Stuck Modifiers",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/release_stuck_modifiers.py' } elseif (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/release_stuck_modifiers.py' } else { python '${workspaceFolder}/scripts/release_stuck_modifiers.py' }"
+			],
+			"group": "test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
 		},
 		{
 			"label": "Sanitize: Recent Text Files (outputs, 48h)",
@@ -7439,6 +7910,32 @@
 "command": "powershell",
 "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "if (Test-Path '${workspaceFolder}/outputs/self_managing_agent_latest.json') { code ${workspaceFolder}/outputs/self_managing_agent_latest.json } else { Write-Host 'No report found. Run: AI: Bootstrap Self-Managing System' -ForegroundColor Yellow }"],
 "group": "none"
+},
+{
+"label": "🔄 Post-Reload: Auto Recovery",
+"type": "shell",
+"command": "powershell",
+"args": [
+"-NoProfile",
+"-ExecutionPolicy",
+"Bypass",
+"-File",
+"${workspaceFolder}/scripts/post_reload_recovery.ps1",
+"-Silent"
+],
+"runOptions": {
+"runOn": "folderOpen"
+},
+"group": "build",
+"problemMatcher": [],
+"presentation": {
+"echo": false,
+"reveal": "silent",
+"focus": false,
+"panel": "shared",
+"showReuseMessage": false,
+"clear": false
+}
 }
 ]
 }
