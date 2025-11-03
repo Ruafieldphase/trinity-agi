@@ -1229,20 +1229,56 @@ if ($pythonMetrics -and $pythonMetrics.metrics) {
     $pyMetrics = $pythonMetrics.metrics
     $pyEventCounts = $null # ops_dashboard doesn't export event_counts
     
-    # Calculate success rate from events (tasks with quality >= 0.6 considered successful)
-    # Event structure: { "event": "eval", "quality": 0.8, "eval": {...} }
-    $successfulTasks = ($agiEvents | Where-Object { 
-            $_.event -eq 'eval' -and $_.quality -ge 0.6 
+    # Calculate success rate from AGI Resonance Ledger events
+    # Event structure: { "event": "health_check", "agi_quality": 0.8, "agi_confidence": 0.9, "timestamp": "2025-11-03T..." }
+    # Consider successful: agi_quality >= 0.6 OR agi_confidence >= 0.7
+    
+    # Time Window: Filter events within the specified time range (e.g., last 24 hours)
+    $now = Get-Date
+    $timeWindowHours = 24  # Configurable: 1, 6, 24, 168 (7 days)
+    $timeWindowStart = $now.AddHours(-$timeWindowHours)
+    
+    $recentEvents = $agiEvents | Where-Object {
+        if ($_.timestamp) {
+            try {
+                $eventTime = [DateTime]::Parse($_.timestamp)
+                $eventTime -ge $timeWindowStart
+            }
+            catch {
+                $false  # Skip events with invalid timestamp
+            }
+        }
+        elseif ($_.ts) {
+            try {
+                $eventTime = [DateTime]::Parse($_.ts)
+                $eventTime -ge $timeWindowStart
+            }
+            catch {
+                $false
+            }
+        }
+        else {
+            $false  # Skip events without timestamp
+        }
+    }
+    
+    # Filter task-related events (exclude system events like 'system_startup')
+    $taskEvents = $recentEvents | Where-Object { 
+        $_.event -notin @('system_startup', 'system_shutdown') -and
+        ($null -ne $_.agi_quality -or $null -ne $_.agi_confidence)
+    }
+    
+    $successfulTasks = ($taskEvents | Where-Object { 
+            ($_.agi_quality -and $_.agi_quality -ge 0.6) -or 
+            ($_.agi_confidence -and $_.agi_confidence -ge 0.7)
         }).Count
-    $totalEvalTasks = ($agiEvents | Where-Object { 
-            $_.event -eq 'eval' -and $null -ne $_.quality 
-        }).Count
+    $totalEvalTasks = $taskEvents.Count
     $successRate = if ($totalEvalTasks -gt 0) { 
         [math]::Round(($successfulTasks / $totalEvalTasks) * 100, 2) 
     }
     else { 0.0 }
     
-    Write-Host "  Success Rate: $successRate% ($successfulTasks/$totalEvalTasks)" -ForegroundColor Gray
+    Write-Host "  Success Rate (last ${timeWindowHours}h): $successRate% ($successfulTasks/$totalEvalTasks)" -ForegroundColor Gray
     
     $agiMetrics = @{
         TotalEvents         = $agiEvents.Count
@@ -1322,7 +1358,8 @@ try {
         try {
             $act = if ($pe.action) { ("" + $pe.action).ToLower() } else { "" }
             if ($policyCounts.ContainsKey($act)) { $policyCounts[$act] += 1 }
-        } catch {}
+        }
+        catch {}
         $lastPolicy = $pe
     }
     $lastPolTimeIso = $null
@@ -1330,7 +1367,8 @@ try {
         try {
             $unixEpoch = [datetime]::new(1970, 1, 1, 0, 0, 0, 0, [System.DateTimeKind]::Utc)
             $lastPolTimeIso = $unixEpoch.AddSeconds([double]$lastPolicy.ts).ToString('s')
-        } catch { $lastPolTimeIso = $null }
+        }
+        catch { $lastPolTimeIso = $null }
     }
     $agiPolicy = @{
         counts    = $policyCounts
@@ -1351,7 +1389,8 @@ try {
             elseif ($cfgJson.default_policy) { $activePol = [string]$cfgJson.default_policy }
             if ($activePol) { $agiPolicy.active = $activePol }
         }
-    } catch { }
+    }
+    catch { }
     # Attach to metrics object in a safe way
     if (-not $agiMetrics) { $agiMetrics = @{} }
     $agiMetrics.Policy = $agiPolicy
@@ -1362,7 +1401,8 @@ try {
         if ($lastPolicy -and $lastPolicy.observed -and $lastPolicy.observed.latency_ms) {
             $lastLatencyMs = [double]$lastPolicy.observed.latency_ms
         }
-    } catch { $lastLatencyMs = $null }
+    }
+    catch { $lastLatencyMs = $null }
     if ($null -eq $lastLatencyMs) {
         try {
             $rev = $agiEvents | Sort-Object -Property ts -Descending
@@ -1371,7 +1411,8 @@ try {
                 elseif ($ev.duration_sec) { $lastLatencyMs = [double]$ev.duration_sec * 1000.0; break }
                 elseif ($ev.duration) { $lastLatencyMs = [double]$ev.duration * 1000.0; break }
             }
-        } catch { $lastLatencyMs = $null }
+        }
+        catch { $lastLatencyMs = $null }
     }
     try { $agiMetrics.LastTaskLatencyMs = $lastLatencyMs } catch { }
 }
@@ -1386,9 +1427,11 @@ try {
         try {
             $evObj = $pyOut | ConvertFrom-Json -ErrorAction Stop
             if ($evObj.min_quality -ne $null) { $evalMinQ = [double]$evObj.min_quality }
-        } catch {}
+        }
+        catch {}
     }
-} catch {}
+}
+catch {}
 
 # ===== Extract Closed-loop Snapshot (from AGI Ledger) =====
 try {
@@ -1398,28 +1441,29 @@ try {
         $snap = $lastCls.snapshot
         $sim = $null; $rt = $null
         try { $sim = $snap.resonance_simulator } catch {}
-        try { $rt  = $snap.realtime_resonance } catch {}
+        try { $rt = $snap.realtime_resonance } catch {}
 
         $closedLoop = @{}
         if ($sim) {
             $closedLoop["simulator"] = @{
-                summary       = $sim.summary
-                last_resonance= $sim.last_resonance
-                last_entropy  = $sim.last_entropy
+                summary        = $sim.summary
+                last_resonance = $sim.last_resonance
+                last_entropy   = $sim.last_entropy
             }
         }
         if ($rt) {
             $closedLoop["realtime"] = @{
-                strength = $rt.strength
-                coherence= $rt.coherence
-                phase    = $rt.phase
+                strength  = $rt.strength
+                coherence = $rt.coherence
+                phase     = $rt.phase
             }
         }
         # Add last snapshot time (ISO)
         try {
             $unixEpoch = [datetime]::new(1970, 1, 1, 0, 0, 0, 0, [System.DateTimeKind]::Utc)
             $closedLoop["last_time"] = $unixEpoch.AddSeconds([double]$lastCls.ts).ToString('s')
-        } catch {}
+        }
+        catch {}
         if (-not $agiMetrics) { $agiMetrics = @{} }
         $agiMetrics.ClosedLoop = $closedLoop
     }
@@ -1473,14 +1517,16 @@ if ($agiMetrics.Policy) {
         if ($pc.block -gt 0) {
             $reportLines += "  !!! POLICY BLOCKS DETECTED: $($pc.block) in window !!!"
         }
-    } catch { }
+    }
+    catch { }
 }
 
 # Show last task latency (if available)
 if ($agiMetrics.LastTaskLatencyMs) {
     try {
         $reportLines += ("  Last Task: {0}ms" -f [int]$agiMetrics.LastTaskLatencyMs)
-    } catch { }
+    }
+    catch { }
 }
 
 # Show Evaluation Config summary (if available)

@@ -24,6 +24,10 @@
    - 성공/실패 상태 표시
    - 상세 정보 및 타임스탬프
 
+3. ✅ **Resonance Policy 스냅샷 카드**
+   - 최신 `policy_ab_snapshot_latest.md` 40줄 미리보기
+   - 전체 리포트 경로 안내
+
 3. ✅ **반응형 테이블**
    - 가로 스크롤 지원
    - Hover 효과
@@ -37,18 +41,21 @@
 ## 📊 테스트 결과
 
 ### Test 1: Dashboard 생성
+
 ```
 ✅ Output: C:\workspace\agi\outputs\system_dashboard_enhanced.html
 ✅ 브라우저 자동 열림
 ```
 
 ### Test 2: Anomaly Detection 통합
+
 ```
 🚨 [Critical] Anomaly Detected: Success rate 0.00%
 ✅ Dashboard에 정상 표시
 ```
 
 ### Test 3: Auto-healing 통합
+
 ```
 ⏳ Grace period active (5분)
 ✅ Healing 기록이 Dashboard에 표시
@@ -70,9 +77,11 @@
 ## 📝 변경된 파일
 
 ### Modified
+
 - `scripts/generate_enhanced_dashboard.ps1` (Anomaly/Healing 섹션)
 
 ### New Docs
+
 - `docs/PHASE7_TASK3_ENHANCED_DASHBOARD_COMPLETE.md`
 
 ---

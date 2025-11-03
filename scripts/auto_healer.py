@@ -30,6 +30,7 @@ from typing import Dict, List, Optional, Any
 
 WORKSPACE_ROOT = Path(__file__).parent.parent
 ALERT_FILE = WORKSPACE_ROOT / "outputs" / "anomaly_alert_latest.json"
+ALERTS_DIR = WORKSPACE_ROOT / "outputs" / "alerts"  # Phase 7 Task 2: Multi-alert support
 STRATEGIES_FILE = WORKSPACE_ROOT / "configs" / "healing_strategies.json"
 HEALING_LOG = WORKSPACE_ROOT / "outputs" / "healing_log.jsonl"
 GRACE_HISTORY_FILE = WORKSPACE_ROOT / "outputs" / "healing_grace_history.json"
@@ -290,37 +291,57 @@ class AutoHealer:
             sys.exit(1)
     
     def heal_once(self):
-        """Check for anomalies and heal once"""
-        print(f"🩹 [{ datetime.now().strftime('%H:%M:%S')}] Checking for anomalies to heal...")
+        """Check for anomalies and heal once (supports multiple alert files)"""
+        print(f"🩹 [{datetime.now().strftime('%H:%M:%S')}] Checking for anomalies to heal...")
         
-        # Read latest alert
-        if not ALERT_FILE.exists():
+        # Phase 7 Task 2: Read from alerts directory
+        alerts_to_process = []
+        
+        # 1. Check legacy alert file
+        if ALERT_FILE.exists():
+            alerts_to_process.append(ALERT_FILE)
+        
+        # 2. Check new alerts directory
+        if ALERTS_DIR.exists():
+            alert_files = sorted(ALERTS_DIR.glob("*_alert_latest.json"))
+            alerts_to_process.extend(alert_files)
+        
+        if not alerts_to_process:
             print("   ℹ️  No alerts found")
             return
         
-        try:
-            with open(ALERT_FILE, 'r', encoding='utf-8') as f:
-                alert = json.load(f)
-        except Exception as e:
-            print(f"⚠️  Failed to read alert: {e}")
-            return
+        print(f"   📋 Found {len(alerts_to_process)} alert file(s)")
         
-        # Check if alert is recent (< 5 minutes)
-        alert_time = datetime.fromisoformat(alert['timestamp'])
-        if (datetime.now() - alert_time).total_seconds() > 300:
-            print(f"   ℹ️  Alert is stale (from {alert_time.strftime('%H:%M:%S')})")
-            return
+        # Process each alert file
+        total_anomalies = 0
+        for alert_file in alerts_to_process:
+            try:
+                with open(alert_file, 'r', encoding='utf-8') as f:
+                    alert = json.load(f)
+            except Exception as e:
+                print(f"⚠️  Failed to read {alert_file.name}: {e}")
+                continue
+            
+            # Check if alert is recent (< 5 minutes)
+            alert_time = datetime.fromisoformat(alert['timestamp'])
+            if (datetime.now() - alert_time).total_seconds() > 300:
+                print(f"   ℹ️  Alert is stale: {alert_file.name} (from {alert_time.strftime('%H:%M:%S')})")
+                continue
+            
+            anomalies = alert.get('anomalies', [])
+            if not anomalies:
+                print(f"   ✅ No anomalies in {alert_file.name}")
+                continue
+            
+            print(f"   🚨 {alert_file.name}: {len(anomalies)} anomaly/anomalies")
+            total_anomalies += len(anomalies)
+            
+            # Process each anomaly
+            for anomaly in anomalies:
+                self._heal_anomaly(anomaly, alert)
         
-        anomalies = alert.get('anomalies', [])
-        if not anomalies:
-            print("   ✅ No anomalies in latest alert")
-            return
-        
-        print(f"   🚨 Found {len(anomalies)} anomaly/anomalies")
-        
-        # Process each anomaly
-        for anomaly in anomalies:
-            self._heal_anomaly(anomaly, alert)
+        if total_anomalies == 0:
+            print("   ✅ No active anomalies found")
     
     def _heal_anomaly(self, anomaly: Dict, alert: Dict):
         """Heal a single anomaly"""

@@ -1,0 +1,22 @@
+﻿{
+    "message":  "Success Rate: 100% (Threshold: 50%-85%)",
+    "suggested_strategy":  null,
+    "metric":  "success_rate",
+    "details":  {
+                    "queue_total_tasks":  0,
+                    "combined_success_rate":  100,
+                    "queue_success_rate":  0,
+                    "combined_total":  241,
+                    "time_window_hours":  24,
+                    "combined_successful":  241,
+                    "agi_success_rate":  100,
+                    "agi_successful_tasks":  241,
+                    "queue_successful_tasks":  0,
+                    "agi_total_tasks":  241
+                },
+    "value":  100,
+    "timestamp":  "2025-11-03T17:47:57.8581102+09:00",
+    "threshold_upper":  85,
+    "status":  "healthy",
+    "threshold_lower":  50
+}

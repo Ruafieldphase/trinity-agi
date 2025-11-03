@@ -322,6 +322,31 @@ class RPAWorker:
                     self.logger.info(
                         f"Submitted mapped result: {'OK' if ok else 'FAIL'} | type={task_type} success={exec_out.get('success')}"
                     )
+                elif task_type == "health_check":
+                    # Health check task: verify worker is alive
+                    result_data = {
+                        "status": "healthy",
+                        "worker": self.config.worker_name,
+                        "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "capabilities": ["rpa", "screenshot", "ocr", "health_check", "benchmark_test"]
+                    }
+                    ok = self._submit_result(task_id, True, result_data, None)
+                    self.logger.info(f"Submitted health_check result: {'OK' if ok else 'FAIL'}")
+                elif task_type == "benchmark_test":
+                    # Benchmark test: measure worker performance
+                    start = time.time()
+                    # Simple benchmark: take screenshot and measure time
+                    screenshot_result = self._do_screenshot({})
+                    elapsed = time.time() - start
+                    result_data = {
+                        "worker": self.config.worker_name,
+                        "timestamp": datetime.utcnow().isoformat() + "Z",
+                        "benchmark_time": round(elapsed, 3),
+                        "screenshot_path": screenshot_result.get("path"),
+                        "status": "completed"
+                    }
+                    ok = self._submit_result(task_id, True, result_data, None)
+                    self.logger.info(f"Submitted benchmark_test result: {'OK' if ok else 'FAIL'} | time={elapsed:.3f}s")
                 else:
                     # Unknown task → mark failed
                     err = f"Unsupported task type: {task_type}"

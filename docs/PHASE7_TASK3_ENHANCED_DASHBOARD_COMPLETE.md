@@ -29,6 +29,8 @@
    - 최근 N시간 내 실행된 Healing Action
    - 성공/실패 상태 표시
    - Action 타입 및 상세 내용
+3. **Resonance Policy Snapshot** (`outputs/policy_ab_snapshot_latest.md`)
+   - 40줄 미리보기 제공 및 전체 리포트 링크 안내
 
 #### Dashboard 구조
 
@@ -68,12 +70,14 @@
 ### 2. **테스트 결과** ✅
 
 #### Test 1: Dashboard 생성
+
 ```powershell
 ✅ Output: C:\workspace\agi\outputs\system_dashboard_enhanced.html
 ✅ Status: 생성 성공, 브라우저 자동 열림
 ```
 
 #### Test 2: Anomaly Detection 통합
+
 ```
 🚨 [Critical] Anomaly Detected!
    • Success rate too low: 0.00% (expected >55.00%)
@@ -82,6 +86,7 @@
 ```
 
 #### Test 3: Auto-healing 통합
+
 ```
 ⏳ Grace period active for 'Low Success Rate' (last: 17:24:56)
 

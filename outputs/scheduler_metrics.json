@@ -5006,3 +5006,219 @@
                     "memory_usage":  51.8
                 }
 }
+{
+    "timestamp":  "2025-11-03 17:33:25",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:33:23",
+                    "cpu_load":  34,
+                    "memory_usage":  51.2
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:34:28",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:34:26",
+                    "cpu_load":  15,
+                    "memory_usage":  51.3
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:35:31",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:35:29",
+                    "cpu_load":  26,
+                    "memory_usage":  50.8
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:36:35",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:36:33",
+                    "cpu_load":  51,
+                    "memory_usage":  51.6
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:37:38",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:37:36",
+                    "cpu_load":  48,
+                    "memory_usage":  51.2
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:38:42",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:38:40",
+                    "cpu_load":  33,
+                    "memory_usage":  51.5
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:39:45",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:39:43",
+                    "cpu_load":  56,
+                    "memory_usage":  51.4
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:40:48",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:40:47",
+                    "cpu_load":  28,
+                    "memory_usage":  51.4
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:41:53",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:41:50",
+                    "cpu_load":  97,
+                    "memory_usage":  51.6
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:42:56",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:42:54",
+                    "cpu_load":  56,
+                    "memory_usage":  52.7
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:44:00",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:43:58",
+                    "cpu_load":  27,
+                    "memory_usage":  52.2
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:46:18",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:45:00",
+                    "cpu_load":  19,
+                    "memory_usage":  51.6
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:47:21",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:47:19",
+                    "cpu_load":  20,
+                    "memory_usage":  52
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:48:24",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:48:23",
+                    "cpu_load":  35,
+                    "memory_usage":  52.2
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:49:28",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:49:26",
+                    "cpu_load":  43,
+                    "memory_usage":  52
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:50:31",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:50:29",
+                    "cpu_load":  29,
+                    "memory_usage":  51.6
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:51:34",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:51:32",
+                    "cpu_load":  46,
+                    "memory_usage":  51.3
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:52:36",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:52:35",
+                    "cpu_load":  23,
+                    "memory_usage":  51.1
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:53:39",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:53:38",
+                    "cpu_load":  44,
+                    "memory_usage":  51.8
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:54:43",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:54:41",
+                    "cpu_load":  19,
+                    "memory_usage":  51.7
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:55:46",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:55:44",
+                    "cpu_load":  40,
+                    "memory_usage":  52
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:56:49",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:56:47",
+                    "cpu_load":  25,
+                    "memory_usage":  51.2
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:57:52",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:57:50",
+                    "cpu_load":  19,
+                    "memory_usage":  52.1
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:58:55",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:58:54",
+                    "cpu_load":  22,
+                    "memory_usage":  52
+                }
+}
+{
+    "timestamp":  "2025-11-03 17:59:58",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 17:59:57",
+                    "cpu_load":  31,
+                    "memory_usage":  52.4
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:01:01",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:01:00",
+                    "cpu_load":  51,
+                    "memory_usage":  51.6
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:02:05",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:02:03",
+                    "cpu_load":  36,
+                    "memory_usage":  52.3
+                }
+}

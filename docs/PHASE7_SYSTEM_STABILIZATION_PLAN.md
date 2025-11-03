@@ -119,12 +119,15 @@
    - 매일 03:30 백업 후 자동 검증
    - 핵심 파일 무결성 체크 (MD5 해시)
    - 복원 가능 여부 테스트 (dry-run)
+   - 스크립트 뼈대: `scripts/verify_backup.ps1` (hashes.json 기반 검증 + DryRun/리포트 지원)
+   - 해시 생성: `scripts/generate_backup_hashes.ps1` (백업 직후 hashes.json 생성)
 
 2. **One-click Restore**
    - `scripts/restore_from_backup.ps1`
    - 최신 백업 또는 특정 날짜 백업 선택
    - 단계별 복원 (설정 → 데이터 → 상태)
    - 복원 전후 상태 비교
+   - 스크립트 뼈대 준비 (DryRun/Sections/Report 옵션)
 
 3. **Multi-site Replication** (선택적)
    - 클라우드 스토리지 동기화 (Google Drive, OneDrive)

@@ -1,4 +1,4 @@
-# Enhanced System Dashboard with GPU Metrics
+﻿# Enhanced System Dashboard with GPU Metrics
 # Generates comprehensive HTML dashboard including GPU monitoring
 # Part of Phase 3+ Real-Time Monitoring Enhancement
 
@@ -40,7 +40,8 @@ $baselinePath = "$PSScriptRoot\..\outputs\anomaly_baseline.json"
 if (Test-Path $baselinePath) {
     try {
         $anomalyBaseline = Get-Content $baselinePath -Raw | ConvertFrom-Json -AsHashtable
-    } catch {
+    }
+    catch {
         Write-Host "⚠️  Could not load anomaly baseline" -ForegroundColor Yellow
     }
 }
@@ -55,7 +56,8 @@ if (Test-Path $anomalyLogPath) {
             $ts = [DateTime]::Parse($entry.timestamp)
             if ($ts -ge $cutoff) { $entry }
         } | Select-Object -Last 20
-    } catch {
+    }
+    catch {
         Write-Host "⚠️  Could not load anomaly log" -ForegroundColor Yellow
     }
 }
@@ -66,13 +68,31 @@ $healingLogPath = "$PSScriptRoot\..\outputs\healing_log.jsonl"
 if (Test-Path $healingLogPath) {
     $cutoff = (Get-Date).AddHours(-$LookbackHours)
     try {
-        $recentHealings = Get-Content $healingLogPath | ForEach-Object {
+        $recentHealings = Get-Content $healingLogPath -TotalCount 200 | ForEach-Object {
             $entry = $_ | ConvertFrom-Json
             $ts = [DateTime]::Parse($entry.timestamp)
             if ($ts -ge $cutoff) { $entry }
         } | Select-Object -Last 20
-    } catch {
+    }
+    catch {
         Write-Host "⚠️  Could not load healing log" -ForegroundColor Yellow
+    }
+}
+
+$policySnapshot = @()
+$policySnapshotPath = "$PSScriptRoot\..\outputs\policy_ab_snapshot_latest.md"
+if (Test-Path $policySnapshotPath) {
+    try {
+        $policySnapshot = Get-Content $policySnapshotPath -TotalCount 40
+    } catch {
+        $policySnapshot = @("Failed to load policy snapshot: $($_.Exception.Message)")
+    }
+}
+$policyPreviewText = ""
+if ($policySnapshot.Count -gt 0) {
+    $policyPreviewText = $policySnapshot -join "`n"
+    if ($policySnapshot.Count -ge 40) {
+        $policyPreviewText += "`n... (see outputs\policy_ab_snapshot_latest.md for full report)"
     }
 }
 
@@ -462,7 +482,8 @@ if ($recentAnomalies.Count -gt 0) {
                 </table>
             </div>
 "@
-} else {
+}
+else {
     $html += @"
             <div class="metric" style="justify-content: center; border-bottom: none;">
                 <span style="opacity: 0.7;">✅ No anomalies detected in the last $LookbackHours hours</span>
@@ -511,7 +532,8 @@ if ($recentHealings.Count -gt 0) {
                 </table>
             </div>
 "@
-} else {
+}
+else {
     $html += @"
             <div class="metric" style="justify-content: center; border-bottom: none;">
                 <span style="opacity: 0.7;">No healing actions executed in the last $LookbackHours hours</span>
@@ -521,7 +543,32 @@ if ($recentHealings.Count -gt 0) {
 
 $html += @"
         </div>
-        
+        $html += @"
+        </div>
+"@
+if ($policyPreviewText) {
+    $html += @"
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">📄</span> Policy Snapshot (Preview)</h2>
+            <div class="table-container">
+                <pre>
+$policyPreviewText
+                </pre>
+            </div>
+        </div>
+"@
+}
+else {
+    $html += @"
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">📄</span> Policy Snapshot (Preview)</h2>
+            <div class="metric" style="justify-content: center; border-bottom: none;">
+                <span style="opacity: 0.7;">Policy snapshot not available.</span>
+            </div>
+        </div>
+"@
+}
+$html += @"
         <div class="footer">
             <p>AGI Real-Time Monitoring System | Phase 3+ Enhanced Dashboard</p>
             <p style="margin-top: 8px; opacity: 0.6;">Auto-refresh: Every 60s (auto)</p>
@@ -547,3 +594,5 @@ if ($OpenBrowser) {
 }
 
 exit 0
+
+

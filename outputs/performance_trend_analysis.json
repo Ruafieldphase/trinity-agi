@@ -1,21 +1,21 @@
 {
     "health_score":  92,
     "memory":  {
-                   "current":  51.9,
+                   "current":  52.2,
                    "min":  35.2,
                    "max":  53.1,
                    "trend":  "UP",
-                   "average":  45.2
+                   "average":  45.4
                },
-    "timestamp":  "2025-11-03 17:19:41",
-    "samples":  613,
+    "timestamp":  "2025-11-03 17:46:14",
+    "samples":  637,
     "analysis_time_ms":  150,
     "lookback_hours":  24,
     "cpu":  {
-                "current":  37,
+                "current":  34,
                 "min":  0,
                 "max":  100,
                 "trend":  "UP",
-                "average":  31
+                "average":  31.5
             }
 }
