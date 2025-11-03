@@ -17,16 +17,19 @@
 **변경 사항**: **300s (5분) → 180s (3분)**
 
 **Before**:
+
 ```json
 "grace_period_seconds": 300
 ```
 
 **After**:
+
 ```json
 "grace_period_seconds": 180
 ```
 
 **영향**:
+
 - 이상 감지 후 **3분 내** 재치유 시도 가능
 - 더 빠른 자동 복구 (5분 → 3분)
 - Worker 재시작 간격 단축
@@ -36,11 +39,13 @@
 **변경 사항**: **새로운 필드 추가 (70%)**
 
 **After**:
+
 ```json
 "min_success_rate": 0.70
 ```
 
 **영향**:
+
 - Success Rate가 **70% 미만**이면 Auto-healing 트리거
 - Task 4에서 구현한 **Time Window Success Rate** 활용
 - 더 높은 품질 기준 (기존: 50% → 새: 70%)
@@ -50,11 +55,13 @@
 **변경 사항**: **새로운 필드 추가 (3회)**
 
 **After**:
+
 ```json
 "consecutive_failures_threshold": 3
 ```
 
 **영향**:
+
 - **연속 실패 3회** 이상 시 Auto-healing 중단
 - 무한 루프 방지
 - Manual intervention 필요 신호
@@ -92,6 +99,7 @@ def can_heal_with_consecutive_check(
 ```
 
 **기능**:
+
 - Grace Period 체크
 - **Consecutive Failures 체크** (신규)
 - 연속 실패 시 자동 치유 중단
@@ -101,6 +109,7 @@ def can_heal_with_consecutive_check(
 **변경 사항**: **success 파라미터 추가**
 
 **Before**:
+
 ```python
 def record_heal(self, strategy_name: str):
     """Record a healing action"""
@@ -108,6 +117,7 @@ def record_heal(self, strategy_name: str):
 ```
 
 **After**:
+
 ```python
 def record_heal(self, strategy_name: str, success: bool = True):
     """Record a healing action"""
@@ -120,6 +130,7 @@ def record_heal(self, strategy_name: str, success: bool = True):
 ```
 
 **기능**:
+
 - 성공 시: **consecutive_failures = 0** (리셋)
 - 실패 시: **consecutive_failures += 1** (증가)
 
@@ -173,12 +184,14 @@ def record_heal(self, strategy_name: str, success: bool = True):
 ### 2. Grace Period 시나리오
 
 **Before** (5분):
+
 ```
 00:00 - Anomaly detected
 00:05 - Auto-healing allowed (5분 경과)
 ```
 
 **After** (3분):
+
 ```
 00:00 - Anomaly detected
 00:03 - Auto-healing allowed (3분 경과) ← 2분 단축!
@@ -187,12 +200,14 @@ def record_heal(self, strategy_name: str, success: bool = True):
 ### 3. Min Success Rate 시나리오
 
 **Before** (50%):
+
 ```
 Success Rate: 55% → ✅ OK (50% 이상)
 Success Rate: 45% → ❌ Low Success Rate alert
 ```
 
 **After** (70%):
+
 ```
 Success Rate: 75% → ✅ OK (70% 이상)
 Success Rate: 65% → ❌ Low Success Rate alert (더 엄격)
@@ -201,6 +216,7 @@ Success Rate: 65% → ❌ Low Success Rate alert (더 엄격)
 ## 🎯 다음 단계
 
 **Task 7**: Worker Load Balancing
+
 - Single Worker 강제
 - Worker Monitor 안정화
 - 중복 Worker 방지
@@ -208,6 +224,7 @@ Success Rate: 65% → ❌ Low Success Rate alert (더 엄격)
 ## ✨ 완료 선언
 
 **Phase 7, Task 6 완료!**
+
 - ✅ Grace Period 단축: 300s → 180s (40% 개선)
 - ✅ Min Success Rate 추가: 70%
 - ✅ Consecutive Failures Threshold 추가: 3회
