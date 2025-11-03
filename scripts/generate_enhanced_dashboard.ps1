@@ -96,6 +96,17 @@ if ($policySnapshot.Count -gt 0) {
     }
 }
 
+$resourceSummaryPath = "$PSScriptRoot\..\outputs\resource_optimizer_summary.md"
+$resourceSummaryText = ""
+if (Test-Path $resourceSummaryPath) {
+    try {
+        $resourceSummaryText = (Get-Content $resourceSummaryPath -TotalCount 20) -join "`n"
+    }
+    catch {
+        $resourceSummaryText = "Failed to load resource optimizer summary: $($_.Exception.Message)"
+    }
+}
+
 # Generate HTML
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 $html = @"
@@ -543,9 +554,31 @@ else {
 
 $html += @"
         </div>
-        $html += @"
+"@
+
+if ($resourceSummaryText) {
+    $html += @"
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">⚖️</span> Resource Budget (Preview)</h2>
+            <div class="table-container">
+                <pre>
+$resourceSummaryText
+                </pre>
+            </div>
         </div>
 "@
+}
+else {
+    $html += @"
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">⚖️</span> Resource Budget (Preview)</h2>
+            <div class="metric" style="justify-content: center; border-bottom: none;">
+                <span style="opacity: 0.7;">Resource optimizer summary not available.</span>
+            </div>
+        </div>
+"@
+}
+
 if ($policyPreviewText) {
     $html += @"
         <div class="card" style="grid-column: 1 / -1;">

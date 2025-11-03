@@ -1,138 +1,257 @@
+﻿#Requires -Version 5.1
+<##
+.SYNOPSIS
+    Ensure the RPA worker process is running and healthy.
+
+.DESCRIPTION
+    Uses a JSON configuration file to control how the RPA worker is launched, how health checks
+    are performed, and how often restarts are permitted. Logs are written to
+    outputs/ensure_rpa_worker.log (UTF-8, no BOM) with 1MB rotation.
+
+.PARAMETER Config
+    Optional path to configuration file (defaults to configs/rpa_worker.json)
+
+.PARAMETER ForceRestart
+    Force a restart even if the worker appears healthy.
+
+.PARAMETER Stop
+    Stop any running worker processes and exit.
+
+.PARAMETER Status
+    Print status (running/healthy) and exit.
+
+.PARAMETER DryRun
+    Preview actions without performing them.
+#>
+
 param(
-    [string]$Server = 'http://127.0.0.1:8091',
-    [double]$Interval = 0.5,
-    [ValidateSet('INFO', 'DEBUG', 'WARNING', 'ERROR')]
-    [string]$LogLevel = 'INFO',
-    [switch]$EnforceSingle,
-    [int]$MaxWorkers = 1,
-    [switch]$KillAll,
+    [string]$Config = "C:\workspace\agi\configs\rpa_worker.json",
+    [switch]$ForceRestart,
+    [switch]$Stop,
+    [switch]$Status,
     [switch]$DryRun
 )
 
-$ErrorActionPreference = 'Stop'
-try {
-    # Mutex-based lock to prevent race condition (cross-process)
-    $mutexName = 'Global\RPAWorkerEnsureMutex'
-    $mutex = $null
-    $mutexAcquired = $false
-    
+$ErrorActionPreference = "Stop"
+try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}
+
+$workspaceRoot = Split-Path -Parent $PSScriptRoot
+$logPath = Join-Path $workspaceRoot "outputs\ensure_rpa_worker.log"
+$summaryPath = Join-Path $workspaceRoot "outputs\rpa_worker_status.txt"
+$historyPath = Join-Path $workspaceRoot "outputs\rpa_worker_restart_history.json"
+
+function Out-FileUtf8NoBomAppend {
+    param([string]$Path, [string]$Text)
+    $dir = Split-Path -Parent $Path
+    if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+    $enc = New-Object System.Text.UTF8Encoding($false)
+    $sw = New-Object System.IO.StreamWriter($Path, $true, $enc)
+    try { $sw.WriteLine($Text) } finally { $sw.Dispose() }
+}
+
+function Rotate-LogIfNeeded {
+    param([string]$Path, [int64]$MaxBytes = 1MB)
+    if (-not (Test-Path -LiteralPath $Path)) { return }
     try {
-        $mutex = New-Object System.Threading.Mutex($false, $mutexName)
-        $mutexAcquired = $mutex.WaitOne(10000)  # 10 second timeout
-        
-        if (-not $mutexAcquired) {
-            Write-Warning "Failed to acquire mutex after 10s. Another instance may be running."
-            exit 1
+        $info = Get-Item -LiteralPath $Path
+        if ($info.Length -le $MaxBytes) { return }
+        $backup = "$Path.1"
+        if (Test-Path -LiteralPath $backup) { Remove-Item -LiteralPath $backup -Force -ErrorAction SilentlyContinue }
+        Rename-Item -LiteralPath $Path -NewName (Split-Path -Leaf $backup) -Force
+    } catch {}
+}
+
+function Write-Log {
+    param([string]$Message, [string]$Level = "INFO")
+    $line = "[$([DateTime]::Now.ToString('yyyy-MM-dd HH:mm:ss'))] [$Level] $Message"
+    Write-Host $line
+    Rotate-LogIfNeeded -Path $logPath
+    Out-FileUtf8NoBomAppend -Path $logPath -Text $line
+    Set-Content -LiteralPath $summaryPath -Value $line -Encoding UTF8
+}
+
+function Load-Config($path) {
+    if (-not (Test-Path -LiteralPath $path)) {
+        throw "Config file not found: $path"
+    }
+    try {
+        $text = Get-Content -LiteralPath $path -Raw
+        return $text | ConvertFrom-Json -ErrorAction Stop
+    }
+    catch {
+        throw "Failed to parse config $path: $($_.Exception.Message)"
+    }
+}
+
+function Get-WorkerProcesses($match) {
+    Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like $match }
+}
+
+function Stop-WorkerProcesses($procs, $dryRun) {
+    if (-not $procs) { Write-Log "No RPA worker processes to stop." "WARN"; return }
+    $pids = $procs | Select-Object -ExpandProperty ProcessId
+    Write-Log "Stopping worker PID(s): $($pids -join ',')" "WARN"
+    if (-not $dryRun) {
+        foreach ($pid in $pids) {
+            try { Stop-Process -Id $pid -Force -ErrorAction Stop } catch { Write-Log "Failed to stop PID $pid: $($_.Exception.Message)" "ERROR" }
         }
-    } catch {
-        Write-Warning "Failed to create/acquire mutex: $_"
+    }
+}
+
+function Test-Health($cfg) {
+    $mode = ($cfg.health.mode ?? "none").ToLower()
+    if ($mode -eq "none") { return $true }
+    if ($mode -eq "http") {
+        try {
+            $timeout = [int]($cfg.health.timeout ?? 2)
+            $result = Invoke-RestMethod -Uri $cfg.health.endpoint -TimeoutSec $timeout -ErrorAction Stop
+            if ($result.status -and $result.status -match "ok|healthy") { return $true }
+            return $false
+        }
+        catch {
+            Write-Log "Health check failed: $($_.Exception.Message)" "WARN"
+            return $false
+        }
+    }
+    return $true
+}
+
+function Update-RestartHistory($path, $dryRun) {
+    $history = @()
+    if (Test-Path -LiteralPath $path) {
+        try { $history = (Get-Content -LiteralPath $path -Raw | ConvertFrom-Json) } catch { $history = @() }
+    }
+    $now = Get-Date
+    $filtered = @($history | Where-Object { $_ -and ([DateTime]$_) -ge $now.AddSeconds(-($global:RestartWindow)) })
+    $filtered += $now.ToString("o")
+    if (-not $dryRun) {
+        $filtered | ConvertTo-Json | Set-Content -LiteralPath $path -Encoding UTF8
+    }
+    return $filtered.Count
+}
+
+function Check-RestartLimit($path) {
+    if (-not (Test-Path -LiteralPath $path)) { return 0 }
+    try { $history = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json } catch { return 0 }
+    $now = Get-Date
+    return (@($history | Where-Object { $_ -and ([DateTime]$_) -ge $now.AddSeconds(-($global:RestartWindow)) })).Count
+}
+
+$configObj = Load-Config $Config
+$pythonPath = $configObj.python
+if (-not $pythonPath -or -not (Test-Path -LiteralPath (Join-Path $workspaceRoot $pythonPath))) {
+    $pythonPath = "python"
+} else {
+    $pythonPath = Join-Path $workspaceRoot $pythonPath
+}
+$command = Join-Path $workspaceRoot ($configObj.command ?? "fdo_agi_repo\integrations\rpa_worker.py")
+if (-not (Test-Path -LiteralPath $command)) {
+    throw "Worker command not found: $command"
+}
+$argumentList = @()
+if ($configObj.args) { $argumentList = $configObj.args }
+$commandLineMatch = "*" + (Split-Path $command -Leaf) + "*"
+
+$global:MaxRestarts = [int]($configObj.restart_policy.max_restarts ?? 3)
+$global:RestartWindow = [int]($configObj.restart_policy.window_seconds ?? 600)
+
+$mutex = $null
+$mutexName = "Global\EnsureRPAWorkerMutex"
+try {
+    $mutex = New-Object System.Threading.Mutex($false, $mutexName)
+    if (-not $mutex.WaitOne(10000)) {
+        Write-Log "Could not acquire mutex. Another ensure operation is running." "WARN"
         exit 1
-    }
-    
-    # Worker PID file for additional safety
-    $pidFile = Join-Path $env:TEMP 'rpa_worker.pid'
-    
-    # Discover processes running rpa_worker.py
-    $running = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*rpa_worker.py*' }
-    
-    # Check PID file validity
-    if ((Test-Path -LiteralPath $pidFile) -and -not $running) {
-        Write-Warning "Stale PID file found. Removing."
-        Remove-Item -LiteralPath $pidFile -Force -ErrorAction SilentlyContinue
-    }
-
-    if ($KillAll) {
-        if (-not $running) { 
-            if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
-            Write-Host 'No RPA worker processes found to kill.' -ForegroundColor Yellow
-            exit 0 
-        }
-        $pids = $running | Select-Object -ExpandProperty ProcessId
-        Write-Host ("Killing all RPA workers: {0}" -f ($pids -join ',')) -ForegroundColor Yellow
-        if (-not $DryRun) { $pids | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop } catch {} } }
-        if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
-        exit 0
-    }
-
-    if ($EnforceSingle -and $running) {
-        # Keep newest MaxWorkers, terminate the rest
-        $sorted = @($running | Sort-Object -Property CreationDate -Descending)
-        $keep = @($sorted | Select-Object -First ([Math]::Max(1, $MaxWorkers)))
-        $kill = @($sorted | Select-Object -Skip ([Math]::Max(1, $MaxWorkers)))
-        
-        if ($kill.Count -gt 0) {
-            $killPids = @($kill | Select-Object -ExpandProperty ProcessId)
-            Write-Host ("Enforcing single worker: keeping {0}, killing {1}" -f (($keep | Select-Object -ExpandProperty ProcessId) -join ','), ($killPids -join ',')) -ForegroundColor Yellow
-            if (-not $DryRun) { 
-                $killPids | ForEach-Object { 
-                    try { Stop-Process -Id $_ -Force -ErrorAction Stop } catch { Write-Warning "Failed to kill PID ${_}: $($_.Exception.Message)" } 
-                }
-            }
-            # Refresh running list after kills
-            Start-Sleep -Milliseconds 500
-            $running = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*rpa_worker.py*' }
-        }
-        
-        # After enforcing, exit without starting new worker
-        if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
-        exit 0
-    }
-
-    if ($running) {
-        if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
-        Write-Host ("RPA worker already running (PID(s): {0})" -f (($running | Select-Object -ExpandProperty ProcessId) -join ',')) -ForegroundColor Green
-        exit 0
-    }
-
-    $repoRoot = Join-Path $PSScriptRoot '..'
-    $fdo = Join-Path $repoRoot 'fdo_agi_repo'
-    $pyVenv = Join-Path $fdo '.venv\Scripts\python.exe'
-    $pyExe = if (Test-Path -LiteralPath $pyVenv) { $pyVenv } else { 'python' }
-
-    $workerPath = Join-Path $fdo 'integrations\rpa_worker.py'
-    if (-not (Test-Path -LiteralPath $workerPath)) {
-        throw "Worker script not found: $workerPath"
-    }
-
-    $procArgs = @($workerPath, '--server', $Server, '--interval', [string]$Interval, '--log-level', $LogLevel)
-
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = $pyExe
-    $psi.Arguments = ($procArgs -join ' ')
-    $psi.UseShellExecute = $false
-    $psi.CreateNoWindow = $true
-    $psi.RedirectStandardOutput = $false
-    $psi.RedirectStandardError = $false
-
-    if ($DryRun) { Write-Host "DRY-RUN: would start worker: $($psi.FileName) $($psi.Arguments)" -ForegroundColor DarkCyan }
-    else { 
-        $proc = [System.Diagnostics.Process]::Start($psi)
-        if ($proc) {
-            # Save PID to file
-            $proc.Id | Out-File -FilePath $pidFile -Encoding ASCII -Force
-        }
-    }
-    Start-Sleep -Milliseconds 400
-
-    # Re-check
-    $running2 = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*rpa_worker.py*' }
-    
-    # Release mutex
-    if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
-    
-    if ($running2) {
-        Write-Host ("RPA worker started (PID(s): {0})" -f (($running2 | Select-Object -ExpandProperty ProcessId) -join ',')) -ForegroundColor Green
-        exit 0
-    }
-    else {
-        throw 'Failed to start RPA worker.'
     }
 }
 catch {
-    # Release mutex on error
-    if ($mutexAcquired -and $mutex) { 
+    Write-Log "Failed to create/acquire mutex: $($_.Exception.Message)" "ERROR"
+    exit 1
+}
+
+try {
+    $procs = Get-WorkerProcesses $commandLineMatch
+
+    if ($Stop) {
+        Stop-WorkerProcesses $procs $DryRun
+        return
+    }
+
+    if ($Status) {
+        if ($procs) {
+            $pids = $procs | Select-Object -ExpandProperty ProcessId
+            $healthy = Test-Health $configObj
+            Write-Log "Worker status: RUNNING (PID $($pids -join ','), healthy=$healthy)" "INFO"
+        }
+        else {
+            Write-Log "Worker status: NOT RUNNING" "WARN"
+        }
+        return
+    }
+
+    $shouldRestart = $ForceRestart
+
+    if ($procs -and -not $ForceRestart) {
+        $healthy = Test-Health $configObj
+        if ($healthy) {
+            Write-Log "Worker already running and healthy." "INFO"
+            return
+        }
+        else {
+            Write-Log "Worker unhealthy. Will restart." "WARN"
+            $shouldRestart = $true
+        }
+    }
+
+    if ($procs -and $shouldRestart) {
+        Stop-WorkerProcesses $procs $DryRun
+        Start-Sleep -Milliseconds 500
+        $procs = @()
+    }
+
+    if ($procs -and -not $shouldRestart) {
+        Write-Log "Worker running but health unknown; no restart requested." "INFO"
+        return
+    }
+
+    $recentRestarts = Check-RestartLimit $historyPath
+    if ($recentRestarts -ge $global:MaxRestarts) {
+        Write-Log "Restart limit reached ($recentRestarts within $global:RestartWindow s). Skipping restart." "ERROR"
+        return
+    }
+
+    Write-Log "Starting RPA worker: $pythonPath $($argumentList -join ' ')" "INFO"
+    if (-not $DryRun) {
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        $psi.FileName = $pythonPath
+        $psi.WorkingDirectory = $workspaceRoot
+        $psi.Arguments = "`"$command`" " + ($argumentList -join ' ')
+        $psi.UseShellExecute = $false
+        $psi.CreateNoWindow = $true
+        $psi.RedirectStandardOutput = $false
+        $psi.RedirectStandardError = $false
+        try {
+            $proc = [System.Diagnostics.Process]::Start($psi)
+            if ($proc) {
+                Write-Log "Worker started PID=$($proc.Id)" "SUCCESS"
+                $count = Update-RestartHistory -path $historyPath -dryRun:$false
+                Write-Log "Restart history count in window: $count" "INFO"
+            }
+            else {
+                Write-Log "Process start returned null." "ERROR"
+            }
+        }
+        catch {
+            Write-Log "Failed to start worker: $($_.Exception.Message)" "ERROR"
+            return
+        }
+    }
+    else {
+        Write-Log "Dry-run: worker start skipped." "INFO"
+    }
+}
+finally {
+    if ($mutex) {
         try { $mutex.ReleaseMutex(); $mutex.Dispose() } catch {}
     }
-    Write-Error $_.Exception.Message
-    exit 1
 }

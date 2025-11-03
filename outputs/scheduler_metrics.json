@@ -5294,3 +5294,99 @@
                     "memory_usage":  51.6
                 }
 }
+{
+    "timestamp":  "2025-11-03 18:12:37",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:12:35",
+                    "cpu_load":  55,
+                    "memory_usage":  52.5
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:13:40",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:13:38",
+                    "cpu_load":  30,
+                    "memory_usage":  51.5
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:14:44",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:14:41",
+                    "cpu_load":  37,
+                    "memory_usage":  51.4
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:15:47",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:15:45",
+                    "cpu_load":  49,
+                    "memory_usage":  52.1
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:18:25",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:16:48",
+                    "cpu_load":  45,
+                    "memory_usage":  52.6
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:19:29",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:19:27",
+                    "cpu_load":  31,
+                    "memory_usage":  52.4
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:20:32",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:20:30",
+                    "cpu_load":  22,
+                    "memory_usage":  52.6
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:21:35",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:21:33",
+                    "cpu_load":  57,
+                    "memory_usage":  52.3
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:22:39",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:22:37",
+                    "cpu_load":  55,
+                    "memory_usage":  52.2
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:23:42",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:23:40",
+                    "cpu_load":  25,
+                    "memory_usage":  52
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:24:46",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:24:44",
+                    "cpu_load":  68,
+                    "memory_usage":  52.1
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:25:49",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:25:47",
+                    "cpu_load":  43,
+                    "memory_usage":  51.6
+                }
+}

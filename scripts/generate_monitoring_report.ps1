@@ -2055,6 +2055,23 @@ if (Test-Path -LiteralPath $stabilizerSummaryPath) {
     }
 }
 
+$resourceSummaryPath = Join-Path (Split-Path -Parent $OutMarkdown) "resource_optimizer_summary.md"
+if (Test-Path -LiteralPath $resourceSummaryPath) {
+    try {
+        $resourceLines = Get-Content -LiteralPath $resourceSummaryPath -TotalCount 20
+        if ($resourceLines) {
+            $reportLines += "## Resource Optimizer Summary"
+            $reportLines += ""
+            $reportLines += $resourceLines
+            $reportLines += ""
+        }
+    }
+    catch {
+        $reportLines += "(Resource optimizer summary unavailable: $($_.Exception.Message))"
+        $reportLines += ""
+    }
+}
+
 if ($recommendations.Count -eq 0) {
     $reportLines += "_All systems operating within normal parameters._"
 }

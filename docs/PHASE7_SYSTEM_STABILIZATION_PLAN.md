@@ -167,6 +167,7 @@
    - 예산 초과 시 자동 조절 (작업 지연, 캐시 정리)
    - 예산 사용 현황 Dashboard
    - 구성: `configs/resource_budget.json`, 실행 스텁 `scripts/resource_optimizer.py` (DryRun 기본, summary 출력)
+   - 리포트/대시보드 연동: Monitoring Report 및 Enhanced Dashboard에 요약 표시
 
 #### 출력물
 

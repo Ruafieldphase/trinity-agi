@@ -36,6 +36,7 @@ New-Item -ItemType File -Path $lockFile -Force | Out-Null
 ```
 
 **기능**:
+
 - Lock 파일 생성: `%TEMP%\rpa_worker_lock.tmp`
 - Lock Timeout: 10초 (Stale lock 제거)
 - 100ms 간격으로 Lock 대기
@@ -105,6 +106,7 @@ $psi.WindowStyle = 'Hidden'
 ```
 
 **문제**:
+
 - **2개의 프로세스 생성** (Parent + Child)
 - Shell을 통한 실행 → 추가 프로세스
 
@@ -118,6 +120,7 @@ $psi.RedirectStandardError = $false
 ```
 
 **개선**:
+
 - **직접 실행** (Shell 없음)
 - **CreateNoWindow** (콘솔 숨김)
 - **표준 출력/에러 리다이렉션 비활성화**
@@ -144,6 +147,7 @@ if ($EnforceSingle -and $running) {
 ```
 
 **기능**:
+
 - 생성 날짜 기준 **최신 N개 유지** (MaxWorkers)
 - 나머지 Worker **종료**
 - `-DryRun` 지원

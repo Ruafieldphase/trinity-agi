@@ -95,6 +95,12 @@ def load_alerts(base_dir: Path) -> List[Dict[str, Any]]:
     return alerts
 ```
 
+### 4. Resource Budget & Optimizer Stub
+
+- ✅ `configs/resource_budget.json`: CPU/Memory 80%, 큐 latency 2000ms 기본 예산
+- ✅ `scripts/resource_optimizer.py --dry-run`: 최신 `performance_metrics_latest.json`과 예산 비교 → `outputs/resource_optimizer_summary.md` 생성
+- ✅ Dry-run 기본(fail-safe), 후속 작업에서 Auto-Healer와 연동 예정
+
 ### 4. Scheduled Task 등록
 
 **파일**: `scripts/register_success_rate_alert_task.ps1`

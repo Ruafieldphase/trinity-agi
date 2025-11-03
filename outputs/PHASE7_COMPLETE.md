@@ -1,14 +1,14 @@
 # 🎯 Phase 7 완료: 시스템 안정화 및 Success Rate 개선
 
-**완료 시각**: 2025-11-03 18:27  
-**총 소요 시간**: ~2시간  
-**커밋 수**: 7개
+**완료 시각**: 2025-11-03 18:50  
+**총 소요 시간**: ~3시간  
+**커밋 수**: 8개
 
 ---
 
 ## 📋 작업 개요
 
-**Phase 7 목표**: Dashboard 개선, Success Rate 계산 방식 개선, Unsupported Task Type 처리, Auto-healer Threshold 조정, Worker Load Balancing
+**Phase 7 목표**: Dashboard 개선, Success Rate 계산 방식 개선, Unsupported Task Type 처리, Auto-healer Threshold 조정, Worker Load Balancing, **Worker 중복 생성 해결**
 
 ### 완료된 Task
 
@@ -19,6 +19,7 @@
 - [x] **Task 5**: Unsupported Task Type 처리
 - [x] **Task 6**: Auto-healer Threshold 조정
 - [x] **Task 7**: Worker Load Balancing
+- [x] **Task 8**: Worker 중복 생성 해결 ⭐ **Critical**
 
 ---
 
@@ -463,20 +464,54 @@ git commit -m "feat(phase7-task7): Worker Load Balancing with Lock mechanism"
 
 ---
 
+## 🔧 Task 8: Worker 중복 생성 해결 (Critical)
+
+### Problem
+- **Auto-bring-up Task**가 `folderOpen` 시 `Queue: Ensure Worker`를 호출하여 중복 생성
+- 여러 스크립트가 동시에 `ensure_rpa_worker.ps1` 실행 시 **Race Condition** 발생
+- 기존 Lock 파일 방식은 **Atomic 보장 없음**
+
+### Solution
+1. **Cross-Process Mutex** (`Global\RPAWorkerEnsureMutex`)
+   - OS-level synchronization
+   - Auto-release on process exit
+   - Timeout: 10s (Deadlock 방지)
+
+2. **PID File Tracking** (`outputs/rpa_worker.pid`)
+   - Fast Check: File read (ms) vs Process enumeration (100ms+)
+   - Stale Detection: 프로세스 종료 후 PID 파일 정리
+
+3. **EnforceSingle Logic**
+   - Keep newest MaxWorkers (CreationDate 기준)
+   - Terminate oldest workers
+   - Exit without starting new worker
+
+### Results
+- **Parallel Start (3 Jobs)**: 1개만 생성 ✅
+- **EnforceSingle**: Oldest 종료, Newest 유지 ✅
+- **Worker Count**: 2-3개 → 1개 (-66% ~ -50%)
+
+### Performance
+- Lock Type: File → **Mutex** (OS-level)
+- Race Condition: Yes → **No** ✅
+- Stale Detection: None → **PID file** ✅
+
+---
+
 ## ✨ 완료 선언
 
 **Phase 7 완료!**
 
-- ✅ **7개 Task** 완료
-- ✅ **7개 Git Commit** 생성
+- ✅ **8개 Task** 완료 (Task 8 추가)
+- ✅ **8개 Git Commit** 생성
 - ✅ **100% Success Rate** 달성
 - ✅ **Dashboard 개선** (GPU, Queue, Success Rate)
 - ✅ **Success Rate 계산 개선** (Time Window, Rolling, Weighted)
 - ✅ **Unsupported Task 처리** (health_check, benchmark_test)
 - ✅ **Auto-healer Threshold 조정** (Grace Period, Min Success Rate, Consecutive Failures)
 - ✅ **Worker Load Balancing** (Lock, EnforceSingle, UseShellExecute=False)
-- ⚠️ **Worker 중복 생성** (Phase 8에서 해결)
+- ✅ **Worker 중복 생성 해결** (Mutex + PID file) ⭐
 
-**상태**: 🟢 **PHASE 7 COMPLETE** (Worker 중복 제외)
+**상태**: 🟢 **PHASE 7 COMPLETE**
 
-**다음**: 🚀 **Phase 8 - 안정화 및 모니터링**
+**다음**: 🚀 **Phase 8 - 안정화 및 24h 모니터링**

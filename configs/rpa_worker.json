@@ -1,0 +1,18 @@
+﻿{
+  "python": "fdo_agi_repo/.venv/Scripts/python.exe",
+  "command": "fdo_agi_repo/integrations/rpa_worker.py",
+  "args": [
+    "--server", "http://127.0.0.1:8091",
+    "--interval", "0.5",
+    "--log-level", "INFO"
+  ],
+  "health": {
+    "mode": "http",
+    "endpoint": "http://127.0.0.1:8091/api/health",
+    "timeout": 2
+  },
+  "restart_policy": {
+    "max_restarts": 3,
+    "window_seconds": 600
+  }
+}

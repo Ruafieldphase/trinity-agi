@@ -1,7 +1,7 @@
 {
   "failure_streak": 0,
-  "success_streak": 2,
-  "cooldown_until": null,
-  "gate_open": true,
-  "last_updated": "2025-11-03T09:08:03.712590"
+  "success_streak": 0,
+  "cooldown_until": "2025-11-03T09:33:04.377396",
+  "gate_open": false,
+  "last_updated": "2025-11-03T09:23:03.856849"
 }
