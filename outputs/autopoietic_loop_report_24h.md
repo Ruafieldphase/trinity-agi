@@ -1,46 +1,46 @@
 [AUTOPOIETIC LOOP DIGEST - ASCII SAFE]
 
-- Generated: 2025-11-02T18:24:39
-- Tasks seen: 99
-- Complete loops: 74 (74.7%)
-- Incomplete loops: 25
+- Generated: 2025-11-03T12:55:14
+- Tasks seen: 79
+- Complete loops: 60 (75.9%)
+- Incomplete loops: 19
 - Evidence gate: 0, Second pass: 0
-- At-a-glance: Stable loop flow; Policy warns: 89
+- At-a-glance: Stable loop flow; Policy warns: 61
 
 ---
 
 # Autopoietic Loop Report (last 24h)
 
-Generated at: 2025-11-02T18:24:39.568126
+Generated at: 2025-11-03T12:55:14.709499
 
 
 ## Counts
 
-- Tasks Seen: 99
-- Complete Loops: 74
-- Incomplete Loops: 25
+- Tasks Seen: 79
+- Complete Loops: 60
+- Incomplete Loops: 19
 - Evidence Gate Triggered: 0
 - Second Pass Executed: 0
 
 ## Rates (%)
 
-- Loop Complete Rate: 74.7%
+- Loop Complete Rate: 75.9%
 - Evidence Gate Trigger Rate: 0.0%
 - Second Pass Rate: 0.0%
 
 ## Avg Durations (sec)
 
-- Folding (Thesis): 4.208
-- Unfolding (Antithesis): 6.739
-- Integration (Synthesis): 9.854
+- Folding (Thesis): 2.892
+- Unfolding (Antithesis): 4.588
+- Integration (Synthesis): 6.824
 - Symmetry (Decision+Correction): 0.003
 
 ## P95 Durations (sec)
 
-- Folding (Thesis) P95: 7.954
-- Unfolding (Antithesis) P95: 11.620
-- Integration (Synthesis) P95: 17.725
-- Symmetry (Decision+Correction) P95: 0.006
+- Folding (Thesis) P95: 6.824
+- Unfolding (Antithesis) P95: 10.398
+- Integration (Synthesis) P95: 15.902
+- Symmetry (Decision+Correction) P95: 0.005
 
 ## Quality
 
@@ -49,7 +49,7 @@ Generated at: 2025-11-02T18:24:39.568126
 
 ## Resonance Policy (counts)
 
-- allow: 19 | warn: 89 | block: 0
+- allow: 28 | warn: 61 | block: 0
 - last: mode=observe policy=quality-first
 - reasons: 
 
@@ -60,8 +60,8 @@ Generated at: 2025-11-02T18:24:39.568126
 
 ## Samples (first 5)
 
-- runtime-test-001: F=3.537813199998709 U=5.855360499999733 I=8.152799100000266 S=0.01926599999933387 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
-- test-ledger-1762001967: F=7.953638399999818 U=9.320614599999772 I=14.238916100000097 S=0.002258800000163319 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
-- test-ledger-1762001967-2: F=5.334339199999704 U=8.209606100000201 I=13.020016699999815 S=0.0018045000001620792 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
-- test-ledger-1762002062: F=4.649791000000278 U=15.548172099999647 I=18.518116299999747 S=0.00626109999984692 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
-- test-ledger-1762002062-2: F=6.804210000000239 U=15.516904000000068 I=17.887901299999612 S=0.0015864000001784007 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
+- runtime-test-001: F=6.823745400000007 U=6.495402000000013 I=15.921213599999987 S=0.02838650000001053 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
+- test-ledger-1762065336: F=6.048338000000058 U=8.518108499999926 I=13.053109799999675 S=0.0019290000000182772 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
+- test-ledger-1762065336-2: F=0.002875399999993533 U=0.0005591999997704988 I=0.0006192000000737607 S=0.001998100000037084 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
+- test-ledger-1762067281: F=6.339735700000347 U=9.402641099999528 I=13.261685699999362 S=0.0030992000001788256 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True
+- test-ledger-1762067281-2: F=0.002945999999610649 U=0.0003418000005694921 I=0.0003960999993068981 S=0.001820600000428385 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True

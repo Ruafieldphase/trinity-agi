@@ -1,27 +1,27 @@
 {
   "window_hours": 24,
-  "generated_at": "2025-11-02T18:24:39.568126",
+  "generated_at": "2025-11-03T12:55:14.709499",
   "counts": {
-    "tasks_total": 99,
-    "complete_loops": 74,
-    "incomplete_loops": 25,
+    "tasks_total": 79,
+    "complete_loops": 60,
+    "incomplete_loops": 19,
     "evidence_gate_triggered": 0,
     "second_pass": 0
   },
   "durations_avg_sec": {
-    "folding": 4.207684697297332,
-    "unfolding": 6.739292752702553,
-    "integration": 9.854129951351482,
-    "symmetry": 0.0028062972975272113
+    "folding": 2.8919167683333247,
+    "unfolding": 4.588207934999877,
+    "integration": 6.824311244999948,
+    "symmetry": 0.0025846633333401316
   },
   "durations_p95_sec": {
-    "folding": 7.953638399999818,
-    "unfolding": 11.619577600000412,
-    "integration": 17.72532030000002,
-    "symmetry": 0.005998399999953108
+    "folding": 6.823745400000007,
+    "unfolding": 10.397500299999592,
+    "integration": 15.902499199999511,
+    "symmetry": 0.005242299999736133
   },
   "rates_pct": {
-    "loop_complete_rate": 74.74747474747475,
+    "loop_complete_rate": 75.9493670886076,
     "evidence_gate_trigger_rate": 0.0,
     "second_pass_rate": 0.0
   },
@@ -33,10 +33,10 @@
     {
       "task_id": "runtime-test-001",
       "phases": {
-        "folding": 3.537813199998709,
-        "unfolding": 5.855360499999733,
-        "integration": 8.152799100000266,
-        "symmetry": 0.01926599999933387
+        "folding": 6.823745400000007,
+        "unfolding": 6.495402000000013,
+        "integration": 15.921213599999987,
+        "symmetry": 0.02838650000001053
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -47,12 +47,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "test-ledger-1762001967",
+      "task_id": "test-ledger-1762065336",
       "phases": {
-        "folding": 7.953638399999818,
-        "unfolding": 9.320614599999772,
-        "integration": 14.238916100000097,
-        "symmetry": 0.002258800000163319
+        "folding": 6.048338000000058,
+        "unfolding": 8.518108499999926,
+        "integration": 13.053109799999675,
+        "symmetry": 0.0019290000000182772
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -63,12 +63,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "test-ledger-1762001967-2",
+      "task_id": "test-ledger-1762065336-2",
       "phases": {
-        "folding": 5.334339199999704,
-        "unfolding": 8.209606100000201,
-        "integration": 13.020016699999815,
-        "symmetry": 0.0018045000001620792
+        "folding": 0.002875399999993533,
+        "unfolding": 0.0005591999997704988,
+        "integration": 0.0006192000000737607,
+        "symmetry": 0.001998100000037084
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -79,12 +79,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "test-ledger-1762002062",
+      "task_id": "test-ledger-1762067281",
       "phases": {
-        "folding": 4.649791000000278,
-        "unfolding": 15.548172099999647,
-        "integration": 18.518116299999747,
-        "symmetry": 0.00626109999984692
+        "folding": 6.339735700000347,
+        "unfolding": 9.402641099999528,
+        "integration": 13.261685699999362,
+        "symmetry": 0.0030992000001788256
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -95,12 +95,12 @@
       "final_evidence_ok": true
     },
     {
-      "task_id": "test-ledger-1762002062-2",
+      "task_id": "test-ledger-1762067281-2",
       "phases": {
-        "folding": 6.804210000000239,
-        "unfolding": 15.516904000000068,
-        "integration": 17.887901299999612,
-        "symmetry": 0.0015864000001784007
+        "folding": 0.002945999999610649,
+        "unfolding": 0.0003418000005694921,
+        "integration": 0.0003960999993068981,
+        "symmetry": 0.001820600000428385
       },
       "context_count": 0,
       "citations_thesis": 3,
@@ -113,8 +113,8 @@
   ],
   "policy": {
     "counts": {
-      "allow": 19,
-      "warn": 89,
+      "allow": 28,
+      "warn": 61,
       "block": 0
     },
     "last": {

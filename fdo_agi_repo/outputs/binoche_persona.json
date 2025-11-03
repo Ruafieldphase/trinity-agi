@@ -1,18 +1,18 @@
 {
   "version": "1.2.0",
-  "created_at": "2025-11-02T12:24:42.445020",
+  "created_at": "2025-11-03T10:15:02.690310",
   "stats": {
-    "total_tasks": 481,
-    "total_decisions": 453,
-    "approve_rate": 0.7350993377483444,
-    "revise_rate": 0.24724061810154527,
-    "reject_rate": 0.017660044150110375
+    "total_tasks": 539,
+    "total_decisions": 509,
+    "approve_rate": 0.7642436149312377,
+    "revise_rate": 0.2200392927308448,
+    "reject_rate": 0.015717092337917484
   },
   "decision_patterns": {
     "approve": [
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.406452+00:00",
+          "timestamp": "2025-11-03T01:15:02.651215+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -27,7 +27,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.406724+00:00",
+          "timestamp": "2025-11-03T01:15:02.651379+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -42,7 +42,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.406975+00:00",
+          "timestamp": "2025-11-03T01:15:02.651523+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -57,7 +57,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407119+00:00",
+          "timestamp": "2025-11-03T01:15:02.651650+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -72,7 +72,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407239+00:00",
+          "timestamp": "2025-11-03T01:15:02.651794+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -87,7 +87,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407311+00:00",
+          "timestamp": "2025-11-03T01:15:02.651880+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -102,7 +102,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407347+00:00",
+          "timestamp": "2025-11-03T01:15:02.651916+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -117,7 +117,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407371+00:00",
+          "timestamp": "2025-11-03T01:15:02.651945+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -132,7 +132,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407393+00:00",
+          "timestamp": "2025-11-03T01:15:02.651972+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -147,7 +147,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407448+00:00",
+          "timestamp": "2025-11-03T01:15:02.652048+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -164,7 +164,7 @@
     "revise": [
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407421+00:00",
+          "timestamp": "2025-11-03T01:15:02.652010+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -179,7 +179,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407474+00:00",
+          "timestamp": "2025-11-03T01:15:02.652083+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -194,7 +194,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407757+00:00",
+          "timestamp": "2025-11-03T01:15:02.652512+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -209,7 +209,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407784+00:00",
+          "timestamp": "2025-11-03T01:15:02.652550+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -224,7 +224,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407898+00:00",
+          "timestamp": "2025-11-03T01:15:02.652722+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -239,7 +239,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407916+00:00",
+          "timestamp": "2025-11-03T01:15:02.652751+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -254,7 +254,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407934+00:00",
+          "timestamp": "2025-11-03T01:15:02.652780+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -269,7 +269,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.407953+00:00",
+          "timestamp": "2025-11-03T01:15:02.652810+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -284,7 +284,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.408026+00:00",
+          "timestamp": "2025-11-03T01:15:02.652913+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -299,7 +299,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.408048+00:00",
+          "timestamp": "2025-11-03T01:15:02.652939+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -316,7 +316,7 @@
     "reject": [
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412334+00:00",
+          "timestamp": "2025-11-03T01:15:02.658253+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -331,7 +331,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412466+00:00",
+          "timestamp": "2025-11-03T01:15:02.658390+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -346,7 +346,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412506+00:00",
+          "timestamp": "2025-11-03T01:15:02.658430+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -361,7 +361,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412544+00:00",
+          "timestamp": "2025-11-03T01:15:02.658472+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -376,7 +376,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412583+00:00",
+          "timestamp": "2025-11-03T01:15:02.658510+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -391,7 +391,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412627+00:00",
+          "timestamp": "2025-11-03T01:15:02.658552+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -406,7 +406,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412688+00:00",
+          "timestamp": "2025-11-03T01:15:02.658590+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -421,7 +421,7 @@
       },
       {
         "bqi": {
-          "timestamp": "2025-11-02T03:24:42.412733+00:00",
+          "timestamp": "2025-11-03T01:15:02.658633+00:00",
           "rhythm_phase": "planning",
           "emotion": {
             "keywords": [
@@ -438,10 +438,10 @@
   },
   "bqi_probabilities": {
     "p1_e:neutral_r:exploration": {
-      "approve_prob": 0.9368421052631579,
-      "revise_prob": 0.06315789473684211,
+      "approve_prob": 0.9470588235294117,
+      "revise_prob": 0.052941176470588235,
       "reject_prob": 0.0,
-      "sample_count": 285
+      "sample_count": 340
     },
     "p1_e:keywords_r:exploration": {
       "approve_prob": 1.0,
@@ -453,7 +453,7 @@
       "approve_prob": 1.0,
       "revise_prob": 0.0,
       "reject_prob": 0.0,
-      "sample_count": 17
+      "sample_count": 18
     },
     "p1_e:neutral_r:integration": {
       "approve_prob": 1.0,
@@ -510,7 +510,7 @@
         "approve_prob": 1.0,
         "revise_prob": 0.0,
         "reject_prob": 0.0,
-        "samples": 26
+        "samples": 27
       },
       "quality": {
         "approve_prob": 1.0,
@@ -525,35 +525,35 @@
         "samples": 1
       }
     },
-    "total_analyzed": 453,
-    "goals_loaded": 615
+    "total_analyzed": 509,
+    "goals_loaded": 673
   },
   "information_theory": {
     "decision_entropy": {
-      "entropy": 0.9277,
+      "entropy": 0.8712,
       "max_entropy": 1.585,
-      "normalized": 0.5853,
+      "normalized": 0.5497,
       "interpretation": "medium"
     },
     "bqi_predictive_power": {
-      "mutual_info": 0.5172,
-      "decision_entropy": 0.9277,
-      "conditional_entropy": 0.4105,
-      "reduction_percent": 55.75,
+      "mutual_info": 0.4966,
+      "decision_entropy": 0.8712,
+      "conditional_entropy": 0.3746,
+      "reduction_percent": 57.0,
       "interpretation": "strong"
     },
     "quality_predictive_power": {
-      "mutual_info": 0.763,
-      "decision_entropy": 0.9277,
-      "conditional_entropy": 0.1647,
-      "reduction_percent": 82.25,
+      "mutual_info": 0.7246,
+      "decision_entropy": 0.8712,
+      "conditional_entropy": 0.1466,
+      "reduction_percent": 83.18,
       "interpretation": "strong"
     },
     "ensemble_predictive_power": {
-      "mutual_info": 0.6914,
-      "decision_entropy": 0.9277,
-      "conditional_entropy": 0.2363,
-      "reduction_percent": 74.53,
+      "mutual_info": 0.6884,
+      "decision_entropy": 0.8712,
+      "conditional_entropy": 0.1828,
+      "reduction_percent": 79.01,
       "interpretation": "strong"
     },
     "summary": {
@@ -568,7 +568,7 @@
     "tools_used": {}
   },
   "work_style": {
-    "quality_threshold": 0.8262762762762762,
+    "quality_threshold": 0.8296915167095112,
     "prefers_documentation": false,
     "prefers_tdd": false,
     "communication_style": "balanced"
@@ -577,8 +577,8 @@
     {
       "condition": "BQI matches 'p1_e:neutral_r:exploration'",
       "action": "approve",
-      "confidence": 0.9368421052631579,
-      "reasoning": "과거 285건 중 94% 승인"
+      "confidence": 0.9470588235294117,
+      "reasoning": "과거 340건 중 95% 승인"
     },
     {
       "condition": "BQI matches 'p1_e:keywords_r:exploration'",
@@ -590,7 +590,7 @@
       "condition": "BQI matches 'p3_e:neutral_r:exploration'",
       "action": "approve",
       "confidence": 1.0,
-      "reasoning": "과거 17건 중 100% 승인"
+      "reasoning": "과거 18건 중 100% 승인"
     },
     {
       "condition": "BQI matches 'p1_e:keywords_r:integration'",

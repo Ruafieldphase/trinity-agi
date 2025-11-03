@@ -1,0 +1,17 @@
+{
+  "last_ok_health_ts": "2025-11-03T02:03:14.022274+00:00",
+  "last_results_count": 0,
+  "no_progress_since_ts": null,
+  "last_report": {
+    "timestamp": "2025-11-03T02:03:14.022274+00:00",
+    "server_url": "http://127.0.0.1:8091",
+    "health_ok": true,
+    "queue_size": 0,
+    "results_count": 0,
+    "oldest_task_age_sec": null,
+    "anomalies": [],
+    "recommendations": [],
+    "self_test": false,
+    "self_test_task_id": null
+  }
+}

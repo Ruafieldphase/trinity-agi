@@ -1,0 +1,528 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>모니터링 대시보드</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --excellent: #10b981;
+            --good: #3b82f6;
+            --degraded: #f59e0b;
+            --critical: #ef4444;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .status-card {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .status-card:hover { transform: translateY(-4px); }
+
+        .status-EXCELLENT { border-left: 5px solid var(--excellent); }
+        .status-GOOD { border-left: 5px solid var(--good); }
+        .status-DEGRADED { border-left: 5px solid var(--degraded); }
+        .status-CRITICAL { border-left: 5px solid var(--critical); }
+
+        .metric-value { font-size: 2rem; font-weight: 700; }
+        .metric-label { font-size: 0.875rem; color: #6c757d; text-transform: uppercase; }
+
+        .chart-container { position: relative; height: 300px; margin-bottom: 2rem; }
+
+        .alert-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.875rem; font-weight: 600; }
+        .alert-critical { background-color: #fee2e2; color: #991b1b; }
+        .alert-warning { background-color: #fef3c7; color: #92400e; }
+        .alert-info { background-color: #dbeafe; color: #1e40af; }
+
+        .last-updated { font-size: 0.75rem; color: #e5e7eb; }
+
+        .session-card { max-height: 420px; overflow-y: auto; }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="mb-0">모니터링 대시보드</h1>
+                    <p class="mb-0 mt-2">실시간 시스템 성능 및 상태</p>
+                    <p class="last-updated mb-0 mt-2">
+                        마지막 업데이트: <span id="lastUpdate">불러오는 중...</span>
+                        <span class="ms-2">|</span>
+                        마지막 새로고침: <span id="lastRefresh">없음</span>
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-light me-2" onclick="refreshDashboard()">지금 새로고침</button>
+                    <button class="btn btn-outline-primary" id="autoRefreshBtn" onclick="toggleAutoRefresh()">자동 새로고침 활성화</button>
+                    <label for="autoRefreshInterval" class="ms-2 me-1 small" style="color: rgba(255,255,255,0.9);">간격</label>
+                    <select id="autoRefreshInterval" class="form-select form-select-sm d-inline-block w-auto" onchange="onRefreshIntervalChange(event)">
+                        <option value="15000">15초</option>
+                        <option value="30000">30초</option>
+                        <option value="60000">60초</option>
+                        <option value="120000">2분</option>
+                        <option value="300000">5분</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Closed-loop Snapshot -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0 d-inline">Closed-loop Snapshot</h5>
+                            <small class="text-muted ms-2" id="clsLastTime">--</small>
+                            <small class="text-muted ms-2" id="clsStatusMsg"></small>
+                            <span class="spinner-border spinner-border-sm text-light ms-2" role="status" aria-hidden="true" id="clsSpinner" style="display:none;"></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3">
+                                <div class="metric-label">Realtime Strength</div>
+                                <div class="metric-value" id="clsStrength">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-label">Realtime Coherence</div>
+                                <div class="metric-value" id="clsCoherence">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-label">Realtime Phase</div>
+                                <div class="metric-value" id="clsPhase">--</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="metric-label">Sim Resonance</div>
+                                <div class="metric-value" id="clsSimRes">--</div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-12 text-center">
+                                <div class="metric-label">Sim Entropy</div>
+                                <div class="metric-value" id="clsSimEntropy">--</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container">
+        <!-- 요약 카드 -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card status-card status-EXCELLENT">
+                    <div class="card-body text-center">
+                        <div class="metric-label">시스템 상태</div>
+                        <div class="metric-value" id="healthStatus">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card">
+                    <div class="card-body text-center">
+                        <div class="metric-label">가용성</div>
+                        <div class="metric-value"><span id="availability">--</span>%</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card">
+                    <div class="card-body text-center">
+                        <div class="metric-label">전체 경보</div>
+                        <div class="metric-value" id="totalAlerts">--</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card status-card">
+                    <div class="card-body text-center">
+                        <div class="metric-label">데이터 포인트</div>
+                        <div class="metric-value" id="dataPoints">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 경보 심각도 분포 + 최근 긴급 경보 -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">경보 심각도 분포</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="severityChart"></canvas>
+                        </div>
+                        <div class="d-flex justify-content-around mt-3">
+                            <div class="text-center">
+                                <span class="alert-badge alert-critical" id="criticalCount">0</span>
+                                <div class="small mt-1">긴급</div>
+                            </div>
+                            <div class="text-center">
+                                <span class="alert-badge alert-warning" id="warningCount">0</span>
+                                <div class="small mt-1">경고</div>
+                            </div>
+                            <div class="text-center">
+                                <span class="alert-badge alert-info" id="infoCount">0</span>
+                                <div class="small mt-1">정보</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">최근 긴급 경보</h5>
+                    </div>
+                    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                        <div id="criticalAlertsList">
+                            <p class="text-muted">긴급 경보 없음</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 지연 시간 추이 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">지연 시간 추이(시간별)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 400px;">
+                            <canvas id="latencyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 가용성 타임라인 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">가용성 타임라인(시간별)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 300px;">
+                            <canvas id="availabilityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 채널 통계 표 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">채널 통계</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>채널</th>
+                                        <th>가용성</th>
+                                        <th>평균 지연</th>
+                                        <th>95퍼센타일 지연</th>
+                                        <th>표준편차</th>
+                                        <th>추세</th>
+                                        <th>경보</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="channelStatsTable">
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted">불러오는 중...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AGI 시스템 상태 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">AGI 시스템 상태</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-dark" id="safeModeBadge" style="display:none;">안전 모드</span>
+                            <span class="badge bg-primary" id="agiStatusBadge">--</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <div class="alert alert-info d-flex justify-content-between align-items-center mb-0">
+                                    <div>
+                                        <strong>헬스 게이트:</strong>
+                                        <span id="healthGateStatus" class="badge bg-secondary">불러오는 중...</span>
+                                        <span class="ms-2 text-muted small" id="healthGateDetails">--</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="refreshHealthGate()">새로고침</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiTotalEvents">--</div>
+                                    <div class="metric-label">전체 이벤트</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiTaskCount">--</div>
+                                    <div class="metric-label">고유 작업</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiQueueDepth">--</div>
+                                    <div class="metric-label">대기 작업</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="metric-value" id="agiActiveWorkers">--</div>
+                                    <div class="metric-label">활성 워커</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resonance Policy Summary -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0 d-inline">Resonance Policy</h5>
+                            <small class="text-muted ms-2" id="policyLastTime">--</small>
+                            <small class="text-muted ms-2" id="policyStatusMsg"></small>
+                        </div>
+                        <div>
+                            <span class="spinner-border spinner-border-sm text-light me-2" role="status" aria-hidden="true" id="policySpinner" style="display:none;"></span>
+                            <span class="badge bg-secondary" id="policyMode">mode: --</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <div class="metric-label">Allow</div>
+                                <div class="metric-value" id="policyAllow">--</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-label">Warn</div>
+                                <div class="metric-value" id="policyWarn">--</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="metric-label">Block</div>
+                                <div class="metric-value" id="policyBlock">--</div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div>
+                            <div class="metric-label">Configured Policy</div>
+                            <div id="policyActive" class="mb-2">--</div>
+                            <div class="metric-label">Last Observed</div>
+                            <div id="policyObserved" class="mb-2">--</div>
+                            <div class="metric-label">Last Reasons</div>
+                            <pre id="policyReasons" class="mb-0" style="white-space: pre-wrap; background:#f3f4f6; padding: 0.75rem; border-radius: 8px;">--</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body py-2">
+                        <span class="badge bg-success me-2">Allow</span>
+                        <span class="badge bg-warning text-dark me-2">Warn</span>
+                        <span class="badge bg-danger me-2">Block</span>
+                        <span class="ms-3 text-muted">Color reflects counts in current window</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 자리표시자: 페이지 로더/오토리프레시 훅
+        const DEFAULT_REFRESH_INTERVAL = 30000;
+        let autoRefreshEnabled = false;
+        let autoRefreshIntervalMs = DEFAULT_REFRESH_INTERVAL;
+        let refreshIntervalId = null;
+
+        function refreshDashboard() {
+            // 외부 스크립트/백엔드가 데이터를 주입한다는 가정
+            // 여기서는 '마지막 새로고침'만 갱신
+            const now = new Date().toLocaleString('ko-KR');
+            const lastRefreshEl = document.getElementById('lastRefresh');
+            if (lastRefreshEl) lastRefreshEl.textContent = now;
+        }
+
+        function toggleAutoRefresh() {
+            const btn = document.getElementById('autoRefreshBtn');
+            if (!autoRefreshEnabled) {
+                refreshIntervalId = setInterval(refreshDashboard, autoRefreshIntervalMs);
+                autoRefreshEnabled = true;
+                if (btn) btn.textContent = '일시정지: 자동 새로고침';
+            } else {
+                if (refreshIntervalId) clearInterval(refreshIntervalId);
+                refreshIntervalId = null;
+                autoRefreshEnabled = false;
+                if (btn) btn.textContent = '자동 새로고침 활성화';
+            }
+        }
+
+        function onRefreshIntervalChange(e) {
+            const ms = parseInt(e.target.value, 10);
+            if (!isNaN(ms)) {
+                autoRefreshIntervalMs = ms;
+                if (autoRefreshEnabled) {
+                    if (refreshIntervalId) clearInterval(refreshIntervalId);
+                    refreshIntervalId = setInterval(refreshDashboard, autoRefreshIntervalMs);
+                }
+            }
+        }
+
+        function refreshHealthGate() {
+            // 자리표시자: 외부 데이터 소스를 통해 갱신
+            const st = document.getElementById('healthGateStatus');
+            if (st) st.textContent = '갱신됨';
+        }
+    </script>
+
+    <script>
+        // Load Closed-loop Snapshot from metrics JSON
+        async function loadClosedLoopSnapshot() {
+            try {
+                const sp = document.getElementById('clsSpinner'); if (sp) sp.style.display = '';
+                let res = await fetch('../outputs/monitoring_metrics_latest.json').catch(() => null);
+                if (!res || !res.ok) { res = await fetch('outputs/monitoring_metrics_latest.json').catch(() => null); }
+                if (!res || !res.ok) {
+                    const m = document.getElementById('clsStatusMsg');
+                    if (m) m.textContent = 'no data (fetch failed)';
+                    if (sp) sp.style.display = 'none';
+                    return;
+                }
+                const data = await res.json();
+                const cls = (data && data.AGI && data.AGI.ClosedLoop) ? data.AGI.ClosedLoop : {};
+                const rt = cls.realtime || {};
+                const sim = cls.simulator || {};
+                const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = (val ?? '--'); };
+                setText('clsStrength', rt.strength);
+                setText('clsCoherence', rt.coherence);
+                setText('clsPhase', rt.phase);
+                setText('clsSimRes', sim.last_resonance);
+                setText('clsSimEntropy', sim.last_entropy);
+                if (cls.last_time) { setText('clsLastTime', cls.last_time); }
+                const m = document.getElementById('clsStatusMsg');
+                if (m) {
+                    const anyVal = (rt.strength ?? rt.coherence ?? rt.phase ?? sim.last_resonance ?? sim.last_entropy);
+                    m.textContent = anyVal ? '' : 'no snapshot in window';
+                }
+                if (sp) sp.style.display = 'none';
+            } catch {}
+        }
+        window.addEventListener('DOMContentLoaded', loadClosedLoopSnapshot);
+    </script>
+
+    <script>
+        // Lightweight fetch to populate Resonance Policy from metrics JSON
+        async function loadPolicySummary() {
+            try {
+                const sp = document.getElementById('policySpinner'); if (sp) sp.style.display = '';
+                let res = await fetch('../outputs/monitoring_metrics_latest.json').catch(() => null);
+                if (!res || !res.ok) {
+                    res = await fetch('outputs/monitoring_metrics_latest.json').catch(() => null);
+                }
+                if (!res || !res.ok) {
+                    const m = document.getElementById('policyStatusMsg');
+                    if (m) m.textContent = 'no data (fetch failed)';
+                    if (sp) sp.style.display = 'none';
+                    return;
+                }
+                const data = await res.json();
+                const policy = (data && data.AGI && data.AGI.Policy) ? data.AGI.Policy : {};
+                const counts = policy.counts || { allow: 0, warn: 0, block: 0 };
+                const last = policy.last || {};
+
+                const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+                setText('policyAllow', counts.allow ?? 0);
+                setText('policyWarn', counts.warn ?? 0);
+                setText('policyBlock', counts.block ?? 0);
+                const modeText = `mode: ${last.mode ?? '--'}`;
+                setText('policyMode', modeText);
+                setText('policyActive', `${policy.active ?? '--'}`);
+                setText('policyObserved', `${last.policy ?? '--'}`);
+                const reasons = Array.isArray(last.reasons) ? last.reasons.join('\n') : (last.reasons ?? '--');
+                setText('policyReasons', reasons || '--');
+                if (policy.last_time) { setText('policyLastTime', policy.last_time); }
+
+                // Badge coloring: block>0 => danger, warn>0 => warning, else success
+                const badge = document.getElementById('policyMode');
+                if (badge) {
+                    badge.classList.remove('bg-secondary','bg-success','bg-warning','bg-danger');
+                    if ((counts.block ?? 0) > 0) {
+                        badge.classList.add('bg-danger');
+                    } else if ((counts.warn ?? 0) > 0) {
+                        badge.classList.add('bg-warning');
+                    } else {
+                        badge.classList.add('bg-success');
+                    }
+                }
+                const m = document.getElementById('policyStatusMsg');
+                if (m) {
+                    const total = (counts.allow ?? 0) + (counts.warn ?? 0) + (counts.block ?? 0);
+                    m.textContent = total > 0 ? '' : 'no policy events in window';
+                }
+                if (sp) sp.style.display = 'none';
+            } catch {}
+        }
+        window.addEventListener('DOMContentLoaded', loadPolicySummary);
+    </script>
+</body>
+
+</html>

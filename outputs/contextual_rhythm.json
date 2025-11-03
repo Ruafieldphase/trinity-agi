@@ -1,0 +1,43 @@
+﻿{
+    "Energy":  30,
+    "Context":  {
+                    "Resources":  {
+                                      "DiskIO":  0,
+                                      "CPU":  97.5,
+                                      "Memory":  51.63
+                                  },
+                    "HoursSinceRest":  24,
+                    "QueuePressure":  {
+                                          "Status":  "OFFLINE",
+                                          "Pending":  0,
+                                          "Size":  0,
+                                          "Failed":  0
+                                      },
+                    "Timestamp":  {
+                                      "value":  "\/Date(1762157510052)\/",
+                                      "DisplayHint":  2,
+                                      "DateTime":  "2025년 11월 3일 월요일 오후 5:11:50"
+                                  },
+                    "RecentActivity":  {
+                                           "ActivityCount":  44,
+                                           "LastActivity":  "2025-11-03T08:11:48.9513073Z",
+                                           "AvgLatency":  0,
+                                           "HighLoadPeriod":  false
+                                       },
+                    "ClockTime":  17,
+                    "LastRestTime":  null
+                },
+    "Timestamp":  "2025-11-03 17:11:50",
+    "Rhythm":  {
+                   "Color":  "Magenta",
+                   "Description":  "🛌 회복: 휴식 및 모니터링만",
+                   "Name":  "RECOVERY",
+                   "Reason":  "Low energy (30%) or post-high-load recovery"
+               },
+    "RecommendedTasks":  [
+                             "Monitoring: Unified Dashboard (AGI + Lumen)",
+                             "Queue: Latest Results (Success 5)",
+                             "System: Health Check (Quick)",
+                             "Lumen: Quick Health Probe"
+                         ]
+}

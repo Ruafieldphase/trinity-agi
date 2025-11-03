@@ -7,25 +7,25 @@
                     "Failed":  0,
                     "PassRate":  90.9
                 },
-    "Timestamp":  "2025-11-02 22:58:13",
+    "Timestamp":  "2025-11-03 16:29:21",
     "Checks":  {
                    "Cloud AI API":  {
                                         "Status":  "OK",
-                                        "Message":  "Response in 174ms",
+                                        "Message":  "Response in 166ms",
                                         "Details":  {
 
                                                     }
                                     },
                    "Python Processes":  {
                                             "Status":  "OK",
-                                            "Message":  "44 process(es) running",
+                                            "Message":  "135 process(es) running",
                                             "Details":  {
 
                                                         }
                                         },
                    "Lumen Gateway":  {
                                          "Status":  "OK",
-                                         "Message":  "Response in 195ms",
+                                         "Message":  "Response in 232ms",
                                          "Details":  {
 
                                                      }
@@ -46,21 +46,21 @@
                                     },
                    "LM Studio Inference":  {
                                                "Status":  "OK",
-                                               "Message":  "Response in 3587ms",
+                                               "Message":  "Response in 4536ms",
                                                "Details":  {
 
                                                            }
                                            },
                    "LM Studio Port":  {
                                           "Status":  "OK",
-                                          "Message":  "Port 8080 active (PID 33344)",
+                                          "Message":  "Port 8080 active (PID 27480)",
                                           "Details":  {
 
                                                       }
                                       },
                    "Settings.json":  {
                                          "Status":  "OK",
-                                         "Message":  "Valid JSON, 270.2KB, 0 commands",
+                                         "Message":  "Valid JSON, 270.5KB, 0 commands",
                                          "Details":  {
 
                                                      }

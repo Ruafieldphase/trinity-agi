@@ -1978,6 +1978,37 @@ if ($agiMetrics.TotalEvents -gt 0) {
     }
 }
 
+$policySnapshotPath = Join-Path (Split-Path -Parent $OutMarkdown) "policy_ab_snapshot_latest.md"
+if (Test-Path -LiteralPath $policySnapshotPath) {
+    $reportLines += "## Policy Snapshot (Latest)"
+    $reportLines += ""
+    try {
+        $snapshotPreview = Get-Content -LiteralPath $policySnapshotPath -TotalCount 60
+        if ($snapshotPreview) {
+            $reportLines += $snapshotPreview
+        }
+    }
+    catch {
+        $reportLines += "_Failed to load policy snapshot: $($_.Exception.Message)_"
+    }
+    $reportLines += ""
+}
+
+$stabilizerSummaryPath = Join-Path (Split-Path -Parent $OutMarkdown) "auto_stabilizer_summary.txt"
+if (Test-Path -LiteralPath $stabilizerSummaryPath) {
+    try {
+        $summaryLine = Get-Content -LiteralPath $stabilizerSummaryPath -TotalCount 1
+        if ($summaryLine) {
+            $reportLines += "Auto Stabilizer Summary: $summaryLine"
+            $reportLines += ""
+        }
+    }
+    catch {
+        $reportLines += "(Auto Stabilizer summary unavailable: $($_.Exception.Message))"
+        $reportLines += ""
+    }
+}
+
 if ($recommendations.Count -eq 0) {
     $reportLines += "_All systems operating within normal parameters._"
 }

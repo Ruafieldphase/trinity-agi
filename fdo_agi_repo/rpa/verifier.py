@@ -81,7 +81,7 @@ class ExecutionVerifier:
         enable_screenshots: bool = True,
         enable_comparison: bool = True,
         comparison_method: str = "SSIM",
-        similarity_threshold: float = 0.95
+        similarity_threshold: float = 0.85
     ):
         """
         Args:

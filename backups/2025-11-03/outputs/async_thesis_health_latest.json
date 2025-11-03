@@ -1,0 +1,23 @@
+{
+  "timestamp": "2025-11-03T10:54:47.089091",
+  "hours": 1,
+  "metrics": {
+    "total_tasks": 2,
+    "async_tasks": 2,
+    "sequential_tasks": 0,
+    "fallback_count": 0,
+    "error_count": 0,
+    "second_pass_count": 0,
+    "avg_latency_async": 21.514309450000383,
+    "avg_latency_seq": 0.0,
+    "async_durations": [
+      25.454940300001,
+      17.573678599999766
+    ],
+    "seq_durations": [],
+    "fallback_rate": 0.0,
+    "error_rate": 0.0,
+    "second_pass_rate": 0.0
+  },
+  "alerts": []
+}

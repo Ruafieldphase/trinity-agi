@@ -88,6 +88,42 @@ def seed_from_metrics(metrics: Dict[str, Any]) -> Dict[str, float]:
     }
 
 
+def read_lumen_state(workspace: Path) -> Optional[Dict[str, Any]]:
+    """Read Lumen emotion signals from lumen_state.json.
+    
+    Returns: {"fear": float, "joy": float, "trust": float, "timestamp": str}
+    """
+    lumen_path = workspace / "fdo_agi_repo/memory/lumen_state.json"
+    
+    if not lumen_path.exists():
+        return None
+    
+    try:
+        # Use utf-8-sig to handle BOM
+        with lumen_path.open("r", encoding="utf-8-sig") as f:
+            data = json.load(f)
+            # Handle both flat and nested emotion structures
+            emotion = data.get("emotion", {})
+            if emotion:
+                result = {
+                    "fear": float(emotion.get("fear", 0.0)),
+                    "joy": float(emotion.get("joy", 0.5)),
+                    "trust": float(emotion.get("trust", 0.5)),
+                    "timestamp": data.get("timestamp", ""),
+                }
+            else:
+                result = {
+                    "fear": float(data.get("fear", 0.0)),
+                    "joy": float(data.get("joy", 0.5)),
+                    "trust": float(data.get("trust", 0.5)),
+                    "timestamp": data.get("timestamp", ""),
+                }
+            return result
+    except Exception as e:
+        print(f"[Warning] Could not read Lumen state: {e}")
+        return None
+
+
 def analyze_seasonality(metrics: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Feed HourlyLatency series into seasonal detector and flag latest point anomalies.
 
@@ -183,10 +219,39 @@ def write_md(path: Path, data: Dict[str, Any]) -> None:
     seasonality = data.get("seasonality", [])
     sim = data.get("simulation", {})
     next_runs = data.get("next_runs", {})
+    lumen = data.get("lumen_state")
 
     lines: List[str] = []
     lines.append("# Real-time Resonance Pipeline\n")
     lines.append(f"Generated: {datetime.now().isoformat()}\n")
+
+    # Lumen Emotion Signals
+    if lumen:
+        lines.append("\n## 🎭 Lumen Emotion Signals\n")
+        fear = lumen.get("fear", 0.0)
+        joy = lumen.get("joy", 0.5)
+        trust = lumen.get("trust", 0.5)
+        
+        # Status indicators
+        fear_status = "🔴 HIGH" if fear >= 0.7 else ("🟡 ELEVATED" if fear >= 0.5 else "🟢 NORMAL")
+        joy_status = "🟢 HIGH" if joy >= 0.7 else ("🟡 MODERATE" if joy >= 0.5 else "⚪ LOW")
+        trust_status = "🟢 HIGH" if trust >= 0.7 else ("🟡 MODERATE" if trust >= 0.5 else "🔴 LOW")
+        
+        lines.append(f"- **Fear**: {fear:.3f} {fear_status}\n")
+        lines.append(f"- **Joy**: {joy:.3f} {joy_status}\n")
+        lines.append(f"- **Trust**: {trust:.3f} {trust_status}\n")
+        lines.append(f"- Last Updated: {lumen.get('timestamp', 'N/A')}\n")
+        
+        # Recommendations based on fear level
+        if fear >= 0.9:
+            lines.append("\n⚠️ **Alert**: Fear level critical - Deep Maintenance recommended\n")
+        elif fear >= 0.7:
+            lines.append("\n⚠️ **Warning**: Fear elevated - Active Cooldown suggested\n")
+        elif fear >= 0.5:
+            lines.append("\n💡 **Info**: Fear moderate - Micro-Reset available\n")
+    else:
+        lines.append("\n## 🎭 Lumen Emotion Signals\n")
+        lines.append("- No emotion state data available\n")
 
     lines.append("\n## Seeds\n")
     lines.append(f"- info_density: {seeds.get('info_density'):.3f}\n")
@@ -237,8 +302,12 @@ def main():
     p.add_argument("--output-md", default="outputs/realtime_pipeline_status.md")
     args = p.parse_args()
 
-    metrics_path = Path(args.metrics)
+    metrics_path = Path(args.metrics).resolve()
     metrics = _read_json(metrics_path) or {}
+    
+    # Read Lumen emotion state (use absolute path)
+    workspace = metrics_path.parent.parent  # outputs/ -> workspace/
+    lumen_state = read_lumen_state(workspace)
 
     seeds = seed_from_metrics(metrics)
     seasonality = analyze_seasonality(metrics)
@@ -249,6 +318,7 @@ def main():
         "generated_at": datetime.now().isoformat(),
         "metrics_path": str(metrics_path),
         "window_hours": args.hours,
+        "lumen_state": lumen_state,
         "seeds": seeds,
         "seasonality": seasonality,
         "simulation": simulation,

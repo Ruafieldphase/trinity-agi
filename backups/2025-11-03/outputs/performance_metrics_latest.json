@@ -1,0 +1,198 @@
+{
+    "BandCounts":  {
+                       "Needs":  0,
+                       "Excellent":  5,
+                       "NoData":  1,
+                       "Good":  0
+                   },
+    "OverallEffectiveSuccessRate":  100,
+    "VisibleSystems":  [
+                           "Intelligent Feedback",
+                           "Daily Briefing",
+                           "Orchestration",
+                           "Resonance Loop",
+                           "BQI Phase 6",
+                           "YouTube Learning"
+                       ],
+    "OverallSuccessRate":  83.333333333333329,
+    "FlaggedSystems":  [
+
+                       ],
+    "SystemsDisplayed":  6,
+    "Systems":  {
+                    "Intelligent Feedback":  {
+                                                 "Band":  "Excellent",
+                                                 "SuccessRate":  100,
+                                                 "EffectiveRuns":  1,
+                                                 "Passed":  1,
+                                                 "Skipped":  0,
+                                                 "LastStatus":  "PASS",
+                                                 "LastError":  null,
+                                                 "EffectiveSuccessRate":  100,
+                                                 "Failed":  0,
+                                                 "TotalRuns":  1
+                                             },
+                    "Daily Briefing":  {
+                                           "Band":  "Excellent",
+                                           "SuccessRate":  100,
+                                           "EffectiveRuns":  1,
+                                           "Passed":  1,
+                                           "Skipped":  0,
+                                           "LastStatus":  "PASS",
+                                           "LastError":  null,
+                                           "EffectiveSuccessRate":  100,
+                                           "Failed":  0,
+                                           "TotalRuns":  1
+                                       },
+                    "Orchestration":  {
+                                          "Band":  "Excellent",
+                                          "SuccessRate":  100,
+                                          "EffectiveRuns":  1,
+                                          "Passed":  1,
+                                          "Skipped":  0,
+                                          "LastStatus":  "PASS",
+                                          "LastError":  null,
+                                          "EffectiveSuccessRate":  100,
+                                          "Failed":  0,
+                                          "TotalRuns":  1
+                                      },
+                    "Resonance Loop":  {
+                                           "Band":  "Excellent",
+                                           "SuccessRate":  100,
+                                           "EffectiveRuns":  1,
+                                           "Passed":  1,
+                                           "Skipped":  0,
+                                           "LastStatus":  "PASS",
+                                           "LastError":  null,
+                                           "EffectiveSuccessRate":  100,
+                                           "Failed":  0,
+                                           "TotalRuns":  1
+                                       },
+                    "BQI Phase 6":  {
+                                        "Band":  "Excellent",
+                                        "SuccessRate":  100,
+                                        "EffectiveRuns":  1,
+                                        "Passed":  1,
+                                        "Skipped":  0,
+                                        "LastStatus":  "PASS",
+                                        "LastError":  null,
+                                        "EffectiveSuccessRate":  100,
+                                        "Failed":  0,
+                                        "TotalRuns":  1
+                                    },
+                    "YouTube Learning":  {
+                                             "Band":  "No Data",
+                                             "SuccessRate":  0,
+                                             "EffectiveRuns":  0,
+                                             "Passed":  0,
+                                             "Skipped":  1,
+                                             "LastStatus":  "SKIP",
+                                             "LastError":  "Skipped by user",
+                                             "EffectiveSuccessRate":  0,
+                                             "Failed":  0,
+                                             "TotalRuns":  1
+                                         }
+                },
+    "Sort":  {
+                 "Order":  "asc",
+                 "SortBy":  "effective"
+             },
+    "Period":  1,
+    "TopAttentionCount":  3,
+    "Generated":  "2025-11-03 11:09:12",
+    "TopAttention":  [
+
+                     ],
+    "Thresholds":  {
+                       "GoodAt":  70,
+                       "ExcellentAt":  90
+                   },
+    "SystemsConsidered":  6,
+    "SystemsFiltered":  {
+                            "Intelligent Feedback":  {
+                                                         "Band":  "Excellent",
+                                                         "SuccessRate":  100,
+                                                         "EffectiveRuns":  1,
+                                                         "Passed":  1,
+                                                         "Skipped":  0,
+                                                         "LastStatus":  "PASS",
+                                                         "LastError":  null,
+                                                         "EffectiveSuccessRate":  100,
+                                                         "Failed":  0,
+                                                         "TotalRuns":  1
+                                                     },
+                            "Daily Briefing":  {
+                                                   "Band":  "Excellent",
+                                                   "SuccessRate":  100,
+                                                   "EffectiveRuns":  1,
+                                                   "Passed":  1,
+                                                   "Skipped":  0,
+                                                   "LastStatus":  "PASS",
+                                                   "LastError":  null,
+                                                   "EffectiveSuccessRate":  100,
+                                                   "Failed":  0,
+                                                   "TotalRuns":  1
+                                               },
+                            "Orchestration":  {
+                                                  "Band":  "Excellent",
+                                                  "SuccessRate":  100,
+                                                  "EffectiveRuns":  1,
+                                                  "Passed":  1,
+                                                  "Skipped":  0,
+                                                  "LastStatus":  "PASS",
+                                                  "LastError":  null,
+                                                  "EffectiveSuccessRate":  100,
+                                                  "Failed":  0,
+                                                  "TotalRuns":  1
+                                              },
+                            "Resonance Loop":  {
+                                                   "Band":  "Excellent",
+                                                   "SuccessRate":  100,
+                                                   "EffectiveRuns":  1,
+                                                   "Passed":  1,
+                                                   "Skipped":  0,
+                                                   "LastStatus":  "PASS",
+                                                   "LastError":  null,
+                                                   "EffectiveSuccessRate":  100,
+                                                   "Failed":  0,
+                                                   "TotalRuns":  1
+                                               },
+                            "BQI Phase 6":  {
+                                                "Band":  "Excellent",
+                                                "SuccessRate":  100,
+                                                "EffectiveRuns":  1,
+                                                "Passed":  1,
+                                                "Skipped":  0,
+                                                "LastStatus":  "PASS",
+                                                "LastError":  null,
+                                                "EffectiveSuccessRate":  100,
+                                                "Failed":  0,
+                                                "TotalRuns":  1
+                                            },
+                            "YouTube Learning":  {
+                                                     "Band":  "No Data",
+                                                     "SuccessRate":  0,
+                                                     "EffectiveRuns":  0,
+                                                     "Passed":  0,
+                                                     "Skipped":  1,
+                                                     "LastStatus":  "SKIP",
+                                                     "LastError":  "Skipped by user",
+                                                     "EffectiveSuccessRate":  0,
+                                                     "Failed":  0,
+                                                     "TotalRuns":  1
+                                                 }
+                        },
+    "Filters":  {
+                    "IncludeSystems":  [
+
+                                       ],
+                    "ExcludeSystems":  [
+
+                                       ],
+                    "Bands":  [
+
+                              ]
+                },
+    "TestRuns":  1,
+    "TopAttentionRespectsBands":  false
+}

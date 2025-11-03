@@ -29,6 +29,7 @@ import cv2
 import mss
 import numpy as np
 import pyautogui
+from fdo_agi_repo.orchestrator.pipeline_binoche_adapter import enhanced_binoche_decision
 
 
 # ============================================================================
@@ -341,25 +342,68 @@ class RPACore:
         await self.type_text(text)
         return True
 
+    async def evaluate_and_decide(
+        self,
+        task_goal: str,
+        rpa_result: Dict[str, Any],
+        bqi_coord: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """RPA 작업 결과를 평가하고 Binoche 의사결정을 받습니다."""
+        self.logger.info("Evaluating RPA task result with Binoche...")
+
+        # 1. 간단한 품질 점수 계산
+        quality = 0.85 if rpa_result.get("success") else 0.3
+        eval_report = {"quality": quality, "evidence_ok": rpa_result.get("success", False)}
+
+        # 2. Binoche 의사결정 호출
+        decision = enhanced_binoche_decision(
+            task_goal=task_goal,
+            eval_report=eval_report,
+            bqi_coord=bqi_coord
+        )
+
+        self.logger.info(f"Binoche decision: {decision['action']} (Confidence: {decision['confidence']:.2f})")
+        self.logger.info(f"  Reason: {decision['reason']}")
+
+        return decision
+
 
 # ============================================================================
 # CLI Interface
 # ============================================================================
 
 async def main():
-    """CLI 테스트"""
+    """CLI 테스트 및 Binoche 통합 데모"""
     logging.basicConfig(level=logging.INFO)
     
     rpa = RPACore()
     
-    print("\n✅ RPA Core initialized")
-    print(f"   Screen size: {pyautogui.size()}")
-    print(f"   Mouse position: {pyautogui.position()}")
-    print(f"   Failsafe: {pyautogui.FAILSAFE}")
+    print("\n✅ RPA Core initialized for Binoche Integration Demo")
     
-    # 스크린샷 테스트
-    screenshot_path = await rpa.save_screenshot("test_screenshot.png")
-    print(f"\n✅ Screenshot saved: {screenshot_path}")
+    # 1. 테스트 작업 정의
+    task_goal = "Take a screenshot and confirm it was saved"
+    bqi_coord = {"priority": 1, "emotion": "neutral", "rhythm": "execution"}
+    
+    print(f"\n🎯 Task: {task_goal}")
+    
+    # 2. RPA 작업 실행 (시뮬레이션)
+    try:
+        screenshot_path = await rpa.save_screenshot("test_integration_screenshot.png")
+        rpa_result = {"success": True, "output_path": str(screenshot_path)}
+        print(f"   RPA task succeeded. Output: {screenshot_path}")
+    except Exception as e:
+        rpa_result = {"success": False, "error": str(e)}
+        print(f"   RPA task failed: {e}")
+
+    # 3. Binoche로 평가 및 의사결정
+    if rpa_result["success"]:
+        decision = await rpa.evaluate_and_decide(task_goal, rpa_result, bqi_coord)
+        print("\n[BQI Phase 6 Integration Complete]")
+        print(f"  Action: {decision.get('action')}")
+        print(f"  Confidence: {decision.get('confidence')}")
+        print(f"  Reason: {decision.get('reason')}")
+    else:
+        print("\nSkipping Binoche evaluation due to RPA failure.")
 
 
 if __name__ == "__main__":

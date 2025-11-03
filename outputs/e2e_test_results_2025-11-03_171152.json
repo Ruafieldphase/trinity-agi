@@ -1,0 +1,13 @@
+﻿{
+    "success_rate":  0,
+    "quick_mode":  true,
+    "passed":  0,
+    "total_tests":  0,
+    "duration_seconds":  9.2786771999999988,
+    "timestamp":  "2025-11-03T17:11:52+09:00",
+    "skip_backup":  false,
+    "failed":  0,
+    "tests":  [
+
+              ]
+}

@@ -8,15 +8,20 @@ param(
 Write-Host "[Reindex] RootDir: $RootDir"
 
 # Prefer repo python if available, else fallback to system python
+$ws = Split-Path -Parent $RootDir
 $pythonCandidates = @(
-    Join-Path $RootDir ".venv\\Scripts\\python.exe" ,
+    (Join-Path $ws "LLM_Unified\.venv\Scripts\python.exe"),
+    (Join-Path $ws "fdo_agi_repo\.venv\Scripts\python.exe"),
+    (Join-Path $ws ".venv\Scripts\python.exe"),
     "python"
 )
 
 $pythonExe = $null
 foreach ($p in $pythonCandidates) {
-    & $p --version 2>$null
-    if ($LASTEXITCODE -eq 0) { $pythonExe = $p; break }
+    if (Test-Path $p -ErrorAction SilentlyContinue) {
+        & $p --version 2>$null
+        if ($LASTEXITCODE -eq 0) { $pythonExe = $p; break }
+    }
 }
 
 if (-not $pythonExe) {

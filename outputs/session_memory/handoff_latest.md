@@ -1,4 +1,4 @@
-﻿# 🔄 Session Handoff Document
+# 🔄 Session Handoff Document
 
 **생성 시각**: 2025-11-02 12:46:26  
 **이전 세션 ID**: 42d141c2-4a09-494a-933b-f27d57226172  

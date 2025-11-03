@@ -1,0 +1,101 @@
+﻿{
+    "timestamp":  "2025-11-03_114311",
+    "gitCommit":  "5b3b46e00b9172d18bdde17cdf3167036d5fa8b6",
+    "pythonVersion":  "3.13.7",
+    "recentFiles":  [
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AGI_OPTIMIZATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762129159418)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AI_SELF_MANAGING_SUCCESS_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762051560827)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AUTOMATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762089358034)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AUTOPOIETIC_TRINITY_INTEGRATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762097537358)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\COMPLETION_AI_SELF_MANAGING_2025-11-02.md",
+                            "LastWriteTime":  "\/Date(1762051560910)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\COPILOT_PERFORMANCE_OPTIMIZATION_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762133025322)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\CworkspaceagiREALTIME_MONITORING_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762092368845)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\GPU_USAGE_EXPLANATION.md",
+                            "LastWriteTime":  "\/Date(1762078777846)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\INTEGRATION_STRATEGY.md",
+                            "LastWriteTime":  "\/Date(1762089889200)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\LM_STUDIO_OPTIMIZATION_REVISED.md",
+                            "LastWriteTime":  "\/Date(1762128885648)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\MASTER_SCHEDULER_IMPLEMENTATION.md",
+                            "LastWriteTime":  "\/Date(1762090193306)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\META_LAYER_AUTONOMOUS_EXECUTION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762066506375)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\META_LAYER_COMPLETION_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762064736956)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\META_LAYER_OBSERVER_INTEGRATION.md",
+                            "LastWriteTime":  "\/Date(1762053511559)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\MORNING_GREETING_FEATURE.md",
+                            "LastWriteTime":  "\/Date(1762092010918)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\MORNING_KICKOFF_AUTOMATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762091422940)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\NEXT_WORK_PLAN_2025-11-02.md",
+                            "LastWriteTime":  "\/Date(1762080096696)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\OPTIMIZATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762128369518)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\OPTIMIZATION_EXECUTION_GUIDE.md",
+                            "LastWriteTime":  "\/Date(1762128324984)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\OPTIMIZATION_STRATEGY.md",
+                            "LastWriteTime":  "\/Date(1762128177599)\/"
+                        }
+                    ],
+    "gitBranch":  "main",
+    "note":  "",
+    "nodeVersion":  "22.19.0",
+    "activeProcesses":  [
+                            {
+                                "port":  8091,
+                                "running":  true,
+                                "name":  "TaskQueueServer"
+                            },
+                            {
+                                "name":  "RPAWorker",
+                                "running":  false
+                            }
+                        ]
+}

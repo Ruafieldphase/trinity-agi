@@ -93,7 +93,10 @@ class ScreenshotCapture:
                 filename = f"screenshot_{timestamp}.png"
             
             filepath = self.output_dir / filename
-            screenshot.save(filepath)
+            # On Windows, PIL may raise OSError: Invalid argument when saving
+            # directly by path in rare cases. Use explicit binary file handle.
+            with open(filepath, "wb") as fp:
+                screenshot.save(fp, format="PNG")
             logger.info(f"Screenshot saved: {filepath}")
         
         return screenshot
@@ -137,7 +140,8 @@ class ScreenshotCapture:
                 filename = f"region_{timestamp}.png"
             
             filepath = self.output_dir / filename
-            screenshot.save(filepath)
+            with open(filepath, "wb") as fp:
+                screenshot.save(fp, format="PNG")
             logger.info(f"Region screenshot saved: {filepath}")
         
         return screenshot

@@ -1,0 +1,17 @@
+{
+    "timestamp":  "2025-11-03T09:10:29.7691934+09:00",
+    "canary":  {
+                   "avg_response_ms":  213,
+                   "success_rate":  100,
+                   "failed":  0,
+                   "requests":  5,
+                   "success":  5
+               },
+    "legacy":  {
+                   "avg_response_ms":  179,
+                   "success_rate":  100,
+                   "failed":  0,
+                   "requests":  5,
+                   "success":  5
+               }
+}

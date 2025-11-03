@@ -1,0 +1,21 @@
+{
+  "tasks": 112,
+  "policies": {
+    "quality-first": {
+      "samples": 112,
+      "allow": 41,
+      "warn": 71,
+      "block": 0,
+      "avg_latency_ms": 18628.184008035805,
+      "p95_latency_ms": 34012.158700003056
+    },
+    "latency-first": {
+      "samples": 112,
+      "allow": 41,
+      "warn": 71,
+      "block": 0,
+      "avg_latency_ms": 18628.184008035805,
+      "p95_latency_ms": 34012.158700003056
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+    "preferences": {
+        "daily_auto_run_time": "10:00",
+        "overnight_computer_power": "off",
+        "offline_window": "02:00-07:00",
+        "notes": "사용자는 새벽에 PC 전원을 끕니다. 스케줄 작업은 오전 10:00 이후로 설정."
+    },
+    "updated_at": "2025-11-03T00:00:00"
+}

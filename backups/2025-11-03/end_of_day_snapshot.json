@@ -1,0 +1,11 @@
+﻿{
+    "pythonEnv":  true,
+    "autoStartEnabled":  false,
+    "note":  "",
+    "nodeModules":  false,
+    "taskQueueServer":  true,
+    "backupLocation":  "C:\\workspace\\agi\\scripts\\..\\backups\\2025-11-03",
+    "gitBranch":  "main",
+    "gitCommit":  "5b3b46e00b9172d18bdde17cdf3167036d5fa8b6",
+    "timestamp":  "2025-11-03_114344"
+}

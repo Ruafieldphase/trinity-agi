@@ -1,5 +1,3 @@
 ﻿Timestamp,Level,Type,Channel,Message
-2025-11-02T22:28:05,WARN,Spike,Gateway,"SPIKE: Gateway latency 229ms (avg 218 +/- 5)"
-2025-11-02T22:43:05,WARN,Spike,Gateway,"SPIKE: Gateway latency 234ms (avg 220 +/- 5)"
-2025-11-02T22:48:05,WARN,Spike,Gateway,"SPIKE: Gateway latency 241ms (avg 222 +/- 7)"
-2025-11-02T22:58:05,WARN,Spike,Local LLM,"SPIKE: Local LLM latency 36ms (avg 21 +/- 4)"
+2025-11-03T16:33:05,WARN,Spike,Cloud AI,"SPIKE: Cloud AI latency 321ms (avg 268 +/- 25)"
+2025-11-03T16:58:05,WARN,Spike,Gateway,"SPIKE: Gateway latency 230ms (avg 221 +/- 4)"

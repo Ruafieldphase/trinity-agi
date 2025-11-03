@@ -13,7 +13,7 @@ services:
       POSTGRES_USER: agent_user
       POSTGRES_PASSWORD: agent_password_123
       POSTGRES_DB: agent_system
-      POSTGRES_INITDB_ARGS: "-c max_connections=100"
+      POSTGRES_INITDB_ARGS: "-c max_connections=50"  # 100에서 50으로 감소
 
     ports:
       - "5432:5432"
@@ -28,6 +28,16 @@ services:
       timeout: 5s
       retries: 5
 
+    # 리소스 제한 추가
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
     networks:
       - agent-network
 
@@ -39,7 +49,8 @@ services:
     container_name: agent-system-redis
     restart: unless-stopped
 
-    command: redis-server --appendonly yes --requirepass redis_password_123
+    # AOF 비활성화로 성능 향상 (필요시 재활성화)
+    command: redis-server --appendonly no --requirepass redis_password_123 --maxmemory 512mb --maxmemory-policy allkeys-lru
 
     ports:
       - "6379:6379"
@@ -52,6 +63,16 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+    # 리소스 제한 추가
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
 
     networks:
       - agent-network
@@ -70,13 +91,13 @@ services:
       ENVIRONMENT: development
       FLASK_ENV: development
       FLASK_APP: agent_api_server.py
-      LOG_LEVEL: DEBUG
+      LOG_LEVEL: INFO  # DEBUG에서 INFO로 변경 (로깅 오버헤드 감소)
       DATABASE_URL: postgresql://agent_user:agent_password_123@postgres:5432/agent_system
       CACHE_REDIS_URL: redis://:redis_password_123@redis:6379
       CACHE_BACKEND: redis
       JWT_SECRET: dev_secret_key_change_in_production
-      DATABASE_POOL_SIZE: 20
-      HEALTH_CHECK_INTERVAL: 30
+      DATABASE_POOL_SIZE: 10  # 20에서 10으로 감소 (리소스 절약)
+      HEALTH_CHECK_INTERVAL: 60  # 30초에서 60초로 변경 (체크 빈도 감소)
 
     ports:
       - "5000:5000"
@@ -99,76 +120,86 @@ services:
       retries: 3
       start_period: 40s
 
-    networks:
-      - agent-network
-
-  # =========================================================================
-  # 4. Nginx 리버스 프록시 (선택사항)
-  # =========================================================================
-  nginx:
-    image: nginx:alpine
-    container_name: agent-system-nginx
-    restart: unless-stopped
-
-    ports:
-      - "80:80"
-      - "443:443"
-
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-
-    depends_on:
-      - agent-api
+    # 리소스 제한 추가
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '1'
+          memory: 1G
 
     networks:
       - agent-network
 
   # =========================================================================
-  # 5. Prometheus 모니터링 (선택사항)
+  # 4. Nginx 리버스 프록시 (비활성화 - 현재 불필요)
   # =========================================================================
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: agent-system-prometheus
-    restart: unless-stopped
-
-    ports:
-      - "9090:9090"
-
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
-
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-
-    networks:
-      - agent-network
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: agent-system-nginx
+  #   restart: unless-stopped
+  #
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #
+  #   depends_on:
+  #     - agent-api
+  #
+  #   networks:
+  #     - agent-network
 
   # =========================================================================
-  # 6. Grafana 대시보드 (선택사항)
+  # 5. Prometheus 모니터링 (비활성화 - 성능 최적화 중)
   # =========================================================================
-  grafana:
-    image: grafana/grafana:latest
-    container_name: agent-system-grafana
-    restart: unless-stopped
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: agent-system-prometheus
+  #   restart: unless-stopped
+  #
+  #   ports:
+  #     - "9090:9090"
+  #
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #     - prometheus_data:/prometheus
+  #
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #
+  #   networks:
+  #     - agent-network
 
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: admin_password_123
-      GF_USERS_ALLOW_SIGN_UP: 'false'
-
-    ports:
-      - "3000:3000"
-
-    volumes:
-      - grafana_data:/var/lib/grafana
-
-    depends_on:
-      - prometheus
-
-    networks:
-      - agent-network
+  # =========================================================================
+  # 6. Grafana 대시보드 (비활성화 - 성능 최적화 중)
+  # =========================================================================
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: agent-system-grafana
+  #   restart: unless-stopped
+  #
+  #   environment:
+  #     GF_SECURITY_ADMIN_PASSWORD: admin_password_123
+  #     GF_USERS_ALLOW_SIGN_UP: 'false'
+  #
+  #   ports:
+  #     - "3000:3000"
+  #
+  #   volumes:
+  #     - grafana_data:/var/lib/grafana
+  #
+  #   depends_on:
+  #     - prometheus
+  #
+  #   networks:
+  #     - agent-network
 
 volumes:
   postgres_data:

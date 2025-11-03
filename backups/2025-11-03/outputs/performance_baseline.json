@@ -1,0 +1,17 @@
+﻿{
+    "python_memory_mb":  419.4,
+    "queue_failed":  0,
+    "collection_time":  "2025-11-03 11:08:03",
+    "system_used_memory_gb":  41.2,
+    "queue_pending":  0,
+    "vscode_process_count":  14,
+    "extension_count":  25,
+    "python_process_count":  11,
+    "queue_online":  true,
+    "system_memory_usage_percent":  43.3,
+    "queue_completed":  2,
+    "system_total_memory_gb":  95.2,
+    "file_watcher_excludes":  0,
+    "vscode_memory_mb":  3159,
+    "timestamp":  "2025-11-03T11:08:03.7486127+09:00"
+}

@@ -26,6 +26,7 @@ from .response_cache import get_response_cache
 # BQI 통합 (Phase 1)
 from scripts.rune.bqi_adapter import analyse_question
 from .conversation_memory import ConversationMemory
+from .user_profile import get_user_profile_context
 try:
     from fdo_agi_repo.personas.thesis import run_thesis
     from fdo_agi_repo.personas.antithesis import run_antithesis
@@ -195,6 +196,23 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         })
     else:
         context_prompt = None
+
+    # 사용자 프로필(전 페르소나 공통 선호도/제약) 주입
+    try:
+        _profile_ctx = get_user_profile_context()
+        if _profile_ctx:
+            context_prompt = f"{_profile_ctx}\n\n{context_prompt}" if context_prompt else _profile_ctx
+            append_ledger({
+                "event": "user_profile_injected",
+                "task_id": task.task_id,
+                "profile_len": len(_profile_ctx)
+            })
+    except Exception as _profile_ex:
+        append_ledger({
+            "event": "user_profile_inject_failed",
+            "task_id": task.task_id,
+            "error": str(_profile_ex)
+        })
     
     gate = SAFE_pre(task.model_dump(), tail_ledger())
     if not gate["allowed"]:

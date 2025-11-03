@@ -72,9 +72,10 @@ except ImportError:
 @dataclass
 class WorkerConfig:
     server_url: str = "http://127.0.0.1:8091"
-    poll_interval: float = 0.5
+    poll_interval: float = 0.1  # ⚡ Quick Win: 0.5 → 0.1 (~150ms 레이턴시 절약)
     worker_name: str = "rpa-worker"
     results_timeout: float = 30.0
+    fast_mode: bool = False  # ⚡ Quick Win: 불필요한 레이어 스킵
 
 
 class RPAWorker:
@@ -346,16 +347,22 @@ class RPAWorker:
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(description="RPA Worker for Task Queue Server")
     p.add_argument("--server", default="http://127.0.0.1:8091", help="Task Queue server base URL")
-    p.add_argument("--interval", type=float, default=0.5, help="Polling interval seconds")
+    p.add_argument("--interval", type=float, default=0.1, help="Polling interval seconds (default: 0.1, Quick Win optimized)")
     p.add_argument("--worker-name", default="rpa-worker", help="Worker name for bookkeeping")
     p.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"], help="Log level")
+    p.add_argument("--fast-mode", action="store_true", help="⚡ Fast mode: Skip non-essential layers")
     return p.parse_args(argv)
 
 
 def main(argv: Optional[List[str]] = None):
     args = parse_args(argv)
     logging.basicConfig(level=getattr(logging, args.log_level.upper()), format="%(asctime)s [%(levelname)s] %(message)s")
-    cfg = WorkerConfig(server_url=args.server, poll_interval=args.interval, worker_name=args.worker_name)
+    cfg = WorkerConfig(
+        server_url=args.server,
+        poll_interval=args.interval,
+        worker_name=args.worker_name,
+        fast_mode=args.fast_mode
+    )
     worker = RPAWorker(cfg)
     worker.run()
 

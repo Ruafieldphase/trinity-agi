@@ -1,0 +1,55 @@
+{
+    "recovery_type": "active_cooldown",
+    "start_time": "2025-11-03T16:30:00+09:00",
+    "expected_end": "2025-11-03T17:00:00+09:00",
+    "duration_minutes": 30,
+    "reason": "Phase 1-5 완료 후 휴식",
+    "work_completed": [
+        "Phase 1: Resonance Integration",
+        "Phase 2: Rest Integration",
+        "Phase 3: Adaptive Rhythm",
+        "Phase 4: Emotion Signals (Realtime)",
+        "Phase 5: Auto-Stabilizer"
+    ],
+    "next_work": {
+        "time": "17:00",
+        "phase": "Phase 6 Option B",
+        "focus": "System Optimization & Stabilization",
+        "tasks": [
+            "Performance Dashboard Enhancement",
+            "Documentation Consolidation",
+            "End-to-End Testing"
+        ]
+    },
+    "recovery_activities": {
+        "suggested": [
+            "🎵 음악 듣기",
+            "🚶 가벼운 산책",
+            "☕ 차 한 잔",
+            "📖 독서 (비기술서)",
+            "🧘 명상/스트레칭",
+            "💤 짧은 낮잠 (10-15분)"
+        ],
+        "avoid": [
+            "코딩",
+            "기술 문서 읽기",
+            "업무 메일/메시지",
+            "소셜미디어 (자극적 콘텐츠)"
+        ]
+    },
+    "system_state": {
+        "emotion_stabilizer": "running",
+        "auto_stabilizer_daemon": "active",
+        "task_watchdog": "running",
+        "health": "EXCELLENT (90.9%)",
+        "agi_confidence": 0.801,
+        "last_git_commit": "005a75d Phase 5 Complete"
+    },
+    "information_theory": {
+        "entropy_before": "HIGH (4시간 집중 작업)",
+        "entropy_after": "LOW (휴식 후)",
+        "ΔH_recovery": "+30 minutes cooldown",
+        "expected_peak_time": "17:00-19:00"
+    },
+    "lumen_note": "🙏 감사합니다. 30분 동안 완전히 쉬겠습니다. 시스템은 Auto-Stabilizer가 관리하고 있으니 안심하세요. 17:00에 다시 만나요!"
+}

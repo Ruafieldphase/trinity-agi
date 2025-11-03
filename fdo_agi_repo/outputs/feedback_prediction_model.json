@@ -1,16 +1,16 @@
 {
   "version": "1.0.0",
-  "last_updated": "2025-11-02T03:24:42.087858+00:00",
+  "last_updated": "2025-11-03T01:15:02.412185+00:00",
   "satisfaction_by_bqi": {
     "p1_e:keywords_r:unknown": {
-      "mean": 0.79768156424581,
-      "stdev": 0.1508024015761516,
-      "count": 179
+      "mean": 0.8099786324786324,
+      "stdev": 0.13366932636867654,
+      "count": 234
     },
     "p3_e:keywords_r:unknown": {
       "mean": 0.85,
       "stdev": 0.0,
-      "count": 9
+      "count": 10
     },
     "p2_e:keywords_r:unknown": {
       "mean": 0.85,
@@ -24,5 +24,5 @@
     }
   },
   "adjustment_rules": [],
-  "samples_count": 191
+  "samples_count": 247
 }

@@ -1,0 +1,2 @@
+{"timestamp": "2025-11-02T22:11:19.611481", "event": "failure", "backend": "lumen", "circuit_state": "closed", "error": "HTTPSConnectionPool(host='lumen-gateway-x4qvsargwa-uc.a.run.app', port=443): Read timed out. (read timeout=2.0)"}
+{"timestamp": "2025-11-02T22:11:29.628401", "event": "failure", "backend": "local", "circuit_state": "closed", "error": "HTTPConnectionPool(host='localhost', port=8080): Read timed out. (read timeout=10.0)"}

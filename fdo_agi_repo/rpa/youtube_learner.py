@@ -24,6 +24,34 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+# Lumen Gateway 클라이언트 임포트
+import sys
+from pathlib import Path
+
+# 프로젝트 루트를 sys.path에 추가 (LLM_Unified가 있는 곳)
+# 이 파일의 위치: fdo_agi_repo/rpa/youtube_learner.py
+# 프로젝트 루트: fdo_agi_repo/../
+project_root = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(project_root))
+
+# Optional Lumen client import (path contains hyphen; use dynamic import)
+get_lumen_client = None  # type: ignore
+lumen_client_available = False
+try:
+    import importlib
+    # Attempt import via safe path; repository may use hyphenated folder names
+    # which are not valid Python packages. We handle failure gracefully.
+    mod = importlib.import_module(
+        "LLM_Unified.ion_mentoring.app.integrations.lumen_client"
+    )
+    get_lumen_client = getattr(mod, "get_lumen_client", None)
+    lumen_client_available = get_lumen_client is not None
+except Exception as e:
+    # Keep optional dependency disabled; unit tests that don't need it can proceed
+    lumen_client_available = False
+    print(f"[Warning] Lumen Client not available: {e}")
+
+
 from typing import TYPE_CHECKING
 
 # 지연 임포트 전략: 무거운/선택적 의존성은 런타임에 필요할 때만 임포트합니다.
@@ -465,6 +493,125 @@ class YouTubeLearner:
 
 
 # ============================================================================
+# Playlist Learner (Phase 3)
+# ============================================================================
+
+@dataclass
+class PlaylistAnalysis:
+    """플레이리스트 분석 결과"""
+    playlist_title: str
+    video_analyses: List[VideoAnalysis]
+    combined_summary: str
+    total_duration: float
+
+class PlaylistLearner:
+    """YouTube 플레이리스트 전체를 학습하고 요약"""
+    
+    def __init__(self, config: Optional[YouTubeLearnerConfig] = None):
+        self.config = config or YouTubeLearnerConfig()
+        self.youtube_learner = YouTubeLearner(self.config)
+        self.logger = logging.getLogger(__name__)
+    
+    async def _get_video_urls_from_playlist(self, playlist_url: str) -> Tuple[str, List[str]]:
+        """플레이리스트에서 모든 비디오 URL 추출"""
+        try:
+            from pytubefix import Playlist
+        except Exception as e:
+            self.logger.error(f"pytubefix not available for Playlist: {e}")
+            return "Unknown Playlist", []
+        
+        playlist = Playlist(playlist_url)
+        self.logger.info(f"Fetching videos from playlist: {playlist.title}")
+        
+        # video_urls는 제너레이터이므로 리스트로 변환
+        return playlist.title, list(playlist.video_urls)
+
+    async def learn_series(self, playlist_url: str) -> PlaylistAnalysis:
+        """플레이리스트 전체를 학습하고 분석 결과를 반환"""
+        playlist_title, video_urls = await self._get_video_urls_from_playlist(playlist_url)
+        
+        if not video_urls:
+            raise ValueError("No videos found in the playlist or playlist is private.")
+        
+        analyses: List[VideoAnalysis] = []
+        total_duration = 0.0
+        
+        self.logger.info(f"Starting analysis of {len(video_urls)} videos in '{playlist_title}'...")
+        
+        for i, video_url in enumerate(video_urls):
+            try:
+                self.logger.info(f"[{i+1}/{len(video_urls)}] Analyzing video: {video_url}")
+                analysis = await self.youtube_learner.analyze_video(video_url)
+                analyses.append(analysis)
+                total_duration += analysis.duration
+            except Exception as e:
+                self.logger.error(f"Failed to analyze video {video_url}: {e}")
+                # Continue with the next video
+        
+        summary = self._synthesize_knowledge(analyses, playlist_title)
+        
+        return PlaylistAnalysis(
+            playlist_title=playlist_title,
+            video_analyses=analyses,
+            combined_summary=summary,
+            total_duration=total_duration
+        )
+
+        def _synthesize_knowledge(self, analyses: List[VideoAnalysis], playlist_title: str) -> str:
+            """여러 영상 분석 결과로부터 종합적인 요약 생성 (Lumen Gateway 연동)"""
+            if not analyses:
+                return "No videos were successfully analyzed."
+    
+            # Lumen Gateway 사용 가능 시 AI 요약
+            if lumen_client_available and get_lumen_client:
+                self.logger.info("Synthesizing knowledge with Lumen Gateway...")
+                try:
+                    client = get_lumen_client()
+                    
+                    # 모든 자막을 하나의 텍스트로 결합
+                    full_transcript = "\n\n".join(
+                        " ".join(sub.text for sub in analysis.subtitles)
+                        for analysis in analyses if analysis.subtitles
+                    )
+    
+                    if not full_transcript.strip():
+                        raise ValueError("No subtitles available to summarize.")
+    
+                    # Lumen에 보낼 프롬프트 생성
+                    prompt = (
+                        f"'{playlist_title}'라는 제목의 YouTube 재생목록 전체 자막입니다. "
+                        f"이 내용을 바탕으로, 재생목록 전체를 관통하는 핵심 주제, 주요 개념, 그리고 학습 흐름을 "
+                        f"3-4 문장으로 요약해주세요.\n\n---\n\n{full_transcript[:8000]}" # 토큰 제한 고려
+                    )
+                    
+                    lumen_response = client.infer(message=prompt, persona_key="square") # '엘로'가 요약에 적합
+                    
+                    if lumen_response.success:
+                        self.logger.info("Lumen Gateway summarization successful.")
+                        return f"[AI Summary by {lumen_response.persona.emoji}] {lumen_response.response}"
+                    else:
+                        self.logger.warning("Lumen Gateway summarization failed, falling back to keyword summary.")
+                except Exception as e:
+                    self.logger.error(f"Lumen Gateway call failed: {e}, falling back to keyword summary.")
+    
+            # Fallback: 기존 키워드 기반 요약
+            self.logger.info("Falling back to keyword-based summary.")
+            all_keywords = []
+            for analysis in analyses:
+                all_keywords.extend(analysis.keywords)
+            
+            unique_keywords = list(dict.fromkeys(all_keywords))
+            top_keywords = unique_keywords[:10]
+            
+            summary = (
+                f"Playlist '{playlist_title}' contains {len(analyses)} videos. "
+                f"Key topics include: {', '.join(top_keywords)}. "
+                f"The series covers concepts from '{analyses[0].title}' to '{analyses[-1].title}'."
+            )
+            
+            return f"[Keyword Summary] {summary}"
+
+# ============================================================================
 # CLI Interface
 # ============================================================================
 
@@ -489,35 +636,35 @@ async def main():
 
 
 async def cli_main():
-    """CLI 엔트리포인트 (인자 파싱)"""
+    """CLI 엔트리포인트 (인자 파싱) - PlaylistLearner 테스트"""
     import argparse
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser(description="YouTube Learner")
-    parser.add_argument("--url", default="https://www.youtube.com/watch?v=dQw4w9WgXcQ", help="YouTube video URL")
-    parser.add_argument("--max-frames", type=int, default=1, help="Max frames to extract")
-    parser.add_argument("--frame-interval", type=float, default=30.0, help="Frame interval in seconds")
-    parser.add_argument("--enable-ocr", action="store_true", help="Enable OCR pipeline")
-    parser.add_argument("--clip-seconds", type=int, default=0, help="Download only first N seconds via yt-dlp")
+    parser = argparse.ArgumentParser(description="YouTube Playlist Learner")
+    # A short, stable playlist is good for testing.
+    parser.add_argument("--playlist-url", default="https://www.youtube.com/playlist?list=PL-gS-8J9C_z-P-3s1hS-t3Wn1-JCRp1nK", help="YouTube playlist URL")
     args = parser.parse_args()
 
     cfg = YouTubeLearnerConfig(
-        max_frames=args.max_frames,
-        frame_interval=args.frame_interval,
-        enable_ocr=args.enable_ocr,
-        sample_clip_seconds=args.clip_seconds,
+        max_frames=1, # Keep it low for testing
+        frame_interval=60.0,
+        enable_ocr=False,
     )
-    learner = YouTubeLearner(cfg)
+    
+    playlist_learner = PlaylistLearner(cfg)
 
-    analysis = await learner.analyze_video(args.url)
+    try:
+        playlist_analysis = await playlist_learner.learn_series(args.playlist_url)
+        
+        print("\n✅ Playlist Analysis Complete:")
+        print(f"   Playlist Title: {playlist_analysis.playlist_title}")
+        print(f"   Videos Analyzed: {len(playlist_analysis.video_analyses)}")
+        print(f"   Total Duration: {playlist_analysis.total_duration / 60:.2f} minutes")
+        print(f"\n   Combined Summary:")
+        print(f"   {playlist_analysis.combined_summary}")
 
-    print("\nAnalysis Complete:")
-    print(f"   Title: {analysis.title}")
-    print(f"   Duration: {analysis.duration}s")
-    print(f"   Subtitles: {len(analysis.subtitles)}")
-    print(f"   Frames: {len(analysis.frames)}")
-    print(f"   Keywords: {', '.join(analysis.keywords)}")
-    print(f"   Summary: {analysis.summary}")
+    except Exception as e:
+        print(f"\n❌ An error occurred: {e}")
 
 
 if __name__ == "__main__":

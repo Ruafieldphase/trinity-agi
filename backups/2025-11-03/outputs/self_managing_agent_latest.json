@@ -1,0 +1,93 @@
+{
+  "timestamp": "2025-11-02T23:41:45.746865+00:00",
+  "dependencies": {
+    "task_queue_server": {
+      "name": "task_queue_server",
+      "critical": true,
+      "process_running": false,
+      "scheduled_task_registered": true,
+      "scheduled_task_state": null,
+      "health_ok": true,
+      "auto_fixed": true
+    },
+    "rpa_worker": {
+      "name": "rpa_worker",
+      "critical": true,
+      "process_running": false,
+      "scheduled_task_registered": false,
+      "scheduled_task_state": null,
+      "health_ok": false,
+      "auto_fixed": true
+    },
+    "watchdog": {
+      "name": "watchdog",
+      "critical": true,
+      "process_running": false,
+      "scheduled_task_registered": true,
+      "scheduled_task_state": "Running",
+      "health_ok": false,
+      "auto_fixed": false
+    },
+    "task_watchdog": {
+      "name": "task_watchdog",
+      "critical": true,
+      "process_running": false,
+      "scheduled_task_registered": false,
+      "scheduled_task_state": null,
+      "health_ok": false,
+      "auto_fixed": false
+    },
+    "meta_observer": {
+      "name": "meta_observer",
+      "critical": true,
+      "process_running": false,
+      "scheduled_task_registered": false,
+      "scheduled_task_state": null,
+      "health_ok": false,
+      "auto_fixed": false
+    },
+    "master_orchestrator": {
+      "name": "master_orchestrator",
+      "critical": true,
+      "process_running": false,
+      "scheduled_task_registered": true,
+      "scheduled_task_state": "Running",
+      "health_ok": false,
+      "auto_fixed": false
+    },
+    "monitoring_collector": {
+      "name": "monitoring_collector",
+      "critical": false,
+      "process_running": false,
+      "scheduled_task_registered": true,
+      "scheduled_task_state": "Ready",
+      "health_ok": false,
+      "auto_fixed": false
+    }
+  },
+  "actions_taken": [
+    {
+      "action": "register_scheduled_task",
+      "target": "task_queue_server",
+      "script": "register_task_queue_server.ps1",
+      "success": true
+    },
+    {
+      "action": "start_dependency",
+      "target": "task_queue_server",
+      "script": "ensure_task_queue_server.ps1",
+      "success": true
+    },
+    {
+      "action": "start_dependency",
+      "target": "rpa_worker",
+      "script": "ensure_rpa_worker.ps1",
+      "success": true
+    }
+  ],
+  "errors": [
+    "Failed to register task_watchdog: ",
+    "Failed to register meta_observer: "
+  ],
+  "needs_human_approval": []
+}

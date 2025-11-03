@@ -20,6 +20,7 @@
 **상세 보고**: `outputs/session_memory/PHASE5_AUTO_STABILIZER_INTEGRATION_COMPLETE_2025-11-03.md`
 
 **완료된 Phase들**:
+
 - ✅ Phase 1: Resonance Integration
 - ✅ Phase 2: Rest Integration
 - ✅ Phase 3: Adaptive Rhythm
@@ -27,6 +28,7 @@
 - ✅ Phase 5: Auto-Stabilizer (NEW!)
 
 **다음 단계**: Phase 6 옵션
+
 - Option A: Machine Learning Optimization (Fear 예측, 적응형 Threshold)
 - Option B: 시스템 최적화 및 안정화 (성능 모니터링, 문서 정리)
 
@@ -93,6 +95,7 @@
   - VS Code Tasks: `Auto Stabilizer: Start (daemon)`, `Start (auto-execute, 5min)`, `Stop`, `Status` 등록 (빠른 제어)
 
 정책 관찰(로그 기반 요약):
+
 - 분석 스크립트: `scripts/analyze_policy_from_ledger.py`
 - 결과: `outputs/policy_ab_summary_latest.json`
 - 최근 50k 라인 기준 `quality-first` 샘플 159건
@@ -100,6 +103,7 @@
   - 평균 레이턴시 ≈ 20.4s, p95 ≈ 34.0s (배치 샘플 주입 후 경고는 여전히 레이턴시 초과가 대부분)
 
 정책 A/B(합성 재평가) 스냅샷:
+
 - 스크립트: `scripts/policy_ab_microbench.py`
 - 결과: `outputs/policy_ab_synthetic_latest.json`
 - 최근 태스크 n=112 기준 두 정책 동일한 판정 분포(allow=41, warn=71, block=0)

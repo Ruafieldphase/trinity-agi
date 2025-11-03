@@ -21,7 +21,9 @@
         ],
         "fallback_on_empty": true,
         "fallback_include_types": null,
-        "min_relevance": 0.12
+        "min_relevance": 0.25,
+        "retry_broaden": false,
+        "pass2_top_k": 8
     },
     "bm25": {
         "k1": 1.2,

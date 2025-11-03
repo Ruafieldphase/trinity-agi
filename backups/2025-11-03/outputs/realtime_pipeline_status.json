@@ -1,0 +1,59 @@
+{
+  "generated_at": "2025-11-02T18:23:19.755515",
+  "metrics_path": "C:\\workspace\\agi\\outputs\\monitoring_metrics_latest.json",
+  "window_hours": 24,
+  "seeds": {
+    "info_density": 0.32999999999999996,
+    "coherence": 0.61,
+    "ethics": 0.65
+  },
+  "seasonality": [],
+  "simulation": {
+    "final_state": {
+      "info_density": -1.5,
+      "resonance": 0.23041573181950378,
+      "entropy": 0.95,
+      "coherence": 0.1,
+      "ethics": 0.13114523952363466,
+      "phase": 10.748525643709831,
+      "horizon_crossings": 4
+    },
+    "horizon_crossings": 4,
+    "history_count": 56,
+    "resonance_series": [
+      0.3751,
+      0.271,
+      0.2971,
+      0.1531,
+      0.0791,
+      0.0583,
+      0.2559,
+      0.6585,
+      0.9893,
+      0.7592,
+      0.2584,
+      0.2513,
+      0.2163,
+      0.2266,
+      0.2318,
+      0.2378,
+      0.2419,
+      0.0367,
+      0.0285,
+      0.2086,
+      0.6283,
+      0.9964,
+      0.6394,
+      0.1599,
+      0.2271,
+      0.2171,
+      0.2264,
+      0.2304
+    ]
+  },
+  "next_runs": {
+    "bqi_daily": "2025-11-03T03:10:00",
+    "monitoring_daily": "2025-11-03T03:20:00",
+    "health_hourly": "2025-11-02T19:00:00"
+  }
+}

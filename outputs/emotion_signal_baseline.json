@@ -1,0 +1,36 @@
+﻿{
+    "fear_signal":  {
+                        "reasons":  [
+                                        "최근 품질 저하 (6%)"
+                                    ],
+                        "level":  0.1
+                    },
+    "timestamp":  "2025-11-03T13:43:39.2195680+09:00",
+    "recommended_actions":  [
+                                "🚀 개발 작업 계속",
+                                "💡 새 기능 구현",
+                                "🧪 테스트 실행",
+                                "📖 문서화",
+                                "🎨 창의 작업"
+                            ],
+    "background_self":  {
+                            "confidence":  0.9,
+                            "signal":  0.1,
+                            "interpretation":  "🌟 최적 - 창의 작업 가능",
+                            "timestamp":  "2025-11-03T13:43:39.2195680+09:00",
+                            "strategy":  "FLOW",
+                            "reasons":  [
+                                            "최근 품질 저하 (6%)"
+                                        ]
+                        },
+    "body_signals":  {
+                         "cpu_usage":  23.78,
+                         "hours_since_rest":  0,
+                         "recent_quality":  0.06,
+                         "queue_depth":  0,
+                         "timestamp":  "2025-11-03T13:43:37.1205372+09:00",
+                         "queue_status":  "WARN",
+                         "memory_usage":  60.23,
+                         "recent_tasks":  100
+                     }
+}

@@ -1,0 +1,15 @@
+﻿{
+    "ts":  "2025-11-03T11:43:00.6534048+09:00",
+    "pid":  29288,
+    "schedulerHealthy":  true,
+    "queueHealthy":  true,
+    "actionTaken":  false,
+    "stabilized":  false,
+    "retries":  0,
+    "actions":  [
+
+                ],
+    "loops":  176,
+    "intervalSeconds":  60,
+    "autoRecover":  true
+}

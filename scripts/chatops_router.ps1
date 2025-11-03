@@ -839,12 +839,36 @@ function Resume-SavedContext {
             
             Write-Host ""
             Write-Host "  🧠 최근 AGI 활동:" -ForegroundColor Cyan
+            # Helper: robust timestamp formatting (supports ISO8601 string or Unix epoch seconds)
+            function _Format-Ts([object]$tsVal) {
+                try {
+                    if ($null -eq $tsVal) { return 'N/A' }
+                    # If already DateTime
+                    if ($tsVal -is [datetime]) { return $tsVal.ToString('MM-dd HH:mm') }
+                    # If numeric (int/double) -> Unix epoch seconds
+                    if ($tsVal -is [int] -or $tsVal -is [long]) {
+                        $dto = [DateTimeOffset]::FromUnixTimeSeconds([long]$tsVal).ToLocalTime()
+                        return $dto.ToString('MM-dd HH:mm')
+                    }
+                    $num = $null
+                    if ([double]::TryParse($tsVal.ToString(), [ref]$num)) {
+                        $secs = [long][math]::Floor($num)
+                        $fracMs = [int][math]::Round(($num - $secs) * 1000)
+                        $dto = [DateTimeOffset]::FromUnixTimeSeconds($secs).ToLocalTime()
+                        $dt = $dto.DateTime.AddMilliseconds($fracMs)
+                        return $dt.ToString('MM-dd HH:mm')
+                    }
+                    # Try ISO8601 string
+                    $dt = [datetime]::Parse($tsVal.ToString())
+                    return $dt.ToString('MM-dd HH:mm')
+                }
+                catch {
+                    return 'N/A'
+                }
+            }
             foreach ($event in $recentEvents) {
                 if ($event.event) {
-                    $ts = if ($event.ts) { 
-                        ([DateTime]$event.ts).ToString("MM-dd HH:mm") 
-                    }
-                    else { "N/A" }
+                    $ts = _Format-Ts $event.ts
                     Write-Host "     [$ts] $($event.event)" -ForegroundColor White
                 }
             }

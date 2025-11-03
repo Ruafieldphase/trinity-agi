@@ -91,3 +91,4 @@ outputs/rpa_worker_debug.log*
 # Environment variables
 .env
 .env.local
+nul
