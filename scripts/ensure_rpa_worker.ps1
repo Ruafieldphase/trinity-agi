@@ -11,55 +11,75 @@ param(
 
 $ErrorActionPreference = 'Stop'
 try {
-    # Lock mechanism to prevent race condition
-    $lockFile = Join-Path $env:TEMP 'rpa_worker_lock.tmp'
-    $lockTimeout = 10  # seconds
-    $lockStart = Get-Date
+    # Mutex-based lock to prevent race condition (cross-process)
+    $mutexName = 'Global\RPAWorkerEnsureMutex'
+    $mutex = $null
+    $mutexAcquired = $false
     
-    while (Test-Path -LiteralPath $lockFile) {
-        if (((Get-Date) - $lockStart).TotalSeconds -gt $lockTimeout) {
-            Write-Warning "Lock file timeout after ${lockTimeout}s. Removing stale lock."
-            Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue
-            break
+    try {
+        $mutex = New-Object System.Threading.Mutex($false, $mutexName)
+        $mutexAcquired = $mutex.WaitOne(10000)  # 10 second timeout
+        
+        if (-not $mutexAcquired) {
+            Write-Warning "Failed to acquire mutex after 10s. Another instance may be running."
+            exit 1
         }
-        Start-Sleep -Milliseconds 100
+    } catch {
+        Write-Warning "Failed to create/acquire mutex: $_"
+        exit 1
     }
     
-    # Create lock file
-    New-Item -ItemType File -Path $lockFile -Force | Out-Null
+    # Worker PID file for additional safety
+    $pidFile = Join-Path $env:TEMP 'rpa_worker.pid'
     
     # Discover processes running rpa_worker.py
     $running = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*rpa_worker.py*' }
+    
+    # Check PID file validity
+    if ((Test-Path -LiteralPath $pidFile) -and -not $running) {
+        Write-Warning "Stale PID file found. Removing."
+        Remove-Item -LiteralPath $pidFile -Force -ErrorAction SilentlyContinue
+    }
 
     if ($KillAll) {
         if (-not $running) { 
-            Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue
+            if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
             Write-Host 'No RPA worker processes found to kill.' -ForegroundColor Yellow
             exit 0 
         }
         $pids = $running | Select-Object -ExpandProperty ProcessId
         Write-Host ("Killing all RPA workers: {0}" -f ($pids -join ',')) -ForegroundColor Yellow
         if (-not $DryRun) { $pids | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop } catch {} } }
-        Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue
+        if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
         exit 0
     }
 
     if ($EnforceSingle -and $running) {
         # Keep newest MaxWorkers, terminate the rest
-        $sorted = $running | Sort-Object -Property CreationDate -Descending
-        $keep = $sorted | Select-Object -First ([Math]::Max(1, $MaxWorkers))
-        $kill = $sorted | Select-Object -Skip ([Math]::Max(1, $MaxWorkers))
-        if ($kill -and $kill.Count -gt 0) {
-            $killPids = $kill | Select-Object -ExpandProperty ProcessId
+        $sorted = @($running | Sort-Object -Property CreationDate -Descending)
+        $keep = @($sorted | Select-Object -First ([Math]::Max(1, $MaxWorkers)))
+        $kill = @($sorted | Select-Object -Skip ([Math]::Max(1, $MaxWorkers)))
+        
+        if ($kill.Count -gt 0) {
+            $killPids = @($kill | Select-Object -ExpandProperty ProcessId)
             Write-Host ("Enforcing single worker: keeping {0}, killing {1}" -f (($keep | Select-Object -ExpandProperty ProcessId) -join ','), ($killPids -join ',')) -ForegroundColor Yellow
-            if (-not $DryRun) { $killPids | ForEach-Object { try { Stop-Process -Id $_ -Force -ErrorAction Stop } catch {} } }
+            if (-not $DryRun) { 
+                $killPids | ForEach-Object { 
+                    try { Stop-Process -Id $_ -Force -ErrorAction Stop } catch { Write-Warning "Failed to kill PID ${_}: $($_.Exception.Message)" } 
+                }
+            }
             # Refresh running list after kills
+            Start-Sleep -Milliseconds 500
             $running = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*rpa_worker.py*' }
         }
+        
+        # After enforcing, exit without starting new worker
+        if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
+        exit 0
     }
 
     if ($running) {
-        Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue
+        if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
         Write-Host ("RPA worker already running (PID(s): {0})" -f (($running | Select-Object -ExpandProperty ProcessId) -join ',')) -ForegroundColor Green
         exit 0
     }
@@ -85,14 +105,20 @@ try {
     $psi.RedirectStandardError = $false
 
     if ($DryRun) { Write-Host "DRY-RUN: would start worker: $($psi.FileName) $($psi.Arguments)" -ForegroundColor DarkCyan }
-    else { [void][System.Diagnostics.Process]::Start($psi) }
+    else { 
+        $proc = [System.Diagnostics.Process]::Start($psi)
+        if ($proc) {
+            # Save PID to file
+            $proc.Id | Out-File -FilePath $pidFile -Encoding ASCII -Force
+        }
+    }
     Start-Sleep -Milliseconds 400
 
     # Re-check
     $running2 = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*rpa_worker.py*' }
     
-    # Release lock
-    Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue
+    # Release mutex
+    if ($mutexAcquired -and $mutex) { $mutex.ReleaseMutex(); $mutex.Dispose() }
     
     if ($running2) {
         Write-Host ("RPA worker started (PID(s): {0})" -f (($running2 | Select-Object -ExpandProperty ProcessId) -join ',')) -ForegroundColor Green
@@ -103,9 +129,10 @@ try {
     }
 }
 catch {
-    # Release lock on error
-    $lockFile = Join-Path $env:TEMP 'rpa_worker_lock.tmp'
-    Remove-Item -LiteralPath $lockFile -Force -ErrorAction SilentlyContinue
+    # Release mutex on error
+    if ($mutexAcquired -and $mutex) { 
+        try { $mutex.ReleaseMutex(); $mutex.Dispose() } catch {}
+    }
     Write-Error $_.Exception.Message
     exit 1
 }
