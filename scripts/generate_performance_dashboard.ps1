@@ -1,4 +1,4 @@
-﻿# Performance Metrics Dashboard Generator
+# Performance Metrics Dashboard Generator
 # Tracks execution time, success rate, and resource usage
 #
 # Parameters:
@@ -33,7 +33,7 @@ param(
     [ValidateRange(1, 100)][int]$TopHistory = 10,
     [ValidateRange(1, 50)][int]$TopAttentionCount = 3,
     [ValidateRange(1, 20)][int]$TopErrorReasons = 3,
-    [string]$Profile = '',
+    [string]$ProfileName = '',
     [ValidateSet('Excellent', 'Good', 'Needs', 'NoData', 'No Data')][string[]]$OnlyBands = @(),
     [switch]$AttentionRespectsBands,
     [string[]]$IncludeSystems = @(),
@@ -45,7 +45,7 @@ param(
 $ErrorActionPreference = "Continue"
 
 # Helpers: band normalization and canonicalization
-function Normalize-BandInput {
+function ConvertTo-NormalizedBand {
     param([Parameter(Mandatory = $true)][string]$Band)
     switch ($Band) {
         'NoData' { 'No Data'; break }
@@ -81,7 +81,7 @@ $outputDir = Join-Path (Split-Path -Parent $scriptDir) "outputs"
 if (-not (Test-Path $outputDir)) { New-Item -ItemType Directory -Path $outputDir -Force | Out-Null }
 
 # Optional: load profile overrides
-if (-not [string]::IsNullOrWhiteSpace($Profile)) {
+if (-not [string]::IsNullOrWhiteSpace($ProfileName)) {
     try {
         $root = Split-Path -Parent $scriptDir
         $candidatePaths = @(
@@ -92,7 +92,7 @@ if (-not [string]::IsNullOrWhiteSpace($Profile)) {
         if ($profilePath) {
             $profJson = Get-Content $profilePath -Raw | ConvertFrom-Json
             $prof = $null
-            if ($profJson -and $profJson.profiles) { $prof = $profJson.profiles.($Profile) }
+            if ($profJson -and $profJson.profiles) { $prof = $profJson.profiles.($ProfileName) }
             if ($null -ne $prof) {
                 if (-not $PSBoundParameters.ContainsKey('IncludeSystems') -and $prof.IncludeSystems) { $IncludeSystems = @($prof.IncludeSystems) }
                 if (-not $PSBoundParameters.ContainsKey('ExcludeSystems') -and $prof.ExcludeSystems) { $ExcludeSystems = @($prof.ExcludeSystems) }
@@ -106,7 +106,7 @@ if (-not [string]::IsNullOrWhiteSpace($Profile)) {
                 if (-not $PSBoundParameters.ContainsKey('AttentionRespectsBands') -and $prof.AttentionRespectsBands) { $AttentionRespectsBands = [bool]$prof.AttentionRespectsBands }
             }
             else {
-                Write-Warning "Profile '$Profile' not found in $profilePath"
+                Write-Warning "Profile '$ProfileName' not found in $profilePath"
             }
         }
         else {
@@ -114,7 +114,7 @@ if (-not [string]::IsNullOrWhiteSpace($Profile)) {
         }
     }
     catch {
-        Write-Warning "Failed to load profile '$Profile': $($_.Exception.Message)"
+        Write-Warning "Failed to load profile '$ProfileName': $($_.Exception.Message)"
     }
 }
 
@@ -293,7 +293,7 @@ if ($AttentionRespectsBands -and $OnlyBands -and $OnlyBands.Count -gt 0 -and $to
     $allowed = @{}
     foreach ($b in $OnlyBands) {
         if ($b) {
-            $bb = Normalize-BandInput -Band $b
+            $bb = ConvertTo-NormalizedBand -Band $b
             $allowed[$bb] = $true
         }
     }
@@ -318,7 +318,7 @@ if ($OnlyBands -and $OnlyBands.Count -gt 0) {
         $metrics[$sys].Band = $band
         $allowed = $false
         foreach ($b in $OnlyBands) {
-            $bb = Normalize-BandInput -Band $b
+            $bb = ConvertTo-NormalizedBand -Band $b
             if ($bb -eq $band) { $allowed = $true; break }
         }
         if ($allowed) { $displayedCount++ }
@@ -339,7 +339,7 @@ $report = @"
  - Flagged count: $($flaggedSystems.Count)
   - Band counts: Excellent=$bandExcellent, Good=$bandGood, Needs=$bandNeeds, NoData=$bandNoData
 $( if ($OnlyBands -and $OnlyBands.Count -gt 0) {
-    $bandsDisplay = ($OnlyBands | ForEach-Object { Normalize-BandInput -Band $_ }) -join ', '
+    $bandsDisplay = ($OnlyBands | ForEach-Object { ConvertTo-NormalizedBand -Band $_ }) -join ', '
     "- Bands considered: $bandsDisplay`n- Systems displayed: $displayedCount"
 } else { '' } )
    - Top attention$(if ($AttentionRespectsBands -and $OnlyBands -and $OnlyBands.Count -gt 0) { ' (respecting bands)' } else { '' }): $(if ($topAttention.Count -gt 0) { ($topAttention | ForEach-Object { "{0} ({1}%)" -f $_.Key, ([double]$_.Value.EffectiveSuccessRate).ToString('F1') }) -join ', ' } else { 'None' })
@@ -413,7 +413,7 @@ if (-not ($OnlyBands -and $OnlyBands.Count -gt 0 -and $displayedCount -eq 0)) {
             $canonical = $healthBand
             $match = $false
             foreach ($b in $OnlyBands) {
-                $bb = Normalize-BandInput -Band $b
+                $bb = ConvertTo-NormalizedBand -Band $b
                 if ($bb -eq $canonical) { $match = $true; break }
             }
             if (-not $match) { continue }
@@ -477,6 +477,42 @@ if ($overallSuccess -ge $ExcellentAt) {
     $report += "- All systems performing well! No action required.`n"
 }
 
+# Add Emotion Signals section
+$emotionJsonPath = Join-Path (Split-Path -Parent $scriptDir) 'outputs/emotion_signals_latest.json'
+if (Test-Path $emotionJsonPath) {
+    try {
+        $emotionData = Get-Content $emotionJsonPath -Raw | ConvertFrom-Json
+        $fear = [double]$emotionData.signals.fear
+        $joy = [double]$emotionData.signals.joy
+        $trust = [double]$emotionData.signals.trust
+        
+        $fearEmoji = if ($fear -ge 0.7) { "🔴" } elseif ($fear -ge 0.5) { "🟡" } else { "🟢" }
+        $joyEmoji = if ($joy -ge 0.7) { "✨" } elseif ($joy -ge 0.5) { "😊" } else { "😐" }
+        $trustEmoji = if ($trust -ge 0.7) { "🤝" } elseif ($trust -ge 0.5) { "👍" } else { "🤔" }
+        
+        $report += @"
+
+---
+
+## 🎭 Emotion Signals (Realtime)
+
+**Last Updated**: $($emotionData.timestamp)
+
+| Signal | Value | Status | Description |
+|--------|-------|--------|-------------|
+| Fear $fearEmoji | $($fear.ToString('F3')) | $(if ($fear -ge 0.7) { "HIGH" } elseif ($fear -ge 0.5) { "ELEVATED" } else { "NORMAL" }) | System stress level |
+| Joy ✨ | $($joy.ToString('F3')) | $(if ($joy -ge 0.7) { "HIGH" } elseif ($joy -ge 0.5) { "GOOD" } else { "LOW" }) | Creative flow |
+| Trust 🤝 | $($trust.ToString('F3')) | $(if ($trust -ge 0.7) { "STRONG" } elseif ($trust -ge 0.5) { "MODERATE" } else { "WEAK" }) | System confidence |
+
+**Recommendation**: $(if ($fear -ge 0.7) { "🚨 Critical - Deep Maintenance needed" } elseif ($fear -ge 0.5) { "⚠️ Elevated - Consider Active Cooldown" } else { "✅ Stable - Continue monitoring" })
+
+"@
+    }
+    catch {
+        $report += "`n<!-- Emotion signals unavailable: $($_.Exception.Message) -->`n"
+    }
+}
+
 $report += @"
 
 ---
@@ -495,7 +531,7 @@ if ($allResults -and $allResults.Count -gt 0) {
             $band = Get-CanonicalBandFromRates -HasData:$hasData -EffectiveRate:([double]$mv.EffectiveSuccessRate) -ExcellentAt:$ExcellentAt -GoodAt:$GoodAt
             $allowed = $false
             foreach ($b in $OnlyBands) {
-                $bb = Normalize-BandInput -Band $b
+                $bb = ConvertTo-NormalizedBand -Band $b
                 if ($bb -eq $band) { $allowed = $true; break }
             }
             if (-not $allowed) { continue }
@@ -588,7 +624,7 @@ if ($ExportJson) {
     # Optional bands considered text
     $bandsConsidered = @()
     if ($OnlyBands -and $OnlyBands.Count -gt 0) {
-        $bandsConsidered = @($OnlyBands | ForEach-Object { Normalize-BandInput -Band $_ })
+        $bandsConsidered = @($OnlyBands | ForEach-Object { ConvertTo-NormalizedBand -Band $_ })
     }
 
     $metricsExport = @{
@@ -646,7 +682,7 @@ if ($ExportCsv) {
         $metaLines += "# Period: Last $Days days"
         $metaLines += "# Systems Considered: $($visibleKeys.Count)"
         if ($OnlyBands -and $OnlyBands.Count -gt 0) {
-            $bandsDisplay = ($OnlyBands | ForEach-Object { Normalize-BandInput -Band $_ }) -join ', '
+            $bandsDisplay = ($OnlyBands | ForEach-Object { ConvertTo-NormalizedBand -Band $_ }) -join ', '
             $metaLines += "# Bands Considered: $bandsDisplay"
             $metaLines += "# Systems Displayed: $displayedCount"
         }
