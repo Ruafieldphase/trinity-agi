@@ -93,6 +93,38 @@
         .progress-yellow { background: #f59e0b; }
         .progress-red { background: #ef4444; }
         
+        .table-container {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: rgba(255,255,255,0.1);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .anomaly-critical { color: #ef4444; font-weight: bold; }
+        .anomaly-warning { color: #f59e0b; font-weight: bold; }
+        .anomaly-info { color: #3b82f6; }
+        .healing-success { color: #10b981; font-weight: bold; }
+        .healing-failed { color: #ef4444; font-weight: bold; }
+        
         .footer {
             text-align: center;
             padding: 20px;
@@ -124,7 +156,7 @@
             <h1>🤖 AGI System Dashboard</h1>
             <div class="timestamp">
                 <span class="live-indicator"></span>
-                Last Updated: 2025-11-03 09:15:17
+                Last Updated: 2025-11-03 17:31:40
             </div>
         </div>
         
@@ -184,6 +216,18 @@
                     </span>
                 </div>            </div>
         </div>
+        
+        <!-- Anomaly Detection Section -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">🔍</span> Anomaly Detection (Last 24 hours)</h2>            <div class="metric" style="justify-content: center; border-bottom: none;">
+                <span style="opacity: 0.7;">✅ No anomalies detected in the last 24 hours</span>
+            </div>        </div>
+        
+        <!-- Healing Actions Section -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">🛠️</span> Auto-Healing Actions (Last 24 hours)</h2>            <div class="metric" style="justify-content: center; border-bottom: none;">
+                <span style="opacity: 0.7;">No healing actions executed in the last 24 hours</span>
+            </div>        </div>
         
         <div class="footer">
             <p>AGI Real-Time Monitoring System | Phase 3+ Enhanced Dashboard</p>

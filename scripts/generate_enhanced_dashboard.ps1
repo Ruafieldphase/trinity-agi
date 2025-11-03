@@ -34,6 +34,48 @@ catch {
     $queueHealth = @{ status = "offline" }
 }
 
+# 4. Anomaly Detection Data
+$anomalyBaseline = @{}
+$baselinePath = "$PSScriptRoot\..\outputs\anomaly_baseline.json"
+if (Test-Path $baselinePath) {
+    try {
+        $anomalyBaseline = Get-Content $baselinePath -Raw | ConvertFrom-Json -AsHashtable
+    } catch {
+        Write-Host "⚠️  Could not load anomaly baseline" -ForegroundColor Yellow
+    }
+}
+
+$recentAnomalies = @()
+$anomalyLogPath = "$PSScriptRoot\..\outputs\anomaly_log.jsonl"
+if (Test-Path $anomalyLogPath) {
+    $cutoff = (Get-Date).AddHours(-$LookbackHours)
+    try {
+        $recentAnomalies = Get-Content $anomalyLogPath | ForEach-Object {
+            $entry = $_ | ConvertFrom-Json
+            $ts = [DateTime]::Parse($entry.timestamp)
+            if ($ts -ge $cutoff) { $entry }
+        } | Select-Object -Last 20
+    } catch {
+        Write-Host "⚠️  Could not load anomaly log" -ForegroundColor Yellow
+    }
+}
+
+# 5. Healing History Data
+$recentHealings = @()
+$healingLogPath = "$PSScriptRoot\..\outputs\healing_log.jsonl"
+if (Test-Path $healingLogPath) {
+    $cutoff = (Get-Date).AddHours(-$LookbackHours)
+    try {
+        $recentHealings = Get-Content $healingLogPath | ForEach-Object {
+            $entry = $_ | ConvertFrom-Json
+            $ts = [DateTime]::Parse($entry.timestamp)
+            if ($ts -ge $cutoff) { $entry }
+        } | Select-Object -Last 20
+    } catch {
+        Write-Host "⚠️  Could not load healing log" -ForegroundColor Yellow
+    }
+}
+
 # Generate HTML
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 $html = @"
@@ -131,6 +173,38 @@ $html = @"
         .progress-green { background: #10b981; }
         .progress-yellow { background: #f59e0b; }
         .progress-red { background: #ef4444; }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        th {
+            background: rgba(255,255,255,0.1);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        tr:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .anomaly-critical { color: #ef4444; font-weight: bold; }
+        .anomaly-warning { color: #f59e0b; font-weight: bold; }
+        .anomaly-info { color: #3b82f6; }
+        .healing-success { color: #10b981; font-weight: bold; }
+        .healing-failed { color: #ef4444; font-weight: bold; }
         
         .footer {
             text-align: center;
@@ -346,6 +420,106 @@ else {
 
 $html += @"
             </div>
+        </div>
+        
+        <!-- Anomaly Detection Section -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">🔍</span> Anomaly Detection (Last $LookbackHours hours)</h2>
+"@
+
+if ($recentAnomalies.Count -gt 0) {
+    $html += @"
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Severity</th>
+                            <th>Type</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+"@
+    foreach ($anomaly in $recentAnomalies | Sort-Object { [DateTime]::Parse($_.timestamp) } -Descending) {
+        $ts = ([DateTime]::Parse($anomaly.timestamp)).ToString("MM-dd HH:mm:ss")
+        $severityClass = switch ($anomaly.severity) {
+            "critical" { "anomaly-critical" }
+            "warning" { "anomaly-warning" }
+            default { "anomaly-info" }
+        }
+        $html += @"
+                        <tr>
+                            <td>$ts</td>
+                            <td class="$severityClass">$($anomaly.severity.ToUpper())</td>
+                            <td>$($anomaly.anomaly_type)</td>
+                            <td style="font-size: 0.9em;">$($anomaly.details)</td>
+                        </tr>
+"@
+    }
+    $html += @"
+                    </tbody>
+                </table>
+            </div>
+"@
+} else {
+    $html += @"
+            <div class="metric" style="justify-content: center; border-bottom: none;">
+                <span style="opacity: 0.7;">✅ No anomalies detected in the last $LookbackHours hours</span>
+            </div>
+"@
+}
+
+$html += @"
+        </div>
+        
+        <!-- Healing Actions Section -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">🛠️</span> Auto-Healing Actions (Last $LookbackHours hours)</h2>
+"@
+
+if ($recentHealings.Count -gt 0) {
+    $html += @"
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Anomaly Type</th>
+                            <th>Action</th>
+                            <th>Status</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+"@
+    foreach ($healing in $recentHealings | Sort-Object { [DateTime]::Parse($_.timestamp) } -Descending) {
+        $ts = ([DateTime]::Parse($healing.timestamp)).ToString("MM-dd HH:mm:ss")
+        $statusClass = if ($healing.status -eq "success") { "healing-success" } else { "healing-failed" }
+        $html += @"
+                        <tr>
+                            <td>$ts</td>
+                            <td>$($healing.anomaly_type)</td>
+                            <td>$($healing.action_type)</td>
+                            <td class="$statusClass">$($healing.status.ToUpper())</td>
+                            <td style="font-size: 0.9em;">$($healing.details)</td>
+                        </tr>
+"@
+    }
+    $html += @"
+                    </tbody>
+                </table>
+            </div>
+"@
+} else {
+    $html += @"
+            <div class="metric" style="justify-content: center; border-bottom: none;">
+                <span style="opacity: 0.7;">No healing actions executed in the last $LookbackHours hours</span>
+            </div>
+"@
+}
+
+$html += @"
         </div>
         
         <div class="footer">

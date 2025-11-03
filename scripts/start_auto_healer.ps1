@@ -100,7 +100,8 @@ $cmdArgs = @(
 
 if ($Once) {
     $cmdArgs += "--once"
-} else {
+}
+else {
     $cmdArgs += "--interval", $IntervalSeconds
 }
 
