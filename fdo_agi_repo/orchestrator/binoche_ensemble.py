@@ -36,21 +36,28 @@ def load_ensemble_config() -> Dict:
         "rules": {
             # Very high quality: Always approve regardless of BQI
             "quality_override_approve": {
-                "min_quality": 0.90,
+                "min_quality": 0.85,  # 0.90 → 0.85 (더 관대함)
                 "decision": "approve",
                 "confidence_boost": 0.15
             },
             # High quality + High BQI confidence: Strong approve
             "quality_bqi_strong_approve": {
-                "min_quality": 0.80,
-                "min_bqi_confidence": 0.70,
+                "min_quality": 0.75,  # 0.80 → 0.75 (더 관대함)
+                "min_bqi_confidence": 0.65,  # 0.70 → 0.65 (더 관대함)
                 "decision": "approve",
                 "confidence_boost": 0.10
             },
-            # Medium quality + High BQI confidence: Approve
+            # Medium quality + High BQI confidence: Approve (추가됨)
+            "quality_bqi_medium_approve": {
+                "min_quality": 0.65,  # 신규: 0.70 → 0.65
+                "min_bqi_confidence": 0.55,  # 신규: 0.60 → 0.55
+                "decision": "approve",
+                "confidence_boost": 0.05
+            },
+            # 기존 Medium quality + High BQI confidence: Approve
             "quality_bqi_approve": {
-                "min_quality": 0.70,
-                "min_bqi_confidence": 0.60,
+                "min_quality": 0.60,  # 0.70 → 0.60 (더 관대함)
+                "min_bqi_confidence": 0.50,  # 0.60 → 0.50 (더 관대함)
                 "decision": "approve",
                 "confidence_boost": 0.05
             },
