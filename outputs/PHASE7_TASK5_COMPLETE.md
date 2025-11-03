@@ -32,6 +32,7 @@ elif task_type == "health_check":
 ```
 
 **응답 예시**:
+
 ```json
 {
   "success": true,
@@ -67,6 +68,7 @@ elif task_type == "benchmark_test":
 ```
 
 **응답 예시**:
+
 ```json
 {
   "success": true,
@@ -96,6 +98,7 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8091/api/results?limit=1'
 ```
 
 **결과**: ✅ **Success!**
+
 ```json
 {
   "task_id": "dc703f96-1516-4685-b1a4-3c94b418bde2",
@@ -122,6 +125,7 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8091/api/results?limit=1'
 ```
 
 **결과**: ✅ **Success!**
+
 ```json
 {
   "task_id": "0557ac77-2f30-4936-a836-ac7f51c47b06",
@@ -138,6 +142,7 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8091/api/results?limit=1'
 ## 📊 영향 분석
 
 ### Before (Task 5 이전)
+
 ```
 ❌ health_check → "Unsupported task type: health_check"
 ❌ benchmark_test → "Unsupported task type: benchmark_test"
@@ -145,6 +150,7 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8091/api/results?limit=1'
 ```
 
 ### After (Task 5 완료)
+
 ```
 ✅ health_check → Success (0.002s)
 ✅ benchmark_test → Success (0.179s)
@@ -156,11 +162,13 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8091/api/results?limit=1'
 ## 🎯 다음 단계
 
 **Task 6**: Auto-healer Threshold 조정
+
 - Grace Period 단축: 300s → 180s
 - Min Success Rate 상향: 50% → 70%
 - Consecutive Failures Threshold 추가
 
 **Task 7**: Worker Load Balancing
+
 - Single Worker 강제
 - Worker Monitor 안정화
 - 중복 Worker 방지
@@ -168,6 +176,7 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8091/api/results?limit=1'
 ## ✨ 완료 선언
 
 **Phase 7, Task 5 완료!**
+
 - ✅ Worker에 health_check 지원 추가
 - ✅ Worker에 benchmark_test 지원 추가
 - ✅ Unsupported Task Type 에러 제거

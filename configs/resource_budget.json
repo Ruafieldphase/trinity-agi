@@ -1,4 +1,4 @@
-﻿{
+{
   "cpu_budget_percent": 80,
   "memory_budget_percent": 80,
   "queue_latency_ms": 2000,

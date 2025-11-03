@@ -1,1 +1,1 @@
-2025-11-03T17:57:51.228107 Micro-Reset triggered (success=True, dry_run=True, fear=0.500)
+2025-11-03T18:02:51.230036 Micro-Reset triggered (success=True, dry_run=True, fear=0.500)

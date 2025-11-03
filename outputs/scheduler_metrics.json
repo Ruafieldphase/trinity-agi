@@ -5222,3 +5222,27 @@
                     "memory_usage":  52.3
                 }
 }
+{
+    "timestamp":  "2025-11-03 18:03:08",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:03:06",
+                    "cpu_load":  25,
+                    "memory_usage":  52.2
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:04:11",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:04:09",
+                    "cpu_load":  67,
+                    "memory_usage":  51.7
+                }
+}
+{
+    "timestamp":  "2025-11-03 18:05:14",
+    "metrics":  {
+                    "timestamp":  "2025-11-03 18:05:12",
+                    "cpu_load":  45,
+                    "memory_usage":  52.4
+                }
+}

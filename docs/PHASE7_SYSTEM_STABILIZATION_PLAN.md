@@ -166,6 +166,7 @@
    - CPU/Memory 예산 설정 (예: 80% 상한)
    - 예산 초과 시 자동 조절 (작업 지연, 캐시 정리)
    - 예산 사용 현황 Dashboard
+   - 구성: `configs/resource_budget.json`, 실행 스텁 `scripts/resource_optimizer.py` (DryRun 기본, summary 출력)
 
 #### 출력물
 

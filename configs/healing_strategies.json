@@ -36,8 +36,10 @@
                 "enabled": true,
                 "restore_workers": true
             },
-            "grace_period_seconds": 300,
-            "max_retries": 3
+            "grace_period_seconds": 180,
+            "max_retries": 3,
+            "min_success_rate": 0.70,
+            "consecutive_failures_threshold": 3
         },
         "high_memory": {
             "name": "High Memory Usage",
@@ -67,8 +69,10 @@
             "rollback": {
                 "enabled": false
             },
-            "grace_period_seconds": 300,
-            "max_retries": 2
+            "grace_period_seconds": 180,
+            "max_retries": 2,
+            "min_success_rate": 0.70,
+            "consecutive_failures_threshold": 3
         },
         "low_success_rate": {
             "name": "Low Success Rate",
@@ -104,8 +108,10 @@
                 "enabled": true,
                 "restore_llm_config": true
             },
-            "grace_period_seconds": 600,
-            "max_retries": 3
+            "grace_period_seconds": 180,
+            "max_retries": 3,
+            "min_success_rate": 0.70,
+            "consecutive_failures_threshold": 3
         },
         "high_latency": {
             "name": "High Latency",
@@ -135,8 +141,10 @@
                 "enabled": true,
                 "restore_worker_count": true
             },
-            "grace_period_seconds": 300,
-            "max_retries": 2
+            "grace_period_seconds": 180,
+            "max_retries": 2,
+            "min_success_rate": 0.70,
+            "consecutive_failures_threshold": 3
         },
         "queue_stuck": {
             "name": "Queue Stuck",
@@ -162,8 +170,10 @@
             "rollback": {
                 "enabled": false
             },
-            "grace_period_seconds": 600,
-            "max_retries": 2
+            "grace_period_seconds": 180,
+            "max_retries": 2,
+            "min_success_rate": 0.70,
+            "consecutive_failures_threshold": 3
         },
         "ml_composite_anomaly": {
             "name": "ML Composite Anomaly",
@@ -186,8 +196,10 @@
             "rollback": {
                 "enabled": false
             },
-            "grace_period_seconds": 600,
-            "max_retries": 1
+            "grace_period_seconds": 180,
+            "max_retries": 1,
+            "min_success_rate": 0.70,
+            "consecutive_failures_threshold": 3
         }
     },
     "global_settings": {

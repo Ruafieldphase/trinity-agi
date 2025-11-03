@@ -93,7 +93,29 @@ class GracePeriodTracker:
         
         return True
     
-    def record_heal(self, strategy_name: str):
+    def can_heal_with_consecutive_check(
+        self, 
+        strategy_name: str, 
+        grace_period_seconds: int, 
+        max_retries: int,
+        consecutive_failures_threshold: int
+    ) -> bool:
+        """Check if healing is allowed (grace period + consecutive failures)"""
+        if not self.can_heal(strategy_name, grace_period_seconds, max_retries):
+            return False
+        
+        # Check consecutive failures
+        if strategy_name in self.history:
+            record = self.history[strategy_name]
+            consecutive_failures = record.get('consecutive_failures', 0)
+            
+            if consecutive_failures >= consecutive_failures_threshold:
+                print(f"🚫 Consecutive failures ({consecutive_failures}) >= threshold ({consecutive_failures_threshold}) for '{strategy_name}'")
+                return False
+        
+        return True
+    
+    def record_heal(self, strategy_name: str, success: bool = True):
         """Record a healing action"""
         now = datetime.now().isoformat()
         
@@ -102,7 +124,8 @@ class GracePeriodTracker:
                 'first_heal_time': now,
                 'last_heal_time': now,
                 'recent_heals': [now],
-                'total_count': 1
+                'total_count': 1,
+                'consecutive_failures': 0 if success else 1
             }
         else:
             record = self.history[strategy_name]
@@ -112,6 +135,12 @@ class GracePeriodTracker:
                 if (datetime.now() - datetime.fromisoformat(ts)).total_seconds() < 3600
             ] + [now]
             record['total_count'] = record.get('total_count', 0) + 1
+            
+            # Update consecutive failures
+            if success:
+                record['consecutive_failures'] = 0
+            else:
+                record['consecutive_failures'] = record.get('consecutive_failures', 0) + 1
         
         self._save_history()
 
@@ -358,9 +387,12 @@ class AutoHealer:
         strategy_name = strategy['name']
         grace_period = strategy.get('grace_period_seconds', 300)
         max_retries = strategy.get('max_retries', 3)
+        consecutive_failures_threshold = strategy.get('consecutive_failures_threshold', 3)
         
-        # Check grace period
-        if not self.grace_tracker.can_heal(strategy_name, grace_period, max_retries):
+        # Check grace period + consecutive failures
+        if not self.grace_tracker.can_heal_with_consecutive_check(
+            strategy_name, grace_period, max_retries, consecutive_failures_threshold
+        ):
             return
         
         # Execute healing actions
@@ -399,9 +431,12 @@ class AutoHealer:
         
         self._log_healing(healing_result)
         
-        if healing_result['success']:
+        # Record heal with success status
+        success = healing_result['success']
+        self.grace_tracker.record_heal(strategy_name, success)
+        
+        if success:
             print(f"\n   ✅ Healing completed: {strategy_name}")
-            self.grace_tracker.record_heal(strategy_name)
         else:
             print(f"\n   ⚠️  Healing partially completed: {success_count}/{len(strategy['actions'])}")
     
