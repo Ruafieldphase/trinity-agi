@@ -3,9 +3,9 @@ orchestrator/resonance_bridge.py
 오케스트레이터 파이프라인과 Universal Resonance 시스템을 연결하는 브리지.
 """
 from __future__ import annotations
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from pathlib import Path
-from datetime import datetime, timezone
+import datetime
 
 try:
     from fdo_agi_repo.universal.resonance import ResonanceStore, ResonanceEvent
@@ -97,6 +97,33 @@ def load_resonance_config(force_reload: bool = False) -> Dict[str, Any]:
     except Exception:
         cfg["closed_loop_snapshot_period_sec"] = 300
 
+    # Optimization defaults (Phase 8.5)
+    opt_cfg = cfg.get("optimization")
+    if not isinstance(opt_cfg, dict):
+        opt_cfg = {}
+    if "enabled" not in opt_cfg:
+        opt_cfg["enabled"] = True
+    if "prefer_gateway" not in opt_cfg:
+        opt_cfg["prefer_gateway"] = True
+    if "prefer_peak_hours" not in opt_cfg:
+        opt_cfg["prefer_peak_hours"] = True
+    peak_defaults = {"start": 8, "end": 16}
+    if "peak_hours" not in opt_cfg or not isinstance(opt_cfg.get("peak_hours"), dict):
+        opt_cfg["peak_hours"] = peak_defaults.copy()
+    else:
+        peak_hours = opt_cfg["peak_hours"]
+        if "start" not in peak_hours:
+            peak_hours["start"] = peak_defaults["start"]
+        if "end" not in peak_hours:
+            peak_hours["end"] = peak_defaults["end"]
+    if "offpeak_mode" not in opt_cfg:
+        opt_cfg["offpeak_mode"] = "lightweight"
+    if "batch_compression" not in opt_cfg:
+        opt_cfg["batch_compression"] = "high"
+    if "learning_bias" not in opt_cfg:
+        opt_cfg["learning_bias"] = "gateway"
+    cfg["optimization"] = opt_cfg
+
     _RESONANCE_CONFIG = cfg
     _RESONANCE_CONFIG_PATH = chosen_path
     try:
@@ -104,6 +131,152 @@ def load_resonance_config(force_reload: bool = False) -> Dict[str, Any]:
     except Exception:
         _RESONANCE_CONFIG_MTIME = None
     return cfg
+
+
+def get_resonance_config_path() -> Optional[Path]:
+    """Return the path of the currently active resonance config file, if any.
+
+    Ensures the config loader has run at least once so callers (e.g., detectors
+    or dashboards) can display the effective path. Falls back to default
+    locations when nothing has been loaded yet.
+    """
+    # Ensure loader ran to populate _RESONANCE_CONFIG_PATH if possible
+    try:
+        load_resonance_config()
+    except Exception:
+        pass
+
+    if _RESONANCE_CONFIG_PATH is not None:
+        return _RESONANCE_CONFIG_PATH
+
+    # Derive default locations without creating files
+    try:
+        import os as _os
+        env_path = _os.environ.get("RESONANCE_CONFIG")
+        if env_path:
+            p = Path(env_path)
+            if p.exists():
+                return p
+    except Exception:
+        pass
+
+    base = Path("configs")
+    primary = base / "resonance_config.json"
+    example = base / "resonance_config.example.json"
+    if primary.exists():
+        return primary
+    if example.exists():
+        return example
+    return None
+
+
+def get_resonance_optimization(now: Optional[datetime.datetime] = None) -> Dict[str, Any]:
+    """Return sanitized optimization guidance derived from resonance config."""
+
+    def _safe_hour(value: Any, default: int) -> int:
+        try:
+            val = int(value)
+        except Exception:
+            val = default
+        return max(0, min(23, val))
+
+    cfg = load_resonance_config()
+    opt_cfg = cfg.get("optimization") if isinstance(cfg.get("optimization"), dict) else {}
+
+    enabled = bool(opt_cfg.get("enabled", True))
+    prefer_gateway = bool(opt_cfg.get("prefer_gateway", False))
+    prefer_peak = bool(opt_cfg.get("prefer_peak_hours", False))
+
+    peak_hours_cfg = opt_cfg.get("peak_hours") if isinstance(opt_cfg.get("peak_hours"), dict) else {}
+    start_hour = _safe_hour(peak_hours_cfg.get("start", 8), 8)
+    end_hour = _safe_hour(peak_hours_cfg.get("end", 16), 16)
+
+    tz_name = opt_cfg.get("timezone")
+    current_dt = now
+    if current_dt is None:
+        if tz_name:
+            try:
+                from zoneinfo import ZoneInfo  # type: ignore
+
+                current_dt = datetime.datetime.now(ZoneInfo(str(tz_name)))
+            except Exception:
+                current_dt = datetime.datetime.now()
+        else:
+            current_dt = datetime.datetime.now()
+
+    hour = current_dt.hour
+
+    def _in_window(h: int, start: int, end: int) -> bool:
+        if start == end:
+            return True  # Degenerate window -> treat as always peak
+        if start < end:
+            return start <= h < end
+        return h >= start or h < end
+
+    is_peak_now = _in_window(hour, start_hour, end_hour)
+
+    preferred_channels_cfg = opt_cfg.get("preferred_channels")
+    preferred_channels: List[str]
+    if isinstance(preferred_channels_cfg, list) and preferred_channels_cfg:
+        preferred_channels = [str(ch).strip() for ch in preferred_channels_cfg if str(ch).strip()]
+    else:
+        preferred_channels = [
+            "gemini",
+            "gateway",
+            "cloud_ai",
+            "local_llm",
+        ] if prefer_gateway else [
+            "local_llm",
+            "gemini",
+            "cloud_ai",
+            "gateway",
+        ]
+
+    if prefer_peak and not is_peak_now:
+        offpeak_channels_cfg = opt_cfg.get("offpeak_channels")
+        if isinstance(offpeak_channels_cfg, list) and offpeak_channels_cfg:
+            preferred_channels = [str(ch).strip() for ch in offpeak_channels_cfg if str(ch).strip()]
+        else:
+            preferred_channels = list(reversed(preferred_channels))
+
+    batch_level = str(opt_cfg.get("batch_compression", "auto") or "auto").lower()
+    batch_compression = batch_level not in {"auto", "none", "off", "normal"}
+    learning_bias = str(opt_cfg.get("learning_bias", "balanced") or "balanced").lower()
+    offpeak_mode = str(opt_cfg.get("offpeak_mode", "normal") or "normal").lower()
+
+    should_throttle_offpeak = bool(prefer_peak and not is_peak_now and offpeak_mode in {"lightweight", "throttle", "conserve"})
+
+    timeout_cfg = opt_cfg.get("timeouts") if isinstance(opt_cfg.get("timeouts"), dict) else {}
+    peak_timeout_ms = int(timeout_cfg.get("peak_ms", 260))
+    offpeak_timeout_ms = int(timeout_cfg.get("offpeak_ms", max(peak_timeout_ms, 360)))
+    timeout_ms = peak_timeout_ms if is_peak_now else offpeak_timeout_ms
+
+    retry_cfg = opt_cfg.get("retry_attempts") if isinstance(opt_cfg.get("retry_attempts"), dict) else {}
+    peak_retries = int(retry_cfg.get("peak", 2))
+    offpeak_retries = int(retry_cfg.get("offpeak", max(peak_retries, 3)))
+    retry_attempts = peak_retries if is_peak_now else offpeak_retries
+
+    return {
+        "enabled": enabled,
+        "prefer_gateway": prefer_gateway,
+        "prefer_peak_hours": prefer_peak,
+        "is_peak_now": is_peak_now,
+        "phase": "peak" if is_peak_now else "off-peak",
+        "current_hour": hour,
+        "preferred_channels": preferred_channels,
+        "offpeak_mode": offpeak_mode,
+        "batch_compression": batch_compression,
+        "batch_compression_level": batch_level,
+        "learning_bias": learning_bias,
+        "peak_window": {
+            "start": start_hour,
+            "end": end_hour,
+            "timezone": tz_name or "local",
+        },
+        "should_throttle_offpeak": should_throttle_offpeak,
+        "timeout_ms": timeout_ms,
+        "retry_attempts": retry_attempts,
+    }
 
 
 def get_active_mode() -> str:
@@ -286,7 +459,7 @@ def record_task_resonance(
         event = ResonanceEvent(
             task_id=task_id,
             resonance_key=resonance_key,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.datetime.now(datetime.timezone.utc),
             metrics=metrics,
             tags=tags,
         )
