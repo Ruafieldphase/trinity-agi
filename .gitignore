@@ -69,6 +69,9 @@ outputs/cache_validation_*.txt
 outputs/worker_monitor.log
 outputs/rpa_worker_debug.log*
 
+# Large conversation data (original sources)
+ai_binoche_conversation_origin/
+
 # Keep important output files
 !outputs/youtube_learner_index.md
 !outputs/monitoring_report_latest.md
