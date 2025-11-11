@@ -1,4 +1,0 @@
-﻿{
-    "error":  "nvidia-smi command failed: ERROR: Option noheader is not recognized. Please run \u0027nvidia-smi -h\u0027 for help. ",
-    "available":  false
-}

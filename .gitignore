@@ -69,13 +69,109 @@ outputs/cache_validation_*.txt
 outputs/worker_monitor.log
 outputs/rpa_worker_debug.log*
 
+# Media files (images, audio, video)
+*.wav
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# CSV data files (analysis outputs)
+outputs/*.csv
+
+# Backups and snapshots
+backups/
+outputs/snapshots/
+outputs/health_snapshots/
+outputs/session_memory/
+
+# Process IDs and state files
+*.pid
+outputs/*_state.json
+outputs/*_status.json
+
 # Large conversation data (original sources)
 ai_binoche_conversation_origin/
+
+# Large audio/music files (WAV format)
+music/
+
+# YouTube Learner outputs (large analysis JSON files)
+outputs/youtube_learner/
+outputs/youtube_learner_*
+
+# Stream Observer telemetry data
+outputs/stream_observer_*
+outputs/flow_observer_*
+
+# Original Data indices (large)
+outputs/original_data_index.*
+
+# Monitoring and analysis outputs (large)
+outputs/monitoring_dashboard_*
+outputs/monitoring_report_*
+outputs/monitoring_metrics_*
+outputs/monitoring_events_*
+outputs/autopoietic_*
+outputs/ledger_summary_*
+outputs/ensemble_*
+outputs/bohm_analysis_*
+outputs/sena_correlation_*
+outputs/cache_*
+
+# Realtime pipeline outputs
+outputs/realtime_pipeline_*
+
+# Performance dashboards
+outputs/performance_dashboard_*
+
+# Session continuity reports
+outputs/session_continuity_*
+outputs/.copilot_context_summary.md
+
+# Microphone analysis data
+outputs/microphone/
+
+# Program learning data
+outputs/program_learning/
+
+# Visual test reports
+outputs/visual_*
+
+# Groove profiles
+outputs/groove_profile_*
+
+# Binaural/rhythm audio files
+outputs/binaural_*.wav
+outputs/rhythm_signature_*.wav
+
+# Test outputs and phase artifacts
+outputs/phase3_test/
+outputs/telemetry/
+outputs/sian/
+outputs/rua/
+
+# Watchdog status snapshots (time-series data)
+outputs/watchdog_status_*.json
+outputs/watchdog_status_*.txt
+
+# Flow observer reports (keep only latest)
+outputs/flow_observer_report_*.json
+!outputs/flow_observer_report_latest.json
+
+# Lumen cache
+outputs/lumen_prism_cache.json
 
 # Keep important output files
 !outputs/youtube_learner_index.md
 !outputs/monitoring_report_latest.md
 !outputs/cache_analysis_latest.md
+!outputs/cache_analysis_latest.json
+!outputs/ledger_summary_latest.md
+!outputs/ledger_summary_latest.json
+!outputs/autonomous_goals_latest.md
+!outputs/autonomous_goals_latest.json
 
 # Temporary files
 *.tmp
