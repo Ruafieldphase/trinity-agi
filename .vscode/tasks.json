@@ -6489,6 +6489,32 @@
 			"group": "test"
 		},
 		{
+			"label": "🔭 Codex: Meta-Observer Run",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/codex_meta_observer.py' } else { python '${workspaceFolder}/scripts/codex_meta_observer.py' }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🔭 Codex: Open Latest Observation",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$latest = Get-ChildItem '${workspaceFolder}/outputs/codex_meta_observer' -Filter 'meta_observation_*.json' | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latest) { code $latest.FullName } else { Write-Host 'No observation found. Run: 🔭 Codex: Meta-Observer Run' -ForegroundColor Yellow }"
+			],
+			"group": "none"
+		},
+		{
 			"label": "👁️ Goal: Execute in VS Code (Observed)",
 			"type": "shell",
 			"command": "powershell",
