@@ -1,0 +1,8 @@
+{"mode": "observer", "perspective": "wave", "frequency_hz": 257142.85714285716, "pattern": "accelerating", "data_count": 10, "timestamp": "2025-11-06T07:58:04.060171+00:00"}
+{"mode": "walker", "perspective": "particle", "path_length": 10, "total_energy": 4.5, "walking_pattern": "descending", "timestamp": "2025-11-06T07:58:04.061546+00:00"}
+{"event": "perspective_switch", "from": "observer", "to": "walker", "timestamp": "2025-11-06T07:58:04.062451+00:00"}
+{"event": "perspective_switch", "from": "walker", "to": "observer", "timestamp": "2025-11-06T07:58:04.062673+00:00"}
+{"mode": "observer", "perspective": "wave", "frequency_hz": 333333.3333333333, "pattern": "accelerating", "data_count": 5, "timestamp": "2025-11-06T07:58:04.063342+00:00"}
+{"mode": "observer", "perspective": "wave", "frequency_hz": 243243.24324324325, "pattern": "accelerating", "data_count": 10, "timestamp": "2025-11-06T07:58:17.609451+00:00"}
+{"mode": "walker", "perspective": "particle", "path_length": 10, "total_energy": 4.5, "walking_pattern": "descending", "timestamp": "2025-11-06T07:58:17.610007+00:00"}
+{"event": "perspective_switch", "from": "observer", "to": "walker", "timestamp": "2025-11-06T07:58:17.610582+00:00"}
