@@ -1,0 +1,140 @@
+[2025-11-06 18:55:25] New PowerShell Window Detected!
+  PID: 40492
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 18:56:04] New PowerShell Window Detected!
+  PID: 35244
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 18:56:08] New PowerShell Window Detected!
+  PID: 28100
+  Name: powershell
+  Title: 
+  Command: "powershell.exe" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\workspace\agi\scripts\run_feedback_loop_once.ps1
+  Visible: False
+----------------------------------------
+[2025-11-06 18:56:10] New PowerShell Window Detected!
+  PID: 49504
+  Name: powershell
+  Title: 
+  Command: powershell -NoProfile -ExecutionPolicy Bypass -File C:\workspace\agi\scripts\merge_augmented_ledgers.ps1
+  Visible: False
+----------------------------------------
+[2025-11-06 18:56:27] New PowerShell Window Detected!
+  PID: 55912
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 18:56:57] New PowerShell Window Detected!
+  PID: 54236
+  Name: powershell
+  Title: 관리자: Windows PowerShell
+  Command: 
+  Visible: True
+----------------------------------------
+[2025-11-06 18:57:04] New PowerShell Window Detected!
+  PID: 56176
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 18:57:32] New PowerShell Window Detected!
+  PID: 53480
+  Name: powershell
+  Title: 
+  Command: "C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\workspace\agi\scripts\observe_desktop_telemetry.ps1 -IntervalSeconds 5
+  Visible: False
+----------------------------------------
+[2025-11-06 18:57:33] New PowerShell Window Detected!
+  PID: 53960
+  Name: powershell
+  Title: 
+  Command: "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" -Version 5.1 -s -NoLogo -NoProfile
+  Visible: False
+----------------------------------------
+[2025-11-06 18:58:32] New PowerShell Window Detected!
+  PID: 52840
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 18:58:34] New PowerShell Window Detected!
+  PID: 44812
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 18:58:36] New PowerShell Window Detected!
+  PID: 42124
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 18:59:03] New PowerShell Window Detected!
+  PID: 52412
+  Name: powershell
+  Title: 
+  Command: "powershell.exe" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "C:\workspace\agi\scripts\collect_monitoring_samples.ps1" -MaxSamples 1 -IntervalSeconds 1
+  Visible: False
+----------------------------------------
+[2025-11-06 18:59:34] New PowerShell Window Detected!
+  PID: 56492
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 19:00:04] New PowerShell Window Detected!
+  PID: 6952
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 19:00:07] New PowerShell Window Detected!
+  PID: 51516
+  Name: powershell
+  Title: 
+  Command: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command "try { . \"c:\Users\kuirv\AppData\Local\Programs\Microsoft VS Code\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1\" } catch {}"
+  Visible: False
+----------------------------------------
+[2025-11-06 19:00:39] New PowerShell Window Detected!
+  PID: 55896
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 19:01:04] New PowerShell Window Detected!
+  PID: 56284
+  Name: powershell
+  Title: 
+  Command: 
+  Visible: False
+----------------------------------------
+[2025-11-06 19:01:08] New PowerShell Window Detected!
+  PID: 52408
+  Name: powershell
+  Title: 
+  Command: "powershell.exe" -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File C:\workspace\agi\scripts\run_feedback_loop_once.ps1
+  Visible: False
+----------------------------------------
+[2025-11-06 19:01:11] New PowerShell Window Detected!
+  PID: 51256
+  Name: powershell
+  Title: 
+  Command: powershell -NoProfile -ExecutionPolicy Bypass -File C:\workspace\agi\scripts\merge_augmented_ledgers.ps1
+  Visible: False
+----------------------------------------
