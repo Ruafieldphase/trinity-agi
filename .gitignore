@@ -192,7 +192,8 @@ outputs/lumen_prism_cache.json
 .env.local
 nul
 
-# Files with Korean filename encoding issues
+# Files with Korean filename encoding issues  
 outputs/*-✨-*
 outputs/*-🌊-*
 outputs/*이어내다씨앗코덱스*
+outputs/*-�-�-*
