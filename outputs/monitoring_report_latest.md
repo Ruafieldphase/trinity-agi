@@ -1,6 +1,6 @@
 ﻿# Monitoring Report
 
-**Generated**: 2025-11-11 19:49:36
+**Generated**: 2025-11-11 19:54:08
 **Time Window**: Last 24 hours
 **Data Points**: 282 snapshots
 
@@ -20,6 +20,7 @@
   Lumen Gateway: 98.94% avail  |  347.06ms mean
   Resonance Policy: mode=n/a active=quality-first last=n/a | allow=0 warn=0 block=0
   Resonance Optimization: total=0 peak=0 offpeak=0 throttle=0 gateway_pref=0
+  AGI Eval: min_quality=0.6
   Feedback Loop: YouTube=3 RPA=50 events ingested
 
   --- vs Previous Period (24h ago) ---
@@ -201,7 +202,7 @@ Lines analyzed (ledger): 34908
 
 Auto Stabilizer Summary: 2025-11-04T16:52:51.900363 Micro-Reset triggered (success=True, dry_run=True, fear=0.500)
 
-RPA Worker Summary: [2025-11-11 19:44:43] [INFO] Worker already running and healthy.
+RPA Worker Summary: [2025-11-11 19:53:53] [INFO] Worker already running and healthy.
 
 RPA Worker Alert: Restart limit reached for RPA worker ensure job. (timestamp=2025-11-03T18:45:23.2234157+09:00, recent_restarts=3/3, window_seconds=600)
 

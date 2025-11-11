@@ -1,10 +1,10 @@
 {
-  "timestamp": "2025-11-11T19:24:08.547184",
+  "timestamp": "2025-11-11T19:54:09.199980",
   "health_data": {
-    "timestamp": "2025-11-11T19:23:52.055379",
+    "timestamp": "2025-11-11T19:53:52.051435",
     "overall_status": "critical",
     "overall_emoji": "🚨",
-    "overall_score": 36.0,
+    "overall_score": 22.0,
     "loop_results": {
       "self_care": {
         "loop_name": "Self-Care",
@@ -29,24 +29,24 @@
       "goal_generation": {
         "loop_name": "Goal Generation",
         "file_status": {
-          "status": "healthy",
-          "age_minutes": 60.0,
-          "message": "정상 (최근 60.0분)",
-          "severity": "none"
+          "status": "stale",
+          "age_minutes": 90.0,
+          "message": "정체: 너무 오래됨 (최근 90.0분)",
+          "severity": "high"
         },
         "alerts": [],
         "overall_health": {
-          "score": 100.0,
-          "status": "healthy",
-          "emoji": "✅"
+          "score": 30.0,
+          "status": "critical",
+          "emoji": "🚨"
         }
       },
       "goal_execution": {
         "loop_name": "Goal Execution",
         "file_status": {
           "status": "stale",
-          "age_minutes": 5383.9,
-          "message": "정체: 너무 오래됨 (최근 5383.9분)",
+          "age_minutes": 5413.9,
+          "message": "정체: 너무 오래됨 (최근 5413.9분)",
           "severity": "high"
         },
         "alerts": [],
@@ -87,38 +87,58 @@
     },
     "synchronization": {
       "synchronized": false,
-      "max_time_diff_minutes": 5353.9,
-      "message": "최대 시간 차이: 5353.9분",
+      "max_time_diff_minutes": 5383.9,
+      "message": "최대 시간 차이: 5383.9분",
       "update_times": {
         "self_care": 30.0,
-        "goal_generation": 60.0,
-        "goal_execution": 5383.9
+        "goal_generation": 90.0,
+        "goal_execution": 5413.9
       }
     },
     "critical_alerts": [],
     "recommendations": [
-      "⏰ 리듬 동기화 필요: 최대 5353.9분 차이 발생",
-      "🛟 Self-care 루프 점검 필요: scripts/update_self_care_metrics.ps1 실행"
+      "⏰ 리듬 동기화 필요: 최대 5383.9분 차이 발생",
+      "🛟 Self-care 루프 점검 필요: scripts/update_self_care_metrics.ps1 실행",
+      "🎯 목표 생성기 재실행 필요: python scripts/autonomous_goal_generator.py"
     ]
   },
   "analysis": {
     "needs_intervention": true,
-    "intervention_level": "warning",
+    "intervention_level": "critical",
     "reasons": [
-      "경고 상태: 점수 36.0/100",
-      "리듬 동기화 필요 (차이: 5353.9분)",
+      "심각한 상태: 점수 22.0/100",
+      "리듬 동기화 필요 (차이: 5383.9분)",
       "Self-care 루프 점검 필요",
+      "목표 생성기 재실행 필요",
       "피드백 분석 필요",
       "Trinity 사이클 누락 (선택적)"
     ],
     "actions": [
+      "generate_goals",
+      "notify_admin",
+      "emergency_recovery",
       "update_self_care",
       "analyze_feedback"
     ],
-    "score": 36.0,
+    "score": 22.0,
     "status": "critical"
   },
   "action_results": [
+    {
+      "success": true,
+      "action": "generate_goals",
+      "result": "목표 생성 완료"
+    },
+    {
+      "success": true,
+      "action": "notify_admin",
+      "result": "알림 기록: C:\\workspace\\agi\\outputs\\meta_supervisor_alerts.log"
+    },
+    {
+      "success": true,
+      "action": "emergency_recovery",
+      "result": "긴급 복구 완료: Task Queue Server 재시작; RPA Worker 재시작; Self-care 요약 갱신 완료; 목표 생성 완료"
+    },
     {
       "success": true,
       "action": "update_self_care",
@@ -127,7 +147,7 @@
     {
       "success": true,
       "action": "analyze_feedback",
-      "result": "분석 실패: 2025-11-11 19:23:52,931 - INFO - 🔄 피드백 분석 시작 (최근 24시간)\n2025-11-11 19:23:52,931 - INFO - Goal Tracker 로드 완료: 13 goals\n2025-11-11 19:23:53,109 - INFO - Resonance Ledger: 0 events (last 24h)\n2025-11-11 19:23:53,116 - INFO - Self-Care 요약 로드 완료\n2025-11-11 19:23:53,116 - INFO - ✅ 피드백 분석 저장: C:\\workspace\\agi\\outputs\\feedback_analysis_20251111_192353.json\n2025-11-11 19:23:53,117 - INFO - 📄 Markdown 보고서 생성: C:\\workspace\\agi\\outputs\\feedback_analysis_20251111_192353.md\n2025-11-11 19:23:53,128 - INFO - ✅ Latest 링크 업데이트 완료\n"
+      "result": "분석 실패: 2025-11-11 19:53:55,079 - INFO - 🔄 피드백 분석 시작 (최근 24시간)\n2025-11-11 19:53:55,080 - INFO - Goal Tracker 로드 완료: 13 goals\n2025-11-11 19:53:55,221 - INFO - Resonance Ledger: 0 events (last 24h)\n2025-11-11 19:53:55,227 - INFO - Self-Care 요약 로드 완료\n2025-11-11 19:53:55,228 - INFO - ✅ 피드백 분석 저장: C:\\workspace\\agi\\outputs\\feedback_analysis_20251111_195355.json\n2025-11-11 19:53:55,228 - INFO - 📄 Markdown 보고서 생성: C:\\workspace\\agi\\outputs\\feedback_analysis_20251111_195355.md\n2025-11-11 19:53:55,237 - INFO - ✅ Latest 링크 업데이트 완료\n"
     }
   ],
   "verification": {
@@ -143,7 +163,7 @@
       {
         "name": "validate_observer_dashboard",
         "exit_code": 1,
-        "stdout": "9.9분 전 업데이트\n\n▶ JSON 구조 검증\n✅ stream_observer_summary_latest.json: 모든 필수 키 존재\n   - total_records: 23835\n\n▶ HTML 내용 검증\n✅ Stream Observer 섹션 존재\n✅ Observer 차트 존재\n✅ Observer 로드 함수 존재\n✅ Refresh 버튼 존재\n\n▶ 통합 리포트 검증\n✅ 통합 상태: SUCCESS\n\n============================================================\n📊 검증 결과 요약\n============================================================\n✅ PASS: 파일:통합 대시보드 HTML\n✅ PASS: 파일:Observer Summary JSON\n✅ PASS: 파일:Observer Summary MD\n✅ PASS: 파일:모니터링 메트릭 JSON\n✅ PASS: 파일:통합 상태 JSON\n❌ FAIL: 신선도:통합 대시보드 HTML\n❌ FAIL: 신선도:Observer Summary JSON\n❌ FAIL: 신선도:Observer Summary MD\n✅ PASS: JSON구조:Observer\n✅ PASS: HTML내용:Dashboard\n✅ PASS: 통합상태\n\n============================================================\n합격률: 8/11 (72.7%)\n============================================================\n\n⚠️ 3개 테스트 실패\n",
+        "stdout": "0.0분 전 업데이트\n\n▶ JSON 구조 검증\n✅ stream_observer_summary_latest.json: 모든 필수 키 존재\n   - total_records: 25269\n\n▶ HTML 내용 검증\n✅ Stream Observer 섹션 존재\n✅ Observer 차트 존재\n✅ Observer 로드 함수 존재\n✅ Refresh 버튼 존재\n\n▶ 통합 리포트 검증\n✅ 통합 상태: SUCCESS\n\n============================================================\n📊 검증 결과 요약\n============================================================\n✅ PASS: 파일:통합 대시보드 HTML\n✅ PASS: 파일:Observer Summary JSON\n✅ PASS: 파일:Observer Summary MD\n✅ PASS: 파일:모니터링 메트릭 JSON\n✅ PASS: 파일:통합 상태 JSON\n✅ PASS: 신선도:통합 대시보드 HTML\n❌ FAIL: 신선도:Observer Summary JSON\n❌ FAIL: 신선도:Observer Summary MD\n✅ PASS: JSON구조:Observer\n✅ PASS: HTML내용:Dashboard\n✅ PASS: 통합상태\n\n============================================================\n합격률: 9/11 (81.8%)\n============================================================\n\n⚠️ 2개 테스트 실패\n",
         "stderr": "",
         "success": false
       },
