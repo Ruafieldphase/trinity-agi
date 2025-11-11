@@ -18,6 +18,7 @@ from .action_mapper import ActionMapper
 from .executor import RPAExecutor
 from .verifier import ExecutionVerifier
 from .failsafe import Failsafe, enable_failsafe
+from .core import RPACore
 
 logger = logging.getLogger(__name__)
 
@@ -136,6 +137,8 @@ class ExecutionEngine:
         else:
             self.failsafe = None
         
+        self.rpa_core = RPACore()
+        
         logger.info(f"ExecutionEngine initialized: mode={config.mode.value}, "
                    f"verification={config.enable_verification}, "
                    f"failsafe={config.enable_failsafe}")
@@ -157,6 +160,13 @@ class ExecutionEngine:
         """
         import time
         start_time = time.time()
+
+        # Prepare containers for partial-progress safe returns
+        steps: List[Dict[str, Any]] = []
+        actions: List[Dict[str, Any]] = []
+        action_results: List[Dict[str, Any]] = []
+        verification_results: List[Dict[str, Any]] = []
+        failed_count: int = 0
         
         logger.info(f"Starting tutorial execution: {tutorial_name} (mode={self.config.mode.value})")
         
@@ -183,7 +193,6 @@ class ExecutionEngine:
             logger.info("Step 1: Extracting steps from tutorial...")
             
             # 간단한 텍스트 파싱 (줄 단위)
-            steps = []
             step_num = 0
             for line in tutorial_text.strip().split('\n'):
                 line = line.strip()
@@ -228,14 +237,10 @@ class ExecutionEngine:
             
             # 3. Execute: 액션 실행 (RPAExecutor는 steps dict 리스트를 받음)
             logger.info(f"Step 3: Executing {len(actions)} actions...")
-            
-            verification_results = []  # 검증 결과 초기화
-            
+
             if self.config.mode != ExecutionMode.VERIFY_ONLY:
                 # RPAExecutor.execute_steps 사용
                 execution_report = self.executor.execute_steps(actions)
-                
-                action_results = []
                 for i, step_result in enumerate(execution_report.results, 1):
                     result_dict = step_result.get("result", {})
                     action_results.append({
@@ -248,8 +253,32 @@ class ExecutionEngine:
                 
                 # ExecutionReport에서 failed 카운트 가져오기
                 failed_count = execution_report.failed
+
+                # BQI Phase 6 Integration (best-effort; never fail the run)
+                try:
+                    logger.info("Step 4: Evaluating execution with Binoche...")
+                    rpa_result_for_bqi = {
+                        "success": execution_report.success,
+                        "output_path": None,
+                        "error": execution_report.results[-1].get("result", {}).get("error") if not execution_report.success else None
+                    }
+                    bqi_coord_for_bqi = {"priority": 1, "emotion": "neutral", "rhythm": "execution"}
+
+                    import asyncio
+                    try:
+                        loop = asyncio.get_running_loop()
+                    except RuntimeError:
+                        loop = asyncio.new_event_loop()
+                        asyncio.set_event_loop(loop)
+
+                    bqi_decision = loop.run_until_complete(
+                        self.rpa_core.evaluate_and_decide(tutorial_name, rpa_result_for_bqi, bqi_coord_for_bqi)
+                    )
+                    logger.info(f"Binoche decision: {bqi_decision}")
+                except Exception as bqi_err:
+                    # Log and continue; do not let BQI failures zero-out results
+                    logger.warning(f"Binoche evaluation skipped due to error: {bqi_err}")
             else:
-                action_results = []
                 failed_count = 0
             
             # 실행 완료
@@ -276,20 +305,21 @@ class ExecutionEngine:
             return result
         
         except Exception as e:
+            # Preserve partial progress if available
             logger.error(f"Tutorial execution failed: {e}")
             execution_time = time.time() - start_time
-            
+
             return ExecutionResult(
                 success=False,
                 mode=self.config.mode,
                 tutorial_name=tutorial_name,
-                total_actions=0,
-                executed_actions=0,
-                verified_actions=0,
-                failed_actions=0,
+                total_actions=len(actions) if actions is not None else 0,
+                executed_actions=len(action_results) if action_results is not None else 0,
+                verified_actions=len(verification_results) if verification_results is not None else 0,
+                failed_actions=failed_count if isinstance(failed_count, int) else 0,
                 execution_time=execution_time,
-                action_results=[],
-                verification_results=[],
+                action_results=action_results or [],
+                verification_results=verification_results or [],
                 errors=[str(e)]
             )
     

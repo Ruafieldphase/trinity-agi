@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [switch]$Status,
@@ -118,9 +118,11 @@ if ($Register) {
 
     if ($NoWake) {
         $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries:$allowStartIfOnBatteries -DontStopIfGoingOnBatteries:$dontStopIfGoingOnBatteries -StartWhenAvailable
+$settings.Hidden = $true
     }
     else {
-        $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries:$allowStartIfOnBatteries -DontStopIfGoingOnBatteries:$dontStopIfGoingOnBatteries -StartWhenAvailable -WakeToRun
+        $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries:$allowStartIfOnBatteries -DontStopIfGoingOnBatteries:$dontStopIfGoingOnBatteries -StartWhenAvailable
+$settings.Hidden = $true -WakeToRun
     }
     # Choose principal
     $principal = $null

@@ -1,4 +1,4 @@
-# Register Task Watchdog as Scheduled Task
+﻿# Register Task Watchdog as Scheduled Task
 # This monitors Task Queue for stuck tasks and auto-recovers them
 
 param(
@@ -60,6 +60,7 @@ if ($Register) {
 
     # Create settings
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
+$settings.Hidden = $true
 
     # Register task
     try {

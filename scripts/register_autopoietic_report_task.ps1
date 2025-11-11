@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [string]$TaskName = "AutopoieticLoopDailyReport",
@@ -51,6 +51,7 @@ if ($Register) {
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $psArgs -WorkingDirectory $WorkspaceRoot
     $trigger = New-ScheduledTaskTrigger -Once -At $runAt -RepetitionInterval (New-TimeSpan -Days 1) -RepetitionDuration (New-TimeSpan -Days 3650)
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries:$false -DontStopIfGoingOnBatteries:$false -StartWhenAvailable -WakeToRun
+$settings.Hidden = $true
     $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 
     try {

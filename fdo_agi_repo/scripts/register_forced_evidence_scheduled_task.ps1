@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$TaskName = "AGI_ForcedEvidenceCheck_Daily",
     [string]$Time = "03:00",
     [int]$LastHours = 24,
@@ -92,6 +92,7 @@ try {
         }
 
         $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 10)
+$settings.Hidden = $true
         $task = New-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings
 
         if ($User -and $Password) {

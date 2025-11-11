@@ -1,4 +1,4 @@
-# Register Windows Scheduled Task for Ensemble Success Monitor
+﻿# Register Windows Scheduled Task for Ensemble Success Monitor
 # Monitors Phase 7 Ensemble performance continuously
 
 param(
@@ -52,6 +52,7 @@ function Register-Task {
     
     # Create settings
     $Settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
         -AllowStartIfOnBatteries `
         -DontStopIfGoingOnBatteries `
         -StartWhenAvailable `

@@ -1,7 +1,59 @@
 {
-  "agent": "lubit",
-  "timestamp": "2025-10-22T16:40:58.930783",
-  "prompt": "워크스페이스 보안 취약점 검토 및 민감정보 탐지",
-  "file": null,
-  "result": "🛡️ LUBIT AGENT - Security & Quality Review\nTimestamp: 2025-10-22 16:40:58.930783\nPrompt: 워크스페이스 보안 취약점 검토 및 민감정보 탐지\n\n🔒 Security Findings:\n- Input validation required for user data\n- XSS prevention needed for DOM manipulation\n- SQL injection protection for database queries\n- Implement proper authentication checks\n- Add CSRF protection for sensitive operations\n\n📋 Best Practices Applied:\n- Code review standards verified\n- Security compliance checked\n✅ Quality assessment completed!"
+  "timestamp": "2025-11-05T05:49:01.272477",
+  "total_records": 9168,
+  "unique_sessions": 80,
+  "avg_messages_per_session": 114.6,
+  "role_distribution": {
+    "user": 4722,
+    "assistant": 4446
+  },
+  "top_sessions": [
+    {
+      "session_id": "019a3a3e...",
+      "message_count": 520
+    },
+    {
+      "session_id": "0199e092...",
+      "message_count": 466
+    },
+    {
+      "session_id": "0199c882...",
+      "message_count": 418
+    },
+    {
+      "session_id": "0199d22e...",
+      "message_count": 362
+    },
+    {
+      "session_id": "0199c661...",
+      "message_count": 348
+    },
+    {
+      "session_id": "0199d886...",
+      "message_count": 334
+    },
+    {
+      "session_id": "f45c62b9...",
+      "message_count": 334
+    },
+    {
+      "session_id": "019a067c...",
+      "message_count": 314
+    },
+    {
+      "session_id": "0199cbc9...",
+      "message_count": 308
+    },
+    {
+      "session_id": "019a3f5f...",
+      "message_count": 292
+    }
+  ],
+  "time_range": {
+    "start": "2025-09-14T02:36:43.744Z",
+    "end": "2025-11-03T13:00:09.965Z",
+    "span_days": 50
+  },
+  "source_files": 81,
+  "avg_content_length": 4409.36
 }

@@ -1,4 +1,4 @@
-# Resonance Loop + 루멘 자동화 등록 스크립트
+﻿# Resonance Loop + 루멘 자동화 등록 스크립트
 # 일일 자동 분석을 예약합니다
 
 param(
@@ -98,6 +98,7 @@ if ($Register) {
     
     # Settings 정의
     $settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
         -AllowStartIfOnBatteries `
         -DontStopIfGoingOnBatteries `
         -StartWhenAvailable `

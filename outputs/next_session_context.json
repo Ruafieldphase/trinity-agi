@@ -1,11 +1,10 @@
-﻿{
-    "savedAt":  "2025-11-03_114345",
+{
+    "savedAt":  "2025-11-08_175141",
     "processesRunning":  true,
     "actionItems":  [
-                        "재부팅 후 \u0027시스템 점검해줘\u0027 실행 권장",
-                        "의존성 업그레이드됨 - 프로세스 재시작 필요할 수 있음"
+                        "재부팅 후 \u0027시스템 점검해줘\u0027 실행 권장"
                     ],
     "note":  "",
-    "lastCommit":  "5b3b46e00b9172d18bdde17cdf3167036d5fa8b6",
-    "upgradesApplied":  true
+    "lastCommit":  "42632cc82ab3e7bf256b50e2e87b02174f249272",
+    "upgradesApplied":  false
 }

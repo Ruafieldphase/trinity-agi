@@ -1,11 +1,11 @@
 ﻿# Policy A/B Snapshot
 
-Generated: 2025-11-03 16:05:07
-Lines analyzed (ledger): 15987
+Generated: 2025-11-09 09:44:49
+Lines analyzed (ledger): 34908
 
 ## Ledger-Based Counts
-- quality-first: count=159 allow=41 warn=118 block=0 avg=20446ms p95=34001ms
+- quality-first: count=45 allow=35 warn=10 block=0 avg=11925ms p95=50297ms
 
 ## Synthetic Re-Evaluation
-- quality-first: n=112 allow=41 warn=71 avg=18628ms p95=34012ms
-- latency-first: n=112 allow=41 warn=71 avg=18628ms p95=34012ms
+- quality-first: n=31 allow=25 warn=6 avg=10445ms p95=26316ms
+- latency-first: n=31 allow=25 warn=6 avg=10445ms p95=26316ms

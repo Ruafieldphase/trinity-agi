@@ -3,6 +3,7 @@ param(
     [string]$OutJson,
     [switch]$LogJsonl,
     [switch]$Perf,
+    [switch]$EnrichSnapshot,  # when set: extend enrichment to JSONL log lines (Perf/Goals) in addition to default OutJson behavior
     [string]$LogPath = "C:\workspace\agi\outputs\status_snapshots.jsonl",
     [int]$WarnLocalMs = 1800,
     [int]$AlertLocalMs = 2500,
@@ -17,7 +18,14 @@ param(
     [switch]$UseAdaptiveThresholds,
     [double]$AdaptiveWarnSigmas = 1.5,  # ?�균 + 1.5? (was 1.0?) - reduces false positives by ~50%
     [double]$AdaptiveAlertSigmas = 2.5,  # ?�균 + 2.5? (was 2.0?) - further reduces alert noise
-    [switch]$HideOptional  # hide optional local channel (18090)
+    [switch]$HideOptional,  # hide optional local channel (18090)
+    
+    # Dual-resolution: trigger microscope capture when a spark (warn/alert) fires
+    [switch]$MicroscopeOnSpark,
+    [int]$MicroscopeWindowSeconds = 3,
+    [ValidateSet('minimal', 'normal', 'full')]
+    [string]$MicroscopeLevel = 'minimal',
+    [int]$MicroscopeCooldownSec = 120
 )
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
@@ -166,6 +174,57 @@ function Show-PerfSummary {
     }
 }
 
+# Enrich snapshot with performance and goal tracker summary.
+# OutJson previously always included this enrichment; we preserve that behavior.
+# When -EnrichSnapshot is passed we also enrich JSONL log snapshots.
+function Enrich-Snapshot {
+    param([hashtable]$Snapshot)
+    if (-not $Snapshot) { return $Snapshot }
+    try {
+        # Skip if already enriched (idempotent)
+        if (-not ($Snapshot.PSObject.Properties.Name -contains 'Perf')) {
+            $root = Split-Path -Parent $PSScriptRoot
+            $perfPath = Join-Path $root 'outputs\performance_metrics_latest.json'
+            if (Test-Path -LiteralPath $perfPath) {
+                $perfObj = Get-Content -LiteralPath $perfPath -Raw | ConvertFrom-Json
+                if ($perfObj) {
+                    $Snapshot.Perf = @{
+                        EffectiveSuccess = if ($perfObj.OverallEffectiveSuccessRate) { [double]$perfObj.OverallEffectiveSuccessRate } else { $null }
+                        OverallSuccess   = if ($perfObj.OverallSuccessRate) { [double]$perfObj.OverallSuccessRate } else { $null }
+                        Systems          = if ($perfObj.SystemsConsidered) { [int]$perfObj.SystemsConsidered } else { $null }
+                        ExcellentAt      = if ($perfObj.Thresholds -and $perfObj.Thresholds.ExcellentAt) { [double]$perfObj.Thresholds.ExcellentAt } else { 90 }
+                        GoodAt           = if ($perfObj.Thresholds -and $perfObj.Thresholds.GoodAt) { [double]$perfObj.Thresholds.GoodAt } else { 70 }
+                    }
+                }
+            }
+        }
+    }
+    catch { }
+    try {
+        if (-not ($Snapshot.PSObject.Properties.Name -contains 'Goals')) {
+            $root = Split-Path -Parent $PSScriptRoot
+            $goalPath = Join-Path $root 'fdo_agi_repo\memory\goal_tracker.json'
+            if (Test-Path -LiteralPath $goalPath) {
+                $goalRaw = Get-Content -LiteralPath $goalPath -Raw | ConvertFrom-Json
+                $goalsArr = @()
+                if ($goalRaw -and $goalRaw.PSObject.Properties.Name -contains 'goals') { $goalsArr = @($goalRaw.goals) }
+                $recentCut = (Get-Date).AddHours(-24)
+                $active = @($goalsArr | Where-Object { $_.status -eq 'in_progress' })
+                $completedRecent = @($goalsArr | Where-Object { $_.status -eq 'completed' -and $_.completed_at -and ([datetime]$_.completed_at) -ge $recentCut })
+                $failedRecent = @($goalsArr | Where-Object { $_.status -eq 'failed' -and $_.updated_at -and ([datetime]$_.updated_at) -ge $recentCut })
+                $Snapshot.Goals = @{
+                    ActiveCount       = $active.Count
+                    Completed24h      = $completedRecent.Count
+                    Failed24h         = $failedRecent.Count
+                    CompletionRate24h = if ($completedRecent.Count -gt 0 -or $failedRecent.Count -gt 0) { [math]::Round(100 * ($completedRecent.Count / [math]::Max(1, ($completedRecent.Count + $failedRecent.Count))), 1) } else { 0 }
+                }
+            }
+        }
+    }
+    catch { }
+    return $Snapshot
+}
+
 function Append-Snapshot {
     param([string]$Path, [hashtable]$Snapshot)
     try {
@@ -179,7 +238,8 @@ function Append-Snapshot {
         }
         catch {
             # Fallback
-            Add-Content -LiteralPath $Path -Value $json -Encoding UTF8
+            $content = $json + [Environment]::NewLine
+            Add-Content -LiteralPath $Path -Value $content -Encoding UTF8
         }
     }
     catch { }
@@ -214,24 +274,30 @@ function Send-AlertIfNeeded {
     foreach ($w in $Summary.Warnings) { $lines += "- $w" }
     if ($lines.Count -eq 0) { $lines = @("- No details") }
     
-    # Add trend context if available
-    if ($Trend -and ($Trend.Local.Count -gt 0 -or $Trend.Cloud.Count -gt 0 -or $Trend.Gateway.Count -gt 0)) {
+    # Add trend context if available (null-safe Count checks)
+    $trendLocalCount = if ($Trend -and $Trend.Local -and $Trend.Local.Count) { [int]$Trend.Local.Count } else { 0 }
+    $trendCloudCount = if ($Trend -and $Trend.Cloud -and $Trend.Cloud.Count) { [int]$Trend.Cloud.Count } else { 0 }
+    $trendGatewayCount = if ($Trend -and $Trend.Gateway -and $Trend.Gateway.Count) { [int]$Trend.Gateway.Count } else { 0 }
+    if ($Trend -and ($trendLocalCount -gt 0 -or $trendCloudCount -gt 0 -or $trendGatewayCount -gt 0)) {
         $lines += ""
         $lines += "_Trend (short-term avg +/- std, direction):_"
-        if ($Trend.Local.Count -gt 0) {
+        if ($trendLocalCount -gt 0) {
             $arrow = Get-TrendArrow -direction $Trend.Local.Direction
-            $dirText = if ($Trend.Local.LongCount -ge $LongTrendWindow) { " $arrow $($Trend.Local.Direction)" } else { "" }
-            $lines += ("Local: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Local.ShortTermMeanMs, [int]$Trend.Local.StdMs, $Trend.Local.Count, $dirText)
+            $longCount = if ($Trend.Local.LongCount) { [int]$Trend.Local.LongCount } else { 0 }
+            $dirText = if ($longCount -ge $LongTrendWindow) { " $arrow $($Trend.Local.Direction)" } else { "" }
+            $lines += ("Local: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Local.ShortTermMeanMs, [int]$Trend.Local.StdMs, $trendLocalCount, $dirText)
         }
-        if ($Trend.Cloud.Count -gt 0) {
+        if ($trendCloudCount -gt 0) {
             $arrow = Get-TrendArrow -direction $Trend.Cloud.Direction
-            $dirText = if ($Trend.Cloud.LongCount -ge $LongTrendWindow) { " $arrow $($Trend.Cloud.Direction)" } else { "" }
-            $lines += ("Cloud: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Cloud.ShortTermMeanMs, [int]$Trend.Cloud.StdMs, $Trend.Cloud.Count, $dirText)
+            $longCount = if ($Trend.Cloud.LongCount) { [int]$Trend.Cloud.LongCount } else { 0 }
+            $dirText = if ($longCount -ge $LongTrendWindow) { " $arrow $($Trend.Cloud.Direction)" } else { "" }
+            $lines += ("Cloud: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Cloud.ShortTermMeanMs, [int]$Trend.Cloud.StdMs, $trendCloudCount, $dirText)
         }
-        if ($Trend.Gateway.Count -gt 0) {
+        if ($trendGatewayCount -gt 0) {
             $arrow = Get-TrendArrow -direction $Trend.Gateway.Direction
-            $dirText = if ($Trend.Gateway.LongCount -ge $LongTrendWindow) { " $arrow $($Trend.Gateway.Direction)" } else { "" }
-            $lines += ("Gateway: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Gateway.ShortTermMeanMs, [int]$Trend.Gateway.StdMs, $Trend.Gateway.Count, $dirText)
+            $longCount = if ($Trend.Gateway.LongCount) { [int]$Trend.Gateway.LongCount } else { 0 }
+            $dirText = if ($longCount -ge $LongTrendWindow) { " $arrow $($Trend.Gateway.Direction)" } else { "" }
+            $lines += ("Gateway: {0}ms +/- {1}ms (n={2}){3}" -f [int]$Trend.Gateway.ShortTermMeanMs, [int]$Trend.Gateway.StdMs, $trendGatewayCount, $dirText)
         }
     }
     
@@ -283,7 +349,6 @@ try {
         # Strip non-ASCII characters to avoid garbled symbols in legacy consoles
         ($line.ToCharArray() | Where-Object { [int]$_ -le 127 } | ForEach-Object { [string]$_ }) -join ''
     }
-    Pop-Location
     
     if ($LASTEXITCODE -eq 0) {
         # Normalize and extract key metrics instead of printing raw lines (to avoid garbled glyphs)
@@ -336,431 +401,544 @@ try {
                 "MODERATE" { "Yellow" }
                 "TURBULENT" { "Red" }
                 "STAGNANT" { "DarkGray" }
-                default { "Gray" }
+                default { "White" }
             }
-            Write-Host ("  Flow:       {0} ({1})" -f $flowScore, $flowStatus) -ForegroundColor $flowColor
-            $summary += "Flow: $flowScore ($flowStatus)"
+            Write-Host ("  Flow: {0} ({1})" -f $flowScore, $flowStatus) -ForegroundColor $flowColor
         }
-    }
-    else {
-        Write-Host " ERROR" -ForegroundColor Red
-    }
-}
-catch {
-    Write-Host " ERROR" -ForegroundColor Red
-    Write-Host "      $($_.Exception.Message)" -ForegroundColor Red
-}
 
-# BQI Pattern Learning Status
-Write-Host ""
-Write-Host "  BQI Learning Status:" -ForegroundColor Cyan
-$bqiLogPath = "$agiRoot\outputs\bqi_learner_last_run.txt"
-$bqiModelPath = "$agiRoot\outputs\bqi_pattern_model.json"
-if (Test-Path $bqiLogPath) {
-    try {
-        $lastLine = Get-Content -LiteralPath $bqiLogPath -Tail 1 -ErrorAction Stop
-        if ($lastLine -match "(\d{4}-\d{2}-\d{2}T[\d:\.+-]+Z?)\s*\|\s*status=(\w+)\s*\|.*prules=(\d+)\s+erules=(\d+)\s+rrules=(\d+)") {
-            $ts = $Matches[1]; $st = $Matches[2]; $pr = $Matches[3]; $er = $Matches[4]; $rr = $Matches[5]
-            $color = if ($st -eq 'ok') { 'Green' } else { 'Yellow' }
-            Write-Host ("    Last Run: {0}" -f $ts) -ForegroundColor White
-            Write-Host "    Status:   " -NoNewline
-            Write-Host $st.ToUpper() -ForegroundColor $color
-            Write-Host ("    Rules:    P:{0} E:{1} R:{2}" -f $pr, $er, $rr) -ForegroundColor White
-            # Feedback Predictor (Phase 5) metrics from log, if present
-            $mFbS = [regex]::Match($lastLine, "fb_samples=(\\d+)")
-            $mFbP = [regex]::Match($lastLine, "fb_patterns=(\\d+)")
-            $mFbR = [regex]::Match($lastLine, "fb_rules=(\\d+)")
-            if ($mFbS.Success -or $mFbP.Success -or $mFbR.Success) {
-                $fbS = if ($mFbS.Success) { $mFbS.Groups[1].Value } else { "0" }
-                $fbP = if ($mFbP.Success) { $mFbP.Groups[1].Value } else { "0" }
-                $fbR = if ($mFbR.Success) { $mFbR.Groups[1].Value } else { "0" }
-                Write-Host ("    Feedback: Samples {0}, Patterns {1}, Rules {2}" -f $fbS, $fbP, $fbR) -ForegroundColor White
+        # BQI Pattern Model (optional)
+        $bqiModelPath = Join-Path $agiRoot "outputs\bqi_pattern_model.json"
+        if ($bqiModelPath -and (Test-Path -LiteralPath $bqiModelPath)) {
+            try {
+                $model = Get-Content -LiteralPath $bqiModelPath -Raw | ConvertFrom-Json
+                if ($model.samples_used -ne $null) {
+                    Write-Host ("    Samples:  {0}" -f $model.samples_used) -ForegroundColor White
+                }
+            }
+            catch { }
+        }
+
+        # Phase 6: Binoche Persona metrics
+        $personaJsonPath = Join-Path $agiRoot "outputs\binoche_persona.json"
+        if (Test-Path $personaJsonPath) {
+            try {
+                $persona = Get-Content -LiteralPath $personaJsonPath -Raw | ConvertFrom-Json
+                Write-Host ""
+                Write-Host "  Binoche Persona (Phase 6):" -ForegroundColor Cyan
+                Write-Host ("    Tasks Analyzed: {0}" -f $persona.stats.total_tasks) -ForegroundColor White
+                Write-Host ("    Decisions: {0} (A:{1:P0} R:{2:P0} X:{3:P0})" -f `
+                        $persona.stats.total_decisions, `
+                        $persona.stats.approve_rate, `
+                        $persona.stats.revise_rate, `
+                        $persona.stats.reject_rate) -ForegroundColor White
+                # Null-safe pattern and rules counts
+                $patternProps = @()
+                try {
+                    if ($persona.bqi_probabilities) {
+                        $patternProps = ($persona.bqi_probabilities | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue)
+                    }
+                }
+                catch { $patternProps = @() }
+                $patternCount = if ($patternProps) { $patternProps.Count } else { 0 }
+                Write-Host ("    BQI Patterns: {0}" -f $patternCount) -ForegroundColor White
+
+                $rulesCount = 0
+                try {
+                    if ($persona.rules) {
+                        # If rules is an array or enumerable, count elements; if PSCustomObject, count its note properties
+                        if ($persona.rules -is [System.Collections.IEnumerable] -and -not ($persona.rules -is [string])) {
+                            $rulesCount = ($persona.rules | Measure-Object).Count
+                        }
+                        else {
+                            $rulesProps = ($persona.rules | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue)
+                            if ($rulesProps) { $rulesCount = $rulesProps.Count }
+                        }
+                    }
+                }
+                catch { $rulesCount = 0 }
+                Write-Host ("    Automation Rules: {0}" -f $rulesCount) -ForegroundColor White
+        
+                # Top tech preferences (if any) - null-safe chain
+                if ($persona.tech_preferences -and $persona.tech_preferences.tech_stack) {
+                    $techProps = @()
+                    try { $techProps = ($persona.tech_preferences.tech_stack | Get-Member -MemberType NoteProperty -ErrorAction SilentlyContinue) } catch { $techProps = @() }
+                    if ($techProps -and $techProps.Count -gt 0) {
+                        $topTech = $techProps | Select-Object -First 3 | ForEach-Object { $_.Name }
+                        Write-Host ("    Top Tech: {0}" -f ($topTech -join ", ")) -ForegroundColor White
+                    }
+                }
+            }
+            catch {
+                Write-Host ""
+                Write-Host "  Binoche Persona: (error reading model)" -ForegroundColor DarkGray
+            }
+        }
+
+        # Adaptive Glymphatic System
+        $glymphaticScriptPath = Join-Path $agiRoot "orchestrator\adaptive_glymphatic_system.py"
+        if (Test-Path $glymphaticScriptPath) {
+            Write-Host ""
+            Write-Host "  Adaptive Glymphatic System:" -ForegroundColor Cyan
+            try {
+                $venvPython = Join-Path $agiRoot ".venv\Scripts\python.exe"
+                $pyCmd = if (Test-Path $venvPython) { $venvPython } else { "python" }
+        
+                # Quick status check
+                $glymphaticCmd = @"
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path('$agiRoot').parent))
+from fdo_agi_repo.orchestrator.adaptive_glymphatic_system import AdaptiveGlymphaticSystem
+system = AdaptiveGlymphaticSystem()
+status = system.monitor_and_decide()
+import json
+print(json.dumps({
+    'workload': status['workload']['workload_percent'],
+    'fatigue': status['fatigue']['fatigue_level'],
+    'action': status['decision']['action'],
+    'delay': status['decision']['delay_minutes'],
+    'cleanup_needed': status['should_cleanup']
+}))
+"@
+                $result = & $pyCmd -c $glymphaticCmd 2>$null
+                if ($result) {
+                    $data = $result | ConvertFrom-Json
+                    Write-Host ("    Workload:  {0:F1}%" -f $data.workload) -ForegroundColor White
+                    Write-Host ("    Fatigue:   {0:F1}%" -f $data.fatigue) -ForegroundColor White
+                    Write-Host ("    Action:    {0}" -f $data.action) -ForegroundColor White
+                    Write-Host ("    Delay:     {0} min" -f $data.delay) -ForegroundColor White
+                    $cleanupColor = if ($data.cleanup_needed) { 'Yellow' } else { 'Green' }
+                    $cleanupText = if ($data.cleanup_needed) { "needed" } else { "not needed" }
+                    Write-Host ("    Cleanup:   {0}" -f $cleanupText) -ForegroundColor $cleanupColor
+                }
+            }
+            catch {
+                Write-Host "    (error checking status)" -ForegroundColor DarkGray
+            }
+        }
+
+        Write-Host ""
+
+        # ===== Original Data API (8093) =====
+        Write-Host "[1.5] Original Data API (Port 8093)" -ForegroundColor Yellow
+        $originalDataApiUrl = "http://127.0.0.1:8093/health"
+        $originalDataIndexPath = Join-Path (Split-Path -Parent $PSScriptRoot) "outputs\original_data_index.json"
+
+        Write-Host "    API Status..." -NoNewline
+        $odProbe = Test-Endpoint -Url $originalDataApiUrl -TimeoutSec 3
+        Show-LatencyLine -Label "API Health" -Probe $odProbe -WarnMs 500 -AlertMs 1000
+
+        # Check index freshness
+        if (Test-Path $originalDataIndexPath) {
+            try {
+                $indexFile = Get-Item -LiteralPath $originalDataIndexPath
+                $ageDays = [math]::Round((New-TimeSpan -Start $indexFile.LastWriteTime -End (Get-Date)).TotalDays, 1)
+                $ageColor = if ($ageDays -le 1) { 'Green' } elseif ($ageDays -le 3) { 'Yellow' } else { 'Red' }
+                Write-Host ("    Index Age:                {0} days" -f $ageDays) -ForegroundColor $ageColor
+        
+                $indexData = Get-Content -LiteralPath $originalDataIndexPath -Raw -Encoding UTF8 | ConvertFrom-Json
+                $fileCount = if ($indexData.items) { $indexData.items.Count } elseif ($indexData.files) { $indexData.files.Count } elseif ($indexData -is [array]) { $indexData.Count } else { 0 }
+                Write-Host ("    Indexed Files:            {0}" -f $fileCount) -ForegroundColor White
+            }
+            catch {
+                Write-Host "    Index:                    (error reading)" -ForegroundColor DarkGray
             }
         }
         else {
-            Write-Host "    Last Run: (unparseable log)" -ForegroundColor DarkGray
+            Write-Host "    Index:                    NOT FOUND" -ForegroundColor Red
         }
-    }
-    catch {
-        Write-Host "    Last Run: (error reading log)" -ForegroundColor DarkGray
-    }
-}
-else {
-    Write-Host "    Last Run: (no log yet)" -ForegroundColor DarkGray
-}
 
-if (Test-Path $bqiModelPath) {
-    try {
-        $model = Get-Content -LiteralPath $bqiModelPath -Raw | ConvertFrom-Json
-        if ($model.samples_used -ne $null) {
-            Write-Host ("    Samples:  {0}" -f $model.samples_used) -ForegroundColor White
-        }
-    }
-    catch { }
-}
-
-# Phase 6: Binoche Persona metrics
-$personaJsonPath = Join-Path $agiRoot "outputs\binoche_persona.json"
-if (Test-Path $personaJsonPath) {
-    try {
-        $persona = Get-Content -LiteralPath $personaJsonPath -Raw | ConvertFrom-Json
         Write-Host ""
-        Write-Host "  Binoche Persona (Phase 6):" -ForegroundColor Cyan
-        Write-Host ("    Tasks Analyzed: {0}" -f $persona.stats.total_tasks) -ForegroundColor White
-        Write-Host ("    Decisions: {0} (A:{1:P0} R:{2:P0} X:{3:P0})" -f `
-                $persona.stats.total_decisions, `
-                $persona.stats.approve_rate, `
-                $persona.stats.revise_rate, `
-                $persona.stats.reject_rate) -ForegroundColor White
-        $patternCount = ($persona.bqi_probabilities | Get-Member -MemberType NoteProperty).Count
-        Write-Host ("    BQI Patterns: {0}" -f $patternCount) -ForegroundColor White
-        Write-Host ("    Automation Rules: {0}" -f $persona.rules.Count) -ForegroundColor White
-        
-        # Top tech preferences (if any)
-        if ($persona.tech_preferences.tech_stack -and ($persona.tech_preferences.tech_stack | Get-Member -MemberType NoteProperty).Count -gt 0) {
-            $topTech = $persona.tech_preferences.tech_stack | Get-Member -MemberType NoteProperty | 
-            Select-Object -First 3 | ForEach-Object { $_.Name }
-            Write-Host ("    Top Tech: {0}" -f ($topTech -join ", ")) -ForegroundColor White
+
+        # ===== Lumen ?�스??=====
+        Write-Host "[2] Lumen Multi-Channel Gateway" -ForegroundColor Yellow
+
+        $prev = if ($LogJsonl) { Read-LastSnapshot -Path $LogPath } else { $null }
+        $prevLocalMs = $null; $prevCloudMs = $null; $prevGatewayMs = $null
+        if ($prev -and $prev.Channels) {
+            if ($prev.Channels.LocalMs -ne $null) { $prevLocalMs = [int]$prev.Channels.LocalMs }
+            if ($prev.Channels.CloudMs -ne $null) { $prevCloudMs = [int]$prev.Channels.CloudMs }
+            if ($prev.Channels.GatewayMs -ne $null) { $prevGatewayMs = [int]$prev.Channels.GatewayMs }
         }
-    }
-    catch {
-        Write-Host ""
-        Write-Host "  Binoche Persona: (error reading model)" -ForegroundColor DarkGray
-    }
-}
 
-Write-Host ""
+        # Local LLM (primary - 8080)
+        $localProbe = Test-Endpoint -Url "http://localhost:8080/v1/models" -TimeoutSec 3
+        Show-LatencyLine -Label "Local LLM (8080)" -Probe $localProbe -WarnMs $WarnLocalMs -AlertMs $AlertLocalMs -PrevMs $prevLocalMs
 
-# ===== Lumen ?�스??=====
-Write-Host "[2] Lumen Multi-Channel Gateway" -ForegroundColor Yellow
-
-$prev = if ($LogJsonl) { Read-LastSnapshot -Path $LogPath } else { $null }
-$prevLocalMs = $null; $prevCloudMs = $null; $prevGatewayMs = $null
-if ($prev -and $prev.Channels) {
-    if ($prev.Channels.LocalMs -ne $null) { $prevLocalMs = [int]$prev.Channels.LocalMs }
-    if ($prev.Channels.CloudMs -ne $null) { $prevCloudMs = [int]$prev.Channels.CloudMs }
-    if ($prev.Channels.GatewayMs -ne $null) { $prevGatewayMs = [int]$prev.Channels.GatewayMs }
-}
-
-# Local LLM (primary - 8080)
-$localProbe = Test-Endpoint -Url "http://localhost:8080/v1/models" -TimeoutSec 3
-Show-LatencyLine -Label "Local LLM (8080)" -Probe $localProbe -WarnMs $WarnLocalMs -AlertMs $AlertLocalMs -PrevMs $prevLocalMs
-
-# Local LLM (secondary - 18090, optional; surface as non-blocking; allow hiding)
-$localProbe2 = $null
-if (-not $HideOptional) {
-    $localProbeJson = "C:\workspace\agi\outputs\local_latency_probe_latest.json"
-    if (Test-Path $localProbeJson) {
-        try {
-            $probeData = Get-Content -LiteralPath $localProbeJson -Raw | ConvertFrom-Json
-            $ep18090 = $probeData.endpoints | Where-Object { $_.url -like '*18090*' } | Select-Object -First 1
-            if ($ep18090) {
-                $isOnline = ($ep18090.success_count -gt 0)
-                $avgMs = if ($ep18090.mean_ms) { [int]$ep18090.mean_ms } else { $null }
-                $errMsg = if ($ep18090.errors -and $ep18090.errors.Count -gt 0) { $ep18090.errors[0] } else { $null }
-                $localProbe2 = @{ Online = $isOnline; Ms = $avgMs; Code = 200; Error = $errMsg }
-                $labelOpt = "Local LLM (18090) (optional)"
-                if ($localProbe2.Online) {
-                    Show-LatencyLine -Label $labelOpt -Probe $localProbe2 -WarnMs $WarnLocalMs -AlertMs $AlertLocalMs
+        # Local LLM (secondary - 18090, optional; surface as non-blocking; allow hiding)
+        $localProbe2 = $null
+        if (-not $HideOptional) {
+            $localProbeJson = "C:\workspace\agi\outputs\local_latency_probe_latest.json"
+            if (Test-Path $localProbeJson) {
+                try {
+                    $probeData = Get-Content -LiteralPath $localProbeJson -Raw | ConvertFrom-Json
+                    $ep18090 = $probeData.endpoints | Where-Object { $_.url -like '*18090*' } | Select-Object -First 1
+                    if ($ep18090) {
+                        $isOnline = ($ep18090.success_count -gt 0)
+                        $avgMs = if ($ep18090.mean_ms) { [int]$ep18090.mean_ms } else { $null }
+                        $errMsg = if ($ep18090.errors -and $ep18090.errors.Count -gt 0) { $ep18090.errors[0] } else { $null }
+                        $localProbe2 = @{ Online = $isOnline; Ms = $avgMs; Code = 200; Error = $errMsg }
+                        $labelOpt = "Local LLM (18090) (optional)"
+                        if ($localProbe2.Online) {
+                            Show-LatencyLine -Label $labelOpt -Probe $localProbe2 -WarnMs $WarnLocalMs -AlertMs $AlertLocalMs
+                        }
+                        else {
+                            # Render as non-blocking offline without noisy error stack
+                            Write-Host ("    {0,-24} " -f $labelOpt) -NoNewline
+                            Write-Host " OFFLINE (optional)" -ForegroundColor DarkGray
+                        }
+                    }
                 }
-                else {
-                    # Render as non-blocking offline without noisy error stack
-                    Write-Host ("    {0,-24} " -f $labelOpt) -NoNewline
-                    Write-Host " OFFLINE (optional)" -ForegroundColor DarkGray
+                catch { }
+            }
+        }
+
+        # Cloud AI
+        $cloudProbe = Test-Endpoint -Url "https://ion-api-64076350717.us-central1.run.app/chat" -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 5
+        Show-LatencyLine -Label "Cloud AI (ion-api)" -Probe $cloudProbe -WarnMs $WarnCloudMs -AlertMs $AlertCloudMs -PrevMs $prevCloudMs
+
+        # Lumen Gateway
+        $gwProbe = Test-Endpoint -Url "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 5
+        Show-LatencyLine -Label "Lumen Gateway" -Probe $gwProbe -WarnMs $WarnGatewayMs -AlertMs $AlertGatewayMs -PrevMs $prevGatewayMs
+
+        # ===== Trend Analytics =====
+        $recent = Read-RecentSnapshots -Path $LogPath -MaxCount $TrendWindow
+        $recentLong = Read-RecentSnapshots -Path $LogPath -MaxCount $LongTrendWindow
+
+        function _ComputeStats([double[]]$arr) {
+            $res = @{ Count = 0; Mean = $null; Std = $null }
+            if ($null -eq $arr -or $arr.Count -lt 1) { return $res }
+            $n = [double]$arr.Count
+            $mean = ($arr | Measure-Object -Average).Average
+            if ($n -gt 1) {
+                $sumSq = 0.0
+                foreach ($v in $arr) { $sumSq += [math]::Pow(($v - $mean), 2) }
+                # sample std (n-1)
+                $std = [math]::Sqrt($sumSq / ($n - 1.0))
+            }
+            else { $std = 0.0 }
+            return @{ Count = [int]$n; Mean = [double]$mean; Std = [double]$std }
+        }
+
+        function Get-TrendDirection([double]$shortMean, [double]$longMean, [double]$thresholdPercent) {
+            if ($null -eq $shortMean -or $null -eq $longMean) { return "UNKNOWN" }
+            $threshold = $longMean * ($thresholdPercent / 100.0)
+            $diff = $shortMean - $longMean
+            # Latency is better when lower: invert semantics
+            if ($diff -lt - $threshold) { return "IMPROVING" }
+            elseif ($diff -gt $threshold) { return "DEGRADING" }
+            else { return "STABLE" }
+        }
+
+        function Get-TrendArrow([string]$direction) {
+            switch ($direction) {
+                "IMPROVING" { return "++"; }
+                "DEGRADING" { return "--"; }
+                "STABLE" { return "=="; }
+                default { return "??"; }
+            }
+        }
+
+        $localVals = @(); $cloudVals = @(); $gwVals = @();
+        foreach ($r in $recent) {
+            try { if ($r.Channels.LocalMs -ne $null -and [int]$r.Channels.LocalMs -gt 0) { $localVals += [double]$r.Channels.LocalMs } } catch {}
+            try { if ($r.Channels.CloudMs -ne $null -and [int]$r.Channels.CloudMs -gt 0) { $cloudVals += [double]$r.Channels.CloudMs } } catch {}
+            try { if ($r.Channels.GatewayMs -ne $null -and [int]$r.Channels.GatewayMs -gt 0) { $gwVals += [double]$r.Channels.GatewayMs } } catch {}
+        }
+        $statLocal = _ComputeStats($localVals)
+        $statCloud = _ComputeStats($cloudVals)
+        $statGateway = _ComputeStats($gwVals)
+
+        # Long-term trend (if enough data)
+        $localValsLong = @(); $cloudValsLong = @(); $gwValsLong = @();
+        foreach ($r in $recentLong) {
+            try { if ($r.Channels.LocalMs -ne $null -and [int]$r.Channels.LocalMs -gt 0) { $localValsLong += [double]$r.Channels.LocalMs } } catch {}
+            try { if ($r.Channels.CloudMs -ne $null -and [int]$r.Channels.CloudMs -gt 0) { $cloudValsLong += [double]$r.Channels.CloudMs } } catch {}
+            try { if ($r.Channels.GatewayMs -ne $null -and [int]$r.Channels.GatewayMs -gt 0) { $gwValsLong += [double]$r.Channels.GatewayMs } } catch {}
+        }
+        $statLocalLong = _ComputeStats($localValsLong)
+        $statCloudLong = _ComputeStats($cloudValsLong)
+        $statGatewayLong = _ComputeStats($gwValsLong)
+
+        # Determine trend direction
+        $dirLocal = Get-TrendDirection -shortMean $statLocal.Mean -longMean $statLocalLong.Mean -thresholdPercent $TrendThresholdPercent
+        $dirCloud = Get-TrendDirection -shortMean $statCloud.Mean -longMean $statCloudLong.Mean -thresholdPercent $TrendThresholdPercent
+        $dirGateway = Get-TrendDirection -shortMean $statGateway.Mean -longMean $statGatewayLong.Mean -thresholdPercent $TrendThresholdPercent
+
+        $trend = @{ 
+            Local   = @{ 
+                ShortTermMeanMs = $statLocal.Mean
+                LongTermMeanMs  = $statLocalLong.Mean
+                StdMs           = $statLocal.Std
+                Count           = $statLocal.Count
+                LongCount       = $statLocalLong.Count
+                Direction       = $dirLocal
+                PrevMs          = $prevLocalMs 
+            }
+            Cloud   = @{ 
+                ShortTermMeanMs = $statCloud.Mean
+                LongTermMeanMs  = $statCloudLong.Mean
+                StdMs           = $statCloud.Std
+                Count           = $statCloud.Count
+                LongCount       = $statCloudLong.Count
+                Direction       = $dirCloud
+                PrevMs          = $prevCloudMs 
+            }
+            Gateway = @{ 
+                ShortTermMeanMs = $statGateway.Mean
+                LongTermMeanMs  = $statGatewayLong.Mean
+                StdMs           = $statGateway.Std
+                Count           = $statGateway.Count
+                LongCount       = $statGatewayLong.Count
+                Direction       = $dirGateway
+                PrevMs          = $prevGatewayMs 
+            }
+        }
+
+        # Display trend summary if we have data
+        if (($statLocal -and $statLocal.Count -gt 0) -or ($statCloud -and $statCloud.Count -gt 0) -or ($statGateway -and $statGateway.Count -gt 0)) {
+            Write-Host ""
+            Write-Host "    Trend Summary (short=$TrendWindow, long=$LongTrendWindow samples):" -ForegroundColor DarkCyan
+            $parts = @()
+            if ($statLocal.Count -gt 0) {
+                $arrow = Get-TrendArrow -direction $dirLocal
+                $longInfo = if ($statLocalLong -and $statLocalLong.Count -ge $LongTrendWindow) { " $arrow" } else { "" }
+                $parts += ("Local avg {0}ms (+/- {1}){2}" -f [int]$statLocal.Mean, [int]$statLocal.Std, $longInfo)
+            }
+            if ($statCloud.Count -gt 0) {
+                $arrow = Get-TrendArrow -direction $dirCloud
+                $longInfo = if ($statCloudLong -and $statCloudLong.Count -ge $LongTrendWindow) { " $arrow" } else { "" }
+                $parts += ("Cloud avg {0}ms (+/- {1}){2}" -f [int]$statCloud.Mean, [int]$statCloud.Std, $longInfo)
+            }
+            if ($statGateway -and $statGateway.Count -gt 0) {
+                $arrow = Get-TrendArrow -direction $dirGateway
+                $longInfo = if ($statGatewayLong -and $statGatewayLong.Count -ge $LongTrendWindow) { " $arrow" } else { "" }
+                $parts += ("Gateway avg {0}ms (+/- {1}){2}" -f [int]$statGateway.Mean, [int]$statGateway.Std, $longInfo)
+            }
+            Write-Host ("      " + ($parts -join " | ")) -ForegroundColor DarkGray
+        }
+
+        # ===== Summary & Export =====
+        $issues = @()
+        $warnings = @()
+
+        if (-not $localProbe.Online) { $issues += "Local LLM offline ($($localProbe.Code))" }
+        elseif ($localProbe.Ms -ge $AlertLocalMs) { $issues += "ALERT: Local LLM latency $($localProbe.Ms)ms" }
+        elseif ($localProbe.Ms -ge $WarnLocalMs) { $warnings += "WARN: Local LLM latency $($localProbe.Ms)ms" }
+
+        if (-not $cloudProbe.Online) { $issues += "Cloud AI offline ($($cloudProbe.Code))" }
+        elseif ($cloudProbe.Ms -ge $AlertCloudMs) { $issues += "ALERT: Cloud AI latency $($cloudProbe.Ms)ms" }
+        elseif ($cloudProbe.Ms -ge $WarnCloudMs) { $warnings += "WARN: Cloud AI latency $($cloudProbe.Ms)ms" }
+
+        if (-not $gwProbe.Online) { $issues += "Lumen Gateway offline ($($gwProbe.Code))" }
+        elseif ($gwProbe.Ms -ge $AlertGatewayMs) { $issues += "ALERT: Lumen Gateway latency $($gwProbe.Ms)ms" }
+        elseif ($gwProbe.Ms -ge $WarnGatewayMs) { $warnings += "WARN: Lumen Gateway latency $($gwProbe.Ms)ms" }
+
+        # Baseline detection using long-term mean (sustained high latency)
+        function Add-BaselineMsg {
+            param(
+                [string]$name,
+                [double]$longMean,
+                [int]$longCount,
+                [int]$warnMs,
+                [int]$alertMs,
+                [ref]$issuesRef,
+                [ref]$warningsRef,
+                [string[]]$existingMsgs
+            )
+            if ($longCount -lt [Math]::Max(5, [int]($LongTrendWindow / 2))) { return }
+            $hasCurrentAlert = $existingMsgs | Where-Object { $_ -like "ALERT: $name*" } | Select-Object -First 1
+            if ($longMean -ge $alertMs -and -not $hasCurrentAlert) {
+                $issuesRef.Value += "BASELINE ALERT: $name sustained latency $([int]$longMean)ms (avg over $longCount samples)"
+            }
+            elseif ($longMean -ge $warnMs -and -not $hasCurrentAlert) {
+                $warningsRef.Value += "BASELINE WARN: $name sustained latency $([int]$longMean)ms (avg over $longCount samples)"
+            }
+        }
+
+        Add-BaselineMsg -name 'Local LLM' -longMean $statLocalLong.Mean -longCount $(if ($statLocalLong) { $statLocalLong.Count } else { 0 }) -warnMs $WarnLocalMs -alertMs $AlertLocalMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
+        Add-BaselineMsg -name 'Cloud AI' -longMean $statCloudLong.Mean -longCount $(if ($statCloudLong) { $statCloudLong.Count } else { 0 }) -warnMs $WarnCloudMs -alertMs $AlertCloudMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
+        Add-BaselineMsg -name 'Lumen Gateway' -longMean $statGatewayLong.Mean -longCount $(if ($statGatewayLong) { $statGatewayLong.Count } else { 0 }) -warnMs $WarnGatewayMs -alertMs $AlertGatewayMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
+
+        # Spike detection vs moving average (if enough history and current online)
+        if ($statLocal -and $statLocal.Count -ge [Math]::Max(5, [int]$TrendWindow / 2) -and $localProbe.Online -and $localProbe.Ms -gt 0 -and $statLocal.Std -gt 0) {
+            $thr = $statLocal.Mean + ($SpikeSigma * $statLocal.Std)
+            if ($localProbe.Ms -gt [int]$thr) { $warnings += "SPIKE: Local LLM latency $($localProbe.Ms)ms (avg $([int]$statLocal.Mean) +/- $([int]$statLocal.Std))" }
+        }
+        if ($statCloud -and $statCloud.Count -ge [Math]::Max(5, [int]$TrendWindow / 2) -and $cloudProbe.Online -and $cloudProbe.Ms -gt 0 -and $statCloud.Std -gt 0) {
+            $thr = $statCloud.Mean + ($SpikeSigma * $statCloud.Std)
+            if ($cloudProbe.Ms -gt [int]$thr) { $warnings += "SPIKE: Cloud AI latency $($cloudProbe.Ms)ms (avg $([int]$statCloud.Mean) +/- $([int]$statCloud.Std))" }
+        }
+        if ($statGateway -and $statGateway.Count -ge [Math]::Max(5, [int]$TrendWindow / 2) -and $gwProbe.Online -and $gwProbe.Ms -gt 0 -and $statGateway.Std -gt 0) {
+            $thr = $statGateway.Mean + ($SpikeSigma * $statGateway.Std)
+            if ($gwProbe.Ms -gt [int]$thr) { $warnings += "SPIKE: Gateway latency $($gwProbe.Ms)ms (avg $([int]$statGateway.Mean) +/- $([int]$statGateway.Std))" }
+        }
+
+        # Adaptive thresholding (optional)
+        function Add-AdaptiveAlerts {
+            param(
+                [string]$name,
+                [double]$currentMs,
+                [bool]$online,
+                [hashtable]$stat,
+                [ref]$issuesRef,
+                [ref]$warningsRef
+            )
+            if (-not $UseAdaptiveThresholds) { return }
+            if (-not $online -or $currentMs -le 0) { return }
+            if ($stat.Count -lt [Math]::Max(5, [int]($TrendWindow / 2)) -or $stat.Std -le 0) { return }
+            $warnThr = $stat.Mean + ($AdaptiveWarnSigmas * $stat.Std)
+            $alertThr = $stat.Mean + ($AdaptiveAlertSigmas * $stat.Std)
+            if ($currentMs -ge [int]$alertThr) {
+                $issuesRef.Value += "ADAPTIVE ALERT: $name latency $([int]$currentMs)ms (thr $([int]$alertThr) = avg $([int]$stat.Mean) + ${AdaptiveAlertSigmas} sig $([int]$stat.Std))"
+            }
+            elseif ($currentMs -ge [int]$warnThr) {
+                $warningsRef.Value += "ADAPTIVE WARN: $name latency $([int]$currentMs)ms (thr $([int]$warnThr) = avg $([int]$stat.Mean) + ${AdaptiveWarnSigmas} sig $([int]$stat.Std))"
+            }
+        }
+
+        Add-AdaptiveAlerts -name 'Local LLM' -currentMs $localProbe.Ms -online $localProbe.Online -stat $statLocal -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
+        Add-AdaptiveAlerts -name 'Cloud AI' -currentMs $cloudProbe.Ms -online $cloudProbe.Online -stat $statCloud -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
+        Add-AdaptiveAlerts -name 'Lumen Gateway' -currentMs $gwProbe.Ms -online $gwProbe.Online -stat $statGateway -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
+
+        $hasAlerts = @(if ($issues) { $issues | Where-Object { $_ -like 'ALERT*' -or $_ -like '*offline*' } } else { @() }).Count -gt 0
+        $hasWarns = @(if ($warnings) { $warnings } else { @() }).Count -gt 0
+        $allGreen = (-not $hasAlerts -and -not $hasWarns)
+
+        Write-Host ""; Write-Host "----------------------------------------------------------------" -ForegroundColor DarkGray
+        Write-Host "Summary: " -NoNewline
+        if ($allGreen) { Write-Host "ALL GREEN - all systems OK" -ForegroundColor Green }
+        elseif ($hasAlerts) { Write-Host "ATTENTION - issues detected" -ForegroundColor Yellow }
+        else { Write-Host "WARNING - latency thresholds exceeded" -ForegroundColor Yellow }
+
+        if ($hasAlerts) { Write-Host "Issues:" -ForegroundColor Red; foreach ($i in $issues) { Write-Host "  - $i" -ForegroundColor Red } }
+        if ($hasWarns) { Write-Host "Warnings:" -ForegroundColor Yellow; foreach ($w in $warnings) { Write-Host "  - $w" -ForegroundColor Yellow } }
+
+        $snapshot = @{
+            Timestamp = (Get-Date).ToString('s')
+            Channels  = @{ 
+                LocalMs   = $localProbe.Ms
+                Local2Ms  = if ($localProbe2) { $localProbe2.Ms } else { $null }
+                CloudMs   = $cloudProbe.Ms
+                GatewayMs = $gwProbe.Ms 
+            }
+            Online    = @{ 
+                Local   = $localProbe.Online
+                Local2  = if ($localProbe2) { $localProbe2.Online } else { $false }
+                Cloud   = $cloudProbe.Online
+                Gateway = $gwProbe.Online 
+            }
+            Trend     = $trend
+            Issues    = $issues
+            Warnings  = $warnings
+        }
+
+        # Decide if enrichment is needed (always for OutJson; conditional for JSONL when -EnrichSnapshot)
+        $needEnrich = $false
+        if ($OutJson) { $needEnrich = $true }
+        elseif ($LogJsonl -and $EnrichSnapshot) { $needEnrich = $true }
+        if ($needEnrich) { $snapshot = Enrich-Snapshot -Snapshot $snapshot }
+
+        if ($OutJson) {
+            try {
+                $outPathResolved = $null
+                try { $rp = Resolve-Path -LiteralPath $OutJson -ErrorAction Stop; if ($rp -and $rp.Path) { $outPathResolved = $rp.Path } } catch { }
+                $outPathFinal = if ($outPathResolved) { $outPathResolved } else { $OutJson }
+                $dir = Split-Path -Parent $outPathFinal
+                if ($dir -and -not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
+                [IO.File]::WriteAllText($outPathFinal, ($snapshot | ConvertTo-Json -Depth 10 -Compress), [Text.Encoding]::UTF8)
+            }
+            catch { }
+        }
+        if ($LogJsonl) { Append-Snapshot -Path $LogPath -Snapshot $snapshot }
+
+        $summary = @{
+            AllGreen   = $allGreen
+            IsDegraded = $hasAlerts
+            HasWarns   = $hasWarns
+            Issues     = $issues
+            Warnings   = $warnings
+        }
+
+        if ($AlertOnDegraded -and (-not $allGreen)) { Send-AlertIfNeeded -Summary $summary -Trend $trend }
+
+        if ($Perf) {
+            Write-Host ""; Show-PerfSummary; Write-Host ""
+        }
+
+        # On spark: schedule a short microscope capture (non-blocking, with cooldown)
+        try {
+            if ($MicroscopeOnSpark -and (-not $allGreen)) {
+                $sparkLabels = @()
+                if ( ($issues + $warnings) | Where-Object { $_ -like '*Local LLM*' } ) { $sparkLabels += 'Local LLM' }
+                if ( ($issues + $warnings) | Where-Object { $_ -like '*Cloud AI*' } ) { $sparkLabels += 'Cloud AI' }
+                if ( ($issues + $warnings) | Where-Object { $_ -like '*Gateway*' } ) { $sparkLabels += 'Lumen Gateway' }
+                if ($sparkLabels.Count -eq 0) { $sparkLabels = @('Unknown') }
+
+                $agiRoot = Split-Path -Parent $PSScriptRoot
+                $micDir = Join-Path $agiRoot 'outputs\microscope'
+                if (-not (Test-Path -LiteralPath $micDir)) { New-Item -ItemType Directory -Path $micDir -Force | Out-Null }
+                $coolFile = Join-Path $micDir 'last_capture.txt'
+                $shouldCapture = $true
+                if (Test-Path -LiteralPath $coolFile) {
+                    try {
+                        $ageSec = (New-TimeSpan -Start (Get-Item -LiteralPath $coolFile).LastWriteTime -End (Get-Date)).TotalSeconds
+                        if ($ageSec -lt [double]$MicroscopeCooldownSec) { $shouldCapture = $false }
+                    }
+                    catch {}
+                }
+                if ($shouldCapture) {
+                    try { Set-Content -LiteralPath $coolFile -Value (Get-Date).ToString('o') -Encoding UTF8 -Force } catch {}
+                    $captureScript = Join-Path $PSScriptRoot 'microscope_capture.ps1'
+                    if (Test-Path -LiteralPath $captureScript) {
+                        # Pass only the first label to simplify escaping in background invocation
+                        $label = $sparkLabels[0]
+                        function QuoteArg([string]$s) { return '"' + ($s -replace '"', '""') + '"' }
+                        $argList = @(
+                            '-NoProfile',
+                            '-ExecutionPolicy', 'Bypass',
+                            '-File', (QuoteArg $captureScript),
+                            '-WindowSeconds', [string]$MicroscopeWindowSeconds,
+                            '-Level', (QuoteArg $MicroscopeLevel),
+                            '-SparkLabels', (QuoteArg $label),
+                            '-OutDir', (QuoteArg $micDir),
+                            '-Quiet'
+                        ) -join ' '
+                        Start-Process -FilePath powershell -ArgumentList $argList -WindowStyle Hidden | Out-Null
+                    }
                 }
             }
         }
-        catch { }
+        catch {}
+
+        # Emit health check event (best-effort)
+        try {
+            $emitPath = Join-Path $PSScriptRoot 'emit_event.ps1'
+            if (Test-Path -LiteralPath $emitPath) {
+                & $emitPath -EventType "health_check" -Payload @{
+                    status           = if ($allGreen) { "HEALTHY" } else { "UNHEALTHY" }
+                    all_green        = $allGreen
+                    has_alerts       = $hasAlerts
+                    has_warnings     = $hasWarns
+                    agi_confidence   = $agiMetrics.confidence
+                    agi_quality      = $agiMetrics.quality
+                    agi_second_pass  = $agiMetrics.second_pass_rate
+                    lumen_latency_ms = $gwProbe.Ms
+                    timestamp        = (Get-Date).ToUniversalTime().ToString("o")
+                } -PersonaId "monitoring"
+            }
+        }
+        catch {}
+
+        Write-Host "`n================================================================`n" -ForegroundColor Cyan
+
+        # ensure non-zero exit codes from native commands do not bubble up
+        $global:LASTEXITCODE = 0
     }
 }
-
-# Cloud AI
-$cloudProbe = Test-Endpoint -Url "https://ion-api-64076350717.us-central1.run.app/chat" -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 5
-Show-LatencyLine -Label "Cloud AI (ion-api)" -Probe $cloudProbe -WarnMs $WarnCloudMs -AlertMs $AlertCloudMs -PrevMs $prevCloudMs
-
-# Lumen Gateway
-$gwProbe = Test-Endpoint -Url "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 5
-Show-LatencyLine -Label "Lumen Gateway" -Probe $gwProbe -WarnMs $WarnGatewayMs -AlertMs $AlertGatewayMs -PrevMs $prevGatewayMs
-
-# ===== Trend Analytics =====
-$recent = Read-RecentSnapshots -Path $LogPath -MaxCount $TrendWindow
-$recentLong = Read-RecentSnapshots -Path $LogPath -MaxCount $LongTrendWindow
-
-function _ComputeStats([double[]]$arr) {
-    $res = @{ Count = 0; Mean = $null; Std = $null }
-    if ($null -eq $arr -or $arr.Count -lt 1) { return $res }
-    $n = [double]$arr.Count
-    $mean = ($arr | Measure-Object -Average).Average
-    if ($n -gt 1) {
-        $sumSq = 0.0
-        foreach ($v in $arr) { $sumSq += [math]::Pow(($v - $mean), 2) }
-        # sample std (n-1)
-        $std = [math]::Sqrt($sumSq / ($n - 1.0))
-    }
-    else { $std = 0.0 }
-    return @{ Count = [int]$n; Mean = [double]$mean; Std = [double]$std }
+catch {
+    Write-Host ("    (AGI Orchestrator check failed: {0})" -f $_.Exception.Message) -ForegroundColor Yellow
 }
-
-function Get-TrendDirection([double]$shortMean, [double]$longMean, [double]$thresholdPercent) {
-    if ($null -eq $shortMean -or $null -eq $longMean) { return "UNKNOWN" }
-    $threshold = $longMean * ($thresholdPercent / 100.0)
-    $diff = $shortMean - $longMean
-    # Latency is better when lower: invert semantics
-    if ($diff -lt - $threshold) { return "IMPROVING" }
-    elseif ($diff -gt $threshold) { return "DEGRADING" }
-    else { return "STABLE" }
+finally {
+    try { Pop-Location } catch {}
 }
-
-function Get-TrendArrow([string]$direction) {
-    switch ($direction) {
-        "IMPROVING" { return "++"; }
-        "DEGRADING" { return "--"; }
-        "STABLE" { return "=="; }
-        default { return "??"; }
-    }
-}
-
-$localVals = @(); $cloudVals = @(); $gwVals = @();
-foreach ($r in $recent) {
-    try { if ($r.Channels.LocalMs -ne $null -and [int]$r.Channels.LocalMs -gt 0) { $localVals += [double]$r.Channels.LocalMs } } catch {}
-    try { if ($r.Channels.CloudMs -ne $null -and [int]$r.Channels.CloudMs -gt 0) { $cloudVals += [double]$r.Channels.CloudMs } } catch {}
-    try { if ($r.Channels.GatewayMs -ne $null -and [int]$r.Channels.GatewayMs -gt 0) { $gwVals += [double]$r.Channels.GatewayMs } } catch {}
-}
-$statLocal = _ComputeStats($localVals)
-$statCloud = _ComputeStats($cloudVals)
-$statGateway = _ComputeStats($gwVals)
-
-# Long-term trend (if enough data)
-$localValsLong = @(); $cloudValsLong = @(); $gwValsLong = @();
-foreach ($r in $recentLong) {
-    try { if ($r.Channels.LocalMs -ne $null -and [int]$r.Channels.LocalMs -gt 0) { $localValsLong += [double]$r.Channels.LocalMs } } catch {}
-    try { if ($r.Channels.CloudMs -ne $null -and [int]$r.Channels.CloudMs -gt 0) { $cloudValsLong += [double]$r.Channels.CloudMs } } catch {}
-    try { if ($r.Channels.GatewayMs -ne $null -and [int]$r.Channels.GatewayMs -gt 0) { $gwValsLong += [double]$r.Channels.GatewayMs } } catch {}
-}
-$statLocalLong = _ComputeStats($localValsLong)
-$statCloudLong = _ComputeStats($cloudValsLong)
-$statGatewayLong = _ComputeStats($gwValsLong)
-
-# Determine trend direction
-$dirLocal = Get-TrendDirection -shortMean $statLocal.Mean -longMean $statLocalLong.Mean -thresholdPercent $TrendThresholdPercent
-$dirCloud = Get-TrendDirection -shortMean $statCloud.Mean -longMean $statCloudLong.Mean -thresholdPercent $TrendThresholdPercent
-$dirGateway = Get-TrendDirection -shortMean $statGateway.Mean -longMean $statGatewayLong.Mean -thresholdPercent $TrendThresholdPercent
-
-$trend = @{ 
-    Local   = @{ 
-        ShortTermMeanMs = $statLocal.Mean
-        LongTermMeanMs  = $statLocalLong.Mean
-        StdMs           = $statLocal.Std
-        Count           = $statLocal.Count
-        LongCount       = $statLocalLong.Count
-        Direction       = $dirLocal
-        PrevMs          = $prevLocalMs 
-    }
-    Cloud   = @{ 
-        ShortTermMeanMs = $statCloud.Mean
-        LongTermMeanMs  = $statCloudLong.Mean
-        StdMs           = $statCloud.Std
-        Count           = $statCloud.Count
-        LongCount       = $statCloudLong.Count
-        Direction       = $dirCloud
-        PrevMs          = $prevCloudMs 
-    }
-    Gateway = @{ 
-        ShortTermMeanMs = $statGateway.Mean
-        LongTermMeanMs  = $statGatewayLong.Mean
-        StdMs           = $statGateway.Std
-        Count           = $statGateway.Count
-        LongCount       = $statGatewayLong.Count
-        Direction       = $dirGateway
-        PrevMs          = $prevGatewayMs 
-    }
-}
-
-# Display trend summary if we have data
-if ($statLocal.Count -gt 0 -or $statCloud.Count -gt 0 -or $statGateway.Count -gt 0) {
-    Write-Host ""
-    Write-Host "    Trend Summary (short=$TrendWindow, long=$LongTrendWindow samples):" -ForegroundColor DarkCyan
-    $parts = @()
-    if ($statLocal.Count -gt 0) {
-        $arrow = Get-TrendArrow -direction $dirLocal
-        $longInfo = if ($statLocalLong.Count -ge $LongTrendWindow) { " $arrow" } else { "" }
-        $parts += ("Local avg {0}ms (+/- {1}){2}" -f [int]$statLocal.Mean, [int]$statLocal.Std, $longInfo)
-    }
-    if ($statCloud.Count -gt 0) {
-        $arrow = Get-TrendArrow -direction $dirCloud
-        $longInfo = if ($statCloudLong.Count -ge $LongTrendWindow) { " $arrow" } else { "" }
-        $parts += ("Cloud avg {0}ms (+/- {1}){2}" -f [int]$statCloud.Mean, [int]$statCloud.Std, $longInfo)
-    }
-    if ($statGateway.Count -gt 0) {
-        $arrow = Get-TrendArrow -direction $dirGateway
-        $longInfo = if ($statGatewayLong.Count -ge $LongTrendWindow) { " $arrow" } else { "" }
-        $parts += ("Gateway avg {0}ms (+/- {1}){2}" -f [int]$statGateway.Mean, [int]$statGateway.Std, $longInfo)
-    }
-    Write-Host ("      " + ($parts -join " | ")) -ForegroundColor DarkGray
-}
-
-# ===== Summary & Export =====
-$issues = @()
-$warnings = @()
-
-if (-not $localProbe.Online) { $issues += "Local LLM offline ($($localProbe.Code))" }
-elseif ($localProbe.Ms -ge $AlertLocalMs) { $issues += "ALERT: Local LLM latency $($localProbe.Ms)ms" }
-elseif ($localProbe.Ms -ge $WarnLocalMs) { $warnings += "WARN: Local LLM latency $($localProbe.Ms)ms" }
-
-if (-not $cloudProbe.Online) { $issues += "Cloud AI offline ($($cloudProbe.Code))" }
-elseif ($cloudProbe.Ms -ge $AlertCloudMs) { $issues += "ALERT: Cloud AI latency $($cloudProbe.Ms)ms" }
-elseif ($cloudProbe.Ms -ge $WarnCloudMs) { $warnings += "WARN: Cloud AI latency $($cloudProbe.Ms)ms" }
-
-if (-not $gwProbe.Online) { $issues += "Lumen Gateway offline ($($gwProbe.Code))" }
-elseif ($gwProbe.Ms -ge $AlertGatewayMs) { $issues += "ALERT: Lumen Gateway latency $($gwProbe.Ms)ms" }
-elseif ($gwProbe.Ms -ge $WarnGatewayMs) { $warnings += "WARN: Lumen Gateway latency $($gwProbe.Ms)ms" }
-
-# Baseline detection using long-term mean (sustained high latency)
-function Add-BaselineMsg {
-    param(
-        [string]$name,
-        [double]$longMean,
-        [int]$longCount,
-        [int]$warnMs,
-        [int]$alertMs,
-        [ref]$issuesRef,
-        [ref]$warningsRef,
-        [string[]]$existingMsgs
-    )
-    if ($longCount -lt [Math]::Max(5, [int]($LongTrendWindow / 2))) { return }
-    $hasCurrentAlert = $existingMsgs | Where-Object { $_ -like "ALERT: $name*" } | Select-Object -First 1
-    if ($longMean -ge $alertMs -and -not $hasCurrentAlert) {
-        $issuesRef.Value += "BASELINE ALERT: $name sustained latency $([int]$longMean)ms (avg over $longCount samples)"
-    }
-    elseif ($longMean -ge $warnMs -and -not $hasCurrentAlert) {
-        $warningsRef.Value += "BASELINE WARN: $name sustained latency $([int]$longMean)ms (avg over $longCount samples)"
-    }
-}
-
-Add-BaselineMsg -name 'Local LLM' -longMean $statLocalLong.Mean -longCount $statLocalLong.Count -warnMs $WarnLocalMs -alertMs $AlertLocalMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
-Add-BaselineMsg -name 'Cloud AI' -longMean $statCloudLong.Mean -longCount $statCloudLong.Count -warnMs $WarnCloudMs -alertMs $AlertCloudMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
-Add-BaselineMsg -name 'Lumen Gateway' -longMean $statGatewayLong.Mean -longCount $statGatewayLong.Count -warnMs $WarnGatewayMs -alertMs $AlertGatewayMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
-
-# Spike detection vs moving average (if enough history and current online)
-if ($statLocal.Count -ge [Math]::Max(5, [int]$TrendWindow / 2) -and $localProbe.Online -and $localProbe.Ms -gt 0 -and $statLocal.Std -gt 0) {
-    $thr = $statLocal.Mean + ($SpikeSigma * $statLocal.Std)
-    if ($localProbe.Ms -gt [int]$thr) { $warnings += "SPIKE: Local LLM latency $($localProbe.Ms)ms (avg $([int]$statLocal.Mean) +/- $([int]$statLocal.Std))" }
-}
-if ($statCloud.Count -ge [Math]::Max(5, [int]$TrendWindow / 2) -and $cloudProbe.Online -and $cloudProbe.Ms -gt 0 -and $statCloud.Std -gt 0) {
-    $thr = $statCloud.Mean + ($SpikeSigma * $statCloud.Std)
-    if ($cloudProbe.Ms -gt [int]$thr) { $warnings += "SPIKE: Cloud AI latency $($cloudProbe.Ms)ms (avg $([int]$statCloud.Mean) +/- $([int]$statCloud.Std))" }
-}
-if ($statGateway.Count -ge [Math]::Max(5, [int]$TrendWindow / 2) -and $gwProbe.Online -and $gwProbe.Ms -gt 0 -and $statGateway.Std -gt 0) {
-    $thr = $statGateway.Mean + ($SpikeSigma * $statGateway.Std)
-    if ($gwProbe.Ms -gt [int]$thr) { $warnings += "SPIKE: Gateway latency $($gwProbe.Ms)ms (avg $([int]$statGateway.Mean) +/- $([int]$statGateway.Std))" }
-}
-
-# Adaptive thresholding (optional)
-function Add-AdaptiveAlerts {
-    param(
-        [string]$name,
-        [double]$currentMs,
-        [bool]$online,
-        [hashtable]$stat,
-        [ref]$issuesRef,
-        [ref]$warningsRef
-    )
-    if (-not $UseAdaptiveThresholds) { return }
-    if (-not $online -or $currentMs -le 0) { return }
-    if ($stat.Count -lt [Math]::Max(5, [int]($TrendWindow / 2)) -or $stat.Std -le 0) { return }
-    $warnThr = $stat.Mean + ($AdaptiveWarnSigmas * $stat.Std)
-    $alertThr = $stat.Mean + ($AdaptiveAlertSigmas * $stat.Std)
-    if ($currentMs -ge [int]$alertThr) {
-        $issuesRef.Value += "ADAPTIVE ALERT: $name latency $([int]$currentMs)ms (thr $([int]$alertThr) = avg $([int]$stat.Mean) + ${AdaptiveAlertSigmas} sig $([int]$stat.Std))"
-    }
-    elseif ($currentMs -ge [int]$warnThr) {
-        $warningsRef.Value += "ADAPTIVE WARN: $name latency $([int]$currentMs)ms (thr $([int]$warnThr) = avg $([int]$stat.Mean) + ${AdaptiveWarnSigmas} sig $([int]$stat.Std))"
-    }
-}
-
-Add-AdaptiveAlerts -name 'Local LLM' -currentMs $localProbe.Ms -online $localProbe.Online -stat $statLocal -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
-Add-AdaptiveAlerts -name 'Cloud AI' -currentMs $cloudProbe.Ms -online $cloudProbe.Online -stat $statCloud -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
-Add-AdaptiveAlerts -name 'Lumen Gateway' -currentMs $gwProbe.Ms -online $gwProbe.Online -stat $statGateway -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
-
-$hasAlerts = ($issues | Where-Object { $_ -like 'ALERT*' -or $_ -like '*offline*' }).Count -gt 0
-$hasWarns = $warnings.Count -gt 0
-$allGreen = (-not $hasAlerts -and -not $hasWarns)
-
-Write-Host ""; Write-Host "----------------------------------------------------------------" -ForegroundColor DarkGray
-Write-Host "Summary: " -NoNewline
-if ($allGreen) { Write-Host "ALL GREEN - all systems OK" -ForegroundColor Green }
-elseif ($hasAlerts) { Write-Host "ATTENTION - issues detected" -ForegroundColor Yellow }
-else { Write-Host "WARNING - latency thresholds exceeded" -ForegroundColor Yellow }
-
-if ($hasAlerts) { Write-Host "Issues:" -ForegroundColor Red; foreach ($i in $issues) { Write-Host "  - $i" -ForegroundColor Red } }
-if ($hasWarns) { Write-Host "Warnings:" -ForegroundColor Yellow; foreach ($w in $warnings) { Write-Host "  - $w" -ForegroundColor Yellow } }
-
-$snapshot = @{
-    Timestamp = (Get-Date).ToString('s')
-    Channels  = @{ 
-        LocalMs   = $localProbe.Ms
-        Local2Ms  = if ($localProbe2) { $localProbe2.Ms } else { $null }
-        CloudMs   = $cloudProbe.Ms
-        GatewayMs = $gwProbe.Ms 
-    }
-    Online    = @{ 
-        Local   = $localProbe.Online
-        Local2  = if ($localProbe2) { $localProbe2.Online } else { $false }
-        Cloud   = $cloudProbe.Online
-        Gateway = $gwProbe.Online 
-    }
-    Trend     = $trend
-    Issues    = $issues
-    Warnings  = $warnings
-}
-
-if ($OutJson) {
-    try {
-        $outPathResolved = $null
-        try { $rp = Resolve-Path -LiteralPath $OutJson -ErrorAction Stop; if ($rp -and $rp.Path) { $outPathResolved = $rp.Path } } catch { }
-        $outPathFinal = if ($outPathResolved) { $outPathResolved } else { $OutJson }
-        $dir = Split-Path -Parent $outPathFinal
-        if ($dir -and -not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }
-        [IO.File]::WriteAllText($outPathFinal, ($snapshot | ConvertTo-Json -Compress), [Text.Encoding]::UTF8)
-    }
-    catch { }
-}
-if ($LogJsonl) { Append-Snapshot -Path $LogPath -Snapshot $snapshot }
-
-$summary = @{
-    AllGreen   = $allGreen
-    IsDegraded = $hasAlerts
-    HasWarns   = $hasWarns
-    Issues     = $issues
-    Warnings   = $warnings
-}
-
-if ($AlertOnDegraded -and (-not $allGreen)) { Send-AlertIfNeeded -Summary $summary -Trend $trend }
-
-if ($Perf) {
-    Write-Host ""; Show-PerfSummary; Write-Host ""
-}
-
-# Emit health check event (best-effort)
-try {
-    $emitPath = Join-Path $PSScriptRoot 'emit_event.ps1'
-    if (Test-Path -LiteralPath $emitPath) {
-        & $emitPath -EventType "health_check" -Payload @{
-            status           = if ($allGreen) { "HEALTHY" } else { "UNHEALTHY" }
-            all_green        = $allGreen
-            has_alerts       = $hasAlerts
-            has_warnings     = $hasWarns
-            agi_confidence   = $agiMetrics.confidence
-            agi_quality      = $agiMetrics.quality
-            agi_second_pass  = $agiMetrics.second_pass_rate
-            lumen_latency_ms = $gwProbe.Ms
-            timestamp        = (Get-Date).ToUniversalTime().ToString("o")
-        } -PersonaId "monitoring"
-    }
-}
-catch {}
-
-Write-Host "`n================================================================`n" -ForegroundColor Cyan
-
-# ensure non-zero exit codes from native commands do not bubble up
-$global:LASTEXITCODE = 0

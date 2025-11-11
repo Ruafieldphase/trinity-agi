@@ -7,6 +7,7 @@
     - Task Queue Server (8091)
     - RPA Worker
     - Monitoring Daemon
+    - Original Data API (8093)
     
     백그라운드에서 지속 실행되며, 로그를 outputs/watchdog_log.jsonl에 기록합니다.
 #>
@@ -131,6 +132,27 @@ function Restart-MonitoringDaemon {
     }
 }
 
+function Restart-OriginalDataApi {
+    param([int]$Port = 8093)
+    Write-WatchdogLog -Action "restart" -Target "original_data_api" -Status "attempting"
+    try {
+        & "$WorkspaceRoot\scripts\ensure_original_data_api.ps1" -StartIfStopped -Port $Port | Out-Null
+        $ok = Test-ServerHealth -Url "http://127.0.0.1:${Port}/health"
+        if ($ok) {
+            Write-WatchdogLog -Action "restart" -Target "original_data_api" -Status "success"
+            return $true
+        }
+        else {
+            Write-WatchdogLog -Action "restart" -Target "original_data_api" -Status "unhealthy"
+            return $false
+        }
+    }
+    catch {
+        Write-WatchdogLog -Action "restart" -Target "original_data_api" -Status "failed" -Details $_.Exception.Message
+        return $false
+    }
+}
+
 # Main watchdog loop
 Write-WatchdogLog -Action "start" -Target "watchdog" -Status "running" -Details "CheckInterval=${CheckInterval}s"
 
@@ -154,6 +176,13 @@ while ($true) {
     if (-not $monitorRunning) {
         Write-WatchdogLog -Action "check" -Target "monitoring_daemon" -Status "down"
         Restart-MonitoringDaemon | Out-Null
+    }
+
+    # Check Original Data API (8093)
+    $odataHealthy = Test-ServerHealth -Url "http://127.0.0.1:8093/health"
+    if (-not $odataHealthy) {
+        Write-WatchdogLog -Action "check" -Target "original_data_api" -Status "down"
+        Restart-OriginalDataApi -Port 8093 | Out-Null
     }
     
     # Information-theoretic stall detection (StallGuard)

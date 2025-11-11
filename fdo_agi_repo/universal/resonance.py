@@ -57,3 +57,21 @@ class ResonanceStore:
                 return ResonanceEvent(**data)
         except Exception:
             return None
+    
+    def read_all(self) -> List[ResonanceEvent]:
+        """Read all events from the store"""
+        if not self.path.exists():
+            return []
+        
+        events = []
+        try:
+            with open(self.path, "r", encoding="utf-8") as f:
+                for line in f:
+                    if line.strip():
+                        data = json.loads(line)
+                        events.append(ResonanceEvent(**data))
+        except Exception:
+            pass
+        
+        return events
+

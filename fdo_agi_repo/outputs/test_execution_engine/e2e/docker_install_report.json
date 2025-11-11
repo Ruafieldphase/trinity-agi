@@ -1,74 +1,74 @@
 {
-  "success": false,
+  "success": true,
   "mode": "dry_run",
   "tutorial_name": "docker_install_e2e",
   "total_actions": 9,
   "executed_actions": 9,
   "verified_actions": 0,
-  "failed_actions": 9,
-  "execution_time": 0.9126100540161133,
+  "failed_actions": 0,
+  "execution_time": 0.904320478439331,
   "action_results": [
     {
       "action_index": 1,
       "action_type": "CLICK",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 3.337860107421875e-06,
       "error": null
     },
     {
       "action_index": 2,
       "action_type": "CLICK",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 5.0067901611328125e-06,
       "error": null
     },
     {
       "action_index": 3,
       "action_type": "INSTALL",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 3.552436828613281e-05,
       "error": null
     },
     {
       "action_index": 4,
       "action_type": "CLICK",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 6.4373016357421875e-06,
       "error": null
     },
     {
       "action_index": 5,
       "action_type": "CLICK",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 5.0067901611328125e-06,
       "error": null
     },
     {
       "action_index": 6,
       "action_type": "CLICK",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 4.5299530029296875e-06,
       "error": null
     },
     {
       "action_index": 7,
       "action_type": "INSTALL",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 1.3589859008789062e-05,
       "error": null
     },
     {
       "action_index": 8,
       "action_type": "INSTALL",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 1.1920928955078125e-05,
       "error": null
     },
     {
       "action_index": 9,
       "action_type": "CLICK",
-      "success": false,
-      "duration": 0.0,
+      "success": true,
+      "duration": 5.0067901611328125e-06,
       "error": null
     }
   ],

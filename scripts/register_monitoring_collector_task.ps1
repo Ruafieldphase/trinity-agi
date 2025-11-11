@@ -36,7 +36,7 @@ if (-not $Register -and -not $Unregister) {
 
 # Build PowerShell command to run collector once and exit
 # One sample, immediate run; collector is responsible for calling quick_status with -LogJsonl
-$collectorArgs = "-NoProfile -ExecutionPolicy Bypass -File `"$CollectorScript`" -MaxSamples 1 -IntervalSeconds 1"
+$collectorArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$CollectorScript`" -MaxSamples 1 -IntervalSeconds 1"
 
 if ($Register) {
     Write-Info "Registering scheduled task '$TaskName' (every $IntervalMinutes minutes)"
@@ -51,13 +51,15 @@ if ($Register) {
 
     $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 
+    $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -Hidden
+
     try {
         # If exists, replace
         if (Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue) {
             Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
             Write-Info "Existing task '$TaskName' removed."
         }
-        Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Principal $principal | Out-Null
+        Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger -Principal $principal -Settings $settings | Out-Null
         Write-Info "Task '$TaskName' registered. It will run every $IntervalMinutes minutes."
         Write-Info "You can start it immediately with: Start-ScheduledTask -TaskName '$TaskName'"
     }

@@ -6,7 +6,7 @@
                              "performance_dashboard_ready",
                              "health_check_ready"
                          ],
-    "previous":  "Core",
+    "previous":  "Sleep",
     "auto_switch_rules":  {
                               "youtube_url_detected":  "Learning",
                               "life_score_below_50":  "Operations",
@@ -16,5 +16,5 @@
     "disabled_services":  [
 
                           ],
-    "active_since":  "2025-11-03T09:40:32.5400480+09:00"
+    "active_since":  "2025-11-06T09:32:59.1321604+09:00"
 }

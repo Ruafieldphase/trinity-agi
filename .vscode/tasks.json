@@ -2,6 +2,102 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "🎵 Music: Start Daemon (Direct)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$py = 'c:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe'; if (Test-Path -LiteralPath $py) { Start-Process -FilePath $py -ArgumentList 'c:\\workspace\\agi\\scripts\\music_daemon.py' -WindowStyle Hidden -PassThru | Format-Table Id,ProcessName,StartTime; Write-Host '✅ Music Daemon started' -ForegroundColor Green } else { Write-Host '❌ Python venv not found' -ForegroundColor Red; exit 1 }"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎵 Music: Check Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$proc = Get-Process -Name 'python' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*music_daemon.py*' }; if ($proc) { Write-Host '✅ Music Daemon is running' -ForegroundColor Green; $proc | Format-Table Id,ProcessName,CPU,WorkingSet } else { Write-Host '❌ Music Daemon is not running' -ForegroundColor Red; exit 1 }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Daemon: Ensure Music+Flow (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_music_flow_daemons.ps1",
+				"-Silent"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [],
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"presentation": {
+				"echo": true,
+				"reveal": "never",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔧 Daemon: Ensure Music+Flow (Manual, Verbose)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_music_flow_daemons.ps1"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🔧 Daemon: Ensure Music+Flow (Force Restart)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_music_flow_daemons.ps1",
+				"-ForceRestart"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "🔍 Daemon: Check Music+Flow Status (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_music_flow_daemons.ps1",
+				"-JsonOnly"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
 			"label": "Morning: Kickoff (1h, open)",
 			"type": "shell",
 			"command": "powershell",
@@ -20,93 +116,6 @@
 			"presentation": {
 				"echo": true,
 				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Policy: Bump Lumen Constitution (minor)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/bump_lumen_constitution.ps1",
-				"-Bump",
-				"minor",
-				"-Note",
-				"auto-review"
-			],
-			"group": "build",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Control Hub: Start (Tray)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/control_hub_tray.ps1"
-			],
-			"isBackground": true,
-			"group": "none",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "never",
-				"focus": false,
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Control Hub: Stop (Tray)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-Command",
-				"Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*control_hub_tray.ps1*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }"
-			],
-			"group": "none",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "never",
-				"focus": false,
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Control Hub: Restart (Tray)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-Command",
-				"Write-Host 'Restarting Control Hub tray...'"
-			],
-			"dependsOn": [
-				"Control Hub: Stop (Tray)",
-				"Control Hub: Start (Tray)"
-			],
-			"dependsOrder": "sequence",
-			"group": "none",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "never",
-				"focus": false,
 				"panel": "shared"
 			}
 		},
@@ -132,6 +141,418 @@
 				"reveal": "always",
 				"panel": "shared"
 			}
+		},
+		{
+			"label": "Observer: Start Dashboard Server (8095)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_observer_server.ps1",
+				"-Port",
+				"8095"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Open Dashboard (browser)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Start-Process 'http://127.0.0.1:8095/'"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Health",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"try { Invoke-RestMethod -Uri 'http://127.0.0.1:8095/health' -TimeoutSec 2 | ConvertTo-Json -Depth 5 | Write-Output } catch { Write-Host 'Observer server offline' -ForegroundColor Red; exit 1 }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Start Telemetry (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/observe_desktop_telemetry.ps1",
+				"-IntervalSeconds",
+				"5"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Start Telemetry (10s test)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/observe_desktop_telemetry.ps1",
+				"-IntervalSeconds",
+				"2",
+				"-DurationSeconds",
+				"10"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Stop Telemetry",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_observer_telemetry.ps1"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Ensure Running (Auto-Restart)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_observer_telemetry.ps1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Force Restart",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/ensure_observer_telemetry.ps1",
+				"-Force"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Summarize (1h)",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"${workspaceFolder}/scripts/summarize_stream_observer.py",
+				"--hours",
+				"1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Summarize (24h)",
+			"type": "shell",
+			"command": "python",
+			"args": [
+				"${workspaceFolder}/scripts/summarize_stream_observer.py",
+				"--hours",
+				"24"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Open Latest Summary (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"code ${workspaceFolder}/outputs/stream_observer_summary_latest.md"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Open Integrated Dashboard",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/open_observer_dashboard.ps1"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Generate Dashboard (with metrics)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_monitoring_dashboard_with_observer.ps1"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Start Live Observer (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/observe_youtube_live.ps1",
+				"-Url",
+				"${input:youtubeUrlPrompt}",
+				"-IntervalSeconds",
+				"60",
+				"-ClipSeconds",
+				"10",
+				"-MaxFrames",
+				"3",
+				"-FrameInterval",
+				"30.0"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "YouTube: Stop Live Observer",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_youtube_live_observer.ps1"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Summarize Telemetry (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe') { & '${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/summarize_stream_observer.py' --hours 24 } elseif (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/summarize_stream_observer.py' --hours 24 } else { python '${workspaceFolder}/scripts/summarize_stream_observer.py' --hours 24 }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Observer: Open Latest Summary (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/stream_observer_summary_latest.md') { code ${workspaceFolder}/outputs/stream_observer_summary_latest.md } else { Write-Host 'No summary found. Run: Observer: Summarize Telemetry (24h)' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🌊 Flow: Start Background Monitor",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_flow_observer_daemon.ps1"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "🌊 Flow: Stop Background Monitor",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_flow_observer_daemon.ps1"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "🌊 Flow: Check Monitor Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_flow_observer_status.ps1"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🌊 Flow: Generate Report (1h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/fdo_agi_repo/copilot/flow_observer_integration.py' } else { python '${workspaceFolder}/fdo_agi_repo/copilot/flow_observer_integration.py' }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🌊 Flow: Open Latest Report (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/flow_observer_report_latest.json') { code ${workspaceFolder}/outputs/flow_observer_report_latest.json } else { Write-Host 'No flow report found. Run: Flow: Generate Report (1h)' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
 		},
 		{
 			"label": "Morning: Kickoff (2h, open)",
@@ -303,25 +724,6 @@
 			}
 		},
 		{
-			"label": "Policy: Refresh snapshot (batch+report)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/policy_ab_refresh.ps1"
-			],
-			"group": "test",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
 			"label": "Policy Smoke: Enforce latency-first (1h, open)",
 			"type": "shell",
 			"command": "powershell",
@@ -409,87 +811,6 @@
 				"1"
 			],
 			"group": "test",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Auto Stabilizer: Start (daemon)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/start_auto_stabilizer_daemon.ps1",
-				"-KillExisting"
-			],
-			"group": "build",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Auto Stabilizer: Start (auto-execute, 5min)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/start_auto_stabilizer_daemon.ps1",
-				"-KillExisting",
-				"-AutoExecute",
-				"-IntervalSeconds",
-				"300"
-			],
-			"group": "build",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Auto Stabilizer: Stop (daemon)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/stop_auto_stabilizer_daemon.ps1"
-			],
-			"group": "build",
-			"problemMatcher": [],
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Auto Stabilizer: Status",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/check_auto_stabilizer_status.ps1"
-			],
-			"group": "build",
 			"problemMatcher": [],
 			"presentation": {
 				"echo": true,
@@ -673,6 +994,25 @@
 			"problemMatcher": []
 		},
 		{
+			"label": "Streaming: Open My YouTube Live",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Start-Process 'https://youtube.com/live/tFILHbGlnJU?feature=share'"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
 			"label": "?㎚ Life: Check Continuity",
 			"type": "shell",
 			"command": "powershell",
@@ -747,49 +1087,6 @@
 				"-File",
 				"${workspaceFolder}/scripts/start_ai_dev_stream.ps1",
 				"-CheckOnly"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Lumen: Daily Rhythm Prompt (print)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/lumen_daily_rhythm.ps1"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Lumen: Daily Rhythm Guide (1 cycle)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/lumen_daily_rhythm.ps1",
-				"-Guide",
-				"-Cycles",
-				"1",
-				"-BeatSeconds",
-				"4"
 			],
 			"group": "test",
 			"presentation": {
@@ -1089,6 +1386,107 @@
 				"echo": true,
 				"reveal": "always",
 				"focus": false,
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Context: Snapshot (24h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/context_snapshot.ps1",
+				"-Hours",
+				"24",
+				"-Open"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Context: Snapshot (12h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/context_snapshot.ps1",
+				"-Hours",
+				"12",
+				"-Open"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Context: Open Latest Snapshot (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/context_snapshot.md') { code ${workspaceFolder}/outputs/context_snapshot.md } else { Write-Host 'No context snapshot found. Run: Context: Snapshot (24h, open)' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "Context: Open Latest Snapshot (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/context_snapshot.json') { code ${workspaceFolder}/outputs/context_snapshot.json } else { Write-Host 'No context snapshot JSON found. Run: Context: Snapshot (24h, open)' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"panel": "shared"
+			}
+		},
+		{
+			"label": "🔧 ES: Preflight (detect es.exe)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$p='${workspaceFolder}/scripts/es.exe'; if (Test-Path -LiteralPath $p) { Write-Host \"Everything CLI found at: $p\" -ForegroundColor Green } else { Write-Host 'Everything CLI (es.exe) not found under scripts/. Some ES tasks may fail.' -ForegroundColor Yellow }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
 				"panel": "shared"
 			}
 		},
@@ -2298,44 +2696,6 @@
 			"presentation": {
 				"reveal": "never",
 				"focus": false
-			}
-		},
-		{
-			"label": "AI: Rest Cycle (10m safe)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-Command",
-				"& \"${workspaceFolder}/scripts/quick_status.ps1\" -OutJson \"${workspaceFolder}/outputs/quick_status_rest_prep.json\"; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & \"${workspaceFolder}/scripts/rotate_status_snapshots.ps1\" -Zip; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & \"${workspaceFolder}/scripts/cleanup_snapshot_archives.ps1\" -KeepDays 14 -DryRun; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }; & \"${workspaceFolder}/scripts/generate_monitoring_report.ps1\" -Hours 1"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			}
-		},
-		{
-			"label": "Policy: Lumen Constitution Guard (dry-run)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/check_constitution_guard.ps1"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
 			}
 		},
 		{
@@ -5960,100 +6320,6 @@
 			"group": "test"
 		},
 		{
-			"label": "🎭 Emotion: Test Stabilizer (elevated)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/test_emotion_stabilizer.ps1",
-				"-Scenario",
-				"elevated"
-			],
-			"group": "test"
-		},
-		{
-			"label": "🎭 Emotion: Test Stabilizer (high)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/test_emotion_stabilizer.ps1",
-				"-Scenario",
-				"high"
-			],
-			"group": "test"
-		},
-		{
-			"label": "🎭 Emotion: Test Stabilizer (critical)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/test_emotion_stabilizer.ps1",
-				"-Scenario",
-				"critical"
-			],
-			"group": "test"
-		},
-		{
-			"label": "🎭 Emotion: Start Stabilizer (5min, dry-run)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/start_emotion_stabilizer.ps1",
-				"-CheckInterval",
-				"300",
-				"-DryRun"
-			],
-			"isBackground": true,
-			"group": "build"
-		},
-		{
-			"label": "🎭 Emotion: Start Stabilizer (5min, auto-execute)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/start_emotion_stabilizer.ps1",
-				"-CheckInterval",
-				"300",
-				"-AutoExecute"
-			],
-			"isBackground": true,
-			"group": "build"
-		},
-		{
-			"label": "🎭 Emotion: Check Once",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/start_emotion_stabilizer.ps1",
-				"-Once",
-				"-DryRun"
-			],
-			"group": "test"
-		},
-		{
 			"label": "🔄 Trinity: Autopoietic Cycle (24h, open)",
 			"type": "shell",
 			"command": "powershell",
@@ -6145,6 +6411,211 @@
 			"group": "test"
 		},
 		{
+			"label": "🎯 Goal: Generate Autonomous Goals (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/autonomous_goal_generator.py' --hours 24 } else { python '${workspaceFolder}/scripts/autonomous_goal_generator.py' --hours 24 }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎯 Goal: Generate + Open (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/autonomous_goal_generator.py' --hours 24 } else { python '${workspaceFolder}/scripts/autonomous_goal_generator.py' --hours 24 }; if ($LASTEXITCODE -eq 0) { code '${workspaceFolder}/outputs/autonomous_goals_latest.md' }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎯 Goal: Open Latest Goals (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/autonomous_goals_latest.md') { code ${workspaceFolder}/outputs/autonomous_goals_latest.md } else { Write-Host 'No goals found. Run: Goal: Generate + Open (24h)' -ForegroundColor Yellow }"
+			],
+			"group": "none"
+		},
+		{
+			"label": "🎯 Goal: Open Latest Goals (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/autonomous_goals_latest.json') { code ${workspaceFolder}/outputs/autonomous_goals_latest.json } else { Write-Host 'No goals found. Run: Goal: Generate + Open (24h)' -ForegroundColor Yellow }"
+			],
+			"group": "none"
+		},
+		{
+			"label": "🎯 Goal: Execute Autonomous Goals (once)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/autonomous_goal_executor.py' } else { python '${workspaceFolder}/scripts/autonomous_goal_executor.py' }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎯 Goal: Execute + Open Tracker",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/autonomous_goal_executor.py' } else { python '${workspaceFolder}/scripts/autonomous_goal_executor.py' }; if ($LASTEXITCODE -eq 0) { code '${workspaceFolder}/fdo_agi_repo/memory/goal_tracker.json' }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "👁️ Goal: Execute in VS Code (Observed)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/execute_goal_in_vscode.ps1",
+				"-GoalIndex",
+				"1"
+			],
+			"group": "test"
+		},
+		{
+			"label": "👁️ Goal: Execute #1 (Quantum Observer)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/execute_goal_in_vscode.ps1",
+				"-GoalIndex",
+				"1"
+			],
+			"group": "test"
+		},
+		{
+			"label": "👁️ Goal: Execute #2 (Quantum Observer)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/execute_goal_in_vscode.ps1",
+				"-GoalIndex",
+				"2"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🔄 Goal: Start Continuous Loop (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_autonomous_goal_loop.ps1"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "🔄 Goal: Stop Continuous Loop",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_autonomous_goal_loop.ps1"
+			],
+			"group": "build"
+		},
+		{
+			"label": "🔄 Goal: Check Loop Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_autonomous_goal_loop_status.ps1"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎯 Goal: Open Tracker (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/memory/goal_tracker.json') { code ${workspaceFolder}/fdo_agi_repo/memory/goal_tracker.json } else { Write-Host 'No tracker found. Run: Goal: Execute + Open Tracker' -ForegroundColor Yellow }"
+			],
+			"group": "none"
+		},
+		{
+			"label": "📊 Goal: Open Dashboard (HTML)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_autonomous_goal_dashboard.ps1",
+				"-OpenBrowser"
+			],
+			"group": "test"
+		},
+		{
+			"label": "📊 Goal: Dashboard (Watch Mode)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/generate_autonomous_goal_dashboard.ps1",
+				"-Watch"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
 			"label": "Autopoietic: Evaluate Engine Promotion",
 			"type": "shell",
 			"command": "powershell",
@@ -6220,6 +6691,178 @@
 			"runOptions": {
 				"runOn": "folderOpen"
 			},
+			"problemMatcher": []
+		},
+		{
+			"label": "🔄 Session: Auto Restore Continuity",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/session_continuity_restore.ps1",
+				"-Silent"
+			],
+			"presentation": {
+				"reveal": "silent",
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "📖 Session: Restore + Open Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/session_continuity_restore.ps1",
+				"-OpenReport"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🆕 Chat: New with Context (Quick)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/new_chat_with_context.ps1"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🆕 Chat: New with Full Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/new_chat_with_context.ps1",
+				"-ContextFile",
+				"outputs/session_continuity_latest.md"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🤖 Chat: New + Auto Paste (게임 봇 모드!)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/new_chat_with_context.ps1",
+				"-AutoPaste"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎮 Chat: Auto Switch (Python 게임 봇!)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_switch_chat_wrapper.ps1"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎮 Chat: Auto Switch (5초 대기)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_switch_chat_wrapper.ps1",
+				"-Delay",
+				"5"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "📦 Chat: Install Python Deps (pyautogui)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_switch_chat_wrapper.ps1",
+				"-InstallDeps"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "🧠 AGI: Check Context (자가 인식)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/agi_self_aware_context_manager.ps1"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🤖 AGI: Auto Context Switch (완전 자동!)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/agi_self_aware_context_manager.ps1",
+				"-AutoSwitch"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "📊 AGI: Context Status (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/agi_self_aware_context_manager.ps1",
+				"-StatusOnly"
+			],
+			"group": "test",
 			"problemMatcher": []
 		},
 		{
@@ -7252,6 +7895,71 @@
 			"group": "test"
 		},
 		{
+			"label": "🌌 Bohm: Analyze Folding/Unfolding (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/bohm_implicate_explicate_analyzer.py' --hours 24 } else { python '${workspaceFolder}/scripts/bohm_implicate_explicate_analyzer.py' --hours 24 }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🌌 Bohm: Analyze Folding/Unfolding (24h, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"& '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/bohm_implicate_explicate_analyzer.py' --hours 24; if ($LASTEXITCODE -eq 0) { code '${workspaceFolder}/outputs/bohm_analysis_latest.md' }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🌌 Bohm: Analyze Folding/Unfolding (7 days)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/bohm_implicate_explicate_analyzer.py' --hours 168 } else { python '${workspaceFolder}/scripts/bohm_implicate_explicate_analyzer.py' --hours 168 }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🌌 Bohm: Open Latest Analysis (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"code ${workspaceFolder}/outputs/bohm_analysis_latest.md"
+			],
+			"group": "none"
+		},
+		{
+			"label": "🌌 Bohm: Open Latest Analysis (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"code ${workspaceFolder}/outputs/bohm_analysis_latest.json"
+			],
+			"group": "none"
+		},
+		{
 			"label": "Realtime: Open Latest (JSON)",
 			"type": "shell",
 			"command": "powershell",
@@ -7580,364 +8288,515 @@
 				"if (Test-Path '${workspaceFolder}/outputs/original_data_index.json') { code ${workspaceFolder}/outputs/original_data_index.json } else { Write-Host 'No original_data_index.json found. Run: Original Data: Build Index (open)' -ForegroundColor Yellow }"
 			],
 			"group": "none"
+		},
+		{
+			"label": "🎵 Music: E2E System Test",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/test_music_rhythm_system_e2e.ps1"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎵 Music: Start Monitor",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_music_monitor.ps1"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "🎵 Music: Stop Monitor",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_music_monitor.ps1"
+			],
+			"group": "build"
+		},
+		{
+			"label": "🎵 Music: Analyze Current (Reaper)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/analyze_current_music_reaper.py' } else { python '${workspaceFolder}/scripts/analyze_current_music_reaper.py' }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎵 Music: Play Adaptive (Wake Up)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/play_adaptive_music.ps1",
+				"-Category",
+				"wake_up"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎵 Music: Play Adaptive (Coding)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/play_adaptive_music.ps1",
+				"-Category",
+				"coding"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎵 Freq: Generate Binaural Beat (Flow-based, 5min)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/flow_binaural_generator.py' --duration 300 } else { python '${workspaceFolder}/scripts/flow_binaural_generator.py' --duration 300 }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎵 Freq: Generate Binaural Beat (Custom duration)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$dur = Read-Host 'Duration (seconds)'; if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/flow_binaural_generator.py' --duration $dur } else { python '${workspaceFolder}/scripts/flow_binaural_generator.py' --duration $dur }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎼 Freq: Generate Rhythm Signature (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/rhythm_audio_signature.py' --hours 24 } else { python '${workspaceFolder}/scripts/rhythm_audio_signature.py' --hours 24 }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎧 Freq: Open Latest Binaural",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$latest = Get-ChildItem '${workspaceFolder}/outputs' -Filter 'binaural_flow_*.wav' | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latest) { Start-Process $latest.FullName } else { Write-Host 'No binaural audio found. Generate first.' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎧 Freq: Open Latest Rhythm Signature",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$latest = Get-ChildItem '${workspaceFolder}/outputs' -Filter 'rhythm_signature_*.wav' | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latest) { Start-Process $latest.FullName } else { Write-Host 'No rhythm signature found. Generate first.' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "🤖 Music: Start Auto-Play Daemon (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/music_daemon.py' --interval 60 --threshold 0.3 } else { python '${workspaceFolder}/scripts/music_daemon.py' --interval 60 --threshold 0.3 }"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "🛑 Music: Stop Auto-Play Daemon",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"Get-Process -Name 'pwsh','powershell','python' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*music_daemon.py*' } | Stop-Process -Force; Write-Host 'Music Daemon stopped' -ForegroundColor Green"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "🔍 Music: Check Daemon Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$proc = Get-Process -Name 'python' -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -like '*music_daemon.py*' }; if ($proc) { Write-Host '✅ Music Daemon is running' -ForegroundColor Green; $proc | Format-Table Id,ProcessName,CPU,WorkingSet } else { Write-Host '❌ Music Daemon is not running' -ForegroundColor Red }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎵 Music: Test Play (Once)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/music_daemon.py' --once --threshold 1.0 } else { python '${workspaceFolder}/scripts/music_daemon.py' --once --threshold 1.0 }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎵 Music: Generate Groove Profile (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/generate_groove_profile.py' --hours 24 } else { python '${workspaceFolder}/scripts/generate_groove_profile.py' --hours 24 }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎵 Music: Generate Groove Profile + Open",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/generate_groove_profile.py' --hours 24 } else { python '${workspaceFolder}/scripts/generate_groove_profile.py' --hours 24 }; if ($LASTEXITCODE -eq 0) { code '${workspaceFolder}/outputs/groove_profile_latest.json' }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎤 Microphone: List Devices",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --list-devices } else { python '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --list-devices }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎤 Microphone: Analyze Once",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --once } else { python '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --once }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎤 Microphone: Monitor (1min)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --monitor --interval 10 --duration 60 } else { python '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --monitor --interval 10 --duration 60 }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎤 Microphone: Monitor (10min)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --monitor --interval 10 --duration 600 } else { python '${workspaceFolder}/scripts/microphone_frequency_analyzer.py' --monitor --interval 10 --duration 600 }"
+			],
+			"group": "test",
+			"problemMatcher": [],
+			"isBackground": true
+		},
+		{
+			"label": "🎤 Microphone: Open Latest Analysis",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/microphone/microphone_analysis_latest.json') { code ${workspaceFolder}/outputs/microphone/microphone_analysis_latest.json } else { Write-Host 'No analysis found. Run: 🎤 Microphone: Analyze Once' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "🧪 Test: Visual Chat Switcher (Auto)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/test_visual_chat_switcher.py' } else { python '${workspaceFolder}/scripts/test_visual_chat_switcher.py' }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🧪 Test: Open Visual Switcher Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/visual_switcher_test_report_latest.json') { code ${workspaceFolder}/outputs/visual_switcher_test_report_latest.json } else { Write-Host 'No test report found. Run: 🧪 Test: Visual Chat Switcher (Auto)' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎓 Learn: Program (DRY RUN)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/program_learning_agent.py' --program Notepad --dry-run } else { python '${workspaceFolder}/scripts/program_learning_agent.py' --program Notepad --dry-run }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎓 Learn: Notepad (실제 실행)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/program_learning_agent.py' --program Notepad } else { python '${workspaceFolder}/scripts/program_learning_agent.py' --program Notepad }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎓 Learn: Paint (실제 실행)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/program_learning_agent.py' --program Paint } else { python '${workspaceFolder}/scripts/program_learning_agent.py' --program Paint }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🎓 Learn: Open Latest Learning Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$latest = Get-ChildItem '${workspaceFolder}/outputs/program_learning' -Filter '*_learning_report_latest.md' | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($latest) { code $latest.FullName } else { Write-Host 'No learning report found.' -ForegroundColor Yellow }"
+			],
+			"group": "none",
+			"problemMatcher": []
+		},
+		{
+			"label": "🧪 Program: Test Learning Integration",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/test_program_learner.py' } else { python '${workspaceFolder}/scripts/test_program_learner.py' }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "📊 Program: Get Statistics",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/fdo_agi_repo/program_learning_agent.py' --mode stats } else { python '${workspaceFolder}/fdo_agi_repo/program_learning_agent.py' --mode stats }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "🔍 Program: Analyze (Prompt)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$program = Read-Host 'Enter program name (e.g., notepad.exe, vscode.exe)'; if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/fdo_agi_repo/program_learning_agent.py' --mode analyze --program $program --hours 24 } else { python '${workspaceFolder}/fdo_agi_repo/program_learning_agent.py' --mode analyze --program $program --hours 24 }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "💡 Program: Suggest Automation",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"$program = Read-Host 'Enter program name for automation'; if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/fdo_agi_repo/program_learning_agent.py' --mode suggest --program $program } else { python '${workspaceFolder}/fdo_agi_repo/program_learning_agent.py' --mode suggest --program $program }"
+			],
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "📦 Chat: Start Auto Switch (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_switch_chat_wrapper_v2.ps1",
+				"-Start",
+				"-IntervalSeconds",
+				"10"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "⏹️ Chat: Stop Auto Switch",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_switch_chat_wrapper_v2.ps1",
+				"-Stop"
+			],
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "ℹ️ Chat: Check Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/auto_switch_chat_wrapper_v2.ps1",
+				"-Status"
+			],
+			"group": "test",
+			"problemMatcher": []
 		}
 	],
 	"inputs": [
 		{
-			"id": "chatopsPhrase",
-			"type": "promptString",
-			"description": "?먯뿰?대줈 吏?쒕? ?낅젰?섏꽭??(AGI: AGI ?곹깭 / Canary: 移대굹由?10% ?щ젮 / ?듯빀: ?듯빀 ?곹깭 / OBS: 諛⑹넚 ?쒖옉 / Bot: 遊?耳쒖쨾)",
-			"default": "?듯빀 ?곹깭"
-		},
-		{
-			"id": "clientSecretPath",
-			"type": "promptString",
-			"description": "OAuth client_secret.json 寃쎈줈 ?낅젰",
-			"default": "C:\\path\\to\\client_secret.json"
-		},
-		{
 			"id": "youtubeUrlPrompt",
 			"type": "promptString",
-			"description": "遺꾩꽍??YouTube URL ?낅젰",
-			"default": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+			"description": "YouTube URL:"
 		},
 		{
-			"id": "jsonPathPrompt",
+			"id": "obsSceneNamePrompt",
 			"type": "promptString",
-			"description": "Markdown?쇰줈 蹂?섑븷 遺꾩꽍 JSON ?뚯씪 寃쎈줈 ?낅젰",
-			"default": "${workspaceFolder}/outputs/youtube_learner/dQw4w9WgXcQ_analysis.json"
-		},
-		{
-			"id": "topCountPrompt",
-			"type": "promptString",
-			"description": "?몃뜳?ㅼ뿉 ?쒖떆??理쒖떊 ??ぉ 媛쒖닔 (?? 20)",
-			"default": "20"
-		},
-		{
-			"id": "endOfDayNote",
-			"type": "promptString",
-			"description": "End of day note (optional)",
-			"default": "Phase 6 진행"
+			"description": "OBS Scene Name (e.g., AI Dev, Coding):"
 		}
-	],
-	"taskDefinitions": [
-		{
-			"label": "?뱤 Context: Show State",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/show_context_state.ps1"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "?뱤 Context: Show State (Verbose)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/show_context_state.ps1",
-				"-Verbose"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "?봽 Context: Manual Resume",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/auto_resume_on_startup.ps1"
-			],
-			"group": "build",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "?벀 Handover: Create Manual",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-Command",
-				"$task = Read-Host 'Task description'; $progress = Read-Host 'Current progress'; $next = Read-Host 'Next steps (comma-separated)'; python '${workspaceFolder}/session_memory/session_handover.py' create --task \"$task\" --progress \"$progress\" --next $next.Split(',')"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "?벀 Handover: Show Latest",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-Command",
-				"python '${workspaceFolder}/session_memory/session_handover.py' load"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "?렞 Context: Full Restore Chain",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-Command",
-				"Write-Host 'Context Restore Chain Started' -ForegroundColor Cyan; & '${workspaceFolder}/scripts/show_context_state.ps1'; Write-Host ''; & '${workspaceFolder}/scripts/auto_resume_on_startup.ps1'; Write-Host ''; python '${workspaceFolder}/session_memory/session_handover.py' load"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": [],
-			"dependsOrder": "sequence"
-		},
-		{
-			"label": "Realtime: Run Resonance Bridge (24h)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run_realtime_resonance.ps1",
-				"-WindowHours",
-				"24"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Realtime: Run Resonance Bridge (24h, open)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/run_realtime_resonance.ps1",
-				"-WindowHours",
-				"24",
-				"-OpenJson"
-			],
-			"group": "test",
-			"presentation": {
-				"echo": true,
-				"reveal": "always",
-				"focus": true,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		},
-		{
-			"label": "Realtime: Open Latest (JSON)",
-			"type": "shell",
-			"command": "powershell",
-			"args": [
-				"-NoProfile",
-				"-ExecutionPolicy",
-				"Bypass",
-				"-File",
-				"${workspaceFolder}/scripts/open_realtime_output.ps1",
-				"-Kind",
-				"json",
-				"-WorkspaceFolder",
-				"${workspaceFolder}"
-			],
-			"group": "none",
-			"presentation": {
-				"echo": true,
-				"reveal": "silent",
-				"focus": false,
-				"panel": "shared"
-			},
-			"problemMatcher": []
-		}
-	],
-	/*
-{
-"label": " Context: Status",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-Status"],
-"group": "test"
-},
-{
-"label": " Context: Auto (Smart)",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/auto_context.ps1"],
-"group": "test"
-},
-{
-"label": " Context: Switch to Learning",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Learning"],
-"group": "build"
-},
-{
-"label": " Context: Switch to Operations",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Operations"],
-"group": "build"
-},
-{
-"label": " Context: Switch to Development",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Development"],
-"group": "build"
-},
-{
-"label": " Context: Switch to Sleep",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/switch_context.ps1", "-To", "Sleep"],
-"group": "build"
-},
-{
-"label": "🤖 AI: Bootstrap Self-Managing System (Once)",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/bootstrap_autonomous_system.ps1"],
-"group": "build",
-"problemMatcher": [],
-"presentation": {
-"echo": true,
-"reveal": "always",
-"focus": true,
-"panel": "shared"
-}
-},
-{
-"label": "🤖 AI: Bootstrap Self-Managing System (Dry-Run)",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/bootstrap_autonomous_system.ps1", "-DryRun"],
-"group": "test",
-"problemMatcher": [],
-"presentation": {
-"echo": true,
-"reveal": "always",
-"focus": true,
-"panel": "shared"
-}
-},
-{
-"label": "🤖 AI: Check Self-Managing Status",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe ${workspaceFolder}/fdo_agi_repo/orchestrator/self_managing_agent.py --no-auto-fix"],
-"group": "test",
-"problemMatcher": [],
-"presentation": {
-"echo": true,
-"reveal": "always",
-"panel": "shared"
-}
-},
-{
-"label": "🤖 AI: Open Self-Managing Report (MD)",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "if (Test-Path '${workspaceFolder}/outputs/self_managing_agent_latest.md') { code ${workspaceFolder}/outputs/self_managing_agent_latest.md } else { Write-Host 'No report found. Run: AI: Bootstrap Self-Managing System' -ForegroundColor Yellow }"],
-"group": "none"
-},
-{
-"label": "🤖 AI: Open Self-Managing Report (JSON)",
-"type": "shell",
-"command": "powershell",
-"args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "if (Test-Path '${workspaceFolder}/outputs/self_managing_agent_latest.json') { code ${workspaceFolder}/outputs/self_managing_agent_latest.json } else { Write-Host 'No report found. Run: AI: Bootstrap Self-Managing System' -ForegroundColor Yellow }"],
-"group": "none"
-},
-{
-"label": "🔄 Post-Reload: Auto Recovery",
-"type": "shell",
-"command": "powershell",
-"args": [
-"-NoProfile",
-"-ExecutionPolicy",
-"Bypass",
-"-File",
-"${workspaceFolder}/scripts/post_reload_recovery.ps1",
-"-Silent"
-],
-"runOptions": {
-"runOn": "folderOpen"
-},
-"group": "build",
-"problemMatcher": [],
-"presentation": {
-"echo": false,
-"reveal": "silent",
-"focus": false,
-"panel": "shared",
-"showReuseMessage": false,
-"clear": false
-}
-}
-]
-}
-*/
+	]
 }

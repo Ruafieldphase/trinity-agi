@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $false)]
     [ValidateSet('Hourly', 'Daily', 'Weekly')]
     [string]$Frequency = 'Daily',
@@ -80,6 +80,7 @@ $Action = New-ScheduledTaskAction -Execute $ActionCommand -Argument $ActionArgum
 
 # 설정
 $Settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
     -AllowStartIfOnBatteries `
     -DontStopIfGoingOnBatteries `
     -StartWhenAvailable `

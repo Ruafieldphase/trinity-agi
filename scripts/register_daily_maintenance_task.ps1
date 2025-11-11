@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [string]$TaskName = "MonitoringDailyMaintenance",
@@ -55,6 +55,7 @@ if ($Register) {
 
     # Settings & principal
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries:$false -DontStopIfGoingOnBatteries:$false -StartWhenAvailable -WakeToRun
+$settings.Hidden = $true
     $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 
     try {

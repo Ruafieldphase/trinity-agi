@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-03T00:40:32Z",
+  "timestamp": "2025-11-06T00:32:59Z",
   "alive": false,
   "dimensions": {
     "difference_detection": {
@@ -28,10 +28,10 @@
       "score": 0.3333333333333333
     },
     "energy_circulation": {
-      "circulating": false,
+      "circulating": true,
       "recent_results_24h": 0,
-      "recent_learning_outputs": false,
-      "score": 0.0
+      "recent_learning_outputs": true,
+      "score": 0.6
     },
     "continuity_preservation": {
       "preserving": true,
@@ -48,8 +48,7 @@
   },
   "recommendations": [
     "⚠️ 차이 감지 약함: 모니터링 시스템 점검 필요 (metrics collector, ledger)",
-    "⚠️ 리듬 약함: Scheduled tasks 실행 여부 확인 (BQI, Ensemble, Autopoietic)",
-    "⚠️ 에너지 순환 약함: Worker/Results 생성 확인 필요"
+    "⚠️ 리듬 약함: Scheduled tasks 실행 여부 확인 (BQI, Ensemble, Autopoietic)"
   ],
-  "life_score": 0.315
+  "life_score": 0.435
 }

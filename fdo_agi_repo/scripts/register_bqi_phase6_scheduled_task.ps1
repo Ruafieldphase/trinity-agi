@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Register or unregister scheduled task for BQI Phase 6 (Persona Learning).
@@ -89,6 +89,7 @@ if ($Register) {
     if ($WakeFromSleep) {
         # Wake from sleep mode (requires admin/highest privileges)
         $settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
             -AllowStartIfOnBatteries `
             -DontStopIfGoingOnBatteries `
             -StartWhenAvailable `
@@ -103,6 +104,7 @@ if ($Register) {
     else {
         # Standard mode: run when computer is awake
         $settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
             -AllowStartIfOnBatteries `
             -DontStopIfGoingOnBatteries `
             -StartWhenAvailable `

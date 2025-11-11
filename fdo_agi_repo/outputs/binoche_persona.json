@@ -1,18 +1,18 @@
 {
   "version": "1.2.0",
-  "created_at": "2025-11-03T10:15:02.690310",
+  "created_at": "2025-11-07T16:40:13.616137",
   "stats": {
-    "total_tasks": 539,
-    "total_decisions": 509,
-    "approve_rate": 0.7642436149312377,
-    "revise_rate": 0.2200392927308448,
-    "reject_rate": 0.015717092337917484
+    "total_tasks": 35,
+    "total_decisions": 29,
+    "approve_rate": 1.0,
+    "revise_rate": 0.0,
+    "reject_rate": 0.0
   },
   "decision_patterns": {
     "approve": [
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651215+00:00",
+          "timestamp": "2025-11-05T09:42:12.545446+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -20,14 +20,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "Phase 1 Goal #2 검증: 메트릭 자동 수집 테스트"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651379+00:00",
+          "timestamp": "2025-11-05T12:03:53.329303+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -35,14 +35,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "Test task execution and resonance logging"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651523+00:00",
+          "timestamp": "2025-11-06T06:10:54.044489+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -50,14 +50,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "Summarize Python best practices in 50 words"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651650+00:00",
+          "timestamp": "2025-11-06T06:11:28.057667+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -65,14 +65,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "quick run for ledger events"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651794+00:00",
+          "timestamp": "2025-11-06T06:11:49.327989+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -80,14 +80,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "quick run for ledger events"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651880+00:00",
+          "timestamp": "2025-11-06T11:37:01.034376+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -95,14 +95,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "quick run for ledger events"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651916+00:00",
+          "timestamp": "2025-11-06T11:37:06.706761+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -110,14 +110,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "quick run for ledger events"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651945+00:00",
+          "timestamp": "2025-11-06T11:42:26.972280+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -125,14 +125,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "quick run for ledger events"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.651972+00:00",
+          "timestamp": "2025-11-06T11:42:32.428566+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -140,14 +140,14 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "quick run for ledger events"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       },
       {
         "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652048+00:00",
+          "timestamp": "2025-11-06T11:49:58.061089+00:00",
           "rhythm_phase": "exploration",
           "emotion": {
             "keywords": [
@@ -155,353 +155,21 @@
             ]
           },
           "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
+          "raw_prompt": "quick run for ledger events"
         },
-        "quality": 0.8,
+        "quality": 0.85,
         "confidence": null
       }
     ],
-    "revise": [
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652010+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "Python 데코레이터와 제너레이터의 차이를 5문장으로 설명하고, 각각의 실제 사용 예시 코드를 제공해주세요"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652083+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "2025년 10월 최신 AI 기술 뉴스를 웹에서 검색하여 요약해주세요"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652512+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "Python 데코레이터와 제너레이터의 차이를 5문장으로 설명하고, 각각의 실제 사용 예시 코드를 제공해주세요"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652550+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "2025년 10월 최신 AI 기술 뉴스를 웹에서 검색하여 요약해주세요"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652722+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652751+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652780+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652810+00:00",
-          "rhythm_phase": "exploration",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "AGI 자기교정 루프 설명 3문장"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652913+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.4,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.652939+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.4,
-        "confidence": null
-      }
-    ],
-    "reject": [
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658253+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658390+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658430+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658472+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658510+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658552+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658590+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      },
-      {
-        "bqi": {
-          "timestamp": "2025-11-03T01:15:02.658633+00:00",
-          "rhythm_phase": "planning",
-          "emotion": {
-            "keywords": [
-              "neutral"
-            ]
-          },
-          "priority": 1,
-          "raw_prompt": "force replan (no citations)"
-        },
-        "quality": 0.3,
-        "confidence": null
-      }
-    ]
+    "revise": [],
+    "reject": []
   },
   "bqi_probabilities": {
     "p1_e:neutral_r:exploration": {
-      "approve_prob": 0.9470588235294117,
-      "revise_prob": 0.052941176470588235,
-      "reject_prob": 0.0,
-      "sample_count": 340
-    },
-    "p1_e:keywords_r:exploration": {
       "approve_prob": 1.0,
       "revise_prob": 0.0,
       "reject_prob": 0.0,
-      "sample_count": 16
-    },
-    "p3_e:neutral_r:exploration": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 18
-    },
-    "p1_e:neutral_r:integration": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 2
-    },
-    "p1_e:neutral_r:planning": {
-      "approve_prob": 0.08928571428571429,
-      "revise_prob": 0.8392857142857143,
-      "reject_prob": 0.07142857142857142,
-      "sample_count": 112
-    },
-    "p1_e:keywords_r:integration": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 13
-    },
-    "p1_e:neutral_r:reflection": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 3
-    },
-    "p2_e:neutral_r:exploration": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 1
-    },
-    "p2_e:keywords_r:exploration": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 1
-    },
-    "p4_e:neutral_r:exploration": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 2
-    },
-    "p1_e:keywords_r:planning": {
-      "approve_prob": 1.0,
-      "revise_prob": 0.0,
-      "reject_prob": 0.0,
-      "sample_count": 1
+      "sample_count": 29
     }
   },
   "conversation_insights": {
@@ -510,57 +178,45 @@
         "approve_prob": 1.0,
         "revise_prob": 0.0,
         "reject_prob": 0.0,
-        "samples": 27
-      },
-      "quality": {
-        "approve_prob": 1.0,
-        "revise_prob": 0.0,
-        "reject_prob": 0.0,
-        "samples": 1
-      },
-      "urgency": {
-        "approve_prob": 1.0,
-        "revise_prob": 0.0,
-        "reject_prob": 0.0,
-        "samples": 1
+        "samples": 2
       }
     },
-    "total_analyzed": 509,
-    "goals_loaded": 673
+    "total_analyzed": 29,
+    "goals_loaded": 774
   },
   "information_theory": {
     "decision_entropy": {
-      "entropy": 0.8712,
+      "entropy": 0.0,
       "max_entropy": 1.585,
-      "normalized": 0.5497,
-      "interpretation": "medium"
+      "normalized": 0.0,
+      "interpretation": "low"
     },
     "bqi_predictive_power": {
-      "mutual_info": 0.4966,
-      "decision_entropy": 0.8712,
-      "conditional_entropy": 0.3746,
-      "reduction_percent": 57.0,
-      "interpretation": "strong"
+      "mutual_info": 0.0,
+      "decision_entropy": 0.0,
+      "conditional_entropy": 0.0,
+      "reduction_percent": 0.0,
+      "interpretation": "none"
     },
     "quality_predictive_power": {
-      "mutual_info": 0.7246,
-      "decision_entropy": 0.8712,
-      "conditional_entropy": 0.1466,
-      "reduction_percent": 83.18,
-      "interpretation": "strong"
+      "mutual_info": 0.0,
+      "decision_entropy": 0.0,
+      "conditional_entropy": 0.0,
+      "reduction_percent": 0.0,
+      "interpretation": "none"
     },
     "ensemble_predictive_power": {
-      "mutual_info": 0.6884,
-      "decision_entropy": 0.8712,
-      "conditional_entropy": 0.1828,
-      "reduction_percent": 79.01,
-      "interpretation": "strong"
+      "mutual_info": 0.0,
+      "decision_entropy": 0.0,
+      "conditional_entropy": 0.0,
+      "reduction_percent": 0.0,
+      "interpretation": "none"
     },
     "summary": {
-      "decision_consistency": "medium",
-      "bqi_usefulness": "strong",
-      "quality_usefulness": "strong",
-      "ensemble_usefulness": "strong"
+      "decision_consistency": "low",
+      "bqi_usefulness": "none",
+      "quality_usefulness": "none",
+      "ensemble_usefulness": "none"
     }
   },
   "tech_preferences": {
@@ -568,7 +224,7 @@
     "tools_used": {}
   },
   "work_style": {
-    "quality_threshold": 0.8296915167095112,
+    "quality_threshold": 0.8500000000000002,
     "prefers_documentation": false,
     "prefers_tdd": false,
     "communication_style": "balanced"
@@ -577,38 +233,8 @@
     {
       "condition": "BQI matches 'p1_e:neutral_r:exploration'",
       "action": "approve",
-      "confidence": 0.9470588235294117,
-      "reasoning": "과거 340건 중 95% 승인"
-    },
-    {
-      "condition": "BQI matches 'p1_e:keywords_r:exploration'",
-      "action": "approve",
       "confidence": 1.0,
-      "reasoning": "과거 16건 중 100% 승인"
-    },
-    {
-      "condition": "BQI matches 'p3_e:neutral_r:exploration'",
-      "action": "approve",
-      "confidence": 1.0,
-      "reasoning": "과거 18건 중 100% 승인"
-    },
-    {
-      "condition": "BQI matches 'p1_e:keywords_r:integration'",
-      "action": "approve",
-      "confidence": 1.0,
-      "reasoning": "과거 13건 중 100% 승인"
-    },
-    {
-      "condition": "BQI matches 'p1_e:neutral_r:reflection'",
-      "action": "approve",
-      "confidence": 1.0,
-      "reasoning": "과거 3건 중 100% 승인"
-    },
-    {
-      "condition": "BQI matches 'p1_e:neutral_r:planning'",
-      "action": "revise",
-      "confidence": 0.8392857142857143,
-      "reasoning": "과거 112건 중 84% 수정 요청"
+      "reasoning": "과거 29건 중 100% 승인"
     },
     {
       "condition": "quality < 0.5",

@@ -32,7 +32,7 @@ def load_index(index_path: str = os.path.join("outputs", "original_data_index.js
         raise FileNotFoundError(
             f"Index file not found: {index_path}. Build it first (e.g., 'Original Data: Build Index')."
         )
-    with open(index_path, "r", encoding="utf-8") as f:
+    with open(index_path, "r", encoding="utf-8-sig") as f:
         data = json.load(f)
     # Normalize to list of entries
     if isinstance(data, dict) and "items" in data and isinstance(data["items"], list):

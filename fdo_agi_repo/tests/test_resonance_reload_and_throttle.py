@@ -76,3 +76,59 @@ def test_should_emit_closed_loop_throttle(monkeypatch):
     # After ~1s it should emit again
     time.sleep(1.1)
     assert rb.should_emit_closed_loop(period_sec=1) is True
+
+
+def test_get_resonance_optimization_defaults():
+    """Phase 8.5: Test get_resonance_optimization() returns sensible defaults."""
+    from fdo_agi_repo.orchestrator import resonance_bridge as rb
+
+    opt = rb.get_resonance_optimization()
+    
+    # Should return dict with required keys
+    assert isinstance(opt, dict)
+    assert "timeout_ms" in opt
+    assert "preferred_channels" in opt
+    assert "batch_compression" in opt
+    assert "phase" in opt
+    
+    # Default timeout should be reasonable (200-600ms range)
+    assert 200 <= opt["timeout_ms"] <= 600
+    assert opt["batch_compression"] is True
+
+
+def test_get_resonance_optimization_offpeak_throttle(monkeypatch):
+    """Phase 8.5: Test off-peak timeout adjustment (adaptive throttling)."""
+    from fdo_agi_repo.orchestrator import resonance_bridge as rb
+    import datetime
+
+    # Mock off-peak time (e.g., 02:00 KST)
+    class MockDateTime:
+        @staticmethod
+        def now():
+            class MockNow:
+                hour = 2  # 02:00 = off-peak
+            return MockNow()
+
+    monkeypatch.setattr("datetime.datetime", MockDateTime)
+    
+    opt = rb.get_resonance_optimization()
+    
+    # Off-peak should have higher timeout (adaptive strategy)
+    assert opt["timeout_ms"] >= 300
+    assert opt["phase"] == "off-peak"
+
+
+def test_routing_hint_emission(monkeypatch):
+    """Phase 8.5: Test that routing hints include preferred_channels."""
+    from fdo_agi_repo.orchestrator import resonance_bridge as rb
+    
+    opt = rb.get_resonance_optimization()
+    
+    # Should contain channel preference
+    assert "preferred_channels" in opt
+    assert isinstance(opt["preferred_channels"], list)
+    
+    # Should prioritize fast channels (Gemini/Claude)
+    channels = opt["preferred_channels"]
+    fast_channels = {"gemini", "claude", "vertex"}
+    assert any(ch in fast_channels for ch in channels)

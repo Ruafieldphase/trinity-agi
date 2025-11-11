@@ -66,6 +66,39 @@ def run_synthesis(task: TaskSpec, outs: List[PersonaOutput], tools, conversation
         system_prompt += f"\n\n{conversation_context}"
         system_prompt += "\n⚠️ **맥락 연계 필수**: 위 이전 대화에서 논의된 내용과 연관성이 있다면, 그 맥락을 최종 문서에 반영하고 일관성을 유지하십시오."
 
+    channel_hint = None
+    throttled = False
+    batch_pref = None
+    try:
+        opt_hint = getattr(tools, "get_optimization_hint", lambda: None)()
+    except Exception:
+        opt_hint = None
+    if isinstance(opt_hint, dict):
+        pref = opt_hint.get("preferred_channels")
+        if isinstance(pref, list) and pref:
+            channel_hint = str(pref[0]).lower()
+        elif isinstance(pref, str) and pref:
+            channel_hint = pref.lower()
+        throttled = bool(opt_hint.get("should_throttle_offpeak", False))
+        batch_level = opt_hint.get("batch_compression_level")
+        if isinstance(batch_level, str) and batch_level:
+            batch_pref = batch_level
+        else:
+            batch_flag = opt_hint.get("batch_compression")
+            if batch_flag is True:
+                batch_pref = "high"
+    try:
+        append_ledger({
+            "event": "persona_channel_hint",
+            "task_id": task.task_id,
+            "persona": "synthesis",
+            "channel_hint": channel_hint,
+            "throttle": bool(throttled),
+            "batch_compression": batch_pref or "auto"
+        })
+    except Exception:
+        pass
+
     # Prompt compaction
     def _compact(text: str, max_chars: int, head: int = 600, tail: int = 600) -> str:
         if max_chars <= 0 or len(text) <= max_chars:
@@ -90,10 +123,51 @@ def run_synthesis(task: TaskSpec, outs: List[PersonaOutput], tools, conversation
         "지시사항: 위의 제안과 비판을 종합하여, '결과 요약, 목표, 제안, 검증, 참고(Local), 다음 단계' 섹션을 포함하는 최종 Markdown 문서를 생성하세요.\n"
         "⚠️ 작성 시 각 주장에 구체적인 근거(출처/데이터)를 인라인 형태로 반드시 포함하세요."
     )
+    if isinstance(batch_pref, str) and batch_pref.lower() in {"high", "max"}:
+        user_prompt += "\n\n⚙️ **Batch Compression**: 중복을 제거하고 각 섹션을 4문장 이내로 요약하십시오."
+
+    prefer_local = (channel_hint == "local_llm")
+    if prefer_local or throttled:
+        doc = _compose_markdown(task, thesis_txt, anti_txt, cites)
+        try:
+            tools.call("fileio", {"op": "write", "path": "sandbox/docs/result.md", "text": doc})
+        except Exception as file_err:
+            append_ledger({
+                "event": "synthesis_file_write_failed",
+                "task_id": task.task_id,
+                "error": str(file_err)
+            })
+        try:
+            append_ledger({
+                "event": "persona_local_fallback",
+                "task_id": task.task_id,
+                "persona": "synthesis",
+                "reason": "throttle_offpeak" if throttled and not prefer_local else "preferred_local"
+            })
+        except Exception:
+            pass
+        summary = "[SYNTHESIS] 초안이 sandbox/docs/result.md에 저장되었습니다. '다음 단계'를 따라 증거를 보강하세요."
+        action = Action(type="TOOL_CALL", tool="fileio", args={"op": "write", "path": "sandbox/docs/result.md"})
+        return PersonaOutput(
+            task_id=task.task_id,
+            persona="synthesis",
+            summary=summary,
+            citations=cites,
+            actions=[action]
+        )
 
     # 3. Gemini LLM 호출 (Google AI Studio API)
     # Streaming 옵션 (환경변수로 제어)
     use_streaming = os.environ.get("SYNTHESIS_STREAMING", "true").lower() == "true"
+    if channel_hint == "cloud_ai":
+        use_streaming = False
+    elif channel_hint == "gateway":
+        use_streaming = True
+    model_name = os.environ.get("SYNTHESIS_MODEL", "gemini-2.0-flash")
+    if channel_hint == "cloud_ai":
+        model_name = os.environ.get("SYNTHESIS_MODEL_CLOUD", model_name)
+    elif channel_hint == "gateway":
+        model_name = os.environ.get("SYNTHESIS_MODEL_GATEWAY", model_name)
     
     doc: str
     err_text = None
@@ -101,7 +175,7 @@ def run_synthesis(task: TaskSpec, outs: List[PersonaOutput], tools, conversation
     t_llm0 = time.perf_counter()
     
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        model = genai.GenerativeModel(model_name)
         prompt = f"{system_prompt}\n\n{user_prompt}"
         
         if use_streaming:
@@ -132,7 +206,7 @@ def run_synthesis(task: TaskSpec, outs: List[PersonaOutput], tools, conversation
         "task_id": task.task_id,
         "persona": "synthesis",
         "provider": "google-ai-studio",
-        "model": "gemini-2.0-flash",
+        "model": model_name,
         "duration_sec": float(t_llm1 - t_llm0),
         "ok": bool(bool(doc) and not err_text),
         "error": err_text,
@@ -145,6 +219,10 @@ def run_synthesis(task: TaskSpec, outs: List[PersonaOutput], tools, conversation
         log_entry["ttft_sec"] = float(ttft)
         perceived_improvement = ((t_llm1 - t_llm0 - ttft) / (t_llm1 - t_llm0)) * 100
         log_entry["perceived_improvement_pct"] = float(perceived_improvement)
+    if channel_hint:
+        log_entry["channel_hint"] = channel_hint
+    if throttled:
+        log_entry["throttle_applied"] = True
     
     append_ledger(log_entry)
 

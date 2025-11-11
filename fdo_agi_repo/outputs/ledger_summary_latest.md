@@ -1,6 +1,6 @@
-# Ledger Summary (last 0.5h)
+# Ledger Summary (last 24.0h)
 
-- Generated: 2025-11-03 10:05:52
+- Generated: 2025-11-09 09:24:21
 - Ledger: C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl
 - Coordinate: C:\workspace\agi\fdo_agi_repo\memory\coordinate.jsonl
 
@@ -8,16 +8,16 @@
 
 ## Counts
 
-- Events: {"context_retrieved": 9, "run_config": 9, "autopoietic_phase": 49, "meta_cognition": 8, "thesis_start": 8, "thesis_async_enabled": 8, "persona_llm_run": 24, "thesis_cache_miss": 6, "thesis_end": 8, "antithesis_start": 8, "antithesis_cache_miss": 6, "antithesis_end": 8, "synthesis_start": 8, "synthesis_cache_miss": 6, "synthesis_end": 8, "pipeline_e2e_complete": 8, "eval": 8, "rune": 8, "binoche_enhanced_decision": 8, "binoche_decision": 8, "binoche_ab_comparison": 8, "binoche_auto_approve": 8, "resonance_policy": 8, "closed_loop_snapshot": 2, "thesis_cache_hit": 2, "antithesis_cache_hit": 2, "synthesis_cache_hit": 2, "rag_call_failed": 6}
-- Tasks started (records): 9
-- Tasks ended (records): 8
-- Distinct tasks started: 8
-- Distinct tasks ended: 7
+- Events: {"context_retrieved": 4, "user_profile_injected": 4, "run_config": 4, "resonance_optimization": 4, "autopoietic_phase": 24, "meta_cognition": 4, "thesis_start": 4, "thesis_async_enabled": 4, "persona_channel_hint": 12, "persona_local_fallback": 9, "thesis_cache_miss": 3, "antithesis_start": 4, "antithesis_cache_miss": 3, "synthesis_start": 4, "synthesis_cache_miss": 3, "pipeline_e2e_complete": 4, "eval": 4, "rune": 4, "binoche_enhanced_decision": 4, "binoche_decision": 4, "binoche_ab_comparison": 4, "binoche_auto_approve": 4, "resonance_policy": 4, "closed_loop_snapshot": 2, "thesis_cache_hit": 1, "antithesis_cache_hit": 1, "synthesis_cache_hit": 1, "persona_llm_run": 3}
+- Tasks started (records): 4
+- Tasks ended (records): 4
+- Distinct tasks started: 3
+- Distinct tasks ended: 3
 
 ## Metrics
 
-- avg_confidence: 0.846
+- avg_confidence: 0.91
 - avg_quality: 0.85
 - second_pass_total: 0
-- completion_rate: 0.875
+- completion_rate: 1.0
 - second_pass_rate_per_task: 0.0

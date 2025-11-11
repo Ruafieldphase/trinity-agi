@@ -150,13 +150,24 @@ else {
     }
 }
 
-# RPA Worker (프로세스 검색)
-$workerProc = Get-Process -Name python -ErrorAction SilentlyContinue |
-Where-Object { $_.CommandLine -like '*rpa_worker.py*' } |
-Select-Object -First 1
+# RPA Worker (프로세스 검색) - PS 5.1 호환: CommandLine 접근은 Win32_Process로 시도 후, 실패 시 단순 존재 체크로 폴백
+$workerProc = $null
+try {
+    $workerProc = Get-CimInstance -ClassName Win32_Process -ErrorAction Stop |
+        Where-Object { $_.Name -match '^python(\.exe)?$' -and ($_.CommandLine -like '*rpa_worker.py*') } |
+        Select-Object -First 1
+}
+catch {
+    # WinRM 비활성/권한 문제 등으로 CIM 쿼리 실패 시 Get-Process로 폴백 (정확도 낮음)
+    $workerProc = Get-Process -Name python -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+}
 
 if ($workerProc) {
-    Write-Host "  ✓ RPA Worker: Running (PID: $($workerProc.Id))" -ForegroundColor Green
+    $workerPid = if ($workerProc.PSObject.Properties['ProcessId']) { $workerProc.ProcessId } elseif ($workerProc.PSObject.Properties['Id']) { $workerProc.Id } else { $null }
+    $msg = "  ✓ RPA Worker: Running"
+    if ($workerPid) { $msg += " (PID: $workerPid)" }
+    Write-Host $msg -ForegroundColor Green
     $allChecks += @{name = "RPA Worker"; status = "✓"; color = "Green" }
 }
 else {

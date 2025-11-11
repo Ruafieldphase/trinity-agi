@@ -1,4 +1,4 @@
-# Register Local LLM Monitoring as Windows Scheduled Task
+﻿# Register Local LLM Monitoring as Windows Scheduled Task
 # Provides 24/7 automated monitoring with optional auto-restart
 
 param(
@@ -117,6 +117,7 @@ $trigger = New-ScheduledTaskTrigger `
 
 # Create settings
 $settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
     -AllowStartIfOnBatteries `
     -DontStopIfGoingOnBatteries `
     -StartWhenAvailable `

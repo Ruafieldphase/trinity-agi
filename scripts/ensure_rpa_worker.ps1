@@ -39,6 +39,7 @@ $workspaceRoot = Split-Path -Parent $PSScriptRoot
 $logPath = Join-Path $workspaceRoot "outputs\ensure_rpa_worker.log"
 $summaryPath = Join-Path $workspaceRoot "outputs\rpa_worker_status.txt"
 $historyPath = Join-Path $workspaceRoot "outputs\rpa_worker_restart_history.json"
+$alertPath = Join-Path $workspaceRoot "outputs\alerts\rpa_worker_alert.json"
 
 function Out-FileUtf8NoBomAppend {
     param([string]$Path, [string]$Text)
@@ -58,7 +59,8 @@ function Rotate-LogIfNeeded {
         $backup = "$Path.1"
         if (Test-Path -LiteralPath $backup) { Remove-Item -LiteralPath $backup -Force -ErrorAction SilentlyContinue }
         Rename-Item -LiteralPath $Path -NewName (Split-Path -Leaf $backup) -Force
-    } catch {}
+    }
+    catch {}
 }
 
 function Write-Log {
@@ -70,6 +72,38 @@ function Write-Log {
     Set-Content -LiteralPath $summaryPath -Value $line -Encoding UTF8
 }
 
+function Write-RestartLimitAlert {
+    param(
+        [int]$RecentRestarts,
+        [int]$MaxRestarts,
+        [int]$WindowSeconds,
+        [switch]$DryRun
+    )
+
+    if ($DryRun) {
+        Write-Log "Dry-run: restart limit alert would be written to $alertPath" "INFO"
+        return
+    }
+
+    $payload = [ordered]@{
+        timestamp        = (Get-Date).ToString("o")
+        type             = "rpa_worker_restart_limit"
+        status           = "error"
+        message          = "Restart limit reached for RPA worker ensure job."
+        recent_restarts  = $RecentRestarts
+        max_restarts     = $MaxRestarts
+        window_seconds   = $WindowSeconds
+    }
+
+    $dir = Split-Path -Parent $alertPath
+    if ($dir -and -not (Test-Path -LiteralPath $dir)) {
+        New-Item -ItemType Directory -Force -Path $dir | Out-Null
+    }
+
+    $payload | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $alertPath -Encoding UTF8
+    Write-Log "Restart limit alert saved to $alertPath" "ALERT"
+}
+
 function Load-Config($path) {
     if (-not (Test-Path -LiteralPath $path)) {
         throw "Config file not found: $path"
@@ -79,7 +113,8 @@ function Load-Config($path) {
         return $text | ConvertFrom-Json -ErrorAction Stop
     }
     catch {
-        throw "Failed to parse config $path: $($_.Exception.Message)"
+        $errMsg = $_.Exception.Message
+        throw "Failed to parse config $path`: $errMsg"
     }
 }
 
@@ -93,17 +128,21 @@ function Stop-WorkerProcesses($procs, $dryRun) {
     Write-Log "Stopping worker PID(s): $($pids -join ',')" "WARN"
     if (-not $dryRun) {
         foreach ($pid in $pids) {
-            try { Stop-Process -Id $pid -Force -ErrorAction Stop } catch { Write-Log "Failed to stop PID $pid: $($_.Exception.Message)" "ERROR" }
+            try { Stop-Process -Id $pid -Force -ErrorAction Stop } catch { 
+                $errMsg = $_.Exception.Message
+                Write-Log "Failed to stop PID $pid`: $errMsg" "ERROR" 
+            }
         }
     }
 }
 
 function Test-Health($cfg) {
-    $mode = ($cfg.health.mode ?? "none").ToLower()
+    $mode = if ($cfg.health.mode) { $cfg.health.mode } else { "none" }
+    $mode = $mode.ToLower()
     if ($mode -eq "none") { return $true }
     if ($mode -eq "http") {
         try {
-            $timeout = [int]($cfg.health.timeout ?? 2)
+            $timeout = if ($cfg.health.timeout) { [int]$cfg.health.timeout } else { 2 }
             $result = Invoke-RestMethod -Uri $cfg.health.endpoint -TimeoutSec $timeout -ErrorAction Stop
             if ($result.status -and $result.status -match "ok|healthy") { return $true }
             return $false
@@ -122,7 +161,7 @@ function Update-RestartHistory($path, $dryRun) {
         try { $history = (Get-Content -LiteralPath $path -Raw | ConvertFrom-Json) } catch { $history = @() }
     }
     $now = Get-Date
-    $filtered = @($history | Where-Object { $_ -and ([DateTime]$_) -ge $now.AddSeconds(-($global:RestartWindow)) })
+    $filtered = @($history | Where-Object { $_ -and ([DateTime]$_) -ge $now.AddSeconds( - ($global:RestartWindow)) })
     $filtered += $now.ToString("o")
     if (-not $dryRun) {
         $filtered | ConvertTo-Json | Set-Content -LiteralPath $path -Encoding UTF8
@@ -134,17 +173,40 @@ function Check-RestartLimit($path) {
     if (-not (Test-Path -LiteralPath $path)) { return 0 }
     try { $history = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json } catch { return 0 }
     $now = Get-Date
-    return (@($history | Where-Object { $_ -and ([DateTime]$_) -ge $now.AddSeconds(-($global:RestartWindow)) })).Count
+    return (@($history | Where-Object { $_ -and ([DateTime]$_) -ge $now.AddSeconds( - ($global:RestartWindow)) })).Count
+}
+
+function Get-RestartBackoffSeconds($path) {
+    if (-not (Test-Path -LiteralPath $path)) { return 0 }
+    if ($global:BackoffBase -le 0) { return 0 }
+    try { $history = Get-Content -LiteralPath $path -Raw | ConvertFrom-Json } catch { return 0 }
+    if (-not $history) { return 0 }
+
+    $now = Get-Date
+    $recent = @($history | Where-Object { $_ -and ([DateTime]$_) -ge $now.AddSeconds( - ($global:RestartWindow)) })
+    if (-not $recent) { return 0 }
+
+    $recentSorted = $recent | Sort-Object { [DateTime]$_ }
+    $count = $recentSorted.Count
+    $lastRestart = [DateTime]$recentSorted[-1]
+
+    $baseDelay = $global:BackoffBase * [math]::Pow(2, [math]::Max(0, $count - 1))
+    if ($baseDelay -gt $global:MaxBackoff) { $baseDelay = $global:MaxBackoff }
+
+    $elapsed = ($now - $lastRestart).TotalSeconds
+    $remaining = [math]::Max(0, $baseDelay - $elapsed)
+    return [int][math]::Ceiling($remaining)
 }
 
 $configObj = Load-Config $Config
 $pythonPath = $configObj.python
 if (-not $pythonPath -or -not (Test-Path -LiteralPath (Join-Path $workspaceRoot $pythonPath))) {
     $pythonPath = "python"
-} else {
+}
+else {
     $pythonPath = Join-Path $workspaceRoot $pythonPath
 }
-$command = Join-Path $workspaceRoot ($configObj.command ?? "fdo_agi_repo\integrations\rpa_worker.py")
+$command = if ($configObj.command) { Join-Path $workspaceRoot $configObj.command } else { Join-Path $workspaceRoot "fdo_agi_repo\integrations\rpa_worker.py" }
 if (-not (Test-Path -LiteralPath $command)) {
     throw "Worker command not found: $command"
 }
@@ -152,8 +214,18 @@ $argumentList = @()
 if ($configObj.args) { $argumentList = $configObj.args }
 $commandLineMatch = "*" + (Split-Path $command -Leaf) + "*"
 
-$global:MaxRestarts = [int]($configObj.restart_policy.max_restarts ?? 3)
-$global:RestartWindow = [int]($configObj.restart_policy.window_seconds ?? 600)
+$restartPolicy = $configObj.restart_policy
+if (-not $restartPolicy) { $restartPolicy = [pscustomobject]@{} }
+
+$global:MaxRestarts = if ($restartPolicy.max_restarts -ne $null) { [int]$restartPolicy.max_restarts } else { 3 }
+$global:RestartWindow = if ($restartPolicy.window_seconds -ne $null) { [int]$restartPolicy.window_seconds } else { 600 }
+$global:BackoffBase = if ($restartPolicy.base_backoff_seconds -ne $null) { [int]$restartPolicy.base_backoff_seconds } else { 5 }
+$global:MaxBackoff = if ($restartPolicy.max_backoff_seconds -ne $null) { [int]$restartPolicy.max_backoff_seconds } else { 60 }
+
+if ($global:MaxRestarts -lt 0) { $global:MaxRestarts = 0 }
+if ($global:RestartWindow -lt 0) { $global:RestartWindow = 0 }
+if ($global:BackoffBase -lt 0) { $global:BackoffBase = 0 }
+if ($global:MaxBackoff -lt $global:BackoffBase) { $global:MaxBackoff = $global:BackoffBase }
 
 $mutex = $null
 $mutexName = "Global\EnsureRPAWorkerMutex"
@@ -217,7 +289,19 @@ try {
     $recentRestarts = Check-RestartLimit $historyPath
     if ($recentRestarts -ge $global:MaxRestarts) {
         Write-Log "Restart limit reached ($recentRestarts within $global:RestartWindow s). Skipping restart." "ERROR"
+        Write-RestartLimitAlert -RecentRestarts $recentRestarts -MaxRestarts $global:MaxRestarts -WindowSeconds $global:RestartWindow -DryRun:$DryRun
         return
+    }
+
+    $backoffSeconds = Get-RestartBackoffSeconds $historyPath
+    if ($backoffSeconds -gt 0) {
+        Write-Log "Applying restart backoff: waiting $backoffSeconds s (recent restarts=$recentRestarts)" "WARN"
+        if (-not $DryRun) {
+            Start-Sleep -Seconds $backoffSeconds
+        }
+        else {
+            Write-Log "Dry-run: sleep skipped for backoff." "INFO"
+        }
     }
 
     Write-Log "Starting RPA worker: $pythonPath $($argumentList -join ' ')" "INFO"

@@ -43,6 +43,14 @@ This guide lists common runbooks and one‑liners. All commands are ASCII‑safe
   - CSV: `outputs/monitoring_timeseries_optional_latest.csv`
   - Optional channels excluded from overall health/availability calculations
 
+  ## Quick Status Smoke (strict SLO + trend)
+
+  - Sanity + strict SLO verification with optional trend stability check:
+    - `scripts/tests/quick_status_smoke.ps1 -Strict -Profile latency-first -CheckTrendStability`
+  - Emit a one‑line JSON summary for downstream parsing when strict checks pass:
+    - `scripts/tests/quick_status_smoke.ps1 -Strict -Profile ops-tight -ExplainStrict`
+  - Docs: `docs/QUICK_STATUS_SMOKE_GUIDE.md`
+
 ## Autonomous Dashboard (Phase 5.5)
 
 - Generate orchestration-aware dashboard (monitoring + routing + recovery):

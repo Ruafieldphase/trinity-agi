@@ -20,103 +20,103 @@ $ScriptsDir = "C:\workspace\agi\scripts"
 # === Performance Thresholds ===
 $AdaptiveConfig = @{
     cpu_threshold_high = 70      # CPU > 70% → reduce frequency
-    cpu_threshold_low = 20       # CPU < 20% → increase frequency
-    memory_threshold = 60         # Memory > 60% → skip non-critical tasks
+    cpu_threshold_low  = 20       # CPU < 20% → increase frequency
+    memory_threshold   = 60         # Memory > 60% → skip non-critical tasks
 
     # Base intervals (in minutes)
-    health_check_base = 10
-    performance_base = 30
-    maintenance_base = 60
-    daily_base = 1440
-    event_base = 120
+    health_check_base  = 10
+    performance_base   = 30
+    maintenance_base   = 60
+    daily_base         = 1440
+    event_base         = 120
 }
 
 # === Task Definitions (with auto script detection) ===
 $TaskDefinitions = @{
-    "health_check" = @{
+    "health_check"         = @{
         interval_minutes = $AdaptiveConfig.health_check_base
-        priority = "critical"
-        commands = @(
+        priority         = "critical"
+        commands         = @(
             @{
-                name = "Quick Diagnosis"
+                name   = "Quick Diagnosis"
                 script = "quick_diagnose.ps1"
             },
             @{
-                name = "LLM Performance Check"
+                name   = "LLM Performance Check"
                 script = "check_llm_perf.ps1"
             }
         )
-        depends_on = @()
-        critical = $true
+        depends_on       = @()
+        critical         = $true
     }
 
     "performance_analysis" = @{
         interval_minutes = $AdaptiveConfig.performance_base
-        priority = "high"
-        commands = @(
+        priority         = "high"
+        commands         = @(
             @{
-                name = "Save Performance Benchmark"
+                name   = "Save Performance Benchmark"
                 script = "save_performance_benchmark.ps1"
             },
             @{
-                name = "Analyze Performance Trends"
+                name   = "Analyze Performance Trends"
                 script = "analyze_performance_trends.ps1"
             },
             @{
-                name = "Adaptive Routing Optimizer"
+                name   = "Adaptive Routing Optimizer"
                 script = "adaptive_routing_optimizer.ps1"
             }
         )
-        depends_on = @("health_check")
+        depends_on       = @("health_check")
     }
 
-    "system_maintenance" = @{
+    "system_maintenance"   = @{
         interval_minutes = $AdaptiveConfig.maintenance_base
-        priority = "medium"
-        commands = @(
+        priority         = "medium"
+        commands         = @(
             @{
-                name = "Cleanup Processes"
+                name   = "Cleanup Processes"
                 script = "cleanup_processes.ps1"
             },
             @{
-                name = "Collect System Metrics"
+                name   = "Collect System Metrics"
                 script = "collect_system_metrics.ps1"
             }
         )
-        depends_on = @("performance_analysis")
+        depends_on       = @("performance_analysis")
     }
 
-    "daily_routine" = @{
+    "daily_routine"        = @{
         interval_minutes = $AdaptiveConfig.daily_base
-        scheduled_time = "03:00"
-        priority = "low"
-        commands = @(
+        scheduled_time   = "03:00"
+        priority         = "low"
+        commands         = @(
             @{
-                name = "Generate Daily Briefing"
+                name   = "Generate Daily Briefing"
                 script = "generate_daily_briefing.ps1"
             },
             @{
-                name = "Update Visual Dashboard"
+                name   = "Update Visual Dashboard"
                 script = "generate_visual_dashboard.ps1"
             }
         )
-        depends_on = @("system_maintenance")
+        depends_on       = @("system_maintenance")
     }
 
-    "event_analysis" = @{
+    "event_analysis"       = @{
         interval_minutes = $AdaptiveConfig.event_base
-        priority = "medium"
-        commands = @(
+        priority         = "medium"
+        commands         = @(
             @{
-                name = "Analyze Latency Spikes"
+                name   = "Analyze Latency Spikes"
                 script = "analyze_latency_spikes.ps1"
             },
             @{
-                name = "Generate Performance Report"
+                name   = "Generate Performance Report"
                 script = "generate_monitoring_report.ps1"
             }
         )
-        depends_on = @("performance_analysis")
+        depends_on       = @("performance_analysis")
     }
 }
 
@@ -144,9 +144,9 @@ function Get-SystemMetrics {
     $memUsagePercent = [math]::Round((($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / $os.TotalVisibleMemorySize) * 100, 1)
 
     return @{
-        cpu_load = if ($null -ne $cpu.LoadPercentage) { [int]$cpu.LoadPercentage } else { 0 }
+        cpu_load     = if ($null -ne $cpu.LoadPercentage) { [int]$cpu.LoadPercentage } else { 0 }
         memory_usage = $memUsagePercent
-        timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        timestamp    = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     }
 }
 
@@ -166,11 +166,13 @@ function Get-AdaptiveInterval {
         # High CPU: increase interval (slow down)
         $factor = 1.5
         Write-Log "High CPU ($cpu%) detected - reducing $TaskName frequency" "WARN" $TaskName
-    } elseif ($cpu -lt $AdaptiveConfig.cpu_threshold_low) {
+    }
+    elseif ($cpu -lt $AdaptiveConfig.cpu_threshold_low) {
         # Low CPU: decrease interval (speed up)
         $factor = 0.8
         Write-Log "Low CPU ($cpu%) detected - increasing $TaskName frequency" "INFO" $TaskName
-    } else {
+    }
+    else {
         # Normal: keep base interval
         $factor = 1.0
     }
@@ -204,22 +206,22 @@ function Invoke-ScriptCommand {
             return $true
         }
 
-        # Auto-detect script type and execute
+        # Auto-detect script type and execute (hidden window)
         if ($scriptName -match '\.py$') {
             # Python script
-            $cmd = "python `"$scriptPath`""
-            if ($args) { $cmd += " $args" }
-            Invoke-Expression $cmd 2>&1 | ForEach-Object {
-                Write-Log $_ "INFO" $TaskName
-            }
-        } elseif ($scriptName -match '\.ps1$') {
+            $argList = @("`"$scriptPath`"")
+            if ($args) { $argList += $args }
+            $proc = Start-Process -FilePath "python" -ArgumentList $argList -WindowStyle Hidden -PassThru -Wait
+            Write-Log "Python script exit code: $($proc.ExitCode)" "INFO" $TaskName
+        }
+        elseif ($scriptName -match '\.ps1$') {
             # PowerShell script
-            $cmd = "& `"$scriptPath`""
-            if ($args) { $cmd += " $args" }
-            Invoke-Expression $cmd 2>&1 | ForEach-Object {
-                Write-Log $_ "INFO" $TaskName
-            }
-        } else {
+            $argList = @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "`"$scriptPath`"")
+            if ($args) { $argList += $args }
+            $proc = Start-Process -FilePath "powershell.exe" -ArgumentList $argList -WindowStyle Hidden -PassThru -Wait
+            Write-Log "PowerShell script exit code: $($proc.ExitCode)" "INFO" $TaskName
+        }
+        else {
             Write-Log "Unknown script type: $scriptName" "ERROR" $TaskName
             return $false
         }
@@ -227,7 +229,8 @@ function Invoke-ScriptCommand {
         Write-Log "Completed: $cmdName" "INFO" $TaskName
         return $true
 
-    } catch {
+    }
+    catch {
         Write-Log "Execution failed: $_" "ERROR" $TaskName
         return $false
     }
@@ -248,7 +251,8 @@ function Load-State {
                         }
                     }
                     $result[$_.Name] = $lastRunsHash
-                } else {
+                }
+                else {
                     $result[$_.Name] = $_.Value
                 }
             }
@@ -267,7 +271,7 @@ function Save-Metrics {
     param([hashtable]$Metrics)
     @{
         timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        metrics = $Metrics
+        metrics   = $Metrics
     } | ConvertTo-Json | Add-Content -Path $MetricsFile
 }
 
@@ -299,7 +303,8 @@ function Invoke-Task {
     if ($success) {
         $StateData.last_runs[$TaskName] = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
         Write-Log "=== Task Complete: $TaskName ===" "INFO" $TaskName
-    } else {
+    }
+    else {
         Write-Log "=== Task Failed: $TaskName ===" "ERROR" $TaskName
     }
 
@@ -351,7 +356,8 @@ function Start-AdaptiveScheduler {
             $taskConfig = $TaskDefinitions[$taskName]
             $lastRun = if ($stateData.last_runs.ContainsKey($taskName)) {
                 [datetime]::ParseExact($stateData.last_runs[$taskName], "yyyy-MM-dd HH:mm:ss", $null)
-            } else {
+            }
+            else {
                 $null
             }
 
@@ -359,7 +365,8 @@ function Start-AdaptiveScheduler {
 
             if ($null -eq $lastRun) {
                 $tasksToRun += $taskName
-            } else {
+            }
+            else {
                 $elapsed = $now - $lastRun
                 if ($elapsed.TotalMinutes -ge $interval) {
                     $tasksToRun += $taskName
@@ -400,12 +407,13 @@ if ($InstallSchedule) {
     $scriptPath = $MyInvocation.MyCommand.Path
 
     $trigger = New-ScheduledTaskTrigger -RepetitionInterval (New-TimeSpan -Minutes 5) -RepetitionDuration (New-TimeSpan -Days 365) -Once -At (Get-Date)
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`""
-    $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
+    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scriptPath`""
+    $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable -Hidden
 
     Register-ScheduledTask -TaskName $taskName -Trigger $trigger -Action $action -Settings $settings -Force -ErrorAction SilentlyContinue | Out-Null
     Write-Host "✓ Registered: $taskName" -ForegroundColor Green
-} else {
+}
+else {
     Start-AdaptiveScheduler
 }
 

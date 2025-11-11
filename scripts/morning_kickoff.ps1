@@ -95,6 +95,22 @@ else {
     Write-Host "  Skipped (start_emotion_stabilizer.ps1 not found)." -ForegroundColor Gray
 }
 
+# 2.6) Stream Observer Telemetry check
+Write-Host "`n[2.6/7] Ensuring Stream Observer telemetry..." -ForegroundColor Yellow
+$observerManager = Join-Path $PSScriptRoot 'ensure_observer_telemetry.ps1'
+if (Test-Path -LiteralPath $observerManager) {
+    try {
+        & $observerManager | Out-Null
+        Write-Host "  Stream Observer telemetry active." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "  Warning: Observer telemetry check failed." -ForegroundColor Yellow
+    }
+}
+else {
+    Write-Host "  Skipped (ensure_observer_telemetry.ps1 not found)." -ForegroundColor Gray
+}
+
 # 3) Daily health snapshot
 Write-Host "`n[3/7] Saving health snapshot..." -ForegroundColor Yellow
 $snapScript = Join-Path $PSScriptRoot 'daily_health_snapshot.ps1'
@@ -159,6 +175,56 @@ if (Test-Path -LiteralPath $reportScript) {
 }
 else {
     Write-Host "  Skipped (generate_monitoring_report.ps1 not found)." -ForegroundColor Gray
+}
+
+# 4.5) Original Data Index freshness check
+Write-Host "`n[4.5/7] Checking Original Data index..." -ForegroundColor Yellow
+$indexPath = Join-Path $root 'outputs\original_data_index.json'
+$indexScript = Join-Path $PSScriptRoot 'build_original_data_index.ps1'
+$needsRebuild = $false
+
+if (Test-Path -LiteralPath $indexPath) {
+    try {
+        $indexFile = Get-Item -LiteralPath $indexPath
+        $ageDays = [math]::Round((New-TimeSpan -Start $indexFile.LastWriteTime -End (Get-Date)).TotalDays, 1)
+        
+        if ($ageDays -le 1) {
+            Write-Host "  Index is fresh (age: $ageDays days)." -ForegroundColor Green
+        }
+        elseif ($ageDays -le 3) {
+            Write-Host "  Index is acceptable (age: $ageDays days)." -ForegroundColor Yellow
+        }
+        else {
+            Write-Host "  Index is stale (age: $ageDays days) - rebuilding..." -ForegroundColor Red
+            $needsRebuild = $true
+        }
+    }
+    catch {
+        Write-Host "  Warning: could not check index age." -ForegroundColor Yellow
+        $needsRebuild = $true
+    }
+}
+else {
+    Write-Host "  Index not found - building..." -ForegroundColor Yellow
+    $needsRebuild = $true
+}
+
+if ($needsRebuild -and (Test-Path -LiteralPath $indexScript)) {
+    try {
+        & $indexScript -NoOpen -AllowEmpty | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  Original Data index rebuilt successfully." -ForegroundColor Green
+        }
+        else {
+            Write-Host "  Warning: index rebuild reported error (check output)." -ForegroundColor Yellow
+        }
+    }
+    catch {
+        Write-Host "  Warning: index rebuild failed: $($_.Exception.Message)" -ForegroundColor Yellow
+    }
+}
+elseif ($needsRebuild) {
+    Write-Host "  Skipped (build_original_data_index.ps1 not found)." -ForegroundColor Gray
 }
 
 # 5) Performance dashboard (7 days)

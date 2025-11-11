@@ -124,6 +124,38 @@ def read_lumen_state(workspace: Path) -> Optional[Dict[str, Any]]:
         return None
 
 
+def read_feedback_loop_stats(workspace: Path) -> Dict[str, int]:
+    """Read feedback loop statistics from JSONL files.
+    
+    Returns: {"youtube": int, "rpa": int, "total": int}
+    """
+    yt_path = workspace / "fdo_agi_repo/outputs/youtube_feedback_bqi.jsonl"
+    rpa_path = workspace / "fdo_agi_repo/outputs/rpa_feedback_bqi.jsonl"
+    
+    yt_count = 0
+    rpa_count = 0
+    
+    try:
+        if yt_path.exists():
+            with yt_path.open("r", encoding="utf-8") as f:
+                yt_count = sum(1 for line in f if line.strip())
+    except Exception:
+        pass
+    
+    try:
+        if rpa_path.exists():
+            with rpa_path.open("r", encoding="utf-8") as f:
+                rpa_count = sum(1 for line in f if line.strip())
+    except Exception:
+        pass
+    
+    return {
+        "youtube": yt_count,
+        "rpa": rpa_count,
+        "total": yt_count + rpa_count,
+    }
+
+
 def analyze_seasonality(metrics: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Feed HourlyLatency series into seasonal detector and flag latest point anomalies.
 
@@ -220,6 +252,7 @@ def write_md(path: Path, data: Dict[str, Any]) -> None:
     sim = data.get("simulation", {})
     next_runs = data.get("next_runs", {})
     lumen = data.get("lumen_state")
+    feedback = data.get("feedback_loop", {})
 
     lines: List[str] = []
     lines.append("# Real-time Resonance Pipeline\n")
@@ -252,6 +285,17 @@ def write_md(path: Path, data: Dict[str, Any]) -> None:
     else:
         lines.append("\n## 🎭 Lumen Emotion Signals\n")
         lines.append("- No emotion state data available\n")
+
+    # Feedback Loop Statistics
+    if feedback and feedback.get("total", 0) > 0:
+        lines.append("\n## 🔄 Feedback Loop Integration\n")
+        lines.append(f"- **YouTube Events**: {feedback.get('youtube', 0)}\n")
+        lines.append(f"- **RPA Events**: {feedback.get('rpa', 0)}\n")
+        lines.append(f"- **Total Ingested**: {feedback.get('total', 0)}\n")
+        lines.append("\n✅ **Status**: Feedback loop active - external events are being ingested into AGI ledger\n")
+    else:
+        lines.append("\n## 🔄 Feedback Loop Integration\n")
+        lines.append("- No feedback events detected in this window\n")
 
     lines.append("\n## Seeds\n")
     lines.append(f"- info_density: {seeds.get('info_density'):.3f}\n")
@@ -308,6 +352,7 @@ def main():
     # Read Lumen emotion state (use absolute path)
     workspace = metrics_path.parent.parent  # outputs/ -> workspace/
     lumen_state = read_lumen_state(workspace)
+    feedback_stats = read_feedback_loop_stats(workspace)
 
     seeds = seed_from_metrics(metrics)
     seasonality = analyze_seasonality(metrics)
@@ -319,6 +364,7 @@ def main():
         "metrics_path": str(metrics_path),
         "window_hours": args.hours,
         "lumen_state": lumen_state,
+        "feedback_loop": feedback_stats,
         "seeds": seeds,
         "seasonality": seasonality,
         "simulation": simulation,

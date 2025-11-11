@@ -1,6 +1,6 @@
 param(
-    [string]$StatusJson = "${PWD}\outputs\realtime_pipeline_status.json",
-    [string]$OutMd = "${PWD}\outputs\realtime_pipeline_summary_latest.md",
+    [string]$StatusJson = "$PSScriptRoot\..\outputs\realtime_pipeline_status.json",
+    [string]$OutMd = "$PSScriptRoot\..\outputs\realtime_pipeline_summary_latest.md",
     [string]$OutJson = "",
     [switch]$Open,
     [int]$Lookback = 12,
@@ -131,20 +131,6 @@ function New-Sparkline {
         [void]$sb.Append($blocks[$idx])
     }
     return $sb.ToString()
-}
-$min = ($series | Measure-Object -Minimum).Minimum
-$max = ($series | Measure-Object -Maximum).Maximum
-if ($null -eq $min -or $null -eq $max) { return "" }
-if ([Math]::Abs($max - $min) -lt 1e-9) { return ("=" * $series.Count) }
-$sb = New-Object System.Text.StringBuilder
-foreach ($v in $series) {
-    $norm = ($v - $min) / ($max - $min)
-    $idx = [int][Math]::Round($norm * ($blocks.Count - 1))
-    if ($idx -lt 0) { $idx = 0 }
-    if ($idx -ge $blocks.Count) { $idx = $blocks.Count - 1 }
-    [void]$sb.Append($blocks[$idx])
-}
-return $sb.ToString()
 }
 
 function Get-ResonanceTrend {

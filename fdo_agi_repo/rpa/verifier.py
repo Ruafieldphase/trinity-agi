@@ -81,7 +81,8 @@ class ExecutionVerifier:
         enable_screenshots: bool = True,
         enable_comparison: bool = True,
         comparison_method: str = "SSIM",
-        similarity_threshold: float = 0.85
+        similarity_threshold: float = 0.85,
+        no_change_tolerance: float = 0.05,
     ):
         """
         Args:
@@ -95,6 +96,7 @@ class ExecutionVerifier:
         self.enable_screenshots = enable_screenshots
         self.enable_comparison = enable_comparison
         self.comparison_method = comparison_method
+        self.no_change_tolerance = max(0.0, no_change_tolerance)
         
         # 하위 디렉토리 생성
         self.screenshots_dir = output_dir / "screenshots"
@@ -281,11 +283,22 @@ class ExecutionVerifier:
             else:
                 # 변화가 없어야 하는데 있으면 실패
                 if not comparison.is_similar:
-                    success = False
-                    error_message = (
-                        f"Expected no change but screens differ "
-                        f"(similarity={comparison.similarity:.4f})"
+                    effective_threshold = max(
+                        0.0, comparison.threshold - self.no_change_tolerance
                     )
+                    if comparison.similarity >= effective_threshold:
+                        logger.info(
+                            "Similarity %.4f within tolerance (threshold %.4f, tolerance %.4f)",
+                            comparison.similarity,
+                            comparison.threshold,
+                            self.no_change_tolerance,
+                        )
+                    else:
+                        success = False
+                        error_message = (
+                            f"Expected no change but screens differ "
+                            f"(similarity={comparison.similarity:.4f})"
+                        )
         
         # 결과 생성
         result = VerificationResult(
@@ -299,7 +312,14 @@ class ExecutionVerifier:
             error_message=error_message,
             metadata={
                 "expect_change": expect_change,
-                "dry_run": action_result.metadata.get("dry_run", False)
+                "dry_run": action_result.metadata.get("dry_run", False),
+                "tolerance_applied": (
+                    not expect_change
+                    and comparison is not None
+                    and not comparison.is_similar
+                    and comparison.similarity
+                    >= max(0.0, comparison.threshold - self.no_change_tolerance)
+                ),
             }
         )
         

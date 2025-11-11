@@ -26,6 +26,8 @@
 - `Python: Coverage Report (repo venv)` - 커버리지 요약 출력
 - `Python: Coverage HTML (generate)` - HTML 리포트 생성(`outputs/coverage_html`)
 - `Python: Open Coverage HTML` - 기본 브라우저로 리포트 열기
+- `RUA: Rebuild Dashboard` - RUA 데이터 통계/대시보드 재생성 (outputs/rua)
+- `Trinity: Rebuild Dashboard` - Rua/Elro/Lumen 통합 대시보드 재생성 (outputs/trinity)
 
 병렬/커버리지를 로컬 스크립트에서 직접 쓰려면:
 

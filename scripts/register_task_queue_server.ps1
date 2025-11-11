@@ -99,22 +99,24 @@ try {
             Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false | Out-Null
         }
         
-        # Task action: Start Python server
-        $pythonExe = (Get-Command py).Source
-        $arguments = "-3 `"$serverScript`" --port 8091 --host 127.0.0.1"
-        $action = New-ScheduledTaskAction -Execute $pythonExe -Argument $arguments
+        # Task action: Start Python server (via PowerShell with Hidden window)
+        $psCommand = "py -3 `"$serverScript`" --port 8091 --host 127.0.0.1"
+        $action = New-ScheduledTaskAction `
+            -Execute 'powershell.exe' `
+            -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -Command `"$psCommand`""
         
         # Trigger: At logon
         $trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
         
-        # Settings: Allow battery, don't stop, restart on failure
+        # Settings: Allow battery, don't stop, restart on failure, HIDDEN
         $settings = New-ScheduledTaskSettingsSet `
             -AllowStartIfOnBatteries `
             -DontStopIfGoingOnBatteries `
             -MultipleInstances Parallel `
             -RestartCount 3 `
             -RestartInterval (New-TimeSpan -Minutes 1) `
-            -ExecutionTimeLimit (New-TimeSpan -Hours 0)  # No time limit
+            -ExecutionTimeLimit (New-TimeSpan -Hours 0) `
+            -Hidden  # Hide task from Task Scheduler UI
         
         # Register task
         Register-ScheduledTask `

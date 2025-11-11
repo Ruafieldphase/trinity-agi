@@ -468,3 +468,83 @@ def record_task_resonance(
     except Exception:
         # Logging system not wired; silently ignore
         pass
+
+
+def consolidate_to_hippocampus(
+    hours: int = 24,
+    min_importance: float = 0.7,
+    workspace_root: Optional[Path] = None
+) -> Dict[str, Any]:
+    """
+    Resonance Ledger 이벤트를 Hippocampus long-term memory로 consolidation
+    
+    Args:
+        hours: 최근 몇 시간의 이벤트를 처리할지
+        min_importance: 이 이상의 importance를 가진 이벤트만 저장
+        workspace_root: Workspace 루트 (None이면 자동 감지)
+    
+    Returns:
+        Consolidation 결과 (저장된 메모리 수 등)
+    """
+    if workspace_root is None:
+        workspace_root = Path(__file__).parent.parent.parent
+    
+    # Hippocampus 로드
+    try:
+        from fdo_agi_repo.copilot.hippocampus import CopilotHippocampus
+    except ModuleNotFoundError:
+        from copilot.hippocampus import CopilotHippocampus  # type: ignore
+    
+    hippocampus = CopilotHippocampus(workspace_root)
+    
+    # Resonance 이벤트 로드
+    if _RESONANCE_STORE is None:
+        init_resonance_store()
+    
+    cutoff_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=hours)
+    all_events = _RESONANCE_STORE.read_all()
+    recent_events = [
+        e for e in all_events
+        if e.timestamp >= cutoff_time
+    ]
+    
+    consolidated = {
+        "processed": 0,
+        "stored": 0,
+        "skipped_low_importance": 0,
+        "memories": [],
+    }
+    
+    for event in recent_events:
+        consolidated["processed"] += 1
+        
+        # Importance 계산 (quality + evidence 기반)
+        quality = event.metrics.get("quality", 0.0)
+        evidence = event.metrics.get("evidence", 0.0)
+        importance = (quality * 0.7 + evidence * 0.3)
+        
+        if importance < min_importance:
+            consolidated["skipped_low_importance"] += 1
+            continue
+        
+        # Memory 포맷으로 변환
+        memory_item = {
+            "timestamp": event.timestamp.isoformat(),
+            "resonance_key": event.resonance_key,
+            "task_id": event.tags.get("task_id", ""),
+            "goal": event.tags.get("task_goal_snippet", ""),
+            "metrics": event.metrics,
+            "importance": importance,
+            "type": "episodic",  # Resonance 이벤트는 사건 기억
+        }
+        
+        # Hippocampus에 저장
+        hippocampus.add_to_working_memory(memory_item)
+        consolidated["stored"] += 1
+        consolidated["memories"].append(memory_item)
+    
+    # Consolidation 실행 (단기 → 장기)
+    result = hippocampus.consolidate(force=False)
+    consolidated["consolidation_result"] = result
+    
+    return consolidated

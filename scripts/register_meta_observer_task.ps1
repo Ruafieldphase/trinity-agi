@@ -1,4 +1,4 @@
-# Register Meta-Layer Observer as Scheduled Task
+﻿# Register Meta-Layer Observer as Scheduled Task
 # OS-level supervision that monitors ALL processes
 
 param(
@@ -74,22 +74,23 @@ if ($Register) {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false
     }
 
-    # Create action
-    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$ScriptPath`" -IntervalSeconds 30 -TimeoutSeconds 300"
+    # Create action (with hidden window)
+    $arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$ScriptPath`" -IntervalSeconds 30 -TimeoutSeconds 300"
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $arguments -WorkingDirectory $WorkspaceRoot
 
     # Create trigger (at logon + 3 minutes delay)
     $trigger = New-ScheduledTaskTrigger -AtLogOn
     $trigger.Delay = "PT3M"
 
-    # Create settings
+    # Create settings (with hidden task)
     $settings = New-ScheduledTaskSettingsSet `
         -AllowStartIfOnBatteries `
         -DontStopIfGoingOnBatteries `
         -StartWhenAvailable `
         -RestartCount 99 `
         -RestartInterval (New-TimeSpan -Minutes 1) `
-        -ExecutionTimeLimit (New-TimeSpan -Hours 0)  # No time limit
+        -ExecutionTimeLimit (New-TimeSpan -Hours 0) `
+        -Hidden  # No time limit
 
     # Register task
     try {

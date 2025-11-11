@@ -1,6 +1,6 @@
 # Self-Managing Agent Report
 
-**Timestamp**: 2025-11-03T02:52:50.046463+00:00
+**Timestamp**: 2025-11-10T23:04:30.265483+00:00
 **Auto-Fix**: Enabled
 
 ## Dependencies Status
@@ -17,7 +17,6 @@
 
 ### 🔴 watchdog
 - Process Running: ❌
-- Scheduled Task: ✅ (Running)
 - Health Check: ❌
 
 ### 🔴 task_watchdog
@@ -30,8 +29,8 @@
 
 ### 🔴 master_orchestrator
 - Process Running: ❌
-- Scheduled Task: ✅ (Running)
 - Health Check: ❌
+- Auto-Fixed: ✅
 
 ### 🟡 monitoring_collector
 - Process Running: ❌
@@ -42,7 +41,9 @@
 - register_scheduled_task: task_queue_server (✅)
 - start_dependency: task_queue_server (✅)
 - start_dependency: rpa_worker (✅)
+- register_scheduled_task: master_orchestrator (✅)
 
 ## Errors
+- Failed to register watchdog: 
 - Failed to register task_watchdog: 
 - Failed to register meta_observer: 

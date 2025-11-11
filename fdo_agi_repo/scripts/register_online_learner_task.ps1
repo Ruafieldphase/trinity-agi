@@ -1,4 +1,4 @@
-#!/usr/bin/env powershell
+﻿#!/usr/bin/env powershell
 <#
 .SYNOPSIS
     Register/Unregister Windows Scheduled Task for Binoche Online Learner (Phase 6l).
@@ -96,6 +96,7 @@ if ($Register) {
 
     # Task settings
     $Settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
         -AllowStartIfOnBatteries `
         -DontStopIfGoingOnBatteries `
         -StartWhenAvailable `

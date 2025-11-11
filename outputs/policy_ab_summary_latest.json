@@ -1,14 +1,14 @@
 {
   "source": "fdo_agi_repo\\memory\\resonance_ledger.jsonl",
-  "analyzed_lines": 15987,
+  "analyzed_lines": 34908,
   "policies": {
     "quality-first": {
-      "count": 159,
-      "allow": 41,
-      "warn": 118,
+      "count": 45,
+      "allow": 35,
+      "warn": 10,
       "block": 0,
-      "avg_latency_ms": 20445.895465409,
-      "p95_latency_ms": 34000.635900003545
+      "avg_latency_ms": 11924.544162221935,
+      "p95_latency_ms": 50297.33249999845
     }
   }
 }

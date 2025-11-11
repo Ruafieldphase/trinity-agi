@@ -1388,7 +1388,76 @@ try {
             if ($cfgJson.active_policy) { $activePol = [string]$cfgJson.active_policy }
             elseif ($cfgJson.default_policy) { $activePol = [string]$cfgJson.default_policy }
             if ($activePol) { $agiPolicy.active = $activePol }
+
+            if ($cfgJson.optimization) {
+                $agiPolicy.config_optimization = $cfgJson.optimization
+            }
         }
+    }
+    catch { }
+
+    try {
+        $optEvents = $agiEvents | Where-Object { $_.event -eq 'resonance_optimization' }
+        $optSummary = @{
+            total             = $optEvents.Count
+            peak              = 0
+            offpeak           = 0
+            throttle          = 0
+            prefer_gateway    = 0
+            preferred_primary = @{}
+            last              = @{}
+        }
+
+        if ($optEvents.Count -gt 0) {
+            $latestOpt = $null
+            foreach ($opt in $optEvents) {
+                try {
+                    $isPeak = $false
+                    if ($null -ne $opt.is_peak_now) {
+                        $isPeak = [bool]$opt.is_peak_now
+                    }
+                    if ($isPeak) { $optSummary.peak += 1 } else { $optSummary.offpeak += 1 }
+
+                    if ($opt.should_throttle_offpeak) { $optSummary.throttle += 1 }
+                    if ($opt.prefer_gateway) { $optSummary.prefer_gateway += 1 }
+
+                    $channels = @()
+                    if ($opt.preferred_channels) {
+                        $channels = @($opt.preferred_channels)
+                    }
+                    if ($channels.Count -gt 0) {
+                        $first = [string]$channels[0]
+                        if ($optSummary.preferred_primary.ContainsKey($first)) {
+                            $optSummary.preferred_primary[$first] += 1
+                        }
+                        else {
+                            $optSummary.preferred_primary[$first] = 1
+                        }
+                    }
+
+                    if ($opt.ts) {
+                        if (-not $latestOpt -or ($opt.ts -gt $latestOpt.ts)) {
+                            $latestOpt = $opt
+                        }
+                    }
+                }
+                catch { }
+            }
+
+            if ($latestOpt) {
+                $optSummary.last = @{
+                    is_peak_now        = $latestOpt.is_peak_now
+                    preferred_channels = $latestOpt.preferred_channels
+                    offpeak_mode       = $latestOpt.offpeak_mode
+                    batch_compression  = $latestOpt.batch_compression
+                    learning_bias      = $latestOpt.learning_bias
+                    should_throttle    = $latestOpt.should_throttle_offpeak
+                    timestamp          = $latestOpt.ts
+                }
+            }
+        }
+
+        $agiPolicy.optimization = $optSummary
     }
     catch { }
     # Attach to metrics object in a safe way
@@ -1415,6 +1484,64 @@ try {
         catch { $lastLatencyMs = $null }
     }
     try { $agiMetrics.LastTaskLatencyMs = $lastLatencyMs } catch { }
+}
+catch { }
+
+# ===== Gateway Optimization Log Summary =====
+try {
+    $optLogPath = Join-Path (Split-Path -Parent $PSScriptRoot) 'outputs\gateway_optimization_log.jsonl'
+    if (Test-Path -LiteralPath $optLogPath) {
+        $rawLines = Get-Content -LiteralPath $optLogPath -Tail 200 -ErrorAction Stop
+        $optEvents = @()
+        foreach ($line in $rawLines) {
+            try {
+                if ([string]::IsNullOrWhiteSpace($line)) { continue }
+                $obj = $line | ConvertFrom-Json -ErrorAction Stop
+                if ($obj.timestamp) {
+                    try { $obj | Add-Member -NotePropertyName 'ParsedTimestamp' -NotePropertyValue ([datetime]$obj.timestamp) -Force }
+                    catch { }
+                }
+                $optEvents += $obj
+            }
+            catch { }
+        }
+
+        if ($optEvents.Count -gt 0) {
+            $sortedOpt = $optEvents | Where-Object { $_.ParsedTimestamp } | Sort-Object -Property ParsedTimestamp
+            if (-not $sortedOpt) { $sortedOpt = $optEvents }
+            $lastOpt = $sortedOpt[-1]
+
+            $gatewayOptSummary = @{
+                total_entries   = $optEvents.Count
+                peak_entries    = ($optEvents | Where-Object { $_.phase -eq 'peak' }).Count
+                offpeak_entries = ($optEvents | Where-Object { $_.phase -eq 'off-peak' }).Count
+                warmup_triggers = ($optEvents | Where-Object { $_.strategies.off_peak_warmup.should_warmup }).Count
+                dry_run         = $lastOpt.dry_run
+                log_path        = $optLogPath
+                last            = @{}
+            }
+
+            try {
+                $gatewayOptSummary.last = @{
+                    timestamp      = $lastOpt.timestamp
+                    phase          = $lastOpt.phase
+                    timeout_ms     = $lastOpt.strategies.adaptive_timeout.timeout_ms
+                    retry_attempts = $lastOpt.strategies.adaptive_timeout.retry_attempts
+                    concurrency    = $lastOpt.strategies.phase_sync_scheduler.concurrency
+                    warmup_active  = $lastOpt.strategies.off_peak_warmup.should_warmup
+                    next_warmup    = if ($lastOpt.strategies.off_peak_warmup.should_warmup) { $lastOpt.strategies.off_peak_warmup.schedule } else { $lastOpt.strategies.off_peak_warmup.next_schedule }
+                }
+            }
+            catch { }
+
+            if ($lastOpt.thresholds) {
+                $gatewayOptSummary.thresholds = $lastOpt.thresholds
+            }
+
+            if (-not $agiMetrics) { $agiMetrics = @{} }
+            $agiMetrics.GatewayOptimization = $gatewayOptSummary
+        }
+    }
 }
 catch { }
 
@@ -1514,6 +1641,49 @@ if ($agiMetrics.Policy) {
         $lastPol = if ($agiMetrics.Policy.last.policy) { $agiMetrics.Policy.last.policy } else { 'n/a' }
         $activePol = if ($agiMetrics.Policy.active) { $agiMetrics.Policy.active } else { 'n/a' }
         $reportLines += "  Resonance Policy: mode=$lastMode active=$activePol last=$lastPol | allow=$($pc.allow) warn=$($pc.warn) block=$($pc.block)"
+        if ($agiMetrics.Policy.optimization) {
+            $opt = $agiMetrics.Policy.optimization
+            $primarySummary = ""
+            try {
+                if ($opt.preferred_primary) {
+                    $pairs = @()
+                    foreach ($k in ($opt.preferred_primary.Keys | Sort-Object)) {
+                        $pairs += ("{0}:{1}" -f $k, $opt.preferred_primary[$k])
+                    }
+                    if ($pairs.Count -gt 0) {
+                        $primarySummary = " primary=[" + ($pairs -join ", ") + "]"
+                    }
+                }
+            }
+            catch { $primarySummary = "" }
+
+            $reportLines += (
+                "  Resonance Optimization: total={0} peak={1} offpeak={2} throttle={3} gateway_pref={4}{5}" -f 
+                $opt.total,
+                $opt.peak,
+                $opt.offpeak,
+                $opt.throttle,
+                $opt.prefer_gateway,
+                $primarySummary
+            )
+        }
+        if ($agiMetrics.GatewayOptimization) {
+            $gopt = $agiMetrics.GatewayOptimization
+            $lastGo = $gopt.last
+            $lastPhase = if ($lastGo.phase) { $lastGo.phase } else { 'n/a' }
+            $lastTimeout = if ($lastGo.timeout_ms) { [int]$lastGo.timeout_ms } else { 0 }
+            $lastConc = if ($lastGo.concurrency) { [int]$lastGo.concurrency } else { 0 }
+            $warmup = if ($lastGo.warmup_active) { 'warmup' } else { 'idle' }
+            $reportLines += (
+                "  Gateway Optimizer: last={0} phase={1} timeout={2}ms concurrency={3} state={4} entries={5}" -f 
+                (if ($lastGo.timestamp) { $lastGo.timestamp } else { 'n/a' }),
+                $lastPhase,
+                $lastTimeout,
+                $lastConc,
+                $warmup,
+                $gopt.total_entries
+            )
+        }
         if ($pc.block -gt 0) {
             $reportLines += "  !!! POLICY BLOCKS DETECTED: $($pc.block) in window !!!"
         }
@@ -1533,6 +1703,24 @@ if ($agiMetrics.LastTaskLatencyMs) {
 if ($evalMinQ -ne $null) {
     $reportLines += "  AGI Eval: min_quality=$evalMinQ"
 }
+
+# Show Feedback Loop stats (if available)
+try {
+    $ytFeedbackPath = "C:\workspace\agi\fdo_agi_repo\outputs\youtube_feedback_bqi.jsonl"
+    $rpaFeedbackPath = "C:\workspace\agi\fdo_agi_repo\outputs\rpa_feedback_bqi.jsonl"
+    $ytCount = 0
+    $rpaCount = 0
+    if (Test-Path $ytFeedbackPath) {
+        $ytCount = @(Get-Content $ytFeedbackPath | Where-Object { $_.Trim() -ne "" }).Count
+    }
+    if (Test-Path $rpaFeedbackPath) {
+        $rpaCount = @(Get-Content $rpaFeedbackPath | Where-Object { $_.Trim() -ne "" }).Count
+    }
+    if ($ytCount -gt 0 -or $rpaCount -gt 0) {
+        $reportLines += "  Feedback Loop: YouTube=$ytCount RPA=$rpaCount events ingested"
+    }
+}
+catch { }
 
 # Add Historical Comparison if available
 if ($periodComparison) {
@@ -2055,6 +2243,50 @@ if (Test-Path -LiteralPath $stabilizerSummaryPath) {
     }
 }
 
+$rpaSummaryPath = Join-Path (Split-Path -Parent $OutMarkdown) "rpa_worker_status.txt"
+if (Test-Path -LiteralPath $rpaSummaryPath) {
+    try {
+        $rpaLine = Get-Content -LiteralPath $rpaSummaryPath -TotalCount 1
+        if ($rpaLine) {
+            $reportLines += "RPA Worker Summary: $rpaLine"
+            $reportLines += ""
+        }
+    }
+    catch {
+        $reportLines += "(RPA Worker summary unavailable: $($_.Exception.Message))"
+        $reportLines += ""
+    }
+}
+
+$rpaAlertPath = Join-Path (Split-Path -Parent $OutMarkdown) "alerts\rpa_worker_alert.json"
+if (Test-Path -LiteralPath $rpaAlertPath) {
+    try {
+        $alertRaw = Get-Content -LiteralPath $rpaAlertPath -Raw
+        if (-not [string]::IsNullOrWhiteSpace($alertRaw)) {
+            $alertObj = $alertRaw | ConvertFrom-Json -ErrorAction Stop
+            $alertMessage = if ($alertObj.message) { $alertObj.message } else { "RPA worker restart limit reached." }
+            $alertTs = $null
+            if ($alertObj.timestamp) { $alertTs = $alertObj.timestamp }
+            else {
+                try { $alertTs = (Get-Item -LiteralPath $rpaAlertPath).LastWriteTime.ToString("o") } catch {}
+            }
+            $alertDetails = @()
+            if ($alertTs) { $alertDetails += "timestamp=$alertTs" }
+            if ($alertObj.recent_restarts -ne $null -and $alertObj.max_restarts -ne $null) {
+                $alertDetails += "recent_restarts=$($alertObj.recent_restarts)/$($alertObj.max_restarts)"
+            }
+            if ($alertObj.window_seconds -ne $null) { $alertDetails += "window_seconds=$($alertObj.window_seconds)" }
+            $detailText = if ($alertDetails.Count) { " (" + ($alertDetails -join ", ") + ")" } else { "" }
+            $reportLines += "RPA Worker Alert: $alertMessage$detailText"
+            $reportLines += ""
+        }
+    }
+    catch {
+        $reportLines += "(RPA Worker alert unavailable: $($_.Exception.Message))"
+        $reportLines += ""
+    }
+}
+
 $resourceSummaryPath = Join-Path (Split-Path -Parent $OutMarkdown) "resource_optimizer_summary.md"
 if (Test-Path -LiteralPath $resourceSummaryPath) {
     try {
@@ -2179,6 +2411,7 @@ $metrics = @{
             Inactive        = if ($agiMetrics.LastActivity) { ((Get-Date) - $agiMetrics.LastActivity).TotalHours -gt [double]$agiThresholds.inactive_hours } else { $false }
         }
     }
+    GatewayOptimizer     = if ($agiMetrics.GatewayOptimization) { $agiMetrics.GatewayOptimization } else { @{} }
     SessionSummaries     = $sessionSummaryMetrics
     Channels             = @{
         Local   = $localStats

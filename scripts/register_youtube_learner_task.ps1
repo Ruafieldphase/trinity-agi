@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [string]$TaskName = "YouTubeLearnerDaily",
@@ -64,6 +64,7 @@ if ($Register) {
         $triggers += ,(New-ScheduledTaskTrigger -AtLogOn)
     }
     $settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries:$false -DontStopIfGoingOnBatteries:$false -StartWhenAvailable -WakeToRun
+$settings.Hidden = $true
     $principal = New-ScheduledTaskPrincipal -UserId $env:USERNAME -LogonType Interactive -RunLevel Limited
 
     try {

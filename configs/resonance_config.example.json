@@ -25,5 +25,17 @@
       "max_latency_ms": 1500
     }
   },
+  "optimization": {
+    "enabled": true,
+    "prefer_gateway": true,
+    "prefer_peak_hours": true,
+    "peak_hours": {
+      "start": 8,
+      "end": 16
+    },
+    "offpeak_mode": "lightweight",
+    "batch_compression": "high",
+    "learning_bias": "gateway"
+  },
   "notes": "Copy to configs/resonance_config.json and tweak for your environment. Modes: disabled | observe | enforce."
 }

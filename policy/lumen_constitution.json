@@ -1,5 +1,5 @@
 ﻿{
-    "version":  "1.1.0",
+    "version":  "1.2.0",
     "prohibitions":  {
                          "forbid_harm":  true,
                          "forbid_consent_bypass":  true,
@@ -37,7 +37,7 @@
                                     "anti_dogma":  true
                                 },
                  "governance":  {
-                                    "last_reviewed_at":  "2025-11-03T06:11:33.7882599Z",
+                                    "last_reviewed_at":  "2025-11-03T10:07:05.6949609Z",
                                     "review_cadence_days":  14,
                                     "sunset_date":  null,
                                     "owners":  [
@@ -62,6 +62,13 @@
                                                           "note":  "auto-review",
                                                           "version":  "1.1.0",
                                                           "at":  "2025-11-03T06:11:33.7973714Z"
+                                                      },
+                                                      {
+                                                          "by":  "kuirv",
+                                                          "bump":  "minor",
+                                                          "note":  "프랙탈 리듬 아키텍처 철학 통합",
+                                                          "version":  "1.2.0",
+                                                          "at":  "2025-11-03T10:07:05.6994673Z"
                                                       }
                                                   ]
                                 }

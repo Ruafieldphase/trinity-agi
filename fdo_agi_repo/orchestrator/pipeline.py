@@ -23,6 +23,40 @@ from .config import is_corrections_enabled, get_corrections_config, get_evaluati
 # Response Cache (Phase 2.5)
 from .response_cache import get_response_cache
 
+# Lumen Feedback System (Phase 6.1)
+# Lumen Feedback System (Phase 6.1)
+# Optional dependency: provide safe fallbacks when Lumen package is unavailable.
+try:
+    from lumen.feedback_loop_redis import FeedbackLoopRedis
+    from lumen.adaptive_ttl_policy import AdaptiveTTLPolicy
+    from lumen.cache_size_optimizer import CacheSizeOptimizer
+except ModuleNotFoundError:
+    class FeedbackLoopRedis:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def record(self, *args, **kwargs):
+            pass
+
+        def close(self):
+            pass
+
+    class AdaptiveTTLPolicy:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def get_ttl(self, *args, **kwargs):
+            # Provide a conservative default TTL
+            return 0
+
+    class CacheSizeOptimizer:  # type: ignore
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def get_size(self, *args, **kwargs):
+            # Provide a conservative default cache size
+            return 0
+
 # BQI 통합 (Phase 1)
 from scripts.rune.bqi_adapter import analyse_question
 from .conversation_memory import ConversationMemory
@@ -169,6 +203,7 @@ def EVAL(outputs: List[PersonaOutput]) -> EvalReport:
 
 def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     task = TaskSpec(**spec)
+    tool_cfg = dict(tool_cfg) if tool_cfg else {}
     t_start = time.perf_counter()  # Start duration tracking
     
     # BQI 좌표 생성 (Phase 1)
@@ -222,6 +257,35 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     # 실행 설정 로깅: 평가 임계값 및 자기교정 구성
     eval_cfg = get_evaluation_config()
     corr_cfg = get_corrections_config()
+    optimization_info: Dict[str, Any] = {}
+    optimization_adjustments: Dict[str, Any] = {}
+    try:
+        from .resonance_bridge import get_resonance_optimization
+
+        optimization_info = get_resonance_optimization()
+    except Exception:
+        optimization_info = {}
+
+    if optimization_info.get("enabled"):
+        preferred_channels = optimization_info.get("preferred_channels")
+        if preferred_channels and "preferred_channels" not in tool_cfg:
+            tool_cfg["preferred_channels"] = preferred_channels
+
+        batch_pref = optimization_info.get("batch_compression_level") or optimization_info.get("batch_compression")
+        if isinstance(batch_pref, str) and batch_pref.lower() not in {"", "auto", "none", "off"} and "batch_compression" not in tool_cfg:
+            tool_cfg["batch_compression"] = batch_pref
+
+        if optimization_info.get("should_throttle_offpeak"):
+            original_max = int(corr_cfg.get("max_passes", 2))
+            if original_max > 1:
+                corr_cfg = dict(corr_cfg)
+                corr_cfg["max_passes"] = 1
+                optimization_adjustments["max_passes"] = {
+                    "from": original_max,
+                    "to": 1,
+                    "reason": "offpeak_throttle",
+                }
+
     append_ledger({
         "event": "run_config",
         "task_id": task.task_id,
@@ -229,6 +293,29 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         "corrections": {"enabled": bool(corr_cfg.get("enabled", True)), "max_passes": int(corr_cfg.get("max_passes", 2))},
         "bqi_coord": bqi_coord.to_dict(),
     })
+    if optimization_info:
+        opt_event: Dict[str, Any] = {
+            "event": "resonance_optimization",
+            "task_id": task.task_id,
+            "enabled": bool(optimization_info.get("enabled")),
+            "prefer_gateway": bool(optimization_info.get("prefer_gateway")),
+            "prefer_peak_hours": bool(optimization_info.get("prefer_peak_hours")),
+            "is_peak_now": bool(optimization_info.get("is_peak_now")),
+            "current_hour": int(optimization_info.get("current_hour", 0)),
+            "peak_window": optimization_info.get("peak_window"),
+            "preferred_channels": optimization_info.get("preferred_channels"),
+            "offpeak_mode": optimization_info.get("offpeak_mode"),
+            "batch_compression": optimization_info.get("batch_compression"),
+            "batch_compression_level": optimization_info.get("batch_compression_level"),
+            "learning_bias": optimization_info.get("learning_bias"),
+            "phase": optimization_info.get("phase"),
+            "should_throttle_offpeak": bool(optimization_info.get("should_throttle_offpeak")),
+            "timeout_ms": optimization_info.get("timeout_ms"),
+            "retry_attempts": optimization_info.get("retry_attempts"),
+        }
+        if optimization_adjustments:
+            opt_event["adjustments"] = optimization_adjustments
+        append_ledger(opt_event)
     # Autopoietic Loop: Folding starts with Thesis phase (context folding)
     try:
         append_ledger({
@@ -244,6 +331,14 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     registry = ToolRegistry(tool_cfg)
     # Phase 3: BQI 좌표를 Registry에 설정 (RAG 호출 시 자동 전달)
     registry.set_bqi_coord(bqi_coord.to_dict())
+    if optimization_info:
+        try:
+            registry.set_optimization_hint(optimization_info)
+            pref_channels = optimization_info.get("preferred_channels")
+            if pref_channels:
+                registry.set_routing_preference(pref_channels)
+        except Exception:
+            pass
     plan = PLAN(task, snapshot_memory())
 
     # Phase 4: Meta-Cognition - 자기능력 평가
@@ -394,10 +489,12 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         pass
     
     append_ledger({
-        "event": "thesis_end",
+        "event_type": "thesis_end",  # 루멘 권장: 일관된 필드명
         "task_id": task.task_id,
         "duration_sec": float(t1 - t0),
-        "citations": len(out_thesis.citations)
+        "latency_ms": float((t1 - t0) * 1000),  # 루멘(合) 권장: 레이턴시 추가
+        "citations": len(out_thesis.citations),
+        "quality": min(1.0, len(out_thesis.citations) / 10.0)  # 루멘(合) 권장: 품질 메트릭
     })
     # Autopoietic Loop: Folding end (after Thesis)
     try:
@@ -446,7 +543,13 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         )
     
     t3 = time.perf_counter()
-    append_ledger({"event": "antithesis_end", "task_id": task.task_id, "duration_sec": float(t3 - t2)})
+    append_ledger({
+        "event_type": "antithesis_end",  # 루멘 권장: 일관된 필드명
+        "task_id": task.task_id,
+        "duration_sec": float(t3 - t2),
+        "latency_ms": float((t3 - t2) * 1000),  # 루멘(合) 권장
+        "quality": 0.85 if hasattr(out_anti, 'summary') and out_anti.summary else 0.5  # 루멘(合) 권장
+    })
     # Autopoietic Loop: Unfolding end (after Antithesis)
     try:
         append_ledger({
@@ -487,10 +590,12 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     )
     
     append_ledger({
-        "event": "synthesis_end",
+        "event_type": "synthesis_end",  # 루멘 권장: 일관된 필드명
         "task_id": task.task_id,
         "duration_sec": float(t5 - t4),
-        "citations": len(out_synth.citations)
+        "latency_ms": float((t5 - t4) * 1000),  # 루멘(合) 권장
+        "citations": len(out_synth.citations),
+        "quality": min(1.0, len(out_synth.citations) / 10.0)  # 루멘(合) 권장
     })
     
     # Pipeline summary event

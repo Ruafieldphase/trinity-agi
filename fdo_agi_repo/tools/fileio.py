@@ -2,7 +2,8 @@ import os
 ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)), "sandbox")
 def _abspath(rel: str) -> str:
     path = os.path.join(os.path.dirname(os.path.dirname(__file__)), rel)
-    if not os.path.abspath(path).startswith(os.path.dirname(ROOT)):
+    # Sandbox escape 체크: path가 ROOT 디렉토리 내부인지 확인
+    if not os.path.abspath(path).startswith(os.path.abspath(ROOT)):
         raise RuntimeError("sandbox escape blocked")
     return path
 def read_text(path: str) -> str:

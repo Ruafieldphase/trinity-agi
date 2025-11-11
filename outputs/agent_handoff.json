@@ -1,8 +1,13 @@
 {
     "PlanPath": "docs/AGI_RESONANCE_INTEGRATION_PLAN.md",
     "HandoffPath": "docs/AGENT_HANDOFF.md",
-    "LastUpdated": "2025-11-01 16:36:00",
+    "LastUpdated": "2025-11-05 12:00:00",
+    "DesignTimeline": "one-month-ago",
     "NextActions": [
+        "Context 명시적 추출: resonance_ledger.jsonl → {where,when,who}",
+        "CI3 최적화: I(Elo;Lumen|Context) ≤ 0.05",
+        "Information Manifold 시각화: Fisher Metric/곡률 + Horizon 마킹",
+        "Bollinger Band 통합: resonance_score 밴드 돌파 알림 및 너비=온도",
         "Phase 0: 인코딩 복구 (8문서, UTF-8)",
         "Phase 1: configs/resonance_config.json 초안",
         "Phase 2: resonance_bridge 로더/검증",
@@ -19,6 +24,24 @@
         "pytest.ini",
         "AGENTS.md"
     ],
+    "EntryPoints": {
+        "docs": [
+            "docs/AGENT_HANDOFF_SUMMARY.md",
+            "docs/AGENT_HANDOFF.md"
+        ],
+        "scripts": [
+            "scripts/contextualized_i3.py"
+        ]
+    },
+    "QuickHandoff": {
+        "status": "partially-integrated",
+        "highlights": [
+            "Resonance Simulator + Bollinger Band active",
+            "AGI_CONTEXT_MAP safeguards present",
+            "CI3 initial=1.24 bits (needs optimization)",
+            "Elo-Lumen correlation high; condition on Context"
+        ]
+    },
     "LatestSession": {
         "date": "2025-11-01",
         "summary": "Phase 6 준비 전 문서 정합성 개선 및 모니터링 리포트/대시보드 생성 확인, 세션 저장",

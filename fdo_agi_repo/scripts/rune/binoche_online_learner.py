@@ -31,6 +31,8 @@ from file_lock_util import FileLock
 
 def load_ledger(ledger_path: Path, hours: int) -> List[Dict[str, Any]]:
     """Load recent events from resonance ledger."""
+    from datetime import datetime, timezone
+    
     cutoff = datetime.now().timestamp() - (hours * 3600)
     events = []
     
@@ -39,6 +41,16 @@ def load_ledger(ledger_path: Path, hours: int) -> List[Dict[str, Any]]:
             if line.strip():
                 event = json.loads(line)
                 ts = event.get('ts', 0)
+                
+                # Handle both timestamp formats
+                if isinstance(ts, str):
+                    try:
+                        ts = datetime.fromisoformat(ts.replace('Z', '+00:00')).timestamp()
+                    except:
+                        ts = 0
+                else:
+                    ts = float(ts)
+                
                 if ts >= cutoff:
                     events.append(event)
     

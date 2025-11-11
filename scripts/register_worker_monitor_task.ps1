@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Register/Unregister Worker Monitor as a Windows Scheduled Task (At Logon)
 
@@ -86,6 +86,7 @@ try {
 
         # Settings: resilient
         $settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
             -AllowStartIfOnBatteries `
             -DontStopIfGoingOnBatteries `
             -MultipleInstances Parallel `

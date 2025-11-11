@@ -467,11 +467,13 @@ git commit -m "feat(phase7-task7): Worker Load Balancing with Lock mechanism"
 ## 🔧 Task 8: Worker 중복 생성 해결 (Critical)
 
 ### Problem
+
 - **Auto-bring-up Task**가 `folderOpen` 시 `Queue: Ensure Worker`를 호출하여 중복 생성
 - 여러 스크립트가 동시에 `ensure_rpa_worker.ps1` 실행 시 **Race Condition** 발생
 - 기존 Lock 파일 방식은 **Atomic 보장 없음**
 
 ### Solution
+
 1. **Cross-Process Mutex** (`Global\RPAWorkerEnsureMutex`)
    - OS-level synchronization
    - Auto-release on process exit
@@ -487,11 +489,13 @@ git commit -m "feat(phase7-task7): Worker Load Balancing with Lock mechanism"
    - Exit without starting new worker
 
 ### Results
+
 - **Parallel Start (3 Jobs)**: 1개만 생성 ✅
 - **EnforceSingle**: Oldest 종료, Newest 유지 ✅
 - **Worker Count**: 2-3개 → 1개 (-66% ~ -50%)
 
 ### Performance
+
 - Lock Type: File → **Mutex** (OS-level)
 - Race Condition: Yes → **No** ✅
 - Stale Detection: None → **PID file** ✅

@@ -23,6 +23,8 @@ class ToolRegistry:
     def __init__(self, cfg: Dict[str, Any]):
         self.cfg = cfg
         self.bqi_coord: Optional[Dict[str, Any]] = None  # Phase 3: BQI 좌표 저장
+        self.optimization_hint: Optional[Dict[str, Any]] = None  # Phase 8.5: Resonance optimization guidance
+        self.routing_preference: Optional[List[str]] = None
 
     def set_bqi_coord(self, bqi_coord: Optional[Dict[str, Any]]) -> None:
         """
@@ -33,6 +35,23 @@ class ToolRegistry:
             bqi_coord: BQI 좌표 (priority, emotion, rhythm)
         """
         self.bqi_coord = bqi_coord
+
+    def set_optimization_hint(self, hint: Optional[Dict[str, Any]]) -> None:
+        """Store resonance optimization hints for downstream tool calls."""
+        self.optimization_hint = hint
+
+    def get_optimization_hint(self) -> Optional[Dict[str, Any]]:
+        return self.optimization_hint
+
+    def set_routing_preference(self, channels: Optional[List[str]]) -> None:
+        """Persist preferred channel ordering for tool invocations."""
+        if channels:
+            self.routing_preference = list(channels)
+        else:
+            self.routing_preference = None
+
+    def get_routing_preference(self) -> Optional[List[str]]:
+        return self.routing_preference
 
     def list_available_tools_for_meta(self) -> List[str]:
         """

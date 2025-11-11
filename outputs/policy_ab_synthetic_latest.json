@@ -1,21 +1,21 @@
 {
-  "tasks": 112,
+  "tasks": 31,
   "policies": {
     "quality-first": {
-      "samples": 112,
-      "allow": 41,
-      "warn": 71,
+      "samples": 31,
+      "allow": 25,
+      "warn": 6,
       "block": 0,
-      "avg_latency_ms": 18628.184008035805,
-      "p95_latency_ms": 34012.158700003056
+      "avg_latency_ms": 10444.743306451432,
+      "p95_latency_ms": 26315.843600001244
     },
     "latency-first": {
-      "samples": 112,
-      "allow": 41,
-      "warn": 71,
+      "samples": 31,
+      "allow": 25,
+      "warn": 6,
       "block": 0,
-      "avg_latency_ms": 18628.184008035805,
-      "p95_latency_ms": 34012.158700003056
+      "avg_latency_ms": 10444.743306451432,
+      "p95_latency_ms": 26315.843600001244
     }
   }
 }

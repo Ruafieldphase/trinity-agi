@@ -86,6 +86,9 @@
    - ✅ 5분(300초) Grace Period
    - ✅ 1시간 내 최대 3회 재시도 제한
    - ✅ Healing history 로깅
+4. ✅ **RPA Worker 가용성 보장**
+   - `scripts/ensure_rpa_worker.ps1`: 설정 기반(Start/Stop/Status), 헬스체크 + 재시작 제한
+   - `configs/rpa_worker.json`: 실행 커맨드, 헬스 엔드포인트, 재시작 정책 정의
 
 #### 테스트 결과
 

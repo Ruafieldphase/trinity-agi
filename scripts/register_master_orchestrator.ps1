@@ -17,6 +17,26 @@ param(
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
 $MasterScript = "$WorkspaceRoot\scripts\master_orchestrator.ps1"
+$RunRegPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
+$RunRegName = 'AGI_Master_Orchestrator'
+
+function Get-RegistryStartup {
+    try {
+        $prop = Get-ItemProperty -Path $RunRegPath -Name $RunRegName -ErrorAction SilentlyContinue
+        return $prop.$RunRegName
+    }
+    catch { return $null }
+}
+
+function Register-StartupViaRegistry {
+    $inner = "Start-Sleep -Seconds 300; & '" + $MasterScript + "'"
+    $cmd = "powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -Command `"$inner`""
+    New-ItemProperty -Path $RunRegPath -Name $RunRegName -Value $cmd -PropertyType String -Force | Out-Null
+}
+
+function Unregister-StartupViaRegistry {
+    Remove-ItemProperty -Path $RunRegPath -Name $RunRegName -ErrorAction SilentlyContinue
+}
 
 function Show-Status {
     try {
@@ -38,6 +58,13 @@ function Show-Status {
             Write-Host "`n✗ Task '$TaskName' is NOT registered" -ForegroundColor Yellow
             Write-Host "  Run with -Register to enable auto-start on boot" -ForegroundColor Gray
         }
+        $reg = Get-RegistryStartup
+        if ($reg) {
+            Write-Host "  ✓ Registry Run entry present (fallback): $RunRegName" -ForegroundColor Green
+        }
+        else {
+            Write-Host "  ☐ Registry Run entry not present (fallback disabled)" -ForegroundColor DarkGray
+        }
     }
     catch {
         Write-Host "`n✗ Error checking status: $($_.Exception.Message)" -ForegroundColor Red
@@ -53,6 +80,8 @@ if ($Unregister) {
     try {
         Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
         Write-Host "`n✓ Task '$TaskName' unregistered" -ForegroundColor Green
+        Unregister-StartupViaRegistry
+        Write-Host "  ✓ Registry Run fallback removed" -ForegroundColor Green
         exit 0
     }
     catch {
@@ -109,7 +138,16 @@ if ($Register) {
         exit 0
     }
     catch {
-        Write-Host "`n✗ Failed to register: $($_.Exception.Message)" -ForegroundColor Red
-        exit 1
+        Write-Host "`n⚠️  Failed to register scheduled task: $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "   Falling back to Registry Run (no admin required)." -ForegroundColor Yellow
+        try {
+            Register-StartupViaRegistry
+            Write-Host "  ✓ Registry Run entry created. Master Orchestrator will auto-start ~5 minutes after logon." -ForegroundColor Green
+            exit 0
+        }
+        catch {
+            Write-Host "  ✗ Fallback failed: $($_.Exception.Message)" -ForegroundColor Red
+            exit 1
+        }
     }
 }

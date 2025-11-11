@@ -3,6 +3,7 @@ Auto resume script (ASCII-safe, PS 5.1 compatible)
 Behavior:
  - Debounce: skip if run within the last 5 minutes
  - Ensure Task Queue Server on port 8091
+ - Ensure Original Data API Server on port 8093
  - Ensure AI Agent Scheduler (30m interval, 24h, AutoRecover)
 #>
 
@@ -38,6 +39,30 @@ try {
         if ((Test-Path $serverScript) -and (Test-Path $pythonExe)) {
             Start-Job -ScriptBlock { param($py, $sc) & $py $sc } -ArgumentList $pythonExe, $serverScript | Out-Null
             if (-not $Silent) { Write-Host 'Started Task Queue Server (bg job)' -ForegroundColor Green }
+        }
+    }
+
+    # Ensure Original Data API Server (8093)
+    try {
+        Invoke-WebRequest -Uri 'http://localhost:8093/health' -TimeoutSec 2 -ErrorAction Stop | Out-Null
+    }
+    catch {
+        $odServerScript = Join-Path $WorkspaceRoot 'scripts\original_data_server.py'
+        $odIndexPath = Join-Path $WorkspaceRoot 'outputs\original_data_index.json'
+        $pythonExe = if (Test-Path (Join-Path $WorkspaceRoot 'LLM_Unified\.venv\Scripts\python.exe')) {
+            Join-Path $WorkspaceRoot 'LLM_Unified\.venv\Scripts\python.exe'
+        }
+        else { 'python' }
+        if ((Test-Path $odServerScript) -and (Test-Path $odIndexPath)) {
+            Start-Job -ScriptBlock { 
+                param($py, $sc, $idx, $root) 
+                Set-Location $root
+                & $py $sc --port 8093 --index $idx 
+            } -ArgumentList $pythonExe, $odServerScript, $odIndexPath, $WorkspaceRoot | Out-Null
+            if (-not $Silent) { Write-Host 'Started Original Data API Server (bg job, port 8093)' -ForegroundColor Green }
+        }
+        elseif (-not (Test-Path $odIndexPath)) {
+            if (-not $Silent) { Write-Host 'Skipped Original Data API: index not found (run build_original_data_index.ps1)' -ForegroundColor Yellow }
         }
     }
 

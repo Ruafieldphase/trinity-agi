@@ -107,6 +107,156 @@ if (Test-Path $resourceSummaryPath) {
     }
 }
 
+$rpaStatusPath = "$PSScriptRoot\..\outputs\rpa_worker_status.txt"
+$rpaStatusLine = ""
+if (Test-Path $rpaStatusPath) {
+    try {
+        $rpaStatusLine = (Get-Content $rpaStatusPath -TotalCount 1) -join "`n"
+    }
+    catch {
+        $rpaStatusLine = "Failed to load RPA worker status: $($_.Exception.Message)"
+    }
+}
+
+$rpaAlertPath = "$PSScriptRoot\..\outputs\alerts\rpa_worker_alert.json"
+$rpaAlertSummary = ""
+if (Test-Path $rpaAlertPath) {
+    try {
+        $alertRaw = Get-Content $rpaAlertPath -Raw
+        if (-not [string]::IsNullOrWhiteSpace($alertRaw)) {
+            $alertObj = $alertRaw | ConvertFrom-Json -ErrorAction Stop
+            $alertMessage = if ($alertObj.message) { $alertObj.message } else { "Restart limit reached." }
+            $alertTs = $null
+            if ($alertObj.timestamp) { $alertTs = $alertObj.timestamp }
+            else {
+                try { $alertTs = (Get-Item $rpaAlertPath).LastWriteTime.ToString("o") } catch {}
+            }
+            $details = @()
+            if ($alertTs) { $details += "timestamp=$alertTs" }
+            if ($alertObj.recent_restarts -ne $null -and $alertObj.max_restarts -ne $null) {
+                $details += "recent_restarts=$($alertObj.recent_restarts)/$($alertObj.max_restarts)"
+            }
+            if ($alertObj.window_seconds -ne $null) { $details += "window_seconds=$($alertObj.window_seconds)" }
+            $detailText = if ($details.Count) { " (" + ($details -join ", ") + ")" } else { "" }
+            $rpaAlertSummary = "$alertMessage$detailText"
+        }
+    }
+    catch {
+        $rpaAlertSummary = "Failed to read RPA worker alert: $($_.Exception.Message)"
+    }
+}
+
+$monitoringMetricsPath = "$PSScriptRoot\..\outputs\monitoring_metrics_latest.json"
+$policyOptimization = $null
+$gatewayOptimizerMetrics = $null
+try {
+    if (Test-Path $monitoringMetricsPath) {
+        $monitoringMetrics = Get-Content $monitoringMetricsPath -Raw | ConvertFrom-Json
+        if ($monitoringMetrics -and $monitoringMetrics.AGI -and $monitoringMetrics.AGI.Policy -and $monitoringMetrics.AGI.Policy.optimization) {
+            $policyOptimization = $monitoringMetrics.AGI.Policy.optimization
+        }
+        if ($monitoringMetrics -and $monitoringMetrics.GatewayOptimizer) {
+            $gatewayOptimizerMetrics = $monitoringMetrics.GatewayOptimizer
+        }
+    }
+}
+catch {
+    Write-Host "⚠️  Could not load monitoring metrics: $($_.Exception.Message)" -ForegroundColor Yellow
+}
+
+$optTotal = "--"
+$optPeak = "--"
+$optOffpeak = "--"
+$optThrottle = "--"
+$optPreferGateway = "--"
+$optPrimaryText = "--"
+$optLastTime = "--"
+$optLastPhase = "--"
+$optLastChannels = "--"
+$optLastOffpeakMode = "--"
+$optLastCompression = "--"
+$optLastLearning = "--"
+$optLastThrottle = "--"
+
+if ($policyOptimization) {
+    if ($policyOptimization.total -ne $null) { $optTotal = $policyOptimization.total }
+    if ($policyOptimization.peak -ne $null) { $optPeak = $policyOptimization.peak }
+    if ($policyOptimization.offpeak -ne $null) { $optOffpeak = $policyOptimization.offpeak }
+    if ($policyOptimization.throttle -ne $null) { $optThrottle = $policyOptimization.throttle }
+    if ($policyOptimization.prefer_gateway -ne $null) { $optPreferGateway = $policyOptimization.prefer_gateway }
+    if ($policyOptimization.preferred_primary) {
+        try {
+            $primaryEntries = $policyOptimization.preferred_primary.PSObject.Properties | ForEach-Object { "{0}:{1}" -f $_.Name, $_.Value }
+            if ($primaryEntries -and $primaryEntries.Count -gt 0) { $optPrimaryText = $primaryEntries -join ', ' }
+        }
+        catch {}
+    }
+    $optLast = $policyOptimization.last
+    if ($optLast) {
+        if ($optLast.timestamp) { $optLastTime = $optLast.timestamp }
+        if ($optLast.is_peak_now -eq $true) { $optLastPhase = "PEAK" }
+        elseif ($optLast.is_peak_now -eq $false) { $optLastPhase = "OFF-PEAK" }
+        $channels = $optLast.preferred_channels
+        if ($channels) {
+            if ($channels -is [System.Collections.IEnumerable] -and -not ($channels -is [string])) {
+                $optLastChannels = ($channels | ForEach-Object { $_ }) -join ', '
+            }
+            else {
+                $optLastChannels = $channels
+            }
+        }
+        if ($optLast.offpeak_mode) { $optLastOffpeakMode = $optLast.offpeak_mode }
+        if ($optLast.batch_compression) { $optLastCompression = $optLast.batch_compression }
+        if ($optLast.learning_bias) { $optLastLearning = $optLast.learning_bias }
+        if ($optLast.should_throttle -eq $true) { $optLastThrottle = "YES" }
+        elseif ($optLast.should_throttle -eq $false) { $optLastThrottle = "NO" }
+    }
+}
+
+$goptModeText = "--"
+$goptTotalEntries = "--"
+$goptPeakEntries = "--"
+$goptOffpeakEntries = "--"
+$goptWarmups = "--"
+$goptTarget = "--"
+$goptWarning = "--"
+$goptCritical = "--"
+$goptSigma = "--"
+$goptLastTime = "--"
+$goptLastPhase = "--"
+$goptLastTimeout = "--"
+$goptLastConcurrency = "--"
+$goptLastWarmup = "--"
+$goptLastNext = "--"
+
+if ($gatewayOptimizerMetrics) {
+    if ($gatewayOptimizerMetrics.dry_run -eq $true) { $goptModeText = "DRY-RUN" }
+    elseif ($gatewayOptimizerMetrics.dry_run -eq $false) { $goptModeText = "ACTIVE" }
+    if ($gatewayOptimizerMetrics.total_entries -ne $null) { $goptTotalEntries = $gatewayOptimizerMetrics.total_entries }
+    if ($gatewayOptimizerMetrics.peak_entries -ne $null) { $goptPeakEntries = $gatewayOptimizerMetrics.peak_entries }
+    if ($gatewayOptimizerMetrics.offpeak_entries -ne $null) { $goptOffpeakEntries = $gatewayOptimizerMetrics.offpeak_entries }
+    if ($gatewayOptimizerMetrics.warmup_triggers -ne $null) { $goptWarmups = $gatewayOptimizerMetrics.warmup_triggers }
+    if ($gatewayOptimizerMetrics.thresholds) {
+        if ($gatewayOptimizerMetrics.thresholds.latency_target_ms -ne $null) { $goptTarget = $gatewayOptimizerMetrics.thresholds.latency_target_ms }
+        if ($gatewayOptimizerMetrics.thresholds.latency_warning_ms -ne $null) { $goptWarning = $gatewayOptimizerMetrics.thresholds.latency_warning_ms }
+        if ($gatewayOptimizerMetrics.thresholds.latency_critical_ms -ne $null) { $goptCritical = $gatewayOptimizerMetrics.thresholds.latency_critical_ms }
+        if ($gatewayOptimizerMetrics.thresholds.stability_target_sigma -ne $null) { $goptSigma = $gatewayOptimizerMetrics.thresholds.stability_target_sigma }
+    }
+    $goptLast = $gatewayOptimizerMetrics.last
+    if ($goptLast) {
+        if ($goptLast.timestamp) { $goptLastTime = $goptLast.timestamp }
+        if ($goptLast.phase) { $goptLastPhase = ($goptLast.phase).ToUpper() }
+        elseif ($goptLast.is_peak_now -eq $true) { $goptLastPhase = "PEAK" }
+        elseif ($goptLast.is_peak_now -eq $false) { $goptLastPhase = "OFF-PEAK" }
+        if ($goptLast.timeout_ms -ne $null) { $goptLastTimeout = "$($goptLast.timeout_ms) ms" }
+        if ($goptLast.concurrency -ne $null) { $goptLastConcurrency = $goptLast.concurrency }
+        if ($goptLast.warmup_active -eq $true) { $goptLastWarmup = "ACTIVE" }
+        elseif ($goptLast.warmup_active -eq $false) { $goptLastWarmup = "IDLE" }
+        if ($goptLast.next_warmup) { $goptLastNext = $goptLast.next_warmup }
+        elseif ($goptLast.schedule) { $goptLastNext = $goptLast.schedule }
+    }
+}
+
 # Generate HTML
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 $html = @"
@@ -398,6 +548,84 @@ if ($queueHealth.status -eq "ok") {
 $html += @"
             </div>
             
+            <!-- Resonance Optimization Card -->
+            <div class="card">
+                <h2><span class="icon">🌀</span> Resonance Optimization</h2>
+                <div class="metric">
+                    <span class="metric-label">Total / Peak / Off-peak</span>
+                    <span class="metric-value">$optTotal / $optPeak / $optOffpeak</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Throttle Activations</span>
+                    <span class="metric-value">$optThrottle</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Gateway Preference Count</span>
+                    <span class="metric-value">$optPreferGateway</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Primary Channels</span>
+                    <span class="metric-value" style="font-size: 0.95em;">$optPrimaryText</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Last Event Phase</span>
+                    <span class="metric-value">$optLastPhase</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Channels</span>
+                    <span class="metric-value" style="font-size: 0.9em;">$optLastChannels</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Off-peak Mode / Compression / Learning</span>
+                    <span class="metric-value" style="font-size: 0.9em;">$optLastOffpeakMode / $optLastCompression / $optLastLearning</span>
+                </div>
+                <div class="metric" style="border-bottom: none;">
+                    <span class="metric-label">Throttle · Timestamp</span>
+                    <span class="metric-value" style="font-size: 0.9em;">$optLastThrottle · $optLastTime</span>
+                </div>
+            </div>
+            
+            <!-- Gateway Optimizer Card -->
+            <div class="card">
+                <h2><span class="icon">🌉</span> Gateway Optimizer</h2>
+                <div class="metric">
+                    <span class="metric-label">Mode</span>
+                    <span class="metric-value">$goptModeText</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Entries (Peak / Off-peak)</span>
+                    <span class="metric-value">$goptTotalEntries ($goptPeakEntries / $goptOffpeakEntries)</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Warmup Triggers</span>
+                    <span class="metric-value">$goptWarmups</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Latency Targets (ms)</span>
+                    <span class="metric-value">$goptTarget / $goptWarning / $goptCritical</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Stability σ Target</span>
+                    <span class="metric-value">$goptSigma</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Last Run Phase</span>
+                    <span class="metric-value">$goptLastPhase</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Timeout / Concurrency</span>
+                    <span class="metric-value">$goptLastTimeout / $goptLastConcurrency</span>
+                </div>
+                <div class="metric">
+                    <span class="metric-label">Warmup State</span>
+                    <span class="metric-value">$goptLastWarmup (next: $goptLastNext)</span>
+                </div>
+                <div class="metric" style="border-bottom: none;">
+                    <span class="metric-label">Timestamp</span>
+                    <span class="metric-value" style="font-size: 0.9em;">$goptLastTime</span>
+                </div>
+            </div>
+            
             <!-- Performance Card -->
             <div class="card">
                 <h2><span class="icon">⚡</span> LLM Performance</h2>
@@ -559,6 +787,37 @@ $html += @"
 if ($resourceSummaryText) {
     $html += @"
         <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">🤖</span> RPA Worker Monitor</h2>
+            <div class="metric" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+                <div>
+                    <strong>Status:</strong>
+                    <span style="margin-left: 6px; font-family: 'Consolas', 'Courier New', monospace;">
+$(if ($rpaStatusLine) { $rpaStatusLine } else { "Status not available." })
+                    </span>
+                </div>
+"@
+    if ($rpaAlertSummary) {
+        $html += @"
+                <div style="margin-top: 6px;">
+                    <strong>Alert:</strong>
+                    <span style="margin-left: 6px; color: #ffcc66; font-family: 'Consolas', 'Courier New', monospace;">$rpaAlertSummary</span>
+                </div>
+"@
+    }
+    else {
+        $html += @"
+                <div style="margin-top: 6px; opacity: 0.7;">
+                    No active alerts.
+                </div>
+"@
+    }
+    $html += @"
+            </div>
+        </div>
+"@
+
+    $html += @"
+        <div class="card" style="grid-column: 1 / -1;">
             <h2><span class="icon">⚖️</span> Resource Budget (Preview)</h2>
             <div class="table-container">
                 <pre>
@@ -569,6 +828,23 @@ $resourceSummaryText
 "@
 }
 else {
+    $html += @"
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2><span class="icon">🤖</span> RPA Worker Monitor</h2>
+            <div class="metric" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+                <div>
+                    <strong>Status:</strong>
+                    <span style="margin-left: 6px; font-family: 'Consolas', 'Courier New', monospace;">
+$(if ($rpaStatusLine) { $rpaStatusLine } else { "Status not available." })
+                    </span>
+                </div>
+                <div style="margin-top: 6px; opacity: 0.7;">
+                    $(if ($rpaAlertSummary) { "Alert: $rpaAlertSummary" } else { "No active alerts." })
+                </div>
+            </div>
+        </div>
+"@
+
     $html += @"
         <div class="card" style="grid-column: 1 / -1;">
             <h2><span class="icon">⚖️</span> Resource Budget (Preview)</h2>

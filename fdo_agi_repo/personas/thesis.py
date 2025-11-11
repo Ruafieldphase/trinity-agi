@@ -29,13 +29,50 @@ def run_thesis(task: TaskSpec, plan: Dict[str, Any], tools, conversation_context
     cites = []
     rag_results_text = ""
     try:
-        res = tools.call("rag", {"query": task.goal, "top_k": 3})
-        rag_hits = res.get("hits", [])
-        for it in rag_hits[:3]:
-            cites.append({"source": it.get("source", "local"), "pointer": it.get("id", "")})
-        rag_results_text = "\n".join([f"- {hit.get('id', '')}: {hit.get('text', '')[:150]}..." for hit in rag_hits])
+            if tools is not None and hasattr(tools, "call"):
+                res = tools.call("rag", {"query": task.goal, "top_k": 3})
+            else:
+                res = {"hits": []}
+            rag_hits = res.get("hits", [])
+            for it in rag_hits[:3]:
+                cites.append({"source": it.get("source", "local"), "pointer": it.get("id", "")})
+            rag_results_text = "\n".join([f"- {hit.get('id', '')}: {hit.get('text', '')[:150]}..." for hit in rag_hits])
     except Exception as e:
         append_ledger({"event": "rag_call_failed", "task_id": task.task_id, "persona": "thesis", "error": str(e)})
+
+    # Optimization hint 처리 (Phase 8.5)
+    channel_hint = None
+    throttled = False
+    batch_pref = None
+    try:
+        opt_hint = getattr(tools, "get_optimization_hint", lambda: None)()
+    except Exception:
+        opt_hint = None
+    if isinstance(opt_hint, dict):
+        pref = opt_hint.get("preferred_channels")
+        if isinstance(pref, list) and pref:
+            channel_hint = str(pref[0]).lower()
+        elif isinstance(pref, str) and pref:
+            channel_hint = pref.lower()
+        throttled = bool(opt_hint.get("should_throttle_offpeak", False))
+        batch_level = opt_hint.get("batch_compression_level")
+        if isinstance(batch_level, str) and batch_level:
+            batch_pref = batch_level
+        else:
+            batch_flag = opt_hint.get("batch_compression")
+            if batch_flag is True:
+                batch_pref = "high"
+    try:
+        append_ledger({
+            "event": "persona_channel_hint",
+            "task_id": task.task_id,
+            "persona": "thesis",
+            "channel_hint": channel_hint,
+            "throttle": bool(throttled),
+            "batch_compression": batch_pref or "auto"
+        })
+    except Exception:
+        pass
 
     # 2. 학습 컨텍스트(Few-shot) 확인
     learning_context = plan.get("learning_context", "")
@@ -105,12 +142,44 @@ def run_thesis(task: TaskSpec, plan: Dict[str, Any], tools, conversation_context
         "⚠️ **경고**: 출처 없는 계획은 자동으로 품질 0.4 이하로 평가되어 재작업 요구됩니다.\n"
         "           반드시 위 4단계 프로세스를 따라 **증거 기반 계획**을 작성하십시오."
     )
-    
+    if isinstance(batch_pref, str) and batch_pref.lower() in {"high", "max"}:
+        prompt_parts.append("\n\n⚙️ **Batch Compression 요청**: 핵심 단계만 3개 이하로 정리하고, 중복 서술을 제거하십시오.")
+
+    prefer_local = (channel_hint == "local_llm")
+    if prefer_local or throttled:
+        cite_paths = [c.get("pointer", "") for c in cites if isinstance(c, dict)]
+        summary = _draft_thesis(task.goal, len(cites), cite_paths)
+        try:
+            append_ledger({
+                "event": "persona_local_fallback",
+                "task_id": task.task_id,
+                "persona": "thesis",
+                "reason": "throttle_offpeak" if throttled and not prefer_local else "preferred_local"
+            })
+        except Exception:
+            pass
+        return PersonaOutput(
+            task_id=task.task_id,
+            persona="thesis",
+            summary=summary,
+            citations=cites,
+            actions=[]
+        )
+
     prompt = "".join(prompt_parts)
 
     # 4. Gemini LLM 호출 (Google AI Studio API)
     # Streaming 옵션 (환경변수로 제어)
     use_streaming = os.environ.get("THESIS_STREAMING", "true").lower() == "true"
+    if channel_hint == "cloud_ai":
+        use_streaming = False
+    elif channel_hint == "gateway":
+        use_streaming = True
+    model_name = os.environ.get("THESIS_MODEL", "gemini-2.0-flash")
+    if channel_hint == "cloud_ai":
+        model_name = os.environ.get("THESIS_MODEL_CLOUD", model_name)
+    elif channel_hint == "gateway":
+        model_name = os.environ.get("THESIS_MODEL_GATEWAY", model_name)
     
     summary = ""
     err_text = None
@@ -118,7 +187,7 @@ def run_thesis(task: TaskSpec, plan: Dict[str, Any], tools, conversation_context
     t_llm0 = time.perf_counter()
     
     try:
-        model = genai.GenerativeModel("gemini-2.0-flash")  # type: ignore[attr-defined]
+        model = genai.GenerativeModel(model_name)  # type: ignore[attr-defined]
         
         if use_streaming:
             # Streaming: 첫 토큰 빠른 반환
@@ -147,7 +216,7 @@ def run_thesis(task: TaskSpec, plan: Dict[str, Any], tools, conversation_context
         "task_id": task.task_id,
         "persona": "thesis",
         "provider": "google-ai-studio",
-        "model": "gemini-2.0-flash",
+        "model": model_name,
         "duration_sec": float(t_llm1 - t_llm0),
         "ok": bool(bool(summary) and not err_text),
         "error": err_text,
@@ -157,6 +226,10 @@ def run_thesis(task: TaskSpec, plan: Dict[str, Any], tools, conversation_context
     if ttft is not None:
         log_entry["ttft_sec"] = float(ttft)
         log_entry["perceived_improvement_pct"] = round((1 - ttft / (t_llm1 - t_llm0)) * 100, 1)
+    if channel_hint:
+        log_entry["channel_hint"] = channel_hint
+    if throttled:
+        log_entry["throttle_applied"] = True
     
     append_ledger(log_entry)
 

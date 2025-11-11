@@ -2,33 +2,29 @@
 🔍 Binoche Ensemble Success Rate Monitor (Phase 6k)
 ============================================================
 Time Window: Last 24 hours
-Generated: 2025-11-03 10:20:01
+Generated: 2025-11-09 10:20:02
 
 📊 Overall Performance:
-  Total predictions: 86
-  Correct: 86
+  Total predictions: 4
+  Correct: 4
   Accuracy: 100.0%
 
 🎯 Accuracy by Ensemble Confidence:
-  high (≥0.8):
-    Total: 85
-    Correct: 85
-    Accuracy: 100.0%
   medium (0.5-0.8):
-    Total: 1
-    Correct: 1
+    Total: 4
+    Correct: 4
     Accuracy: 100.0%
 
 📈 Accuracy by Decision Type:
   Approve:
-    Total: 86
-    Correct: 86
+    Total: 4
+    Correct: 4
     Accuracy: 100.0%
 
 🔀 Confusion Matrix (Predicted vs Actual):
   Predicted │ approve  │  revise  │  reject 
   ──────────────────────────────────────────────────
-    approve │    86    │    0     │    0     │
+    approve │    4     │    0     │    0     │
 
 🧠 Information Theory (Production):
   Mutual Information: 0.0000 bits

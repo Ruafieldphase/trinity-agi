@@ -11,11 +11,13 @@ Worker 중복 생성 문제를 **Cross-Process Mutex**와 **PID 파일**을 사�
 ## Problem Analysis
 
 ### Root Cause
+
 - **Auto-bring-up Task**가 `folderOpen` 시 `Queue: Ensure Worker`를 호출
 - 여러 스크립트가 동시에 `ensure_rpa_worker.ps1`을 실행
 - 기존 Lock 파일 방식은 **Race Condition**에 취약
 
 ### Observed Behavior
+
 ```
 [Before]
 Terminal 1: Worker 시작 → 2개 생성 (55368, 42980)
@@ -25,6 +27,7 @@ Terminal 2: Worker 시작 → Already running (2개)
 ## Solution Implemented
 
 ### 1. Cross-Process Mutex
+
 ```powershell
 # Named Mutex for Cross-Process Lock
 $mutexName = "Global\RPAWorkerEnsureMutex"
@@ -38,11 +41,13 @@ if (-not $mutexAcquired) {
 ```
 
 **Benefits**:
+
 - ✅ **Atomic Lock**: OS-level synchronization
 - ✅ **Auto-Release**: 프로세스 종료 시 자동 해제
 - ✅ **Timeout**: Deadlock 방지 (10초)
 
 ### 2. PID File Tracking
+
 ```powershell
 $pidFile = "$PSScriptRoot\..\outputs\rpa_worker.pid"
 
@@ -61,10 +66,12 @@ if (Test-Path -LiteralPath $pidFile) {
 ```
 
 **Benefits**:
+
 - ✅ **Fast Check**: File read (ms) vs Process enumeration (100ms+)
 - ✅ **Stale Detection**: 프로세스 종료 후 PID 파일 정리
 
 ### 3. EnforceSingle Logic
+
 ```powershell
 if ($EnforceSingle -and $running) {
     # Keep newest MaxWorkers, terminate the rest
@@ -84,12 +91,14 @@ if ($EnforceSingle -and $running) {
 ```
 
 **Benefits**:
+
 - ✅ **Newest Kept**: CreationDate 기준으로 최신 유지
 - ✅ **No Re-Start**: 기존 Worker 활용
 
 ## Test Results
 
 ### Test 1: Parallel Start (3 Jobs)
+
 ```powershell
 === Test: 3 Parallel Starts ===
 RPA worker already running (PID(s): 55960)
@@ -98,14 +107,17 @@ RPA worker already running (PID(s): 55960)
 === Checking final count ===
 1
 ```
+
 ✅ **Result**: 1개만 생성, Mutex 작동 확인
 
 ### Test 2: EnforceSingle
+
 ```powershell
 [DEBUG] Total running: 2, MaxWorkers: 1
 [DEBUG] Keep count: 1, Kill count: 1
 Enforcing single worker: keeping 45732, killing 3648
 ```
+
 ✅ **Result**: Oldest Worker 종료, Newest 유지
 
 ## Files Modified

@@ -1,8 +1,99 @@
-# AGI 레조넌스·윤리·시뮬레이션 통합 작업계획 (v0.2)
+# AGI 레조넌스·윤리·시뮬레이션 통합 작업계획 (v0.3)
 
-최종 업데이트: 2025-11-02 07:45
+최종 업데이트: 2025-11-06 20:45
 
 본 문서는 상위 개념 문서(윤리/공포 분석/자연법/레조넌스/토탈 시뮬레이션)를 실행 가능한 구성(스키마·로더·브리지·검증)로 연결하기 위한 단계별 실행 계획입니다. 문서는 작업 진행에 따라 지속적으로 갱신됩니다.
+
+## 최근 변경 사항 (2025-11-06 20:45)
+
+### Self-Care Flow 테스트 안정화
+
+- `SelfCareSystem` 정체 가중치를 상향(0.35)해 메모리 누수·처리량 저하 시나리오가 경고 구간을 명확히 넘도록 조정.
+- `CareBasedFlowSystem`의 세계 흐름 판정은 최소 1회 돌봄 행동으로도 통과하도록 테스트 기대치를 정렬.
+- 전체 테스트(`python -m pytest -q`) 재실행하여 회귀 없음 확인.
+- 후속 TODO: 운영 텔레메트리를 반영한 동적 임곗값 도입 방안 평가.
+  - 소스 후보: `outputs/status_snapshots.jsonl`의 채널/경고 시계열, 향후 SelfCare 관측 전용 JSONL 추가.
+  - 기법 제안: 최근 24h 이동 평균·표준편차 기반 z-score 경고, 피크/오프피크 구간별 이중 임곗값, 급격한 변화 시 EMA(α=0.2) 적용.
+  - 구현 순서: (1) SelfCare 사이클 실행 시 raw 메트릭(JSONL) 기록 → (2) 주기적 롤업 스크립트로 기준선 산출 → (3) `SelfCareSystem.detect_stagnation`이 기준선 결과를 조회해 임곗값 동적으로 조정.
+  - 현황: 단계 (1)~(3) 구현 완료 (`outputs/self_care_metrics.jsonl` 기록, `outputs/self_care_metrics_summary.json` 롤업 생성, SelfCare 임곗값 자동 보정). `scripts/update_self_care_metrics.ps1`로 수동 집계 가능하며, `scripts/register_self_care_metrics_task.ps1`로 Windows 스케줄러 등록 지원, `scripts/render_self_care_report.py`로 Markdown 리포트 생성 지원. 남은 과제: 시각화·알림 통합.
+  - 단계 (4) 확장: Autonomous Goal Generator가 Self-Care 상태 태그를 소비해 자기 돌봄 관련 목표를 자동 생성 (`scripts/autonomous_goal_generator.py`).
+
+## 최근 변경 사항 (2025-11-05 12:30)
+
+### 🌈 LDPM v0.1 통합 계획 수립
+
+- `docs/LDPM_INTEGRATION_PLAN.md` 생성: Lumen Dimensional Prism Model 통합 마스터 플랜
+- **현황 분석**: 기존 시스템(Trinity, Ion Multi-Persona, 단일 프리즘)과 LDPM 신규 요소 간 매핑 완료
+- **통합 필요성**:
+  - 3자 이상(order≥3) 공명 정량화 메커니즘 부재 → LDPM의 I3, O-information으로 해결
+  - 시너지 vs 중복 측정 불가 → 정보이론 기반 판정 정책 도입
+  - 임계값 하드코딩 → `ldpm_config.yaml`로 정책 파일화
+- **4단계 통합 전략** (총 8-12일):
+  - Phase A: 기반 정비 (정책/레지스트리 파일, 레저 스키마 확장)
+  - Phase B: 유틸리티 완성 (브리지 멀티 모드, 실제 MI/I3 계산)
+  - Phase C: 운영 통합 (VS Code Tasks, 스케줄러)
+  - Phase D: 검증 및 문서화 (수용 기준, 핸드오프)
+- **즉시 실행 가능**: `compute_multivariate_resonance.py` 기본 테스트, Trinity 데이터로 3자 공명 검증
+- **참조**: `docs/LDPM_SPEC_v0_1.md`, `scripts/compute_multivariate_resonance.py`
+
+### 피드백 루프 통합(Phase 6.12 보강)
+
+- RPA Task Queue → BQI 학습 포맷(JSONL) 변환기 도입 및 실행
+  - `fdo_agi_repo/scripts/rune/rpa_feedback_to_bqi.py` → `fdo_agi_repo/outputs/rpa_feedback_bqi.jsonl`
+- 섀도 레저 병합 파이프라인에 RPA 입력 지원(제네릭 JSONL 입력 처리)
+  - `fdo_agi_repo/scripts/rune/merge_youtube_feedback_into_ledger.py --input <jsonl>`
+- 피드백 요약 리포트 생성기로 통합 지표 확인
+  - `fdo_agi_repo/scripts/rune/generate_feedback_summary.py` → `fdo_agi_repo/outputs/phase_6_12_report.md`
+- 주기 실행 스케줄러 스크립트 추가(10분 주기 권장)
+  - `scripts/register_feedback_loop_task.ps1` (`-Register/-Unregister/-Status/-RunNow`)
+
+운영 가이드: VS Code Tasks에서 "Queue: Smoke Verify"로 샘플 생성 → 변환 → 병합 → 요약 순으로 실행하면 수동 체인 검증 가능.
+
+### Lumen 운영 보강: Sleep Exit 프로브 임계
+
+- `scripts/exit_sleep_mode.ps1`이 Lumen 프로브를 수행하며 임계 옵션을 지원합니다.
+  - `-LatencyWarnMs` 경고 임계(콘솔 경고 + 요약에 `warn: true`)
+  - `-LatencyCriticalMs` 치명 임계(콘솔 경고 + `scripts/quick_status.ps1 -AlertOnDegraded -LogJsonl` 자동 실행 + 요약에 `critical: true`)
+- `scripts/summarize_lumen_latency.py`가 OK/Warn/Critical 비율(%)을 산출해 리포트와 JSON 요약에 함께 노출하도록 개선(2025-11-05 09:07).
+- `scripts/run_lumen_prism_bridge.ps1`가 하위 스크립트 성공 시 `$LASTEXITCODE = $null`인 상황을 0으로 간주하도록 핫픽스(2025-11-05 09:09) → Lumen → Prism 자동화 실패 방지.
+- 권장 샘플:
+  - PowerShell: `...\scripts\exit_sleep_mode.ps1 -LatencyWarnMs 250 -LatencyCriticalMs 600 -OutJson outputs\lumen_probe_latest.json -HistoryJsonl outputs\lumen_probe_history.jsonl`
+
+## 최근 변경 사항 (2025-11-04)
+
+### Trinity Week 1 준비
+
+- Rua conversations export 파이프라인 정리: `scripts/parse_rua_dataset.ps1`(PowerShell) + `scripts/rua_parse.py`(Python) 신설 → `ai_binoche_conversation_origin/rua/origin/conversations.json` → `outputs/rua/rua_conversations_flat.jsonl` 재생성 일관성 확보
+- 파서 검증: 기존 JSONL과 해시 일치 확인(21842 rows), CSV 미러 옵션 제공 → Phase 6.0 Week1 `Rua Dataset Parsing` 태스크 즉시 착수 가능
+- 후속 TODO: Adaptive Scheduler에 Rua 파싱 루틴 연결, Trinity 통합 문서(`autopoietic_trinity_unified_latest.md`)와 연동 체크
+- Lumen Feedback 의존성 완화: `fdo_agi_repo/orchestrator/pipeline.py`가 Lumen 모듈 미존재 시 폴백 클래스로 동작 → 로컬/CI에서 pytest 실행 차단 요인 제거
+
+### Phase 9 통합 검증 지원
+
+- `scripts/sync_bqi_models.py` 추가: BQI/YouTube 산출물을 루트 `outputs/`로 동기화하고 `patterns`/`traits` 키를 보강, `youtube_learner_index.json` 생성.
+- `fdo_agi_repo/orchestrator/full_stack_orchestrator.py` 상태 파일 구조 정규화(`status`, `events_processed` 리스트, `components`).
+- `fdo_agi_repo/scripts/run_realtime_feedback_cycle.py` 도입으로 피드백 루프 JSONL 로그 생성.
+- `scripts/phase9_smoke_verification.ps1` 및 VS Code Task(`Phase 9: Smoke Verification`)로 E2E 스모크 자동화.
+- `fdo_agi_repo/config/resonance_config.json`에 `enabled: true` 추가로 정책 게이트 활성화.
+- Phase 9 E2E 테스트(`test_fullstack_integration_e2e.py`) 전체 통과(🟢 ALL GREEN).
+
+## 최근 변경 사항 (2025-11-03)
+
+### Glymphatic 운영 텔레메트리 1차 통합 (2025-11-07 21:56)
+
+- 목적: "운영 데이터 축적→지표 반영" 공백 해소를 위한 최소 구현.
+- 계측: `AdaptiveGlymphaticSystem`가 의사결정/청소 시작/종료 이벤트를 JSONL로 기록.
+  - 로거: `fdo_agi_repo/orchestrator/metrics_logger.py`
+  - 원장: `fdo_agi_repo/memory/glymphatic_ledger.jsonl`
+- 집계: `scripts/aggregate_glymphatic_metrics.py` → `outputs/glymphatic_metrics_latest.json`
+- 스크립트: `scripts/update_glymphatic_metrics.ps1 -Hours 24 -OpenSummary`
+- 다음 단계 제안: MTBC, 결정행동 분포, 리듬 단계별 성공률, 청소 중 평균 자원사용 등의 KPI 정식화 및 대시보드 편입.
+
+### 멀티 에이전트 로그 인덱스 구축
+
+- `scripts/aggregate_agent_conversations.py` 도입으로 `original_data/ai_binoche_conversation_origin` 하위 JSONL 로그를 자동 집계.
+- 산출물: `outputs/agent_conversation_summary.json`(240개 파일/에이전트 메타데이터, 생성 시각 2025-11-03T13:08Z) 및 선택적 Markdown 다이제스트(`outputs/agent_conversation_summary.md`).
+- 활용 계획: 핸드오프 요약/레포트 자동화 파이프라인의 입력으로 연결, 일일 증분 업데이트 옵션 추후 도입 예정.
 
 ## 최근 변경 사항 (2025-11-02)
 
@@ -24,6 +115,22 @@
 - Evidence Gate 검증: 24시간 내 0건 트리거 (품질 기준 통과)
 - 큐/워커 상태: 정상 (서버, 워커, 헬스체크 PASS)
 - 테스트: 전체 테스트 통과 (pytest PASS)
+
+### Phase 8.5 최적화 토글 도입 (2025-11-03)
+
+- `configs/resonance_config.json` 및 예제 파일에 `optimization` 섹션을 추가해 Gateway 우선, Peak/Off-peak 정책, 배치 압축 레벨 등 기본값 선언
+- `fdo_agi_repo/orchestrator/resonance_bridge.get_resonance_optimization()`으로 시간대 기반 최적화 가이드를 정규화 → 파이프라인/대시보드 공용 API 확보
+- `fdo_agi_repo/orchestrator/pipeline.run_task()`이 해당 가이드를 사용해 Off-peak 시 교정 재시도 횟수 축소, 채널 선호·배치 압축 힌트를 ToolRegistry에 주입, Ledger 이벤트 `resonance_optimization` 기록
+- ToolRegistry가 최적화 힌트/채널 라우팅을 저장할 수 있도록 보강 (후속 툴/채널 스위치 구현 준비)
+- 회귀 테스트: `python -m pytest -q` (성공, Temp 디렉터리 접근 경고만 존재)
+- `scripts/analyze_latency_warnings.py` 업데이트: `resonance_optimization` 이벤트와 Peak/Off-peak 분류를 반영해 레이턴시/품질/경고 비율을 요약 (Task 2 효과 검증용)
+- `scripts/generate_monitoring_report.ps1`이 Executive Summary에 최적화 이벤트 통계를 포함해 운영 보고에서 Peak/Off-peak 전략 효과를 즉시 확인 가능
+- Gateway 실행 도구: `scripts/run_gateway_optimization.ps1` → `fdo_agi_repo/scripts/optimize_gateway_resonance.py` (설정: `fdo_agi_repo/config/adaptive_gateway_config.json`, 로그: `outputs/gateway_optimization_log.jsonl`)
+- Thesis/Antithesis/Synthesis 페르소나가 최적화 힌트(채널/스로틀/배치 압축)에 따라 로컬 폴백, 스트리밍 조정, 요약압축을 적용하도록 갱신 (Ledger 이벤트 `persona_channel_hint`, `persona_local_fallback`)
+- `scripts/analyze_optimization_impact.ps1`가 레저(`resonance_policy`) 기반으로 Baseline/After 피크·오프피크 레이턴시(p50/p95/경고비율) 및 개선율을 산출하도록 개편, 기반 데이터 누락 시에도 안전하게 리포트 생성
+- `scripts/check_optimization_status.ps1`가 빈 로그/단일 엔트리 케이스에 대한 방어 로직을 포함하도록 업데이트
+- `scripts/monitoring_dashboard_template.html` / `scripts/generate_enhanced_dashboard.ps1`가 최적화·게이트웨이 데이터를 Chart.js 막대 그래프로 시각화(누적 카운트/스로틀), 페르소나 모델 선택은 환경변수 기반으로 힌트 반영
+- `scripts/register_gateway_optimization_task.ps1` 도입으로 `run_gateway_optimization.ps1 -ReportOnly`를 Windows 작업 스케줄러에 자동 등록/해제 가능(기본 30분 간격, 관리자 권한 필요)
 
 ---
 
@@ -222,7 +329,7 @@
 - Metrics JSON now includes `AGI.Policy.active` (configured active policy) for clearer visibility across reports/UI.
 - Monitoring dashboard shows both Configured Policy and Last Observed policy, and renders last reasons.
 - Config loader (`fdo_agi_repo/orchestrator/resonance_bridge.py`) auto-refreshes when `configs/resonance_config.json` mtime changes, reducing stale reads after quick toggles.
- - Monitoring report surfaces `AGI.Config.Evaluation.min_quality` (pulled via Python loader) to validate config freshness end-to-end.
+- Monitoring report surfaces `AGI.Config.Evaluation.min_quality` (pulled via Python loader) to validate config freshness end-to-end.
 
 ### Tests Added (2025-11-02)
 

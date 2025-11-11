@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     자기생산 + 정반합 삼위일체 사이클 자동 실행 등록/해제
 
@@ -138,6 +138,7 @@ function Register-Task {
 
     # 설정
     $settings = New-ScheduledTaskSettingsSet `
+$settings.Hidden = $true
         -AllowStartIfOnBatteries `
         -DontStopIfGoingOnBatteries `
         -StartWhenAvailable `
