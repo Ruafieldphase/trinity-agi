@@ -1,7 +1,7 @@
 # Autonomous Goals Report
 
-Generated: 2025-11-11 19:53:54
-Window: Last 6 hours
+Generated: 2025-11-11 19:57:19
+Window: Last 24 hours
 
 ## Summary
 

@@ -3,18 +3,18 @@
   "persona": "반인(反人)",
   "role": "검증",
   "philosophy": "이것이 정말 옳은가?",
-  "timestamp": "2025-11-09T00:21:35.763933Z",
+  "timestamp": "2025-11-11T10:57:01.186681Z",
   "source_observation": "C:\\workspace\\agi\\outputs\\lua_observation_latest.json",
   "information_theory": {
     "entropy": {
-      "value": 1.942,
-      "max_possible": 4.954,
-      "normalized": 0.392,
-      "interpretation": "특정 이벤트 타입에 집중됨 (낮은 다양성)"
+      "value": 1.515,
+      "max_possible": 1.585,
+      "normalized": 0.956,
+      "interpretation": "매우 다양한 이벤트 분포 (높은 정보량)"
     },
     "information_density": {
-      "value": 0.474,
-      "percentage": 47.4,
+      "value": 0.495,
+      "percentage": 49.5,
       "interpretation": "보통 수준의 정보 밀도"
     }
   },
@@ -24,15 +24,15 @@
     "checks": [
       {
         "name": "events_per_task",
-        "value": 212.17,
+        "value": 638.0,
         "status": "ok",
-        "message": "212.17 events per task"
+        "message": "638.00 events per task"
       },
       {
         "name": "quality_coverage",
-        "value": 0.474,
+        "value": 0.495,
         "status": "warning",
-        "message": "47.4% events have quality metrics"
+        "message": "49.5% events have quality metrics"
       }
     ]
   },

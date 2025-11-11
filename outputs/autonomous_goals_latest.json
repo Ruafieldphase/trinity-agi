@@ -1,6 +1,6 @@
 {
-  "generated_at": "2025-11-11T10:53:54.318980Z",
-  "window_hours": 6,
+  "generated_at": "2025-11-11T10:57:19.339220Z",
+  "window_hours": 24,
   "input_sources": {
     "resonance_metrics": "outputs/resonance_simulation_latest.json",
     "trinity_report": "outputs/lumen_enhanced_synthesis_latest.md",
@@ -27,9 +27,9 @@
         "phase_coherence": 1.0,
         "state": "superconducting",
         "conductivity": 1.0,
-        "measured_at": "2025-11-11T19:53:54.174307"
+        "measured_at": "2025-11-11T19:53:54.981773"
       },
-      "generated_at": "2025-11-11T19:53:54.174317"
+      "generated_at": "2025-11-11T19:53:54.981781"
     }
   },
   "goals": [
