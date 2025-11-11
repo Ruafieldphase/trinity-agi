@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-11-11T19:23:52.055379",
+  "timestamp": "2025-11-11T19:53:52.051435",
   "overall_status": "critical",
   "overall_emoji": "🚨",
-  "overall_score": 36.0,
+  "overall_score": 22.0,
   "loop_results": {
     "self_care": {
       "loop_name": "Self-Care",
@@ -27,24 +27,24 @@
     "goal_generation": {
       "loop_name": "Goal Generation",
       "file_status": {
-        "status": "healthy",
-        "age_minutes": 60.0,
-        "message": "정상 (최근 60.0분)",
-        "severity": "none"
+        "status": "stale",
+        "age_minutes": 90.0,
+        "message": "정체: 너무 오래됨 (최근 90.0분)",
+        "severity": "high"
       },
       "alerts": [],
       "overall_health": {
-        "score": 100.0,
-        "status": "healthy",
-        "emoji": "✅"
+        "score": 30.0,
+        "status": "critical",
+        "emoji": "🚨"
       }
     },
     "goal_execution": {
       "loop_name": "Goal Execution",
       "file_status": {
         "status": "stale",
-        "age_minutes": 5383.9,
-        "message": "정체: 너무 오래됨 (최근 5383.9분)",
+        "age_minutes": 5413.9,
+        "message": "정체: 너무 오래됨 (최근 5413.9분)",
         "severity": "high"
       },
       "alerts": [],
@@ -85,17 +85,18 @@
   },
   "synchronization": {
     "synchronized": false,
-    "max_time_diff_minutes": 5353.9,
-    "message": "최대 시간 차이: 5353.9분",
+    "max_time_diff_minutes": 5383.9,
+    "message": "최대 시간 차이: 5383.9분",
     "update_times": {
       "self_care": 30.0,
-      "goal_generation": 60.0,
-      "goal_execution": 5383.9
+      "goal_generation": 90.0,
+      "goal_execution": 5413.9
     }
   },
   "critical_alerts": [],
   "recommendations": [
-    "⏰ 리듬 동기화 필요: 최대 5353.9분 차이 발생",
-    "🛟 Self-care 루프 점검 필요: scripts/update_self_care_metrics.ps1 실행"
+    "⏰ 리듬 동기화 필요: 최대 5383.9분 차이 발생",
+    "🛟 Self-care 루프 점검 필요: scripts/update_self_care_metrics.ps1 실행",
+    "🎯 목표 생성기 재실행 필요: python scripts/autonomous_goal_generator.py"
   ]
 }
