@@ -69,23 +69,41 @@ class CodexMetaObserver:
         return recent[:limit]
     
     def analyze_with_codex(self, goals: List[Dict[str, Any]]) -> str:
-        """Codex를 활용한 메타 분석"""
+        """Codex를 활용한 메타 분석 (토큰 효율 최적화)"""
         if not self.codex_enabled:
             return self._fallback_analysis(goals)
         
-        # Codex 프롬프트 구성
+        # Codex 프롬프트 구성 (간결하게)
         prompt = self._build_codex_prompt(goals)
+        
+        # 토큰 예측 (대략 계산)
+        estimated_prompt_tokens = len(prompt) // 4  # 대략 1 token ≈ 4 chars
+        max_response_tokens = 150  # 500 → 150 (비용 절감)
+        total_estimated = estimated_prompt_tokens + max_response_tokens
+        
+        print(f"💰 Token 예상: ~{total_estimated} tokens (prompt: ~{estimated_prompt_tokens}, response: {max_response_tokens})")
+        
+        # 토큰 제한 체크 (프롬프트가 너무 길면 폴백)
+        if estimated_prompt_tokens > 800:
+            print(f"⚠️  Prompt too long ({estimated_prompt_tokens} tokens). Using fallback.")
+            return self._fallback_analysis(goals)
         
         try:
             response = openai.Completion.create(
                 engine="code-davinci-002",  # Codex 모델
                 prompt=prompt,
-                max_tokens=500,
+                max_tokens=max_response_tokens,  # 토큰 제한 (비용 절감)
                 temperature=0.3,
                 top_p=1.0,
                 frequency_penalty=0.2,
                 presence_penalty=0.1
             )
+            
+            # 실제 사용 토큰 로그
+            usage = response.get("usage", {})
+            print(f"✅ 실제 사용: {usage.get('total_tokens', 'N/A')} tokens "
+                  f"(prompt: {usage.get('prompt_tokens', 'N/A')}, "
+                  f"completion: {usage.get('completion_tokens', 'N/A')})")
             
             return response.choices[0].text.strip()
         
@@ -163,24 +181,30 @@ Keep it short (3-5 sentences total). Use warm, supportive tone.
         }
     
     def run_meta_observation(self) -> Dict[str, Any]:
-        """메타 관찰 실행"""
+        """메타 관찰 실행 (토큰 사용량 추적)"""
         print("🔭 Codex Meta-Observer 시작...\n")
         
         # 1. 최근 목표 조회
         recent_goals = self.get_recent_goals(limit=5)
         print(f"📋 최근 목표: {len(recent_goals)}개")
         
+        token_usage = {}  # 토큰 사용량 추적
+        
         if not recent_goals:
             result = {
                 "timestamp": datetime.now().isoformat(),
                 "analysis": "No recent goals found. Maybe it's time to set some? 🎯",
                 "reality_check": self.reality_check(),
-                "goals_analyzed": []
+                "goals_analyzed": [],
+                "token_usage": {"mode": "fallback", "total": 0}
             }
         else:
-            # 2. Codex 분석
+            # 2. Codex 분석 (토큰 추적)
             print("\n🤖 Codex 분석 중...")
             analysis = self.analyze_with_codex(recent_goals)
+            
+            # 토큰 사용량 기록 (최근 API 호출에서)
+            # Note: 실제 사용량은 analyze_with_codex에서 출력됨
             
             # 3. Reality Check
             reality = self.reality_check()
@@ -196,7 +220,11 @@ Keep it short (3-5 sentences total). Use warm, supportive tone.
                         "priority": g.get("priority")
                     }
                     for g in recent_goals
-                ]
+                ],
+                "token_usage": {
+                    "mode": "codex" if self.codex_enabled else "fallback",
+                    "note": "Check console output for actual token usage"
+                }
             }
         
         # 4. 결과 저장

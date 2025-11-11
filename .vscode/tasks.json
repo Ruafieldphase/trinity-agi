@@ -8823,6 +8823,71 @@
 			"id": "obsSceneNamePrompt",
 			"type": "promptString",
 			"description": "OBS Scene Name (e.g., AI Dev, Coding):"
+		},
+		{
+			"label": "💰 Codex: Monitor Token Usage (24h)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/monitor_openai_token_usage.py' --hours 24 } else { python '${workspaceFolder}/scripts/monitor_openai_token_usage.py' --hours 24 }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "💰 Codex: Budget Check ($1/day)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/monitor_openai_token_usage.py' --budget 1.0 } else { python '${workspaceFolder}/scripts/monitor_openai_token_usage.py' --budget 1.0 }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "💰 Codex: Token Usage (JSON)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/monitor_openai_token_usage.py' --json } else { python '${workspaceFolder}/scripts/monitor_openai_token_usage.py' --json }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "💰 Codex: Token Usage (Report)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/monitor_openai_token_usage.py' } else { python '${workspaceFolder}/scripts/monitor_openai_token_usage.py' }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "💰 Codex: Open Token Log",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/codex_meta_observer/token_usage.jsonl') { code ${workspaceFolder}/outputs/codex_meta_observer/token_usage.jsonl } else { Write-Host 'No token log found' -ForegroundColor Yellow }"
+			],
+			"group": "none"
 		}
 	]
 }
