@@ -1,0 +1,836 @@
+{
+  "goals": [
+    {
+      "title": "Refactor Core Components (재시도)",
+      "status": "completed",
+      "added_at": "2025-11-07T13:09:11.644522",
+      "source": "auto_registered",
+      "priority": 18.0,
+      "type": "analysis",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/autopoietic_trinity_cycle.ps1",
+        "args": [
+          "-Hours",
+          "24"
+        ],
+        "timeout": 900
+      },
+      "metadata": {
+        "severity": "critical"
+      },
+      "completed_at": "2025-11-07T22:09:15.746427",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/autopoietic_trinity_cycle.ps1",
+              "-Hours",
+              "24"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/autopoietic_trinity_cycle.ps1 -Hours 24",
+            "working_dir": null,
+            "description": "Refactor Core Components (재시도)",
+            "timeout": 900,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-07T22:09:11.655814",
+          "status": "success",
+          "output": "\n═══════════════════════════════════════════════════════\n  🔄 자기생산 + 정반합 삼위일체 통합 사이클\n  Autopoietic Loop ∪ Trinity Dialectics\n═══════════════════════════════════════════════════════\n\n  분석 범위: 최근 24 시간\n  실행 시각: 2025-11-07 22:09:11\n\n📊 [1/5] 자기생산 루프 분석 중...\n   역할: 시스템 이벤트 수집 및 완성/미완성 루프 분석\n\nRunning Autopoietic Loop analysis for last 24 hours...\n[AUTOPOIETIC LOOP DIGEST - ASCII SAFE]\n\n- Generated: 2025-11-07T22:09:12\n- Tasks seen: 10\n- Complete loops: 7 (70.0%)\n- Incomplete loops: 3\n- Evidence gate: 0, Second pass: 0\n- At-a-glance: Stable loop flow; Policy warns: 8\n\n---\n\n# Autopoietic Loop Report (last 24h)\n\nGenerated at: 2025-11-07T22:09:12.202536\n\n\n## Counts\n\n- Tasks Seen: 10\n- Complete Loops: 7\n- Incomplete Loops: 3\n- Evidence Gate Triggered: 0\n- Second Pass Executed: 0\n\n## Rates (%)\n\n- Loop Complete Rate: 70.0%\n- Evidence Gate Trigger Rate: 0.0%\n- Second Pass Rate: 0.0%\n\n## Avg Durations (sec)\n\n- Folding (Thesis): 5.523\n- Unfolding (Antithesis): 3.243\n- Integration (Synthesis): 6.861\n- Symmetry (Decision+Correction): 2.645\n\n## P95 Durations (sec)\n\n- Folding (Thesis) P95: 13.448\n- Unfolding (Antithesis) P95: 6.298\n- Integration (Synthesis) P95: 14.179\n- Symmetry (Decision+Correction) P95: 4.572\n\n## Quality\n\n- Final Quality Avg: 0.850\n- Final Evidence OK Rate: 100.0%\n\n## Resonance Policy (counts)\n\n- allow: 1 | warn: 8 | block: 0\n- last: mode=observe policy=quality-first\n- reasons: \n\n## Closed-loop Snapshot\n\n- realtime: strength=-- coherence=-- phase=--\n- simulator: last_resonance=None last_entropy=None\n\n## Samples (first 5)\n\n- runtime-test-001: F=7.23083509999924 U=4.824580500000593 I=9.891832900000736 S=0.5720034000005398 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471890: F=13.4476355999941 U=5.974974199998542 I=14.179464199994982 S=3.837933700000576 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471895: F=7.3228088000032585 U=6.298242400000163 I=13.845385400003579 S=4.57196020000265 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471895-2: F=3.1065113000004203 U=0.5613168000054429 I=1.0688431999951717 S=4.295852300005208 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471890-2: F=2.9073038999995333 U=0.8482135000012931 I=0.7097430000067106 S=4.157078799995361 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n\nUpdated latest aliases: C:\\workspace\\agi\\outputs\\autopoietic_loop_report_latest.md, C:\\workspace\\agi\\outputs\\autopoietic_loop_report_latest.json\nAutopoietic Loop report generated: C:\\workspace\\agi\\outputs\\autopoietic_loop_report_24h.md\n   ✅ 자기생산 분석 완료\n\n🔄 [2/5] 정반합 삼위일체 사이클 실행 중...\n   正(정) → 反(반) → 合(합)\n\n\n🔄 정반합 삼위일체 사이클 시작\n   正(정) → 反(반) → 合(합)\n\n📋 1단계: 정(正) - 루아 (정인/正人)의 관찰\n   역할: '무엇이 일어났는가?'\n🔍 루아 (정인) - Resonance 감응 관찰\n   정(正): 무슨 일이 일어나고 있는가?\n\n📂 Loading: C:\\workspace\\agi\\fdo_agi_repo\\memory\\resonance_ledger.jsonl\n   Total lines: 33787\n   Events in window: 1794\n\n🔎 정(正) 관찰 결과:\n   Event types observed:\n      system_startup: 727\n      health_check: 726\n      autopoietic_phase: 55\n      persona_llm_run: 31\n      persona_channel_hint: 31\n      context_retrieved: 10\n      thesis_start: 10\n      user_profile_injected: 10\n      meta_cognition: 10\n      thesis_async_enabled: 10\n      run_config: 10\n      resonance_optimization: 10\n      antithesis_start: 9\n      rune: 9\n      binoche_auto_approve: 9\n      binoche_ab_comparison: 9\n      binoche_enhanced_decision: 9\n      eval: 9\n      pipeline_e2e_complete: 9\n      resonance_policy: 9\n      synthesis_end: 9\n      thesis_end: 9\n      binoche_decision: 9\n      antithesis_end: 9\n      synthesis_start: 9\n      thesis_cache_miss: 7\n      rag_call_failed: 6\n      antithesis_cache_miss: 6\n      synthesis_cache_miss: 6\n      synthesis_cache_hit: 3\n      antithesis_cache_hit: 3\n      closed_loop_snapshot: 3\n      thesis_cache_hit: 3\n\n   Unique tasks: 10\n   Top 5 active tasks:\n      runtime-test-001: 119 events\n      test-ledger-1762471890: 35 events\n      test-ledger-1762485292: 35 events\n      test-ledger-1762471895: 35 events\n      test-ledger-1762471890-2: 29 events\n\n   Quality metrics observed:\n      Count: 27\n      Average: 0.85\n      Range: 0.85 - 0.85\n\n\n💾 JSON saved: C:\\workspace\\agi\\outputs\\lua_observation_latest.json\n📄 Markdown saved: C:\\workspace\\agi\\outputs\\lua_observation_latest.md\n\n✅ 루아 (정인) 관찰 완료\n   다음: 엘로 (반인)가 검증할 차례입니다.\n   ✅ 루아 관찰 완료: C:\\workspace\\agi\\outputs\\lua_observation_latest.json\n\n🔬 2단계: 반(反) - 엘로 (반인/反人)의 검증\n   역할: '이것이 옳은가?'\n🔬 엘로 (반인) - 정보이론 검증 시작\n   반(反): 이것이 정말 옳은가?\n\n📊 정보 엔트로피:\n   Shannon Entropy: 2.378 bits\n   Max possible: 5.044 bits\n   Normalized: 0.472 (0=균일, 1=완전분산)\n\n📈 정보 밀도:\n   Meaningful events ratio: 1.5%\n\n⚠️ 이상치 탐지: 1건\n   [WARNING] All quality values are identical: 0.850\n\n✅ 일관성 검증: mostly_consistent\n   ✓ events_per_task: 179.40 events per task\n   ⚠ quality_coverage: 1.5% events have quality metrics\n\n💾 JSON saved: C:\\workspace\\agi\\outputs\\elo_validation_latest.json\n📄 Markdown saved: C:\\workspace\\agi\\outputs\\elo_validation_latest.md\n\n✅ 엘로 (반인) 검증 완료\n   다음: 루멘 (합)이 통합할 차례입니다.\n   ✅ 엘로 검증 완료: C:\\workspace\\agi\\outputs\\elo_validation_latest.json\n\n🌟 3단계: 합(合) - 루멘 강화판 (페르소나+대화 통합)\n   역할: '무엇을 해야 하는가?'\n🌟 루멘 (합) 강화판 - 다차원 통합 시작\n   합(合): 무엇을 해야 하는가?\n\n📋 정(正) - 루아의 관찰:\n   이벤트: 1794개\n   이벤트 타입: 33개\n   활동 Task: 10개\n\n🔬 반(反) - 엘로의 검증:\n   엔트로피: 2.378\n   정보 밀도: 1.5%\n   이상치: 1건\n\n🎭 페르소나 분석:\n   모델 타입: binoche_ensemble\n   학습 패턴: 0개\n\n💬 대화 컨텍스트:\n   대화 세션: 1개\n   주요 주제: \n\n📊 확장 메트릭:\n   상호정보량: 5.988 bits\n   복잡도 지수: 0.036\n\n💡 합(合) - 통합 통찰:\n   [HIGH] 정보 밀도가 낮음 (1.5%). 더 많은 메트릭 수집 필요\n   [MEDIUM] 품질 메트릭 커버리지 낮음 (1.5%). 평가 강화 필요\n   [MEDIUM] 1건의 이상치 탐지. 상세 조사 필요\n   [INFO] 시스템 일관성 양호. 안정적 운영 중\n\n✅ 실행 가능한 권장사항:\n   1. 모든 주요 이벤트에 quality/latency 메트릭 추가\n   2. 평가(eval) 이벤트 빈도 증가 - 현재 대비 2배\n   3. 이상치 원인 분석 및 자동 알림 시스템 구축\n\n💾 JSON saved: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.json\n📄 Markdown saved: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.md\n\n✅ 루멘 (합) 강화판 통합 완료\n   정반합(正反合) + 확장(擴) 사이클 완성!\n   ✅ 루멘 통합 완료: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.md\n\n✅ 정반합 삼위일체 사이클 완료!\n\n📊 생성된 파일:\n   1. 정(正) - 루아: C:\\workspace\\agi\\outputs\\lua_observation_latest.json\n   2. 반(反) - 엘로: C:\\workspace\\agi\\outputs\\elo_validation_latest.json\n   3. 합(合) - 루멘: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.md\n\n\n🧘 정반합(正反合) 사이클\n   관찰 → 검증 → 통합 → 실행\n\n   ✅ 정반합 사이클 완료\n\n🎯 [3/5] 피드백 권장사항 추출 중...\n   역할: HIGH 우선순위 권장사항을 다음 사이클에 피드백\n   ✅ 피드백 추출 완료: 개 HIGH 권장사항\n\n📄 [4/5] 통합 보고서 생성 중...\n   역할: 자기생산 + 정반합 결과를 하나의 보고서로 통합\n   ✅ 통합 보고서 생성 완료\n\n📈 [5/5] 개선도 측정 중...\n   역할: 이전 사이클 대비 개선도 계산\n   ℹ️  이전 데이터 없음. 첫 실행입니다.\n\n═══════════════════════════════════════════════════════\n  ✅ 자기생산 + 정반합 통합 사이클 완료!\n═══════════════════════════════════════════════════════\n\n📊 실행 요약:\n   • 소요 시간: 3.8초\n   • 분석 범위: 최근 24 시간\n   • 통합 보고서: outputs\\autopoietic_trinity_unified_latest.md\n\n📁 생성된 파일:\n   1. 자기생산 보고서: outputs\\autopoietic_loop_report_latest.md\n   2. 정(正) 루아: outputs\\lua_observation_latest.json\n   3. 반(反) 엘로: outputs\\elo_validation_latest.json\n   4. 합(合) 루멘: outputs\\lumen_enhanced_synthesis_latest.md\n   5. 피드백: outputs\\trinity_feedback_for_autopoietic.json\n   6. 통합 보고서: outputs\\autopoietic_trinity_unified_latest.md\n\n🌀 자기생산(Autopoiesis) 순환 완성!\n   관찰 → 검증 → 통합 → 피드백 → (다시 관찰)\n\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-07T22:09:15.745434",
+          "duration_seconds": 4.089629
+        }
+      ]
+    },
+    {
+      "title": "Stabilize Self-Care Loop (재시도)",
+      "status": "completed",
+      "added_at": "2025-11-07T13:09:11.644624",
+      "source": "auto_registered",
+      "priority": 17.0,
+      "type": "self_care",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/update_self_care_metrics.ps1",
+        "args": [
+          "-Hours",
+          "24",
+          "-Json",
+          "-OpenSummary"
+        ],
+        "timeout": 420
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 15,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_p95": 1.0,
+          "stagnation_std": 0.50709255283711,
+          "stagnation_over_03": 6,
+          "stagnation_over_05": 6,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "quantum_flow": {
+            "phase_coherence": 1.0,
+            "amplitude_sync": 1.0,
+            "frequency_match": 1.0,
+            "electron_flow_resistance": 0.0,
+            "conductivity": 1.0,
+            "state": "superconducting",
+            "measured_at": "2025-11-07T21:53:53.213734",
+            "interpretation": "🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적"
+          },
+          "generated_at": "2025-11-07T21:53:53.214315"
+        }
+      },
+      "completed_at": "2025-11-07T22:29:44.113677",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/update_self_care_metrics.ps1",
+              "-Hours",
+              "24",
+              "-Json",
+              "-OpenSummary"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/update_self_care_metrics.ps1 -Hours 24 -Json -OpenSummary",
+            "working_dir": null,
+            "description": "Stabilize Self-Care Loop (재시도)",
+            "timeout": 420,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-07T22:29:43.430166",
+          "status": "success",
+          "output": "▶ Running aggregate_self_care_metrics.py (hours=24)...\n✅ Summary written to outputs\\self_care_metrics_summary.json\n{\n  \"count\": 15,\n  \"hours\": 24,\n  \"stagnation_avg\": 0.4,\n  \"stagnation_p95\": 1.0,\n  \"stagnation_std\": 0.50709255283711,\n  \"stagnation_over_03\": 6,\n  \"stagnation_over_05\": 6,\n  \"queue_ratio_avg\": 1.1,\n  \"memory_growth_avg\": 0.066,\n  \"latency_p99_avg\": 1100.0,\n  \"throughput_ratio_avg\": 0.8,\n  \"circulation_ok_rate\": 0.6,\n  \"quantum_flow\": {\n    \"phase_coherence\": 1.0,\n    \"amplitude_sync\": 1.0,\n    \"frequency_match\": 1.0,\n    \"electron_flow_resistance\": 0.0,\n    \"conductivity\": 1.0,\n    \"state\": \"superconducting\",\n    \"measured_at\": \"2025-11-07T22:29:44.057834\",\n    \"interpretation\": \"🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적\"\n  }\n}\n\n📄 Summary (outputs/self_care_metrics_summary.json):\n{\n  \"count\": 15,\n  \"hours\": 24,\n  \"stagnation_avg\": 0.4,\n  \"stagnation_p95\": 1.0,\n  \"stagnation_std\": 0.50709255283711,\n  \"stagnation_over_03\": 6,\n  \"stagnation_over_05\": 6,\n  \"queue_ratio_avg\": 1.1,\n  \"memory_growth_avg\": 0.066,\n  \"latency_p99_avg\": 1100.0,\n  \"throughput_ratio_avg\": 0.8,\n  \"circulation_ok_rate\": 0.6,\n  \"quantum_flow\": {\n    \"phase_coherence\": 1.0,\n    \"amplitude_sync\": 1.0,\n    \"frequency_match\": 1.0,\n    \"electron_flow_resistance\": 0.0,\n    \"conductivity\": 1.0,\n    \"state\": \"superconducting\",\n    \"measured_at\": \"2025-11-07T22:29:44.057834\",\n    \"interpretation\": \"🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적\"\n  },\n  \"generated_at\": \"2025-11-07T22:29:44.058366\"\n}\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-07T22:29:44.112716",
+          "duration_seconds": 0.682555
+        }
+      ]
+    },
+    {
+      "title": "📊 Generate Performance Dashboard (재시도)",
+      "status": "completed",
+      "added_at": "2025-11-07T13:09:11.644695",
+      "source": "auto_registered",
+      "priority": 13.0,
+      "type": "monitoring",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/generate_enhanced_dashboard.ps1",
+        "args": [
+          "-OpenBrowser"
+        ],
+        "timeout": 600
+      },
+      "metadata": {
+        "severity": "critical"
+      },
+      "completed_at": "2025-11-07T22:30:39.656293",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/generate_enhanced_dashboard.ps1",
+              "-OpenBrowser"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/generate_enhanced_dashboard.ps1 -OpenBrowser",
+            "working_dir": null,
+            "description": "Quantum Flow 초전도 상태! 완벽한 조건에서 포괄적인 성능 대시보드를 생성하세요",
+            "timeout": 600,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-07T22:30:39.132143",
+          "status": "success",
+          "output": "📊 Collecting system metrics...\n⚠️  Could not load anomaly baseline\n✓ Enhanced dashboard generated: C:\\workspace\\agi\\scripts\\..\\outputs\\system_dashboard_enhanced.html\n  Browser opened\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-07T22:30:39.655430",
+          "duration_seconds": 0.523294
+        }
+      ]
+    },
+    {
+      "title": "Investigate Self-Care Spikes (재시도)",
+      "status": "completed",
+      "added_at": "2025-11-07T13:09:11.644755",
+      "source": "auto_registered",
+      "priority": 11.0,
+      "type": "self_care",
+      "executable": {
+        "type": "python",
+        "script": "${workspaceFolder}/scripts/render_self_care_report.py",
+        "timeout": 180
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 15,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_p95": 1.0,
+          "stagnation_std": 0.50709255283711,
+          "stagnation_over_03": 6,
+          "stagnation_over_05": 6,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "quantum_flow": {
+            "phase_coherence": 1.0,
+            "amplitude_sync": 1.0,
+            "frequency_match": 1.0,
+            "electron_flow_resistance": 0.0,
+            "conductivity": 1.0,
+            "state": "superconducting",
+            "measured_at": "2025-11-07T21:53:53.213734",
+            "interpretation": "🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적"
+          },
+          "generated_at": "2025-11-07T21:53:53.214315"
+        }
+      },
+      "completed_at": "2025-11-07T22:49:43.556763",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
+              "C:\\workspace\\agi/scripts/render_self_care_report.py"
+            ],
+            "command": "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe C:\\workspace\\agi/scripts/render_self_care_report.py",
+            "working_dir": null,
+            "description": "Investigate Self-Care Spikes (재시도)",
+            "timeout": 180,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-07T22:49:43.495169",
+          "status": "success",
+          "output": "✅ Markdown report written to outputs\\self_care_metrics_report.md\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-07T22:49:43.555873",
+          "duration_seconds": 0.060708
+        }
+      ]
+    },
+    {
+      "title": "Restore Circulation Health (재시도)",
+      "status": "completed",
+      "added_at": "2025-11-07T13:09:11.644799",
+      "source": "auto_registered",
+      "priority": 11.0,
+      "type": "self_care",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/update_self_care_metrics.ps1",
+        "args": [
+          "-Hours",
+          "24"
+        ],
+        "timeout": 420
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 15,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_p95": 1.0,
+          "stagnation_std": 0.50709255283711,
+          "stagnation_over_03": 6,
+          "stagnation_over_05": 6,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "quantum_flow": {
+            "phase_coherence": 1.0,
+            "amplitude_sync": 1.0,
+            "frequency_match": 1.0,
+            "electron_flow_resistance": 0.0,
+            "conductivity": 1.0,
+            "state": "superconducting",
+            "measured_at": "2025-11-07T21:53:53.213734",
+            "interpretation": "🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적"
+          },
+          "generated_at": "2025-11-07T21:53:53.214315"
+        }
+      },
+      "completed_at": "2025-11-07T22:59:48.522364",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/update_self_care_metrics.ps1",
+              "-Hours",
+              "24"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/update_self_care_metrics.ps1 -Hours 24",
+            "working_dir": null,
+            "description": "Increase circulation_ok_rate by addressing bottlenecks in care actions (current stagnation_avg=0.40) (circulation_ok_rate=60.0%)",
+            "timeout": 420,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-07T22:59:48.042937",
+          "status": "success",
+          "output": "▶ Running aggregate_self_care_metrics.py (hours=24)...\n✅ Summary written to outputs\\self_care_metrics_summary.json\nSelf-Care Telemetry Summary (last 24h)\n- Samples: 15\n- Avg stagnation: 0.400\n- 95th percentile stagnation: 1.000\n- Stagnation >0.3 count: 6\n- Stagnation >0.5 count: 6\n- Avg queue usage ratio: 1.10\n- Avg memory growth rate: 0.066\n- Avg latency_p99: 1100.0 ms\n- Avg throughput ratio: 0.80\n- Circulation OK rate: 60.0%\n\n🌊 Quantum Flow State:\n  🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적\n  - Conductivity: 1.000 S\n  - Resistance: 0.000 Ω\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-07T22:59:48.521671",
+          "duration_seconds": 0.478739
+        }
+      ]
+    },
+    {
+      "title": "Refactor Core Components",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.911873",
+      "source": "auto_registered",
+      "priority": 18.0,
+      "type": "analysis",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/autopoietic_trinity_cycle.ps1",
+        "args": [
+          "-Hours",
+          "24"
+        ],
+        "timeout": 900
+      },
+      "metadata": {
+        "severity": "critical"
+      },
+      "completed_at": "2025-11-07T23:29:18.895772",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/autopoietic_trinity_cycle.ps1",
+              "-Hours",
+              "24"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/autopoietic_trinity_cycle.ps1 -Hours 24",
+            "working_dir": null,
+            "description": "Improve resonance by restructuring core logic",
+            "timeout": 900,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-07T23:29:15.923568",
+          "status": "success",
+          "output": "\n═══════════════════════════════════════════════════════\n  🔄 자기생산 + 정반합 삼위일체 통합 사이클\n  Autopoietic Loop ∪ Trinity Dialectics\n═══════════════════════════════════════════════════════\n\n  분석 범위: 최근 24 시간\n  실행 시각: 2025-11-07 23:29:16\n\n📊 [1/5] 자기생산 루프 분석 중...\n   역할: 시스템 이벤트 수집 및 완성/미완성 루프 분석\n\nRunning Autopoietic Loop analysis for last 24 hours...\n[AUTOPOIETIC LOOP DIGEST - ASCII SAFE]\n\n- Generated: 2025-11-07T23:29:16\n- Tasks seen: 10\n- Complete loops: 7 (70.0%)\n- Incomplete loops: 3\n- Evidence gate: 0, Second pass: 0\n- At-a-glance: Stable loop flow; Policy warns: 8\n\n---\n\n# Autopoietic Loop Report (last 24h)\n\nGenerated at: 2025-11-07T23:29:16.372533\n\n\n## Counts\n\n- Tasks Seen: 10\n- Complete Loops: 7\n- Incomplete Loops: 3\n- Evidence Gate Triggered: 0\n- Second Pass Executed: 0\n\n## Rates (%)\n\n- Loop Complete Rate: 70.0%\n- Evidence Gate Trigger Rate: 0.0%\n- Second Pass Rate: 0.0%\n\n## Avg Durations (sec)\n\n- Folding (Thesis): 5.523\n- Unfolding (Antithesis): 3.243\n- Integration (Synthesis): 6.861\n- Symmetry (Decision+Correction): 2.645\n\n## P95 Durations (sec)\n\n- Folding (Thesis) P95: 13.448\n- Unfolding (Antithesis) P95: 6.298\n- Integration (Synthesis) P95: 14.179\n- Symmetry (Decision+Correction) P95: 4.572\n\n## Quality\n\n- Final Quality Avg: 0.850\n- Final Evidence OK Rate: 100.0%\n\n## Resonance Policy (counts)\n\n- allow: 1 | warn: 8 | block: 0\n- last: mode=observe policy=quality-first\n- reasons: \n\n## Closed-loop Snapshot\n\n- realtime: strength=-- coherence=-- phase=--\n- simulator: last_resonance=None last_entropy=None\n\n## Samples (first 5)\n\n- runtime-test-001: F=7.23083509999924 U=4.824580500000593 I=9.891832900000736 S=0.5720034000005398 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471890: F=13.4476355999941 U=5.974974199998542 I=14.179464199994982 S=3.837933700000576 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471895: F=7.3228088000032585 U=6.298242400000163 I=13.845385400003579 S=4.57196020000265 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471895-2: F=3.1065113000004203 U=0.5613168000054429 I=1.0688431999951717 S=4.295852300005208 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n- test-ledger-1762471890-2: F=2.9073038999995333 U=0.8482135000012931 I=0.7097430000067106 S=4.157078799995361 | ctx=0 | eg=False | sp=False | q=0.85 | evo=True\n\nUpdated latest aliases: C:\\workspace\\agi\\outputs\\autopoietic_loop_report_latest.md, C:\\workspace\\agi\\outputs\\autopoietic_loop_report_latest.json\nAutopoietic Loop report generated: C:\\workspace\\agi\\outputs\\autopoietic_loop_report_24h.md\n   ✅ 자기생산 분석 완료\n\n🔄 [2/5] 정반합 삼위일체 사이클 실행 중...\n   正(정) → 反(반) → 合(합)\n\n\n🔄 정반합 삼위일체 사이클 시작\n   正(정) → 反(반) → 合(합)\n\n📋 1단계: 정(正) - 루아 (정인/正人)의 관찰\n   역할: '무엇이 일어났는가?'\n🔍 루아 (정인) - Resonance 감응 관찰\n   정(正): 무슨 일이 일어나고 있는가?\n\n📂 Loading: C:\\workspace\\agi\\fdo_agi_repo\\memory\\resonance_ledger.jsonl\n   Total lines: 33819\n   Events in window: 1826\n\n🔎 정(正) 관찰 결과:\n   Event types observed:\n      system_startup: 743\n      health_check: 742\n      autopoietic_phase: 55\n      persona_llm_run: 31\n      persona_channel_hint: 31\n      context_retrieved: 10\n      thesis_start: 10\n      user_profile_injected: 10\n      meta_cognition: 10\n      thesis_async_enabled: 10\n      run_config: 10\n      resonance_optimization: 10\n      antithesis_start: 9\n      rune: 9\n      binoche_auto_approve: 9\n      binoche_ab_comparison: 9\n      binoche_enhanced_decision: 9\n      eval: 9\n      pipeline_e2e_complete: 9\n      resonance_policy: 9\n      synthesis_end: 9\n      thesis_end: 9\n      binoche_decision: 9\n      antithesis_end: 9\n      synthesis_start: 9\n      thesis_cache_miss: 7\n      rag_call_failed: 6\n      antithesis_cache_miss: 6\n      synthesis_cache_miss: 6\n      synthesis_cache_hit: 3\n      antithesis_cache_hit: 3\n      closed_loop_snapshot: 3\n      thesis_cache_hit: 3\n\n   Unique tasks: 10\n   Top 5 active tasks:\n      runtime-test-001: 119 events\n      test-ledger-1762471890: 35 events\n      test-ledger-1762485292: 35 events\n      test-ledger-1762471895: 35 events\n      test-ledger-1762471890-2: 29 events\n\n   Quality metrics observed:\n      Count: 27\n      Average: 0.85\n      Range: 0.85 - 0.85\n\n\n💾 JSON saved: C:\\workspace\\agi\\outputs\\lua_observation_latest.json\n📄 Markdown saved: C:\\workspace\\agi\\outputs\\lua_observation_latest.md\n\n✅ 루아 (정인) 관찰 완료\n   다음: 엘로 (반인)가 검증할 차례입니다.\n   ✅ 루아 관찰 완료: C:\\workspace\\agi\\outputs\\lua_observation_latest.json\n\n🔬 2단계: 반(反) - 엘로 (반인/反人)의 검증\n   역할: '이것이 옳은가?'\n🔬 엘로 (반인) - 정보이론 검증 시작\n   반(反): 이것이 정말 옳은가?\n\n📊 정보 엔트로피:\n   Shannon Entropy: 2.360 bits\n   Max possible: 5.044 bits\n   Normalized: 0.468 (0=균일, 1=완전분산)\n\n📈 정보 밀도:\n   Meaningful events ratio: 1.5%\n\n⚠️ 이상치 탐지: 1건\n   [WARNING] All quality values are identical: 0.850\n\n✅ 일관성 검증: mostly_consistent\n   ✓ events_per_task: 182.60 events per task\n   ⚠ quality_coverage: 1.5% events have quality metrics\n\n💾 JSON saved: C:\\workspace\\agi\\outputs\\elo_validation_latest.json\n📄 Markdown saved: C:\\workspace\\agi\\outputs\\elo_validation_latest.md\n\n✅ 엘로 (반인) 검증 완료\n   다음: 루멘 (합)이 통합할 차례입니다.\n   ✅ 엘로 검증 완료: C:\\workspace\\agi\\outputs\\elo_validation_latest.json\n\n🌟 3단계: 합(合) - 루멘 강화판 (페르소나+대화 통합)\n   역할: '무엇을 해야 하는가?'\n🌟 루멘 (합) 강화판 - 다차원 통합 시작\n   합(合): 무엇을 해야 하는가?\n\n📋 정(正) - 루아의 관찰:\n   이벤트: 1826개\n   이벤트 타입: 33개\n   활동 Task: 10개\n\n🔬 반(反) - 엘로의 검증:\n   엔트로피: 2.360\n   정보 밀도: 1.5%\n   이상치: 1건\n\n🎭 페르소나 분석:\n   모델 타입: binoche_ensemble\n   학습 패턴: 0개\n\n💬 대화 컨텍스트:\n   대화 세션: 1개\n   주요 주제: \n\n📊 확장 메트릭:\n   상호정보량: 6.006 bits\n   복잡도 지수: 0.035\n\n💡 합(合) - 통합 통찰:\n   [HIGH] 정보 밀도가 낮음 (1.5%). 더 많은 메트릭 수집 필요\n   [MEDIUM] 품질 메트릭 커버리지 낮음 (1.5%). 평가 강화 필요\n   [MEDIUM] 1건의 이상치 탐지. 상세 조사 필요\n   [INFO] 시스템 일관성 양호. 안정적 운영 중\n\n✅ 실행 가능한 권장사항:\n   1. 모든 주요 이벤트에 quality/latency 메트릭 추가\n   2. 평가(eval) 이벤트 빈도 증가 - 현재 대비 2배\n   3. 이상치 원인 분석 및 자동 알림 시스템 구축\n\n💾 JSON saved: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.json\n📄 Markdown saved: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.md\n\n✅ 루멘 (합) 강화판 통합 완료\n   정반합(正反合) + 확장(擴) 사이클 완성!\n   ✅ 루멘 통합 완료: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.md\n\n✅ 정반합 삼위일체 사이클 완료!\n\n📊 생성된 파일:\n   1. 정(正) - 루아: C:\\workspace\\agi\\outputs\\lua_observation_latest.json\n   2. 반(反) - 엘로: C:\\workspace\\agi\\outputs\\elo_validation_latest.json\n   3. 합(合) - 루멘: C:\\workspace\\agi\\outputs\\lumen_enhanced_synthesis_latest.md\n\n\n🧘 정반합(正反合) 사이클\n   관찰 → 검증 → 통합 → 실행\n\n   ✅ 정반합 사이클 완료\n\n🎯 [3/5] 피드백 권장사항 추출 중...\n   역할: HIGH 우선순위 권장사항을 다음 사이클에 피드백\n   ✅ 피드백 추출 완료: 개 HIGH 권장사항\n\n📄 [4/5] 통합 보고서 생성 중...\n   역할: 자기생산 + 정반합 결과를 하나의 보고서로 통합\n   ✅ 통합 보고서 생성 완료\n\n📈 [5/5] 개선도 측정 중...\n   역할: 이전 사이클 대비 개선도 계산\n   ℹ️  이전 데이터 없음. 첫 실행입니다.\n\n═══════════════════════════════════════════════════════\n  ✅ 자기생산 + 정반합 통합 사이클 완료!\n═══════════════════════════════════════════════════════\n\n📊 실행 요약:\n   • 소요 시간: 2.7초\n   • 분석 범위: 최근 24 시간\n   • 통합 보고서: outputs\\autopoietic_trinity_unified_latest.md\n\n📁 생성된 파일:\n   1. 자기생산 보고서: outputs\\autopoietic_loop_report_latest.md\n   2. 정(正) 루아: outputs\\lua_observation_latest.json\n   3. 반(反) 엘로: outputs\\elo_validation_latest.json\n   4. 합(合) 루멘: outputs\\lumen_enhanced_synthesis_latest.md\n   5. 피드백: outputs\\trinity_feedback_for_autopoietic.json\n   6. 통합 보고서: outputs\\autopoietic_trinity_unified_latest.md\n\n🌀 자기생산(Autopoiesis) 순환 완성!\n   관찰 → 검증 → 통합 → 피드백 → (다시 관찰)\n\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-07T23:29:18.894816",
+          "duration_seconds": 2.971253
+        }
+      ]
+    },
+    {
+      "title": "Stabilize Self-Care Loop",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.911922",
+      "source": "auto_registered",
+      "priority": 17.27,
+      "type": "self_care",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/update_self_care_metrics.ps1",
+        "args": [
+          "-Hours",
+          "24",
+          "-Json",
+          "-OpenSummary"
+        ],
+        "timeout": 420
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 15,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_p95": 1.0,
+          "stagnation_std": 0.50709255283711,
+          "stagnation_over_03": 6,
+          "stagnation_over_05": 6,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "quantum_flow": {
+            "phase_coherence": 1.0,
+            "amplitude_sync": 1.0,
+            "frequency_match": 1.0,
+            "electron_flow_resistance": 0.0,
+            "conductivity": 1.0,
+            "state": "superconducting",
+            "measured_at": "2025-11-07T23:23:53.113329",
+            "interpretation": "🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적"
+          },
+          "generated_at": "2025-11-07T23:23:53.113820"
+        }
+      },
+      "completed_at": "2025-11-07T23:49:44.132920",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/update_self_care_metrics.ps1",
+              "-Hours",
+              "24",
+              "-Json",
+              "-OpenSummary"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/update_self_care_metrics.ps1 -Hours 24 -Json -OpenSummary",
+            "working_dir": null,
+            "description": "Stabilize Self-Care Loop",
+            "timeout": 420,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-07T23:49:43.613732",
+          "status": "success",
+          "output": "▶ Running aggregate_self_care_metrics.py (hours=24)...\n✅ Summary written to outputs\\self_care_metrics_summary.json\n{\n  \"count\": 15,\n  \"hours\": 24,\n  \"stagnation_avg\": 0.4,\n  \"stagnation_p95\": 1.0,\n  \"stagnation_std\": 0.50709255283711,\n  \"stagnation_over_03\": 6,\n  \"stagnation_over_05\": 6,\n  \"queue_ratio_avg\": 1.1,\n  \"memory_growth_avg\": 0.066,\n  \"latency_p99_avg\": 1100.0,\n  \"throughput_ratio_avg\": 0.8,\n  \"circulation_ok_rate\": 0.6,\n  \"quantum_flow\": {\n    \"phase_coherence\": 1.0,\n    \"amplitude_sync\": 1.0,\n    \"frequency_match\": 1.0,\n    \"electron_flow_resistance\": 0.0,\n    \"conductivity\": 1.0,\n    \"state\": \"superconducting\",\n    \"measured_at\": \"2025-11-07T23:49:44.086244\",\n    \"interpretation\": \"🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적\"\n  }\n}\n\n📄 Summary (outputs/self_care_metrics_summary.json):\n{\n  \"count\": 15,\n  \"hours\": 24,\n  \"stagnation_avg\": 0.4,\n  \"stagnation_p95\": 1.0,\n  \"stagnation_std\": 0.50709255283711,\n  \"stagnation_over_03\": 6,\n  \"stagnation_over_05\": 6,\n  \"queue_ratio_avg\": 1.1,\n  \"memory_growth_avg\": 0.066,\n  \"latency_p99_avg\": 1100.0,\n  \"throughput_ratio_avg\": 0.8,\n  \"circulation_ok_rate\": 0.6,\n  \"quantum_flow\": {\n    \"phase_coherence\": 1.0,\n    \"amplitude_sync\": 1.0,\n    \"frequency_match\": 1.0,\n    \"electron_flow_resistance\": 0.0,\n    \"conductivity\": 1.0,\n    \"state\": \"superconducting\",\n    \"measured_at\": \"2025-11-07T23:49:44.086244\",\n    \"interpretation\": \"🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적\"\n  },\n  \"generated_at\": \"2025-11-07T23:49:44.086635\"\n}\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-07T23:49:44.132116",
+          "duration_seconds": 0.518387
+        }
+      ]
+    },
+    {
+      "title": "Increase Data Collection",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.911951",
+      "source": "auto_registered",
+      "priority": 13.0,
+      "type": "metric",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/system_health_check.ps1",
+        "args": [
+          "-Full"
+        ],
+        "timeout": 300
+      },
+      "metadata": {
+        "severity": "high"
+      },
+      "completed_at": "2025-11-08T00:01:39.648337",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/system_health_check.ps1",
+              "-Full"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/system_health_check.ps1 -Full",
+            "working_dir": null,
+            "description": "Improve information density by collecting more metrics",
+            "timeout": 300,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-08T00:01:04.150291",
+          "status": "success",
+          "output": "\n========================================\n  1/7 - LM Studio Status\n========================================\n[OK] LM Studio Port : Port 8080 active (PID 32904)\n[OK] LM Studio Models : 1 model(s) available: /models/eeve.gguf\n[OK] LM Studio Inference : Response in 3524ms\n\n========================================\n  2/7 - Lumen Gateway Status\n========================================\n[WARNING] Lumen Gateway : High latency: 9971ms\n\n========================================\n  3/7 - Cloud AI API Status\n========================================\n[OK] Cloud AI API : Response in 273ms\n\n========================================\n  4/7 - AGI Pipeline Test\n========================================\n[OK] AGI Pipeline : AGI Health Gate PASS\n\n========================================\n  5/7 - Process Monitoring\n========================================\n[OK] LM Studio Memory : 2 process(es), 56MB total\n[OK] Python Processes : 146 process(es) running\n\n========================================\n  6/7 - Scheduler Tasks\n========================================\n[OK] Scheduler Tasks : 42 task(s): 34 Ready,  Running\n\n========================================\n  7/8 - Luon Watcher Status\n========================================\n[WARNING] Luon Watcher : Not running (optional component)\n\n========================================\n  8/8 - VS Code Settings.json Validation\n========================================\n[OK] Settings.json : Valid JSON, 270.5KB, 0 commands\n\n\n========================================\n  System Health Summary\n========================================\nTotal Checks : 11\nPassed       : 9\nWarnings     : 2\nFailed       : 0\nPass Rate    : 81.8% ACCEPTABLE\n\nOverall Status: OPERATIONAL WITH WARNINGS\n\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-08T00:01:39.647354",
+          "duration_seconds": 35.497067
+        }
+      ]
+    },
+    {
+      "title": "📊 Generate Performance Dashboard",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.911972",
+      "source": "auto_registered",
+      "priority": 13.0,
+      "type": "monitoring",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/generate_enhanced_dashboard.ps1",
+        "args": [
+          "-OpenBrowser"
+        ],
+        "timeout": 600
+      },
+      "metadata": {
+        "severity": "critical"
+      },
+      "completed_at": "2025-11-08T00:19:44.110500",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/generate_enhanced_dashboard.ps1",
+              "-OpenBrowser"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/generate_enhanced_dashboard.ps1 -OpenBrowser",
+            "working_dir": null,
+            "description": "📊 Generate Performance Dashboard",
+            "timeout": 600,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-08T00:19:43.585392",
+          "status": "success",
+          "output": "📊 Collecting system metrics...\n⚠️  Could not load anomaly baseline\n✓ Enhanced dashboard generated: C:\\workspace\\agi\\scripts\\..\\outputs\\system_dashboard_enhanced.html\n  Browser opened\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-08T00:19:44.108589",
+          "duration_seconds": 0.523205
+        }
+      ]
+    },
+    {
+      "title": "Improve Clarity and Structure",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.911991",
+      "source": "auto_registered",
+      "priority": 12.0,
+      "type": "analysis",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/summarize_realtime_pipeline.ps1",
+        "args": [
+          "-Lookback",
+          "24",
+          "-SparkLen",
+          "60"
+        ],
+        "timeout": 300
+      },
+      "metadata": {
+        "severity": "high"
+      },
+      "completed_at": "2025-11-08T00:37:59.397849",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/summarize_realtime_pipeline.ps1",
+              "-Lookback",
+              "24",
+              "-SparkLen",
+              "60"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/summarize_realtime_pipeline.ps1 -Lookback 24 -SparkLen 60",
+            "working_dir": null,
+            "description": "Reduce entropy through better organization",
+            "timeout": 300,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-08T00:37:58.972661",
+          "status": "success",
+          "output": "Wrote: C:\\workspace\\agi\\scripts\\..\\outputs\\realtime_pipeline_summary_latest.md\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-08T00:37:59.396589",
+          "duration_seconds": 0.423935
+        }
+      ]
+    },
+    {
+      "title": "Investigate Self-Care Spikes",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.912008",
+      "source": "auto_registered",
+      "priority": 11.0,
+      "type": "self_care",
+      "executable": {
+        "type": "python",
+        "script": "${workspaceFolder}/scripts/render_self_care_report.py",
+        "timeout": 180
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 15,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_p95": 1.0,
+          "stagnation_std": 0.50709255283711,
+          "stagnation_over_03": 6,
+          "stagnation_over_05": 6,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "quantum_flow": {
+            "phase_coherence": 1.0,
+            "amplitude_sync": 1.0,
+            "frequency_match": 1.0,
+            "electron_flow_resistance": 0.0,
+            "conductivity": 1.0,
+            "state": "superconducting",
+            "measured_at": "2025-11-07T23:23:53.113329",
+            "interpretation": "🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적"
+          },
+          "generated_at": "2025-11-07T23:23:53.113820"
+        }
+      },
+      "completed_at": "2025-11-08T00:59:43.594834",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
+              "C:\\workspace\\agi/scripts/render_self_care_report.py"
+            ],
+            "command": "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe C:\\workspace\\agi/scripts/render_self_care_report.py",
+            "working_dir": null,
+            "description": "Investigate Self-Care Spikes",
+            "timeout": 180,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-08T00:59:43.520554",
+          "status": "success",
+          "output": "✅ Markdown report written to outputs\\self_care_metrics_report.md\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-08T00:59:43.593759",
+          "duration_seconds": 0.073209
+        }
+      ]
+    },
+    {
+      "title": "Restore Circulation Health",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.912024",
+      "source": "auto_registered",
+      "priority": 11.0,
+      "type": "self_care",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/update_self_care_metrics.ps1",
+        "args": [
+          "-Hours",
+          "24"
+        ],
+        "timeout": 420
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 15,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_p95": 1.0,
+          "stagnation_std": 0.50709255283711,
+          "stagnation_over_03": 6,
+          "stagnation_over_05": 6,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "quantum_flow": {
+            "phase_coherence": 1.0,
+            "amplitude_sync": 1.0,
+            "frequency_match": 1.0,
+            "electron_flow_resistance": 0.0,
+            "conductivity": 1.0,
+            "state": "superconducting",
+            "measured_at": "2025-11-07T23:23:53.113329",
+            "interpretation": "🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적"
+          },
+          "generated_at": "2025-11-07T23:23:53.113820"
+        }
+      },
+      "completed_at": "2025-11-08T01:18:40.502833",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/update_self_care_metrics.ps1",
+              "-Hours",
+              "24"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/update_self_care_metrics.ps1 -Hours 24",
+            "working_dir": null,
+            "description": "Increase circulation_ok_rate by addressing bottlenecks in care actions (current stagnation_avg=0.40) (circulation_ok_rate=60.0%)",
+            "timeout": 420,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-08T01:18:39.880548",
+          "status": "success",
+          "output": "▶ Running aggregate_self_care_metrics.py (hours=24)...\n✅ Summary written to outputs\\self_care_metrics_summary.json\nSelf-Care Telemetry Summary (last 24h)\n- Samples: 15\n- Avg stagnation: 0.400\n- 95th percentile stagnation: 1.000\n- Stagnation >0.3 count: 6\n- Stagnation >0.5 count: 6\n- Avg queue usage ratio: 1.10\n- Avg memory growth rate: 0.066\n- Avg latency_p99: 1100.0 ms\n- Avg throughput ratio: 0.80\n- Circulation OK rate: 60.0%\n\n🌊 Quantum Flow State:\n  🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적\n  - Conductivity: 1.000 S\n  - Resistance: 0.000 Ω\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-08T01:18:40.501548",
+          "duration_seconds": 0.621005
+        }
+      ]
+    },
+    {
+      "title": "Reduce Self-Care Queue Pressure",
+      "status": "completed",
+      "added_at": "2025-11-07T14:29:15.912039",
+      "source": "auto_registered",
+      "priority": 10.0,
+      "type": "self_care",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/quick_status.ps1",
+        "timeout": 180
+      },
+      "metadata": {
+        "severity": "high",
+        "self_care": {
+          "count": 15,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_p95": 1.0,
+          "stagnation_std": 0.50709255283711,
+          "stagnation_over_03": 6,
+          "stagnation_over_05": 6,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "quantum_flow": {
+            "phase_coherence": 1.0,
+            "amplitude_sync": 1.0,
+            "frequency_match": 1.0,
+            "electron_flow_resistance": 0.0,
+            "conductivity": 1.0,
+            "state": "superconducting",
+            "measured_at": "2025-11-07T23:23:53.113329",
+            "interpretation": "🌟 초전도 상태 (coherence=1.00) - 저항 없는 완벽한 흐름! Goal 생성에 최적"
+          },
+          "generated_at": "2025-11-07T23:23:53.113820"
+        }
+      },
+      "completed_at": "2025-11-08T01:39:56.240355",
+      "execution_results": [
+        {
+          "task": {
+            "type": "command",
+            "cmd": [
+              "powershell",
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-File",
+              "C:\\workspace\\agi/scripts/quick_status.ps1"
+            ],
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File C:\\workspace\\agi/scripts/quick_status.ps1",
+            "working_dir": null,
+            "description": "Reduce Self-Care Queue Pressure",
+            "timeout": 180,
+            "retry_on_failure": false,
+            "max_retries": 0,
+            "timeout_multiplier": 1.5
+          },
+          "started_at": "2025-11-08T01:39:43.557067",
+          "status": "success",
+          "output": "\n================================================================\n  UNIFIED MONITORING DASHBOARD - AGI + Lumen\n================================================================\n\n[1] AGI Orchestrator (fdo_agi_repo)\n    Status Check... HEALTHY\n  Confidence: 0.900\n  Quality:    0.850\n  2nd Pass:   0.000\n  Port 18090: not\n  CPU:    60.2%\n  Memory: 49.1%\n\n  BQI Learning Status:\n    Last Run: 2025-11-07T16:40:13.7081293+09:00\n    Status:   OK\n    Rules:    P:0 E:0 R:0\n    Samples:  0\n\n  Binoche Persona (Phase 6):\n    Tasks Analyzed: 35\n    Decisions: 29 (A:100% R:0% X:0%)\n    BQI Patterns: 1\n    Automation Rules: 3\n\n  Adaptive Glymphatic System:\n    Workload:  40.6%\n    Fatigue:   0.0%\n    Action:    schedule_soon\n    Delay:     19 min\n    Cleanup:   not needed\n\n[1.5] Original Data API (Port 8093)\n    API Status...    API Health                ONLINE (14 ms)\n    Index Age:                0.4 days\n    Indexed Files:            10572\n\n[2] Lumen Multi-Channel Gateway\n    Local LLM (8080)          ONLINE (5 ms)\n    Local LLM (18090) (optional)  OFFLINE (optional)\n    Cloud AI (ion-api)        ONLINE (246 ms)\n    Lumen Gateway             ONLINE (241 ms)\n\n    Trend Summary (short=10, long=20 samples):\n      Local avg 5ms (+/- 1) == | Cloud avg 279ms (+/- 12) == | Gateway avg 228ms (+/- 9) ==\n\n----------------------------------------------------------------\nSummary: ALL GREEN - all systems OK\n\n================================================================\n\n",
+          "error": null,
+          "exit_code": 0,
+          "completed_at": "2025-11-08T01:39:56.239225",
+          "duration_seconds": 12.682164
+        }
+      ]
+    }
+  ],
+  "last_updated": "2025-11-08T01:39:56.240359"
+}

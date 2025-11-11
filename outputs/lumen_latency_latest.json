@@ -1,0 +1,21 @@
+{
+    "success_rate":  1,
+    "warn_count":  5,
+    "source":  "C:\\workspace\\agi\\outputs\\lumen_latency_latest.md",
+    "p50_latency_ms":  363,
+    "min_latency_ms":  195,
+    "observations":  [
+                         {
+                             "latency_ms":  343,
+                             "endpoint":  "/api/v2/recommend/personalized",
+                             "timestamp":  "2025-11-05T01:29:57.0221097Z",
+                             "success":  true
+                         }
+                     ],
+    "total_records":  6,
+    "timestamp":  "2025-11-05T01:29:57.0189923Z",
+    "max_latency_ms":  432,
+    "p90_latency_ms":  418,
+    "ok_count":  6,
+    "avg_latency_ms":  343
+}

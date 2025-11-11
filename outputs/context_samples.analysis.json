@@ -1,0 +1,53 @@
+{
+  "total_contexts": 20700,
+  "where_distribution": {
+    "thesis": 2083,
+    "autopoietic_phase": 1716,
+    "quick_status": 1622,
+    "health_check": 1621,
+    "thesis_start": 864,
+    "thesis_end": 859,
+    "synthesis_start": 856,
+    "synthesis_end": 848,
+    "eval": 847,
+    "rune": 847
+  },
+  "event_distribution": {
+    "persona_llm_run": 2400,
+    "autopoietic_phase": 1716,
+    "system_startup": 1623,
+    "health_check": 1621,
+    "thesis_start": 864,
+    "thesis_end": 859,
+    "synthesis_start": 856,
+    "synthesis_end": 848,
+    "eval": 847,
+    "rune": 847
+  },
+  "hour_distribution": {
+    "0": 168,
+    "1": 166,
+    "2": 641,
+    "3": 458,
+    "4": 176,
+    "5": 202,
+    "6": 491,
+    "7": 1062,
+    "8": 1851,
+    "9": 2050,
+    "10": 1096,
+    "11": 1031,
+    "12": 647,
+    "13": 253,
+    "14": 421,
+    "15": 1052,
+    "16": 1764,
+    "17": 1482,
+    "18": 719,
+    "19": 789,
+    "20": 1171,
+    "21": 1460,
+    "22": 703,
+    "23": 847
+  }
+}

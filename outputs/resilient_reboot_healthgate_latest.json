@@ -1,0 +1,26 @@
+{
+    "profile":  "ops-normal",
+    "requireAllOnline":  true,
+    "thresholds":  {
+                       "localMs":  100,
+                       "cloudMs":  1000,
+                       "gatewayMs":  1200,
+                       "warnAt":  {
+                                      "localMs":  85,
+                                      "cloudMs":  850,
+                                      "gatewayMs":  1020
+                                  },
+                       "trendWarnPercent":  85
+                   },
+    "channels":  {
+                     "localMs":  3,
+                     "local2Ms":  null,
+                     "cloudMs":  173,
+                     "gatewayMs":  176
+                 },
+    "online":  {
+                   "local":  true,
+                   "cloud":  true,
+                   "gateway":  true
+               }
+}

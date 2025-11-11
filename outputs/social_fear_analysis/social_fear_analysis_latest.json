@@ -1,0 +1,57 @@
+{
+  "state": {
+    "timestamp": "2025-11-06T08:36:19.326823+00:00",
+    "comparison_frequency": 0.075,
+    "relative_deprivation": 0.0675,
+    "uncertainty_level": 0.8,
+    "survival_threat": 0.7,
+    "fear_amplification": 0.6914896849336353,
+    "self_negation": 0.6,
+    "external_attribution": 0.7,
+    "projection_score": 0.42,
+    "structural_constraint": 0.8,
+    "generational_gap": 0.7,
+    "anger_intensity": 0.6317448424668177,
+    "anger_target": "structural"
+  },
+  "report": {
+    "timestamp": "2025-11-06T08:36:19.326823+00:00",
+    "analysis": {
+      "comparison_pattern": {
+        "frequency": 0.075,
+        "relative_deprivation": 0.0675,
+        "interpretation": "✅ 정상 범위"
+      },
+      "fear_dynamics": {
+        "uncertainty": 0.8,
+        "survival_threat": 0.7,
+        "amplification": 0.6914896849336353,
+        "interpretation": "⚠️ 높은 두려움 수준"
+      },
+      "projection_pattern": {
+        "self_negation": 0.6,
+        "external_attribution": 0.7,
+        "projection_score": 0.42,
+        "interpretation": "분노 대상: 구조적 문제"
+      },
+      "structural_factors": {
+        "constraint": 0.8,
+        "generational_gap": 0.7,
+        "interpretation": "🚨 심각한 구조적 불공정 + 세대 간 격차"
+      },
+      "anger_assessment": {
+        "intensity": 0.6317448424668177,
+        "target": "structural",
+        "interpretation": "분노 강도: 높음 (대상: structural)"
+      }
+    },
+    "recommendations": [
+      "🎯 작은 목표 설정: 통제 가능한 것에 집중",
+      "💪 불확실성 수용 연습: '모르는 것'을 인정하기",
+      "🤝 연대 찾기: 같은 문제를 겪는 사람들과 연결",
+      "📢 구조 변화 참여: 개인 문제가 아닌 사회 문제 인식",
+      "🌉 세대 간 대화: 서로의 맥락 이해하기",
+      "📊 데이터로 말하기: 감정 대신 객관적 수치"
+    ]
+  }
+}

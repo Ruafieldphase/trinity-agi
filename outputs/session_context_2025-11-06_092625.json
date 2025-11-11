@@ -1,0 +1,101 @@
+﻿{
+    "timestamp":  "2025-11-06_092625",
+    "gitCommit":  "42632cc82ab3e7bf256b50e2e87b02174f249272",
+    "pythonVersion":  "3.13.7",
+    "recentFiles":  [
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AGENTS.md",
+                            "LastWriteTime":  "\/Date(1762346061976)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AUTONOMOUS_GOAL_SYSTEM_PHASE3_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762341107810)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AUTONOMOUS_GOAL_SYSTEM_ROADMAP.md",
+                            "LastWriteTime":  "\/Date(1762334831743)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\DREAM_INTEGRATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762351253663)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\DREAM_INTEGRATION_PHASE1_COMPLETE_2025-11-05.md",
+                            "LastWriteTime":  "\/Date(1762351253753)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\DREAM_PIPELINE_AUTO_CHAIN_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762353786248)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\DREAM_PIPELINE_VALIDATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762354156772)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_FOLDING_SINGULARITY_INTEGRATION_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762331093078)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_FOLDING_TO_STRUCTURE_COMPLETE_JOURNEY.md",
+                            "LastWriteTime":  "\/Date(1762331091222)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_FOLDING_UNFOLDING_SINGULARITY_UNIFIED_THEORY.md",
+                            "LastWriteTime":  "\/Date(1762320406706)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_COMPLETE_EVIDENCE.md",
+                            "LastWriteTime":  "\/Date(1762331091028)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_COMPLETE_JOURNEY.md",
+                            "LastWriteTime":  "\/Date(1762331090770)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_JOURNEY_COMPLETE_ANALYSIS.md",
+                            "LastWriteTime":  "\/Date(1762331091757)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_UNIFIED_JOURNEY_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762331094337)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FROM_FEAR_TO_STRUCTURE_COMPLETE_INTEGRATION.md",
+                            "LastWriteTime":  "\/Date(1762331093789)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\GIT_COMMIT_MESSAGE_HIPPOCAMPUS_DREAM.md",
+                            "LastWriteTime":  "\/Date(1762349980874)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\HANDOFF_QUICK_REFERENCE.md",
+                            "LastWriteTime":  "\/Date(1762350138585)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\LUMEN_BINOCHE_ADAPTIVE_RHYTHM_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762341566224)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\LUMEN_BINOCHE_TRINITY_UNIFIED_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762343860491)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\MASTER_AI_ROUTER_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762343860792)\/"
+                        }
+                    ],
+    "gitBranch":  "main",
+    "note":  "",
+    "nodeVersion":  "22.19.0",
+    "activeProcesses":  [
+                            {
+                                "port":  8091,
+                                "running":  true,
+                                "name":  "TaskQueueServer"
+                            },
+                            {
+                                "name":  "RPAWorker",
+                                "running":  false
+                            }
+                        ]
+}

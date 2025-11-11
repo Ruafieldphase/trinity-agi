@@ -1,0 +1,52 @@
+{
+    "system_type": "core",
+    "description": "중추신경계 - 생명 유지 시스템 (항상 실행)",
+    "components": {
+        "task_queue_server": {
+            "enabled": true,
+            "role": "heart",
+            "description": "심장 - 작업 순환 시스템",
+            "critical": true,
+            "auto_restart": true,
+            "health_check_interval": 30,
+            "script": "LLM_Unified/ion-mentoring/task_queue_server.py",
+            "args": [
+                "--port",
+                "8091"
+            ],
+            "working_dir": "LLM_Unified/ion-mentoring",
+            "restart_policy": {
+                "max_retries": 999,
+                "retry_delay": 5,
+                "escalate_after": 3
+            }
+        },
+        "system_watchdog": {
+            "enabled": true,
+            "role": "brainstem",
+            "description": "뇌간 - 생명 징후 모니터링",
+            "critical": true,
+            "auto_restart": true,
+            "health_check_interval": 60,
+            "script": "fdo_agi_repo/scripts/task_watchdog.py",
+            "args": [
+                "--server",
+                "http://127.0.0.1:8091",
+                "--interval",
+                "60",
+                "--auto-recover"
+            ],
+            "working_dir": "fdo_agi_repo",
+            "restart_policy": {
+                "max_retries": 999,
+                "retry_delay": 10,
+                "escalate_after": 3
+            }
+        }
+    },
+    "failure_policy": {
+        "core_failure_alert": true,
+        "emergency_shutdown": false,
+        "log_level": "critical"
+    }
+}

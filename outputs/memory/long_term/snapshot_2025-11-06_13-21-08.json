@@ -1,0 +1,22 @@
+﻿{
+    "mental_state":  {
+                         "tags":  "john2,music,walk",
+                         "fear_noise_level":  2,
+                         "resonance_level":  8,
+                         "state_label":  "john2_like",
+                         "non_semantic_mode":  true
+                     },
+    "timestamp":  "2025-11-06T13:21:08.1604582+09:00",
+    "active_window":  {
+                          "title":  "summarize_stream_observer.py - agi - Visual Studio Code",
+                          "pid":  40248,
+                          "process":  "Code"
+                      },
+    "importance":  6,
+    "system_state":  {
+                         "cpu_percent":  64.73,
+                         "memory_mb":  50794.74
+                     },
+    "reason":  "Resonance test",
+    "mode":  "signal"
+}

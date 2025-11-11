@@ -1,0 +1,41 @@
+{
+    "version": "1.0.0",
+    "description": "Rhythm Mode Manager Configuration",
+    "modes": {
+        "work": {
+            "description": "Work mode - enables music daemon for focus enhancement",
+            "music_daemon": {
+                "enabled": true,
+                "script": "scripts/music_daemon.py",
+                "interval": 60,
+                "flow_threshold": 0.3
+            },
+            "system_resources": {
+                "cpu_priority": "normal",
+                "max_workers": 1
+            }
+        },
+        "rest": {
+            "description": "Rest mode - disables music daemon to reduce system load",
+            "music_daemon": {
+                "enabled": false
+            },
+            "system_resources": {
+                "cpu_priority": "low",
+                "max_workers": 0
+            }
+        },
+        "auto": {
+            "description": "Auto mode - switches between work/rest based on time and flow state",
+            "work_hours": {
+                "start": 8,
+                "end": 21
+            },
+            "flow_threshold": 0.5
+        }
+    },
+    "monitoring": {
+        "log_file": "outputs/rhythm_mode_manager.log",
+        "status_file": "outputs/rhythm_mode_status.json"
+    }
+}

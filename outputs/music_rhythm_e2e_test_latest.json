@@ -1,0 +1,296 @@
+﻿{
+    "timestamp":  "2025-11-10 09:44:39",
+    "tests":  [
+                  {
+                      "result":  {
+                                     "success":  true,
+                                     "data":  {
+                                                  "Timestamp":  "2025-11-10 09:44:39",
+                                                  "IsPlaying":  true,
+                                                  "is_music_playing":  true,
+                                                  "ActiveSessions":  [
+                                                                         {
+                                                                             "ProcessName":  "obs64",
+                                                                             "PID":  42928,
+                                                                             "WindowTitle":  "OBS 32.0.2 - 프로파일: 제목 없음 - 장면: 제목 없음",
+                                                                             "CPU":  193.08,
+                                                                             "WorkingSet":  399.9,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  1632,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  19.55,
+                                                                             "WorkingSet":  334.7,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  3904,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  1.56,
+                                                                             "WorkingSet":  155.6,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  3940,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.86,
+                                                                             "WorkingSet":  35.9,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  4396,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  3.56,
+                                                                             "WorkingSet":  103,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  5928,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  3.14,
+                                                                             "WorkingSet":  52.7,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  10232,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  1.03,
+                                                                             "WorkingSet":  63.2,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  10628,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.59,
+                                                                             "WorkingSet":  63.1,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  10636,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  3.05,
+                                                                             "WorkingSet":  112.8,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  11192,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.53,
+                                                                             "WorkingSet":  74.7,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  11352,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  25.12,
+                                                                             "WorkingSet":  342.3,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  12892,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  335.48,
+                                                                             "WorkingSet":  952,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  14492,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  12.16,
+                                                                             "WorkingSet":  175.4,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  16508,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  1.98,
+                                                                             "WorkingSet":  134.1,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  20852,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  3.14,
+                                                                             "WorkingSet":  68.2,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  24224,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  71.88,
+                                                                             "WorkingSet":  265.8,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  25412,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  3.17,
+                                                                             "WorkingSet":  128.3,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  30368,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  8.8,
+                                                                             "WorkingSet":  25,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  31052,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  90.34,
+                                                                             "WorkingSet":  442.5,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  31672,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  14.95,
+                                                                             "WorkingSet":  212.1,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  33112,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  13.42,
+                                                                             "WorkingSet":  60.9,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  33736,
+                                                                             "WindowTitle":  "RuaFieldPhase by @ruafieldphase | Suno - Comet",
+                                                                             "CPU":  98.69,
+                                                                             "WorkingSet":  456.6,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  33772,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.31,
+                                                                             "WorkingSet":  9.5,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  33852,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  3.77,
+                                                                             "WorkingSet":  145.2,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  36556,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.66,
+                                                                             "WorkingSet":  57.3,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  37516,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  12.7,
+                                                                             "WorkingSet":  262.7,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  40428,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.08,
+                                                                             "WorkingSet":  62.6,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  42376,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.22,
+                                                                             "WorkingSet":  48.2,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         },
+                                                                         {
+                                                                             "ProcessName":  "comet",
+                                                                             "PID":  44980,
+                                                                             "WindowTitle":  "",
+                                                                             "CPU":  0.05,
+                                                                             "WorkingSet":  32.4,
+                                                                             "DetectedAt":  "2025-11-10 09:44:39"
+                                                                         }
+                                                                     ],
+                                                  "SessionCount":  29,
+                                                  "browser_count":  29,
+                                                  "TopProcess":  "obs64",
+                                                  "SignalStrength":  "STRONG"
+                                              }
+                                 },
+                      "name":  "Audio Detection"
+                  },
+                  {
+                      "result":  {
+                                     "phase":  "unknown",
+                                     "success":  true
+                                 },
+                      "name":  "Rhythm Phase Detection"
+                  },
+                  {
+                      "result":  {
+                                     "success":  true,
+                                     "offline":  true
+                                 },
+                      "name":  "Reaper Monitor"
+                  },
+                  {
+                      "result":  [
+                                     "🎵 Music-Triggered Wake Protocol",
+                                     "==================================================",
+                                     "🎶 Music Playing: True",
+                                     "🌊 Current Phase: ACTIVE",
+                                     "",
+                                     "⏸️ No wake trigger needed",
+                                     "   Reason: Already in ACTIVE phase",
+                                     "",
+                                     "📁 State saved: C:\\workspace\\agi\\outputs\\music_wake_protocol_state.json",
+                                     {
+                                         "success":  true
+                                     }
+                                 ],
+                      "name":  "Music Wake Protocol"
+                  },
+                  {
+                      "result":  {
+                                     "success":  true,
+                                     "categories":  [
+                                                        null
+                                                    ]
+                                 },
+                      "name":  "Adaptive Music Player"
+                  }
+              ],
+    "failed":  0,
+    "passed":  5
+}

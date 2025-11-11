@@ -1,0 +1,23 @@
+﻿{
+    "milestone":  "mid-day",
+    "projections":  {
+                        "cycles_24h":  249,
+                        "events_24h":  200
+                    },
+    "start_time":  "2025-11-04 08:06:06",
+    "actual_time":  "12:00:02",
+    "timestamp":  "2025-11-06 12:00:02",
+    "targets":  {
+                    "events_max":  3110,
+                    "events_min":  1866,
+                    "cycles":  622
+                },
+    "metrics":  {
+                    "progress_percent":  216.2,
+                    "events_processed":  432,
+                    "hours_elapsed":  51.9,
+                    "learning_cycles":  538
+                },
+    "status":  "below_target",
+    "target_time":  "12:00 KST"
+}

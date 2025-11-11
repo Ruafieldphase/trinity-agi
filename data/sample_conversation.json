@@ -1,0 +1,70 @@
+{
+    "conversations": [
+        {
+            "timestamp": "2025-11-05T10:00:00Z",
+            "speaker": "binoche",
+            "text": "오늘 이 이론이 맞을까? 조금 불안해...",
+            "emotion": {
+                "fear": 0.6,
+                "anxiety": 0.5,
+                "confidence": 0.4
+            },
+            "location": "home/desk"
+        },
+        {
+            "timestamp": "2025-11-05T10:01:00Z",
+            "speaker": "ai_assistant",
+            "text": "괜찮아요. 차근차근 검증해보죠.",
+            "emotion": {
+                "fear": 0.0,
+                "anxiety": 0.0,
+                "confidence": 0.9
+            },
+            "location": "conversation"
+        },
+        {
+            "timestamp": "2025-11-05T10:05:00Z",
+            "speaker": "binoche",
+            "text": "아, 이렇게 보니 이해가 되네! 신기하다.",
+            "emotion": {
+                "fear": 0.2,
+                "anxiety": 0.1,
+                "confidence": 0.8
+            },
+            "location": "home/desk"
+        },
+        {
+            "timestamp": "2025-11-05T11:00:00Z",
+            "speaker": "binoche",
+            "text": "혹시 이게 틀렸으면 어쩌지... 너무 두렵다.",
+            "emotion": {
+                "fear": 0.9,
+                "anxiety": 0.8,
+                "confidence": 0.1
+            },
+            "location": "home/desk"
+        },
+        {
+            "timestamp": "2025-11-05T11:05:00Z",
+            "speaker": "ai_assistant",
+            "text": "실험으로 검증하면 돼요. 데이터가 답을 줄 거예요.",
+            "emotion": {
+                "fear": 0.0,
+                "anxiety": 0.0,
+                "confidence": 0.95
+            },
+            "location": "conversation"
+        },
+        {
+            "timestamp": "2025-11-05T12:00:00Z",
+            "speaker": "binoche",
+            "text": "아하! 데이터를 보니 정말 상관관계가 있네! 흥미롭다!",
+            "emotion": {
+                "fear": 0.1,
+                "anxiety": 0.0,
+                "confidence": 0.9
+            },
+            "location": "home/desk"
+        }
+    ]
+}

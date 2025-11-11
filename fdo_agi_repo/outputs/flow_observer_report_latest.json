@@ -1,0 +1,23 @@
+{
+  "generated_at": "2025-11-06T08:17:19.913582+00:00",
+  "analysis_period_hours": 24,
+  "current_state": {
+    "state": "unknown",
+    "confidence": 0.0,
+    "context": {
+      "reason": "no_telemetry_data"
+    }
+  },
+  "activity_summary": {
+    "total_records": 0,
+    "activity_ratio": 0.0,
+    "flow_sessions": 0,
+    "total_flow_minutes": 0,
+    "interruptions": 0
+  },
+  "flow_quality": "unknown",
+  "interruptions": [],
+  "recommendations": [
+    "텔레메트리 데이터가 없습니다. Observer를 시작하세요."
+  ]
+}

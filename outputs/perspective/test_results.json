@@ -1,0 +1,22 @@
+{
+  "observer": {
+    "mode": "observer",
+    "perspective": "wave",
+    "frequency_hz": 257142.85714285716,
+    "pattern": "accelerating",
+    "data_count": 10,
+    "timestamp": "2025-11-06T07:58:04.060171+00:00"
+  },
+  "walker": {
+    "mode": "walker",
+    "perspective": "particle",
+    "path_length": 10,
+    "total_energy": 4.5,
+    "walking_pattern": "descending",
+    "timestamp": "2025-11-06T07:58:04.061546+00:00"
+  },
+  "fear_depth": "(DepthDimension(fear_level=0.8, emotional_distance=0.7999999999999999, perceived_depth=15.999999999999998, context='task_x at (5, 20)'), DepthDimension(fear_level=0.2, emotional_distance=0.20000000000000004, perceived_depth=4.000000000000001, context='task_x at (5, 20)'))",
+  "switch": "(<PerspectiveMode.WALKER: 'walker'>, <PerspectiveMode.OBSERVER: 'observer'>)",
+  "bridge": "({'walker_perspective': True, 'walking_mode': 'climbing', 'frequency_height': 25.0, 'energy_required': 'high', 'original_observation': {'frequency_hz': 2.5, 'pattern': 'accelerating', 'data_count': 10}}, {'observer_perspective': True, 'estimated_frequency': 5.0, 'flow_pattern': 'accelerating', 'data_stream_quality': 'inferred_from_walking', 'original_walking': {'path_length': 10, 'total_energy': 50.0, 'walking_pattern': 'climbing'}})",
+  "full_cycle": "({'mode': 'observer', 'perspective': 'wave', 'frequency_hz': 333333.3333333333, 'pattern': 'accelerating', 'data_count': 5, 'timestamp': '2025-11-06T07:58:04.063342+00:00'}, {'walker_perspective': True, 'walking_mode': 'climbing', 'frequency_height': 3333333.333333333, 'energy_required': 'high', 'original_observation': {'mode': 'observer', 'perspective': 'wave', 'frequency_hz': 333333.3333333333, 'pattern': 'accelerating', 'data_count': 5, 'timestamp': '2025-11-06T07:58:04.063342+00:00'}}, {'observer_perspective': True, 'estimated_frequency': 0.0, 'flow_pattern': 'stable', 'data_stream_quality': 'inferred_from_walking', 'original_walking': {'walker_perspective': True, 'walking_mode': 'climbing', 'frequency_height': 3333333.333333333, 'energy_required': 'high', 'original_observation': {'mode': 'observer', 'perspective': 'wave', 'frequency_hz': 333333.3333333333, 'pattern': 'accelerating', 'data_count': 5, 'timestamp': '2025-11-06T07:58:04.063342+00:00'}}})"
+}

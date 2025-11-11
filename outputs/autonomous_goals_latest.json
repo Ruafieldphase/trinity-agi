@@ -1,0 +1,155 @@
+{
+  "generated_at": "2025-11-11T09:23:54.863951Z",
+  "window_hours": 6,
+  "input_sources": {
+    "resonance_metrics": "outputs/resonance_simulation_latest.json",
+    "trinity_report": "outputs/lumen_enhanced_synthesis_latest.md",
+    "self_care_summary": "outputs/self_care_metrics_summary.json"
+  },
+  "resonance_states": [
+    "info_starvation",
+    "low_resonance",
+    "high_entropy"
+  ],
+  "trinity_summary": {
+    "lua_issues": [],
+    "elo_status": "✅ 검증 통과 - 데이터 품질 양호",
+    "lumen_recommendations": []
+  },
+  "self_care": {
+    "states": [
+      "quantum_flow_superconducting"
+    ],
+    "summary": {
+      "count": 0,
+      "hours": 24,
+      "quantum_flow": {
+        "phase_coherence": 1.0,
+        "state": "superconducting",
+        "conductivity": 1.0,
+        "measured_at": "2025-11-11T18:23:54.330546"
+      },
+      "generated_at": "2025-11-11T18:23:54.330557"
+    }
+  },
+  "goals": [
+    {
+      "title": "Refactor Core Components",
+      "description": "Improve resonance by restructuring core logic",
+      "base_priority": 9,
+      "type": "analysis",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/autopoietic_trinity_cycle.ps1",
+        "args": [
+          "-Hours",
+          "24"
+        ],
+        "timeout": 900
+      },
+      "source": "resonance",
+      "metadata": {
+        "severity": "critical"
+      },
+      "id": 1,
+      "urgency_boost": 1.0,
+      "impact_boost": 8.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 18.0,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    },
+    {
+      "title": "Increase Data Collection",
+      "description": "Improve information density by collecting more metrics",
+      "base_priority": 7,
+      "type": "metric",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/system_health_check.ps1",
+        "args": [
+          "-Full"
+        ],
+        "timeout": 300
+      },
+      "source": "resonance",
+      "metadata": {
+        "severity": "high"
+      },
+      "id": 2,
+      "urgency_boost": 1.0,
+      "impact_boost": 5.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 13.0,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    },
+    {
+      "title": "📊 Generate Performance Dashboard",
+      "description": "Quantum Flow 초전도 상태! 완벽한 조건에서 포괄적인 성능 대시보드를 생성하세요",
+      "base_priority": 10,
+      "type": "monitoring",
+      "source": "resonance",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/generate_enhanced_dashboard.ps1",
+        "args": [
+          "-OpenBrowser"
+        ],
+        "timeout": 600
+      },
+      "metadata": {
+        "severity": "critical"
+      },
+      "id": 3,
+      "urgency_boost": 0.0,
+      "impact_boost": 3.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 13.0,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    },
+    {
+      "title": "Improve Clarity and Structure",
+      "description": "Reduce entropy through better organization",
+      "base_priority": 7,
+      "type": "analysis",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/summarize_realtime_pipeline.ps1",
+        "args": [
+          "-Lookback",
+          "24",
+          "-SparkLen",
+          "60"
+        ],
+        "timeout": 300
+      },
+      "source": "resonance",
+      "metadata": {
+        "severity": "high"
+      },
+      "id": 4,
+      "urgency_boost": 0.0,
+      "impact_boost": 5.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 12.0,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    }
+  ],
+  "summary": {
+    "total_goals": 4,
+    "high_priority": 4,
+    "medium_priority": 0,
+    "low_priority": 0
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "generated": "2025-11-11T10:10:44.613284+00:00",
+  "ledger_path": "C:\\workspace\\agi\\fdo_agi_repo\\memory\\resonance_ledger.jsonl",
+  "analysis": {
+    "error": "No evidence_correction events found",
+    "total_events": 36282
+  }
+}

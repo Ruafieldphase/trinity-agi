@@ -1,0 +1,109 @@
+{
+    "schemaVersion":  1,
+    "timestamp":  "2025-11-08T12:11:16.1631936+09:00",
+    "dryRun":  false,
+    "runMode":  "execute",
+    "delaySec":  60,
+    "noDelay":  false,
+    "openReport":  false,
+    "showSummary":  true,
+    "markdownReport":  true,
+    "autoFix":  false,
+    "startWatch":  false,
+    "failOnError":  false,
+    "skips":  {
+                  "ensureQueue":  false,
+                  "ensureWorker":  false,
+                  "sessionRestore":  false,
+                  "postVerify":  false
+              },
+    "memoryGate":  {
+                       "enabled":  false
+                   },
+    "cooldown":  null,
+    "healthGate":  {
+                       "enabled":  false,
+                       "maxLogEntries":  200
+                   },
+    "steps":  [
+                  {
+                      "name":  "delay",
+                      "status":  "ok",
+                      "detail":  "60 s",
+                      "durationMs":  60000
+                  },
+                  {
+                      "name":  "ensure_task_queue_server",
+                      "status":  "ok",
+                      "detail":  "",
+                      "durationMs":  46
+                  },
+                  {
+                      "name":  "ensure_single_worker",
+                      "status":  "ok",
+                      "detail":  "",
+                      "durationMs":  545
+                  },
+                  {
+                      "name":  "session_continuity_restore",
+                      "status":  "ok",
+                      "detail":  "",
+                      "durationMs":  115
+                  },
+                  {
+                      "name":  "post_reboot_verify",
+                      "status":  "ok",
+                      "detail":  "",
+                      "durationMs":  13065
+                  }
+              ],
+    "success":  true,
+    "errorCount":  0,
+    "errorList":  [
+
+                  ],
+    "firstFailureStep":  null,
+    "durationMs":  74338,
+    "finalizedEarly":  false,
+    "finalizeReason":  null,
+    "system":  {
+                   "machineName":  "BINO",
+                   "osVersion":  "Microsoft Windows 11 Pro 10.0.26200 (Build 26200)",
+                   "psVersion":  "5.1.26100.7019",
+                   "cpuCount":  12,
+                   "memoryMB":  {
+                                    "total":  97442,
+                                    "free":  41623
+                                },
+                   "model":  "System Product Name",
+                   "manufacturer":  "ASUS"
+               },
+    "systemInfo":  {
+                       "machineName":  "BINO",
+                       "osVersion":  "Microsoft Windows 11 Pro 10.0.26200 (Build 26200)",
+                       "psVersion":  "5.1.26100.7019",
+                       "cpuCount":  12,
+                       "memoryMB":  {
+                                        "total":  97442,
+                                        "free":  41623
+                                    },
+                       "model":  "System Product Name",
+                       "manufacturer":  "ASUS"
+                   },
+    "stepStats":  {
+                      "total":  5,
+                      "ok":  5,
+                      "dryrun":  0,
+                      "skipped":  0,
+                      "error":  0
+                  },
+    "errorSteps":  null,
+    "executedSteps":  [
+                          "delay",
+                          "ensure_task_queue_server",
+                          "ensure_single_worker",
+                          "session_continuity_restore",
+                          "post_reboot_verify"
+                      ],
+    "lastRunModeReason":  "Normal execution path; DryRun not set."
+}

@@ -1,0 +1,61 @@
+{
+  "timestamp": "2025-11-05T11:02:43.705931",
+  "hours": 168,
+  "total_events": 3691,
+  "signals": {
+    "lua": {
+      "event_count": 0,
+      "entropy": 0.0,
+      "signal": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "elo": {
+      "event_count": 0,
+      "entropy": 0.0,
+      "signal": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "lumen": {
+      "event_count": 0,
+      "entropy": 0.0,
+      "signal": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "pairwise_mi": {
+    "lua_elo": 0.0,
+    "elo_lumen": 0.0,
+    "lua_lumen": 0.0
+  },
+  "tc": 0.0,
+  "i3": 0.0,
+  "interpretation": {
+    "level": "independent",
+    "message": "독립: 3자 간 상호작용 미미",
+    "emoji": "⚖️"
+  }
+}

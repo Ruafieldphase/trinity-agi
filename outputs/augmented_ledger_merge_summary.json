@@ -1,0 +1,10 @@
+{
+    "sources":  {
+                    "rpa":  0,
+                    "youtube":  31329
+                },
+    "output_path":  "C:\\workspace\\agi\\scripts\\..\\fdo_agi_repo\\memory\\resonance_ledger_augmented.jsonl",
+    "merged_at":  "2025-11-06T19:16:48.6038532+09:00",
+    "total_events":  5178,
+    "duplicates_removed":  26151
+}

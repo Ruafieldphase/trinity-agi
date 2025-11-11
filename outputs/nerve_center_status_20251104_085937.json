@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-11-04T08:59:37.314655+00:00",
+  "config": "C:\\workspace\\agi\\config\\autonomic_monitors.json",
+  "dry_run": true,
+  "resources": [
+    {
+      "name": "queue_server_8091",
+      "healthy": false,
+      "reason": "http_unhealthy: http://127.0.0.1:8091/health",
+      "action": null,
+      "ensured": false
+    },
+    {
+      "name": "rpa_worker",
+      "healthy": false,
+      "reason": "process_missing: rpa_worker.py count=0",
+      "action": null,
+      "ensured": false
+    }
+  ]
+}

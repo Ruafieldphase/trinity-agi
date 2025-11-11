@@ -1,0 +1,632 @@
+﻿{
+    "summary":  {
+                    "cpu":  {
+                                "min":  30.83,
+                                "mean":  43.33,
+                                "max":  61.14
+                            },
+                    "disk":  {
+                                 "mean_mbps":  0.42,
+                                 "max_mbps":  1.11
+                             },
+                    "memory":  {
+                                   "mean_used_mb":  52028,
+                                   "mean_percent":  53.4
+                               },
+                    "network":  {
+                                    "mean_mbps":  11.62,
+                                    "max_mbps":  20.91
+                                },
+                    "frequent_processes":  [
+                                               {
+                                                   "avg_cpu_seconds":  37581.03,
+                                                   "frequency_percent":  100,
+                                                   "name":  "LM_Support",
+                                                   "max_memory_mb":  1209,
+                                                   "appearances":  6
+                                               },
+                                               {
+                                                   "avg_cpu_seconds":  3668.32,
+                                                   "frequency_percent":  100,
+                                                   "name":  "com.docker.backend",
+                                                   "max_memory_mb":  494,
+                                                   "appearances":  6
+                                               },
+                                               {
+                                                   "avg_cpu_seconds":  6479.98,
+                                                   "frequency_percent":  100,
+                                                   "name":  "Taskmgr",
+                                                   "max_memory_mb":  571,
+                                                   "appearances":  6
+                                               },
+                                               {
+                                                   "avg_cpu_seconds":  4896.16,
+                                                   "frequency_percent":  200,
+                                                   "name":  "Code",
+                                                   "max_memory_mb":  1808,
+                                                   "appearances":  12
+                                               }
+                                           ],
+                    "sample_count":  6
+                },
+    "duration_seconds":  60,
+    "timestamp":  "2025-11-03T20:18:15.9106472+09:00",
+    "samples":  [
+                    {
+                        "network_bytes_per_sec":  813038,
+                        "network_mbps":  6.2,
+                        "disk_mbps":  0.39,
+                        "memory_percent":  53.56,
+                        "timestamp":  "2025-11-03T20:18:15.9328899+09:00",
+                        "iteration":  1,
+                        "network_connections":  [
+                                                    {
+                                                        "pid":  "16580",
+                                                        "process_name":  "airscreen-backend",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "31776",
+                                                        "process_name":  "avsvc_airscreen",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "5508",
+                                                        "process_name":  "ArmouryCrate.Service",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "12700",
+                                                        "process_name":  "Screen_intf",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "20052",
+                                                        "process_name":  "KakaoTalk",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "29476",
+                                                        "process_name":  "lghub_agent",
+                                                        "connection_count":  3
+                                                    },
+                                                    {
+                                                        "pid":  "28488",
+                                                        "process_name":  "lghub_system_tray",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "29172",
+                                                        "process_name":  "AdskIdentityManager",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "14660",
+                                                        "process_name":  "AdSSO",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "13228",
+                                                        "process_name":  "AdskAccessCore",
+                                                        "connection_count":  1
+                                                    }
+                                                ],
+                        "memory_used_mb":  52187,
+                        "cpu_percent":  61.14,
+                        "top_processes":  [
+                                              {
+                                                  "memory_mb":  621,
+                                                  "pid":  37548,
+                                                  "name":  "LM_Support",
+                                                  "cpu_seconds":  37562.19
+                                              },
+                                              {
+                                                  "memory_mb":  570,
+                                                  "pid":  39416,
+                                                  "name":  "Taskmgr",
+                                                  "cpu_seconds":  6473.12
+                                              },
+                                              {
+                                                  "memory_mb":  1808,
+                                                  "pid":  24776,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  5930.66
+                                              },
+                                              {
+                                                  "memory_mb":  1149,
+                                                  "pid":  26684,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  3858.3
+                                              },
+                                              {
+                                                  "memory_mb":  492,
+                                                  "pid":  13472,
+                                                  "name":  "com.docker.backend",
+                                                  "cpu_seconds":  3662
+                                              }
+                                          ],
+                        "disk_bytes_per_sec":  406560,
+                        "memory_total_mb":  97442
+                    },
+                    {
+                        "network_bytes_per_sec":  1488080,
+                        "network_mbps":  11.35,
+                        "disk_mbps":  0.27,
+                        "memory_percent":  53.42,
+                        "timestamp":  "2025-11-03T20:18:27.4986435+09:00",
+                        "iteration":  2,
+                        "network_connections":  [
+                                                    {
+                                                        "pid":  "16580",
+                                                        "process_name":  "airscreen-backend",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "31776",
+                                                        "process_name":  "avsvc_airscreen",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "5508",
+                                                        "process_name":  "ArmouryCrate.Service",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "12700",
+                                                        "process_name":  "Screen_intf",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "20052",
+                                                        "process_name":  "KakaoTalk",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "29476",
+                                                        "process_name":  "lghub_agent",
+                                                        "connection_count":  3
+                                                    },
+                                                    {
+                                                        "pid":  "28488",
+                                                        "process_name":  "lghub_system_tray",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "29172",
+                                                        "process_name":  "AdskIdentityManager",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "14660",
+                                                        "process_name":  "AdSSO",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "13228",
+                                                        "process_name":  "AdskAccessCore",
+                                                        "connection_count":  1
+                                                    }
+                                                ],
+                        "memory_used_mb":  52051,
+                        "cpu_percent":  30.83,
+                        "top_processes":  [
+                                              {
+                                                  "memory_mb":  1209,
+                                                  "pid":  37548,
+                                                  "name":  "LM_Support",
+                                                  "cpu_seconds":  37571.5
+                                              },
+                                              {
+                                                  "memory_mb":  570,
+                                                  "pid":  39416,
+                                                  "name":  "Taskmgr",
+                                                  "cpu_seconds":  6476.02
+                                              },
+                                              {
+                                                  "memory_mb":  1759,
+                                                  "pid":  24776,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  5930.7
+                                              },
+                                              {
+                                                  "memory_mb":  1160,
+                                                  "pid":  26684,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  3859.5
+                                              },
+                                              {
+                                                  "memory_mb":  494,
+                                                  "pid":  13472,
+                                                  "name":  "com.docker.backend",
+                                                  "cpu_seconds":  3662.27
+                                              }
+                                          ],
+                        "disk_bytes_per_sec":  287349,
+                        "memory_total_mb":  97442
+                    },
+                    {
+                        "network_bytes_per_sec":  1094563,
+                        "network_mbps":  8.35,
+                        "disk_mbps":  0.16,
+                        "memory_percent":  53.21,
+                        "timestamp":  "2025-11-03T20:18:38.4150585+09:00",
+                        "iteration":  3,
+                        "network_connections":  [
+                                                    {
+                                                        "pid":  "16580",
+                                                        "process_name":  "airscreen-backend",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "31776",
+                                                        "process_name":  "avsvc_airscreen",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "5508",
+                                                        "process_name":  "ArmouryCrate.Service",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "12700",
+                                                        "process_name":  "Screen_intf",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "19756",
+                                                        "process_name":  "python",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "13228",
+                                                        "process_name":  "AdskAccessCore",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "20052",
+                                                        "process_name":  "KakaoTalk",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "29476",
+                                                        "process_name":  "lghub_agent",
+                                                        "connection_count":  3
+                                                    },
+                                                    {
+                                                        "pid":  "28488",
+                                                        "process_name":  "lghub_system_tray",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "29172",
+                                                        "process_name":  "AdskIdentityManager",
+                                                        "connection_count":  3
+                                                    }
+                                                ],
+                        "memory_used_mb":  51849,
+                        "cpu_percent":  40.51,
+                        "top_processes":  [
+                                              {
+                                                  "memory_mb":  441,
+                                                  "pid":  37548,
+                                                  "name":  "LM_Support",
+                                                  "cpu_seconds":  37575.44
+                                              },
+                                              {
+                                                  "memory_mb":  570,
+                                                  "pid":  39416,
+                                                  "name":  "Taskmgr",
+                                                  "cpu_seconds":  6478.66
+                                              },
+                                              {
+                                                  "memory_mb":  1748,
+                                                  "pid":  24776,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  5930.73
+                                              },
+                                              {
+                                                  "memory_mb":  1154,
+                                                  "pid":  26684,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  3859.8
+                                              },
+                                              {
+                                                  "memory_mb":  492,
+                                                  "pid":  13472,
+                                                  "name":  "com.docker.backend",
+                                                  "cpu_seconds":  3671.16
+                                              }
+                                          ],
+                        "disk_bytes_per_sec":  172515,
+                        "memory_total_mb":  97442
+                    },
+                    {
+                        "network_bytes_per_sec":  1691038,
+                        "network_mbps":  12.9,
+                        "disk_mbps":  0.4,
+                        "memory_percent":  53.4,
+                        "timestamp":  "2025-11-03T20:18:49.1574468+09:00",
+                        "iteration":  4,
+                        "network_connections":  [
+                                                    {
+                                                        "pid":  "16580",
+                                                        "process_name":  "airscreen-backend",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "31776",
+                                                        "process_name":  "avsvc_airscreen",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "5508",
+                                                        "process_name":  "ArmouryCrate.Service",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "12700",
+                                                        "process_name":  "Screen_intf",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "6024",
+                                                        "process_name":  "MpDefenderCoreService",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "20052",
+                                                        "process_name":  "KakaoTalk",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "29476",
+                                                        "process_name":  "lghub_agent",
+                                                        "connection_count":  3
+                                                    },
+                                                    {
+                                                        "pid":  "28488",
+                                                        "process_name":  "lghub_system_tray",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "29172",
+                                                        "process_name":  "AdskIdentityManager",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "14660",
+                                                        "process_name":  "AdSSO",
+                                                        "connection_count":  1
+                                                    }
+                                                ],
+                        "memory_used_mb":  52030,
+                        "cpu_percent":  45.5,
+                        "top_processes":  [
+                                              {
+                                                  "memory_mb":  309,
+                                                  "pid":  37548,
+                                                  "name":  "LM_Support",
+                                                  "cpu_seconds":  37578.3
+                                              },
+                                              {
+                                                  "memory_mb":  571,
+                                                  "pid":  39416,
+                                                  "name":  "Taskmgr",
+                                                  "cpu_seconds":  6481.16
+                                              },
+                                              {
+                                                  "memory_mb":  1714,
+                                                  "pid":  24776,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  5930.75
+                                              },
+                                              {
+                                                  "memory_mb":  1164,
+                                                  "pid":  26684,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  3860.38
+                                              },
+                                              {
+                                                  "memory_mb":  492,
+                                                  "pid":  13472,
+                                                  "name":  "com.docker.backend",
+                                                  "cpu_seconds":  3671.3
+                                              }
+                                          ],
+                        "disk_bytes_per_sec":  419379,
+                        "memory_total_mb":  97442
+                    },
+                    {
+                        "network_bytes_per_sec":  2741151,
+                        "network_mbps":  20.91,
+                        "disk_mbps":  1.11,
+                        "memory_percent":  53.46,
+                        "timestamp":  "2025-11-03T20:18:59.9127006+09:00",
+                        "iteration":  5,
+                        "network_connections":  [
+                                                    {
+                                                        "pid":  "16580",
+                                                        "process_name":  "airscreen-backend",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "31776",
+                                                        "process_name":  "avsvc_airscreen",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "5508",
+                                                        "process_name":  "ArmouryCrate.Service",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "12700",
+                                                        "process_name":  "Screen_intf",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "6024",
+                                                        "process_name":  "MpDefenderCoreService",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "20052",
+                                                        "process_name":  "KakaoTalk",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "29476",
+                                                        "process_name":  "lghub_agent",
+                                                        "connection_count":  3
+                                                    },
+                                                    {
+                                                        "pid":  "28488",
+                                                        "process_name":  "lghub_system_tray",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "29172",
+                                                        "process_name":  "AdskIdentityManager",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "14660",
+                                                        "process_name":  "AdSSO",
+                                                        "connection_count":  1
+                                                    }
+                                                ],
+                        "memory_used_mb":  52096,
+                        "cpu_percent":  43.02,
+                        "top_processes":  [
+                                              {
+                                                  "memory_mb":  736,
+                                                  "pid":  37548,
+                                                  "name":  "LM_Support",
+                                                  "cpu_seconds":  37592.34
+                                              },
+                                              {
+                                                  "memory_mb":  571,
+                                                  "pid":  39416,
+                                                  "name":  "Taskmgr",
+                                                  "cpu_seconds":  6483.94
+                                              },
+                                              {
+                                                  "memory_mb":  1714,
+                                                  "pid":  24776,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  5931.08
+                                              },
+                                              {
+                                                  "memory_mb":  1178,
+                                                  "pid":  26684,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  3864.11
+                                              },
+                                              {
+                                                  "memory_mb":  492,
+                                                  "pid":  13472,
+                                                  "name":  "com.docker.backend",
+                                                  "cpu_seconds":  3671.47
+                                              }
+                                          ],
+                        "disk_bytes_per_sec":  1161182,
+                        "memory_total_mb":  97442
+                    },
+                    {
+                        "network_bytes_per_sec":  1307881,
+                        "network_mbps":  9.98,
+                        "disk_mbps":  0.2,
+                        "memory_percent":  53.32,
+                        "timestamp":  "2025-11-03T20:19:10.8490363+09:00",
+                        "iteration":  6,
+                        "network_connections":  [
+                                                    {
+                                                        "pid":  "16580",
+                                                        "process_name":  "airscreen-backend",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "31776",
+                                                        "process_name":  "avsvc_airscreen",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "5508",
+                                                        "process_name":  "ArmouryCrate.Service",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "12700",
+                                                        "process_name":  "Screen_intf",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "6024",
+                                                        "process_name":  "MpDefenderCoreService",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "20052",
+                                                        "process_name":  "KakaoTalk",
+                                                        "connection_count":  2
+                                                    },
+                                                    {
+                                                        "pid":  "29476",
+                                                        "process_name":  "lghub_agent",
+                                                        "connection_count":  3
+                                                    },
+                                                    {
+                                                        "pid":  "28488",
+                                                        "process_name":  "lghub_system_tray",
+                                                        "connection_count":  1
+                                                    },
+                                                    {
+                                                        "pid":  "29172",
+                                                        "process_name":  "AdskIdentityManager",
+                                                        "connection_count":  3
+                                                    },
+                                                    {
+                                                        "pid":  "14660",
+                                                        "process_name":  "AdSSO",
+                                                        "connection_count":  1
+                                                    }
+                                                ],
+                        "memory_used_mb":  51953,
+                        "cpu_percent":  39,
+                        "top_processes":  [
+                                              {
+                                                  "memory_mb":  573,
+                                                  "pid":  37548,
+                                                  "name":  "LM_Support",
+                                                  "cpu_seconds":  37606.44
+                                              },
+                                              {
+                                                  "memory_mb":  571,
+                                                  "pid":  39416,
+                                                  "name":  "Taskmgr",
+                                                  "cpu_seconds":  6486.95
+                                              },
+                                              {
+                                                  "memory_mb":  1690,
+                                                  "pid":  24776,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  5932.36
+                                              },
+                                              {
+                                                  "memory_mb":  1166,
+                                                  "pid":  26684,
+                                                  "name":  "Code",
+                                                  "cpu_seconds":  3865.53
+                                              },
+                                              {
+                                                  "memory_mb":  492,
+                                                  "pid":  13472,
+                                                  "name":  "com.docker.backend",
+                                                  "cpu_seconds":  3671.69
+                                              }
+                                          ],
+                        "disk_bytes_per_sec":  209182,
+                        "memory_total_mb":  97442
+                    }
+                ]
+}

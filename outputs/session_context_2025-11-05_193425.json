@@ -1,0 +1,101 @@
+﻿{
+    "timestamp":  "2025-11-05_193425",
+    "gitCommit":  "42632cc82ab3e7bf256b50e2e87b02174f249272",
+    "pythonVersion":  "3.13.7",
+    "recentFiles":  [
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AUTONOMOUS_GOAL_SYSTEM_ROADMAP.md",
+                            "LastWriteTime":  "\/Date(1762334831743)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_FOLDING_SINGULARITY_INTEGRATION_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762331093078)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_FOLDING_TO_STRUCTURE_COMPLETE_JOURNEY.md",
+                            "LastWriteTime":  "\/Date(1762331091222)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_FOLDING_UNFOLDING_SINGULARITY_UNIFIED_THEORY.md",
+                            "LastWriteTime":  "\/Date(1762320406706)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_COMPLETE_EVIDENCE.md",
+                            "LastWriteTime":  "\/Date(1762331091028)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_COMPLETE_JOURNEY.md",
+                            "LastWriteTime":  "\/Date(1762331090770)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_JOURNEY_COMPLETE_ANALYSIS.md",
+                            "LastWriteTime":  "\/Date(1762331091757)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEAR_TO_STRUCTURE_UNIFIED_JOURNEY_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762331094337)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEEDBACK_LOOP_INTEGRATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762292829489)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FEEDBACK_LOOP_PHASE3_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762293392007)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FROM_FEAR_TO_STRUCTURE_COMPLETE_INTEGRATION.md",
+                            "LastWriteTime":  "\/Date(1762331093789)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\GIT_COMMIT_MESSAGE_FEEDBACK_LOOP_PHASE3.md",
+                            "LastWriteTime":  "\/Date(1762293392310)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\LUMEN_LATENCY_MONITORING_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762300694332)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\LUMEN_PRISM_INTEGRATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762301548942)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\PHASE_6_11_COMPLETION_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762290015958)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\QUICK_START_NEW_SESSION.md",
+                            "LastWriteTime":  "\/Date(1762332895074)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\RUA_META_THEORY_UNIFIED.md",
+                            "LastWriteTime":  "\/Date(1762331551025)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\.vscode\\tasks.json",
+                            "LastWriteTime":  "\/Date(1762336816859)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\configs\\resonance_config.json",
+                            "LastWriteTime":  "\/Date(1762303776965)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\data\\sample_conversation.json",
+                            "LastWriteTime":  "\/Date(1762320721408)\/"
+                        }
+                    ],
+    "gitBranch":  "main",
+    "note":  "VSCode Task",
+    "nodeVersion":  "22.19.0",
+    "activeProcesses":  [
+                            {
+                                "port":  8091,
+                                "running":  true,
+                                "name":  "TaskQueueServer"
+                            },
+                            {
+                                "name":  "RPAWorker",
+                                "running":  false
+                            }
+                        ]
+}

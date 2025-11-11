@@ -1,0 +1,23 @@
+{
+  "create_file_create_file": {
+    "template": {
+      "action": "create_file",
+      "file_path": "youtube_analyzer.py",
+      "content_prompt": "YouTube 분석 시스템 만들어줘 youtube_analyzer.py",
+      "auto_execute": true,
+      "reason": "File creation intent detected",
+      "intent": {
+        "type": "create_file",
+        "content": "YouTube 분석 시스템 만들어줘 youtube_analyzer.py",
+        "confidence": 0.8,
+        "matched_keywords": [
+          ".py"
+        ]
+      }
+    },
+    "auto_execute": true,
+    "learned_from_experiences": 5,
+    "confidence": 1.0,
+    "promoted_at": "2025-11-06T16:52:17.237816"
+  }
+}

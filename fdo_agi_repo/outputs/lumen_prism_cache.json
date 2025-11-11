@@ -1,0 +1,42 @@
+{
+  "cache": [
+    {
+      "timestamp": "2025-11-05T09:56:10.991302",
+      "lumen": {
+        "latency_ms": 343,
+        "endpoint": "/api/v2/recommend/personalized",
+        "timestamp": "2025-11-05T00:56:10.7897237Z",
+        "success": true
+      },
+      "prism": {
+        "original_lumen": {
+          "latency_ms": 343,
+          "endpoint": "/api/v2/recommend/personalized",
+          "timestamp": "2025-11-05T00:56:10.7897237Z",
+          "success": true
+        },
+        "refracted_at": "2025-11-05T00:56:10.990918+00:00",
+        "prism_filters": {
+          "quality_gate": true
+        },
+        "resonance_amplification": 1.0,
+        "binoche_interpretation": {
+          "quality_meets_standard": true,
+          "aligns_with_preferences": false,
+          "estimated_approval_rate": 0.0
+        }
+      },
+      "resonance_task_id": "lumen_prism_20251105095610"
+    }
+  ],
+  "summary": {
+    "time_range_hours": 24,
+    "total_prism_events": 1,
+    "avg_amplification": 1.0,
+    "quality_pass_rate": 0.0,
+    "cache_size": 1,
+    "persona_loaded": true,
+    "lumen_data_loaded": true
+  },
+  "timestamp": "2025-11-05T00:56:10.991596+00:00"
+}

@@ -1,0 +1,70 @@
+{
+  "timestamp": "2025-11-11T19:23:53.667051",
+  "modules": {
+    "hippocampus": {
+      "module_exists": true,
+      "long_term_memory_class": true,
+      "semantic_memory_implemented": true,
+      "episodic_memory_implemented": true,
+      "procedural_memory_implemented": false,
+      "consolidation_active": false,
+      "session_memory_db_exists": true
+    },
+    "quantum_flow": {
+      "module_exists": true,
+      "connected_to_selfcare": true,
+      "connected_to_goal_system": false,
+      "recent_measurements": 0,
+      "flow_state_tracked": false
+    },
+    "reward_system": {
+      "module_exists": true,
+      "connected_to_goal_generator": true,
+      "connected_to_goal_executor": true,
+      "reward_signals_recorded": 4736,
+      "policy_cache_exists": true,
+      "active_learning": false
+    },
+    "meta_supervisor": {
+      "module_exists": true,
+      "scheduled": false,
+      "recent_execution": null,
+      "rhythm_health_integrated": true,
+      "auto_intervention_enabled": false
+    }
+  },
+  "integrations": {
+    "selfcare_to_quantum": false,
+    "quantum_to_goals": true,
+    "goals_to_reward": true,
+    "reward_to_goals": true,
+    "hippocampus_to_goals": true,
+    "meta_supervisor_active": false
+  },
+  "recommendations": [
+    {
+      "priority": "MEDIUM",
+      "module": "Quantum Flow",
+      "issue": "Goal 시스템과 연결 부족",
+      "action": "Goal 생성/실행 시 flow state 반영"
+    },
+    {
+      "priority": "LOW",
+      "module": "Reward System",
+      "issue": "최근 보상 신호 없음",
+      "action": "Goal 실행 결과를 보상 시스템에 기록"
+    },
+    {
+      "priority": "MEDIUM",
+      "module": "Meta Supervisor",
+      "issue": "Meta Supervisor 미실행",
+      "action": "주기적 실행 스케줄 등록 또는 수동 실행"
+    },
+    {
+      "priority": "HIGH",
+      "module": "Integration",
+      "issue": "Self-care → Quantum Flow 루프 미연결",
+      "action": "generate_selfcare_summary.py에 quantum flow 측정 추가"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+    "timestamp":  "2025-11-08_090457",
+    "gitCommit":  "42632cc82ab3e7bf256b50e2e87b02174f249272",
+    "pythonVersion":  "3.13.7",
+    "recentFiles":  [
+                        {
+                            "FullName":  "C:\\workspace\\agi\\ADAPTIVE_GLYMPHATIC_CLI_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762521480239)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\ADAPTIVE_GLYMPHATIC_PRODUCTION_READY.md",
+                            "LastWriteTime":  "\/Date(1762522007353)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\ADAPTIVE_GLYMPHATIC_SYSTEM_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762521479977)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\ADAPTIVE_GLYMPHATIC_SYSTEM_COMPLETE_old.md",
+                            "LastWriteTime":  "\/Date(1762519979204)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\AGENTS.md",
+                            "LastWriteTime":  "\/Date(1762484875533)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\QUANTUM_OBSERVER_INTEGRATION_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762503205649)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\WORK_COMPLETED_GLYMPHATIC_20251107.md",
+                            "LastWriteTime":  "\/Date(1762522007603)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\.github\\copilot-instructions.md",
+                            "LastWriteTime":  "\/Date(1762484875918)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\.vscode\\tasks.json",
+                            "LastWriteTime":  "\/Date(1762522007086)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\AGENT_HANDOFF.md",
+                            "LastWriteTime":  "\/Date(1762520132260)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\AGI_OPERATIONS_TECH_REPORT.md",
+                            "LastWriteTime":  "\/Date(1762522003340)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\AGI_RESONANCE_INTEGRATION_PLAN.md",
+                            "LastWriteTime":  "\/Date(1762520138746)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\COPILOT_SESSION_CONTINUITY_COMPLETE.md",
+                            "LastWriteTime":  "\/Date(1762484876266)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\MICROSCOPE_HOOK.md",
+                            "LastWriteTime":  "\/Date(1762478289200)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\SESSION_CONTINUITY_GUIDE.md",
+                            "LastWriteTime":  "\/Date(1762484875847)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.pytest_tmp\\test_handover_version_and_load0\\outputs\\copilot_handover_latest.json",
+                            "LastWriteTime":  "\/Date(1762485253837)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Lib\\site-packages\\decorator.py",
+                            "LastWriteTime":  "\/Date(1762498656188)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Lib\\site-packages\\soundfile.py",
+                            "LastWriteTime":  "\/Date(1762498675470)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Lib\\site-packages\\threadpoolctl.py",
+                            "LastWriteTime":  "\/Date(1762498653764)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Lib\\site-packages\\_soundfile.py",
+                            "LastWriteTime":  "\/Date(1762498675469)\/"
+                        }
+                    ],
+    "gitBranch":  "main",
+    "note":  "",
+    "nodeVersion":  "22.19.0",
+    "activeProcesses":  [
+                            {
+                                "port":  8091,
+                                "running":  true,
+                                "name":  "TaskQueueServer"
+                            },
+                            {
+                                "name":  "RPAWorker",
+                                "running":  false
+                            }
+                        ]
+}

@@ -1,0 +1,37 @@
+{
+    "timestamp":  "2025-11-08T12:12:17",
+    "autoFix":  false,
+    "startWatchdog":  false,
+    "steps":  [
+                  {
+                      "name":  "check_system_after_restart",
+                      "status":  "ok",
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "session_continuity_restore",
+                      "status":  "ok",
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "queue_health_check",
+                      "status":  "ok",
+                      "detail":  ""
+                  },
+                  {
+                      "name":  "quick_status",
+                      "status":  "error",
+                      "detail":  "The property \u0027Count\u0027 cannot be found on this object. Verify that the property exists."
+                  },
+                  {
+                      "name":  "ensure_single_worker",
+                      "status":  "ok",
+                      "detail":  "-EnforceSingle -MaxWorkers 1"
+                  },
+                  {
+                      "name":  "watchdog",
+                      "status":  "ok",
+                      "detail":  "already running"
+                  }
+              ]
+}

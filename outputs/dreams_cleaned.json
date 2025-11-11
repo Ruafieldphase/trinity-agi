@@ -1,0 +1,446 @@
+[
+  {
+    "dream_id": "dream_20251101_204129_0",
+    "narrative": "In this dream, health_check + system_startup, then health_check + health_check, then health_check + health_check",
+    "patterns": [
+      "health_check (delta=1116578104)",
+      "system_startup (delta=165220498)",
+      "health_check (delta=534452665)",
+      "health_check (delta=1424139182)",
+      "health_check (delta=1233949315)"
+    ],
+    "timestamp": "2025-11-01T20:41:29.6355901+09:00",
+    "recombinations": [
+      "health_check + system_startup",
+      "health_check + health_check",
+      "health_check + health_check"
+    ],
+    "avg_delta": 894867952.8,
+    "interesting": true,
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "dream_id": "dream_20251101_204130_1",
+    "narrative": "In this dream, health_check + health_check, then health_check + health_check, then health_check + health_check",
+    "patterns": [
+      "health_check (delta=1921179532)",
+      "health_check (delta=780771768)",
+      "health_check (delta=185402791)",
+      "health_check (delta=1361803388)",
+      "health_check (delta=143389516)"
+    ],
+    "timestamp": "2025-11-01T20:41:30.1831603+09:00",
+    "recombinations": [
+      "health_check + health_check",
+      "health_check + health_check",
+      "health_check + health_check"
+    ],
+    "avg_delta": 878509399,
+    "interesting": true,
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "dream_id": "dream_20251101_204130_2",
+    "narrative": "In this dream, system_startup + system_startup, then system_startup + system_startup, then system_startup + health_check",
+    "patterns": [
+      "health_check (delta=1100729297)",
+      "system_startup (delta=1951006058)",
+      "system_startup (delta=1828778364)",
+      "health_check (delta=1391271416)",
+      "system_startup (delta=396479351)"
+    ],
+    "timestamp": "2025-11-01T20:41:30.6946174+09:00",
+    "recombinations": [
+      "system_startup + system_startup",
+      "system_startup + system_startup",
+      "system_startup + health_check"
+    ],
+    "avg_delta": 1333652897.2,
+    "interesting": true,
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "dream_id": "dream_20251101_204131_3",
+    "narrative": "In this dream, system_startup + system_startup, then system_startup + system_startup, then system_startup + health_check",
+    "patterns": [
+      "health_check (delta=1281720989)",
+      "system_startup (delta=1533238069)",
+      "health_check (delta=1718643929)",
+      "system_startup (delta=1381869082)",
+      "health_check (delta=437759246)"
+    ],
+    "timestamp": "2025-11-01T20:41:31.2072279+09:00",
+    "recombinations": [
+      "system_startup + system_startup",
+      "system_startup + system_startup",
+      "system_startup + health_check"
+    ],
+    "avg_delta": 1270646263,
+    "interesting": true,
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "dream_id": "dream_20251101_204131_4",
+    "narrative": "In this dream, system_startup + health_check, then system_startup + system_startup, then health_check + system_startup",
+    "patterns": [
+      "health_check (delta=719682723)",
+      "system_startup (delta=1246131239)",
+      "health_check (delta=1802300860)",
+      "system_startup (delta=484357910)"
+    ],
+    "timestamp": "2025-11-01T20:41:31.7277403+09:00",
+    "recombinations": [
+      "system_startup + health_check",
+      "system_startup + system_startup",
+      "health_check + system_startup"
+    ],
+    "avg_delta": 863424583,
+    "interesting": true,
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 4
+  },
+  {
+    "patterns": [
+      "system_startup (delta=1932648816)",
+      "health_check (delta=429470929)",
+      "health_check (delta=1938530352)",
+      "health_check (delta=1077251371)",
+      "system_startup (delta=1874190910)"
+    ],
+    "dream_id": "dream_20251101_221302_0",
+    "timestamp": "2025-11-01T22:13:02.7075593+09:00",
+    "avg_delta": 1450418475.6,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "health_check + health_check",
+      "health_check + health_check",
+      "system_startup + health_check"
+    ],
+    "narrative": "In this dream, health_check + health_check, then health_check + health_check, then system_startup + health_check",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "system_startup (delta=148974654)",
+      "health_check (delta=355646626)",
+      "system_startup (delta=465787373)",
+      "system_startup (delta=797548588)",
+      "system_startup (delta=1262464208)"
+    ],
+    "dream_id": "dream_20251101_221303_1",
+    "timestamp": "2025-11-01T22:13:03.2347592+09:00",
+    "avg_delta": 606084289.8,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "system_startup + system_startup",
+      "health_check + system_startup",
+      "system_startup + health_check"
+    ],
+    "narrative": "In this dream, system_startup + system_startup, then health_check + system_startup, then system_startup + health_check",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "system_startup (delta=2141817199)",
+      "health_check (delta=2090031968)",
+      "system_startup (delta=299591773)",
+      "health_check (delta=2082747305)",
+      "health_check (delta=1580114655)"
+    ],
+    "dream_id": "dream_20251101_221303_2",
+    "timestamp": "2025-11-01T22:13:03.7508463+09:00",
+    "avg_delta": 1638860580,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "health_check + system_startup",
+      "health_check + health_check",
+      "system_startup + health_check"
+    ],
+    "narrative": "In this dream, health_check + system_startup, then health_check + health_check, then system_startup + health_check",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "system_startup (delta=2097840576)",
+      "system_startup (delta=1755067734)",
+      "system_startup (delta=1143169279)",
+      "system_startup (delta=345551138)"
+    ],
+    "dream_id": "dream_20251101_221304_3",
+    "timestamp": "2025-11-01T22:13:04.2632826+09:00",
+    "avg_delta": 1084236013,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "system_startup + system_startup",
+      "health_check + health_check",
+      "system_startup + system_startup"
+    ],
+    "narrative": "In this dream, system_startup + system_startup, then health_check + health_check, then system_startup + system_startup",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 4
+  },
+  {
+    "patterns": [
+      "health_check (delta=1662521592)",
+      "health_check (delta=1522986778)",
+      "health_check (delta=1612839809)",
+      "unknown_event (delta=694742906)",
+      "health_check (delta=1571696672)"
+    ],
+    "dream_id": "dream_20251101_221304_4",
+    "timestamp": "2025-11-01T22:13:04.7758118+09:00",
+    "avg_delta": 1412957551.4,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "health_check + unknown_event",
+      "unknown_event + health_check",
+      "health_check + health_check"
+    ],
+    "narrative": "In this dream, health_check + unknown_event, then unknown_event + health_check, then health_check + health_check",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "health_check (delta=1819615241)",
+      "health_check (delta=200983808)",
+      "system_startup (delta=754250411)",
+      "system_startup (delta=1093438106)",
+      "health_check (delta=2024114045)"
+    ],
+    "dream_id": "dream_20251101_221305_5",
+    "timestamp": "2025-11-01T22:13:05.2837352+09:00",
+    "avg_delta": 1178480322.2,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "health_check + health_check",
+      "health_check + health_check",
+      "health_check + system_startup"
+    ],
+    "narrative": "In this dream, health_check + health_check, then health_check + health_check, then health_check + system_startup",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "system_startup (delta=131464629)",
+      "health_check (delta=673120356)",
+      "system_startup (delta=720674510)",
+      "system_startup (delta=110254958)",
+      "system_startup (delta=1716832873)"
+    ],
+    "dream_id": "dream_20251101_221305_6",
+    "timestamp": "2025-11-01T22:13:05.7929349+09:00",
+    "avg_delta": 670469465.2,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "system_startup + system_startup",
+      "health_check + system_startup",
+      "system_startup + health_check"
+    ],
+    "narrative": "In this dream, system_startup + system_startup, then health_check + system_startup, then system_startup + health_check",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "system_startup (delta=848815243)",
+      "health_check (delta=1852270997)",
+      "health_check (delta=2141836510)",
+      "system_startup (delta=1216583985)",
+      "system_startup (delta=1980369080)"
+    ],
+    "dream_id": "dream_20251101_221306_7",
+    "timestamp": "2025-11-01T22:13:06.3055798+09:00",
+    "avg_delta": 1607975163,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "health_check + system_startup",
+      "health_check + health_check",
+      "system_startup + health_check"
+    ],
+    "narrative": "In this dream, health_check + system_startup, then health_check + health_check, then system_startup + health_check",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "system_startup (delta=281387335)",
+      "system_startup (delta=613807539)",
+      "health_check (delta=862863093)",
+      "health_check (delta=1258212196)"
+    ],
+    "dream_id": "dream_20251101_221306_8",
+    "timestamp": "2025-11-01T22:13:06.8158073+09:00",
+    "avg_delta": 614030125.8,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "health_check + system_startup",
+      "health_check + health_check",
+      "health_check + system_startup"
+    ],
+    "narrative": "In this dream, health_check + system_startup, then health_check + health_check, then health_check + system_startup",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 4
+  },
+  {
+    "patterns": [
+      "health_check (delta=545447496)",
+      "system_startup (delta=374584855)",
+      "system_startup (delta=1104713767)",
+      "health_check (delta=1262395628)"
+    ],
+    "dream_id": "dream_20251101_221307_9",
+    "timestamp": "2025-11-01T22:13:07.3385857+09:00",
+    "avg_delta": 670244948.4,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "system_startup + system_startup",
+      "health_check + system_startup",
+      "system_startup + health_check"
+    ],
+    "narrative": "In this dream, system_startup + system_startup, then health_check + system_startup, then system_startup + health_check",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 4
+  },
+  {
+    "patterns": [
+      "unknown_event (delta=2067508169)",
+      "unknown_event (delta=1167469776)",
+      "unknown_event (delta=1980349598)",
+      "unknown_event (delta=1886249618)",
+      "unknown_event (delta=1512815475)"
+    ],
+    "dream_id": "dream_20251105_223025_0",
+    "timestamp": "2025-11-05T22:30:25.1706857+09:00",
+    "avg_delta": 1722878527.2,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "unknown_event + unknown_event",
+      "unknown_event + unknown_event",
+      "unknown_event + unknown_event"
+    ],
+    "narrative": "In this dream, unknown_event + unknown_event, then unknown_event + unknown_event, then unknown_event + unknown_event",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "unknown_event (delta=1445707380)",
+      "unknown_event (delta=226513623)",
+      "unknown_event (delta=1406514479)",
+      "unknown_event (delta=284920914)",
+      "unknown_event (delta=288614970)"
+    ],
+    "dream_id": "dream_20251105_223025_1",
+    "timestamp": "2025-11-05T22:30:25.7244414+09:00",
+    "avg_delta": 730454273.2,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "unknown_event + unknown_event",
+      "unknown_event + unknown_event",
+      "unknown_event + unknown_event"
+    ],
+    "narrative": "In this dream, unknown_event + unknown_event, then unknown_event + unknown_event, then unknown_event + unknown_event",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  },
+  {
+    "patterns": [
+      "unknown_event (delta=366933672)",
+      "unknown_event (delta=1899807278)",
+      "unknown_event (delta=261639958)",
+      "system_startup (delta=1184989899)",
+      "unknown_event (delta=518502494)"
+    ],
+    "dream_id": "dream_20251105_223026_2",
+    "timestamp": "2025-11-05T22:30:26.2531956+09:00",
+    "avg_delta": 846374660.2,
+    "interesting": true,
+    "params": {
+      "recombination": 1,
+      "temperature": 1
+    },
+    "recombinations": [
+      "unknown_event + unknown_event",
+      "unknown_event + unknown_event",
+      "system_startup + unknown_event"
+    ],
+    "narrative": "In this dream, unknown_event + unknown_event, then unknown_event + unknown_event, then system_startup + unknown_event",
+    "glymphatic_cleaned": true,
+    "original_pattern_count": 5,
+    "cleaned_pattern_count": 5
+  }
+]

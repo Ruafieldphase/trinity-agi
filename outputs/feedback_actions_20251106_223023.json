@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-11-06T22:30:23.849199",
+  "dry_run": false,
+  "actions_executed": [
+    {
+      "action": {
+        "type": "self_care",
+        "priority": "high",
+        "action": "force_break",
+        "description": "강제 휴식 필요 (Coherence < 0.5)",
+        "duration_minutes": 15,
+        "reason": "현재 Coherence: 0.00"
+      },
+      "status": "success",
+      "message": "실행 완료"
+    }
+  ],
+  "actions_failed": []
+}

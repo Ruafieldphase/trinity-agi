@@ -1,0 +1,35 @@
+{
+  "generated_at": "2025-11-05T11:16:31.060876Z",
+  "rhythm_state": "Info Starvation",
+  "description": "정보 밀도 낮음, 데이터 수집 필요",
+  "interval_hours": 2,
+  "max_executions_per_day": 12,
+  "state_details": {
+    "resonance_states": [
+      "info_starvation",
+      "low_resonance",
+      "high_entropy"
+    ],
+    "max_priority": 13,
+    "info_density": 0.5,
+    "resonance": 0.5,
+    "entropy": 0.5,
+    "horizon_crossings": 0,
+    "goals_count": 2
+  },
+  "schedule": [
+    "2025-11-05T20:16:31.057542",
+    "2025-11-05T22:16:31.057542",
+    "2025-11-06T00:16:31.057542",
+    "2025-11-06T02:16:31.057542",
+    "2025-11-06T04:16:31.057542",
+    "2025-11-06T06:16:31.057542",
+    "2025-11-06T08:16:31.057542",
+    "2025-11-06T10:16:31.057542",
+    "2025-11-06T12:16:31.057542",
+    "2025-11-06T14:16:31.057542",
+    "2025-11-06T16:16:31.057542",
+    "2025-11-06T18:16:31.057542"
+  ],
+  "next_execution": "2025-11-05T20:16:31.057542"
+}

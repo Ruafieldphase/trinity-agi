@@ -1,0 +1,114 @@
+{
+    "system_type": "adaptive",
+    "description": "말초신경계 - 리듬 기반 적응 시스템",
+    "rhythm_based": true,
+    "flow_tracking": true,
+    "components": {
+        "observer_telemetry": {
+            "enabled": true,
+            "role": "sensory_nerve",
+            "description": "감각신경 - 환경 인식 (데스크톱 상태)",
+            "critical": false,
+            "rhythm_dependent": true,
+            "script": "scripts/observe_desktop_telemetry.ps1",
+            "args": [
+                "-IntervalSeconds",
+                "5"
+            ],
+            "working_dir": ".",
+            "flow_states": {
+                "deep_focus": {
+                    "interval": 10,
+                    "priority": "low"
+                },
+                "active_work": {
+                    "interval": 5,
+                    "priority": "normal"
+                },
+                "idle": {
+                    "interval": 30,
+                    "priority": "low"
+                },
+                "away": {
+                    "enabled": false
+                }
+            }
+        },
+        "rpa_worker": {
+            "enabled": true,
+            "role": "motor_nerve",
+            "description": "운동신경 - 행동 실행 (RPA 작업)",
+            "critical": false,
+            "rhythm_dependent": true,
+            "script": "fdo_agi_repo/integrations/rpa_worker.py",
+            "args": [
+                "--server",
+                "http://127.0.0.1:8091",
+                "--interval",
+                "0.5",
+                "--log-level",
+                "INFO"
+            ],
+            "working_dir": "fdo_agi_repo",
+            "flow_states": {
+                "deep_focus": {
+                    "enabled": false,
+                    "reason": "집중 방해 방지"
+                },
+                "active_work": {
+                    "enabled": true,
+                    "interval": 0.5
+                },
+                "idle": {
+                    "enabled": true,
+                    "interval": 1.0
+                },
+                "away": {
+                    "enabled": false
+                }
+            }
+        },
+        "bqi_learner": {
+            "enabled": true,
+            "role": "learning",
+            "description": "학습 - 패턴 인식 및 적응",
+            "critical": false,
+            "rhythm_dependent": true,
+            "schedule": "daily_03:10",
+            "script": "fdo_agi_repo/scripts/run_bqi_learner.ps1",
+            "args": [
+                "-Phase",
+                "6",
+                "-VerboseLog"
+            ],
+            "working_dir": "fdo_agi_repo",
+            "flow_states": {
+                "deep_focus": {
+                    "enabled": false
+                },
+                "active_work": {
+                    "enabled": false
+                },
+                "idle": {
+                    "enabled": false
+                },
+                "away": {
+                    "enabled": true,
+                    "reason": "사용자 부재시 학습"
+                }
+            }
+        }
+    },
+    "rhythm_config": {
+        "flow_detection_interval": 60,
+        "flow_state_hysteresis": 120,
+        "auto_adjust": true,
+        "respect_user_focus": true
+    },
+    "failure_policy": {
+        "adaptive_failure_alert": false,
+        "auto_restart": true,
+        "max_consecutive_failures": 5,
+        "log_level": "warning"
+    }
+}

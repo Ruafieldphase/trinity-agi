@@ -1,0 +1,115 @@
+﻿{
+    "summary":  {
+                    "total_checks":  20,
+                    "success":  true,
+                    "visible_window_events":  0,
+                    "hidden_ok_events":  20
+                },
+    "events":  [
+                   {
+                       "timestamp":  "2025-11-06 18:23:51",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:24:21",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:24:52",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:25:22",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:25:53",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:26:23",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:26:54",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:27:24",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:27:55",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:28:25",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:28:56",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:29:26",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:29:56",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:30:27",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:30:57",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:31:28",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:31:58",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:32:29",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:32:59",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   },
+                   {
+                       "timestamp":  "2025-11-06 18:33:30",
+                       "hidden_process_count":  0,
+                       "type":  "all_hidden"
+                   }
+               ],
+    "monitoring_period":  {
+                              "duration_minutes":  10,
+                              "end":  "2025-11-06 18:34:00",
+                              "start":  "2025-11-06 18:23:51"
+                          }
+}

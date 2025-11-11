@@ -1,0 +1,255 @@
+{
+  "timestamp": "2025-11-03T09:48:44.007121Z",
+  "server": "http://127.0.0.1:8091",
+  "health": {
+    "status": "ok",
+    "service": "task-queue-server",
+    "queue_size": 0,
+    "queue_urgent": 0,
+    "queue_normal": 0,
+    "queue_low": 0,
+    "results_count": 26,
+    "timestamp": "2025-11-03T18:48:40.200968"
+  },
+  "tasks": {
+    "queue_urgent": [],
+    "queue_normal": [],
+    "queue_low": [],
+    "total_queue_size": 0
+  },
+  "inflight": {
+    "inflight": [],
+    "count": 0
+  },
+  "results": {
+    "results": [
+      {
+        "task_id": "244be124-139c-4064-8e51-9e50ec548f69",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: health_check",
+        "submitted_at": "2025-11-03T12:33:46.900488"
+      },
+      {
+        "task_id": "3b1cc262-646d-4310-8d24-9fb52085c412",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: health_check",
+        "submitted_at": "2025-11-03T12:44:12.765395"
+      },
+      {
+        "task_id": "6775130b-9ff2-4d70-bdfd-6686d29405a2",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: health_check",
+        "submitted_at": "2025-11-03T12:44:23.823278"
+      },
+      {
+        "task_id": "2921a321-a8ba-4a36-8990-3146b353a0f4",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: health_check",
+        "submitted_at": "2025-11-03T12:44:34.882541"
+      },
+      {
+        "task_id": "a22e4f34-f220-4f57-9ed9-61a6ba69e4bc",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:36:02.146912"
+      },
+      {
+        "task_id": "b13fe1c5-0c08-4859-addc-e60ae460dd57",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:36:33.811940"
+      },
+      {
+        "task_id": "52cff639-c043-4bcb-b699-1f555dee682d",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:37:05.499975"
+      },
+      {
+        "task_id": "054a1840-5b25-4a36-9e30-b4a2f541162e",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:38:41.001888"
+      },
+      {
+        "task_id": "fcb34006-4775-4d58-ab24-0b5c550f0ee6",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:39:12.670593"
+      },
+      {
+        "task_id": "8abfc24c-4357-48f4-b3d1-02dd93b348c7",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:39:37.301483"
+      },
+      {
+        "task_id": "99ab6c1d-98e5-4e33-8ac5-0ff6379c7f15",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:39:44.338723"
+      },
+      {
+        "task_id": "46ce3149-cdd3-4631-8a31-e82799e462d5",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:40:09.472222"
+      },
+      {
+        "task_id": "8194585e-9452-42e7-ac23-9345d379aa00",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:40:16.008173"
+      },
+      {
+        "task_id": "4cbbc91e-e791-428a-875a-72248c128d37",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:41:19.333346"
+      },
+      {
+        "task_id": "272d72fb-bf9e-4d6a-b966-e4217c20ae73",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:41:51.050685"
+      },
+      {
+        "task_id": "f8539c9c-1d25-4fe2-a357-c015e62d125c",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:42:22.824616"
+      },
+      {
+        "task_id": "4c94bb9b-6043-48cb-8fbf-5ff2a3d7bc30",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:42:54.522935"
+      },
+      {
+        "task_id": "8308c255-147e-47df-a798-9e1151bbbcb5",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:43:26.190691"
+      },
+      {
+        "task_id": "3e9cd9ac-0a31-43c4-95b5-e11c5b2bc2df",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: benchmark_test",
+        "submitted_at": "2025-11-03T15:46:48.070214"
+      },
+      {
+        "task_id": "0f710183-e396-4ef4-a9e2-7b3514e5fd67",
+        "success": true,
+        "data": {
+          "slept": 0.5,
+          "execution_time": 0.5
+        },
+        "error": null,
+        "submitted_at": "2025-11-03T17:38:09.744521"
+      },
+      {
+        "task_id": "cfbd95c3-661f-49bf-b04f-3a9d59744dfb",
+        "success": true,
+        "data": {
+          "path": "outputs\\screenshot_20251103_173810_250972.png",
+          "width": 3840,
+          "height": 2160,
+          "execution_time": 0.177
+        },
+        "error": null,
+        "submitted_at": "2025-11-03T17:38:10.429806"
+      },
+      {
+        "task_id": "bd3b0409-c9ce-436f-9f1b-5625beca316e",
+        "success": false,
+        "data": {},
+        "error": "Unsupported task type: health_check",
+        "submitted_at": "2025-11-03T17:59:54.625710"
+      },
+      {
+        "task_id": "dc703f96-1516-4685-b1a4-3c94b418bde2",
+        "success": true,
+        "data": {
+          "status": "healthy",
+          "worker": "rpa-worker",
+          "timestamp": "2025-11-03T09:01:07.865276Z",
+          "capabilities": [
+            "rpa",
+            "screenshot",
+            "ocr",
+            "health_check",
+            "benchmark_test"
+          ]
+        },
+        "error": null,
+        "submitted_at": "2025-11-03T18:01:07.867357"
+      },
+      {
+        "task_id": "0557ac77-2f30-4936-a836-ac7f51c47b06",
+        "success": true,
+        "data": {
+          "worker": "rpa-worker",
+          "timestamp": "2025-11-03T09:01:23.623109Z",
+          "benchmark_time": 0.179,
+          "screenshot_path": "outputs\\screenshot_20251103_180123_444226.png",
+          "status": "completed"
+        },
+        "error": null,
+        "submitted_at": "2025-11-03T18:01:23.625076"
+      },
+      {
+        "task_id": "4738df87-2cc9-495a-8ce5-aedc8eac6b64",
+        "success": true,
+        "data": {
+          "slept": 0.5,
+          "execution_time": 0.5
+        },
+        "error": null,
+        "submitted_at": "2025-11-03T18:31:20.321010"
+      },
+      {
+        "task_id": "d6337b7d-4820-4c11-9e86-dc645c6104b0",
+        "success": true,
+        "data": {
+          "path": "outputs\\screenshot_20251103_183120_825462.png",
+          "width": 3840,
+          "height": 2160,
+          "execution_time": 0.184
+        },
+        "error": null,
+        "submitted_at": "2025-11-03T18:31:21.011929"
+      }
+    ],
+    "count": 26
+  },
+  "processes": {
+    "worker": "",
+    "server": ""
+  },
+  "net_8091": "LocalAddress LocalPort       State OwningProcess\r\n------------ ---------       ----- -------------\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091 Established         40720\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091 Established         40720\r\n127.0.0.1         8091 Established         40720\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091 Established         40720\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091    FinWait2         40720\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091    FinWait2         40720\r\n127.0.0.1         8091 Established         40720\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091    TimeWait             0\r\n127.0.0.1         8091      Listen         40720",
+  "issues": [
+    "worker_absent"
+  ],
+  "recommendations": [
+    "워커가 보이지 않습니다. 백그라운드 워커를 시작하세요."
+  ]
+}

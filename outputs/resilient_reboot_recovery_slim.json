@@ -1,0 +1,27 @@
+{
+    "schemaVersion":  1,
+    "timestamp":  "2025-11-08T12:11:16.1631936+09:00",
+    "runMode":  "execute",
+    "success":  true,
+    "errorCount":  0,
+    "durationMs":  74338,
+    "finalizedEarly":  false,
+    "finalizeReason":  null,
+    "memoryGate":  {
+                       "enabled":  false
+                   },
+    "healthGate":  {
+                       "enabled":  false,
+                       "exitCode":  null
+                   },
+    "cooldown":  {
+                     "markerUpdated":  true
+                 },
+    "stepStats":  {
+                      "total":  5,
+                      "ok":  5,
+                      "dryrun":  0,
+                      "skipped":  0,
+                      "error":  0
+                  }
+}

@@ -1,0 +1,36 @@
+{
+  "generated_at": "2025-11-05T11:09:01.599504Z",
+  "window_hours": 24,
+  "input_sources": {
+    "resonance_metrics": "outputs/resonance_simulation_latest.json",
+    "trinity_report": "outputs/lumen_enhanced_synthesis_latest.md"
+  },
+  "resonance_states": [
+    "stable_dynamics"
+  ],
+  "trinity_summary": {
+    "lua_issues": [],
+    "elo_status": "unknown",
+    "lumen_recommendations": []
+  },
+  "goals": [
+    {
+      "title": "Incremental Improvements",
+      "description": "System is stable, focus on gradual enhancements",
+      "base_priority": 5,
+      "source": "resonance",
+      "id": 1,
+      "urgency_boost": 0,
+      "impact_boost": 2,
+      "final_priority": 7,
+      "estimated_effort": "2 days",
+      "dependencies": []
+    }
+  ],
+  "summary": {
+    "total_goals": 1,
+    "high_priority": 0,
+    "medium_priority": 1,
+    "low_priority": 0
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "timestamp": "2025-11-06T11:03:10.712323+00:00",
+  "server_url": "http://127.0.0.1:8091",
+  "health_ok": true,
+  "queue_size": 0,
+  "results_count": 443,
+  "oldest_task_age_sec": null,
+  "anomalies": [],
+  "recommendations": [],
+  "self_test": false,
+  "self_test_task_id": null
+}

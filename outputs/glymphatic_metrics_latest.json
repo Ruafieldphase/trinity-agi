@@ -1,0 +1,16 @@
+{
+  "hours": 24,
+  "events": 1,
+  "decisions": 1,
+  "cleanup_start": 0,
+  "cleanup_end": 0,
+  "cleanup_success": 0,
+  "avg_cleanup_duration_sec": null,
+  "avg_workload_percent": 38.46,
+  "avg_fatigue_level": 0.0,
+  "avg_adjusted_fatigue": 0.0,
+  "decisions_by_action": {
+    "schedule_default": 1
+  },
+  "last_activity": "2025-11-07T21:55:10.539335"
+}

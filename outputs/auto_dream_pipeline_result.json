@@ -1,0 +1,21 @@
+{
+  "start_time": "2025-11-05T23:28:40.931259",
+  "resonance_events_processed": 0,
+  "memories_consolidated": 0,
+  "dreams_generated": 0,
+  "glymphatic_cycles": 0,
+  "total_cleanup_mb": 0,
+  "errors": [
+    {
+      "step": "glymphatic",
+      "error": "'CopilotHippocampus' object has no attribute 'workspace_root'"
+    },
+    {
+      "step": "longterm",
+      "error": "'CopilotHippocampus' object has no attribute 'working_memory'"
+    }
+  ],
+  "end_time": "2025-11-05T23:28:40.932332",
+  "success": true,
+  "duration_seconds": 0.001073
+}

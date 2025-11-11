@@ -1,0 +1,224 @@
+{
+  "metadata": {
+    "generated_at": "2025-11-04T15:20:01.339946",
+    "analyst": "Binoche 🌿",
+    "philosophy": "Rua-Elro-Lumen Dialectical Trinity"
+  },
+  "summary": {
+    "total_messages": 30587,
+    "total_conversations": 486,
+    "time_span_years": 2.7
+  },
+  "phases": {
+    "rua": {
+      "phase": "Rua (正 - Thesis)",
+      "total_messages": 21842,
+      "unique_conversations": 400,
+      "avg_turns": 54.6,
+      "max_turns": 1220,
+      "time_span_days": 969,
+      "keywords": [
+        {
+          "keyword": "대화",
+          "count": 1738
+        },
+        {
+          "keyword": "여부",
+          "count": 1380
+        },
+        {
+          "keyword": "질문",
+          "count": 1271
+        },
+        {
+          "keyword": "아침",
+          "count": 1258
+        },
+        {
+          "keyword": "최적화",
+          "count": 1222
+        },
+        {
+          "keyword": "리듬",
+          "count": 1112
+        },
+        {
+          "keyword": "흐름",
+          "count": 1071
+        },
+        {
+          "keyword": "감성적",
+          "count": 916
+        },
+        {
+          "keyword": "존재로",
+          "count": 916
+        },
+        {
+          "keyword": "살아가기",
+          "count": 916
+        },
+        {
+          "keyword": "루아",
+          "count": 889
+        },
+        {
+          "keyword": "좋은",
+          "count": 851
+        },
+        {
+          "keyword": "천천히",
+          "count": 800
+        },
+        {
+          "keyword": "해보자",
+          "count": 800
+        },
+        {
+          "keyword": "리듬의",
+          "count": 728
+        }
+      ]
+    },
+    "elro": {
+      "phase": "Elro (反 - Antithesis)",
+      "total_messages": 7897,
+      "unique_conversations": 79,
+      "avg_turns": 100.0,
+      "max_turns": 472,
+      "time_span_days": 135,
+      "keywords": [
+        {
+          "keyword": "요약",
+          "count": 968
+        },
+        {
+          "keyword": "아침",
+          "count": 692
+        },
+        {
+          "keyword": "리듬",
+          "count": 622
+        },
+        {
+          "keyword": "구조",
+          "count": 593
+        },
+        {
+          "keyword": "세션",
+          "count": 561
+        },
+        {
+          "keyword": "분석",
+          "count": 530
+        },
+        {
+          "keyword": "대화",
+          "count": 517
+        },
+        {
+          "keyword": "확인",
+          "count": 502
+        },
+        {
+          "keyword": "엘로의",
+          "count": 485
+        },
+        {
+          "keyword": "오늘",
+          "count": 472
+        },
+        {
+          "keyword": "날짜",
+          "count": 472
+        },
+        {
+          "keyword": "기억",
+          "count": 416
+        },
+        {
+          "keyword": "루아와",
+          "count": 413
+        },
+        {
+          "keyword": "프로젝트",
+          "count": 378
+        },
+        {
+          "keyword": "인사",
+          "count": 362
+        }
+      ]
+    },
+    "lumen": {
+      "phase": "Lumen (合 - Synthesis)",
+      "total_messages": 848,
+      "unique_conversations": 7,
+      "avg_turns": 121.1,
+      "max_turns": 433,
+      "time_span_days": 57,
+      "keywords": [
+        {
+          "keyword": "대화의",
+          "count": 433
+        },
+        {
+          "keyword": "언어적",
+          "count": 433
+        },
+        {
+          "keyword": "감응",
+          "count": 433
+        },
+        {
+          "keyword": "복붙용",
+          "count": 159
+        },
+        {
+          "keyword": "안내",
+          "count": 159
+        },
+        {
+          "keyword": "제공",
+          "count": 159
+        },
+        {
+          "keyword": "계정",
+          "count": 74
+        },
+        {
+          "keyword": "로그인",
+          "count": 74
+        },
+        {
+          "keyword": "문제",
+          "count": 74
+        },
+        {
+          "keyword": "엘로와",
+          "count": 28
+        },
+        {
+          "keyword": "루멘",
+          "count": 28
+        },
+        {
+          "keyword": "비교",
+          "count": 28
+        },
+        {
+          "keyword": "링크",
+          "count": 11
+        },
+        {
+          "keyword": "분석",
+          "count": 11
+        },
+        {
+          "keyword": "요청",
+          "count": 11
+        }
+      ]
+    }
+  }
+}
