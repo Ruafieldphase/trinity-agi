@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-11T10:35:30.004009+00:00",
+  "generated_at": "2025-11-11T12:02:45.005152+00:00",
   "analysis_period_hours": 24,
   "current_state": {
     "state": "unknown",
@@ -9,28 +9,14 @@
     }
   },
   "activity_summary": {
-    "total_records": 25539,
+    "total_records": 25541,
     "activity_ratio": 1.48,
     "flow_sessions": 3,
-    "total_flow_minutes": 815.0960333666649,
-    "interruptions": 5
+    "total_flow_minutes": 814.3444864166662,
+    "interruptions": 3
   },
   "flow_quality": "fair",
   "interruptions": [
-    {
-      "type": "flow_interruption",
-      "from_focus": "Code:music_daemon.py - agi - Visual Studio Code - GitHub Copilot에서 보류 중인 변경 내용 • 이 파일의 문제 1개",
-      "to_focus": "Code:goal_tracker.json - agi - Visual Studio Code",
-      "focus_duration_minutes": 15.40772395,
-      "timestamp": "2025-11-10T10:51:00.693819+00:00"
-    },
-    {
-      "type": "flow_interruption",
-      "from_focus": "Code:event_bus.py - agi - Visual Studio Code - GitHub Copilot에서 보류 중인 변경 내용",
-      "to_focus": "python:관리자: C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
-      "focus_duration_minutes": 17.672518516666663,
-      "timestamp": "2025-11-10T11:53:53.860465+00:00"
-    },
     {
       "type": "flow_interruption",
       "from_focus": "comet:중고나라 - 안심되는 중고거래 - Comet",
