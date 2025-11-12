@@ -1,5 +1,4 @@
 ﻿Timestamp,Level,Type,Channel,Message
-2025-11-11T09:54:09,WARN,Spike,Gateway,"SPIKE: Gateway latency 301ms (avg 230 +/- 7)"
 2025-11-11T10:24:11,ALERT,Alert,,"ALERT: Lumen Gateway latency 3008ms"
 2025-11-11T10:24:11,WARN,Spike,Gateway,"SPIKE: Gateway latency 3008ms (avg 241 +/- 25)"
 2025-11-11T10:29:09,WARN,Spike,Cloud AI,"SPIKE: Cloud AI latency 297ms (avg 269 +/- 11)"

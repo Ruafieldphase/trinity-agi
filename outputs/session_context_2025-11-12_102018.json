@@ -1,0 +1,101 @@
+﻿{
+    "timestamp":  "2025-11-12_102018",
+    "gitCommit":  "6e1fb5122ded59766df105c1c1362dfb37d49394",
+    "pythonVersion":  "3.13.7",
+    "recentFiles":  [
+                        {
+                            "FullName":  "C:\\workspace\\agi\\.copilot_safety.json",
+                            "LastWriteTime":  "\/Date(1762863012384)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\.vscode\\tasks.json",
+                            "LastWriteTime":  "\/Date(1762859678484)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\ai_binoche_conversation_origin\\rua\\ChatGPT-가을의 따뜻함과차가움.md",
+                            "LastWriteTime":  "\/Date(1762856846201)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\outputs\\health_gate_state.json",
+                            "LastWriteTime":  "\/Date(1762910405857)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\utils\\__init__.py",
+                            "LastWriteTime":  "\/Date(1762856510281)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\.copilot_context_summary.md",
+                            "LastWriteTime":  "\/Date(1762906062843)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\async_thesis_health_latest.json",
+                            "LastWriteTime":  "\/Date(1762908888122)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\async_thesis_health_latest.md",
+                            "LastWriteTime":  "\/Date(1762908888119)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\autonomous_goals_latest.json",
+                            "LastWriteTime":  "\/Date(1762907035340)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\autonomous_goals_latest.md",
+                            "LastWriteTime":  "\/Date(1762907035341)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\autopoietic_loop_report_24h.json",
+                            "LastWriteTime":  "\/Date(1762858617804)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\autopoietic_loop_report_24h.md",
+                            "LastWriteTime":  "\/Date(1762858617804)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\autopoietic_loop_report_latest.json",
+                            "LastWriteTime":  "\/Date(1762858617804)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\autopoietic_loop_report_latest.md",
+                            "LastWriteTime":  "\/Date(1762858617804)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\autopoietic_trinity_unified_latest.md",
+                            "LastWriteTime":  "\/Date(1762858621340)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\auto_resume_state.json",
+                            "LastWriteTime":  "\/Date(1762862556221)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\cache_analysis_latest.json",
+                            "LastWriteTime":  "\/Date(1762855844613)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\cache_analysis_latest.md",
+                            "LastWriteTime":  "\/Date(1762855844613)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\cache_timeline_latest.json",
+                            "LastWriteTime":  "\/Date(1762855844267)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\outputs\\cache_timeline_latest.md",
+                            "LastWriteTime":  "\/Date(1762855844268)\/"
+                        }
+                    ],
+    "gitBranch":  "main",
+    "note":  "VSCode Task",
+    "nodeVersion":  "22.19.0",
+    "activeProcesses":  [
+                            {
+                                "port":  8091,
+                                "running":  true,
+                                "name":  "TaskQueueServer"
+                            },
+                            {
+                                "name":  "RPAWorker",
+                                "running":  false
+                            }
+                        ]
+}
