@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-11-12T18:53:52.903207",
+  "hours": 24,
+  "feedback_score": 40.0,
+  "goal_analysis": {
+    "total": 13,
+    "completed": 13,
+    "in_progress": 0,
+    "not_started": 0,
+    "success_rate": 100.0
+  },
+  "resonance_analysis": {
+    "total_events": 0,
+    "policy_distribution": {},
+    "intervention_count": 0,
+    "avg_score": 0.0
+  },
+  "self_care_summary": {
+    "count": 0,
+    "hours": 24,
+    "quantum_flow": {
+      "phase_coherence": 1.0,
+      "state": "superconducting",
+      "conductivity": 1.0,
+      "measured_at": "2025-11-12T18:53:52.616061"
+    },
+    "generated_at": "2025-11-12T18:53:52.616069"
+  },
+  "recommendations": [
+    "🛟 Self-Care 개선 필요: 휴식, 수면, 운동 점검",
+    "🔧 시스템 개선이 필요합니다"
+  ]
+}

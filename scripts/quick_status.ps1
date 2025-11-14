@@ -1,3 +1,16 @@
+# Quick Status: Unified AGI + Lumen monitoring dashboard
+#
+# QUICK USAGE:
+#   quick_status.ps1                          # console output
+#   quick_status.ps1 -OutJson status.json     # save JSON
+#   quick_status.ps1 -AlertOnDegraded         # alert on issues
+#
+# SECTIONS INDEX:
+#   - Parameters (line 1-30)
+#   - Helper Functions (line 60-300)
+#   - Endpoint Testing (line 300-500)
+#   - Main Logic & Output (line 500+)
+
 param(
     [switch]$AlertOnDegraded,
     [string]$OutJson,

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-12T09:53:54.049107",
+  "timestamp": "2025-11-14T11:54:26.136274",
   "modules": {
     "hippocampus": {
       "module_exists": true,
@@ -21,9 +21,9 @@
       "module_exists": true,
       "connected_to_goal_generator": true,
       "connected_to_goal_executor": true,
-      "reward_signals_recorded": 4736,
+      "reward_signals_recorded": 4742,
       "policy_cache_exists": true,
-      "active_learning": false
+      "active_learning": true
     },
     "meta_supervisor": {
       "module_exists": true,
@@ -47,12 +47,6 @@
       "module": "Quantum Flow",
       "issue": "Goal 시스템과 연결 부족",
       "action": "Goal 생성/실행 시 flow state 반영"
-    },
-    {
-      "priority": "LOW",
-      "module": "Reward System",
-      "issue": "최근 보상 신호 없음",
-      "action": "Goal 실행 결과를 보상 시스템에 기록"
     },
     {
       "priority": "MEDIUM",

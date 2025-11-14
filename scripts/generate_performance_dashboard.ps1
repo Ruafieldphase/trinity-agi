@@ -1,6 +1,17 @@
 # Performance Metrics Dashboard Generator
 # Tracks execution time, success rate, and resource usage
 #
+# QUICK USAGE:
+#   generate_performance_dashboard.ps1 -Days 7 -OpenDashboard
+#   generate_performance_dashboard.ps1 -WriteLatest -ExportJson -ExportCsv
+#
+# SECTIONS INDEX:
+#   - Parameters & Config (line 1-100)
+#   - Data Collection (line 100-300)
+#   - Analysis & Scoring (line 300-500)
+#   - Report Generation (line 500-700)
+#   - Export Formats (line 700+)
+#
 # Parameters:
 #   -Days: Number of days to analyze (default: 7)
 #   -OpenDashboard: Open generated MD file in VS Code

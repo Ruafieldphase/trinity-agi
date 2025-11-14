@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-11-13T17:22:59.712250",
+  "checksum": "f75e193f8dcec067",
+  "folded": {
+    "daemons": [
+      "music_daemon",
+      "flow_observer",
+      "watchdog"
+    ],
+    "health_score": 36,
+    "critical_paths": [
+      "scripts/ensure_music_flow_daemons.ps1",
+      "scripts/task_watchdog.py"
+    ]
+  },
+  "compressed_state": "{\"health_score\":36,\"daemons\":[{\"name\":\"music_daemon\",\"running\":false},{\"name\":\"flow_observer\",\"running\":true},{\"name\":\"watchdog\",\"running\":true}],\"max_sync_gap_minutes\":8053.9,\"critical_paths\":[\"scripts/ensure_music_flow_daemons.ps1\",\"scripts/task_watchdog.py\"]}"
+}

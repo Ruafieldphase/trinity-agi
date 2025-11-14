@@ -107,6 +107,20 @@ class GrooveEngine:
         self.profile = profile or GrooveProfile()
         logger.info(f"🎷 Groove Engine initialized (profile: {self.profile.name})")
     
+    @classmethod
+    def load_profile(cls, path: str) -> 'GrooveEngine':
+        """
+        Load groove profile from file and create engine
+        
+        Args:
+            path: Path to groove profile JSON file
+            
+        Returns:
+            GrooveEngine with loaded profile (or default if load fails)
+        """
+        profile = GrooveProfile.load(Path(path))
+        return cls(profile=profile)
+    
     def compute_beat_offset(self, beat_index: int, bpm: float) -> float:
         """
         Compute timing offset for a beat (in seconds)
@@ -134,6 +148,19 @@ class GrooveEngine:
         if self.profile.microtiming_variance > 0:
             max_variance_ms = 5.0 * self.profile.microtiming_variance
             variance_offset = np.random.uniform(-max_variance_ms, max_variance_ms) / 1000.0
+    
+    def compute_microtiming_offset(self, beat_index: int, bpm: float) -> float:
+        """
+        Alias for compute_beat_offset for backward compatibility
+        
+        Args:
+            beat_index: Beat number
+            bpm: Tempo in BPM
+            
+        Returns:
+            Timing offset in seconds
+        """
+        return self.compute_beat_offset(beat_index, bpm)
         
         total_offset = base_offset_sec + swing_offset + variance_offset
         

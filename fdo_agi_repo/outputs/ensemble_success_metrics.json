@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-11-09T10:20:02.021266",
+  "timestamp": "2025-11-14T10:20:01.964210",
   "time_window_hours": 24,
-  "predictions_count": 4,
+  "predictions_count": 2,
   "success_rate": {
     "overall": {
-      "total": 4,
-      "correct": 4,
+      "total": 2,
+      "correct": 2,
       "accuracy": 1.0
     },
     "by_confidence": {
@@ -15,8 +15,8 @@
         "accuracy": 0.0
       },
       "medium (0.5-0.8)": {
-        "total": 4,
-        "correct": 4,
+        "total": 2,
+        "correct": 2,
         "accuracy": 1.0
       },
       "low (<0.5)": {
@@ -27,8 +27,8 @@
     },
     "by_decision": {
       "approve": {
-        "total": 4,
-        "correct": 4,
+        "total": 1,
+        "correct": 1,
         "accuracy": 1.0
       },
       "revise": {
@@ -37,14 +37,17 @@
         "accuracy": 0.0
       },
       "reject": {
-        "total": 0,
-        "correct": 0,
-        "accuracy": 0.0
+        "total": 1,
+        "correct": 1,
+        "accuracy": 1.0
       }
     },
     "confusion_matrix": {
       "approve": {
-        "approve": 4
+        "approve": 1
+      },
+      "reject": {
+        "reject": 1
       }
     }
   },
@@ -53,5 +56,5 @@
     "expected": 1.1106,
     "percent_of_expected": 0.0
   },
-  "drift_detected": false
+  "drift_detected": true
 }

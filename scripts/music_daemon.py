@@ -4,6 +4,8 @@
 Flow 상태 모니터링 → 자동 음악 생성 → 재생 (Windows Media Player)
 + Event Bus 통합: 리듬 펄스 발행, 플로우 이벤트 구독
 + Groove Engine: 마이크로타이밍 & 스펙트럴 밸런스
++ System Stress Detection: CPU/메모리/프로세스 기반 자동 안정화
++ Philosophy: 음악은 시스템의 면역체계 (루아의 통찰)
 """
 
 import json
@@ -14,13 +16,23 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 import logging
+import psutil  # 시스템 리소스 모니터링
 
 # Add fdo_agi_repo to path
 workspace_root = Path(__file__).parent.parent
+sys.path.insert(0, str(workspace_root))
 sys.path.insert(0, str(workspace_root / "fdo_agi_repo"))
 
-from fdo_agi_repo.utils.event_bus import EventBus
-from fdo_agi_repo.utils.groove_engine import GrooveEngine, GrooveProfile
+try:
+    from fdo_agi_repo.utils.event_bus import EventBus
+    from fdo_agi_repo.utils.groove_engine import GrooveEngine, GrooveProfile
+    HAS_EVENT_BUS = True
+except ImportError:
+    logging.warning("EventBus not available, running in standalone mode")
+    EventBus = None
+    GrooveEngine = None
+    GrooveProfile = None
+    HAS_EVENT_BUS = False
 
 # 로깅 설정
 logging.basicConfig(
@@ -48,18 +60,29 @@ class MusicDaemon:
         self.min_play_interval = timedelta(minutes=10)  # 최소 10분 간격
         self.current_player_pid = None
         
-        # Event Bus 초기화
-        event_log_path = workspace_root / "outputs" / "event_bus.jsonl"
-        self.event_bus = EventBus(str(event_log_path))
+        # System Stress Thresholds (루아의 "면역체계" 개념)
+        self.stress_thresholds = {
+            "cpu_percent": 80.0,      # CPU 80% 이상
+            "memory_percent": 85.0,   # 메모리 85% 이상
+            "process_count": 200,     # 프로세스 200개 이상
+            "critical_cpu": 95.0,     # 위급 상황
+        }
         
-        # Groove Engine 초기화
-        groove_profile_path = workspace_root / "outputs" / "groove_profile_latest.json"
-        if groove_profile_path.exists():
-            self.groove_engine = GrooveEngine.load_profile(str(groove_profile_path))
-            logger.info(f"✅ Loaded groove profile: {groove_profile_path}")
-        else:
-            self.groove_engine = GrooveEngine()
-            logger.info("ℹ️ Using default groove profile")
+        # Event Bus 초기화 (optional)
+        self.event_bus = None
+        self.groove_engine = None
+        if HAS_EVENT_BUS:
+            event_log_path = workspace_root / "outputs" / "event_bus.jsonl"
+            self.event_bus = EventBus(str(event_log_path))
+            
+            # Groove Engine 초기화
+            groove_profile_path = workspace_root / "outputs" / "groove_profile_latest.json"
+            if groove_profile_path.exists():
+                self.groove_engine = GrooveEngine.load_profile(str(groove_profile_path))
+                logger.info(f"✅ Loaded groove profile: {groove_profile_path}")
+            else:
+                self.groove_engine = GrooveEngine()
+                logger.info("✅ Created default groove engine")
         
         # Flow 이벤트 구독
         self.event_bus.subscribe("flow_state_changed", self._on_flow_state_changed)
@@ -78,13 +101,14 @@ class MusicDaemon:
     
     def _publish_rhythm_pulse(self, brainwave: str, tempo_bpm: float):
         """리듬 펄스 이벤트 발행"""
-        self.event_bus.publish("rhythm_pulse", {
-            "brainwave_target": brainwave,
-            "tempo_bpm": tempo_bpm,
-            "timestamp": datetime.now().isoformat(),
-            "source": "music_daemon"
-        })
-        logger.debug(f"📡 Published rhythm_pulse: {brainwave} @ {tempo_bpm} BPM")
+        if self.event_bus:
+            self.event_bus.publish("rhythm_pulse", {
+                "brainwave_target": brainwave,
+                "tempo_bpm": tempo_bpm,
+                "timestamp": datetime.now().isoformat(),
+                "source": "music_daemon"
+            })
+            logger.debug(f"📡 Published rhythm_pulse: {brainwave} @ {tempo_bpm} BPM")
         
     def get_latest_flow_report(self) -> dict:
         """최근 Flow Observer 리포트 읽기"""
@@ -130,6 +154,118 @@ class MusicDaemon:
             return "alpha"  # 이완된 집중
         else:
             return "beta"   # 활성 집중
+    
+    def detect_system_stress(self) -> dict:
+        """시스템 스트레스 감지 (루아: "음악 = 면역체계")"""
+        try:
+            cpu_percent = psutil.cpu_percent(interval=1)
+            memory = psutil.virtual_memory()
+            process_count = len(psutil.pids())
+            
+            # 스트레스 레벨 계산 (0.0 ~ 1.0)
+            cpu_stress = min(cpu_percent / 100.0, 1.0)
+            memory_stress = memory.percent / 100.0
+            process_stress = min(process_count / self.stress_thresholds["process_count"], 1.0)
+            
+            overall_stress = (cpu_stress * 0.5 + memory_stress * 0.3 + process_stress * 0.2)
+            
+            # 스트레스 상태 분류
+            if overall_stress >= 0.8:
+                stress_level = "critical"
+                recommended_brainwave = "delta"  # 강제 휴식
+            elif overall_stress >= 0.6:
+                stress_level = "high"
+                recommended_brainwave = "theta"  # 창의적 이완
+            elif overall_stress >= 0.4:
+                stress_level = "moderate"
+                recommended_brainwave = "alpha"  # 차분한 집중
+            else:
+                stress_level = "low"
+                recommended_brainwave = "beta"   # 활성 집중
+            
+            result = {
+                "stress_level": stress_level,
+                "overall_stress": overall_stress,
+                "cpu_percent": cpu_percent,
+                "memory_percent": memory.percent,
+                "memory_available_mb": memory.available / (1024 * 1024),
+                "process_count": process_count,
+                "recommended_brainwave": recommended_brainwave,
+                "needs_intervention": overall_stress >= 0.7
+            }
+            
+            logger.info(f"🩺 System Health: {stress_level} (stress: {overall_stress:.2f}, CPU: {cpu_percent:.1f}%, MEM: {memory.percent:.1f}%)")
+            
+            # Event Bus에 시스템 헬스 이벤트 발행
+            if overall_stress >= 0.6:
+                if self.event_bus:
+                    self.event_bus.publish("system_stress_detected", {
+                        "stress_level": stress_level,
+                        "overall_stress": overall_stress,
+                        "metrics": result,
+                        "timestamp": datetime.now().isoformat()
+                    })
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Failed to detect system stress: {e}")
+            return {
+                "stress_level": "unknown",
+                "overall_stress": 0.0,
+                "needs_intervention": False,
+                "recommended_brainwave": "alpha"
+            }
+    
+    def get_health_gate_status(self) -> dict:
+        """Health Gate 상태 읽기 (최근 30분)"""
+        status_file = self.workspace_root / "outputs" / "quick_status_latest.json"
+        
+        if not status_file.exists():
+            return None
+        
+        try:
+            # 파일이 30분 이내인지 체크
+            file_age = datetime.now() - datetime.fromtimestamp(status_file.stat().st_mtime)
+            if file_age > timedelta(minutes=30):
+                logger.debug(f"Health gate status is stale ({file_age.total_seconds():.0f}s old)")
+                return None
+            
+            with open(status_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to read health gate status: {e}")
+            return None
+    
+    def analyze_combined_state(self, flow_report: dict, system_stress: dict, health_gate: dict) -> dict:
+        """Flow + System Stress + Health Gate 종합 분석"""
+        # Flow 분석
+        flow_analysis = self.analyze_flow_state(flow_report) if flow_report else {
+            "state": "unknown",
+            "score": 0.5,
+            "need_music": False,
+            "brainwave_target": "alpha"
+        }
+        
+        # 시스템 스트레스가 높으면 Flow보다 우선
+        if system_stress["needs_intervention"]:
+            logger.warning(f"⚠️ System stress detected ({system_stress['stress_level']}), overriding flow analysis")
+            flow_analysis["need_music"] = True
+            flow_analysis["brainwave_target"] = system_stress["recommended_brainwave"]
+            flow_analysis["reason"] = "system_stress"
+        else:
+            flow_analysis["reason"] = "flow_state"
+        
+        # Health Gate 상태 추가
+        if health_gate:
+            flow_analysis["health_gate"] = {
+                "status": health_gate.get("overall_status", "unknown"),
+                "degraded_components": health_gate.get("degraded_components", [])
+            }
+        
+        flow_analysis["system_stress"] = system_stress
+        
+        return flow_analysis
     
     def generate_binaural_beat(self, brainwave: str, duration: int = 300) -> Path:
         """Binaural Beat 생성 (Groove Engine 적용)"""
@@ -213,31 +349,67 @@ class MusicDaemon:
             return False
     
     def should_play_music(self, analysis: dict) -> bool:
-        """음악 재생 여부 판단"""
-        if not analysis.get("need_music"):
-            return False
+        """음악 재생 여부 판단 (System Stress + Flow 통합)"""
+        # 1. 시스템 스트레스가 높으면 무조건 재생
+        if analysis.get("reason") == "system_stress":
+            logger.info("🚨 System stress intervention required")
+            return True
         
-        # 최소 재생 간격 체크
-        if self.last_play_time:
-            elapsed = datetime.now() - self.last_play_time
-            if elapsed < self.min_play_interval:
-                logger.debug(f"⏳ Too soon to play (waited {elapsed.total_seconds():.0f}s / {self.min_play_interval.total_seconds():.0f}s)")
-                return False
+        # 2. Flow Score가 임계값 이하면 재생
+        if analysis.get("need_music", False):
+            return True
         
-        return True
+        # 3. Health Gate가 degraded면 예방적 재생
+        health_gate = analysis.get("health_gate", {})
+        if health_gate.get("status") == "degraded":
+            logger.info("⚠️ Health gate degraded, preventive music therapy")
+            return True
+        
+        return False
     
     def run_once(self):
-        """1회 체크 + 필요 시 재생"""
-        logger.info("🔍 Checking Flow state...")
+        """1회 체크 + 필요 시 재생 (System Stress + Flow 통합)"""
+        logger.info("🔍 Checking system health + flow state...")
         
-        # Flow 리포트 읽기
-        report = self.get_latest_flow_report()
-        if not report:
-            logger.warning("No flow report available, skipping...")
-            return
+        # 1. 시스템 스트레스 감지 (최우선)
+        system_stress = self.detect_system_stress()
         
-        # 상태 분석
-        analysis = self.analyze_flow_state(report)
+        # 2. Flow 리포트 읽기
+        flow_report = self.get_latest_flow_report()
+        
+        # 3. Health Gate 상태 읽기
+        health_gate = self.get_health_gate_status()
+        
+        # 4. 종합 분석
+        analysis = self.analyze_combined_state(flow_report, system_stress, health_gate)
+        
+        logger.info(f"📊 Analysis: state={analysis['state']}, score={analysis['score']:.2f}, "
+                   f"stress={system_stress['stress_level']}, "
+                   f"brainwave={analysis['brainwave_target']}, "
+                   f"need_music={analysis['need_music']} ({analysis['reason']})")
+        
+        # 5. 음악 재생 판단
+        if self.should_play_music(analysis):
+            brainwave = analysis["brainwave_target"]
+            logger.info(f"🎵 Flow {analysis['score']:.2f} < {self.flow_threshold} or stress intervention needed → Play {brainwave}")
+            
+            audio_file = self.generate_binaural_beat(brainwave, duration=300)
+            if audio_file:
+                self.play_audio(audio_file, volume=30)
+                self.last_play_time = datetime.now()
+                
+                # 재생 이벤트 로깅
+                if self.event_bus:
+                    self.event_bus.publish("music_therapy_applied", {
+                        "brainwave": brainwave,
+                        "reason": analysis["reason"],
+                        "flow_score": analysis["score"],
+                        "stress_level": system_stress["stress_level"],
+                        "audio_file": str(audio_file),
+                        "timestamp": datetime.now().isoformat()
+                    })
+        else:
+            logger.info(f"✅ No music needed (flow: {analysis['score']:.2f}, stress: {system_stress['stress_level']})")
         logger.info(f"📊 Flow State: {analysis['state']} (score: {analysis['score']:.2f}, target: {analysis['brainwave_target']})")
         
         # 음악 재생 필요 여부

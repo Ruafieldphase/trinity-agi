@@ -8888,6 +8888,72 @@
 				"if (Test-Path '${workspaceFolder}/outputs/codex_meta_observer/token_usage.jsonl') { code ${workspaceFolder}/outputs/codex_meta_observer/token_usage.jsonl } else { Write-Host 'No token log found' -ForegroundColor Yellow }"
 			],
 			"group": "none"
+		},
+		{
+			"label": "🛡️ Immune: Start Recovery Loop (Background)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/start_immune_recovery_loop.ps1"
+			],
+			"isBackground": true,
+			"group": "build"
+		},
+		{
+			"label": "🛡️ Immune: Stop Recovery Loop",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/stop_immune_recovery_loop.ps1"
+			],
+			"group": "build"
+		},
+		{
+			"label": "🛡️ Immune: Check Loop Status",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-File",
+				"${workspaceFolder}/scripts/check_immune_loop_status.ps1"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🛡️ Immune: Trigger Manual Recovery",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/immune_recovery_loop.py' --once } else { python '${workspaceFolder}/scripts/immune_recovery_loop.py' --once }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🛡️ Immune: Open Latest Report",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/immune_recovery_latest.json') { code ${workspaceFolder}/outputs/immune_recovery_latest.json } else { Write-Host 'No recovery report found' -ForegroundColor Yellow }"
+			],
+			"group": "none"
 		}
 	]
 }

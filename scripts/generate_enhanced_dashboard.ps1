@@ -1,6 +1,17 @@
 ﻿# Enhanced System Dashboard with GPU Metrics
 # Generates comprehensive HTML dashboard including GPU monitoring
 # Part of Phase 3+ Real-Time Monitoring Enhancement
+#
+# QUICK USAGE:
+#   generate_enhanced_dashboard.ps1 -OpenBrowser   # generate & open
+#   generate_enhanced_dashboard.ps1                # generate only
+#
+# SECTIONS INDEX:
+#   - Parameters (line 1-10)
+#   - GPU Metrics Collection (line 20-200)
+#   - Queue Status (line 200-400)
+#   - LLM Analytics (line 400-600)
+#   - Dashboard HTML (line 600+)
 
 param(
     [int]$LookbackHours = 24,

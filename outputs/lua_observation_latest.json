@@ -3,15 +3,15 @@
     "persona":  "정인(正人)",
     "role":  "관찰",
     "philosophy":  "무슨 일이 일어나고 있는가?",
-    "timestamp":  "2025-11-11T10:57:01.0580745Z",
+    "timestamp":  "2025-11-13T14:00:13.1033514Z",
     "window_hours":  24,
     "ledger_path":  "C:\\workspace\\agi\\fdo_agi_repo\\memory\\resonance_ledger.jsonl",
-    "total_lines":  36304,
-    "events_in_window":  3828,
+    "total_lines":  37562,
+    "events_in_window":  5084,
     "event_types":  {
                         "system_startup":  999,
                         "health_check":  977,
-                        "unknown":  1852
+                        "unknown":  3108
                     },
     "unique_tasks":  6,
     "top_tasks":  {
@@ -25,8 +25,8 @@
     "quality_metrics":  {
                             "min":  0,
                             "max":  0.95,
-                            "count":  1896,
-                            "average":  0.825
+                            "count":  2524,
+                            "average":  0.831
                         },
     "latency_metrics":  null
 }

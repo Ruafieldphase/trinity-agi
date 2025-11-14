@@ -1,8 +1,14 @@
 ﻿# ChatOps Router: natural language control for OBS & YouTube bot
-# Usage:
-#   powershell -NoProfile -ExecutionPolicy Bypass `
-#     -File scripts/chatops_router.ps1 `
-#     -Say "start the stream"
+#
+# QUICK USAGE:
+#   chatops_router.ps1 -Say "start the stream"
+#   $env:CHATOPS_SAY="통합 상태"; .\chatops_router.ps1
+#
+# SECTIONS INDEX:
+#   - Parameters & Initialization (line 1-35)
+#   - Intent Parsing Functions (line 100-500)
+#   - Command Handlers (line 500-1000)
+#   - Main Router Logic (line 1000+)
 
 [CmdletBinding()]
 param(

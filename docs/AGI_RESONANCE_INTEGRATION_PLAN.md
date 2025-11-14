@@ -1,8 +1,54 @@
 # AGI 레조넌스·윤리·시뮬레이션 통합 작업계획 (v0.3)
 
-최종 업데이트: 2025-11-06 20:45
+최종 업데이트: 2025-11-12 22:45
 
 본 문서는 상위 개념 문서(윤리/공포 분석/자연법/레조넌스/토탈 시뮬레이션)를 실행 가능한 구성(스키마·로더·브리지·검증)로 연결하기 위한 단계별 실행 계획입니다. 문서는 작업 진행에 따라 지속적으로 갱신됩니다.
+
+## 최근 변경 사항 (2025-11-14 12:01)
+
+### Lua Bridge Copilot Payload Guard
+
+- `scripts/send_to_chatgpt_lua.ps1`: Added `Apply-ContextLimit` so Markdown handoffs are capped (default 8k chars, min 500) with WARN logging + metadata to stop Copilot `invalid_request_body` loops.
+- CLI enhancements: `-MaxContext <chars>` now functional, `-MinimalContext` halves the ceiling when no explicit value is passed, and both flows propagate truncation notices into JSON for downstream agents.
+- Clipboard guard: payloads over ~3.5k chars now copy a short summary (includes key bullets + link to the full Markdown) unless `-AllowLargeClipboard` is supplied, so Copilot pastes stay within safe limits by default.
+- File watcher/queue processor path picks up the same guard, so Lua-originated JSON/MD responses inherit safe sizes.
+
+**다음 단계**
+
+1. Pipe truncation metrics into `outputs/copilot_error_recovery_log.jsonl` (or similar) to track whether further summarisation is required.
+2. Consider trimming JSON payloads (e.g., omit raw session blobs when `MinimalContext` is true) to align structured data size with Markdown cap.
+3. Update bridge quick-start docs/tasks so operators know about `-MaxContext` and the new truncation notices.
+
+## 최근 변경 사항 (2025-11-12 22:45)
+
+### RCL Secure Loop 실구현 (Lua ↔ VSCode ↔ Runner)
+
+- `rcl_system/harmony_core_runner.py`: 30Hz Harmony Core Runner를 FastAPI 서비스로 구현(동적 FSM, `/status`·`/metrics`·`/adjust`).
+- `rcl_system/bridge_server_v1_3.py`: HMAC-SHA256 + RateLimit + 감사 로그가 결합된 Secure Bridge v1.3 완성.
+- `web/rcl/secure_adjust_shim.js`: 대시보드/VSCode Webview에서 `/adjust` 호출 시 자동 서명·폼 헬퍼 제공.
+- `scripts/feedback_worker.js`: RMSE/Drift 감시 기반 self-healing 루프(자동 OFF→15초 안정 유지→ON).
+- 감사 경로: `outputs/rcl/adjust_audit.log`, 상태 공유: `/metrics` → 추후 Unified Dashboard 통합 예정.
+
+| 구성 | 포트/경로 | 실행 |
+|------|-----------|------|
+| Harmony Core Runner | 8090 (`/status`, `/metrics`, `/adjust`) | `python -m rcl_system.harmony_core_runner` |
+| Secure Bridge | 8091 (`/adjust`, `/metrics`) | `python -m rcl_system.bridge_server_v1_3` |
+| Feedback Worker | background (Node) | `node scripts/feedback_worker.js` |
+| Front Shim | `web/rcl/secure_adjust_shim.js` | HTML/Webview `<script>` 삽입 |
+| Stack Manager | `scripts/manage_rcl_stack.ps1` | `-Action Start/Stop/Status` |
+| Auto-Start Task | `scripts/register_rcl_stack_task.ps1` | `-Action Register/Status/RunNow` |
+
+**필수 환경 변수**
+
+- Runner: `HARMONY_RUNNER_PORT`, `HARMONY_TICK_HZ`(선택)
+- Bridge: `ADJUST_SECRET`, `RUNNER_URL`, `BRIDGE_RATE_LIMIT`
+- Worker: `ADJUST_SECRET`, `RCL_BRIDGE_URL`, `HARMONY_STATUS_URL`
+
+**다음 단계**
+
+1. Bridge `/metrics` → VS Code Dashboard에 tick_jitter/drift 카드 노출.
+2. Lua Request(JSON) 템플릿을 `outputs/lua_requests/`에 주기적으로 주입해 MCP Bridge 플로우 검증.
+3. `scripts/register_rcl_stack_task.ps1`로 Windows Scheduled Task를 구성해 재부팅 이후에도 Runner/Bridge/Worker가 자동 복구되도록 유지.
 
 ## 최근 변경 사항 (2025-11-06 20:45)
 

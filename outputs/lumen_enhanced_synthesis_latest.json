@@ -4,7 +4,7 @@
   "persona": "합(合)",
   "role": "다차원 통합",
   "philosophy": "무엇을 해야 하는가?",
-  "timestamp": "2025-11-11T19:57:01.272730",
+  "timestamp": "2025-11-13T23:00:13.255838",
   "sources": {
     "lua": "C:\\workspace\\agi\\outputs\\lua_observation_latest.json",
     "elo": "C:\\workspace\\agi\\outputs\\elo_validation_latest.json",
@@ -14,17 +14,17 @@
   },
   "synthesis": {
     "lua_summary": {
-      "total_events": 3828,
+      "total_events": 5084,
       "event_types": 3,
       "unique_tasks": 6,
-      "quality_count": 1896,
-      "quality_avg": 0.825,
+      "quality_count": 2524,
+      "quality_avg": 0.831,
       "latency_count": 0
     },
     "elo_summary": {
-      "entropy": 1.515,
-      "entropy_normalized": 0.956,
-      "information_density": 0.495,
+      "entropy": 1.353,
+      "entropy_normalized": 0.853,
+      "information_density": 0.496,
       "anomaly_count": 0,
       "consistency": "mostly_consistent",
       "verdict": "✅ 검증 통과 - 데이터 품질 양호"
@@ -42,16 +42,16 @@
       "total_messages": 0
     },
     "extended_metrics": {
-      "mutual_information": 2.6549250014423125,
-      "complexity_index": 0.749925,
-      "quality_entropy_correlation": 1.2498749999999998,
+      "mutual_information": 2.8169250014423124,
+      "complexity_index": 0.671088,
+      "quality_entropy_correlation": 1.1243429999999999,
       "anomaly_ratio": 0.0
     },
     "insights": [
       {
         "priority": "medium",
         "category": "monitoring",
-        "message": "품질 메트릭 커버리지 낮음 (49.5%). 평가 강화 필요",
+        "message": "품질 메트릭 커버리지 낮음 (49.6%). 평가 강화 필요",
         "source": "lua",
         "actionable": true
       },

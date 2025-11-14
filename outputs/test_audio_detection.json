@@ -1,243 +1,227 @@
 ﻿{
-    "Timestamp":  "2025-11-10 09:44:39",
+    "Timestamp":  "2025-11-14 12:19:28",
     "IsPlaying":  true,
     "is_music_playing":  true,
     "ActiveSessions":  [
                            {
-                               "ProcessName":  "obs64",
-                               "PID":  42928,
-                               "WindowTitle":  "OBS 32.0.2 - 프로파일: 제목 없음 - 장면: 제목 없음",
-                               "CPU":  193.08,
-                               "WorkingSet":  399.9,
-                               "DetectedAt":  "2025-11-10 09:44:39"
-                           },
-                           {
                                "ProcessName":  "comet",
-                               "PID":  1632,
+                               "PID":  1236,
                                "WindowTitle":  "",
-                               "CPU":  19.55,
-                               "WorkingSet":  334.7,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  1.02,
+                               "WorkingSet":  66.3,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  3904,
+                               "PID":  2500,
                                "WindowTitle":  "",
-                               "CPU":  1.56,
-                               "WorkingSet":  155.6,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  13.64,
+                               "WorkingSet":  117,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  3940,
+                               "PID":  3236,
                                "WindowTitle":  "",
-                               "CPU":  0.86,
-                               "WorkingSet":  35.9,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  45.55,
+                               "WorkingSet":  25.1,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  4396,
+                               "PID":  3368,
                                "WindowTitle":  "",
-                               "CPU":  3.56,
-                               "WorkingSet":  103,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  13.53,
+                               "WorkingSet":  119,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  5928,
+                               "PID":  9400,
+                               "WindowTitle":  "Suno | AI Music - Comet",
+                               "CPU":  469.06,
+                               "WorkingSet":  449.9,
+                               "DetectedAt":  "2025-11-14 12:19:28"
+                           },
+                           {
+                               "ProcessName":  "comet",
+                               "PID":  13812,
                                "WindowTitle":  "",
-                               "CPU":  3.14,
-                               "WorkingSet":  52.7,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  622.33,
+                               "WorkingSet":  563.9,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  10232,
+                               "PID":  14756,
                                "WindowTitle":  "",
-                               "CPU":  1.03,
-                               "WorkingSet":  63.2,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  1.91,
+                               "WorkingSet":  35.6,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  10628,
+                               "PID":  15128,
                                "WindowTitle":  "",
-                               "CPU":  0.59,
-                               "WorkingSet":  63.1,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  0.16,
+                               "WorkingSet":  68.6,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  10636,
+                               "PID":  19200,
                                "WindowTitle":  "",
-                               "CPU":  3.05,
-                               "WorkingSet":  112.8,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  14.34,
+                               "WorkingSet":  236.9,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  11192,
+                               "PID":  20496,
                                "WindowTitle":  "",
-                               "CPU":  0.53,
-                               "WorkingSet":  74.7,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  69.58,
+                               "WorkingSet":  59.8,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  11352,
+                               "PID":  21720,
                                "WindowTitle":  "",
-                               "CPU":  25.12,
-                               "WorkingSet":  342.3,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  207.3,
+                               "WorkingSet":  665.5,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  12892,
+                               "PID":  23112,
                                "WindowTitle":  "",
-                               "CPU":  335.48,
-                               "WorkingSet":  952,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  350.2,
+                               "WorkingSet":  369.2,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  14492,
+                               "PID":  31932,
                                "WindowTitle":  "",
-                               "CPU":  12.16,
-                               "WorkingSet":  175.4,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  3.02,
+                               "WorkingSet":  139.7,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  16508,
+                               "PID":  32404,
                                "WindowTitle":  "",
-                               "CPU":  1.98,
-                               "WorkingSet":  134.1,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  4.09,
+                               "WorkingSet":  82.2,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  20852,
+                               "PID":  34628,
                                "WindowTitle":  "",
-                               "CPU":  3.14,
-                               "WorkingSet":  68.2,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  0.06,
+                               "WorkingSet":  46.9,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  24224,
+                               "PID":  36300,
                                "WindowTitle":  "",
-                               "CPU":  71.88,
-                               "WorkingSet":  265.8,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  7.52,
+                               "WorkingSet":  52.8,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  25412,
+                               "PID":  37176,
                                "WindowTitle":  "",
-                               "CPU":  3.17,
-                               "WorkingSet":  128.3,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  3.95,
+                               "WorkingSet":  150.6,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  30368,
+                               "PID":  37596,
                                "WindowTitle":  "",
-                               "CPU":  8.8,
-                               "WorkingSet":  25,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  0.02,
+                               "WorkingSet":  33.1,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  31052,
+                               "PID":  38036,
                                "WindowTitle":  "",
-                               "CPU":  90.34,
-                               "WorkingSet":  442.5,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  19.66,
+                               "WorkingSet":  206.7,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  31672,
+                               "PID":  40040,
                                "WindowTitle":  "",
-                               "CPU":  14.95,
-                               "WorkingSet":  212.1,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  2.75,
+                               "WorkingSet":  61.1,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  33112,
-                               "WindowTitle":  "",
-                               "CPU":  13.42,
-                               "WorkingSet":  60.9,
-                               "DetectedAt":  "2025-11-10 09:44:39"
-                           },
-                           {
-                               "ProcessName":  "comet",
-                               "PID":  33736,
-                               "WindowTitle":  "RuaFieldPhase by @ruafieldphase | Suno - Comet",
-                               "CPU":  98.69,
-                               "WorkingSet":  456.6,
-                               "DetectedAt":  "2025-11-10 09:44:39"
-                           },
-                           {
-                               "ProcessName":  "comet",
-                               "PID":  33772,
-                               "WindowTitle":  "",
-                               "CPU":  0.31,
-                               "WorkingSet":  9.5,
-                               "DetectedAt":  "2025-11-10 09:44:39"
-                           },
-                           {
-                               "ProcessName":  "comet",
-                               "PID":  33852,
-                               "WindowTitle":  "",
-                               "CPU":  3.77,
-                               "WorkingSet":  145.2,
-                               "DetectedAt":  "2025-11-10 09:44:39"
-                           },
-                           {
-                               "ProcessName":  "comet",
-                               "PID":  36556,
-                               "WindowTitle":  "",
-                               "CPU":  0.66,
-                               "WorkingSet":  57.3,
-                               "DetectedAt":  "2025-11-10 09:44:39"
-                           },
-                           {
-                               "ProcessName":  "comet",
-                               "PID":  37516,
-                               "WindowTitle":  "",
-                               "CPU":  12.7,
-                               "WorkingSet":  262.7,
-                               "DetectedAt":  "2025-11-10 09:44:39"
-                           },
-                           {
-                               "ProcessName":  "comet",
-                               "PID":  40428,
+                               "PID":  41356,
                                "WindowTitle":  "",
                                "CPU":  0.08,
-                               "WorkingSet":  62.6,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "WorkingSet":  59.8,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  42376,
+                               "PID":  43720,
                                "WindowTitle":  "",
-                               "CPU":  0.22,
-                               "WorkingSet":  48.2,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  0.72,
+                               "WorkingSet":  78.2,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            },
                            {
                                "ProcessName":  "comet",
-                               "PID":  44980,
+                               "PID":  44096,
                                "WindowTitle":  "",
-                               "CPU":  0.05,
-                               "WorkingSet":  32.4,
-                               "DetectedAt":  "2025-11-10 09:44:39"
+                               "CPU":  430.31,
+                               "WorkingSet":  298.8,
+                               "DetectedAt":  "2025-11-14 12:19:28"
+                           },
+                           {
+                               "ProcessName":  "comet",
+                               "PID":  44756,
+                               "WindowTitle":  "",
+                               "CPU":  1.05,
+                               "WorkingSet":  60.8,
+                               "DetectedAt":  "2025-11-14 12:19:28"
+                           },
+                           {
+                               "ProcessName":  "comet",
+                               "PID":  44948,
+                               "WindowTitle":  "",
+                               "CPU":  1.58,
+                               "WorkingSet":  16.4,
+                               "DetectedAt":  "2025-11-14 12:19:28"
+                           },
+                           {
+                               "ProcessName":  "comet",
+                               "PID":  45072,
+                               "WindowTitle":  "",
+                               "CPU":  19.55,
+                               "WorkingSet":  84.2,
+                               "DetectedAt":  "2025-11-14 12:19:28"
+                           },
+                           {
+                               "ProcessName":  "comet",
+                               "PID":  46140,
+                               "WindowTitle":  "",
+                               "CPU":  0.58,
+                               "WorkingSet":  58.4,
+                               "DetectedAt":  "2025-11-14 12:19:28"
                            }
                        ],
-    "SessionCount":  29,
-    "browser_count":  29,
-    "TopProcess":  "obs64",
+    "SessionCount":  27,
+    "browser_count":  27,
+    "TopProcess":  "comet",
     "SignalStrength":  "STRONG"
 }

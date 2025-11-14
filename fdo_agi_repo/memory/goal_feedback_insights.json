@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-11-06T21:21:53.433331",
+  "timestamp": "2025-11-13T15:46:14.227658",
   "analysis_period_hours": 24,
   "type_performance": {
     "type_stats": {},
@@ -31,7 +31,7 @@
   },
   "recommendations": [],
   "metadata": {
-    "total_goals": 7,
+    "total_goals": 13,
     "total_resonance_events": 0
   }
 }

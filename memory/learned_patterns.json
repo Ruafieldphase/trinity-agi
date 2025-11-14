@@ -1,7 +1,7 @@
 {
   "learn_learn": {
-    "count": 1,
-    "success_count": 1,
+    "count": 2,
+    "success_count": 2,
     "success_rate": 1.0,
     "template": {
       "action": "learn",

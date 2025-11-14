@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-11T12:02:45.005152+00:00",
+  "generated_at": "2025-11-13T23:26:04.058045+00:00",
   "analysis_period_hours": 24,
   "current_state": {
     "state": "unknown",
@@ -9,34 +9,34 @@
     }
   },
   "activity_summary": {
-    "total_records": 25541,
-    "activity_ratio": 1.48,
-    "flow_sessions": 3,
-    "total_flow_minutes": 814.3444864166662,
+    "total_records": 983,
+    "activity_ratio": 0.06,
+    "flow_sessions": 1,
+    "total_flow_minutes": 67.41987785000003,
     "interruptions": 3
   },
   "flow_quality": "fair",
   "interruptions": [
     {
       "type": "flow_interruption",
-      "from_focus": "comet:중고나라 - 안심되는 중고거래 - Comet",
-      "to_focus": "explorer:",
-      "focus_duration_minutes": 16.155018099999996,
-      "timestamp": "2025-11-10T12:23:51.825528+00:00"
+      "from_focus": "Code:send_to_chatgpt_lua.ps1 - agi - Visual Studio Code",
+      "to_focus": "comet:김어준의 겸손은힘들다 뉴스공장 2025년 11월 13일 목요일 [김병기, 양부남, 이건태, 김기표, 김교흥, 홍사훈, 노영희, 주진우, 박구용, 정혜승, 스포츠공장] + 텐밀희 - YouTube - Comet",
+      "focus_duration_minutes": 15.30516265,
+      "timestamp": "2025-11-13T04:33:56.261448+00:00"
     },
     {
       "type": "flow_interruption",
-      "from_focus": "comet:중고나라 - 안심되는 중고거래 - Comet",
-      "to_focus": "Code:event_bus.py - agi - Visual Studio Code - GitHub Copilot에서 보류 중인 변경 내용",
-      "focus_duration_minutes": 15.329967566666669,
-      "timestamp": "2025-11-10T12:41:22.335420+00:00"
+      "from_focus": "comet:김어준의 겸손은힘들다 뉴스공장 2025년 11월 13일 목요일 [김병기, 양부남, 이건태, 김기표, 김교흥, 홍사훈, 노영희, 주진우, 박구용, 정혜승, 스포츠공장] + 텐밀희 - YouTube - Comet",
+      "to_focus": "python:관리자: C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
+      "focus_duration_minutes": 29.66626518333334,
+      "timestamp": "2025-11-13T05:23:54.922181+00:00"
     },
     {
       "type": "flow_interruption",
-      "from_focus": "comet:Suno | AI Music - Comet",
-      "to_focus": "WindowsTerminal:C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-      "focus_duration_minutes": 17.823445699999997,
-      "timestamp": "2025-11-11T06:42:02.072059+00:00"
+      "from_focus": "Code:send_to_chatgpt_lua.ps1 - agi - Visual Studio Code",
+      "to_focus": "Code:autopoietic_trinity_unified_latest.md - agi - Visual Studio Code",
+      "focus_duration_minutes": 30.48697545,
+      "timestamp": "2025-11-13T07:07:00.939881+00:00"
     }
   ],
   "recommendations": [

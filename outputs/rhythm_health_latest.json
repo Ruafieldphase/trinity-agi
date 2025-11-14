@@ -1,16 +1,16 @@
 {
-  "timestamp": "2025-11-12T09:53:52.259309",
+  "timestamp": "2025-11-14T11:53:53.348383",
   "overall_status": "critical",
   "overall_emoji": "🚨",
-  "overall_score": 36.0,
+  "overall_score": 19.0,
   "loop_results": {
     "self_care": {
       "loop_name": "Self-Care",
       "summary_file_status": {
-        "status": "healthy",
+        "status": "warning",
         "age_minutes": 30.0,
-        "message": "정상 (최근 30.0분)",
-        "severity": "none"
+        "message": "경고: 약간 오래됨 (최근 30.0분)",
+        "severity": "low"
       },
       "report_file_status": {
         "status": "missing",
@@ -19,32 +19,32 @@
       },
       "alerts": [],
       "overall_health": {
-        "score": 50.0,
-        "status": "degraded",
-        "emoji": "🔶"
+        "score": 35.0,
+        "status": "critical",
+        "emoji": "🚨"
       }
     },
     "goal_generation": {
       "loop_name": "Goal Generation",
       "file_status": {
-        "status": "healthy",
-        "age_minutes": 29.9,
-        "message": "정상 (최근 29.9분)",
-        "severity": "none"
+        "status": "stale",
+        "age_minutes": 90.0,
+        "message": "정체: 너무 오래됨 (최근 90.0분)",
+        "severity": "high"
       },
       "alerts": [],
       "overall_health": {
-        "score": 100.0,
-        "status": "healthy",
-        "emoji": "✅"
+        "score": 30.0,
+        "status": "critical",
+        "emoji": "🚨"
       }
     },
     "goal_execution": {
       "loop_name": "Goal Execution",
       "file_status": {
         "status": "stale",
-        "age_minutes": 6253.9,
-        "message": "정체: 너무 오래됨 (최근 6253.9분)",
+        "age_minutes": 814.1,
+        "message": "정체: 너무 오래됨 (최근 814.1분)",
         "severity": "high"
       },
       "alerts": [],
@@ -85,17 +85,18 @@
   },
   "synchronization": {
     "synchronized": false,
-    "max_time_diff_minutes": 6224.0,
-    "message": "최대 시간 차이: 6224.0분",
+    "max_time_diff_minutes": 784.1,
+    "message": "최대 시간 차이: 784.1분",
     "update_times": {
       "self_care": 30.0,
-      "goal_generation": 29.9,
-      "goal_execution": 6253.9
+      "goal_generation": 90.0,
+      "goal_execution": 814.1
     }
   },
   "critical_alerts": [],
   "recommendations": [
-    "⏰ 리듬 동기화 필요: 최대 6224.0분 차이 발생",
-    "🛟 Self-care 루프 점검 필요: scripts/update_self_care_metrics.ps1 실행"
+    "⏰ 리듬 동기화 필요: 최대 784.1분 차이 발생",
+    "🛟 Self-care 루프 점검 필요: scripts/update_self_care_metrics.ps1 실행",
+    "🎯 목표 생성기 재실행 필요: python scripts/autonomous_goal_generator.py"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-12T00:23:55.340373Z",
+  "generated_at": "2025-11-14T02:54:05.243529Z",
   "window_hours": 6,
   "input_sources": {
     "resonance_metrics": "outputs/resonance_simulation_latest.json",
@@ -27,14 +27,14 @@
         "phase_coherence": 1.0,
         "state": "superconducting",
         "conductivity": 1.0,
-        "measured_at": "2025-11-12T09:23:55.064545"
+        "measured_at": "2025-11-14T11:54:03.613483"
       },
-      "generated_at": "2025-11-12T09:23:55.064554"
+      "generated_at": "2025-11-14T11:54:03.613497"
     }
   },
   "goals": [
     {
-      "title": "Refactor Core Components",
+      "title": "Refactor Core Components (재시도)",
       "description": "Improve resonance by restructuring core logic",
       "base_priority": 9,
       "type": "analysis",
@@ -62,34 +62,7 @@
       "dependencies": []
     },
     {
-      "title": "Increase Data Collection",
-      "description": "Improve information density by collecting more metrics",
-      "base_priority": 7,
-      "type": "metric",
-      "executable": {
-        "type": "script",
-        "script": "${workspaceFolder}/scripts/system_health_check.ps1",
-        "args": [
-          "-Full"
-        ],
-        "timeout": 300
-      },
-      "source": "resonance",
-      "metadata": {
-        "severity": "high"
-      },
-      "id": 2,
-      "urgency_boost": 1.0,
-      "impact_boost": 5.0,
-      "feedback_boost": 0.0,
-      "habit_boost": 0.0,
-      "memory_boost": 0.0,
-      "final_priority": 13.0,
-      "estimated_effort": "3 days",
-      "dependencies": []
-    },
-    {
-      "title": "📊 Generate Performance Dashboard",
+      "title": "📊 Generate Performance Dashboard (재시도)",
       "description": "Quantum Flow 초전도 상태! 완벽한 조건에서 포괄적인 성능 대시보드를 생성하세요",
       "base_priority": 10,
       "type": "monitoring",
@@ -105,7 +78,7 @@
       "metadata": {
         "severity": "critical"
       },
-      "id": 3,
+      "id": 2,
       "urgency_boost": 0.0,
       "impact_boost": 3.0,
       "feedback_boost": 0.0,
@@ -114,41 +87,11 @@
       "final_priority": 13.0,
       "estimated_effort": "3 days",
       "dependencies": []
-    },
-    {
-      "title": "Improve Clarity and Structure",
-      "description": "Reduce entropy through better organization",
-      "base_priority": 7,
-      "type": "analysis",
-      "executable": {
-        "type": "script",
-        "script": "${workspaceFolder}/scripts/summarize_realtime_pipeline.ps1",
-        "args": [
-          "-Lookback",
-          "24",
-          "-SparkLen",
-          "60"
-        ],
-        "timeout": 300
-      },
-      "source": "resonance",
-      "metadata": {
-        "severity": "high"
-      },
-      "id": 4,
-      "urgency_boost": 0.0,
-      "impact_boost": 5.0,
-      "feedback_boost": 0.0,
-      "habit_boost": 0.0,
-      "memory_boost": 0.0,
-      "final_priority": 12.0,
-      "estimated_effort": "3 days",
-      "dependencies": []
     }
   ],
   "summary": {
-    "total_goals": 4,
-    "high_priority": 4,
+    "total_goals": 2,
+    "high_priority": 2,
     "medium_priority": 0,
     "low_priority": 0
   }

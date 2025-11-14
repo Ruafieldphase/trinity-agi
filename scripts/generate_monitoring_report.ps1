@@ -1,3 +1,17 @@
+# Generate Monitoring Report: Comprehensive AGI + Lumen analytics
+#
+# QUICK USAGE:
+#   generate_monitoring_report.ps1 -Hours 24        # last 24h
+#   generate_monitoring_report.ps1 -Hours 168       # last week
+#
+# SECTIONS INDEX:
+#   - Parameters (line 1-20)
+#   - Threshold Config (line 25-80)
+#   - AGI Ledger Parsing (line 85-500)
+#   - Lumen Analysis (line 500-1000)
+#   - Report Generation (line 1000-2000)
+#   - HTML Dashboard (line 2000+)
+
 param(
     [int]$Hours = 24,
     [string]$LogPath = "C:\workspace\agi\outputs\status_snapshots.jsonl",

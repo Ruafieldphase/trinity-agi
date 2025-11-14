@@ -1,0 +1,13 @@
+{
+  "timestamp": "20251114_102749",
+  "flow_quality": 0.5,
+  "audio_file": "C:\\workspace\\agi\\outputs\\binaural_flow_q50_20251114_102749.wav",
+  "params": {
+    "name": "Calming Down (Theta)",
+    "base_freq": 396,
+    "beat_freq": 6,
+    "carrier_type": "sine",
+    "reason": "긴장 완화, 재집중 준비"
+  },
+  "duration_seconds": 300
+}

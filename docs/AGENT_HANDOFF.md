@@ -1,5 +1,55 @@
 # Agent Handoff Log
 
+## [2025-11-14 12:01] 🛡️ Lua Bridge Payload Guard 적용
+
+### 30초 요약 (다음 에이전트용)
+
+- **Context limit enforcement**: `scripts/send_to_chatgpt_lua.ps1` now clamps Markdown handoffs via `Apply-ContextLimit`, appends safe notices, and writes limit metadata to the JSON so Copilot 400 `invalid_request_body` loops can be traced.
+- **New knobs**: CLI `-MaxContext <chars>` finally works (min guard = 500). `-MinimalContext` halves the default ceiling unless a custom limit is provided. Both paths log WARN lines so operators know which payload cap is active.
+- **Queue/monitor parity**: File-based processor path reuses the same guard and records truncation stats per request, so Lua queue consumers receive trimmed but valid responses instead of oversized payloads.
+- **Clipboard safe-mode**: Any payload longer than ~3.5k chars copies a short summary (with a link to the full Markdown) unless `-AllowLargeClipboard` is passed, keeping Copilot input under the size that triggers 400s by default.
+
+### 다음 우선순위 제안
+
+- P0: Capture truncation frequency (e.g., append to `outputs/copilot_error_recovery_log.jsonl`) to see if 8k default can be raised or if additional summarisation is needed.
+- P1: Add JSON payload slimming (skip raw session blobs when `MinimalContext` is set) to keep clipboard copies and automation tasks aligned.
+- P2: Reflect the new flags in `CHATGPT_LUA_BRIDGE_*` docs + VS Code task snippets so humans know how to request safe payload sizes on demand.
+
+## [2025-11-12 22:45] 🌐 RCL Bridge · Harmony Runner 실장
+
+### 30초 요약 (다음 에이전트용)
+
+- **구현**: `rcl_system/` 신규 패키지로 Harmony Core Runner(30Hz loop + `/status`·`/adjust`), Secure Bridge v1.3(HMAC·RateLimit·Audit) 및 Web Shim/Feedback Worker를 실체화.
+- **보안**: 모든 `/adjust` 호출은 `X-RCL-Signature`(HMAC-SHA256) 검사, `outputs/rcl/adjust_audit.log`에 감사 로그 적재.
+- **자율 루프**: `scripts/feedback_worker.js`가 Runner 메트릭을 감시해 RMSE 급등 시 자동으로 feedback OFF → 안정 15s 유지 시 ON.
+- **프런트엔드**: `web/rcl/secure_adjust_shim.js` 삽입 시 브라우저에서 자동 서명 + 토글 UI 지원.
+- **오케스트레이션**: `scripts/manage_rcl_stack.ps1`로 Runner/Bridge/Worker를 한 번에 Start/Stop/Status 관리.
+- **자동화**: `scripts/register_rcl_stack_task.ps1`가 Windows Scheduled Task에 RCL 스택을 등록/실행.
+- **Lua 연동**: `lua_trinity_bridge.py`가 “RCL/하모니/Bridge” 키워드를 감지하면 `manage_rcl_stack.ps1 -OutputJson`으로 상태를 수집하고, “시작/중지/재시작” 지시 시 해당 액션을 실행한 뒤 최신 상태를 리포트함.
+
+### 다음 우선순위 제안
+
+- P0: Runner 메트릭을 Unified Dashboard에 노출 (tick_jitter_ms, drift_ppm, forecast_rmse).
+- P1: MCP Bridge 설계서(JSON → `lua_requests/`)를 채워서 Lua ↔ VSCode ↔ RCL 통로 자동화.
+- P2: `feedback_worker.js`용 Windows 서비스/Task 등록 스크립트 작성.
+
+### 빠른 실행
+
+```powershell
+# 일괄 실행
+.\scripts\manage_rcl_stack.ps1 -Action Start -AdjustSecret rcl_bridge_secret
+
+# 상태 확인 / 중지
+.\scripts\manage_rcl_stack.ps1 -Action Status
+.\scripts\manage_rcl_stack.ps1 -Action Stop
+
+# 자동 등록 (로그온 시 자동 시작)
+.\scripts\register_rcl_stack_task.ps1 -Action Register -AdjustSecret rcl_bridge_secret
+.\scripts\register_rcl_stack_task.ps1 -Action Status
+```
+
+---
+
 ## [2025-11-08 13:40] 🔧 Event Emitter 안전성 강화 (휴식 페이즈)
 
 ### 30초 요약 (다음 에이전트용)

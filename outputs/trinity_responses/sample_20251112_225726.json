@@ -1,0 +1,25 @@
+﻿{
+    "rcl":  null,
+    "recommended_actions":  [
+                                "리듬 상태 확인 및 조정",
+                                "활성 목표 진행 상황 점검",
+                                "시스템 건강도 모니터링",
+                                "RCL 루프 상태 점검"
+                            ],
+    "goals":  null,
+    "file_references":  [
+                            "C:\\workspace\\agi\\outputs\\session_continuity_latest.md",
+                            "C:\\workspace\\agi\\outputs\\RHYTHM_SYSTEM_STATUS_REPORT.md",
+                            "C:\\workspace\\agi\\fdo_agi_repo\\memory\\goal_tracker.json",
+                            "C:\\workspace\\agi\\outputs\\quick_status_latest.json",
+                            "C:\\workspace\\agi\\scripts\\manage_rcl_stack.ps1"
+                        ],
+    "metadata":  {
+                     "generated_at":  "2025-11-12 22:57:51",
+                     "user_query":  "",
+                     "generator":  "Lua Trinity Bridge v2.0"
+                 },
+    "system":  null,
+    "rhythm":  null,
+    "session":  null
+}

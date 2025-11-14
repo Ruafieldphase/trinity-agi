@@ -1,6 +1,6 @@
 # 시스템 통합 진단 리포트
 
-**생성 시각**: 2025-11-12T09:53:54.049107
+**생성 시각**: 2025-11-14T11:54:26.136274
 
 ## 📊 모듈 상태
 
@@ -27,9 +27,9 @@
 - ✅ **module_exists**: True
 - ✅ **connected_to_goal_generator**: True
 - ✅ **connected_to_goal_executor**: True
-- ✅ **reward_signals_recorded**: 4736
+- ✅ **reward_signals_recorded**: 4742
 - ✅ **policy_cache_exists**: True
-- ❌ **active_learning**: False
+- ✅ **active_learning**: True
 
 ### META_SUPERVISOR
 
@@ -58,21 +58,14 @@
 **조치**: Goal 생성/실행 시 flow state 반영
 
 
-### 2. 🟢 [LOW] Reward System
-
-**문제**: 최근 보상 신호 없음
-
-**조치**: Goal 실행 결과를 보상 시스템에 기록
-
-
-### 3. 🟡 [MEDIUM] Meta Supervisor
+### 2. 🟡 [MEDIUM] Meta Supervisor
 
 **문제**: Meta Supervisor 미실행
 
 **조치**: 주기적 실행 스케줄 등록 또는 수동 실행
 
 
-### 4. 🔴 [HIGH] Integration
+### 3. 🔴 [HIGH] Integration
 
 **문제**: Self-care → Quantum Flow 루프 미연결
 
