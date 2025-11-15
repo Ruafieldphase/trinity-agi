@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { createLogger } from './logger';
+import { t } from './i18n';
 
 const logger = createLogger('SecurityGuardrails');
 
@@ -65,13 +66,13 @@ export class SecurityGuardrails {
         // Check killswitch
         if (this.isKillswitchActive) {
             this.logAction(action, false, 'Killswitch active');
-            return { allowed: false, reason: 'Computer Use is disabled (killswitch active)' };
+            return { allowed: false, reason: t('security.killswitchEnabled') };
         }
 
         // Check daily limit
         if (this.dailyActionCount >= this.maxDailyActions) {
             this.logAction(action, false, 'Daily limit exceeded');
-            return { allowed: false, reason: `Daily action limit (${this.maxDailyActions}) exceeded` };
+            return { allowed: false, reason: t('security.dailyLimitExceeded', this.maxDailyActions) };
         }
 
         // Check per-minute rate limit
@@ -81,7 +82,7 @@ export class SecurityGuardrails {
             this.logAction(action, false, 'Rate limit exceeded');
             return {
                 allowed: false,
-                reason: `Rate limit (${this.maxActionsPerMinute}/min) exceeded. Try again in a moment.`,
+                reason: t('security.rateLimitExceeded', this.maxActionsPerMinute),
             };
         }
 
@@ -126,12 +127,12 @@ export class SecurityGuardrails {
      */
     private async confirmDestructiveAction(action: string): Promise<boolean> {
         const result = await vscode.window.showWarningMessage(
-            `⚠️ Potentially destructive Computer Use action detected: "${action}"`,
+            t('security.destructiveActionConfirm', action),
             { modal: true },
-            'Allow',
-            'Deny'
+            t('common.allow'),
+            t('common.deny')
         );
-        return result === 'Allow';
+        return result === t('common.allow');
     }
 
     /**
@@ -173,9 +174,8 @@ export class SecurityGuardrails {
         this.isKillswitchActive = !this.isKillswitchActive;
         const state = this.isKillswitchActive ? 'ENABLED' : 'DISABLED';
         logger.info(`[Security] 🔴 Killswitch ${state}`);
-        vscode.window.showInformationMessage(
-            `Computer Use Killswitch ${state}${this.isKillswitchActive ? ' - All actions blocked' : ''}`
-        );
+        const message = this.isKillswitchActive ? t('security.killswitchEnabled') : t('security.killswitchDisabled');
+        vscode.window.showInformationMessage(message);
     }
 
     /**
@@ -234,11 +234,11 @@ export class SecurityGuardrails {
                     2
                 );
                 await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf-8'));
-                vscode.window.showInformationMessage(`Audit log exported to ${uri.fsPath}`);
+                vscode.window.showInformationMessage(t('security.auditLogExported', uri.fsPath));
             }
         } catch (error) {
             logger.error('[Security] Failed to export audit log:', error);
-            vscode.window.showErrorMessage('Failed to export audit log');
+            vscode.window.showErrorMessage(t('security.auditLogExportFailed'));
         }
     }
 }

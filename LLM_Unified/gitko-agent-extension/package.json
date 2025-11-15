@@ -293,7 +293,8 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
+        "compile": "tsc -p ./ && npm run copy-locales",
+        "copy-locales": "powershell -Command \"if (!(Test-Path 'out/locales')) { New-Item -ItemType Directory -Path 'out/locales' }; Copy-Item 'src/locales/*.json' 'out/locales/'\"",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile",
         "lint": "eslint src --ext ts",

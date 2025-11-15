@@ -1,0 +1,53 @@
+{
+    "extension.activated": "Gitko Agent Extension 활성화됨",
+    "extension.httpPollerAutoStarted": "HTTP Poller 자동 시작됨",
+    "extension.httpPollerDisabled": "HTTP Task Poller 자동 시작이 설정에 의해 비활성화됨",
+    
+    "commands.enableHttpPoller": "HTTP Poller 활성화",
+    "commands.disableHttpPoller": "HTTP Poller 비활성화",
+    "commands.showPollerOutput": "HTTP Poller 출력 표시",
+    "commands.showTaskQueueMonitor": "Task Queue Monitor 표시",
+    "commands.showResonanceLedger": "Resonance Ledger 표시",
+    "commands.validateConfig": "설정 검증",
+    "commands.showPerformanceViewer": "성능 모니터 표시",
+    "commands.showActivityViewer": "활동 추적기 표시",
+    "commands.runIntegrationTests": "통합 테스트 실행",
+    "commands.healthCheck": "상태 확인",
+    "commands.exportDiagnostics": "진단 정보 내보내기",
+    "commands.showMemoryStats": "메모리 통계 표시",
+    "commands.toggleKillswitch": "Computer Use 킬스위치 토글",
+    "commands.exportAuditLog": "감사 로그 내보내기",
+    
+    "httpPoller.enabled": "HTTP Poller 활성화됨",
+    "httpPoller.disabled": "HTTP Poller 비활성화됨",
+    "httpPoller.alreadyRunning": "HTTP Poller가 이미 실행 중입니다",
+    "httpPoller.notRunning": "HTTP Poller가 실행 중이 아닙니다",
+    "httpPoller.error": "HTTP Poller 오류",
+    
+    "security.killswitchEnabled": "Computer Use 킬스위치 활성화 - 모든 작업 차단됨",
+    "security.killswitchDisabled": "Computer Use 킬스위치 비활성화",
+    "security.actionBlocked": "작업 차단됨: {0}",
+    "security.dailyLimitExceeded": "일일 작업 한도({0}) 초과",
+    "security.rateLimitExceeded": "속도 제한({0}/분) 초과. 잠시 후 다시 시도하세요.",
+    "security.destructiveActionConfirm": "⚠️ 잠재적 파괴 작업 감지됨: \"{0}\"",
+    "security.auditLogExported": "감사 로그 내보내기 완료: {0}",
+    "security.auditLogExportFailed": "감사 로그 내보내기 실패",
+    
+    "config.validationFailed": "설정 검증 실패",
+    "config.validationWarnings": "설정에 {0}개의 경고가 있습니다",
+    
+    "computerUse.elementNotFound": "\"{0}\" 텍스트가 있는 요소를 찾을 수 없습니다",
+    "computerUse.clickFailed": "({0}, {1}) 위치 클릭 실패",
+    "computerUse.typeFailed": "입력 실패",
+    
+    "status.stopped": "중지됨",
+    "status.polling": "폴링 중",
+    "status.busy": "작업 중",
+    "status.error": "오류",
+    "status.paused": "일시중지",
+    
+    "common.allow": "허용",
+    "common.deny": "거부",
+    "common.ok": "확인",
+    "common.cancel": "취소"
+}

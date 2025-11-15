@@ -1,0 +1,53 @@
+{
+    "extension.activated": "Gitko Agent Extension activated",
+    "extension.httpPollerAutoStarted": "HTTP Poller auto-started",
+    "extension.httpPollerDisabled": "HTTP Task Poller autostart is disabled by settings",
+    
+    "commands.enableHttpPoller": "Enable HTTP Poller",
+    "commands.disableHttpPoller": "Disable HTTP Poller",
+    "commands.showPollerOutput": "Show HTTP Poller Output",
+    "commands.showTaskQueueMonitor": "Show Task Queue Monitor",
+    "commands.showResonanceLedger": "Show Resonance Ledger",
+    "commands.validateConfig": "Validate Configuration",
+    "commands.showPerformanceViewer": "Show Performance Monitor",
+    "commands.showActivityViewer": "Show Activity Tracker",
+    "commands.runIntegrationTests": "Run Integration Tests",
+    "commands.healthCheck": "Health Check",
+    "commands.exportDiagnostics": "Export Diagnostics",
+    "commands.showMemoryStats": "Show Memory Stats",
+    "commands.toggleKillswitch": "Toggle Computer Use Killswitch",
+    "commands.exportAuditLog": "Export Audit Log",
+    
+    "httpPoller.enabled": "HTTP Poller enabled",
+    "httpPoller.disabled": "HTTP Poller disabled",
+    "httpPoller.alreadyRunning": "HTTP Poller is already running",
+    "httpPoller.notRunning": "HTTP Poller is not running",
+    "httpPoller.error": "Error in HTTP Poller",
+    
+    "security.killswitchEnabled": "Computer Use Killswitch ENABLED - All actions blocked",
+    "security.killswitchDisabled": "Computer Use Killswitch DISABLED",
+    "security.actionBlocked": "Action blocked: {0}",
+    "security.dailyLimitExceeded": "Daily action limit ({0}) exceeded",
+    "security.rateLimitExceeded": "Rate limit ({0}/min) exceeded. Try again in a moment.",
+    "security.destructiveActionConfirm": "⚠️ Potentially destructive Computer Use action detected: \"{0}\"",
+    "security.auditLogExported": "Audit log exported to {0}",
+    "security.auditLogExportFailed": "Failed to export audit log",
+    
+    "config.validationFailed": "Configuration validation failed",
+    "config.validationWarnings": "Configuration has {0} warnings",
+    
+    "computerUse.elementNotFound": "Element with text \"{0}\" not found",
+    "computerUse.clickFailed": "Click failed at ({0}, {1})",
+    "computerUse.typeFailed": "Type failed",
+    
+    "status.stopped": "Stopped",
+    "status.polling": "Polling",
+    "status.busy": "Busy",
+    "status.error": "Error",
+    "status.paused": "Paused",
+    
+    "common.allow": "Allow",
+    "common.deny": "Deny",
+    "common.ok": "OK",
+    "common.cancel": "Cancel"
+}

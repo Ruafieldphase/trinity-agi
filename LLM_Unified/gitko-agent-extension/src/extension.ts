@@ -15,6 +15,7 @@ import { registerDevCommands } from './devUtils';
 import { ActivityTracker, ActivityViewer } from './activityTracker';
 import { StatusBarManager } from './statusBarManager';
 import { SecurityGuardrails } from './securityGuardrails';
+import { initializeI18n, t } from './i18n';
 
 const logger = createLogger('Extension');
 
@@ -46,7 +47,10 @@ let cachedRuntimeConfig: AgentRuntimeConfig | null = null;
 let runtimeConfigWarningShown = false;
 
 export function activate(context: vscode.ExtensionContext) {
-    logger.info('Gitko Agent Extension is now active!');
+    // Initialize i18n
+    initializeI18n(context.extensionPath);
+
+    logger.info(t('extension.activated'));
 
     // Activity Tracker 초기화
     const activityTracker = ActivityTracker.getInstance();
@@ -182,11 +186,9 @@ export function activate(context: vscode.ExtensionContext) {
     const shouldAutostart = gitkoCfg.get<boolean>('enableHttpPoller', true);
     if (shouldAutostart) {
         enableHttpPoller();
-        logger.info('HTTP Poller auto-started');
+        logger.info(t('extension.httpPollerAutoStarted'));
     } else {
-        httpPollerOutputChannel?.appendLine(
-            `[${new Date().toISOString()}] HTTP Task Poller autostart is disabled by settings (gitko.enableHttpPoller=false)`
-        );
+        httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] ${t('extension.httpPollerDisabled')}`);
     }
 
     // Language Model Tools 등록 (Copilot이 자동으로 호출)

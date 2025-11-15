@@ -52,6 +52,7 @@ const devUtils_1 = require("./devUtils");
 const activityTracker_1 = require("./activityTracker");
 const statusBarManager_1 = require("./statusBarManager");
 const securityGuardrails_1 = require("./securityGuardrails");
+const i18n_1 = require("./i18n");
 const logger = (0, logger_1.createLogger)('Extension');
 // HTTP Poller 상태 관리
 let httpPollerInterval; // legacy (unused after poller refactor)
@@ -63,7 +64,9 @@ const MAX_TOOL_RESPONSE_CHARS = 3200; // Keep Copilot payloads below ~3.5k clipb
 let cachedRuntimeConfig = null;
 let runtimeConfigWarningShown = false;
 function activate(context) {
-    logger.info('Gitko Agent Extension is now active!');
+    // Initialize i18n
+    (0, i18n_1.initializeI18n)(context.extensionPath);
+    logger.info((0, i18n_1.t)('extension.activated'));
     // Activity Tracker 초기화
     const activityTracker = activityTracker_1.ActivityTracker.getInstance();
     activityTracker.trackSystemEvent('extension_activated', {
@@ -169,10 +172,10 @@ function activate(context) {
     const shouldAutostart = gitkoCfg.get('enableHttpPoller', true);
     if (shouldAutostart) {
         enableHttpPoller();
-        logger.info('HTTP Poller auto-started');
+        logger.info((0, i18n_1.t)('extension.httpPollerAutoStarted'));
     }
     else {
-        httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] HTTP Task Poller autostart is disabled by settings (gitko.enableHttpPoller=false)`);
+        httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] ${(0, i18n_1.t)('extension.httpPollerDisabled')}`);
     }
     // Language Model Tools 등록 (Copilot이 자동으로 호출)
     const sianTool = vscode.lm.registerTool('sian_refactor', {
