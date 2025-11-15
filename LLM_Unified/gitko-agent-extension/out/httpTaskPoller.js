@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpTaskPoller = void 0;
 const vscode = __importStar(require("vscode"));
 const logger_1 = require("./logger");
+const offlineQueue_1 = require("./offlineQueue");
 const performanceMonitor_1 = require("./performanceMonitor");
 const schemas_1 = require("./schemas");
 const logger = (0, logger_1.createLogger)('HttpTaskPoller');
@@ -319,6 +320,13 @@ class HttpTaskPoller {
                 task_id: taskId,
                 error: error instanceof Error ? error.message : String(error),
             });
+            // Offline queue fallback
+            try {
+                const q = offlineQueue_1.OfflineResultQueue.getInstance();
+                await q.enqueue(this.apiBase, taskId, result);
+                this.log(`[HttpPoller] 💾 Queued result for offline retry: ${taskId}`);
+            }
+            catch { }
         }
     }
     // ==================== Task Handlers ====================

@@ -43,6 +43,7 @@ const os = __importStar(require("os"));
 const computerUse_1 = require("./computerUse");
 const httpTaskPoller_1 = require("./httpTaskPoller");
 const realtimeTaskClient_1 = require("./realtimeTaskClient");
+const offlineQueue_1 = require("./offlineQueue");
 const taskQueueMonitor_1 = require("./taskQueueMonitor");
 const resonanceLedgerViewer_1 = require("./resonanceLedgerViewer");
 const configValidator_1 = require("./configValidator");
@@ -178,6 +179,14 @@ function activate(context) {
     const gitkoCfg = vscode.workspace.getConfiguration('gitko');
     const shouldAutostart = gitkoCfg.get('enableHttpPoller', true);
     const mode = gitkoCfg.get('taskQueueMode', 'auto');
+    // Initialize offline queue worker
+    const oqEnabled = gitkoCfg.get('offlineQueue.enabled', true);
+    const oqDir = gitkoCfg.get('offlineQueue.dir', '');
+    const oqInterval = gitkoCfg.get('offlineQueue.intervalMs', 5000);
+    const offlineQueue = offlineQueue_1.OfflineResultQueue.getInstance(oqDir || undefined, oqEnabled);
+    if (oqEnabled) {
+        offlineQueue.startWorker(oqInterval);
+    }
     if (shouldAutostart) {
         if (mode === 'sse' || mode === 'auto') {
             const started = enableRealtimeQueue(mode === 'auto');

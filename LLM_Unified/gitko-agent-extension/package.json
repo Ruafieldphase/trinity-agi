@@ -326,6 +326,26 @@
                     "default": "auto",
                     "description": "Task queue mode: HTTP polling, Server-Sent Events (SSE), or auto (prefer SSE, fallback to polling)",
                     "order": 20
+                },
+                "gitko.offlineQueue.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enable disk-backed offline result queue when submit fails",
+                    "order": 21
+                },
+                "gitko.offlineQueue.dir": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Directory for offline queue files. Empty = %APPDATA%/gitko/queue",
+                    "order": 22
+                },
+                "gitko.offlineQueue.intervalMs": {
+                    "type": "number",
+                    "default": 5000,
+                    "minimum": 1000,
+                    "maximum": 60000,
+                    "description": "Background flush interval for offline queue (ms)",
+                    "order": 23
                 }
             }
         }

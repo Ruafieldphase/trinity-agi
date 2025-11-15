@@ -6,7 +6,15 @@
  * - Optional file sink
  */
 
-import * as vscode from 'vscode';
+// Avoid hard dependency on VS Code API during unit tests.
+// Try to require 'vscode' at runtime; fall back to console-based channel if unavailable.
+let vscodeApi: any = undefined;
+try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    vscodeApi = require('vscode');
+} catch {
+    vscodeApi = undefined;
+}
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
@@ -28,9 +36,27 @@ interface LoggerOptions {
     logFilePath: string;
 }
 
+interface OutputChannelLike {
+    appendLine(value: string): void;
+    show(): void;
+    dispose(): void;
+}
+
+function createOutputChannel(name: string): OutputChannelLike {
+    if (vscodeApi && vscodeApi.window && typeof vscodeApi.window.createOutputChannel === 'function') {
+        return vscodeApi.window.createOutputChannel(name);
+    }
+    // Fallback: console-backed output channel for tests
+    return {
+        appendLine: (v: string) => console.log(`[${name}] ${v}`),
+        show: () => {},
+        dispose: () => {},
+    } as OutputChannelLike;
+}
+
 export class Logger {
     private static instance: Logger;
-    private channels: Map<string, vscode.OutputChannel> = new Map();
+    private channels: Map<string, OutputChannelLike> = new Map();
     private defaultChannelName = 'Gitko Extension';
     private options: LoggerOptions;
 
@@ -53,22 +79,32 @@ export class Logger {
     }
 
     private loadOptionsFromConfig(): LoggerOptions {
-        const cfg = vscode.workspace.getConfiguration('gitko');
-        const levelStr = (cfg.get<string>('logLevel', 'info') || 'info').toLowerCase();
-        const levelMap: Record<string, LogLevel> = {
-            debug: LogLevel.DEBUG,
-            info: LogLevel.INFO,
-            warn: LogLevel.WARN,
-            error: LogLevel.ERROR,
+        if (vscodeApi?.workspace?.getConfiguration) {
+            const cfg = vscodeApi.workspace.getConfiguration('gitko');
+            const levelStr = (cfg.get('logLevel', 'info') || 'info').toLowerCase();
+            const levelMap: Record<string, LogLevel> = {
+                debug: LogLevel.DEBUG,
+                info: LogLevel.INFO,
+                warn: LogLevel.WARN,
+                error: LogLevel.ERROR,
+            };
+            const level = levelMap[levelStr] ?? LogLevel.INFO;
+            const format = ((cfg.get('logFormat', 'plain') as string) as LogFormat) || 'plain';
+            const separateChannels = (cfg.get('separateOutputChannels', false) as boolean) ?? false;
+            const logToFile = (cfg.get('logToFile', false) as boolean) ?? false;
+            const logFilePath =
+                (cfg.get('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) as string) ||
+                path.join(os.homedir(), 'gitko-agent.log');
+            return { level, format, separateChannels, logToFile, logFilePath };
+        }
+        // Defaults for test environment
+        return {
+            level: LogLevel.INFO,
+            format: 'plain',
+            separateChannels: false,
+            logToFile: false,
+            logFilePath: path.join(os.homedir(), 'gitko-agent.log'),
         };
-        const level = levelMap[levelStr] ?? LogLevel.INFO;
-        const format = (cfg.get<string>('logFormat', 'plain') as LogFormat) || 'plain';
-        const separateChannels = cfg.get<boolean>('separateOutputChannels', false) ?? false;
-        const logToFile = cfg.get<boolean>('logToFile', false) ?? false;
-        const logFilePath =
-            cfg.get<string>('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) ||
-            path.join(os.homedir(), 'gitko-agent.log');
-        return { level, format, separateChannels, logToFile, logFilePath };
     }
 
     public setLogLevel(level: LogLevel) {
@@ -101,14 +137,14 @@ export class Logger {
         }
     }
 
-    private getChannel(name: string): vscode.OutputChannel {
+    private getChannel(name: string): OutputChannelLike {
         if (!this.channels.has(name)) {
-            this.channels.set(name, vscode.window.createOutputChannel(name));
+            this.channels.set(name, createOutputChannel(name));
         }
         return this.channels.get(name)!;
     }
 
-    private getTargetChannel(module?: string): vscode.OutputChannel {
+    private getTargetChannel(module?: string): OutputChannelLike {
         if (this.options.separateChannels && module) {
             return this.getChannel(`Gitko: ${module}`);
         }

@@ -42,7 +42,16 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = exports.LogLevel = void 0;
 exports.createLogger = createLogger;
-const vscode = __importStar(require("vscode"));
+// Avoid hard dependency on VS Code API during unit tests.
+// Try to require 'vscode' at runtime; fall back to console-based channel if unavailable.
+let vscodeApi = undefined;
+try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    vscodeApi = require('vscode');
+}
+catch {
+    vscodeApi = undefined;
+}
 const fs = __importStar(require("fs"));
 const os = __importStar(require("os"));
 const path = __importStar(require("path"));
@@ -53,6 +62,17 @@ var LogLevel;
     LogLevel[LogLevel["WARN"] = 2] = "WARN";
     LogLevel[LogLevel["ERROR"] = 3] = "ERROR";
 })(LogLevel || (exports.LogLevel = LogLevel = {}));
+function createOutputChannel(name) {
+    if (vscodeApi && vscodeApi.window && typeof vscodeApi.window.createOutputChannel === 'function') {
+        return vscodeApi.window.createOutputChannel(name);
+    }
+    // Fallback: console-backed output channel for tests
+    return {
+        appendLine: (v) => console.log(`[${name}] ${v}`),
+        show: () => { },
+        dispose: () => { },
+    };
+}
 class Logger {
     constructor() {
         this.channels = new Map();
@@ -72,21 +92,31 @@ class Logger {
         this.options = this.loadOptionsFromConfig();
     }
     loadOptionsFromConfig() {
-        const cfg = vscode.workspace.getConfiguration('gitko');
-        const levelStr = (cfg.get('logLevel', 'info') || 'info').toLowerCase();
-        const levelMap = {
-            debug: LogLevel.DEBUG,
-            info: LogLevel.INFO,
-            warn: LogLevel.WARN,
-            error: LogLevel.ERROR,
+        if (vscodeApi?.workspace?.getConfiguration) {
+            const cfg = vscodeApi.workspace.getConfiguration('gitko');
+            const levelStr = (cfg.get('logLevel', 'info') || 'info').toLowerCase();
+            const levelMap = {
+                debug: LogLevel.DEBUG,
+                info: LogLevel.INFO,
+                warn: LogLevel.WARN,
+                error: LogLevel.ERROR,
+            };
+            const level = levelMap[levelStr] ?? LogLevel.INFO;
+            const format = cfg.get('logFormat', 'plain') || 'plain';
+            const separateChannels = cfg.get('separateOutputChannels', false) ?? false;
+            const logToFile = cfg.get('logToFile', false) ?? false;
+            const logFilePath = cfg.get('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) ||
+                path.join(os.homedir(), 'gitko-agent.log');
+            return { level, format, separateChannels, logToFile, logFilePath };
+        }
+        // Defaults for test environment
+        return {
+            level: LogLevel.INFO,
+            format: 'plain',
+            separateChannels: false,
+            logToFile: false,
+            logFilePath: path.join(os.homedir(), 'gitko-agent.log'),
         };
-        const level = levelMap[levelStr] ?? LogLevel.INFO;
-        const format = cfg.get('logFormat', 'plain') || 'plain';
-        const separateChannels = cfg.get('separateOutputChannels', false) ?? false;
-        const logToFile = cfg.get('logToFile', false) ?? false;
-        const logFilePath = cfg.get('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) ||
-            path.join(os.homedir(), 'gitko-agent.log');
-        return { level, format, separateChannels, logToFile, logFilePath };
     }
     setLogLevel(level) {
         this.options.level = level;
@@ -115,7 +145,7 @@ class Logger {
     }
     getChannel(name) {
         if (!this.channels.has(name)) {
-            this.channels.set(name, vscode.window.createOutputChannel(name));
+            this.channels.set(name, createOutputChannel(name));
         }
         return this.channels.get(name);
     }

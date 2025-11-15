@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { createLogger } from './logger';
+import { OfflineResultQueue } from './offlineQueue';
 import { PerformanceMonitor } from './performanceMonitor';
 import { validateTaskSafe, type Task, type SubmitResult } from './schemas';
 
@@ -344,6 +345,12 @@ export class HttpTaskPoller {
                 task_id: taskId,
                 error: error instanceof Error ? error.message : String(error),
             });
+                // Offline queue fallback
+                try {
+                    const q = OfflineResultQueue.getInstance();
+                    await q.enqueue(this.apiBase, taskId, result);
+                    this.log(`[HttpPoller] 💾 Queued result for offline retry: ${taskId}`);
+                } catch {}
         }
     }
 
