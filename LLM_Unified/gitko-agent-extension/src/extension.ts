@@ -166,7 +166,7 @@ export function activate(context: vscode.ExtensionContext) {
     const shouldAutostart = gitkoCfg.get<boolean>('enableHttpPoller', true);
     if (shouldAutostart) {
         enableHttpPoller();
-        vscode.window.showInformationMessage('🤖 Gitko Agent Extension 활성화! HTTP Poller 자동 시작됨');
+        logger.info('HTTP Poller auto-started');
     } else {
         httpPollerOutputChannel?.appendLine(
             `[${new Date().toISOString()}] HTTP Task Poller autostart is disabled by settings (gitko.enableHttpPoller=false)`

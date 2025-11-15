@@ -36,7 +36,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpTaskPoller = void 0;
 const vscode = __importStar(require("vscode"));
 const logger_1 = require("./logger");
+const schemas_1 = require("./schemas");
 const logger = (0, logger_1.createLogger)('HttpTaskPoller');
+/**
+ * HTTP-based Task Poller for Gitko Extension
+ *
+ * Polls the Task Queue HTTP API for new tasks and processes them.
+ * Replaces the Python http_task_poller.py with native TypeScript implementation.
+ *
+ * @author Phase 8a Integration
+ * @date 2025-10-29
+ */
 class HttpTaskPoller {
     constructor(apiBase = 'http://localhost:8091/api', workerId = 'gitko-extension', pollingInterval = 2000) {
         this.isPolling = false;
@@ -186,7 +196,16 @@ class HttpTaskPoller {
             if (data && data.task === null) {
                 return null;
             }
-            return data || null;
+            // Validate task schema
+            if (data) {
+                const validation = (0, schemas_1.validateTaskSafe)(data);
+                if (!validation.success) {
+                    this.log(`[HttpPoller] ⚠️ Invalid task schema: ${validation.error}`);
+                    return null;
+                }
+                return validation.data;
+            }
+            return null;
         }
         catch (error) {
             if (error instanceof Error) {

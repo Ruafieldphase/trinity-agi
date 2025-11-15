@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { createLogger } from './logger';
+import { validateTaskSafe, type Task, type SubmitResult } from './schemas';
 
 const logger = createLogger('HttpTaskPoller');
 
@@ -12,19 +13,6 @@ const logger = createLogger('HttpTaskPoller');
  * @author Phase 8a Integration
  * @date 2025-10-29
  */
-
-interface Task {
-    task_id: string;
-    type: string;
-    data: unknown;
-    created_at: string;
-}
-
-interface SubmitResult {
-    success: boolean;
-    data?: unknown;
-    error?: string;
-}
 
 export class HttpTaskPoller {
     private apiBase: string;
@@ -209,14 +197,24 @@ export class HttpTaskPoller {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
-            const data = (await response.json()) as Task;
+            const data = (await response.json()) as unknown;
 
             // Handle empty queue response: {task: null}
             if (data && (data as any).task === null) {
                 return null;
             }
 
-            return data || null;
+            // Validate task schema
+            if (data) {
+                const validation = validateTaskSafe(data);
+                if (!validation.success) {
+                    this.log(`[HttpPoller] ⚠️ Invalid task schema: ${validation.error}`);
+                    return null;
+                }
+                return validation.data;
+            }
+
+            return null;
         } catch (error) {
             if (error instanceof Error) {
                 const msg = error.message;
