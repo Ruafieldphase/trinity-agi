@@ -155,6 +155,21 @@ export class HttpTaskPoller {
     }
 
     /**
+     * Expose internal backoff/circuit state for testing and diagnostics
+     */
+    public getDebugState(): {
+        consecutiveErrors: number;
+        currentBackoffMs: number;
+        isCircuitOpen: boolean;
+    } {
+        return {
+            consecutiveErrors: this.consecutiveErrors,
+            currentBackoffMs: this.currentBackoffMs,
+            isCircuitOpen: this.isCircuitOpen,
+        };
+    }
+
+    /**
      * Handle successful operation - reset backoff
      */
     private onSuccess() {

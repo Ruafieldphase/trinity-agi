@@ -223,6 +223,19 @@ class Logger {
         }
         this.channels.clear();
     }
+    /**
+     * Enable file sink programmatically (useful for tests)
+     */
+    enableFileSink(filePath) {
+        this.options.logToFile = true;
+        this.options.logFilePath = filePath;
+    }
+    /**
+     * Disable file sink programmatically (useful for tests)
+     */
+    disableFileSink() {
+        this.options.logToFile = false;
+    }
 }
 exports.Logger = Logger;
 /**

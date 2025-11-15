@@ -172,4 +172,11 @@ export class RealTimeTaskClient {
             this.heartbeatTimer = undefined;
         }
     }
+
+    /**
+     * Expose minimal state for testing
+     */
+    public getDebugState(): { reconnectAttempts: number; active: boolean } {
+        return { reconnectAttempts: this.reconnectAttempts, active: this.active };
+    }
 }
