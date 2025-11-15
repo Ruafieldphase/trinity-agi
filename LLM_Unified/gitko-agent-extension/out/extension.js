@@ -49,6 +49,7 @@ const resonanceLedgerViewer_1 = require("./resonanceLedgerViewer");
 const configValidator_1 = require("./configValidator");
 const logger_1 = require("./logger");
 const performanceViewer_1 = require("./performanceViewer");
+const otelExporter_1 = require("./otelExporter");
 const integrationTest_1 = require("./integrationTest");
 const devUtils_1 = require("./devUtils");
 const activityTracker_1 = require("./activityTracker");
@@ -213,6 +214,8 @@ function activate(context) {
     else {
         httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] ${(0, i18n_1.t)('extension.httpPollerDisabled')}`);
     }
+    // Start OpenTelemetry exporter if enabled
+    (0, otelExporter_1.startOtelExporter)();
     // Language Model Tools 등록 (Copilot이 자동으로 호출)
     const sianTool = vscode.lm.registerTool('sian_refactor', {
         invoke: async (options, token) => {
@@ -858,6 +861,17 @@ function deactivate() {
         clearInterval(httpPollerInterval);
         httpPollerInterval = undefined;
     }
+    // Stop active clients
+    if (realtimeClient?.isActive()) {
+        realtimeClient.stop();
+        realtimeClient = undefined;
+    }
+    if (taskPoller?.isActive()) {
+        taskPoller.stop();
+        taskPoller = undefined;
+    }
+    // Stop OTLP exporter
+    (0, otelExporter_1.stopOtelExporter)();
     logger.info('Gitko Agent Extension is deactivated');
 }
 //# sourceMappingURL=extension.js.map

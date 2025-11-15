@@ -12,6 +12,7 @@ import { ResonanceLedgerViewer } from './resonanceLedgerViewer';
 import { ConfigValidator } from './configValidator';
 import { createLogger, Logger } from './logger';
 import { PerformanceViewer } from './performanceViewer';
+import { startOtelExporter, stopOtelExporter } from './otelExporter';
 import { registerIntegrationTestCommand } from './integrationTest';
 import { registerDevCommands } from './devUtils';
 import { ActivityTracker, ActivityViewer } from './activityTracker';
@@ -229,6 +230,9 @@ export function activate(context: vscode.ExtensionContext) {
     } else {
         httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] ${t('extension.httpPollerDisabled')}`);
     }
+
+    // Start OpenTelemetry exporter if enabled
+    startOtelExporter();
 
     // Language Model Tools 등록 (Copilot이 자동으로 호출)
     const sianTool = vscode.lm.registerTool('sian_refactor', {
@@ -988,5 +992,16 @@ export function deactivate() {
         clearInterval(httpPollerInterval);
         httpPollerInterval = undefined;
     }
+    // Stop active clients
+    if (realtimeClient?.isActive()) {
+        realtimeClient.stop();
+        realtimeClient = undefined;
+    }
+    if (taskPoller?.isActive()) {
+        taskPoller.stop();
+        taskPoller = undefined;
+    }
+    // Stop OTLP exporter
+    stopOtelExporter();
     logger.info('Gitko Agent Extension is deactivated');
 }

@@ -204,6 +204,30 @@
                     "description": "Path to Python executable (leave empty for auto-detection)",
                     "order": 1
                 },
+                "gitko.otel.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Export PerformanceMonitor spans/metrics to OTLP endpoint",
+                    "order": 35
+                },
+                "gitko.otel.endpoint": {
+                    "type": "string",
+                    "default": "http://localhost:4318",
+                    "description": "OTLP endpoint base URL (e.g., http://localhost:4318)",
+                    "order": 36
+                },
+                "gitko.otel.headerName": {
+                    "type": "string",
+                    "default": "Authorization",
+                    "description": "Optional header name for OTLP auth",
+                    "order": 37
+                },
+                "gitko.otel.token": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Optional token value for OTLP auth header (e.g., Bearer <token>)",
+                    "order": 38
+                },
                 "gitko.security.redact.enabled": {
                     "type": "boolean",
                     "default": true,
