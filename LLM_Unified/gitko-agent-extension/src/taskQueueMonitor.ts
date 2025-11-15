@@ -201,6 +201,34 @@ export class TaskQueueMonitor {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Queue Monitor</title>
     <style>
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        .skip-link:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            padding: 8px 12px;
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border-radius: 4px;
+        }
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
         body {
             font-family: var(--vscode-font-family);
             padding: 20px;
@@ -308,100 +336,103 @@ export class TaskQueueMonitor {
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🎯 Task Queue Monitor</h1>
-        <div>
-            <button class="button" onclick="refresh()">🔄 Refresh</button>
-            <button class="button" onclick="clearCompleted()">🗑️ Clear Completed</button>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div id="sr-status" aria-live="polite" class="sr-only"></div>
+    <header class="header" role="banner">
+        <h1 aria-label="Task Queue Monitor"><span aria-hidden="true">🎯</span> Task Queue Monitor</h1>
+        <div role="group" aria-label="Actions">
+            <button class="button" onclick="refresh()" aria-label="Refresh task data"><span aria-hidden="true">🔄</span> Refresh</button>
+            <button class="button" onclick="clearCompleted()" aria-label="Clear completed tasks"><span aria-hidden="true">🗑️</span> Clear Completed</button>
         </div>
-    </div>
+    </header>
 
-    <div class="stats">
-        <div class="stat-card">
+    <main id="main" role="main" tabindex="-1">
+      <section class="stats" role="region" aria-label="Queue statistics">
+        <div class="stat-card" role="group" aria-label="Health status ${health.status} with success rate ${successRate} percent">
             <div class="stat-label">
-                <span class="health-indicator"></span>
-                Health Status
+                <span class="health-indicator" aria-hidden="true"></span>
+                <span>Health Status</span>
             </div>
-            <div class="stat-value">${health.status.toUpperCase()}</div>
-            <div class="stat-label">Success Rate: ${successRate}%</div>
+            <div class="stat-value" aria-label="${health.status.toUpperCase()}">${health.status.toUpperCase()}</div>
+            <div class="stat-label" aria-label="Success rate ${successRate} percent">Success Rate: ${successRate}%</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">⏳ Pending</div>
+        <div class="stat-card" role="group" aria-label="Pending tasks ${pendingCount}">
+            <div class="stat-label"><span aria-hidden="true">⏳</span> Pending</div>
             <div class="stat-value status-pending">${pendingCount}</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">🔄 In Flight</div>
+        <div class="stat-card" role="group" aria-label="In flight tasks ${inflightCount}">
+            <div class="stat-label"><span aria-hidden="true">🔄</span> In Flight</div>
             <div class="stat-value status-inflight">${inflightCount}</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">✅ Completed</div>
+        <div class="stat-card" role="group" aria-label="Completed tasks ${completedCount}">
+            <div class="stat-label"><span aria-hidden="true">✅</span> Completed</div>
             <div class="stat-value status-completed">${completedCount}</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">❌ Failed</div>
+        <div class="stat-card" role="group" aria-label="Failed tasks ${failedCount}">
+            <div class="stat-label"><span aria-hidden="true">❌</span> Failed</div>
             <div class="stat-value status-failed">${failedCount}</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-label">⏱️ Avg Duration</div>
+        <div class="stat-card" role="group" aria-label="Average duration ${health.avg_duration_ms.toFixed(0)} milliseconds">
+            <div class="stat-label"><span aria-hidden="true">⏱️</span> Avg Duration</div>
             <div class="stat-value">${health.avg_duration_ms.toFixed(0)}ms</div>
         </div>
-    </div>
+      </section>
 
-    <div class="section">
-        <h2>📋 Pending Tasks (${pendingCount})</h2>
-        <div class="task-list">
+    <section class="section" role="region" aria-label="Pending tasks list with ${pendingCount} items">
+        <h2><span aria-hidden="true">📋</span> Pending Tasks (${pendingCount})</h2>
+        <ul class="task-list" role="list">
             ${
                 tasks
                     .slice(0, 10)
                     .map(
                         (task: any) => `
-                <div class="task-item">
+                <li class="task-item" role="listitem" aria-label="${task.task_type || 'unknown'} priority ${task.priority || 'normal'} id ${task.task_id} created ${new Date(task.created_at).toLocaleString()}">
                     <div>
                         <strong>${task.task_type || 'unknown'}</strong>
                         <span class="task-type">${task.priority || 'normal'}</span>
                     </div>
                     <div class="task-id">ID: ${task.task_id}</div>
                     <div class="timestamp">Created: ${new Date(task.created_at).toLocaleString()}</div>
-                </div>
+                </li>
             `
                     )
-                    .join('') || '<div class="task-item">No pending tasks</div>'
+                    .join('') || '<li class="task-item" role="listitem">No pending tasks</li>'
             }
-        </div>
-    </div>
+        </ul>
+    </section>
 
-    <div class="section">
-        <h2>🔄 In Flight Tasks (${inflightCount})</h2>
-        <div class="task-list">
+    <section class="section" role="region" aria-label="In flight tasks list with ${inflightCount} items">
+        <h2><span aria-hidden="true">🔄</span> In Flight Tasks (${inflightCount})</h2>
+        <ul class="task-list" role="list">
             ${
                 inflight?.tasks
                     ?.slice(0, 5)
                     .map(
                         (task: any) => `
-                <div class="task-item">
+                <li class="task-item" role="listitem" aria-label="${task.task_type || 'unknown'} running id ${task.task_id} started ${new Date(task.leased_at).toLocaleString()}">
                     <div>
                         <strong>${task.task_type || 'unknown'}</strong>
                         <span class="task-type status-inflight">RUNNING</span>
                     </div>
                     <div class="task-id">ID: ${task.task_id}</div>
                     <div class="timestamp">Started: ${new Date(task.leased_at).toLocaleString()}</div>
-                </div>
+                </li>
             `
                     )
-                    .join('') || '<div class="task-item">No tasks in flight</div>'
+                    .join('') || '<li class="task-item" role="listitem">No tasks in flight</li>'
             }
-        </div>
-    </div>
+        </ul>
+    </section>
 
-    <div class="section">
-        <h2>📊 Recent Results</h2>
-        <div class="task-list">
+    <section class="section" role="region" aria-label="Recent results list">
+        <h2><span aria-hidden="true">📊</span> Recent Results</h2>
+        <ul class="task-list" role="list">
             ${
                 results
                     .slice(0, 10)
                     .map(
                         (result: any) => `
-                <div class="task-item">
+                <li class="task-item" role="listitem" aria-label="${result.task_type || 'unknown'} ${result.status} id ${result.task_id} ${result.completed_at ? 'completed' : 'created'} ${new Date(result.completed_at || result.created_at).toLocaleString()} ${result.error ? 'error ' + result.error : ''}">
                     <div>
                         <strong>${result.task_type || 'unknown'}</strong>
                         <span class="task-type status-${result.status}">${result.status?.toUpperCase()}</span>
@@ -409,23 +440,28 @@ export class TaskQueueMonitor {
                     <div class="task-id">ID: ${result.task_id}</div>
                     ${result.error ? `<div style="color: #FF5722; margin-top: 4px;">Error: ${result.error}</div>` : ''}
                     <div class="timestamp">Completed: ${new Date(result.completed_at || result.created_at).toLocaleString()}</div>
-                </div>
+                </li>
             `
                     )
-                    .join('') || '<div class="task-item">No results yet</div>'
+                    .join('') || '<li class="task-item" role="listitem">No results yet</li>'
             }
-        </div>
-    </div>
+        </ul>
+    </section>
+    </main>
 
     <script>
         const vscode = acquireVsCodeApi();
         
         function refresh() {
             vscode.postMessage({ command: 'refresh' });
+            const sr = document.getElementById('sr-status');
+            if (sr) sr.textContent = 'Refreshed task data';
         }
         
         function clearCompleted() {
             vscode.postMessage({ command: 'clearCompleted' });
+            const sr = document.getElementById('sr-status');
+            if (sr) sr.textContent = 'Cleared completed tasks';
         }
     </script>
 </body>

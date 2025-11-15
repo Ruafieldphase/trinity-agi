@@ -163,6 +163,34 @@ export class ResonanceLedgerViewer {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resonance Ledger</title>
     <style>
+        .skip-link {
+            position: absolute;
+            left: -9999px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        .skip-link:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            padding: 8px 12px;
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border-radius: 4px;
+        }
+        .sr-only {
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            padding: 0 !important;
+            margin: -1px !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            white-space: nowrap !important;
+            border: 0 !important;
+        }
         body {
             font-family: var(--vscode-font-family);
             padding: 20px;
@@ -334,17 +362,20 @@ export class ResonanceLedgerViewer {
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>
-            <span class="wave">🌊</span>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div id="sr-status" aria-live="polite" class="sr-only"></div>
+    <header class="header" role="banner">
+        <h1 aria-label="Resonance Ledger">
+            <span class="wave" aria-hidden="true">🌊</span>
             Resonance Ledger
         </h1>
-        <div class="controls">
-            <button class="button" onclick="refresh()">🔄 Refresh</button>
+        <div class="controls" role="group" aria-label="Actions">
+            <button class="button" onclick="refresh()" aria-label="Refresh ledger"><span aria-hidden="true">🔄</span> Refresh</button>
         </div>
-    </div>
+    </header>
 
-    <div class="stats">
+    <main id="main" role="main" tabindex="-1">
+    <div class="stats" role="region" aria-label="Ledger statistics">
         <div class="stat-card">
             <div class="stat-label">Total Events</div>
             <div class="stat-value">${events.length}</div>
@@ -363,23 +394,23 @@ export class ResonanceLedgerViewer {
         </div>
     </div>
 
-    <div class="filter-bar">
-        <span class="filter-label">Filter by Agent:</span>
-        <button class="button secondary" onclick="filterByAgent('')">All</button>
+    <div class="filter-bar" role="region" aria-label="Filter controls">
+        <span class="filter-label" id="filter-label">Filter by Agent:</span>
+        <button class="button secondary" onclick="filterByAgent('')" aria-labelledby="filter-label">All</button>
         ${agents
             .map(
                 (agent) => `
-            <button class="button secondary" onclick="filterByAgent('${agent}')">${agent}</button>
+            <button class="button secondary" onclick="filterByAgent('${agent}')" aria-label="Filter by agent ${agent}">${agent}</button>
         `
             )
             .join('')}
     </div>
 
-    <div class="timeline">
+    <div class="timeline" role="list" aria-label="Events timeline">
         ${events
             .map(
                 (event) => `
-            <div class="event">
+            <div class="event" role="listitem" aria-label="${event.event_type || 'Unknown Event'} at ${new Date(event.timestamp).toLocaleString()} ${event.agent ? 'by ' + event.agent : ''}">
                 <div class="event-header">
                     <span class="event-type">${event.event_type || 'Unknown Event'}</span>
                     <span class="event-time">${new Date(event.timestamp).toLocaleString()}</span>
@@ -394,7 +425,7 @@ export class ResonanceLedgerViewer {
                     event.context
                         ? `
                     <details style="margin-top: 8px;">
-                        <summary style="cursor: pointer; font-size: 12px; opacity: 0.8;">Context</summary>
+                        <summary style="cursor: pointer; font-size: 12px; opacity: 0.8;">Context (toggle)</summary>
                         <div class="event-context">${JSON.stringify(event.context, null, 2)}</div>
                     </details>
                 `
@@ -404,7 +435,7 @@ export class ResonanceLedgerViewer {
                     event.evidence_link
                         ? `
                     <div style="margin-top: 8px; font-size: 11px;">
-                        🔗 <a href="${event.evidence_link}" style="color: var(--vscode-textLink-foreground);">Evidence Link</a>
+                        <span aria-hidden="true">🔗</span> <a href="${event.evidence_link}" style="color: var(--vscode-textLink-foreground);">Evidence Link</a>
                     </div>
                 `
                         : ''
@@ -431,12 +462,17 @@ export class ResonanceLedgerViewer {
         
         function refresh() {
             vscode.postMessage({ command: 'refresh' });
+            const sr = document.getElementById('sr-status');
+            if (sr) sr.textContent = 'Ledger refreshed';
         }
         
         function filterByAgent(agent) {
             vscode.postMessage({ command: 'filterByAgent', agent: agent });
+            const sr = document.getElementById('sr-status');
+            if (sr) sr.textContent = agent ? ('Filtered by agent ' + agent) : 'Filter cleared';
         }
     </script>
+</main>
 </body>
 </html>`;
     }
