@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { createLogger } from './logger';
 import { PerformanceMonitor } from './performanceMonitor';
+import { exportDiagnosticsBundle, runPreflight } from './diagnostics';
 
 const logger = createLogger('DevUtils');
 
@@ -269,6 +270,32 @@ export function registerDevCommands(context: vscode.ExtensionContext): void {
     context.subscriptions.push(
         vscode.commands.registerCommand('gitko.dev.exportDiagnostics', () => {
             DevUtils.exportDiagnostics();
+        })
+    );
+
+    // Export diagnostics bundle (ZIP)
+    context.subscriptions.push(
+        vscode.commands.registerCommand('gitko.dev.exportDiagnosticsBundle', () => {
+            exportDiagnosticsBundle();
+        })
+    );
+
+    // Run preflight checks
+    context.subscriptions.push(
+        vscode.commands.registerCommand('gitko.dev.preflight', async () => {
+            const result = await runPreflight();
+            const ch = vscode.window.createOutputChannel('Gitko Preflight');
+            ch.clear();
+            ch.appendLine('=== Gitko Preflight Checks ===\n');
+            for (const c of result.checks) {
+                ch.appendLine(`${c.ok ? '✅' : '❌'} ${c.name}${c.message ? ` - ${c.message}` : ''}`);
+            }
+            ch.show();
+            if (!result.ok) {
+                vscode.window.showWarningMessage('Preflight checks found issues. See Output for details.');
+            } else {
+                vscode.window.showInformationMessage('Preflight checks passed.');
+            }
         })
     );
 

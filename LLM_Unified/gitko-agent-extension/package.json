@@ -92,6 +92,16 @@
                 "category": "Gitko Dev"
             },
             {
+                "command": "gitko.dev.exportDiagnosticsBundle",
+                "title": "Gitko Dev: Export Diagnostics Bundle (ZIP)",
+                "category": "Gitko Dev"
+            },
+            {
+                "command": "gitko.dev.preflight",
+                "title": "Gitko Dev: Run Preflight Checks",
+                "category": "Gitko Dev"
+            },
+            {
                 "command": "gitko.dev.showMemoryStats",
                 "title": "Gitko Dev: Show Memory Stats",
                 "category": "Gitko Dev"
@@ -108,9 +118,21 @@
                 "category": "Gitko Security",
                 "icon": "$(file-text)"
             },
-            { "command": "gitko.setQueueMode.poll", "title": "Gitko: Switch Queue Mode to Polling", "category": "Gitko" },
-            { "command": "gitko.setQueueMode.sse", "title": "Gitko: Switch Queue Mode to SSE", "category": "Gitko" },
-            { "command": "gitko.toggleQueueMode", "title": "Gitko: Toggle Queue Mode (SSE/Poll)", "category": "Gitko" }
+            {
+                "command": "gitko.setQueueMode.poll",
+                "title": "Gitko: Switch Queue Mode to Polling",
+                "category": "Gitko"
+            },
+            {
+                "command": "gitko.setQueueMode.sse",
+                "title": "Gitko: Switch Queue Mode to SSE",
+                "category": "Gitko"
+            },
+            {
+                "command": "gitko.toggleQueueMode",
+                "title": "Gitko: Toggle Queue Mode (SSE/Poll)",
+                "category": "Gitko"
+            }
         ],
         "languageModelTools": [
             {
@@ -260,14 +282,18 @@
                 },
                 "gitko.security.allowDomains": {
                     "type": "array",
-                    "items": { "type": "string" },
+                    "items": {
+                        "type": "string"
+                    },
                     "default": [],
                     "description": "Allowlist of domains for Computer Use URL actions (empty = allow all)",
                     "order": 33
                 },
                 "gitko.security.allowProcesses": {
                     "type": "array",
-                    "items": { "type": "string" },
+                    "items": {
+                        "type": "string"
+                    },
                     "default": [],
                     "description": "Allowlist of process base names for Computer Use actions (empty = allow all)",
                     "order": 34
@@ -361,14 +387,22 @@
                 },
                 "gitko.logLevel": {
                     "type": "string",
-                    "enum": ["debug", "info", "warn", "error"],
+                    "enum": [
+                        "debug",
+                        "info",
+                        "warn",
+                        "error"
+                    ],
                     "default": "info",
                     "description": "Logging level for Gitko extension",
                     "order": 15
                 },
                 "gitko.logFormat": {
                     "type": "string",
-                    "enum": ["plain", "json"],
+                    "enum": [
+                        "plain",
+                        "json"
+                    ],
                     "default": "plain",
                     "description": "Log output format (plain text or JSON)",
                     "order": 16
@@ -393,7 +427,11 @@
                 },
                 "gitko.taskQueueMode": {
                     "type": "string",
-                    "enum": ["auto", "poll", "sse"],
+                    "enum": [
+                        "auto",
+                        "poll",
+                        "sse"
+                    ],
                     "default": "auto",
                     "description": "Task queue mode: HTTP polling, Server-Sent Events (SSE), or auto (prefer SSE, fallback to polling)",
                     "order": 20
@@ -466,6 +504,7 @@
         "test": "vitest run --reporter=default"
     },
     "devDependencies": {
+        "@types/adm-zip": "^0.5.7",
         "@types/node": "^20.x",
         "@types/vscode": "^1.90.0",
         "@typescript-eslint/eslint-plugin": "^7.18.0",
@@ -474,11 +513,12 @@
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.4",
         "eslint-plugin-security": "^3.0.1",
-        "vitest": "^2.1.3",
         "prettier": "^3.6.2",
-        "typescript": "^5.4.0"
+        "typescript": "^5.4.0",
+        "vitest": "^2.1.3"
     },
     "dependencies": {
+        "adm-zip": "^0.5.10",
         "axios": "^1.13.1",
         "eventsource": "^2.0.2",
         "zod": "^4.1.12"
