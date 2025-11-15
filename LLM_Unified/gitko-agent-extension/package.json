@@ -107,7 +107,10 @@
                 "title": "Gitko Security: Export Audit Log",
                 "category": "Gitko Security",
                 "icon": "$(file-text)"
-            }
+            },
+            { "command": "gitko.setQueueMode.poll", "title": "Gitko: Switch Queue Mode to Polling", "category": "Gitko" },
+            { "command": "gitko.setQueueMode.sse", "title": "Gitko: Switch Queue Mode to SSE", "category": "Gitko" },
+            { "command": "gitko.toggleQueueMode", "title": "Gitko: Toggle Queue Mode (SSE/Poll)", "category": "Gitko" }
         ],
         "languageModelTools": [
             {
@@ -327,17 +330,45 @@
                     "description": "Task queue mode: HTTP polling, Server-Sent Events (SSE), or auto (prefer SSE, fallback to polling)",
                     "order": 20
                 },
+                "gitko.sse.heartbeatMs": {
+                    "type": "number",
+                    "default": 15000,
+                    "minimum": 1000,
+                    "maximum": 60000,
+                    "description": "Expected heartbeat interval from server (ms). If no message within this window, SSE reconnects.",
+                    "order": 21
+                },
+                "gitko.sse.maxReconnectAttempts": {
+                    "type": "number",
+                    "default": 10,
+                    "minimum": 0,
+                    "maximum": 1000,
+                    "description": "Max consecutive reconnect attempts before giving up (0 = unlimited). In auto mode, fallback to polling.",
+                    "order": 22
+                },
+                "gitko.queueAuth.headerName": {
+                    "type": "string",
+                    "default": "Authorization",
+                    "description": "Header name to send auth token for SSE/poll requests (e.g., Authorization).",
+                    "order": 23
+                },
+                "gitko.queueAuth.token": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Auth token value. For Authorization header, include the scheme (e.g., 'Bearer <token>').",
+                    "order": 24
+                },
                 "gitko.offlineQueue.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "Enable disk-backed offline result queue when submit fails",
-                    "order": 21
+                    "order": 25
                 },
                 "gitko.offlineQueue.dir": {
                     "type": "string",
                     "default": "",
                     "description": "Directory for offline queue files. Empty = %APPDATA%/gitko/queue",
-                    "order": 22
+                    "order": 26
                 },
                 "gitko.offlineQueue.intervalMs": {
                     "type": "number",
@@ -345,7 +376,7 @@
                     "minimum": 1000,
                     "maximum": 60000,
                     "description": "Background flush interval for offline queue (ms)",
-                    "order": 23
+                    "order": 27
                 }
             }
         }

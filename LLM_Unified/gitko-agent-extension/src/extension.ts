@@ -34,6 +34,7 @@ let httpPollerInterval: NodeJS.Timeout | undefined; // legacy (unused after poll
 let httpPollerOutputChannel: vscode.OutputChannel | undefined;
 let taskPoller: HttpTaskPoller | undefined;
 let realtimeClient: RealTimeTaskClient | undefined;
+let currentQueueMode: 'poll' | 'sse' | 'auto' | undefined;
 let agentOutputChannel: vscode.OutputChannel | undefined;
 let statusBarManager: StatusBarManager | undefined;
 
@@ -123,6 +124,14 @@ export function activate(context: vscode.ExtensionContext) {
         httpPollerOutputChannel?.show();
     });
 
+    // Queue mode switching commands
+    const setModePollCmd = vscode.commands.registerCommand('gitko.setQueueMode.poll', () => switchQueueMode('poll'));
+    const setModeSseCmd = vscode.commands.registerCommand('gitko.setQueueMode.sse', () => switchQueueMode('sse'));
+    const toggleModeCmd = vscode.commands.registerCommand('gitko.toggleQueueMode', () => {
+        const next = currentQueueMode === 'sse' ? 'poll' : 'sse';
+        switchQueueMode(next);
+    });
+
     // 🎯 Task Queue Monitor 명령어 등록
     const showTaskQueueMonitorCmd = vscode.commands.registerCommand('gitko.showTaskQueueMonitor', () => {
         const serverUrl = vscode.workspace
@@ -166,6 +175,9 @@ export function activate(context: vscode.ExtensionContext) {
         toggleHttpPollerCmd,
         enableHttpPollerCmd,
         disableHttpPollerCmd,
+        setModePollCmd,
+        setModeSseCmd,
+        toggleModeCmd,
         showPollerOutputCmd,
         showTaskQueueMonitorCmd,
         showResonanceLedgerCmd,
@@ -192,7 +204,7 @@ export function activate(context: vscode.ExtensionContext) {
     // gitko.enableHttpPoller=true일 때만 자동 시작 (기본값 true)
     const gitkoCfg = vscode.workspace.getConfiguration('gitko');
     const shouldAutostart = gitkoCfg.get<boolean>('enableHttpPoller', true);
-    const mode = gitkoCfg.get<string>('taskQueueMode', 'auto');
+    const mode = (gitkoCfg.get<string>('taskQueueMode', 'auto') as 'auto' | 'poll' | 'sse');
     // Initialize offline queue worker
     const oqEnabled = gitkoCfg.get<boolean>('offlineQueue.enabled', true);
     const oqDir = gitkoCfg.get<string>('offlineQueue.dir', '');
@@ -201,14 +213,17 @@ export function activate(context: vscode.ExtensionContext) {
     if (oqEnabled) {
         offlineQueue.startWorker(oqInterval);
     }
+    currentQueueMode = mode;
     if (shouldAutostart) {
         if (mode === 'sse' || mode === 'auto') {
             const started = enableRealtimeQueue(mode === 'auto');
             if (!started) {
                 enableHttpPoller();
+                currentQueueMode = 'poll';
             }
         } else {
             enableHttpPoller();
+            currentQueueMode = 'poll';
         }
         logger.info(t('extension.httpPollerAutoStarted'));
     } else {
@@ -904,11 +919,30 @@ function enableRealtimeQueue(allowFallback: boolean = true): boolean {
     }
     const config = vscode.workspace.getConfiguration('gitko');
     const apiBase = config.get<string>('httpApiBase', 'http://localhost:8091/api');
+    const heartbeatMs = config.get<number>('sse.heartbeatMs', 15000);
+    const maxReconnectAttempts = config.get<number>('sse.maxReconnectAttempts', 10);
+    const headerName = config.get<string>('queueAuth.headerName', 'Authorization') || 'Authorization';
+    const token = config.get<string>('queueAuth.token', '') || '';
+    const headers = token ? { [headerName]: token } : undefined;
     try {
-        realtimeClient = new RealTimeTaskClient(apiBase, 'gitko-extension');
+        realtimeClient = new RealTimeTaskClient(apiBase, 'gitko-extension', {
+            headers,
+            heartbeatMs,
+            maxReconnectAttempts,
+            onPermanentFailure: () => {
+                httpPollerOutputChannel?.appendLine(
+                    `[${new Date().toISOString()}] Realtime client reached max reconnects. ${allowFallback ? 'Falling back to polling.' : 'Stopped.'}`
+                );
+                if (allowFallback) {
+                    enableHttpPoller();
+                    currentQueueMode = 'poll';
+                }
+            },
+        });
         realtimeClient.start();
         httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] Realtime Task Client enabled (SSE)`);
         statusBarManager?.setState('polling');
+        currentQueueMode = 'sse';
         return true;
     } catch (error) {
         httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] Failed to start Realtime Client: ${error}`);
@@ -918,6 +952,34 @@ function enableRealtimeQueue(allowFallback: boolean = true): boolean {
         }
         vscode.window.showErrorMessage('❌ Failed to start realtime task client');
         return false;
+    }
+}
+
+function stopQueueClients() {
+    if (realtimeClient?.isActive()) {
+        realtimeClient.stop();
+        realtimeClient = undefined;
+    }
+    if (taskPoller?.isActive()) {
+        disableHttpPoller();
+        taskPoller = undefined;
+    }
+}
+
+function switchQueueMode(mode: 'poll' | 'sse') {
+    stopQueueClients();
+    if (mode === 'sse') {
+        const started = enableRealtimeQueue(false);
+        if (!started) {
+            vscode.window.showWarningMessage('Failed to start SSE. Falling back to polling.');
+            enableHttpPoller();
+            currentQueueMode = 'poll';
+        } else {
+            currentQueueMode = 'sse';
+        }
+    } else {
+        enableHttpPoller();
+        currentQueueMode = 'poll';
     }
 }
 

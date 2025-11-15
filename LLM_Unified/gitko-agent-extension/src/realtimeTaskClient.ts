@@ -5,6 +5,13 @@ import { HttpTaskPoller } from './httpTaskPoller';
 
 const logger = createLogger('RealtimeClient');
 
+export interface RealtimeClientOptions {
+    headers?: Record<string, string>;
+    heartbeatMs?: number; // if no messages for this duration, reconnect
+    maxReconnectAttempts?: number; // 0 = unlimited
+    onPermanentFailure?: () => void; // notify owner to fallback
+}
+
 export class RealTimeTaskClient {
     private apiBase: string;
     private workerId: string;
@@ -14,12 +21,16 @@ export class RealTimeTaskClient {
     private readonly maxBackoffMs = 30000;
     private readonly baseBackoffMs = 1000;
     private readonly pollerAdapter: HttpTaskPoller;
+    private options: RealtimeClientOptions;
+    private heartbeatTimer?: NodeJS.Timeout;
+    private lastEventTs = 0;
 
-    constructor(apiBase: string, workerId: string) {
+    constructor(apiBase: string, workerId: string, options?: RealtimeClientOptions) {
         this.apiBase = apiBase;
         this.workerId = workerId;
         // Reuse HttpTaskPoller task handling and submission logic
         this.pollerAdapter = new HttpTaskPoller(apiBase, workerId, 0);
+        this.options = options || {};
     }
 
     public isActive(): boolean {
@@ -42,15 +53,25 @@ export class RealTimeTaskClient {
             this.es = undefined;
         }
         logger.info('Realtime client stopped');
+        if (this.heartbeatTimer) {
+            clearInterval(this.heartbeatTimer);
+            this.heartbeatTimer = undefined;
+        }
     }
 
     private connect(url: string) {
-        this.es = new EventSource(url);
+        const init: { headers?: Record<string, string> } = {};
+        if (this.options.headers && Object.keys(this.options.headers).length > 0) {
+            init.headers = this.options.headers;
+        }
+        this.es = new EventSource(url, init);
         this.active = true;
 
         this.es.onopen = () => {
             logger.info('SSE connected');
             this.reconnectAttempts = 0;
+            this.lastEventTs = Date.now();
+            this.startHeartbeat();
         };
 
         this.es.onerror = (err: unknown) => {
@@ -63,6 +84,7 @@ export class RealTimeTaskClient {
             logger.warn(`SSE error: ${msg}`);
             this.es?.close();
             this.active = false;
+            this.stopHeartbeat();
             this.scheduleReconnect(url);
         };
 
@@ -75,6 +97,7 @@ export class RealTimeTaskClient {
                     return;
                 }
                 const task = validation.data as Task;
+                this.lastEventTs = Date.now();
                 await this.pollerAdapter.handleTask(task);
             } catch (error) {
                 logger.error('Failed to process SSE task', error as Error);
@@ -87,11 +110,41 @@ export class RealTimeTaskClient {
         const backoff = Math.min(this.baseBackoffMs * Math.pow(2, this.reconnectAttempts - 1), this.maxBackoffMs);
         const jitter = Math.random() * backoff * 0.1;
         const delay = Math.floor(backoff + jitter);
+        const maxAttempts = this.options.maxReconnectAttempts ?? 10;
+        if (maxAttempts > 0 && this.reconnectAttempts > maxAttempts) {
+            logger.error(`SSE reached max reconnect attempts (${maxAttempts}). Giving up.`);
+            this.options.onPermanentFailure?.();
+            return;
+        }
         logger.info(`Reconnecting SSE in ${delay}ms (attempt #${this.reconnectAttempts})`);
         setTimeout(() => {
             if (!this.active) {
                 this.connect(url);
             }
         }, delay);
+    }
+
+    private startHeartbeat() {
+        const hbMs = this.options.heartbeatMs ?? 15000;
+        if (hbMs <= 0) return;
+        this.stopHeartbeat();
+        this.heartbeatTimer = setInterval(() => {
+            const delta = Date.now() - this.lastEventTs;
+            if (delta > hbMs) {
+                logger.warn(`SSE heartbeat missed (${delta}ms > ${hbMs}ms). Reconnecting...`);
+                this.es?.close();
+                this.active = false;
+                this.stopHeartbeat();
+                // Use a small delay to avoid hot loop
+                setTimeout(() => this.scheduleReconnect(`${this.apiBase}/tasks/stream?workerId=${encodeURIComponent(this.workerId)}`), 100);
+            }
+        }, Math.max(Math.floor(hbMs / 2), 500));
+    }
+
+    private stopHeartbeat() {
+        if (this.heartbeatTimer) {
+            clearInterval(this.heartbeatTimer);
+            this.heartbeatTimer = undefined;
+        }
     }
 }
