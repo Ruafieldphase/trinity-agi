@@ -95,6 +95,18 @@
                 "command": "gitko.dev.showMemoryStats",
                 "title": "Gitko Dev: Show Memory Stats",
                 "category": "Gitko Dev"
+            },
+            {
+                "command": "gitko.security.toggleKillswitch",
+                "title": "Gitko Security: Toggle Computer Use Killswitch",
+                "category": "Gitko Security",
+                "icon": "$(shield)"
+            },
+            {
+                "command": "gitko.security.exportAuditLog",
+                "title": "Gitko Security: Export Audit Log",
+                "category": "Gitko Security",
+                "icon": "$(file-text)"
             }
         ],
         "languageModelTools": [

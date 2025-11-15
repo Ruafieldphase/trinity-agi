@@ -67,6 +67,12 @@ GitHub Copilot이 문맥을 분석하여 최적의 에이전트를 자동 선택
 - **텍스트 클릭**: `Gitko: Computer Use - Click by Text`
 - **HTTP Task Queue**: AI가 원격으로 데스크톱 제어 가능
 
+### 🛡️ 보안 기능
+- **Rate Limiting**: 일일/분당 작업 제한 (100/일, 10/분)
+- **Killswitch**: 긴급 정지 토글 (`Gitko Security: Toggle Computer Use Killswitch`)
+- **Destructive Action Confirmation**: 위험한 명령 실행 전 확인
+- **Audit Log**: 모든 Computer Use 작업 기록 및 내보내기
+
 ### 📊 실시간 모니터링
 - **Task Queue Monitor**: 작업 큐 상태 실시간 확인
 - **Resonance Ledger**: AGI 학습 과정 시각화

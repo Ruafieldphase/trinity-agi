@@ -4,9 +4,11 @@ import { spawn } from 'child_process';
 import * as path from 'path';
 import { createLogger } from './logger';
 import { PerformanceMonitor } from './performanceMonitor';
+import { SecurityGuardrails } from './securityGuardrails';
 
 const logger = createLogger('ComputerUse');
 const perfMonitor = PerformanceMonitor.getInstance();
+const security = SecurityGuardrails.getInstance();
 
 /**
  * Computer Use 기능 구현
@@ -112,6 +114,12 @@ export class ComputerUseAgent {
      * 특정 위치 클릭
      */
     async clickAt(x: number, y: number): Promise<boolean> {
+        // Security check
+        const check = await security.checkAction('computer_use.click', { x, y });
+        if (!check.allowed) {
+            throw new Error(`Action blocked: ${check.reason}`);
+        }
+
         return new Promise((resolve, reject) => {
             const args = [this.scriptPath, 'click', '--x', x.toString(), '--y', y.toString()];
 
@@ -148,6 +156,12 @@ export class ComputerUseAgent {
      * 텍스트로 요소 찾아서 클릭
      */
     async clickElementByText(searchText: string): Promise<boolean> {
+        // Security check
+        const check = await security.checkAction('computer_use.click', { text: searchText });
+        if (!check.allowed) {
+            throw new Error(`Action blocked: ${check.reason}`);
+        }
+
         try {
             const element = await this.findElementByText(searchText);
             if (!element) {
@@ -172,6 +186,12 @@ export class ComputerUseAgent {
      * 키보드 입력
      */
     async type(text: string): Promise<boolean> {
+        // Security check
+        const check = await security.checkAction('computer_use.type', { text });
+        if (!check.allowed) {
+            throw new Error(`Action blocked: ${check.reason}`);
+        }
+
         return new Promise((resolve, reject) => {
             const args = [this.scriptPath, 'type', '--text', text];
 

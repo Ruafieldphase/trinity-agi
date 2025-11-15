@@ -40,8 +40,10 @@ const vscode = __importStar(require("vscode"));
 const child_process_1 = require("child_process");
 const logger_1 = require("./logger");
 const performanceMonitor_1 = require("./performanceMonitor");
+const securityGuardrails_1 = require("./securityGuardrails");
 const logger = (0, logger_1.createLogger)('ComputerUse');
 const perfMonitor = performanceMonitor_1.PerformanceMonitor.getInstance();
+const security = securityGuardrails_1.SecurityGuardrails.getInstance();
 class ComputerUseAgent {
     constructor() {
         // Python 환경 설정 (설정값 우선, 없으면 기본값 사용)
@@ -117,6 +119,11 @@ class ComputerUseAgent {
      * 특정 위치 클릭
      */
     async clickAt(x, y) {
+        // Security check
+        const check = await security.checkAction('computer_use.click', { x, y });
+        if (!check.allowed) {
+            throw new Error(`Action blocked: ${check.reason}`);
+        }
         return new Promise((resolve, reject) => {
             const args = [this.scriptPath, 'click', '--x', x.toString(), '--y', y.toString()];
             const envVars = { ...process.env, PYTHONIOENCODING: 'utf-8' };
@@ -149,6 +156,11 @@ class ComputerUseAgent {
      * 텍스트로 요소 찾아서 클릭
      */
     async clickElementByText(searchText) {
+        // Security check
+        const check = await security.checkAction('computer_use.click', { text: searchText });
+        if (!check.allowed) {
+            throw new Error(`Action blocked: ${check.reason}`);
+        }
         try {
             const element = await this.findElementByText(searchText);
             if (!element) {
@@ -171,6 +183,11 @@ class ComputerUseAgent {
      * 키보드 입력
      */
     async type(text) {
+        // Security check
+        const check = await security.checkAction('computer_use.type', { text });
+        if (!check.allowed) {
+            throw new Error(`Action blocked: ${check.reason}`);
+        }
         return new Promise((resolve, reject) => {
             const args = [this.scriptPath, 'type', '--text', text];
             const envVars = { ...process.env, PYTHONIOENCODING: 'utf-8' };

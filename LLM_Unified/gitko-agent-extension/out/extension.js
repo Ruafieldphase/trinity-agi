@@ -51,6 +51,7 @@ const integrationTest_1 = require("./integrationTest");
 const devUtils_1 = require("./devUtils");
 const activityTracker_1 = require("./activityTracker");
 const statusBarManager_1 = require("./statusBarManager");
+const securityGuardrails_1 = require("./securityGuardrails");
 const logger = (0, logger_1.createLogger)('Extension');
 // HTTP Poller 상태 관리
 let httpPollerInterval; // legacy (unused after poller refactor)
@@ -143,7 +144,18 @@ function activate(context) {
         activityTracker_1.ActivityTracker.getInstance().trackCommand('gitko.showActivityViewer');
         activityViewer.show(context);
     });
-    context.subscriptions.push(toggleHttpPollerCmd, enableHttpPollerCmd, disableHttpPollerCmd, showPollerOutputCmd, showTaskQueueMonitorCmd, showResonanceLedgerCmd, showPerformanceViewerCmd, showActivityViewerCmd);
+    // Security: Computer Use Killswitch
+    const toggleKillswitchCmd = vscode.commands.registerCommand('gitko.security.toggleKillswitch', () => {
+        const security = securityGuardrails_1.SecurityGuardrails.getInstance();
+        security.toggleKillswitch();
+        activityTracker_1.ActivityTracker.getInstance().trackCommand('gitko.security.toggleKillswitch');
+    });
+    const exportAuditLogCmd = vscode.commands.registerCommand('gitko.security.exportAuditLog', () => {
+        const security = securityGuardrails_1.SecurityGuardrails.getInstance();
+        security.exportAuditLog();
+        activityTracker_1.ActivityTracker.getInstance().trackCommand('gitko.security.exportAuditLog');
+    });
+    context.subscriptions.push(toggleHttpPollerCmd, enableHttpPollerCmd, disableHttpPollerCmd, showPollerOutputCmd, showTaskQueueMonitorCmd, showResonanceLedgerCmd, showPerformanceViewerCmd, showActivityViewerCmd, toggleKillswitchCmd, exportAuditLogCmd);
     const configWatcher = vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('gitkoAgent')) {
             resetRuntimeConfigCache();

@@ -14,6 +14,7 @@ import { registerIntegrationTestCommand } from './integrationTest';
 import { registerDevCommands } from './devUtils';
 import { ActivityTracker, ActivityViewer } from './activityTracker';
 import { StatusBarManager } from './statusBarManager';
+import { SecurityGuardrails } from './securityGuardrails';
 
 const logger = createLogger('Extension');
 
@@ -141,6 +142,19 @@ export function activate(context: vscode.ExtensionContext) {
         activityViewer.show(context);
     });
 
+    // Security: Computer Use Killswitch
+    const toggleKillswitchCmd = vscode.commands.registerCommand('gitko.security.toggleKillswitch', () => {
+        const security = SecurityGuardrails.getInstance();
+        security.toggleKillswitch();
+        ActivityTracker.getInstance().trackCommand('gitko.security.toggleKillswitch');
+    });
+
+    const exportAuditLogCmd = vscode.commands.registerCommand('gitko.security.exportAuditLog', () => {
+        const security = SecurityGuardrails.getInstance();
+        security.exportAuditLog();
+        ActivityTracker.getInstance().trackCommand('gitko.security.exportAuditLog');
+    });
+
     context.subscriptions.push(
         toggleHttpPollerCmd,
         enableHttpPollerCmd,
@@ -149,7 +163,9 @@ export function activate(context: vscode.ExtensionContext) {
         showTaskQueueMonitorCmd,
         showResonanceLedgerCmd,
         showPerformanceViewerCmd,
-        showActivityViewerCmd
+        showActivityViewerCmd,
+        toggleKillswitchCmd,
+        exportAuditLogCmd
     );
 
     const configWatcher = vscode.workspace.onDidChangeConfiguration((event) => {
