@@ -235,7 +235,7 @@ export class HttpTaskPoller {
     /**
      * Handle task based on type
      */
-    private async handleTask(task: Task) {
+    public async handleTask(task: Task) {
         let result: SubmitResult;
         // Queue latency if provided
         let queueLatencyMs: number | undefined;
@@ -319,7 +319,7 @@ export class HttpTaskPoller {
     /**
      * Submit task result to server
      */
-    private async submitResult(taskId: string, result: SubmitResult) {
+    public async submitResult(taskId: string, result: SubmitResult) {
         const opId = perf.startOperation('http.submit', { task_id: taskId, success: result.success });
         try {
             const response = await fetch(`${this.apiBase}/tasks/${taskId}/result`, {

@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import { registerComputerUseCommands } from './computerUse';
 import { HttpTaskPoller } from './httpTaskPoller';
+import { RealTimeTaskClient } from './realtimeTaskClient';
 import { TaskQueueMonitor } from './taskQueueMonitor';
 import { ResonanceLedgerViewer } from './resonanceLedgerViewer';
 import { ConfigValidator } from './configValidator';
@@ -31,6 +32,7 @@ interface AgentResult {
 let httpPollerInterval: NodeJS.Timeout | undefined; // legacy (unused after poller refactor)
 let httpPollerOutputChannel: vscode.OutputChannel | undefined;
 let taskPoller: HttpTaskPoller | undefined;
+let realtimeClient: RealTimeTaskClient | undefined;
 let agentOutputChannel: vscode.OutputChannel | undefined;
 let statusBarManager: StatusBarManager | undefined;
 
@@ -189,8 +191,16 @@ export function activate(context: vscode.ExtensionContext) {
     // gitko.enableHttpPoller=true일 때만 자동 시작 (기본값 true)
     const gitkoCfg = vscode.workspace.getConfiguration('gitko');
     const shouldAutostart = gitkoCfg.get<boolean>('enableHttpPoller', true);
+    const mode = gitkoCfg.get<string>('taskQueueMode', 'auto');
     if (shouldAutostart) {
-        enableHttpPoller();
+        if (mode === 'sse' || mode === 'auto') {
+            const started = enableRealtimeQueue(mode === 'auto');
+            if (!started) {
+                enableHttpPoller();
+            }
+        } else {
+            enableHttpPoller();
+        }
         logger.info(t('extension.httpPollerAutoStarted'));
     } else {
         httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] ${t('extension.httpPollerDisabled')}`);
@@ -876,6 +886,30 @@ function disableHttpPoller() {
     httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] HTTP Task Poller disabled`);
     vscode.window.showInformationMessage('❌ Gitko HTTP Task Poller disabled');
     statusBarManager?.setState('stopped');
+}
+
+function enableRealtimeQueue(allowFallback: boolean = true): boolean {
+    if (realtimeClient && realtimeClient.isActive()) {
+        vscode.window.showInformationMessage('Realtime task client is already running');
+        return true;
+    }
+    const config = vscode.workspace.getConfiguration('gitko');
+    const apiBase = config.get<string>('httpApiBase', 'http://localhost:8091/api');
+    try {
+        realtimeClient = new RealTimeTaskClient(apiBase, 'gitko-extension');
+        realtimeClient.start();
+        httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] Realtime Task Client enabled (SSE)`);
+        statusBarManager?.setState('polling');
+        return true;
+    } catch (error) {
+        httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] Failed to start Realtime Client: ${error}`);
+        realtimeClient = undefined;
+        if (allowFallback) {
+            return false; // caller may fallback to polling
+        }
+        vscode.window.showErrorMessage('❌ Failed to start realtime task client');
+        return false;
+    }
 }
 
 export function deactivate() {
