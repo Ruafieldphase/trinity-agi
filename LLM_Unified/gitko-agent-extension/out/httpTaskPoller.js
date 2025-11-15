@@ -42,6 +42,13 @@ class HttpTaskPoller {
         this.isPolling = false;
         this.lastUiActionAt = 0;
         this.minUiActionIntervalMs = 150;
+        // Backoff and circuit breaker
+        this.consecutiveErrors = 0;
+        this.maxConsecutiveErrors = 5;
+        this.baseBackoffMs = 1000;
+        this.maxBackoffMs = 30000;
+        this.currentBackoffMs = 0;
+        this.isCircuitOpen = false;
         this.apiBase = apiBase;
         this.workerId = workerId;
         this.pollingInterval = pollingInterval;
@@ -96,27 +103,64 @@ class HttpTaskPoller {
         if (!this.isPolling) {
             return;
         }
+        // Check circuit breaker
+        if (this.isCircuitOpen) {
+            if (this.consecutiveErrors >= this.maxConsecutiveErrors) {
+                this.log(`[HttpPoller] ⚠️ Circuit breaker OPEN (${this.consecutiveErrors} errors). Backing off ${this.currentBackoffMs}ms`);
+            }
+        }
         try {
             const task = await this.getNextTask();
             if (task) {
                 this.log(`[HttpPoller] 📥 Task received: ${task.task_id} (${task.type})`);
                 await this.handleTask(task);
             }
+            // Success: reset backoff
+            this.onSuccess();
         }
         catch (error) {
-            // Suppress common connection/API errors to reduce noise
-            const errorMsg = error instanceof Error ? error.message : String(error);
-            const shouldSuppress = errorMsg.includes('ECONNREFUSED') ||
-                errorMsg.includes('HTTP 405') ||
-                errorMsg.includes('Method Not Allowed') ||
-                errorMsg.includes('ENOTFOUND') ||
-                errorMsg.includes('fetch failed');
-            if (!shouldSuppress) {
-                this.log(`[HttpPoller] ⚠️ Error: ${errorMsg}`);
-            }
-        } // Schedule next poll
+            // Error: apply backoff
+            this.onError(error);
+        }
+        // Schedule next poll with backoff
         if (this.isPolling) {
-            this.pollTimer = setTimeout(() => this.poll(), this.pollingInterval);
+            const interval = this.isCircuitOpen ? this.currentBackoffMs : this.pollingInterval;
+            this.pollTimer = setTimeout(() => this.poll(), interval);
+        }
+    }
+    /**
+     * Handle successful operation - reset backoff
+     */
+    onSuccess() {
+        if (this.consecutiveErrors > 0 || this.isCircuitOpen) {
+            this.log(`[HttpPoller] ✅ Recovered from errors. Resetting backoff.`);
+        }
+        this.consecutiveErrors = 0;
+        this.currentBackoffMs = 0;
+        this.isCircuitOpen = false;
+    }
+    /**
+     * Handle error - apply exponential backoff with jitter
+     */
+    onError(error) {
+        // Suppress common connection/API errors to reduce noise
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        const shouldSuppress = errorMsg.includes('ECONNREFUSED') ||
+            errorMsg.includes('HTTP 405') ||
+            errorMsg.includes('Method Not Allowed') ||
+            errorMsg.includes('ENOTFOUND') ||
+            errorMsg.includes('fetch failed');
+        this.consecutiveErrors++;
+        // Calculate exponential backoff with jitter
+        const baseBackoff = Math.min(this.baseBackoffMs * Math.pow(2, this.consecutiveErrors - 1), this.maxBackoffMs);
+        const jitter = Math.random() * baseBackoff * 0.1; // 10% jitter
+        this.currentBackoffMs = Math.floor(baseBackoff + jitter);
+        // Open circuit breaker if too many errors
+        if (this.consecutiveErrors >= this.maxConsecutiveErrors) {
+            this.isCircuitOpen = true;
+        }
+        if (!shouldSuppress || this.consecutiveErrors >= 3) {
+            this.log(`[HttpPoller] ⚠️ Error #${this.consecutiveErrors}: ${errorMsg} (backoff: ${this.currentBackoffMs}ms)`);
         }
     }
     /**
@@ -127,8 +171,8 @@ class HttpTaskPoller {
             const response = await fetch(`${this.apiBase}/tasks/next`, {
                 method: 'GET',
                 headers: {
-                    'Accept': 'application/json'
-                }
+                    Accept: 'application/json',
+                },
             });
             if (response.status === 204) {
                 // No tasks available (normal)
@@ -137,7 +181,7 @@ class HttpTaskPoller {
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            const data = await response.json();
+            const data = (await response.json());
             // Handle empty queue response: {task: null}
             if (data && data.task === null) {
                 return null;
@@ -148,9 +192,7 @@ class HttpTaskPoller {
             if (error instanceof Error) {
                 const msg = error.message;
                 // Suppress common connection errors
-                if (msg.includes('ECONNREFUSED') ||
-                    msg.includes('fetch failed') ||
-                    msg.includes('ENOTFOUND')) {
+                if (msg.includes('ECONNREFUSED') || msg.includes('fetch failed') || msg.includes('ENOTFOUND')) {
                     return null; // Server not running, silently retry
                 }
             }
@@ -200,14 +242,14 @@ class HttpTaskPoller {
             }
             result = {
                 success: true,
-                data: resultData
+                data: resultData,
             };
             this.log(`[HttpPoller] ✅ Task completed: ${task.task_id}`);
         }
         catch (error) {
             result = {
                 success: false,
-                error: error instanceof Error ? error.message : String(error)
+                error: error instanceof Error ? error.message : String(error),
             };
             this.log(`[HttpPoller] ❌ Task failed: ${task.task_id} - ${result.error}`);
         }
@@ -222,9 +264,9 @@ class HttpTaskPoller {
             const response = await fetch(`${this.apiBase}/tasks/${taskId}/result`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(result)
+                body: JSON.stringify(result),
             });
             if (!response.ok) {
                 throw new Error(`Failed to submit result: HTTP ${response.status}`);
@@ -242,7 +284,7 @@ class HttpTaskPoller {
             worker: this.workerId,
             timestamp: new Date().toISOString(),
             extension: 'gitko-agent-extension',
-            version: '2.0.0'
+            version: '2.0.0',
         };
     }
     async handleCalculation(data) {
@@ -279,7 +321,7 @@ class HttpTaskPoller {
         return {
             result,
             operation,
-            input: numArray
+            input: numArray,
         };
     }
     async handleDataTransform(data) {
@@ -339,14 +381,14 @@ class HttpTaskPoller {
                     id,
                     result: null,
                     status: 'error',
-                    error: error instanceof Error ? error.message : String(error)
+                    error: error instanceof Error ? error.message : String(error),
                 });
             }
         }
         return {
             calculations: results,
             total: calculations.length,
-            successful: results.filter(r => r.status === 'success').length
+            successful: results.filter((r) => r.status === 'success').length,
         };
     }
     async handleMonitoringReport(data) {
@@ -356,7 +398,7 @@ class HttpTaskPoller {
             message: 'Monitoring report generation not yet implemented in extension',
             requested_hours: data.hours,
             requested_metrics: data.metrics || [],
-            suggestion: 'Use Python scripts for full monitoring reports'
+            suggestion: 'Use Python scripts for full monitoring reports',
         };
     }
     // ==================== Computer Use handlers ====================
@@ -435,7 +477,7 @@ class HttpTaskPoller {
         const now = Date.now();
         const elapsed = now - this.lastUiActionAt;
         if (elapsed < this.minUiActionIntervalMs) {
-            await new Promise(res => setTimeout(res, this.minUiActionIntervalMs - elapsed));
+            await new Promise((res) => setTimeout(res, this.minUiActionIntervalMs - elapsed));
         }
         this.lastUiActionAt = Date.now();
     }

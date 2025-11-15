@@ -24,7 +24,7 @@ export class DevUtils {
             rss: `${(usage.rss / 1024 / 1024).toFixed(2)} MB`,
             heapTotal: `${(usage.heapTotal / 1024 / 1024).toFixed(2)} MB`,
             heapUsed: `${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB`,
-            external: `${(usage.external / 1024 / 1024).toFixed(2)} MB`
+            external: `${(usage.external / 1024 / 1024).toFixed(2)} MB`,
         };
     }
 
@@ -49,11 +49,11 @@ export class DevUtils {
      */
     static startMemoryMonitor(intervalMs: number = 60000): NodeJS.Timeout {
         logger.info(`Starting memory monitor (interval: ${intervalMs}ms)`);
-        
+
         return setInterval(() => {
             const memory = this.getMemoryStats();
             logger.debug(`Memory: RSS=${memory.rss}, Heap=${memory.heapUsed}/${memory.heapTotal}`);
-            
+
             // Warning if heap usage > 80%
             const heapUsed = parseFloat(memory.heapUsed);
             const heapTotal = parseFloat(memory.heapTotal);
@@ -70,7 +70,7 @@ export class DevUtils {
         const memory = this.getMemoryStats();
         const perfMonitor = PerformanceMonitor.getInstance();
         const summary = perfMonitor.getSummary();
-        
+
         const report = `
 # Gitko Extension Diagnostics
 
@@ -88,18 +88,22 @@ export class DevUtils {
 - External: ${memory.external}
 
 ## Performance Summary
-${Object.entries(summary).map(([op, stats]) => `
+${Object.entries(summary)
+    .map(
+        ([op, stats]) => `
 ### ${op}
 - Executions: ${stats.count}
 - Success Rate: ${stats.successRate.toFixed(1)}%
 - Avg Duration: ${stats.avgDuration.toFixed(0)}ms
-`).join('\n')}
+`
+    )
+    .join('\n')}
 
 ## Configuration
 ${JSON.stringify(vscode.workspace.getConfiguration('gitkoAgent'), null, 2)}
 ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
 `;
-        
+
         return report;
     }
 
@@ -110,21 +114,18 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
         const report = await this.generateDiagnostics();
         const timestamp = new Date().toISOString().replace(/:/g, '-').split('.')[0];
         const fileName = `gitko-diagnostics-${timestamp}.md`;
-        
+
         const uri = await vscode.window.showSaveDialog({
             defaultUri: vscode.Uri.file(fileName),
-            filters: { 'Markdown': ['md'], 'All Files': ['*'] }
+            filters: { Markdown: ['md'], 'All Files': ['*'] },
         });
-        
+
         if (uri) {
             await vscode.workspace.fs.writeFile(uri, Buffer.from(report, 'utf-8'));
             vscode.window.showInformationMessage(`✅ Diagnostics saved to ${uri.fsPath}`);
-            
-            const open = await vscode.window.showInformationMessage(
-                'Open diagnostics file?',
-                'Yes', 'No'
-            );
-            
+
+            const open = await vscode.window.showInformationMessage('Open diagnostics file?', 'Yes', 'No');
+
             if (open === 'Yes') {
                 await vscode.window.showTextDocument(uri);
             }
@@ -138,23 +139,23 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
         const confirm = await vscode.window.showWarningMessage(
             'Clear all caches and restart extension?',
             { modal: true },
-            'Yes', 'No'
+            'Yes',
+            'No'
         );
-        
+
         if (confirm === 'Yes') {
             logger.info('Clearing caches...');
-            
+
             // Clear performance metrics
             PerformanceMonitor.getInstance().clearMetrics();
-            
-            vscode.window.showInformationMessage(
-                '✅ Caches cleared. Please reload the window.',
-                'Reload'
-            ).then(action => {
-                if (action === 'Reload') {
-                    vscode.commands.executeCommand('workbench.action.reloadWindow');
-                }
-            });
+
+            vscode.window
+                .showInformationMessage('✅ Caches cleared. Please reload the window.', 'Reload')
+                .then((action) => {
+                    if (action === 'Reload') {
+                        vscode.commands.executeCommand('workbench.action.reloadWindow');
+                    }
+                });
         }
     }
 
@@ -168,38 +169,38 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
     }> {
         const issues: string[] = [];
         const warnings: string[] = [];
-        
+
         // Memory check
         const memory = this.getMemoryStats();
         const heapUsed = parseFloat(memory.heapUsed);
         const heapTotal = parseFloat(memory.heapTotal);
-        
+
         if (heapUsed / heapTotal > 0.9) {
             issues.push('Critical memory usage (>90%)');
         } else if (heapUsed / heapTotal > 0.8) {
             warnings.push('High memory usage (>80%)');
         }
-        
+
         // Performance check
         const perfMonitor = PerformanceMonitor.getInstance();
         const summary = perfMonitor.getSummary();
-        
+
         for (const [op, stats] of Object.entries(summary)) {
             if (stats.successRate < 50) {
                 issues.push(`Low success rate for ${op}: ${stats.successRate.toFixed(1)}%`);
             } else if (stats.successRate < 80) {
                 warnings.push(`Moderate success rate for ${op}: ${stats.successRate.toFixed(1)}%`);
             }
-            
+
             if (stats.avgDuration > 10000) {
                 warnings.push(`Slow operation ${op}: ${stats.avgDuration.toFixed(0)}ms avg`);
             }
         }
-        
+
         return {
             healthy: issues.length === 0,
             issues,
-            warnings
+            warnings,
         };
     }
 
@@ -209,38 +210,37 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
     static async showHealthCheck(): Promise<void> {
         const health = await this.healthCheck();
         const outputChannel = vscode.window.createOutputChannel('Gitko Health Check');
-        
+
         outputChannel.clear();
         outputChannel.appendLine('=== Gitko Extension Health Check ===\n');
         outputChannel.appendLine(`Status: ${health.healthy ? '✅ Healthy' : '❌ Issues Detected'}\n`);
-        
+
         if (health.issues.length > 0) {
             outputChannel.appendLine('🔴 Issues:');
-            health.issues.forEach(issue => outputChannel.appendLine(`  - ${issue}`));
+            health.issues.forEach((issue) => outputChannel.appendLine(`  - ${issue}`));
             outputChannel.appendLine('');
         }
-        
+
         if (health.warnings.length > 0) {
             outputChannel.appendLine('⚠️ Warnings:');
-            health.warnings.forEach(warning => outputChannel.appendLine(`  - ${warning}`));
+            health.warnings.forEach((warning) => outputChannel.appendLine(`  - ${warning}`));
             outputChannel.appendLine('');
         }
-        
+
         if (health.healthy && health.warnings.length === 0) {
             outputChannel.appendLine('✅ All systems operational!');
         }
-        
+
         outputChannel.show();
-        
+
         if (!health.healthy) {
-            vscode.window.showWarningMessage(
-                `Health check failed: ${health.issues.length} issue(s) found`,
-                'View Details'
-            ).then(action => {
-                if (action === 'View Details') {
-                    outputChannel.show();
-                }
-            });
+            vscode.window
+                .showWarningMessage(`Health check failed: ${health.issues.length} issue(s) found`, 'View Details')
+                .then((action) => {
+                    if (action === 'View Details') {
+                        outputChannel.show();
+                    }
+                });
         }
     }
 }
@@ -256,37 +256,35 @@ export function registerDevCommands(context: vscode.ExtensionContext): void {
             vscode.window.showInformationMessage('System info logged to Output Channel');
         })
     );
-    
+
     // Memory stats command
     context.subscriptions.push(
         vscode.commands.registerCommand('gitko.dev.showMemoryStats', () => {
             const stats = DevUtils.getMemoryStats();
-            vscode.window.showInformationMessage(
-                `Memory: RSS=${stats.rss}, Heap=${stats.heapUsed}/${stats.heapTotal}`
-            );
+            vscode.window.showInformationMessage(`Memory: RSS=${stats.rss}, Heap=${stats.heapUsed}/${stats.heapTotal}`);
         })
     );
-    
+
     // Export diagnostics command
     context.subscriptions.push(
         vscode.commands.registerCommand('gitko.dev.exportDiagnostics', () => {
             DevUtils.exportDiagnostics();
         })
     );
-    
+
     // Health check command
     context.subscriptions.push(
         vscode.commands.registerCommand('gitko.dev.healthCheck', () => {
             DevUtils.showHealthCheck();
         })
     );
-    
+
     // Clear and restart command
     context.subscriptions.push(
         vscode.commands.registerCommand('gitko.dev.clearAndRestart', () => {
             DevUtils.clearAndRestart();
         })
     );
-    
+
     logger.debug('Dev utility commands registered');
 }

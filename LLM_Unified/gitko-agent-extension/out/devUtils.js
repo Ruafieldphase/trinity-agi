@@ -53,7 +53,7 @@ class DevUtils {
             rss: `${(usage.rss / 1024 / 1024).toFixed(2)} MB`,
             heapTotal: `${(usage.heapTotal / 1024 / 1024).toFixed(2)} MB`,
             heapUsed: `${(usage.heapUsed / 1024 / 1024).toFixed(2)} MB`,
-            external: `${(usage.external / 1024 / 1024).toFixed(2)} MB`
+            external: `${(usage.external / 1024 / 1024).toFixed(2)} MB`,
         };
     }
     /**
@@ -111,12 +111,14 @@ class DevUtils {
 - External: ${memory.external}
 
 ## Performance Summary
-${Object.entries(summary).map(([op, stats]) => `
+${Object.entries(summary)
+            .map(([op, stats]) => `
 ### ${op}
 - Executions: ${stats.count}
 - Success Rate: ${stats.successRate.toFixed(1)}%
 - Avg Duration: ${stats.avgDuration.toFixed(0)}ms
-`).join('\n')}
+`)
+            .join('\n')}
 
 ## Configuration
 ${JSON.stringify(vscode.workspace.getConfiguration('gitkoAgent'), null, 2)}
@@ -133,7 +135,7 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
         const fileName = `gitko-diagnostics-${timestamp}.md`;
         const uri = await vscode.window.showSaveDialog({
             defaultUri: vscode.Uri.file(fileName),
-            filters: { 'Markdown': ['md'], 'All Files': ['*'] }
+            filters: { Markdown: ['md'], 'All Files': ['*'] },
         });
         if (uri) {
             await vscode.workspace.fs.writeFile(uri, Buffer.from(report, 'utf-8'));
@@ -153,7 +155,9 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
             logger.info('Clearing caches...');
             // Clear performance metrics
             performanceMonitor_1.PerformanceMonitor.getInstance().clearMetrics();
-            vscode.window.showInformationMessage('✅ Caches cleared. Please reload the window.', 'Reload').then(action => {
+            vscode.window
+                .showInformationMessage('✅ Caches cleared. Please reload the window.', 'Reload')
+                .then((action) => {
                 if (action === 'Reload') {
                     vscode.commands.executeCommand('workbench.action.reloadWindow');
                 }
@@ -193,7 +197,7 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
         return {
             healthy: issues.length === 0,
             issues,
-            warnings
+            warnings,
         };
     }
     /**
@@ -207,12 +211,12 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
         outputChannel.appendLine(`Status: ${health.healthy ? '✅ Healthy' : '❌ Issues Detected'}\n`);
         if (health.issues.length > 0) {
             outputChannel.appendLine('🔴 Issues:');
-            health.issues.forEach(issue => outputChannel.appendLine(`  - ${issue}`));
+            health.issues.forEach((issue) => outputChannel.appendLine(`  - ${issue}`));
             outputChannel.appendLine('');
         }
         if (health.warnings.length > 0) {
             outputChannel.appendLine('⚠️ Warnings:');
-            health.warnings.forEach(warning => outputChannel.appendLine(`  - ${warning}`));
+            health.warnings.forEach((warning) => outputChannel.appendLine(`  - ${warning}`));
             outputChannel.appendLine('');
         }
         if (health.healthy && health.warnings.length === 0) {
@@ -220,7 +224,9 @@ ${JSON.stringify(vscode.workspace.getConfiguration('gitko'), null, 2)}
         }
         outputChannel.show();
         if (!health.healthy) {
-            vscode.window.showWarningMessage(`Health check failed: ${health.issues.length} issue(s) found`, 'View Details').then(action => {
+            vscode.window
+                .showWarningMessage(`Health check failed: ${health.issues.length} issue(s) found`, 'View Details')
+                .then((action) => {
                 if (action === 'View Details') {
                     outputChannel.show();
                 }

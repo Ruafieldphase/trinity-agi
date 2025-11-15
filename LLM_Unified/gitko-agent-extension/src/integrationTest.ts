@@ -29,10 +29,10 @@ export async function runIntegrationTests(): Promise<{
         results.push({ test: 'Logger', passed: true });
         passed++;
     } catch (error) {
-        results.push({ 
-            test: 'Logger', 
-            passed: false, 
-            error: error instanceof Error ? error.message : String(error) 
+        results.push({
+            test: 'Logger',
+            passed: false,
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }
@@ -41,9 +41,9 @@ export async function runIntegrationTests(): Promise<{
     try {
         const monitor = PerformanceMonitor.getInstance();
         const opId = monitor.startOperation('test.operation');
-        await new Promise(resolve => setTimeout(resolve, 10)); // Simulate work
+        await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate work
         monitor.endOperation(opId, true);
-        
+
         const stats = monitor.getOperationStats('test.operation');
         if (stats.totalCount === 1 && stats.successCount === 1) {
             results.push({ test: 'Performance Monitor', passed: true });
@@ -51,13 +51,13 @@ export async function runIntegrationTests(): Promise<{
         } else {
             throw new Error('Performance stats mismatch');
         }
-        
+
         monitor.clearMetrics('test.operation');
     } catch (error) {
-        results.push({ 
-            test: 'Performance Monitor', 
-            passed: false, 
-            error: error instanceof Error ? error.message : String(error) 
+        results.push({
+            test: 'Performance Monitor',
+            passed: false,
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }
@@ -65,17 +65,17 @@ export async function runIntegrationTests(): Promise<{
     // Test 3: Config Validator
     try {
         const validation = ConfigValidator.validateAll();
-        results.push({ 
-            test: 'Config Validator', 
+        results.push({
+            test: 'Config Validator',
             passed: true,
-            error: validation.isValid ? undefined : `${validation.errors.length} errors found`
+            error: validation.isValid ? undefined : `${validation.errors.length} errors found`,
         });
         passed++;
     } catch (error) {
-        results.push({ 
-            test: 'Config Validator', 
-            passed: false, 
-            error: error instanceof Error ? error.message : String(error) 
+        results.push({
+            test: 'Config Validator',
+            passed: false,
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }
@@ -83,34 +83,34 @@ export async function runIntegrationTests(): Promise<{
     // Test 4: Extension Commands
     try {
         const commands = await vscode.commands.getCommands(true);
-        const gitkoCommands = commands.filter(cmd => cmd.startsWith('gitko.'));
-        
+        const gitkoCommands = commands.filter((cmd) => cmd.startsWith('gitko.'));
+
         const expectedCommands = [
             'gitko.enableHttpPoller',
             'gitko.disableHttpPoller',
             'gitko.showTaskQueueMonitor',
             'gitko.showResonanceLedger',
             'gitko.validateConfig',
-            'gitko.showPerformanceViewer'
+            'gitko.showPerformanceViewer',
         ];
-        
-        const allFound = expectedCommands.every(cmd => gitkoCommands.includes(cmd));
-        
+
+        const allFound = expectedCommands.every((cmd) => gitkoCommands.includes(cmd));
+
         if (allFound) {
-            results.push({ 
-                test: 'Extension Commands', 
+            results.push({
+                test: 'Extension Commands',
                 passed: true,
-                error: `Found ${gitkoCommands.length} commands`
+                error: `Found ${gitkoCommands.length} commands`,
             });
             passed++;
         } else {
             throw new Error(`Missing commands. Found: ${gitkoCommands.length}, Expected: ${expectedCommands.length}`);
         }
     } catch (error) {
-        results.push({ 
-            test: 'Extension Commands', 
-            passed: false, 
-            error: error instanceof Error ? error.message : String(error) 
+        results.push({
+            test: 'Extension Commands',
+            passed: false,
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }
@@ -126,20 +126,20 @@ export async function runIntegrationTests(): Promise<{
 export function registerIntegrationTestCommand(context: vscode.ExtensionContext) {
     const testCmd = vscode.commands.registerCommand('gitko.runIntegrationTests', async () => {
         const result = await runIntegrationTests();
-        
+
         const message = `Integration Tests: ${result.passed}/${result.passed + result.failed} passed`;
-        
+
         if (result.failed === 0) {
             vscode.window.showInformationMessage(`✅ ${message}`);
         } else {
             vscode.window.showWarningMessage(`⚠️ ${message}`);
         }
-        
+
         // Show detailed results in Output Channel
         const outputChannel = vscode.window.createOutputChannel('Gitko Integration Tests');
         outputChannel.clear();
         outputChannel.appendLine('=== Integration Test Results ===\n');
-        
+
         result.results.forEach((r, i) => {
             const status = r.passed ? '✅' : '❌';
             outputChannel.appendLine(`${i + 1}. ${status} ${r.test}`);
@@ -147,14 +147,14 @@ export function registerIntegrationTestCommand(context: vscode.ExtensionContext)
                 outputChannel.appendLine(`   ${r.error}`);
             }
         });
-        
+
         outputChannel.appendLine(`\n=== Summary ===`);
         outputChannel.appendLine(`Passed: ${result.passed}`);
         outputChannel.appendLine(`Failed: ${result.failed}`);
         outputChannel.appendLine(`Total: ${result.passed + result.failed}`);
-        
+
         outputChannel.show();
     });
-    
+
     context.subscriptions.push(testCmd);
 }

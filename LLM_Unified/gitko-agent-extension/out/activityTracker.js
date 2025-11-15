@@ -64,7 +64,7 @@ class ActivityTracker {
             timestamp: Date.now(),
             type: 'command',
             action: commandId,
-            duration
+            duration,
         });
         const count = this.commandCounts.get(commandId) || 0;
         this.commandCounts.set(commandId, count + 1);
@@ -78,7 +78,7 @@ class ActivityTracker {
             type: 'agent',
             action: agentName,
             details: { success },
-            duration
+            duration,
         });
         const count = this.agentCalls.get(agentName) || 0;
         this.agentCalls.set(agentName, count + 1);
@@ -92,7 +92,7 @@ class ActivityTracker {
             type: 'task',
             action: taskType,
             details: { success },
-            duration
+            duration,
         });
     }
     /**
@@ -104,8 +104,8 @@ class ActivityTracker {
             type: 'error',
             action: source,
             details: {
-                error: error instanceof Error ? error.message : error
-            }
+                error: error instanceof Error ? error.message : error,
+            },
         });
     }
     /**
@@ -116,7 +116,7 @@ class ActivityTracker {
             timestamp: Date.now(),
             type: 'system',
             action: event,
-            details
+            details,
         });
     }
     /**
@@ -140,7 +140,7 @@ class ActivityTracker {
      * Get events by type
      */
     getEventsByType(type) {
-        return this.events.filter(e => e.type === type);
+        return this.events.filter((e) => e.type === type);
     }
     /**
      * Get session statistics
@@ -159,12 +159,12 @@ class ActivityTracker {
         return {
             sessionDuration,
             totalEvents: this.events.length,
-            commandCount: this.events.filter(e => e.type === 'command').length,
-            agentCallCount: this.events.filter(e => e.type === 'agent').length,
-            taskCount: this.events.filter(e => e.type === 'task').length,
-            errorCount: this.events.filter(e => e.type === 'error').length,
+            commandCount: this.events.filter((e) => e.type === 'command').length,
+            agentCallCount: this.events.filter((e) => e.type === 'agent').length,
+            taskCount: this.events.filter((e) => e.type === 'task').length,
+            errorCount: this.events.filter((e) => e.type === 'error').length,
             topCommands,
-            topAgents
+            topAgents,
         };
     }
     /**
@@ -198,7 +198,7 @@ class ActivityTracker {
         }
         report += `## Recent Events (Last 20)\n\n`;
         const recent = this.getRecentEvents(20);
-        recent.forEach(event => {
+        recent.forEach((event) => {
             const time = new Date(event.timestamp).toLocaleTimeString();
             const duration = event.duration ? ` (${event.duration}ms)` : '';
             report += `- \`${time}\` [${event.type}] ${event.action}${duration}\n`;
@@ -239,11 +239,11 @@ class ActivityViewer {
         }
         this.panel = vscode.window.createWebviewPanel('gitkoActivityViewer', 'Gitko Activity Tracker', vscode.ViewColumn.One, {
             enableScripts: true,
-            retainContextWhenHidden: true
+            retainContextWhenHidden: true,
         });
         this.panel.webview.html = this.getHtmlContent();
         // Handle messages from webview
-        this.panel.webview.onDidReceiveMessage(message => {
+        this.panel.webview.onDidReceiveMessage((message) => {
             switch (message.command) {
                 case 'refresh':
                     this.updateContent();
@@ -278,7 +278,7 @@ class ActivityViewer {
         this.panel.webview.postMessage({
             command: 'update',
             stats,
-            events: recent
+            events: recent,
         });
     }
     async exportActivity() {
@@ -287,7 +287,7 @@ class ActivityViewer {
         const fileName = `gitko-activity-${timestamp}.md`;
         const uri = await vscode.window.showSaveDialog({
             defaultUri: vscode.Uri.file(fileName),
-            filters: { 'Markdown': ['md'], 'All Files': ['*'] }
+            filters: { Markdown: ['md'], 'All Files': ['*'] },
         });
         if (uri) {
             await vscode.workspace.fs.writeFile(uri, Buffer.from(log, 'utf-8'));
@@ -295,7 +295,7 @@ class ActivityViewer {
         }
     }
     clearActivity() {
-        vscode.window.showWarningMessage('Clear all activity data?', { modal: true }, 'Yes', 'No').then(answer => {
+        vscode.window.showWarningMessage('Clear all activity data?', { modal: true }, 'Yes', 'No').then((answer) => {
             if (answer === 'Yes') {
                 this.tracker.clear();
                 this.updateContent();

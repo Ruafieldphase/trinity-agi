@@ -34,7 +34,7 @@ class PerformanceMonitor {
             operationName,
             startTime,
             success: false,
-            metadata
+            metadata,
         };
         if (!this.metrics.has(operationName)) {
             this.metrics.set(operationName, []);
@@ -59,7 +59,7 @@ class PerformanceMonitor {
         const operationName = operationId.split('_')[0];
         const metrics = this.metrics.get(operationName);
         if (metrics) {
-            const metric = metrics.find(m => m.startTime === startTime && !m.endTime);
+            const metric = metrics.find((m) => m.startTime === startTime && !m.endTime);
             if (metric) {
                 metric.endTime = endTime;
                 metric.duration = duration;
@@ -78,7 +78,7 @@ class PerformanceMonitor {
      */
     getOperationStats(operationName) {
         const metrics = this.metrics.get(operationName) || [];
-        const completedMetrics = metrics.filter(m => m.duration !== undefined);
+        const completedMetrics = metrics.filter((m) => m.duration !== undefined);
         if (completedMetrics.length === 0) {
             return {
                 totalCount: 0,
@@ -86,18 +86,18 @@ class PerformanceMonitor {
                 failureCount: 0,
                 avgDuration: 0,
                 minDuration: 0,
-                maxDuration: 0
+                maxDuration: 0,
             };
         }
-        const durations = completedMetrics.map(m => m.duration);
-        const successCount = completedMetrics.filter(m => m.success).length;
+        const durations = completedMetrics.map((m) => m.duration);
+        const successCount = completedMetrics.filter((m) => m.success).length;
         return {
             totalCount: completedMetrics.length,
             successCount,
             failureCount: completedMetrics.length - successCount,
             avgDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
             minDuration: Math.min(...durations),
-            maxDuration: Math.max(...durations)
+            maxDuration: Math.max(...durations),
         };
     }
     /**
@@ -136,7 +136,7 @@ class PerformanceMonitor {
             summary[operationName] = {
                 count: stats.totalCount,
                 successRate: stats.totalCount > 0 ? (stats.successCount / stats.totalCount) * 100 : 0,
-                avgDuration: stats.avgDuration
+                avgDuration: stats.avgDuration,
             };
         }
         return summary;
@@ -149,7 +149,7 @@ class PerformanceMonitor {
             timestamp: new Date().toISOString(),
             summary: this.getSummary(),
             activeOperations: this.activeOperations.size,
-            operations: Object.fromEntries(this.metrics)
+            operations: Object.fromEntries(this.metrics),
         };
         return JSON.stringify(data, null, 2);
     }
@@ -185,7 +185,7 @@ class PerformanceMonitor {
         allMetrics.sort((a, b) => a.metric.startTime - b.metric.startTime);
         // Remove oldest 20%
         const toRemove = Math.floor(allMetrics.length * 0.2);
-        const removeSet = new Set(allMetrics.slice(0, toRemove).map(m => `${m.name}_${m.index}`));
+        const removeSet = new Set(allMetrics.slice(0, toRemove).map((m) => `${m.name}_${m.index}`));
         // Rebuild metrics without removed items
         for (const [name, metrics] of this.metrics.entries()) {
             const filtered = metrics.filter((_, index) => !removeSet.has(`${name}_${index}`));

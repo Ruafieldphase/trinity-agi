@@ -31,13 +31,13 @@ async function axiosWithRetry<T>(config: AxiosRequestConfig, retries = MAX_RETRI
         return response.data as T;
     } catch (error) {
         const axiosError = error as AxiosError;
-        
+
         if (retries > 0 && shouldRetry(axiosError)) {
             logger.warn(`Request failed, retrying... (${MAX_RETRIES - retries + 1}/${MAX_RETRIES})`);
             await delay(RETRY_DELAY);
             return axiosWithRetry<T>(config, retries - 1);
         }
-        
+
         logger.error('Request failed after all retries', axiosError);
         throw error;
     }
@@ -46,7 +46,7 @@ async function axiosWithRetry<T>(config: AxiosRequestConfig, retries = MAX_RETRI
 function shouldRetry(error: AxiosError): boolean {
     // Retry on network errors or 5xx server errors
     return (
-        !error.response || 
+        !error.response ||
         (error.response.status >= 500 && error.response.status < 600) ||
         error.code === 'ECONNREFUSED' ||
         error.code === 'ETIMEDOUT'
@@ -54,7 +54,7 @@ function shouldRetry(error: AxiosError): boolean {
 }
 
 function delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -79,16 +79,11 @@ export class TaskQueueMonitor {
         }
 
         // 새 패널 생성
-        const panel = vscode.window.createWebviewPanel(
-            'taskQueueMonitor',
-            '🎯 Task Queue Monitor',
-            column,
-            {
-                enableScripts: true,
-                retainContextWhenHidden: true,
-                localResourceRoots: [extensionUri]
-            }
-        );
+        const panel = vscode.window.createWebviewPanel('taskQueueMonitor', '🎯 Task Queue Monitor', column, {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            localResourceRoots: [extensionUri],
+        });
 
         TaskQueueMonitor.currentPanel = new TaskQueueMonitor(panel, extensionUri, serverUrl);
     }
@@ -111,7 +106,7 @@ export class TaskQueueMonitor {
 
         // 웹뷰 메시지 처리
         this._panel.webview.onDidReceiveMessage(
-            message => {
+            (message) => {
                 switch (message.command) {
                     case 'refresh':
                         this._update();
@@ -132,7 +127,7 @@ export class TaskQueueMonitor {
                 this._fetchHealth(),
                 this._fetchTasks(),
                 this._fetchInflight(),
-                this._fetchResults()
+                this._fetchResults(),
             ]);
 
             this._panel.webview.html = this._getHtmlContent(health, tasks, inflight, results);
@@ -145,7 +140,7 @@ export class TaskQueueMonitor {
         logger.debug('Fetching health status');
         return axiosWithRetry<TaskQueueHealth>({
             method: 'GET',
-            url: `${this._serverUrl}/api/health`
+            url: `${this._serverUrl}/api/health`,
         });
     }
 
@@ -153,7 +148,7 @@ export class TaskQueueMonitor {
         logger.debug('Fetching tasks');
         return axiosWithRetry<any[]>({
             method: 'GET',
-            url: `${this._serverUrl}/api/tasks`
+            url: `${this._serverUrl}/api/tasks`,
         });
     }
 
@@ -161,7 +156,7 @@ export class TaskQueueMonitor {
         logger.debug('Fetching inflight tasks');
         return axiosWithRetry<any>({
             method: 'GET',
-            url: `${this._serverUrl}/api/inflight`
+            url: `${this._serverUrl}/api/inflight`,
         });
     }
 
@@ -169,7 +164,7 @@ export class TaskQueueMonitor {
         logger.debug('Fetching results');
         return axiosWithRetry<any[]>({
             method: 'GET',
-            url: `${this._serverUrl}/api/results`
+            url: `${this._serverUrl}/api/results`,
         });
     }
 
@@ -178,7 +173,7 @@ export class TaskQueueMonitor {
             logger.info('Clearing completed tasks');
             await axiosWithRetry<void>({
                 method: 'POST',
-                url: `${this._serverUrl}/api/clear-completed`
+                url: `${this._serverUrl}/api/clear-completed`,
             });
             vscode.window.showInformationMessage('✅ Completed tasks cleared');
             logger.info('Completed tasks cleared successfully');
@@ -355,7 +350,11 @@ export class TaskQueueMonitor {
     <div class="section">
         <h2>📋 Pending Tasks (${pendingCount})</h2>
         <div class="task-list">
-            ${tasks.slice(0, 10).map((task: any) => `
+            ${
+                tasks
+                    .slice(0, 10)
+                    .map(
+                        (task: any) => `
                 <div class="task-item">
                     <div>
                         <strong>${task.task_type || 'unknown'}</strong>
@@ -364,14 +363,21 @@ export class TaskQueueMonitor {
                     <div class="task-id">ID: ${task.task_id}</div>
                     <div class="timestamp">Created: ${new Date(task.created_at).toLocaleString()}</div>
                 </div>
-            `).join('') || '<div class="task-item">No pending tasks</div>'}
+            `
+                    )
+                    .join('') || '<div class="task-item">No pending tasks</div>'
+            }
         </div>
     </div>
 
     <div class="section">
         <h2>🔄 In Flight Tasks (${inflightCount})</h2>
         <div class="task-list">
-            ${inflight?.tasks?.slice(0, 5).map((task: any) => `
+            ${
+                inflight?.tasks
+                    ?.slice(0, 5)
+                    .map(
+                        (task: any) => `
                 <div class="task-item">
                     <div>
                         <strong>${task.task_type || 'unknown'}</strong>
@@ -380,14 +386,21 @@ export class TaskQueueMonitor {
                     <div class="task-id">ID: ${task.task_id}</div>
                     <div class="timestamp">Started: ${new Date(task.leased_at).toLocaleString()}</div>
                 </div>
-            `).join('') || '<div class="task-item">No tasks in flight</div>'}
+            `
+                    )
+                    .join('') || '<div class="task-item">No tasks in flight</div>'
+            }
         </div>
     </div>
 
     <div class="section">
         <h2>📊 Recent Results</h2>
         <div class="task-list">
-            ${results.slice(0, 10).map((result: any) => `
+            ${
+                results
+                    .slice(0, 10)
+                    .map(
+                        (result: any) => `
                 <div class="task-item">
                     <div>
                         <strong>${result.task_type || 'unknown'}</strong>
@@ -397,7 +410,10 @@ export class TaskQueueMonitor {
                     ${result.error ? `<div style="color: #FF5722; margin-top: 4px;">Error: ${result.error}</div>` : ''}
                     <div class="timestamp">Completed: ${new Date(result.completed_at || result.created_at).toLocaleString()}</div>
                 </div>
-            `).join('') || '<div class="task-item">No results yet</div>'}
+            `
+                    )
+                    .join('') || '<div class="task-item">No results yet</div>'
+            }
         </div>
     </div>
 

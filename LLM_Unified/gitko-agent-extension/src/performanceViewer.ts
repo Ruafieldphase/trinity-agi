@@ -25,16 +25,11 @@ export class PerformanceViewer {
             return;
         }
 
-        const panel = vscode.window.createWebviewPanel(
-            'performanceViewer',
-            '📊 Performance Monitor',
-            column,
-            {
-                enableScripts: true,
-                retainContextWhenHidden: true,
-                localResourceRoots: [extensionUri]
-            }
-        );
+        const panel = vscode.window.createWebviewPanel('performanceViewer', '📊 Performance Monitor', column, {
+            enableScripts: true,
+            retainContextWhenHidden: true,
+            localResourceRoots: [extensionUri],
+        });
 
         PerformanceViewer.currentPanel = new PerformanceViewer(panel, extensionUri);
     }
@@ -53,7 +48,7 @@ export class PerformanceViewer {
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
         this._panel.webview.onDidReceiveMessage(
-            message => {
+            (message) => {
                 switch (message.command) {
                     case 'refresh':
                         this._update();
@@ -76,30 +71,33 @@ export class PerformanceViewer {
     private _update() {
         const summary = this._monitor.getSummary();
         const operations = this._monitor.getAllOperations();
-        
+
         this._panel.webview.html = this._getHtmlContent(summary, operations);
     }
 
     private _exportMetrics() {
         const json = this._monitor.exportMetrics();
         const timestamp = new Date().toISOString().replace(/:/g, '-');
-        
-        vscode.workspace.fs.writeFile(
-            vscode.Uri.file(`gitko-performance-${timestamp}.json`),
-            Buffer.from(json, 'utf-8')
-        ).then(() => {
-            vscode.window.showInformationMessage('✅ Metrics exported successfully');
-        }, (error) => {
-            vscode.window.showErrorMessage(`❌ Export failed: ${error}`);
-        });
+
+        vscode.workspace.fs
+            .writeFile(vscode.Uri.file(`gitko-performance-${timestamp}.json`), Buffer.from(json, 'utf-8'))
+            .then(
+                () => {
+                    vscode.window.showInformationMessage('✅ Metrics exported successfully');
+                },
+                (error) => {
+                    vscode.window.showErrorMessage(`❌ Export failed: ${error}`);
+                }
+            );
     }
 
     private _getHtmlContent(summary: Record<string, any>, operations: string[]): string {
-        const operationRows = operations.map(op => {
-            const stats = this._monitor.getOperationStats(op);
-            const summaryData = summary[op] || { count: 0, successRate: 0, avgDuration: 0 };
-            
-            return `
+        const operationRows = operations
+            .map((op) => {
+                const stats = this._monitor.getOperationStats(op);
+                const summaryData = summary[op] || { count: 0, successRate: 0, avgDuration: 0 };
+
+                return `
                 <tr>
                     <td>${op}</td>
                     <td>${stats.totalCount}</td>
@@ -109,7 +107,8 @@ export class PerformanceViewer {
                     <td>${stats.maxDuration.toFixed(0)}ms</td>
                 </tr>
             `;
-        }).join('');
+            })
+            .join('');
 
         return `<!DOCTYPE html>
 <html lang="ko">
@@ -205,12 +204,15 @@ export class PerformanceViewer {
         </div>
     </div>
 
-    ${operations.length === 0 ? `
+    ${
+        operations.length === 0
+            ? `
         <div class="empty-state">
             <h2>No performance data yet</h2>
             <p>Performance metrics will appear here once operations are tracked.</p>
         </div>
-    ` : `
+    `
+            : `
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-label">Total Operations</div>
@@ -222,15 +224,25 @@ export class PerformanceViewer {
             </div>
             <div class="stat-card">
                 <div class="stat-label">Avg Success Rate</div>
-                <div class="stat-value">${operations.length > 0 
-                    ? (Object.values(summary).reduce((sum: number, s: any) => sum + s.successRate, 0) / operations.length).toFixed(1) 
-                    : 0}%</div>
+                <div class="stat-value">${
+                    operations.length > 0
+                        ? (
+                              Object.values(summary).reduce((sum: number, s: any) => sum + s.successRate, 0) /
+                              operations.length
+                          ).toFixed(1)
+                        : 0
+                }%</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Avg Duration</div>
-                <div class="stat-value">${operations.length > 0 
-                    ? (Object.values(summary).reduce((sum: number, s: any) => sum + s.avgDuration, 0) / operations.length).toFixed(0) 
-                    : 0}ms</div>
+                <div class="stat-value">${
+                    operations.length > 0
+                        ? (
+                              Object.values(summary).reduce((sum: number, s: any) => sum + s.avgDuration, 0) /
+                              operations.length
+                          ).toFixed(0)
+                        : 0
+                }ms</div>
             </div>
         </div>
 
@@ -249,7 +261,8 @@ export class PerformanceViewer {
                 ${operationRows}
             </tbody>
         </table>
-    `}
+    `
+    }
 
     <script>
         const vscode = acquireVsCodeApi();

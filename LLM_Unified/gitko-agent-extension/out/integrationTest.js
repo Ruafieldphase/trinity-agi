@@ -61,7 +61,7 @@ async function runIntegrationTests() {
         results.push({
             test: 'Logger',
             passed: false,
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }
@@ -69,7 +69,7 @@ async function runIntegrationTests() {
     try {
         const monitor = performanceMonitor_1.PerformanceMonitor.getInstance();
         const opId = monitor.startOperation('test.operation');
-        await new Promise(resolve => setTimeout(resolve, 10)); // Simulate work
+        await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate work
         monitor.endOperation(opId, true);
         const stats = monitor.getOperationStats('test.operation');
         if (stats.totalCount === 1 && stats.successCount === 1) {
@@ -85,7 +85,7 @@ async function runIntegrationTests() {
         results.push({
             test: 'Performance Monitor',
             passed: false,
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }
@@ -95,7 +95,7 @@ async function runIntegrationTests() {
         results.push({
             test: 'Config Validator',
             passed: true,
-            error: validation.isValid ? undefined : `${validation.errors.length} errors found`
+            error: validation.isValid ? undefined : `${validation.errors.length} errors found`,
         });
         passed++;
     }
@@ -103,28 +103,28 @@ async function runIntegrationTests() {
         results.push({
             test: 'Config Validator',
             passed: false,
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }
     // Test 4: Extension Commands
     try {
         const commands = await vscode.commands.getCommands(true);
-        const gitkoCommands = commands.filter(cmd => cmd.startsWith('gitko.'));
+        const gitkoCommands = commands.filter((cmd) => cmd.startsWith('gitko.'));
         const expectedCommands = [
             'gitko.enableHttpPoller',
             'gitko.disableHttpPoller',
             'gitko.showTaskQueueMonitor',
             'gitko.showResonanceLedger',
             'gitko.validateConfig',
-            'gitko.showPerformanceViewer'
+            'gitko.showPerformanceViewer',
         ];
-        const allFound = expectedCommands.every(cmd => gitkoCommands.includes(cmd));
+        const allFound = expectedCommands.every((cmd) => gitkoCommands.includes(cmd));
         if (allFound) {
             results.push({
                 test: 'Extension Commands',
                 passed: true,
-                error: `Found ${gitkoCommands.length} commands`
+                error: `Found ${gitkoCommands.length} commands`,
             });
             passed++;
         }
@@ -136,7 +136,7 @@ async function runIntegrationTests() {
         results.push({
             test: 'Extension Commands',
             passed: false,
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
         });
         failed++;
     }

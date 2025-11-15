@@ -48,7 +48,7 @@ export class PerformanceMonitor {
             operationName,
             startTime,
             success: false,
-            metadata
+            metadata,
         };
 
         if (!this.metrics.has(operationName)) {
@@ -80,7 +80,7 @@ export class PerformanceMonitor {
         const operationName = operationId.split('_')[0];
         const metrics = this.metrics.get(operationName);
         if (metrics) {
-            const metric = metrics.find(m => m.startTime === startTime && !m.endTime);
+            const metric = metrics.find((m) => m.startTime === startTime && !m.endTime);
             if (metric) {
                 metric.endTime = endTime;
                 metric.duration = duration;
@@ -109,7 +109,7 @@ export class PerformanceMonitor {
         maxDuration: number;
     } {
         const metrics = this.metrics.get(operationName) || [];
-        const completedMetrics = metrics.filter(m => m.duration !== undefined);
+        const completedMetrics = metrics.filter((m) => m.duration !== undefined);
 
         if (completedMetrics.length === 0) {
             return {
@@ -118,12 +118,12 @@ export class PerformanceMonitor {
                 failureCount: 0,
                 avgDuration: 0,
                 minDuration: 0,
-                maxDuration: 0
+                maxDuration: 0,
             };
         }
 
-        const durations = completedMetrics.map(m => m.duration!);
-        const successCount = completedMetrics.filter(m => m.success).length;
+        const durations = completedMetrics.map((m) => m.duration!);
+        const successCount = completedMetrics.filter((m) => m.success).length;
 
         return {
             totalCount: completedMetrics.length,
@@ -131,7 +131,7 @@ export class PerformanceMonitor {
             failureCount: completedMetrics.length - successCount,
             avgDuration: durations.reduce((a, b) => a + b, 0) / durations.length,
             minDuration: Math.min(...durations),
-            maxDuration: Math.max(...durations)
+            maxDuration: Math.max(...durations),
         };
     }
 
@@ -166,11 +166,14 @@ export class PerformanceMonitor {
     /**
      * Get summary of all operations
      */
-    getSummary(): Record<string, {
-        count: number;
-        successRate: number;
-        avgDuration: number;
-    }> {
+    getSummary(): Record<
+        string,
+        {
+            count: number;
+            successRate: number;
+            avgDuration: number;
+        }
+    > {
         const summary: Record<string, { count: number; successRate: number; avgDuration: number }> = {};
 
         for (const operationName of this.getAllOperations()) {
@@ -178,7 +181,7 @@ export class PerformanceMonitor {
             summary[operationName] = {
                 count: stats.totalCount,
                 successRate: stats.totalCount > 0 ? (stats.successCount / stats.totalCount) * 100 : 0,
-                avgDuration: stats.avgDuration
+                avgDuration: stats.avgDuration,
             };
         }
 
@@ -193,7 +196,7 @@ export class PerformanceMonitor {
             timestamp: new Date().toISOString(),
             summary: this.getSummary(),
             activeOperations: this.activeOperations.size,
-            operations: Object.fromEntries(this.metrics)
+            operations: Object.fromEntries(this.metrics),
         };
 
         return JSON.stringify(data, null, 2);
@@ -236,7 +239,7 @@ export class PerformanceMonitor {
 
         // Remove oldest 20%
         const toRemove = Math.floor(allMetrics.length * 0.2);
-        const removeSet = new Set(allMetrics.slice(0, toRemove).map(m => `${m.name}_${m.index}`));
+        const removeSet = new Set(allMetrics.slice(0, toRemove).map((m) => `${m.name}_${m.index}`));
 
         // Rebuild metrics without removed items
         for (const [name, metrics] of this.metrics.entries()) {
@@ -252,13 +255,16 @@ export class PerformanceMonitor {
      */
     private startAutoCleanup(): void {
         // Check every 5 minutes
-        setInterval(() => {
-            const totalMetrics = Array.from(this.metrics.values()).reduce((sum, m) => sum + m.length, 0);
-            if (totalMetrics > this.MAX_TOTAL_METRICS * 0.8) {
-                logger.info(`Auto-cleanup triggered: ${totalMetrics} metrics`);
-                this.trimOldestMetrics();
-            }
-        }, 5 * 60 * 1000);
+        setInterval(
+            () => {
+                const totalMetrics = Array.from(this.metrics.values()).reduce((sum, m) => sum + m.length, 0);
+                if (totalMetrics > this.MAX_TOTAL_METRICS * 0.8) {
+                    logger.info(`Auto-cleanup triggered: ${totalMetrics} metrics`);
+                    this.trimOldestMetrics();
+                }
+            },
+            5 * 60 * 1000
+        );
     }
 }
 

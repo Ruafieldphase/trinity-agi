@@ -282,6 +282,9 @@
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile",
         "lint": "eslint src --ext ts",
+        "lint:fix": "eslint src --ext ts --fix",
+        "format": "prettier --write \"src/**/*.ts\"",
+        "format:check": "prettier --check \"src/**/*.ts\"",
         "clean": "rimraf out",
         "rebuild": "npm run clean && npm run compile",
         "package": "vsce package",
@@ -290,9 +293,13 @@
     "devDependencies": {
         "@types/node": "^20.x",
         "@types/vscode": "^1.90.0",
-        "@typescript-eslint/eslint-plugin": "^7.0.0",
-        "@typescript-eslint/parser": "^7.0.0",
-        "eslint": "^8.57.0",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
+        "eslint": "^8.57.1",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.4",
+        "eslint-plugin-security": "^3.0.1",
+        "prettier": "^3.6.2",
         "typescript": "^5.4.0"
     },
     "dependencies": {

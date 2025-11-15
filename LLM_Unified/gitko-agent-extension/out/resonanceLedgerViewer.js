@@ -55,7 +55,7 @@ class ResonanceLedgerViewer {
         const panel = vscode.window.createWebviewPanel('resonanceLedgerViewer', '🌊 Resonance Ledger', column, {
             enableScripts: true,
             retainContextWhenHidden: true,
-            localResourceRoots: [extensionUri]
+            localResourceRoots: [extensionUri],
         });
         ResonanceLedgerViewer.currentPanel = new ResonanceLedgerViewer(panel, extensionUri);
     }
@@ -82,7 +82,7 @@ class ResonanceLedgerViewer {
         // 패널이 닫힐 때 정리
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
         // 웹뷰 메시지 처리
-        this._panel.webview.onDidReceiveMessage(message => {
+        this._panel.webview.onDidReceiveMessage((message) => {
             switch (message.command) {
                 case 'refresh':
                     this._update();
@@ -125,9 +125,9 @@ class ResonanceLedgerViewer {
             return [];
         }
         const content = fs.readFileSync(this._ledgerPath, 'utf-8');
-        const lines = content.split('\n').filter(line => line.trim());
+        const lines = content.split('\n').filter((line) => line.trim());
         const events = lines
-            .map(line => {
+            .map((line) => {
             try {
                 return JSON.parse(line);
             }
@@ -138,15 +138,15 @@ class ResonanceLedgerViewer {
             .filter((e) => e !== null)
             .reverse(); // 최신순
         if (filterAgent) {
-            return events.filter(e => e.agent === filterAgent);
+            return events.filter((e) => e.agent === filterAgent);
         }
         return events.slice(0, 100); // 최근 100개
     }
     _getHtmlContent(events) {
         const eventsByType = this._groupByType(events);
-        const agents = [...new Set(events.map(e => e.agent).filter(Boolean))];
+        const agents = [...new Set(events.map((e) => e.agent).filter(Boolean))];
         const avgScore = events
-            .filter(e => e.resonance_score !== undefined)
+            .filter((e) => e.resonance_score !== undefined)
             .reduce((sum, e) => sum + (e.resonance_score || 0), 0) / Math.max(events.length, 1);
         return `<!DOCTYPE html>
 <html lang="ko">
@@ -358,13 +358,16 @@ class ResonanceLedgerViewer {
     <div class="filter-bar">
         <span class="filter-label">Filter by Agent:</span>
         <button class="button secondary" onclick="filterByAgent('')">All</button>
-        ${agents.map(agent => `
+        ${agents
+            .map((agent) => `
             <button class="button secondary" onclick="filterByAgent('${agent}')">${agent}</button>
-        `).join('')}
+        `)
+            .join('')}
     </div>
 
     <div class="timeline">
-        ${events.map(event => `
+        ${events
+            .map((event) => `
             <div class="event">
                 <div class="event-header">
                     <span class="event-type">${event.event_type || 'Unknown Event'}</span>
@@ -376,27 +379,34 @@ class ResonanceLedgerViewer {
                     ${event.resonance_score !== undefined ? `<span class="badge badge-score">🎯 ${event.resonance_score.toFixed(2)}</span>` : ''}
                 </div>
                 ${event.result ? `<div style="margin-top: 8px; font-size: 13px;">${event.result}</div>` : ''}
-                ${event.context ? `
+                ${event.context
+            ? `
                     <details style="margin-top: 8px;">
                         <summary style="cursor: pointer; font-size: 12px; opacity: 0.8;">Context</summary>
                         <div class="event-context">${JSON.stringify(event.context, null, 2)}</div>
                     </details>
-                ` : ''}
-                ${event.evidence_link ? `
+                `
+            : ''}
+                ${event.evidence_link
+            ? `
                     <div style="margin-top: 8px; font-size: 11px;">
                         🔗 <a href="${event.evidence_link}" style="color: var(--vscode-textLink-foreground);">Evidence Link</a>
                     </div>
-                ` : ''}
+                `
+            : ''}
             </div>
-        `).join('')}
+        `)
+            .join('')}
     </div>
 
-    ${events.length === 0 ? `
+    ${events.length === 0
+            ? `
         <div style="text-align: center; padding: 40px; opacity: 0.6;">
             <p>No events found in Resonance Ledger</p>
             <p style="font-size: 12px;">Path: ${this._ledgerPath}</p>
         </div>
-    ` : ''}
+    `
+            : ''}
 
     <script>
         const vscode = acquireVsCodeApi();

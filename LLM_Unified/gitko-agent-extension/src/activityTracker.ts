@@ -44,7 +44,7 @@ export class ActivityTracker {
             timestamp: Date.now(),
             type: 'command',
             action: commandId,
-            duration
+            duration,
         });
 
         const count = this.commandCounts.get(commandId) || 0;
@@ -60,7 +60,7 @@ export class ActivityTracker {
             type: 'agent',
             action: agentName,
             details: { success },
-            duration
+            duration,
         });
 
         const count = this.agentCalls.get(agentName) || 0;
@@ -76,7 +76,7 @@ export class ActivityTracker {
             type: 'task',
             action: taskType,
             details: { success },
-            duration
+            duration,
         });
     }
 
@@ -89,8 +89,8 @@ export class ActivityTracker {
             type: 'error',
             action: source,
             details: {
-                error: error instanceof Error ? error.message : error
-            }
+                error: error instanceof Error ? error.message : error,
+            },
         });
     }
 
@@ -102,7 +102,7 @@ export class ActivityTracker {
             timestamp: Date.now(),
             type: 'system',
             action: event,
-            details
+            details,
         });
     }
 
@@ -130,7 +130,7 @@ export class ActivityTracker {
      * Get events by type
      */
     getEventsByType(type: ActivityEvent['type']): ActivityEvent[] {
-        return this.events.filter(e => e.type === type);
+        return this.events.filter((e) => e.type === type);
     }
 
     /**
@@ -162,12 +162,12 @@ export class ActivityTracker {
         return {
             sessionDuration,
             totalEvents: this.events.length,
-            commandCount: this.events.filter(e => e.type === 'command').length,
-            agentCallCount: this.events.filter(e => e.type === 'agent').length,
-            taskCount: this.events.filter(e => e.type === 'task').length,
-            errorCount: this.events.filter(e => e.type === 'error').length,
+            commandCount: this.events.filter((e) => e.type === 'command').length,
+            agentCallCount: this.events.filter((e) => e.type === 'agent').length,
+            taskCount: this.events.filter((e) => e.type === 'task').length,
+            errorCount: this.events.filter((e) => e.type === 'error').length,
             topCommands,
-            topAgents
+            topAgents,
         };
     }
 
@@ -207,7 +207,7 @@ export class ActivityTracker {
 
         report += `## Recent Events (Last 20)\n\n`;
         const recent = this.getRecentEvents(20);
-        recent.forEach(event => {
+        recent.forEach((event) => {
             const time = new Date(event.timestamp).toLocaleTimeString();
             const duration = event.duration ? ` (${event.duration}ms)` : '';
             report += `- \`${time}\` [${event.type}] ${event.action}${duration}\n`;
@@ -261,7 +261,7 @@ export class ActivityViewer {
             vscode.ViewColumn.One,
             {
                 enableScripts: true,
-                retainContextWhenHidden: true
+                retainContextWhenHidden: true,
             }
         );
 
@@ -269,7 +269,7 @@ export class ActivityViewer {
 
         // Handle messages from webview
         this.panel.webview.onDidReceiveMessage(
-            message => {
+            (message) => {
                 switch (message.command) {
                     case 'refresh':
                         this.updateContent();
@@ -301,15 +301,17 @@ export class ActivityViewer {
     }
 
     private updateContent(): void {
-        if (!this.panel) {return;}
-        
+        if (!this.panel) {
+            return;
+        }
+
         const stats = this.tracker.getSessionStats();
         const recent = this.tracker.getRecentEvents(50);
 
         this.panel.webview.postMessage({
             command: 'update',
             stats,
-            events: recent
+            events: recent,
         });
     }
 
@@ -320,7 +322,7 @@ export class ActivityViewer {
 
         const uri = await vscode.window.showSaveDialog({
             defaultUri: vscode.Uri.file(fileName),
-            filters: { 'Markdown': ['md'], 'All Files': ['*'] }
+            filters: { Markdown: ['md'], 'All Files': ['*'] },
         });
 
         if (uri) {
@@ -330,11 +332,7 @@ export class ActivityViewer {
     }
 
     private clearActivity(): void {
-        vscode.window.showWarningMessage(
-            'Clear all activity data?',
-            { modal: true },
-            'Yes', 'No'
-        ).then(answer => {
+        vscode.window.showWarningMessage('Clear all activity data?', { modal: true }, 'Yes', 'No').then((answer) => {
             if (answer === 'Yes') {
                 this.tracker.clear();
                 this.updateContent();

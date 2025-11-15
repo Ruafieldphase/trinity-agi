@@ -33,7 +33,9 @@ export class ConfigValidator {
                 errors.push(`Python executable not found: ${pythonPath}`);
             }
         } else {
-            warnings.push('Python path not configured. Using default: D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe');
+            warnings.push(
+                'Python path not configured. Using default: D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe'
+            );
         }
 
         // Validate Computer Use Python path
@@ -100,7 +102,7 @@ export class ConfigValidator {
         return {
             isValid: errors.length === 0,
             errors,
-            warnings
+            warnings,
         };
     }
 
@@ -132,7 +134,7 @@ export class ConfigValidator {
      */
     static async validateAndFix(): Promise<void> {
         const result = this.validateAll();
-        
+
         if (!result.isValid) {
             const action = await vscode.window.showErrorMessage(
                 'Configuration validation failed. Would you like to open settings?',
@@ -155,12 +157,10 @@ export class ConfigValidator {
      */
     static checkCriticalPaths(): boolean {
         const cfg = vscode.workspace.getConfiguration('gitkoAgent');
-        
+
         // Check default Python path
         const defaultPython = 'D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe';
-        const pythonPath = cfg.get<string>('pythonPath') || 
-                          cfg.get<string>('computerUsePythonPath') || 
-                          defaultPython;
+        const pythonPath = cfg.get<string>('pythonPath') || cfg.get<string>('computerUsePythonPath') || defaultPython;
 
         if (!fs.existsSync(pythonPath)) {
             logger.error(`Critical: Python not found at ${pythonPath}`);

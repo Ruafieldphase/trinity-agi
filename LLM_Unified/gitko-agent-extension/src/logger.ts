@@ -9,7 +9,7 @@ export enum LogLevel {
     DEBUG = 0,
     INFO = 1,
     WARN = 2,
-    ERROR = 3
+    ERROR = 3,
 }
 
 export class Logger {
@@ -88,6 +88,6 @@ export function createLogger(moduleName: string): {
         debug: (msg: string) => logger.debug(msg, moduleName),
         info: (msg: string) => logger.info(msg, moduleName),
         warn: (msg: string) => logger.warn(msg, moduleName),
-        error: (msg: string, err?: Error | unknown) => logger.error(msg, err, moduleName)
+        error: (msg: string, err?: Error | unknown) => logger.error(msg, err, moduleName),
     };
 }

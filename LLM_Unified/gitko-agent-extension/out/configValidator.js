@@ -117,7 +117,7 @@ class ConfigValidator {
         return {
             isValid: errors.length === 0,
             errors,
-            warnings
+            warnings,
         };
     }
     /**
@@ -165,9 +165,7 @@ class ConfigValidator {
         const cfg = vscode.workspace.getConfiguration('gitkoAgent');
         // Check default Python path
         const defaultPython = 'D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe';
-        const pythonPath = cfg.get('pythonPath') ||
-            cfg.get('computerUsePythonPath') ||
-            defaultPython;
+        const pythonPath = cfg.get('pythonPath') || cfg.get('computerUsePythonPath') || defaultPython;
         if (!fs.existsSync(pythonPath)) {
             logger.error(`Critical: Python not found at ${pythonPath}`);
             return false;

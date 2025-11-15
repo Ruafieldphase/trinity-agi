@@ -70,11 +70,7 @@ class ComputerUseAgent {
     async findElementByText(searchText) {
         const opId = perfMonitor.startOperation('computerUse.findElement', { searchText });
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'find',
-                '--text', searchText
-            ];
+            const args = [this.scriptPath, 'find', '--text', searchText];
             const envVars = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
                 envVars.COMPUTER_USE_OCR_BACKEND = this.ocrBackend;
@@ -122,12 +118,7 @@ class ComputerUseAgent {
      */
     async clickAt(x, y) {
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'click',
-                '--x', x.toString(),
-                '--y', y.toString()
-            ];
+            const args = [this.scriptPath, 'click', '--x', x.toString(), '--y', y.toString()];
             const envVars = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
                 envVars.COMPUTER_USE_OCR_BACKEND = this.ocrBackend;
@@ -181,11 +172,7 @@ class ComputerUseAgent {
      */
     async type(text) {
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'type',
-                '--text', text
-            ];
+            const args = [this.scriptPath, 'type', '--text', text];
             const envVars = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
                 envVars.COMPUTER_USE_OCR_BACKEND = this.ocrBackend;
@@ -217,10 +204,7 @@ class ComputerUseAgent {
      */
     async scanScreen() {
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'scan'
-            ];
+            const args = [this.scriptPath, 'scan'];
             const envVars = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
                 envVars.COMPUTER_USE_OCR_BACKEND = this.ocrBackend;
@@ -270,7 +254,7 @@ function registerComputerUseCommands(context) {
     const clickByTextCmd = vscode.commands.registerCommand('gitko.computerUse.clickByText', async () => {
         const searchText = await vscode.window.showInputBox({
             prompt: '찾을 텍스트를 입력하세요',
-            placeHolder: 'Gitko'
+            placeHolder: 'Gitko',
         });
         if (!searchText) {
             return;
@@ -279,7 +263,7 @@ function registerComputerUseCommands(context) {
             await vscode.window.withProgress({
                 location: vscode.ProgressLocation.Notification,
                 title: `"${searchText}" 요소 찾는 중...`,
-                cancellable: false
+                cancellable: false,
             }, async (progress) => {
                 const success = await agent.clickElementByText(searchText);
                 if (success) {

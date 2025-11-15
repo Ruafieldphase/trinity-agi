@@ -50,13 +50,14 @@ const performanceViewer_1 = require("./performanceViewer");
 const integrationTest_1 = require("./integrationTest");
 const devUtils_1 = require("./devUtils");
 const activityTracker_1 = require("./activityTracker");
+const statusBarManager_1 = require("./statusBarManager");
 const logger = (0, logger_1.createLogger)('Extension');
 // HTTP Poller 상태 관리
 let httpPollerInterval; // legacy (unused after poller refactor)
 let httpPollerOutputChannel;
 let taskPoller;
 let agentOutputChannel;
-let statusBarItem;
+let statusBarManager;
 const MAX_TOOL_RESPONSE_CHARS = 3200; // Keep Copilot payloads below ~3.5k clipboard-safe limit
 let cachedRuntimeConfig = null;
 let runtimeConfigWarningShown = false;
@@ -66,15 +67,20 @@ function activate(context) {
     const activityTracker = activityTracker_1.ActivityTracker.getInstance();
     activityTracker.trackSystemEvent('extension_activated', {
         version: context.extension.packageJSON.version,
-        mode: context.extensionMode
+        mode: context.extensionMode,
     });
-    // Status Bar Item 생성
-    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    statusBarItem.command = 'gitko.showTaskQueueMonitor';
-    statusBarItem.tooltip = 'Gitko Agent Status';
-    updateStatusBar('idle');
-    statusBarItem.show();
-    context.subscriptions.push(statusBarItem);
+    // Status Bar Manager 생성
+    statusBarManager = new statusBarManager_1.StatusBarManager(vscode.StatusBarAlignment.Right, 100);
+    statusBarManager.setState('stopped');
+    statusBarManager.setToggleCallback(() => {
+        if (taskPoller?.isActive()) {
+            disableHttpPoller();
+        }
+        else {
+            enableHttpPoller();
+        }
+    });
+    context.subscriptions.push(statusBarManager);
     // 설정 검증
     const validationResult = configValidator_1.ConfigValidator.validateAll();
     if (!validationResult.isValid) {
@@ -103,6 +109,9 @@ function activate(context) {
     agentOutputChannel = vscode.window.createOutputChannel('Gitko Agent Runtime');
     context.subscriptions.push(agentOutputChannel);
     // HTTP Poller 명령어 등록
+    const toggleHttpPollerCmd = vscode.commands.registerCommand('gitko.toggleHttpPoller', () => {
+        statusBarManager?.handleToggle();
+    });
     const enableHttpPollerCmd = vscode.commands.registerCommand('gitko.enableHttpPoller', () => {
         enableHttpPoller();
     });
@@ -114,7 +123,9 @@ function activate(context) {
     });
     // 🎯 Task Queue Monitor 명령어 등록
     const showTaskQueueMonitorCmd = vscode.commands.registerCommand('gitko.showTaskQueueMonitor', () => {
-        const serverUrl = vscode.workspace.getConfiguration('gitko').get('taskQueueUrl', 'http://127.0.0.1:8091');
+        const serverUrl = vscode.workspace
+            .getConfiguration('gitko')
+            .get('taskQueueUrl', 'http://127.0.0.1:8091');
         taskQueueMonitor_1.TaskQueueMonitor.createOrShow(context.extensionUri, serverUrl);
     });
     // 🌊 Resonance Ledger Viewer 명령어 등록
@@ -132,7 +143,7 @@ function activate(context) {
         activityTracker_1.ActivityTracker.getInstance().trackCommand('gitko.showActivityViewer');
         activityViewer.show(context);
     });
-    context.subscriptions.push(enableHttpPollerCmd, disableHttpPollerCmd, showPollerOutputCmd, showTaskQueueMonitorCmd, showResonanceLedgerCmd, showPerformanceViewerCmd, showActivityViewerCmd);
+    context.subscriptions.push(toggleHttpPollerCmd, enableHttpPollerCmd, disableHttpPollerCmd, showPollerOutputCmd, showTaskQueueMonitorCmd, showResonanceLedgerCmd, showPerformanceViewerCmd, showActivityViewerCmd);
     const configWatcher = vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration('gitkoAgent')) {
             resetRuntimeConfigCache();
@@ -155,26 +166,20 @@ function activate(context) {
     const sianTool = vscode.lm.registerTool('sian_refactor', {
         invoke: async (options, token) => {
             const result = await executeAgent('sian', options.input.message, token);
-            return new vscode.LanguageModelToolResult([
-                new vscode.LanguageModelTextPart(result)
-            ]);
-        }
+            return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(result)]);
+        },
     });
     const lubitTool = vscode.lm.registerTool('lubit_review', {
         invoke: async (options, token) => {
             const result = await executeAgent('lubit', options.input.message, token);
-            return new vscode.LanguageModelToolResult([
-                new vscode.LanguageModelTextPart(result)
-            ]);
-        }
+            return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(result)]);
+        },
     });
     const gitkoTool = vscode.lm.registerTool('gitko_orchestrate', {
         invoke: async (options, token) => {
             const result = await executeAgent('gitko', options.input.message, token);
-            return new vscode.LanguageModelToolResult([
-                new vscode.LanguageModelTextPart(result)
-            ]);
-        }
+            return new vscode.LanguageModelToolResult([new vscode.LanguageModelTextPart(result)]);
+        },
     });
     // Chat Participant도 유지 (명시적 호출용)
     const gitko = vscode.chat.createChatParticipant('gitko-agent', async (request, context, stream, token) => {
@@ -337,9 +342,9 @@ async function executeAgent(agent, message, token) {
             cwd: runtime.workingDirectory,
             env: {
                 ...process.env,
-                PYTHONIOENCODING: 'utf-8'
+                PYTHONIOENCODING: 'utf-8',
             },
-            windowsHide: true
+            windowsHide: true,
         });
         let stdout = '';
         let stderr = '';
@@ -398,9 +403,9 @@ async function executeGitkoAgent(message, stream, token) {
             cwd: runtime.workingDirectory,
             env: {
                 ...process.env,
-                PYTHONIOENCODING: 'utf-8'
+                PYTHONIOENCODING: 'utf-8',
             },
-            windowsHide: true
+            windowsHide: true,
         });
         let stdout = '';
         let stderr = '';
@@ -468,7 +473,7 @@ async function executeGitkoAgent(message, stream, token) {
                     agent: 'gitko',
                     status: 'error',
                     summary: '에이전트 실행 실패',
-                    error: (stderr || stdout || 'Gitko Agent 실행 실패').trim()
+                    error: (stderr || stdout || 'Gitko Agent 실행 실패').trim(),
                 });
             }
         });
@@ -513,7 +518,7 @@ function parseAgentOutput(output) {
             agent,
             status,
             summary: summary || `${agent} 에이전트 작업 완료`,
-            output: outputText
+            output: outputText,
         };
     }
     catch (error) {
@@ -522,7 +527,7 @@ function parseAgentOutput(output) {
             status: 'error',
             summary: '출력 파싱 실패',
             error: error instanceof Error ? error.message : String(error),
-            output: output
+            output: output,
         };
     }
 }
@@ -559,7 +564,7 @@ function resolveAgentRuntimeConfig() {
     const workspaceRoot = getWorkspaceRoot();
     const scriptCandidates = [
         resolveScriptCandidate(cfg.get('scriptPath'), workspaceRoot),
-        resolveScriptCandidate(process.env.GITKO_SCRIPT_PATH, workspaceRoot)
+        resolveScriptCandidate(process.env.GITKO_SCRIPT_PATH, workspaceRoot),
     ];
     if (workspaceRoot) {
         scriptCandidates.push(path.join(workspaceRoot, 'LLM_Unified', 'ion-mentoring', 'gitko_cli.py'), path.join(workspaceRoot, 'ion-mentoring', 'gitko_cli.py'), path.join(workspaceRoot, 'gitko_cli.py'));
@@ -570,7 +575,7 @@ function resolveAgentRuntimeConfig() {
     }
     const pythonCandidates = [
         resolveExecutableCandidate(cfg.get('pythonPath'), workspaceRoot),
-        resolveExecutableCandidate(process.env.GITKO_PYTHON_PATH, workspaceRoot)
+        resolveExecutableCandidate(process.env.GITKO_PYTHON_PATH, workspaceRoot),
     ];
     if (workspaceRoot) {
         const win = process.platform === 'win32';
@@ -582,8 +587,7 @@ function resolveAgentRuntimeConfig() {
     }
     pythonCandidates.push(process.platform === 'win32' ? 'python.exe' : 'python');
     const pythonPath = findExistingExecutable(pythonCandidates) ?? (process.platform === 'win32' ? 'python.exe' : 'python');
-    const workingDirectory = resolveDirectoryCandidate(cfg.get('workingDirectory'), workspaceRoot) ||
-        path.dirname(scriptPath);
+    const workingDirectory = resolveDirectoryCandidate(cfg.get('workingDirectory'), workspaceRoot) || path.dirname(scriptPath);
     const timeout = cfg.get('timeout', 300000) ?? 300000;
     const enableLogging = cfg.get('enableLogging', true) ?? true;
     return {
@@ -591,7 +595,7 @@ function resolveAgentRuntimeConfig() {
         scriptPath,
         workingDirectory,
         timeoutMs: timeout > 0 ? timeout : 300000,
-        enableLogging
+        enableLogging,
     };
 }
 function resolveScriptCandidate(value, workspaceRoot) {
@@ -711,14 +715,14 @@ function enableHttpPoller() {
     taskPoller = new httpTaskPoller_1.HttpTaskPoller(apiBase, 'gitko-extension', interval);
     taskPoller.setOutputCallback((msg) => httpPollerOutputChannel?.appendLine(msg));
     taskPoller.start();
-    updateStatusBar('polling');
+    statusBarManager?.setState('polling');
 }
 function disableHttpPoller() {
     if (taskPoller && taskPoller.isActive()) {
         taskPoller.stop();
         httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] HTTP Task Poller disabled`);
         vscode.window.showInformationMessage('❌ Gitko HTTP Task Poller disabled');
-        updateStatusBar('idle');
+        statusBarManager?.setState('stopped');
         return;
     }
     if (httpPollerInterval) {
@@ -727,42 +731,13 @@ function disableHttpPoller() {
     }
     httpPollerOutputChannel?.appendLine(`[${new Date().toISOString()}] HTTP Task Poller disabled`);
     vscode.window.showInformationMessage('❌ Gitko HTTP Task Poller disabled');
-    updateStatusBar('idle');
+    statusBarManager?.setState('stopped');
 }
 function deactivate() {
     if (httpPollerInterval) {
         clearInterval(httpPollerInterval);
         httpPollerInterval = undefined;
     }
-    if (statusBarItem) {
-        statusBarItem.dispose();
-    }
     logger.info('Gitko Agent Extension is deactivated');
-}
-/**
- * Update status bar based on state
- */
-function updateStatusBar(state) {
-    if (!statusBarItem) {
-        return;
-    }
-    switch (state) {
-        case 'idle':
-            statusBarItem.text = '$(circle-outline) Gitko: Idle';
-            statusBarItem.backgroundColor = undefined;
-            break;
-        case 'polling':
-            statusBarItem.text = '$(sync~spin) Gitko: Polling';
-            statusBarItem.backgroundColor = undefined;
-            break;
-        case 'working':
-            statusBarItem.text = '$(gear~spin) Gitko: Working';
-            statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.warningBackground');
-            break;
-        case 'error':
-            statusBarItem.text = '$(warning) Gitko: Error';
-            statusBarItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
-            break;
-    }
 }
 //# sourceMappingURL=extension.js.map

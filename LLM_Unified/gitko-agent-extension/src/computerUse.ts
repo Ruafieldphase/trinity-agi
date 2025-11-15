@@ -61,11 +61,7 @@ export class ComputerUseAgent {
         const opId = perfMonitor.startOperation('computerUse.findElement', { searchText });
 
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'find',
-                '--text', searchText
-            ];
+            const args = [this.scriptPath, 'find', '--text', searchText];
 
             const envVars: NodeJS.ProcessEnv = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
@@ -117,12 +113,7 @@ export class ComputerUseAgent {
      */
     async clickAt(x: number, y: number): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'click',
-                '--x', x.toString(),
-                '--y', y.toString()
-            ];
+            const args = [this.scriptPath, 'click', '--x', x.toString(), '--y', y.toString()];
 
             const envVars: NodeJS.ProcessEnv = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
@@ -182,11 +173,7 @@ export class ComputerUseAgent {
      */
     async type(text: string): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'type',
-                '--text', text
-            ];
+            const args = [this.scriptPath, 'type', '--text', text];
 
             const envVars: NodeJS.ProcessEnv = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
@@ -222,10 +209,7 @@ export class ComputerUseAgent {
      */
     async scanScreen(): Promise<ScreenElement[]> {
         return new Promise((resolve, reject) => {
-            const args = [
-                this.scriptPath,
-                'scan'
-            ];
+            const args = [this.scriptPath, 'scan'];
 
             const envVars: NodeJS.ProcessEnv = { ...process.env, PYTHONIOENCODING: 'utf-8' };
             if (this.ocrBackend !== 'auto') {
@@ -276,66 +260,56 @@ export function registerComputerUseCommands(context: vscode.ExtensionContext) {
     const agent = new ComputerUseAgent();
 
     // 1. 텍스트로 요소 찾아 클릭
-    const clickByTextCmd = vscode.commands.registerCommand(
-        'gitko.computerUse.clickByText',
-        async () => {
-            const searchText = await vscode.window.showInputBox({
-                prompt: '찾을 텍스트를 입력하세요',
-                placeHolder: 'Gitko'
-            });
+    const clickByTextCmd = vscode.commands.registerCommand('gitko.computerUse.clickByText', async () => {
+        const searchText = await vscode.window.showInputBox({
+            prompt: '찾을 텍스트를 입력하세요',
+            placeHolder: 'Gitko',
+        });
 
-            if (!searchText) {
-                return;
-            }
-
-            try {
-                await vscode.window.withProgress(
-                    {
-                        location: vscode.ProgressLocation.Notification,
-                        title: `"${searchText}" 요소 찾는 중...`,
-                        cancellable: false
-                    },
-                    async (progress) => {
-                        const success = await agent.clickElementByText(searchText);
-                        if (success) {
-                            vscode.window.showInformationMessage(`✅ "${searchText}" 클릭 완료`);
-                        }
-                    }
-                );
-            } catch (error) {
-                vscode.window.showErrorMessage(
-                    `❌ 클릭 실패: ${error instanceof Error ? error.message : String(error)}`
-                );
-            }
+        if (!searchText) {
+            return;
         }
-    );
+
+        try {
+            await vscode.window.withProgress(
+                {
+                    location: vscode.ProgressLocation.Notification,
+                    title: `"${searchText}" 요소 찾는 중...`,
+                    cancellable: false,
+                },
+                async (progress) => {
+                    const success = await agent.clickElementByText(searchText);
+                    if (success) {
+                        vscode.window.showInformationMessage(`✅ "${searchText}" 클릭 완료`);
+                    }
+                }
+            );
+        } catch (error) {
+            vscode.window.showErrorMessage(`❌ 클릭 실패: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    });
 
     // 2. 화면 스캔 (모든 요소 보기)
-    const scanScreenCmd = vscode.commands.registerCommand(
-        'gitko.computerUse.scanScreen',
-        async () => {
-            try {
-                const elements = await agent.scanScreen();
-                const outputChannel = vscode.window.createOutputChannel('Computer Use - Screen Scan');
-                outputChannel.clear();
-                outputChannel.appendLine(`🔍 총 ${elements.length}개 요소 발견:\n`);
+    const scanScreenCmd = vscode.commands.registerCommand('gitko.computerUse.scanScreen', async () => {
+        try {
+            const elements = await agent.scanScreen();
+            const outputChannel = vscode.window.createOutputChannel('Computer Use - Screen Scan');
+            outputChannel.clear();
+            outputChannel.appendLine(`🔍 총 ${elements.length}개 요소 발견:\n`);
 
-                elements.forEach((el, index) => {
-                    outputChannel.appendLine(`${index + 1}. "${el.text}"`);
-                    outputChannel.appendLine(`   위치: (${el.x}, ${el.y})`);
-                    outputChannel.appendLine(`   크기: ${el.width}x${el.height}`);
-                    outputChannel.appendLine(`   신뢰도: ${(el.confidence * 100).toFixed(1)}%\n`);
-                });
+            elements.forEach((el, index) => {
+                outputChannel.appendLine(`${index + 1}. "${el.text}"`);
+                outputChannel.appendLine(`   위치: (${el.x}, ${el.y})`);
+                outputChannel.appendLine(`   크기: ${el.width}x${el.height}`);
+                outputChannel.appendLine(`   신뢰도: ${(el.confidence * 100).toFixed(1)}%\n`);
+            });
 
-                outputChannel.show();
-                vscode.window.showInformationMessage(`✅ 화면 스캔 완료: ${elements.length}개 요소 발견`);
-            } catch (error) {
-                vscode.window.showErrorMessage(
-                    `❌ 스캔 실패: ${error instanceof Error ? error.message : String(error)}`
-                );
-            }
+            outputChannel.show();
+            vscode.window.showInformationMessage(`✅ 화면 스캔 완료: ${elements.length}개 요소 발견`);
+        } catch (error) {
+            vscode.window.showErrorMessage(`❌ 스캔 실패: ${error instanceof Error ? error.message : String(error)}`);
         }
-    );
+    });
 
     context.subscriptions.push(clickByTextCmd, scanScreenCmd);
 }

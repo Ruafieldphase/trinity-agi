@@ -106,7 +106,7 @@ function createLogger(moduleName) {
         debug: (msg) => logger.debug(msg, moduleName),
         info: (msg) => logger.info(msg, moduleName),
         warn: (msg) => logger.warn(msg, moduleName),
-        error: (msg, err) => logger.error(msg, err, moduleName)
+        error: (msg, err) => logger.error(msg, err, moduleName),
     };
 }
 //# sourceMappingURL=logger.js.map
