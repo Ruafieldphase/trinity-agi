@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { createLogger } from './logger';
+import * as path from 'path';
 import { t } from './i18n';
 
 const logger = createLogger('SecurityGuardrails');
@@ -86,6 +87,13 @@ export class SecurityGuardrails {
             };
         }
 
+        // Allowlist enforcement for domains/processes
+        const allowCheck = this.checkAllowlists(action, data);
+        if (!allowCheck.allowed) {
+            this.logAction(action, false, allowCheck.reason);
+            return { allowed: false, reason: allowCheck.reason };
+        }
+
         // Check for destructive patterns
         const isDestructive = this.isDestructiveAction(action, data);
         if (isDestructive) {
@@ -101,6 +109,45 @@ export class SecurityGuardrails {
         this.dailyActionCount++;
         this.logAction(action, true);
         return { allowed: true };
+    }
+
+    private checkAllowlists(action: string, data: unknown): { allowed: boolean; reason?: string } {
+        try {
+            const cfg = (vscode.workspace && vscode.workspace.getConfiguration('gitko')) || undefined;
+            const allowDomains = (cfg?.get('security.allowDomains', []) as string[]) || [];
+            const allowProcesses = (cfg?.get('security.allowProcesses', []) as string[]) || [];
+
+            // URL domain checks
+            const d1 = (data as Record<string, unknown> | undefined);
+            const url = (d1 && (d1['url'] as string)) || undefined;
+            if (url && allowDomains.length > 0) {
+                try {
+                    const u = new URL(url);
+                    const host = u.hostname.toLowerCase();
+                    const ok = allowDomains.some((d) => host === d.toLowerCase() || host.endsWith('.' + d.toLowerCase()));
+                    if (!ok) {
+                        return { allowed: false, reason: `URL domain not allowed: ${host}` };
+                    }
+                } catch {
+                    return { allowed: false, reason: 'Invalid URL format' };
+                }
+            }
+
+            // Process basename checks
+            const d = data as Record<string, unknown> | undefined;
+            const proc = (d && (d['process'] as string)) || (d && (d['command'] as string)) || undefined;
+            if (proc && allowProcesses.length > 0) {
+                const base = path.win32.basename(proc).toLowerCase();
+                const ok = allowProcesses.map((p) => p.toLowerCase()).includes(base);
+                if (!ok) {
+                    return { allowed: false, reason: `Process not allowed: ${base}` };
+                }
+            }
+
+            return { allowed: true };
+        } catch {
+            return { allowed: true };
+        }
     }
 
     /**

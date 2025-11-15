@@ -107,7 +107,8 @@ class Logger {
             const logToFile = cfg.get('logToFile', false) ?? false;
             const logFilePath = cfg.get('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) ||
                 path.join(os.homedir(), 'gitko-agent.log');
-            return { level, format, separateChannels, logToFile, logFilePath };
+            const redactSensitive = cfg.get('security.redact.enabled', true) ?? true;
+            return { level, format, separateChannels, logToFile, logFilePath, redactSensitive };
         }
         // Defaults for test environment
         return {
@@ -116,6 +117,7 @@ class Logger {
             separateChannels: false,
             logToFile: false,
             logFilePath: path.join(os.homedir(), 'gitko-agent.log'),
+            redactSensitive: true,
         };
     }
     setLogLevel(level) {
@@ -179,6 +181,10 @@ class Logger {
             const sourceTag = source ? `[${source}]` : '';
             line = `[${timestamp}] [${level}]${sourceTag} ${message}`;
         }
+        // Redact sensitive content if enabled
+        if (this.options.redactSensitive) {
+            line = this.redact(line);
+        }
         // Output channel
         const channel = this.getTargetChannel(source);
         channel.appendLine(line);
@@ -191,6 +197,22 @@ class Logger {
                 // ignore file errors to avoid crashing logging
             }
         }
+    }
+    redact(text) {
+        try {
+            // Email addresses
+            text = text.replace(/([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[A-Za-z]{2,})/g, '[REDACTED:email]');
+            // Bearer tokens
+            text = text.replace(/Bearer\s+[A-Za-z0-9._\-]+/gi, 'Bearer [REDACTED:token]');
+            // API keys common patterns
+            text = text.replace(/(api[-_ ]?key\s*[:=]\s*)["']?[A-Za-z0-9_\-]{8,}["']?/gi, '$1[REDACTED:key]');
+            // Secret-like hex/base64 strings following key/secret/password labels
+            text = text.replace(/(secret|password|token)\s*[:=]\s*["']?[A-Za-z0-9+/=]{8,}["']?/gi, '$1:[REDACTED]');
+        }
+        catch {
+            // best-effort
+        }
+        return text;
     }
     show(module) {
         this.getTargetChannel(module).show();

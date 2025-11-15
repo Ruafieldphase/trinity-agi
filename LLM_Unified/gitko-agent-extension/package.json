@@ -204,6 +204,50 @@
                     "description": "Path to Python executable (leave empty for auto-detection)",
                     "order": 1
                 },
+                "gitko.security.redact.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Redact sensitive info (emails, tokens, API keys) from logs",
+                    "order": 28
+                },
+                "gitko.security.hmac.enabled": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Verify HMAC signature on incoming tasks using shared secret",
+                    "order": 29
+                },
+                "gitko.security.hmac.secret": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Shared secret for HMAC verification (not stored securely in settings sync)",
+                    "order": 30
+                },
+                "gitko.security.hmac.signatureField": {
+                    "type": "string",
+                    "default": "signature",
+                    "description": "JSON field containing HMAC signature to verify (removed from payload before hashing)",
+                    "order": 31
+                },
+                "gitko.security.hmac.required": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "When enabled and secret set, reject tasks missing/invalid signature",
+                    "order": 32
+                },
+                "gitko.security.allowDomains": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "default": [],
+                    "description": "Allowlist of domains for Computer Use URL actions (empty = allow all)",
+                    "order": 33
+                },
+                "gitko.security.allowProcesses": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "default": [],
+                    "description": "Allowlist of process base names for Computer Use actions (empty = allow all)",
+                    "order": 34
+                },
                 "gitkoAgent.scriptPath": {
                     "type": "string",
                     "default": "",

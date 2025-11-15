@@ -1,5 +1,6 @@
 import EventSource, { MessageEvent } from 'eventsource';
 import { createLogger } from './logger';
+import { verifyHmacForObject, type HmacConfig } from './security';
 import { validateTaskSafe, type Task } from './schemas';
 import { HttpTaskPoller } from './httpTaskPoller';
 
@@ -98,6 +99,30 @@ export class RealTimeTaskClient {
                 }
                 const task = validation.data as Task;
                 this.lastEventTs = Date.now();
+                // HMAC verification if enabled
+                try {
+                    // Lazy import to avoid test env hard dependency
+                    // eslint-disable-next-line @typescript-eslint/no-var-requires
+                    const vscode = require('vscode');
+                    const cfg = vscode?.workspace?.getConfiguration?.('gitko');
+                    if (cfg) {
+                        const hmacCfg: HmacConfig = {
+                            enabled: (cfg.get('security.hmac.enabled', false) as boolean) ?? false,
+                            secret: (cfg.get('security.hmac.secret', '') as string) || '',
+                            signatureField: (cfg.get('security.hmac.signatureField', 'signature') as string) || 'signature',
+                            required: (cfg.get('security.hmac.required', true) as boolean) ?? true,
+                        };
+                        if (hmacCfg.enabled && hmacCfg.secret) {
+                            const ok = verifyHmacForObject(task as unknown as Record<string, unknown>, hmacCfg);
+                            if (!ok) {
+                                logger.warn(`HMAC verification failed for SSE task ${task.task_id}`);
+                                return;
+                            }
+                        }
+                    }
+                } catch {
+                    // ignore if vscode unavailable
+                }
                 await this.pollerAdapter.handleTask(task);
             } catch (error) {
                 logger.error('Failed to process SSE task', error as Error);

@@ -3,6 +3,7 @@ import { createLogger } from './logger';
 import { OfflineResultQueue } from './offlineQueue';
 import { PerformanceMonitor } from './performanceMonitor';
 import { validateTaskSafe, type Task, type SubmitResult } from './schemas';
+import { verifyHmacForObject, type HmacConfig } from './security';
 
 const logger = createLogger('HttpTaskPoller');
 const perf = PerformanceMonitor.getInstance();
@@ -119,6 +120,21 @@ export class HttpTaskPoller {
 
             if (task) {
                 this.log(`[HttpPoller] 📥 Task received: ${task.task_id} (${task.type})`);
+                // HMAC verification if enabled
+                const cfg = vscode.workspace.getConfiguration('gitko');
+                const hmacCfg: HmacConfig = {
+                    enabled: (cfg.get('security.hmac.enabled', false) as boolean) ?? false,
+                    secret: (cfg.get('security.hmac.secret', '') as string) || '',
+                    signatureField: (cfg.get('security.hmac.signatureField', 'signature') as string) || 'signature',
+                    required: (cfg.get('security.hmac.required', true) as boolean) ?? true,
+                };
+                if (hmacCfg.enabled && hmacCfg.secret) {
+                    const ok = verifyHmacForObject(task as unknown as Record<string, unknown>, hmacCfg);
+                    if (!ok) {
+                        this.log(`[HttpPoller] ❌ HMAC verification failed for task ${task.task_id}`);
+                        throw new Error('Task signature verification failed');
+                    }
+                }
                 await this.handleTask(task);
             }
 
@@ -496,6 +512,9 @@ export class HttpTaskPoller {
     // ==================== Computer Use handlers ====================
     private async handleCuScan(): Promise<{ elements: unknown[] }> {
         this.ensureCuEnabled();
+        const guard = (await import('./securityGuardrails')).SecurityGuardrails.getInstance();
+        const chk = await guard.checkAction('computer_use.scan', {});
+        if (!chk.allowed) throw new Error(chk.reason || 'Security policy rejected action');
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
@@ -516,6 +535,9 @@ export class HttpTaskPoller {
         }
 
         this.ensureCuEnabled();
+        const guard = (await import('./securityGuardrails')).SecurityGuardrails.getInstance();
+        const chk = await guard.checkAction('computer_use.find', { text });
+        if (!chk.allowed) throw new Error(chk.reason || 'Security policy rejected action');
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
@@ -526,6 +548,7 @@ export class HttpTaskPoller {
 
     private async handleCuClick(data: unknown): Promise<{ success: boolean }> {
         this.ensureCuEnabled();
+        const guard = (await import('./securityGuardrails')).SecurityGuardrails.getInstance();
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
@@ -536,9 +559,13 @@ export class HttpTaskPoller {
             const clickData = data as { x?: unknown; y?: unknown; text?: unknown };
 
             if (typeof clickData.x === 'number' && typeof clickData.y === 'number') {
+                const chk = await guard.checkAction('computer_use.click', { x: clickData.x, y: clickData.y });
+                if (!chk.allowed) throw new Error(chk.reason || 'Security policy rejected action');
                 ok = await agent.clickAt(clickData.x, clickData.y);
                 logger.info(`Clicked at (${clickData.x}, ${clickData.y})`);
             } else if (typeof clickData.text === 'string' && clickData.text.trim()) {
+                const chk = await guard.checkAction('computer_use.click', { text: clickData.text });
+                if (!chk.allowed) throw new Error(chk.reason || 'Security policy rejected action');
                 ok = await agent.clickElementByText(clickData.text);
                 logger.info(`Clicked element: ${clickData.text}`);
             } else {
@@ -563,6 +590,9 @@ export class HttpTaskPoller {
         }
 
         this.ensureCuEnabled();
+        const guard = (await import('./securityGuardrails')).SecurityGuardrails.getInstance();
+        const chk = await guard.checkAction('computer_use.type', { text });
+        if (!chk.allowed) throw new Error(chk.reason || 'Security policy rejected action');
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
