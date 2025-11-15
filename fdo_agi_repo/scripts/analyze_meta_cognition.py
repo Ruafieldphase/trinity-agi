@@ -115,7 +115,12 @@ def render_markdown(analysis: Dict[str, Any], hours: int) -> str:
 def main():
     parser = argparse.ArgumentParser(description="Analyze meta-cognition events")
     parser.add_argument("--hours", type=int, default=24)
-    parser.add_argument("--ledger", type=str, default="D:/nas_backup/fdo_agi_repo/memory/resonance_ledger.jsonl")
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from workspace_utils import find_fdo_root
+    
+    default_ledger = str(find_fdo_root(Path(__file__).parent) / "memory" / "resonance_ledger.jsonl")
+    parser.add_argument("--ledger", type=str, default=default_ledger)
     parser.add_argument("--out", type=str, help="Output JSON file")
     args = parser.parse_args()
 

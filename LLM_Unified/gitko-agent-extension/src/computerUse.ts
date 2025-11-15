@@ -1,7 +1,6 @@
 // 🤖 Computer Use 기능: 화면 인식 + 자동 클릭
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
-import * as path from 'path';
 import { createLogger } from './logger';
 import { PerformanceMonitor } from './performanceMonitor';
 import { SecurityGuardrails } from './securityGuardrails';
@@ -34,8 +33,8 @@ export class ComputerUseAgent {
     constructor() {
         // Python 환경 설정 (설정값 우선, 없으면 기본값 사용)
         const cfg = vscode.workspace.getConfiguration('gitkoAgent');
-        const defaultPy = 'D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe';
-        const defaultScript = 'D:/nas_backup/LLM_Unified/ion-mentoring/computer_use.py';
+        const defaultPy = ''; // Auto-detect from workspace
+        const defaultScript = ''; // Auto-detect from workspace
 
         // Computer Use 전용 설정 우선
         const configuredCuPy = (cfg.get<string>('computerUsePythonPath') || '').trim();
@@ -297,7 +296,7 @@ export function registerComputerUseCommands(context: vscode.ExtensionContext) {
                     title: `"${searchText}" 요소 찾는 중...`,
                     cancellable: false,
                 },
-                async (progress) => {
+                async (_progress) => {
                     const success = await agent.clickElementByText(searchText);
                     if (success) {
                         vscode.window.showInformationMessage(`✅ "${searchText}" 클릭 완료`);

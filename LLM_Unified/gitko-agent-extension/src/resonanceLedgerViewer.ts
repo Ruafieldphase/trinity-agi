@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createLogger } from './logger';
+import { createNonce } from './webviewUtil';
 
 const logger = createLogger('ResonanceLedger');
 
@@ -10,7 +11,7 @@ interface ResonanceEvent {
     event_type: string;
     agent?: string;
     action?: string;
-    context?: any;
+    context?: unknown;
     result?: string;
     resonance_score?: number;
     evidence_link?: string;
@@ -122,6 +123,19 @@ export class ResonanceLedgerViewer {
         }
     }
 
+    /**
+     * HTML-escape helper to prevent XSS.
+     */
+    private _esc(value: unknown): string {
+        const str = value == null ? '' : String(value);
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     private _readLedger(filterAgent?: string): ResonanceEvent[] {
         if (!fs.existsSync(this._ledgerPath)) {
             return [];
@@ -156,11 +170,14 @@ export class ResonanceLedgerViewer {
                 .filter((e) => e.resonance_score !== undefined)
                 .reduce((sum, e) => sum + (e.resonance_score || 0), 0) / Math.max(events.length, 1);
 
+        const nonce = createNonce();
+        const cspSource = this._panel.webview.cspSource;
         return `<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource} https: data:; style-src 'unsafe-inline' ${cspSource}; font-src ${cspSource}; script-src 'nonce-${nonce}';">
     <title>Resonance Ledger</title>
     <style>
         .skip-link {
@@ -400,7 +417,7 @@ export class ResonanceLedgerViewer {
         ${agents
             .map(
                 (agent) => `
-            <button class="button secondary" onclick="filterByAgent('${agent}')" aria-label="Filter by agent ${agent}">${agent}</button>
+            <button class="button secondary" onclick="filterByAgent('${this._esc(agent)}')" aria-label="Filter by agent ${this._esc(agent)}">${this._esc(agent)}</button>
         `
             )
             .join('')}
@@ -410,23 +427,23 @@ export class ResonanceLedgerViewer {
         ${events
             .map(
                 (event) => `
-            <div class="event" role="listitem" aria-label="${event.event_type || 'Unknown Event'} at ${new Date(event.timestamp).toLocaleString()} ${event.agent ? 'by ' + event.agent : ''}">
+            <div class="event" role="listitem" aria-label="${this._esc(event.event_type || 'Unknown Event')} at ${this._esc(new Date(event.timestamp).toLocaleString())} ${event.agent ? 'by ' + this._esc(event.agent) : ''}">
                 <div class="event-header">
-                    <span class="event-type">${event.event_type || 'Unknown Event'}</span>
-                    <span class="event-time">${new Date(event.timestamp).toLocaleString()}</span>
+                    <span class="event-type">${this._esc(event.event_type || 'Unknown Event')}</span>
+                    <span class="event-time">${this._esc(new Date(event.timestamp).toLocaleString())}</span>
                 </div>
                 <div class="event-meta">
-                    ${event.agent ? `<span class="badge badge-agent">👤 ${event.agent}</span>` : ''}
-                    ${event.action ? `<span class="badge badge-action">⚡ ${event.action}</span>` : ''}
-                    ${event.resonance_score !== undefined ? `<span class="badge badge-score">🎯 ${event.resonance_score.toFixed(2)}</span>` : ''}
+                    ${event.agent ? `<span class="badge badge-agent">👤 ${this._esc(event.agent)}</span>` : ''}
+                    ${event.action ? `<span class="badge badge-action">⚡ ${this._esc(event.action)}</span>` : ''}
+                    ${event.resonance_score !== undefined ? `<span class="badge badge-score">🎯 ${this._esc(event.resonance_score.toFixed(2))}</span>` : ''}
                 </div>
-                ${event.result ? `<div style="margin-top: 8px; font-size: 13px;">${event.result}</div>` : ''}
+                ${event.result ? `<div style="margin-top: 8px; font-size: 13px;">${this._esc(event.result)}</div>` : ''}
                 ${
                     event.context
                         ? `
                     <details style="margin-top: 8px;">
                         <summary style="cursor: pointer; font-size: 12px; opacity: 0.8;">Context (toggle)</summary>
-                        <div class="event-context">${JSON.stringify(event.context, null, 2)}</div>
+                        <div class="event-context">${this._esc(JSON.stringify(event.context, null, 2))}</div>
                     </details>
                 `
                         : ''
@@ -435,7 +452,7 @@ export class ResonanceLedgerViewer {
                     event.evidence_link
                         ? `
                     <div style="margin-top: 8px; font-size: 11px;">
-                        <span aria-hidden="true">🔗</span> <a href="${event.evidence_link}" style="color: var(--vscode-textLink-foreground);">Evidence Link</a>
+                        <span aria-hidden="true">🔗</span> <a href="${this._esc(event.evidence_link)}" style="color: var(--vscode-textLink-foreground);">Evidence Link</a>
                     </div>
                 `
                         : ''
@@ -451,13 +468,13 @@ export class ResonanceLedgerViewer {
             ? `
         <div style="text-align: center; padding: 40px; opacity: 0.6;">
             <p>No events found in Resonance Ledger</p>
-            <p style="font-size: 12px;">Path: ${this._ledgerPath}</p>
+            <p style="font-size: 12px;">Path: ${this._esc(this._ledgerPath)}</p>
         </div>
     `
             : ''
     }
 
-    <script>
+    <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
         
         function refresh() {
@@ -488,11 +505,13 @@ export class ResonanceLedgerViewer {
         );
     }
 
-    private _getErrorHtml(error: any): string {
+    private _getErrorHtml(error: unknown): string {
+        const cspSource = this._panel.webview.cspSource;
         return `<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource} https: data:; style-src 'unsafe-inline' ${cspSource}; font-src ${cspSource}; script-src 'none';">
     <style>
         body {
             font-family: var(--vscode-font-family);
@@ -518,10 +537,10 @@ export class ResonanceLedgerViewer {
 <body>
     <div class="error">
         <h1>❌ Error Loading Resonance Ledger</h1>
-        <p>Failed to read ledger file at <code>${this._ledgerPath}</code></p>
+        <p>Failed to read ledger file at <code>${this._esc(this._ledgerPath)}</code></p>
         <details>
             <summary>Error Details</summary>
-            <pre>${error instanceof Error ? error.message : String(error)}</pre>
+            <pre>${this._esc(error instanceof Error ? error.message : String(error))}</pre>
         </details>
     </div>
 </body>

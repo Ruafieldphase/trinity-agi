@@ -9,10 +9,15 @@ Full-Stack Orchestrator - Phase 9
 import argparse
 import json
 import time
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 import logging
+
+# Import workspace utilities
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_workspace_root
 
 # 상대 import (기존 컴포넌트 활용)
 try:
@@ -540,7 +545,7 @@ def main():
     if args.workspace:
         workspace_root = Path(args.workspace)
     else:
-        workspace_root = Path(__file__).parent.parent.parent
+        workspace_root = find_workspace_root(Path(__file__).parent)
     
     print(f"\n=== Full-Stack Orchestrator ===")
     print(f"Mode: {args.mode}")

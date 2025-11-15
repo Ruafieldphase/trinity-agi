@@ -233,9 +233,12 @@ class OpsDashboard:
             # 최근 로그 파일 확인으로 루프 작동 여부 판단
             import glob
             from datetime import datetime, timedelta
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from workspace_utils import find_workspace_root
             
-            # 절대 경로 사용
-            log_pattern = "D:/nas_backup/LLM_Unified/ion-mentoring/logs/monitor_loop_*.log"
+            workspace = find_workspace_root(Path(__file__).parent)
+            log_pattern = str(workspace / "LLM_Unified" / "ion-mentoring" / "logs" / "monitor_loop_*.log")
             log_files = glob.glob(log_pattern)
             
             canary_loop_running = False
@@ -250,7 +253,7 @@ class OpsDashboard:
                 print(f"  {self._status_icon(False)} Monitoring Loop: No logs found")
             
             # 최근 probe 결과 읽기 시도
-            probe_pattern = "D:/nas_backup/LLM_Unified/ion-mentoring/logs/probe_iter_*.json"
+            probe_pattern = str(workspace / \"LLM_Unified\" / \"ion-mentoring\" / \"logs\" / \"probe_iter_*.json\")
             probe_files = glob.glob(probe_pattern)
             if probe_files:
                 latest_probe = max(probe_files, key=lambda p: Path(p).stat().st_mtime)

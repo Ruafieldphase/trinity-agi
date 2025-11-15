@@ -364,8 +364,17 @@ def demo_logging_system():
     print("로깅 시스템 데모")
     print("=" * 80)
 
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+        sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+        from workspace_utils import find_workspace_root
+        workspace = find_workspace_root(Path(__file__).parent)
+    else:
+        workspace = Path(__file__).parent.parent
+    
     # 로거 생성
-    logger = AgentLogger(log_dir="d:\\nas_backup\\session_memory\\logs")
+    logger = AgentLogger(log_dir=str(workspace / "session_memory" / "logs"))
 
     print("\n[1] 에이전트 액션 로깅")
     print("-" * 80)

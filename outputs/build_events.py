@@ -3,7 +3,20 @@ from pathlib import Path
 from datetime import datetime
 import pandas as pd
 
-share = json.loads(Path('d:/nas_backup/copilot_share.json').read_text(encoding='utf-8'))
+from pathlib import Path
+import json
+import sys
+
+# Find workspace root
+sys.path.insert(0, str(Path(__file__).parent.parent))
+if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+    from workspace_utils import find_workspace_root
+    workspace = find_workspace_root(Path(__file__).parent)
+else:
+    workspace = Path(__file__).parent.parent
+
+share = json.loads((workspace / 'copilot_share.json').read_text(encoding='utf-8'))
 msgs = sorted(share['messages'], key=lambda m: m['createdAt'])
 rows = []
 prev_ts = None
@@ -43,7 +56,7 @@ if rows:
         r['R_smooth'] = round(R_smooth, 6)
         prev_r = R_smooth
 
-out_path = Path('d:/nas_backup/outputs/copilot_events.csv')
+out_path = workspace / 'outputs' / 'copilot_events.csv'
 df = pd.DataFrame(rows)
 if not df.empty:
     df = df[['timestamp','persona','role','tokens','delta_sec','R','R_smooth','text']]

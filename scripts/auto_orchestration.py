@@ -1,10 +1,17 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
+import os, sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 """
 자동화된 오케스트레이션 스크립트
 페르소나 협업을 자동으로 실행하고 통합 솔루션을 도출합니다.
 """
 
 import requests
+from utils.request_guard import post_json
+from utils.validator import lumen_chat_schema
+from utils.atomic_write import atomic_write
+
+
 import json
 from datetime import datetime
 from pathlib import Path
@@ -21,12 +28,7 @@ def query_persona(persona_name: str, question: str) -> str:
     payload = {"message": prompt}
     
     try:
-        response = requests.post(
-            LUMEN_GATEWAY,
-            json=payload,
-            headers={'Content-Type': 'application/json; charset=utf-8'},
-            timeout=30
-        )
+        response = post_json(LUMEN_GATEWAY, payload, schema=lumen_chat_schema, headers={'Content-Type': 'application/json; charset=utf-8'}, timeout=30)
         response.raise_for_status()
         result = response.json()
         return result.get('response', 'No response')
@@ -83,8 +85,7 @@ def save_orchestration_result(results: Dict[str, Any]):
     # 마크다운 리포트
     report_file = OUTPUT_DIR / "orchestration_latest.md"
     
-    with open(report_file, 'w', encoding='utf-8') as f:
-        f.write(f"""# 오케스트레이션 리포트
+    report_content = f"""# 오케스트레이션 리포트
 
 **주제**: {results['topic']}
 **생성 시각**: {results['timestamp']}
@@ -110,7 +111,9 @@ def save_orchestration_result(results: Dict[str, Any]):
 ---
 
 *이 리포트는 자동화된 오케스트레이션 시스템에 의해 생성되었습니다.*
-""")
+"""
+    
+    atomic_write(str(report_file), report_content)
     
     print(f"\n✅ 결과 저장:")
     print(f"   로그: {log_file}")
@@ -142,3 +145,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+

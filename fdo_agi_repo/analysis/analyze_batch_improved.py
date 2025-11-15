@@ -1,7 +1,15 @@
 import json
 
 # Load recent events
-lines = open('d:/nas_backup/fdo_agi_repo/memory/resonance_ledger.jsonl', encoding='utf-8').readlines()
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_fdo_root
+
+ledger_path = find_fdo_root(Path(__file__).parent) / 'memory' / 'resonance_ledger.jsonl'
+lines = open(ledger_path, encoding='utf-8').readlines()
 events = [json.loads(l) for l in lines]
 
 print(f"Total events: {len(events)}")

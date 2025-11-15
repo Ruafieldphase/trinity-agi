@@ -382,10 +382,17 @@ def main():
     """메인 함수"""
     import sys
     
+    import sys
+    from pathlib import Path
+    
+    # Import workspace utilities
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from workspace_utils import find_workspace_root
+    
     if len(sys.argv) > 1:
         workspace_root = Path(sys.argv[1])
     else:
-        workspace_root = Path(__file__).parent.parent.parent
+        workspace_root = find_workspace_root(Path(__file__).parent)
     
     # 피드백 루프 생성
     feedback_loop = RealtimeFeedbackLoop(

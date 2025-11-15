@@ -7,7 +7,7 @@ import type { I18nReport } from './i18nGuardCore';
 export async function runI18nCheck(): Promise<I18nReport> {
   const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || path.resolve(__dirname, '..');
   const report = buildI18nReport(root);
-  const ch = vscode.window.createOutputChannel('Gitko i18n Check');
+  // removed unused output channel
   ch.clear();
   ch.appendLine('=== Gitko i18n Coverage Check ===\n');
   ch.appendLine(`Used keys: ${report.usedKeys.length}`);

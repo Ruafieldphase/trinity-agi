@@ -5,7 +5,6 @@
 
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as path from 'path';
 import { createLogger } from './logger';
 
 const logger = createLogger('ConfigValidator');
@@ -34,7 +33,7 @@ export class ConfigValidator {
             }
         } else {
             warnings.push(
-                'Python path not configured. Using default: D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe'
+                'Python path not configured. It will be auto-detected from workspace.'
             );
         }
 
@@ -159,7 +158,7 @@ export class ConfigValidator {
         const cfg = vscode.workspace.getConfiguration('gitkoAgent');
 
         // Check default Python path
-        const defaultPython = 'D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe';
+        const defaultPython = ''; // Auto-detect from workspace
         const pythonPath = cfg.get<string>('pythonPath') || cfg.get<string>('computerUsePythonPath') || defaultPython;
 
         if (!fs.existsSync(pythonPath)) {

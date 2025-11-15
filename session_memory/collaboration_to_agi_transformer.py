@@ -327,13 +327,19 @@ def transform_collaboration_state_to_agi():
     """
     import os
 
-    # Windows 또는 Linux 경로 자동 감지
-    if os.name == 'nt':  # Windows
-        input_file = r"d:\nas_backup\session_memory\COLLABORATION_STATE.jsonl"
-        output_file = r"d:\nas_backup\session_memory\agi_learning_dataset.jsonl"
-    else:  # Linux/WSL
-        input_file = "/d/nas_backup/session_memory/COLLABORATION_STATE.jsonl"
-        output_file = "/d/nas_backup/session_memory/agi_learning_dataset.jsonl"
+    # 동적 경로 탐색
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+        sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+        from workspace_utils import find_workspace_root
+        workspace = find_workspace_root(Path(__file__).parent)
+    else:
+        workspace = Path(__file__).parent.parent
+    
+    input_file = workspace / "session_memory" / "COLLABORATION_STATE.jsonl"
+    output_file = workspace / "session_memory" / "agi_learning_dataset.jsonl"
 
     user_goal = "AGI 학습 데이터 생성 및 에이전트 협력 패턴 학습"
     transformer = CollaborationToAGITransformer(user_goal)

@@ -1,8 +1,22 @@
 ﻿from pathlib import Path
 import re
 
-source = Path('d:/nas_backup/outputs/ChatGPT_대화의언어적감응_full.md')
-output = Path('d:/nas_backup/outputs/ChatGPT_대화의언어적감응_summary.md')
+from pathlib import Path
+import sys
+
+# Add parent to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# Find workspace root dynamically
+if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+    from workspace_utils import find_workspace_root
+    workspace = find_workspace_root(Path(__file__).parent)
+else:
+    workspace = Path(__file__).parent.parent
+
+source = workspace / 'outputs' / 'ChatGPT_대화의언어적감응_full.md'
+output = workspace / 'outputs' / 'ChatGPT_대화의언어적감응_summary.md'
 text = source.read_text(encoding='utf-8')
 
 sections = re.split(r'\n## Prompt:', text)

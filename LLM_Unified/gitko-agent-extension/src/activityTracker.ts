@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import { createLogger } from './logger';
+import { createNonce } from './webviewUtil';
 
 const logger = createLogger('ActivityTracker');
 
@@ -300,6 +301,19 @@ export class ActivityViewer {
         }, 5000);
     }
 
+    /**
+     * HTML-escape helper to prevent XSS.
+     */
+    private _esc(value: unknown): string {
+        const str = value == null ? '' : String(value);
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     private updateContent(): void {
         if (!this.panel) {
             return;
@@ -342,11 +356,14 @@ export class ActivityViewer {
     }
 
     private getHtmlContent(): string {
+        const nonce = createNonce();
+        const cspSource = this.panel?.webview.cspSource;
         return `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${cspSource} https: data:; style-src 'unsafe-inline' ${cspSource}; font-src ${cspSource}; script-src 'nonce-${nonce}';">
     <title>Activity Tracker</title>
     <style>
         body { 
@@ -355,6 +372,9 @@ export class ActivityViewer {
             color: var(--vscode-foreground);
             background: var(--vscode-editor-background);
         }
+        .skip-link { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }
+        .skip-link:focus { position: static; width: auto; height: auto; padding: 8px 12px; background: var(--vscode-button-background); color: var(--vscode-button-foreground); border-radius: 4px; }
+        .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
         h1, h2 { color: var(--vscode-textLink-foreground); }
         .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
         .stat-card { 
@@ -395,33 +415,61 @@ export class ActivityViewer {
         .top-list { margin: 15px 0; }
         .top-item { padding: 8px; margin: 5px 0; background: var(--vscode-editor-background); border-radius: 3px; }
     </style>
-</head>
-<body>
-    <h1>📊 Gitko Activity Tracker</h1>
+ </head>
+ <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <div id="sr-status" aria-live="polite" class="sr-only"></div>
+
+    <h1 role="banner">📊 Gitko Activity Tracker</h1>
     
-    <div class="buttons">
-        <button onclick="refresh()">🔄 Refresh</button>
-        <button onclick="exportLog()">💾 Export</button>
-        <button onclick="clearData()">🗑️ Clear</button>
+    <div class="buttons" role="group" aria-label="Actions">
+        <button onclick="refresh()" aria-label="Refresh activity">🔄 Refresh</button>
+        <button onclick="exportLog()" aria-label="Export activity log">💾 Export</button>
+        <button onclick="clearData()" aria-label="Clear activity data">🗑️ Clear</button>
     </div>
 
-    <div class="stats" id="stats"></div>
+    <main id="main" role="main" tabindex="-1">
+      <div class="stats" id="stats"></div>
 
-    <h2>Top Commands</h2>
-    <div class="top-list" id="topCommands"></div>
+      <h2>Top Commands</h2>
+      <div class="top-list" id="topCommands"></div>
 
-    <h2>Top Agents</h2>
-    <div class="top-list" id="topAgents"></div>
+      <h2>Top Agents</h2>
+      <div class="top-list" id="topAgents"></div>
 
-    <h2>Recent Events</h2>
-    <div class="events" id="events"></div>
+      <h2>Recent Events</h2>
+      <div class="events" id="events"></div>
+    </main>
 
-    <script>
+    <script nonce="${nonce}">
         const vscode = acquireVsCodeApi();
 
-        function refresh() { vscode.postMessage({ command: 'refresh' }); }
-        function exportLog() { vscode.postMessage({ command: 'export' }); }
-        function clearData() { vscode.postMessage({ command: 'clear' }); }
+        // Client-side HTML escape helper
+        function esc(value) {
+            const str = value == null ? '' : String(value);
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function refresh() { 
+            vscode.postMessage({ command: 'refresh' }); 
+            const sr = document.getElementById('sr-status');
+            if (sr) sr.textContent = 'Refreshed activity data';
+        }
+        function exportLog() { 
+            vscode.postMessage({ command: 'export' }); 
+            const sr = document.getElementById('sr-status');
+            if (sr) sr.textContent = 'Exported activity log';
+        }
+        function clearData() { 
+            vscode.postMessage({ command: 'clear' }); 
+            const sr = document.getElementById('sr-status');
+            if (sr) sr.textContent = 'Cleared activity data';
+        }
 
         window.addEventListener('message', event => {
             const message = event.data;
@@ -435,40 +483,40 @@ export class ActivityViewer {
             const sessionHours = (stats.sessionDuration / (1000 * 60 * 60)).toFixed(2);
             document.getElementById('stats').innerHTML = \`
                 <div class="stat-card">
-                    <div class="stat-value">\${sessionHours}h</div>
+                    <div class="stat-value">\${esc(sessionHours)}h</div>
                     <div class="stat-label">Session Duration</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">\${stats.totalEvents}</div>
+                    <div class="stat-value">\${esc(stats.totalEvents)}</div>
                     <div class="stat-label">Total Events</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">\${stats.commandCount}</div>
+                    <div class="stat-value">\${esc(stats.commandCount)}</div>
                     <div class="stat-label">Commands</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">\${stats.agentCallCount}</div>
+                    <div class="stat-value">\${esc(stats.agentCallCount)}</div>
                     <div class="stat-label">Agent Calls</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">\${stats.taskCount}</div>
+                    <div class="stat-value">\${esc(stats.taskCount)}</div>
                     <div class="stat-label">Tasks</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">\${stats.errorCount}</div>
+                    <div class="stat-value">\${esc(stats.errorCount)}</div>
                     <div class="stat-label">Errors</div>
                 </div>
             \`;
 
             // Top commands
             const topCmds = stats.topCommands.map((cmd, i) => 
-                \`<div class="top-item">\${i+1}. <code>\${cmd.command}</code> - \${cmd.count} times</div>\`
+                \`<div class="top-item">\${esc(i+1)}. <code>\${esc(cmd.command)}</code> - \${esc(cmd.count)} times</div>\`
             ).join('');
             document.getElementById('topCommands').innerHTML = topCmds || '<div>No commands yet</div>';
 
             // Top agents
             const topAgts = stats.topAgents.map((agt, i) => 
-                \`<div class="top-item">\${i+1}. <strong>\${agt.agent}</strong> - \${agt.count} calls</div>\`
+                \`<div class="top-item">\${esc(i+1)}. <strong>\${esc(agt.agent)}</strong> - \${esc(agt.count)} calls</div>\`
             ).join('');
             document.getElementById('topAgents').innerHTML = topAgts || '<div>No agent calls yet</div>';
         }
@@ -476,11 +524,11 @@ export class ActivityViewer {
         function updateEvents(events) {
             const html = events.reverse().map(event => {
                 const time = new Date(event.timestamp).toLocaleTimeString();
-                const duration = event.duration ? \` <span class="duration">(\${event.duration}ms)</span>\` : '';
+                const duration = event.duration ? \` <span class="duration">(\${esc(event.duration)}ms)</span>\` : '';
                 return \`
-                    <div class="event event-\${event.type}">
-                        <span class="timestamp">\${time}</span> 
-                        [\${event.type}] <strong>\${event.action}</strong>\${duration}
+                    <div class="event event-\${esc(event.type)}">
+                        <span class="timestamp">\${esc(time)}</span> 
+                        [\${esc(event.type)}] <strong>\${esc(event.action)}</strong>\${duration}
                     </div>
                 \`;
             }).join('');

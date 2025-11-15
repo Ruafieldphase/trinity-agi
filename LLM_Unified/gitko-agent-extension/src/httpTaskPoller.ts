@@ -237,7 +237,13 @@ export class HttpTaskPoller {
             const data = (await response.json()) as unknown;
 
             // Handle empty queue response: {task: null}
-            if (data && (data as any).task === null) {
+            if (
+                data &&
+                typeof data === 'object' &&
+                data !== null &&
+                'task' in data &&
+                (data as { task: unknown }).task === null
+            ) {
                 return null;
             }
 
@@ -284,7 +290,7 @@ export class HttpTaskPoller {
         });
 
         try {
-            let resultData: any;
+            let resultData: unknown;
 
             // Handle different task types
             switch (task.type) {
@@ -381,13 +387,21 @@ export class HttpTaskPoller {
                     const q = OfflineResultQueue.getInstance();
                     await q.enqueue(this.apiBase, taskId, result);
                     this.log(`[HttpPoller] 💾 Queued result for offline retry: ${taskId}`);
-                } catch {}
+                } catch (e) {
+                    this.log(`[HttpPoller] ⚠️ Offline queue enqueue failed`);
+                }
         }
     }
 
     // ==================== Task Handlers ====================
 
-    private async handlePing(task: Task): Promise<any> {
+    private async handlePing(_task: Task): Promise<{
+        message: string;
+        worker: string;
+        timestamp: string;
+        extension: string;
+        version: string;
+    }> {
         return {
             message: 'pong',
             worker: this.workerId,
@@ -469,36 +483,51 @@ export class HttpTaskPoller {
         throw new Error(`Unknown operation: ${operation}`);
     }
 
-    private async handleBatchCalculation(data: any): Promise<any> {
-        const calculations = data.calculations || [];
-        const results: any[] = [];
+    private async handleBatchCalculation(data: unknown): Promise<{
+        calculations: Array<{ id: string | number; result: number | null; status: 'success' | 'error'; error?: string }>;
+        total: number;
+        successful: number;
+    }> {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid data: object required');
+        }
+
+        const req = data as { calculations?: Array<{ id?: unknown; operation?: unknown; numbers?: unknown; multiply_by?: unknown }> };
+        const calculations = Array.isArray(req.calculations) ? req.calculations : [];
+        const results: Array<{ id: string | number; result: number | null; status: 'success' | 'error'; error?: string }> = [];
 
         for (const calc of calculations) {
-            const { id, operation, numbers, multiply_by } = calc;
+            const id = (calc && calc.id) as unknown;
+            const operation = (calc && calc.operation) as unknown;
+            const numbers = (calc && calc.numbers) as unknown;
+            const multiply_by = (calc && calc.multiply_by) as unknown;
 
             try {
                 let result = 0;
 
-                if (operation === 'divide' && numbers.length === 2) {
+                if (operation === 'divide' && Array.isArray(numbers) && numbers.length === 2) {
                     if (numbers[1] === 0) {
                         throw new Error('Division by zero');
                     }
-                    result = numbers[0] / numbers[1];
-                    if (multiply_by) {
+                    result = Number(numbers[0]) / Number(numbers[1]);
+                    if (typeof multiply_by === 'number') {
                         result *= multiply_by;
                     }
-                } else if (operation === 'average') {
-                    result = numbers.reduce((a: number, b: number) => a + b, 0) / numbers.length;
-                } else if (operation === 'multiply') {
-                    result = numbers.reduce((a: number, b: number) => a * b, 1);
-                } else if (operation === 'add') {
-                    result = numbers.reduce((a: number, b: number) => a + b, 0);
+                } else if (operation === 'average' && Array.isArray(numbers) && numbers.length > 0) {
+                    const arr = numbers.map((n) => Number(n));
+                    result = arr.reduce((a, b) => a + b, 0) / arr.length;
+                } else if (operation === 'multiply' && Array.isArray(numbers)) {
+                    const arr = numbers.map((n) => Number(n));
+                    result = arr.reduce((a, b) => a * b, 1);
+                } else if (operation === 'add' && Array.isArray(numbers)) {
+                    const arr = numbers.map((n) => Number(n));
+                    result = arr.reduce((a, b) => a + b, 0);
                 }
 
-                results.push({ id, result, status: 'success' });
+                results.push({ id: (typeof id === 'string' || typeof id === 'number') ? id : String(id), result, status: 'success' });
             } catch (error) {
                 results.push({
-                    id,
+                    id: (typeof id === 'string' || typeof id === 'number') ? id : String(id),
                     result: null,
                     status: 'error',
                     error: error instanceof Error ? error.message : String(error),
@@ -513,13 +542,14 @@ export class HttpTaskPoller {
         };
     }
 
-    private async handleMonitoringReport(data: any): Promise<any> {
+    private async handleMonitoringReport(data: unknown): Promise<{ message: string; requested_hours: number | undefined; requested_metrics: unknown[]; suggestion: string }> {
         // Placeholder for monitoring report generation
         // This could be extended to call Gitko agents or generate reports
+        const d = (data && typeof data === 'object') ? (data as { hours?: unknown; metrics?: unknown[] }) : {};
         return {
             message: 'Monitoring report generation not yet implemented in extension',
-            requested_hours: data.hours,
-            requested_metrics: data.metrics || [],
+            requested_hours: typeof d.hours === 'number' ? d.hours : undefined,
+            requested_metrics: Array.isArray(d.metrics) ? d.metrics : [],
             suggestion: 'Use Python scripts for full monitoring reports',
         };
     }

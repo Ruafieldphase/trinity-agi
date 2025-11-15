@@ -3,7 +3,15 @@
 import json
 from pathlib import Path
 
-ledger = Path("d:/nas_backup/fdo_agi_repo/memory/resonance_ledger.jsonl")
+from pathlib import Path
+import json
+import sys
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from workspace_utils import find_fdo_root
+
+fdo_root = find_fdo_root(Path(__file__).parent)
+ledger = fdo_root / "memory" / "resonance_ledger.jsonl"
 if not ledger.exists():
     print("Ledger not found")
     exit(1)

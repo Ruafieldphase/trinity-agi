@@ -1,207 +1,251 @@
 #!/usr/bin/env python3
 """
 Autonomous Goal Executor - Phase 2
-목표 생성기가 만든 목표를 자동으로 실행한다.
+생성된 자율 목표(JSON)를 읽어 실제 실행 가능한 스크립트를 호출하고,
+실행 결과를 goal_tracker.json에 기록합니다.
 
-작동 방식:
-1. autonomous_goals_latest.json 로드
-2. 실행 가능한 목표 선택 (우선순위, 의존성, 리소스)
-3. 목표를 구체적인 작업으로 분해
-4. Task Queue에 등록
-5. 실행 모니터링 및 결과 기록
-6. goal_tracker.json 업데이트
-7. 🧠 보상 신호 기록 (기저핵적 학습)
+동작 요약:
+1) outputs/autonomous_goals_latest.json 로드
+2) 상태가 queued인 첫 목표(또는 지정 index)를 선택
+3) executable.type == "script" 인 경우 PowerShell로 스크립트 실행
+4) 성공/실패 결과와 로그를 outputs/* 및 fdo_agi_repo/memory/goal_tracker.json에 반영
 
-Phase 2 특징:
-- 단순한 목표부터 시작 (메트릭 수집, 보고서 생성 등)
-- 안전 장치: 실행 전 검증, 롤백 가능
-- 점진적: 한 번에 하나씩
-- 보상 기반 학습: 성공/실패 → 다음 우선순위 조정
+안전 설계:
+- 워크스페이스 변수(${workspaceFolder}) 안전 치환
+- 타임아웃, 존재 여부 검사, 상세 오류 메시지 출력
+- 기존 tracker 파일이 없으면 새로 생성
 """
 
-import json
-import os
-import sys
-import logging
+from __future__ import annotations
+
 import argparse
-from datetime import datetime
-from typing import List, Dict, Any, Optional
-from pathlib import Path
+import json
+import logging
+import os
 import subprocess
+import sys
 import time
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
 # 로깅 설정
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-# 프로젝트 루트 추가
-project_root = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(project_root))
 
-# 🧠 보상 추적기 임포트
-try:
-    from reward_tracker import RewardTracker
-    REWARD_TRACKING_ENABLED = True
-except ImportError:
-    logger.warning("Reward tracker not available - habit learning disabled")
-    REWARD_TRACKING_ENABLED = False
-    RewardTracker = None
+def _now_iso() -> str:
+    return datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
 
-# 🌀 Trinity Resonance Oracle 임포트
-try:
-    sys.path.insert(0, str(project_root / "fdo_agi_repo"))
-    from trinity.resonance_orchestrator import TrinityResonanceOrchestrator
-    RESONANCE_ORACLE_ENABLED = True
-except ImportError:
-    logger.warning("Trinity Resonance Oracle not available")
-    RESONANCE_ORACLE_ENABLED = False
-    TrinityResonanceOrchestrator = None
 
-# 🧪 Autonomous Learning System 임포트
-try:
-    sys.path.insert(0, str(project_root / "agi_core"))
-    from sandbox_bridge import SandboxBridge
-    AUTONOMOUS_LEARNING_ENABLED = True
-except ImportError:
-    logger.warning("Autonomous Learning System not available")
-    AUTONOMOUS_LEARNING_ENABLED = False
-    SandboxBridge = None
+@dataclass
+class ExecResult:
+    success: bool
+    returncode: int
+    duration_sec: float
+    stdout: str
+    stderr: str
 
 
 class GoalExecutor:
-    """목표를 실행하는 클래스"""
-    
-    def __init__(self, workspace_root: str, task_queue_server: str = "http://127.0.0.1:8091"):
+    """자율 목표 실행기"""
+
+    def __init__(self, workspace_root: Path, task_queue_server: str = "http://127.0.0.1:8091") -> None:
         self.workspace_root = Path(workspace_root)
         self.task_queue_server = task_queue_server
-        self.goal_tracker_path = self.workspace_root / "fdo_agi_repo" / "memory" / "goal_tracker.json"
-        self.goals_path = self.workspace_root / "outputs" / "autonomous_goals_latest.json"
-        self.selfcare_summary_path = self.workspace_root / "outputs" / "self_care_metrics_summary.json"
-        # placeholder map for command arg resolution
-        self.placeholder_map = {
-            "${workspaceFolder}": str(self.workspace_root)
+        self.outputs_dir = self.workspace_root / "outputs"
+        self.goals_path = self.outputs_dir / "autonomous_goals_latest.json"
+        self.tracker_path = self.workspace_root / "fdo_agi_repo" / "memory" / "goal_tracker.json"
+        self.last_run_log = self.outputs_dir / "autonomous_goal_executor_last_run.json"
+
+    # ---------- 파일 유틸 ----------
+    def _read_json(self, path: Path) -> Any:
+        with path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def _write_json(self, path: Path, data: Any) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open("w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+    # ---------- 플레이스홀더 ----------
+    def _expand(self, value: Any) -> Any:
+        """${workspaceFolder} 치환 (문자열/리스트/딕셔너리 전파)"""
+        if isinstance(value, str):
+            return value.replace("${workspaceFolder}", str(self.workspace_root))
+        if isinstance(value, list):
+            return [self._expand(v) for v in value]
+        if isinstance(value, dict):
+            return {k: self._expand(v) for k, v in value.items()}
+        return value
+
+    # ---------- 목표 선택 ----------
+    def _select_goal(self, goals: List[Dict[str, Any]], index: Optional[int] = None) -> Tuple[int, Dict[str, Any]]:
+        if index is not None:
+            if index < 0 or index >= len(goals):
+                raise IndexError(f"goal-index {index} is out of range (0..{len(goals)-1})")
+            return index, goals[index]
+        # 기본: queued 상태 첫 번째
+        for i, g in enumerate(goals):
+            if g.get("status", "queued").lower() == "queued":
+                return i, g
+        # 없으면 0번이라도 시도
+        if goals:
+            return 0, goals[0]
+        raise ValueError("No goals available to execute")
+
+    # ---------- 실행 ----------
+    def _run_script(self, script: str, args: List[str], timeout: int) -> ExecResult:
+        ps = [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            script,
+            *args,
+        ]
+        logger.info(f"▶ Running script: {script} {args}")
+        t0 = time.time()
+        try:
+            proc = subprocess.run(
+                ps,
+                cwd=str(self.workspace_root),
+                capture_output=True,
+                text=True,
+                timeout=timeout if timeout and timeout > 0 else None,
+            )
+            dt = time.time() - t0
+            ok = proc.returncode == 0
+            logger.info(f"✅ Completed with code {proc.returncode} in {dt:.1f}s")
+            if not ok:
+                logger.error(proc.stderr.strip())
+            return ExecResult(ok, proc.returncode, dt, proc.stdout, proc.stderr)
+        except subprocess.TimeoutExpired as e:
+            dt = time.time() - t0
+            logger.error(f"⏱️ Timeout after {dt:.1f}s: {script}")
+            return ExecResult(False, -1, dt, e.stdout or "", e.stderr or "Timeout")
+
+    def _execute_executable(self, exe: Dict[str, Any]) -> ExecResult:
+        exe = self._expand(exe)
+        typ = exe.get("type", "script").lower()
+        if typ != "script":
+            raise NotImplementedError(f"Unsupported executable type: {typ}")
+        script = exe.get("script")
+        if not script:
+            raise ValueError("Missing 'script' in executable")
+        script_path = Path(script)
+        if not script_path.exists():
+            raise FileNotFoundError(f"Script not found: {script_path}")
+        args = [str(a) for a in exe.get("args", [])]
+        timeout = int(exe.get("timeout", 900))
+        return self._run_script(str(script_path), args, timeout)
+
+    # ---------- 트래커 ----------
+    def _load_tracker(self) -> Dict[str, Any]:
+        if self.tracker_path.exists():
+            try:
+                return self._read_json(self.tracker_path)
+            except Exception:
+                logger.warning("goal_tracker.json corrupted; recreating new tracker")
+        return {
+            "createdAt": _now_iso(),
+            "updatedAt": _now_iso(),
+            "goals": [],
+            "active_goals": 0,
+            "completed_goals": 0,
         }
-        
-        # 🧠 보상 추적기 초기화
-        if REWARD_TRACKING_ENABLED:
-            try:
-                self.reward_tracker = RewardTracker(self.workspace_root)
-                logger.info("✅ Reward tracking enabled")
-            except Exception as e:
-                logger.warning(f"Reward tracker init failed: {e}")
-                self.reward_tracker = None
-        else:
-            self.reward_tracker = None
-        
-        # � Trinity Resonance Oracle 초기화
-        if RESONANCE_ORACLE_ENABLED:
-            try:
-                event_bus_path = self.workspace_root / "outputs" / "event_bus.jsonl"
-                self.resonance_oracle = TrinityResonanceOrchestrator(str(event_bus_path))
-                logger.info("✅ Trinity Resonance Oracle enabled")
-            except Exception as e:
-                logger.warning(f"Resonance oracle init failed: {e}")
-                self.resonance_oracle = None
-        else:
-            self.resonance_oracle = None
-        
-        # 🧪 Autonomous Learning System 초기화
-        if AUTONOMOUS_LEARNING_ENABLED:
-            try:
-                self.sandbox_bridge = SandboxBridge()
-                logger.info("✅ Autonomous Learning System enabled")
-            except Exception as e:
-                logger.warning(f"Sandbox bridge init failed: {e}")
-                self.sandbox_bridge = None
-        else:
-            self.sandbox_bridge = None
-        
-        # �🌊 Quantum Flow 상태 캐시
-        self.quantum_flow_state = None
-        self._load_quantum_flow_state()
 
-    def _is_self_invocation(self, exec_info: Dict[str, Any]) -> bool:
-        """Detect if an executable spec tries to invoke this executor itself.
+    def _append_tracker(self, goal: Dict[str, Any], result: ExecResult) -> None:
+        tracker = self._load_tracker()
+        entry = {
+            "timestamp": _now_iso(),
+            "title": goal.get("title", "(untitled)"),
+            "status": "success" if result.success else "failed",
+            "duration_sec": round(result.duration_sec, 3),
+            "returncode": result.returncode,
+            "task_queue_server": self.task_queue_server,
+        }
+        tracker.setdefault("goals", []).append(entry)
+        # 간단 카운터 업데이트
+        if result.success:
+            tracker["completed_goals"] = int(tracker.get("completed_goals", 0)) + 1
+        tracker["updatedAt"] = _now_iso()
+        self._write_json(self.tracker_path, tracker)
 
-        Guards against recursive self-invocation loops by inspecting provided
-        command/args/script fields for any reference to 'autonomous_goal_executor.py'.
-        """
+    # ---------- 퍼블릭 ----------
+    def execute_once(self, goal_index: Optional[int] = None) -> ExecResult:
+        if not self.goals_path.exists():
+            raise FileNotFoundError(f"Goals JSON not found: {self.goals_path}")
+        data = self._read_json(self.goals_path)
+        goals = data if isinstance(data, list) else data.get("goals") or data
+        if not isinstance(goals, list):
+            raise ValueError("Invalid goals JSON format: expected a list")
+
+        idx, goal = self._select_goal(goals, goal_index)
+        logger.info(f"🎯 Selected goal[{idx}]: {goal.get('title')}")
+        exe = goal.get("executable")
+        if not exe:
+            raise ValueError("Selected goal has no 'executable'")
+
+        result = self._execute_executable(exe)
+
+        # 결과 로그 파일 저장 (디버깅 용)
+        self._write_json(self.last_run_log, {
+            "timestamp": _now_iso(),
+            "goal_index": idx,
+            "goal_title": goal.get("title"),
+            "success": result.success,
+            "returncode": result.returncode,
+            "duration_sec": result.duration_sec,
+            "stdout_tail": (result.stdout or "").splitlines()[-20:],
+            "stderr_tail": (result.stderr or "").splitlines()[-20:],
+        })
+
+        # 트래커 반영
         try:
-            target_tokens: list[str] = []
-            # command + args shape
-            cmd = exec_info.get("command")
-            if isinstance(cmd, str):
-                target_tokens.append(cmd)
-            args = exec_info.get("args")
-            if isinstance(args, list):
-                target_tokens.extend([str(a) for a in args])
-            # type + script shape
-            script = exec_info.get("script")
-            if isinstance(script, str):
-                target_tokens.append(self._resolve_placeholders(script))
-            # working_dir rarely contains filename but include anyway
-            wd = exec_info.get("working_dir")
-            if isinstance(wd, str):
-                target_tokens.append(self._resolve_placeholders(wd))
-
-            for tok in target_tokens:
-                if isinstance(tok, str) and "autonomous_goal_executor.py" in tok.replace("\\", "/"):
-                    return True
-        except Exception:
-            # Fail-safe: if detection fails, better to assume not self-invocation
-            pass
-        return False
-
-    def _load_quantum_flow_state(self):
-        """Self-care summary에서 Quantum Flow 상태를 로드"""
-        try:
-            if not self.selfcare_summary_path.exists():
-                logger.info("No self-care summary found - Quantum Flow state unknown")
-                return
-            
-            with open(self.selfcare_summary_path, 'r', encoding='utf-8') as f:
-                summary = json.load(f)
-            
-            qf = summary.get("quantum_flow", {})
-            if qf:
-                self.quantum_flow_state = qf
-                # coherence는 phase_coherence로 저장됨
-                coherence = qf.get("phase_coherence", qf.get("coherence", 0.0))
-                state_desc = qf.get("state", "Unknown")
-                logger.info(f"🌊 Quantum Flow: {state_desc} (coherence={coherence:.2f})")
-            else:
-                logger.info("No quantum flow data in self-care summary")
+            self._append_tracker(goal, result)
         except Exception as e:
-            logger.warning(f"Failed to load Quantum Flow state: {e}")
+            logger.warning(f"Failed to update goal tracker: {e}")
 
-    def _determine_execution_mode(self) -> Optional[str]:
-        """Quantum Flow 상태에 따른 실행 모드 결정
-        
-        Returns:
-            - "superconducting": coherence >= 0.9 (초전도 상태)
-            - "high_flow": 0.7 <= coherence < 0.9 (높은 흐름)
-            - "normal": 0.4 <= coherence < 0.7 (일반 상태)
-            - "high_resistance": coherence < 0.4 (저항 높음)
-            - None: Quantum Flow 데이터 없음
-        """
-        if not self.quantum_flow_state:
-            return None
-        
-        # coherence는 phase_coherence로 저장됨
-        coherence = self.quantum_flow_state.get("phase_coherence", 
-                                                 self.quantum_flow_state.get("coherence", 0.0))
-        
-        if coherence >= 0.9:
-            return "superconducting"
-        elif coherence >= 0.7:
-            return "high_flow"
-        elif coherence >= 0.4:
-            return "normal"
-        else:
-            return "high_resistance"
+        return result
+
+
+def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
+    p = argparse.ArgumentParser(description="Autonomous Goal Executor")
+    p.add_argument("--server", default="http://127.0.0.1:8091", help="Task queue server URL (reserved)")
+    p.add_argument("--goal-index", type=int, default=None, help="Index of goal to execute (default: first queued)")
+    return p.parse_args(argv)
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    args = parse_args(argv)
+    workspace = Path(__file__).resolve().parent.parent
+    try:
+        executor = GoalExecutor(workspace, task_queue_server=args.server)
+        res = executor.execute_once(goal_index=args.goal_index)
+        return 0 if res.success else (res.returncode or 1)
+    except Exception as e:
+        # 상세 오류 출력 및 기록
+        logger.exception(f"Execution failed: {e}")
+        # 최소한의 실패 로그 남기기
+        try:
+            outputs_dir = workspace / "outputs"
+            outputs_dir.mkdir(parents=True, exist_ok=True)
+            with (outputs_dir / "autonomous_goal_executor_last_run.json").open("w", encoding="utf-8") as f:
+                json.dump({
+                    "timestamp": _now_iso(),
+                    "success": False,
+                    "error": str(e),
+                }, f, ensure_ascii=False, indent=2)
+        except Exception:
+            pass
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
     
     def _check_glymphatic_readiness(self) -> bool:
         """

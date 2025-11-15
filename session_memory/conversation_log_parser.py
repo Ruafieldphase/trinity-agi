@@ -296,12 +296,18 @@ def demo():
     print("="*70)
 
     # Windows 경로 처리
-    if os.name == 'nt':
-        source_dir = r"d:\nas_backup\ai_binoche_conversation_origin"
-        output_file = r"d:\nas_backup\session_memory\parsed_conversations.jsonl"
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+        sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+        from workspace_utils import find_workspace_root
+        workspace = find_workspace_root(Path(__file__).parent)
     else:
-        source_dir = "/d/nas_backup/ai_binoche_conversation_origin"
-        output_file = "/d/nas_backup/session_memory/parsed_conversations.jsonl"
+        workspace = Path(__file__).parent.parent
+    
+    source_dir = workspace / "ai_binoche_conversation_origin"
+    output_file = workspace / "session_memory" / "parsed_conversations.jsonl"
 
     print(f"\n[INFO] Source directory: {source_dir}")
     print(f"[INFO] Output file: {output_file}\n")

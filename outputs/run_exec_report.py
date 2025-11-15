@@ -1,13 +1,24 @@
 import sys
-sys.path.append(r"d:/nas_backup/ai_binoche_conversation_origin/lumen/chatgpt-정보이론철학적분석")
-from luon_executive_report_simple import main
+from pathlib import Path
 
-sys.argv = [
-    "luon_executive_report_simple",
-    "--events", r"d:/nas_backup/outputs/luon_report/luon_rhythm_events.csv",
-    "--outdir", r"d:/nas_backup/outputs/luon_report",
-    "--dashboard_png", r"d:/nas_backup/outputs/luon_report/luon_dashboard.png",
-    "--rhythm_png", r"d:/nas_backup/outputs/luon_report/luon_rhythm_plot.png"
+# Find workspace root
+sys.path.insert(0, str(Path(__file__).parent.parent))
+if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+    from workspace_utils import find_workspace_root
+    workspace = find_workspace_root(Path(__file__).parent)
+else:
+    workspace = Path(__file__).parent.parent
+
+lumen_path = workspace / "ai_binoche_conversation_origin" / "lumen" / "chatgpt-정보이론철학적분석"
+sys.path.append(str(lumen_path))
+from exec_report import main
+
+main([
+    "--events", str(workspace / "outputs" / "luon_report" / "luon_rhythm_events.csv"),
+    "--outdir", str(workspace / "outputs" / "luon_report"),
+    "--dashboard_png", str(workspace / "outputs" / "luon_report" / "luon_dashboard.png"),
+    "--rhythm_png", str(workspace / "outputs" / "luon_report" / "luon_rhythm_plot.png")
 ]
 try:
     main()

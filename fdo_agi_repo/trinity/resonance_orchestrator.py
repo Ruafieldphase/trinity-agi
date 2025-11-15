@@ -13,6 +13,7 @@ import sys
 # Add parent to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from workspace_utils import find_workspace_root
 from utils.event_bus import EventBus
 
 
@@ -39,7 +40,7 @@ class ResonanceOrchestrator:
     
     def __init__(self, workspace_root: Optional[Path] = None):
         if workspace_root is None:
-            workspace_root = Path(__file__).parent.parent.parent
+            workspace_root = find_workspace_root(Path(__file__).parent)
         
         self.workspace_root = Path(workspace_root)
         self.event_bus = EventBus(self.workspace_root / "outputs" / "events")

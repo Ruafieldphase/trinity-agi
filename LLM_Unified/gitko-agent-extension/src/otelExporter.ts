@@ -82,6 +82,12 @@ export function stopOtelExporter() {
   intervalHandle = undefined;
 }
 
+// Test-only hook to inject mocked VS Code API
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export function __setVscodeApi(api: unknown) {
+  vscodeApi = api;
+}
+
 function metricToSpan(m: PerformanceMetrics) {
   const startN = BigInt(m.startTime) * 1_000_000n;
   const endN = BigInt(m.endTime || Date.now()) * 1_000_000n;

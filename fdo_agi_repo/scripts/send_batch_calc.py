@@ -47,12 +47,18 @@ def send_batch_calculation_task():
     print(f"🔢 계산 개수: {len(calculations)}개")
     
     print(f"\n📊 요청한 계산:")
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from workspace_utils import find_fdo_root
+    
+    fdo_root = find_fdo_root(Path(__file__).parent)
+    
     for calc in calculations:
         print(f"   - {calc['id']}: {calc['operation']}")
     
     print(f"\n⏳ 코멧이 10초 내 처리 예상...")
     print(f"\n💡 결과 확인 (12초 후):")
-    print(f"   Get-Content d:\\nas_backup\\fdo_agi_repo\\outputs\\task_queue\\results\\{task_id}.json | ConvertFrom-Json")
+    print(f"   Get-Content {fdo_root}\\\\outputs\\\\task_queue\\\\results\\\\{task_id}.json | ConvertFrom-Json")
     
     print(f"\n📈 예상 결과:")
     print(f"   - success_rate: 84.7%")

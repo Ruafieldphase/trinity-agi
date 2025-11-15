@@ -44,7 +44,10 @@ class EverythingSearch:
             self.es_path = Path(es_path)
         else:
             # 자동 탐색: scripts/es.exe
-            workspace = Path(__file__).parent.parent.parent
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from workspace_utils import find_workspace_root
+            workspace = find_workspace_root(Path(__file__).parent)
             self.es_path = workspace / "scripts" / "es.exe"
         
         if not self.es_path.exists():
@@ -280,10 +283,14 @@ def find_hippocampus_memories(
     max_results: int = 50
 ) -> List[SearchResult]:
     """Hippocampus 메모리 검색 (최적화)"""
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from workspace_utils import find_workspace_root
+    
     searcher = EverythingSearch()
     
     # outputs 폴더에서 최근 파일만
-    workspace = Path(__file__).parent.parent.parent
+    workspace = find_workspace_root(Path(__file__).parent)
     outputs_path = workspace / "outputs"
     
     return searcher.search_recent(

@@ -14,7 +14,9 @@ from collections import defaultdict
 # BQI 어댑터 경로 추가
 import sys
 from pathlib import Path
-repo_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_workspace_root
+repo_root = find_workspace_root(Path(__file__).parent)
 sys.path.insert(0, str(repo_root))
 
 from scripts.rune.bqi_adapter import analyse_question, BQICoordinate
@@ -29,9 +31,21 @@ class BQITrainingDataGenerator:
     
     def __init__(
         self,
-        conversation_file: str = "d:/nas_backup/outputs/ai_conversations_anonymized.jsonl",
-        output_dir: str = "d:/nas_backup/fdo_agi_repo/memory"
+        conversation_file: Optional[str] = None,
+        output_dir: Optional[str] = None
     ):
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        from workspace_utils import find_workspace_root, find_fdo_root
+        
+        workspace = find_workspace_root(Path(__file__).parent)
+        fdo_root = find_fdo_root(Path(__file__).parent)
+        
+        if conversation_file is None:
+            conversation_file = str(workspace / "outputs" / "ai_conversations_anonymized.jsonl")
+        if output_dir is None:
+            output_dir = str(fdo_root / "memory")
+            
         self.conversation_file = Path(conversation_file)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)

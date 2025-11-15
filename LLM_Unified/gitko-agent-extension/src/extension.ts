@@ -10,7 +10,7 @@ import { OfflineResultQueue } from './offlineQueue';
 import { TaskQueueMonitor } from './taskQueueMonitor';
 import { ResonanceLedgerViewer } from './resonanceLedgerViewer';
 import { ConfigValidator } from './configValidator';
-import { createLogger, Logger } from './logger';
+import { createLogger } from './logger';
 import { PerformanceViewer } from './performanceViewer';
 import { startOtelExporter, stopOtelExporter } from './otelExporter';
 import { registerIntegrationTestCommand } from './integrationTest';
@@ -195,8 +195,9 @@ export function activate(context: vscode.ExtensionContext) {
         }
         if (event.affectsConfiguration('gitko')) {
             // Reload logger configuration when gitko.* settings change
-            const { Logger } = require('./logger');
-            Logger.getInstance().reloadConfig();
+            import('./logger').then(({ Logger }) => {
+                Logger.getInstance().reloadConfig();
+            });
         }
     });
     context.subscriptions.push(configWatcher);
@@ -284,9 +285,9 @@ export function activate(context: vscode.ExtensionContext) {
                 stream.markdown(`- \`/check\` - 환경 설정 확인\n\n`);
 
                 stream.markdown(`## Python 환경\n\n`);
-                const pythonPath = 'D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe';
-                stream.markdown(`- **Python 경로**: \`${pythonPath}\`\n`);
-                stream.markdown(`- **스크립트**: \`D:/nas_backup/LLM_Unified/ion-mentoring/gitko_cli.py\`\n\n`);
+                const config = getAgentRuntimeConfig();
+                stream.markdown(`- **Python 경로**: \`${config?.pythonPath || '자동 탐색'}\`\n`);
+                stream.markdown(`- **스크립트**: \`${config?.scriptPath || '자동 탐색'}\`\n\n`);
 
                 stream.markdown(`## 사용 방법\n\n`);
                 stream.markdown(`1. \`@gitko /review\` - 현재 코드를 리뷰합니다\n`);
@@ -298,15 +299,16 @@ export function activate(context: vscode.ExtensionContext) {
 
             if (request.command === 'check') {
                 stream.markdown(`# 🔍 환경 설정 확인\n\n`);
-                const pythonPath = 'D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe';
-                const scriptPath = 'D:/nas_backup/LLM_Unified/ion-mentoring/gitko_cli.py';
+                const config = getAgentRuntimeConfig();
+                const pythonPath = config?.pythonPath;
+                const scriptPath = config?.scriptPath;
 
-                const pythonExists = fs.existsSync(pythonPath);
-                const scriptExists = fs.existsSync(scriptPath);
+                const pythonExists = pythonPath ? fs.existsSync(pythonPath) : false;
+                const scriptExists = scriptPath ? fs.existsSync(scriptPath) : false;
 
                 stream.markdown(`## Python 환경\n\n`);
-                stream.markdown(`- Python: ${pythonExists ? '✅' : '❌'} \`${pythonPath}\`\n`);
-                stream.markdown(`- Script: ${scriptExists ? '✅' : '❌'} \`${scriptPath}\`\n\n`);
+                stream.markdown(`- Python: ${pythonExists ? '✅' : '❌'} \`${pythonPath || '찾을 수 없음'}\`\n`);
+                stream.markdown(`- Script: ${scriptExists ? '✅' : '❌'} \`${scriptPath || '찾을 수 없음'}\`\n\n`);
 
                 if (!pythonExists || !scriptExists) {
                     stream.markdown(`⚠️ **설정 필요**: Settings에서 경로를 확인하세요.\n\n`);
@@ -1005,3 +1007,11 @@ export function deactivate() {
     stopOtelExporter();
     logger.info('Gitko Agent Extension is deactivated');
 }
+
+// Test hooks (non-API): expose internals for unit tests without changing public surface
+// eslint-disable-next-line @typescript-eslint/naming-convention
+export const __test__ = {
+    _resolveAgentRuntimeConfig: resolveAgentRuntimeConfig,
+    _resetRuntimeConfigCache: resetRuntimeConfigCache,
+    _getAgentRuntimeConfig: getAgentRuntimeConfig,
+};

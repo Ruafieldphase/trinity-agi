@@ -19,7 +19,11 @@ from datetime import datetime
 
 
 # 설정: 작업 큐 디렉토리 (절대 경로로 지정)
-QUEUE_BASE = Path(r"D:\nas_backup\fdo_agi_repo\outputs\task_queue")
+import sys
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_fdo_root
+
+QUEUE_BASE = find_fdo_root(Path(__file__).parent) / "outputs" / "task_queue"
 TASKS_DIR = QUEUE_BASE / "tasks"
 RESULTS_DIR = QUEUE_BASE / "results"
 

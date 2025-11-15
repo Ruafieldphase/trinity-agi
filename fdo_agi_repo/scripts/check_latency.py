@@ -1,7 +1,11 @@
 import json
 from pathlib import Path
+import sys
 
-ledger_path = Path(__file__).parent.parent / "memory" / "resonance_ledger.jsonl"
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_fdo_root
+
+ledger_path = find_fdo_root(Path(__file__).parent) / "memory" / "resonance_ledger.jsonl"
 lines = ledger_path.read_text(encoding="utf-8").splitlines()[-50:]
 
 events = []

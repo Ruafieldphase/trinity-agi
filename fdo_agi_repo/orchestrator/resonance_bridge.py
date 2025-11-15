@@ -486,8 +486,12 @@ def consolidate_to_hippocampus(
     Returns:
         Consolidation 결과 (저장된 메모리 수 등)
     """
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from workspace_utils import find_workspace_root
+    
     if workspace_root is None:
-        workspace_root = Path(__file__).parent.parent.parent
+        workspace_root = find_workspace_root(Path(__file__).parent)
     
     # Hippocampus 로드
     try:

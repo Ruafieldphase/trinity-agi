@@ -6,8 +6,12 @@ import time
 import sys
 from pathlib import Path
 
+# Import workspace utilities
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_workspace_root, find_fdo_root
+
 # 프로젝트 루트 경로 설정 (BQI 모듈 import용)
-_project_root = Path(__file__).parent.parent.parent
+_project_root = find_workspace_root(Path(__file__).parent)
 if str(_project_root) not in sys.path:
     sys.path.insert(0, str(_project_root))
 

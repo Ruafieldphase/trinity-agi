@@ -1,6 +1,12 @@
 import json
+import sys
+from pathlib import Path
 
-lines = open('d:/nas_backup/fdo_agi_repo/memory/resonance_ledger.jsonl', encoding='utf-8').readlines()
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_fdo_root
+
+ledger_path = find_fdo_root(Path(__file__).parent) / 'memory' / 'resonance_ledger.jsonl'
+lines = open(ledger_path, encoding='utf-8').readlines()
 print(f'Total lines: {len(lines)}')
 
 recent = [json.loads(l) for l in lines[-100:]]

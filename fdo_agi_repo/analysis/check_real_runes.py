@@ -1,6 +1,12 @@
 import json
+import sys
+from pathlib import Path
 
-events = [json.loads(line) for line in open('d:/nas_backup/fdo_agi_repo/memory/resonance_ledger.jsonl', encoding='utf-8') if line.strip()]
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_utils import find_fdo_root
+
+ledger_path = find_fdo_root(Path(__file__).parent) / 'memory' / 'resonance_ledger.jsonl'
+events = [json.loads(line) for line in open(ledger_path, encoding='utf-8') if line.strip()]
 runes = [e for e in events if e.get('event') == 'rune']
 real_runes = [r for r in runes if 'batch_val' not in r.get('task_id', '') and 'test_' not in r.get('task_id', '')]
 replans = [r for r in real_runes if r.get('replan') is True]

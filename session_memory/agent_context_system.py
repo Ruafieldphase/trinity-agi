@@ -420,7 +420,16 @@ def demo():
     print("="*70)
 
     server = ContextServer(
-        context_file=r"d:\nas_backup\session_memory\AGENT_CONTEXTS.jsonl"
+        import sys
+        sys.path.insert(0, str(Path(__file__).parent.parent))
+        if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+            sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+            from workspace_utils import find_workspace_root
+            workspace = find_workspace_root(Path(__file__).parent)
+        else:
+            workspace = Path(__file__).parent.parent
+        
+        context_file = workspace / "session_memory" / "AGENT_CONTEXTS.jsonl"
     )
 
     task_id = "task_001"
@@ -505,8 +514,19 @@ def demo():
         if context:
             contexts_info.append(context.to_dict())
 
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+        sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+        from workspace_utils import find_workspace_root
+        workspace = find_workspace_root(Path(__file__).parent)
+    else:
+        workspace = Path(__file__).parent.parent
+    
+    context_file_path = workspace / "session_memory" / "AGENT_CONTEXTS.jsonl"
+    
     with open(
-        r"d:\nas_backup\session_memory\AGENT_CONTEXTS.jsonl",
+        context_file_path,
         "w",
         encoding="utf-8"
     ) as f:

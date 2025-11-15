@@ -1,13 +1,28 @@
 ﻿import re
 from pathlib import Path
 
-TARGET_DIRS = [
-    Path("d:/nas_backup/outputs"),
-    Path("d:/nas_backup/ai_binoche_conversation_origin/perple_comet_cople_eru"),
-    Path("d:/nas_backup/ai_binoche_conversation_origin/sena"),
-    Path("d:/nas_backup/ai_binoche_conversation_origin/rio"),
-    Path("d:/nas_backup/ai_binoche_conversation_origin/ari"),
-    Path("d:/nas_backup/LLM_Unified"),
+from pathlib import Path
+import re
+import sys
+
+# Add parent to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# Find workspace root dynamically
+if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+    from workspace_utils import find_workspace_root
+    workspace = find_workspace_root(Path(__file__).parent)
+else:
+    workspace = Path(__file__).parent.parent
+
+SCAN_DIRS = [
+    workspace / "outputs",
+    workspace / "ai_binoche_conversation_origin" / "perple_comet_cople_eru",
+    workspace / "ai_binoche_conversation_origin" / "sena",
+    workspace / "ai_binoche_conversation_origin" / "rio",
+    workspace / "ai_binoche_conversation_origin" / "ari",
+    workspace / "LLM_Unified",
 ]
 
 PATTERNS = {
@@ -19,7 +34,7 @@ PATTERNS = {
 
 EXCLUDE_EXT = {".png", ".svg", ".zip", ".pdf", ".exe", ".dll", ".ttf", ".jpg", ".mp4", ".pyc"}
 MAX_BYTES = 1_500_000
-REPORT = Path("d:/nas_backup/outputs/sensitive_scan_report.md")
+REPORT = workspace / "outputs" / "sensitive_scan_report.md"
 
 results = {name: [] for name in PATTERNS}
 

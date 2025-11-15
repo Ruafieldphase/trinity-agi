@@ -2,7 +2,13 @@
 """Add debug warning to _build_docs when memory files not found."""
 import os
 
-path = 'D:/nas_backup/fdo_agi_repo/tools/rag/retriever.py'
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from workspace_utils import find_fdo_root
+
+path = find_fdo_root(Path(__file__).parent) / 'tools' / 'rag' / 'retriever.py'
 with open(path, 'r', encoding='utf-8') as f:
     lines = f.readlines()
 

@@ -1,13 +1,23 @@
+import subprocess
 import sys
-sys.path.append(r"d:/nas_backup/ai_binoche_conversation_origin/lumen/chatgpt-정보이론철학적분석")
-from luon_param_autotuner_kpi import main
+from pathlib import Path
 
-sys.argv = [
-    "luon_param_autotuner_kpi",
-    "--events", r"d:/nas_backup/outputs/luon_report/luon_rhythm_events.csv",
-    "--kpi", r"d:/nas_backup/outputs/copilot_kpi.csv",
-    "--outdir", r"d:/nas_backup/outputs/luon_report"
-]
+# Find workspace root
+sys.path.insert(0, str(Path(__file__).parent.parent))
+if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+    from workspace_utils import find_workspace_root
+    workspace = find_workspace_root(Path(__file__).parent)
+else:
+    workspace = Path(__file__).parent.parent
+
+lumen_path = workspace / "ai_binoche_conversation_origin" / "lumen" / "chatgpt-정보이론철학적분석"
+sys.path.append(str(lumen_path))
+from autotuner_kpi import main
+
+main([
+    "--events", str(workspace / "outputs" / "luon_report" / "luon_rhythm_events.csv"),
+    "--kpi", str(workspace / "outputs" / "copilot_kpi.csv"),
 try:
     main()
 except SystemExit:

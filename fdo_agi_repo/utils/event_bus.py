@@ -30,7 +30,10 @@ class EventBus:
         """
         if event_dir is None:
             # Default to workspace/outputs/events
-            workspace_root = Path(__file__).parent.parent.parent
+            import sys
+            sys.path.insert(0, str(Path(__file__).parent.parent))
+            from workspace_utils import find_workspace_root
+            workspace_root = find_workspace_root(Path(__file__).parent)
             event_dir = workspace_root / "outputs" / "events"
         
         self.event_dir = Path(event_dir)

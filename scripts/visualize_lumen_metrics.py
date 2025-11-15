@@ -209,7 +209,16 @@ def generate_summary_report(metrics_df, entities_df, output_path):
 
 def main():
     # 파일 경로
-    metrics_path = Path("D:/nas_backup/outputs/lumen_metrics.csv")
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+        sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+        from workspace_utils import find_workspace_root
+        workspace = find_workspace_root(Path(__file__).parent)
+    else:
+        workspace = Path(__file__).parent.parent
+    
+    metrics_path = workspace / "outputs" / "lumen_metrics.csv"
     entities_path = Path("D:/nas_backup/outputs/lumen_entities.csv")
     
     output_dir = Path("D:/nas_backup/docs/lumen_charts")

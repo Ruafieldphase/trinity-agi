@@ -1,7 +1,17 @@
 import pandas as pd
 from pathlib import Path
+import sys
 
-BASE = Path('d:/nas_backup/outputs')
+# Find workspace root
+sys.path.insert(0, str(Path(__file__).parent.parent))
+if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+    from workspace_utils import find_workspace_root
+    workspace = find_workspace_root(Path(__file__).parent)
+else:
+    workspace = Path(__file__).parent.parent
+
+BASE = workspace / 'outputs'
 EVENTS_PATH = BASE / 'copilot_events.csv'
 KPI_PATH = BASE / 'copilot_kpi.csv'
 DECISION_PATH = BASE / 'copilot_decisions.csv'

@@ -305,7 +305,16 @@ def demo():
     print("Background Monitor - Demo")
     print("="*70)
 
-    collab_state_path = r"d:\nas_backup\session_memory\COLLABORATION_STATE.jsonl"
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
+        sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
+        from workspace_utils import find_workspace_root
+        workspace = find_workspace_root(Path(__file__).parent)
+    else:
+        workspace = Path(__file__).parent.parent
+    
+    collab_state_path = workspace / "session_memory" / "COLLABORATION_STATE.jsonl"
 
     # 모니터 생성
     monitor = BackgroundMonitor(collab_state_path)

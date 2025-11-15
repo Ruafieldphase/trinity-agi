@@ -8,7 +8,17 @@
 
 // Avoid hard dependency on VS Code API during unit tests.
 // Try to require 'vscode' at runtime; fall back to console-based channel if unavailable.
-let vscodeApi: any = undefined;
+// Minimal VS Code API surface used by this module
+type WorkspaceConfigurationLike = {
+    get<T>(section: string, defaultValue?: T): T | undefined;
+};
+
+type VSCodeLike = {
+    window?: { createOutputChannel?: (name: string) => OutputChannelLike };
+    workspace?: { getConfiguration?: (section: string) => WorkspaceConfigurationLike };
+};
+
+let vscodeApi: VSCodeLike | undefined = undefined;
 try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     vscodeApi = require('vscode');
@@ -49,7 +59,14 @@ function createOutputChannel(name: string): OutputChannelLike {
     }
     // Fallback: console-backed output channel for tests
     return {
-        appendLine: (v: string) => console.log(`[${name}] ${v}`),
+        appendLine: (v: string) => {
+            try {
+                // Use stdout to avoid eslint no-console warning while retaining visibility in tests
+                process.stdout.write(`[${name}] ${v}` + os.EOL);
+            } catch {
+                // noop
+            }
+        },
         show: () => {},
         dispose: () => {},
     } as OutputChannelLike;
@@ -202,9 +219,9 @@ export class Logger {
             // Email addresses
             text = text.replace(/([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[A-Za-z]{2,})/g, '[REDACTED:email]');
             // Bearer tokens
-            text = text.replace(/Bearer\s+[A-Za-z0-9._\-]+/gi, 'Bearer [REDACTED:token]');
+            text = text.replace(/Bearer\s+[A-Za-z0-9._-]+/gi, 'Bearer [REDACTED:token]');
             // API keys common patterns
-            text = text.replace(/(api[-_ ]?key\s*[:=]\s*)["']?[A-Za-z0-9_\-]{8,}["']?/gi, '$1[REDACTED:key]');
+            text = text.replace(/(api[-_ ]?key\s*[:=]\s*)["']?[A-Za-z0-9_-]{8,}["']?/gi, '$1[REDACTED:key]');
             // Secret-like hex/base64 strings following key/secret/password labels
             text = text.replace(/(secret|password|token)\s*[:=]\s*["']?[A-Za-z0-9+/=]{8,}["']?/gi, '$1:[REDACTED]');
         } catch {

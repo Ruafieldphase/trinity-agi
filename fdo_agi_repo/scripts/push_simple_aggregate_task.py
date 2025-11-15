@@ -51,7 +51,12 @@ def push_aggregate_task():
     return task['id']
 
 if __name__ == "__main__":
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from workspace_utils import find_fdo_root
+    
+    fdo_root = find_fdo_root(Path(__file__).parent)
     task_id = push_aggregate_task()
     
     print(f"\n💡 결과 확인:")
-    print(f"   Get-Content d:\\nas_backup\\fdo_agi_repo\\outputs\\task_queue\\results\\{task_id}.json | ConvertFrom-Json")
+    print(f"   Get-Content {fdo_root}\\\\outputs\\\\task_queue\\\\results\\\\{task_id}.json | ConvertFrom-Json")

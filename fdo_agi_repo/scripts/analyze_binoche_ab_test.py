@@ -130,7 +130,12 @@ def main():
     parser = argparse.ArgumentParser(description="Analyze Binoche A/B test results")
     parser.add_argument("--hours", type=int, default=24, help="Hours to analyze (default: 24)")
     parser.add_argument("--out", type=str, help="Output JSON file path")
-    parser.add_argument("--ledger", type=str, default="D:/nas_backup/fdo_agi_repo/memory/resonance_ledger.jsonl",
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    from workspace_utils import find_fdo_root
+    
+    default_ledger = str(find_fdo_root(Path(__file__).parent) / "memory" / "resonance_ledger.jsonl")
+    parser.add_argument("--ledger", type=str, default=default_ledger,
                         help="Path to resonance_ledger.jsonl")
     args = parser.parse_args()
     
