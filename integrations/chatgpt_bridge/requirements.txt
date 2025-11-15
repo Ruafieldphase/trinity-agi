@@ -1,0 +1,24 @@
+# ChatGPT-AGI Bridge Dependencies
+
+# OpenAI API
+openai>=1.12.0
+
+# FastAPI Server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.6.0
+
+# Async Support
+aiohttp>=3.9.0
+asyncio
+
+# MCP Integration (AGI에서 이미 설치됨)
+# mcp>=0.1.0  # 기존 시스템 활용
+
+# Testing
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+httpx>=0.26.0
+
+# Logging
+structlog>=24.1.0
