@@ -2,12 +2,14 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Build: Watch",
             "type": "npm",
             "script": "watch",
             "problemMatcher": "$tsc-watch",
             "isBackground": true,
             "presentation": {
-                "reveal": "never"
+                "reveal": "never",
+                "panel": "dedicated"
             },
             "group": {
                 "kind": "build",
@@ -15,12 +17,90 @@
             }
         },
         {
+            "label": "Build: Compile",
             "type": "npm",
             "script": "compile",
             "problemMatcher": "$tsc",
             "presentation": {
-                "reveal": "silent"
+                "reveal": "silent",
+                "panel": "shared"
             },
+            "group": "build"
+        },
+        {
+            "label": "Test: Quick Validation",
+            "type": "shell",
+            "command": ".\\tests\\test-extension.ps1",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Test: Integration",
+            "type": "shell",
+            "command": ".\\tests\\test_integration.ps1",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "group": "test"
+        },
+        {
+            "label": "Package: Create VSIX",
+            "type": "shell",
+            "command": "vsce package",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "group": "build"
+        },
+        {
+            "label": "Package: Install Local",
+            "type": "shell",
+            "command": "code --install-extension ${workspaceFolder}\\gitko-agent-extension-0.3.1.vsix",
+            "problemMatcher": [],
+            "dependsOn": ["Package: Create VSIX"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "Troubleshoot: Auto Diagnose",
+            "type": "shell",
+            "command": ".\\scripts\\troubleshoot.ps1",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Stats: Project Statistics",
+            "type": "shell",
+            "command": ".\\scripts\\project-stats.ps1",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Full Build & Test",
+            "dependsOn": [
+                "Build: Compile",
+                "Test: Quick Validation"
+            ],
+            "problemMatcher": [],
             "group": "build"
         }
     ]
