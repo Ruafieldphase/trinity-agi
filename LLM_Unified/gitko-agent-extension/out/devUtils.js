@@ -43,6 +43,7 @@ const vscode = __importStar(require("vscode"));
 const logger_1 = require("./logger");
 const performanceMonitor_1 = require("./performanceMonitor");
 const diagnostics_1 = require("./diagnostics");
+const i18nGuard_1 = require("./i18nGuard");
 const logger = (0, logger_1.createLogger)('DevUtils');
 class DevUtils {
     /**
@@ -274,6 +275,20 @@ function registerDevCommands(context) {
         else {
             vscode.window.showInformationMessage('Preflight checks passed.');
         }
+    }));
+    // i18n coverage check
+    context.subscriptions.push(vscode.commands.registerCommand('gitko.dev.i18nCheck', async () => {
+        const r = await (0, i18nGuard_1.runI18nCheck)();
+        if (r.missingInEn.length || r.missingInKo.length) {
+            vscode.window.showWarningMessage('i18n: Missing keys detected. See Output for details.');
+        }
+        else {
+            vscode.window.showInformationMessage('i18n: No missing keys.');
+        }
+    }));
+    // i18n sync
+    context.subscriptions.push(vscode.commands.registerCommand('gitko.dev.i18nSync', async () => {
+        await (0, i18nGuard_1.runI18nSync)();
     }));
     // Health check command
     context.subscriptions.push(vscode.commands.registerCommand('gitko.dev.healthCheck', () => {

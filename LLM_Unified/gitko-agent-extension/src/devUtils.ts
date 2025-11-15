@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { createLogger } from './logger';
 import { PerformanceMonitor } from './performanceMonitor';
 import { exportDiagnosticsBundle, runPreflight } from './diagnostics';
+import { runI18nCheck, runI18nSync } from './i18nGuard';
 
 const logger = createLogger('DevUtils');
 
@@ -296,6 +297,25 @@ export function registerDevCommands(context: vscode.ExtensionContext): void {
             } else {
                 vscode.window.showInformationMessage('Preflight checks passed.');
             }
+        })
+    );
+
+    // i18n coverage check
+    context.subscriptions.push(
+        vscode.commands.registerCommand('gitko.dev.i18nCheck', async () => {
+            const r = await runI18nCheck();
+            if (r.missingInEn.length || r.missingInKo.length) {
+                vscode.window.showWarningMessage('i18n: Missing keys detected. See Output for details.');
+            } else {
+                vscode.window.showInformationMessage('i18n: No missing keys.');
+            }
+        })
+    );
+
+    // i18n sync
+    context.subscriptions.push(
+        vscode.commands.registerCommand('gitko.dev.i18nSync', async () => {
+            await runI18nSync();
         })
     );
 

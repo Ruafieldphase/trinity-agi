@@ -102,6 +102,16 @@
                 "category": "Gitko Dev"
             },
             {
+                "command": "gitko.dev.i18nCheck",
+                "title": "Gitko Dev: i18n Coverage Check",
+                "category": "Gitko Dev"
+            },
+            {
+                "command": "gitko.dev.i18nSync",
+                "title": "Gitko Dev: i18n Sync Missing Keys",
+                "category": "Gitko Dev"
+            },
+            {
                 "command": "gitko.dev.showMemoryStats",
                 "title": "Gitko Dev: Show Memory Stats",
                 "category": "Gitko Dev"
