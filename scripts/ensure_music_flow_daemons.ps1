@@ -39,6 +39,7 @@ param(
     [switch]$Force,
     [int]$MaxHungSeconds = 300,
     [int]$RetryCount = 2
+    , [switch]$EnableAutoGoal
 )
 
 $ErrorActionPreference = 'Stop'
@@ -123,7 +124,8 @@ function Start-Daemon {
     param(
         [string]$Name,
         [string]$ScriptPath,
-        [int]$Retries
+        [int]$Retries,
+        [string]$StartArgs = ''
     )
     
     for ($i = 1; $i -le $Retries; $i++) {
@@ -137,7 +139,7 @@ function Start-Daemon {
             
             $startInfo = New-Object System.Diagnostics.ProcessStartInfo
             $startInfo.FileName = $pythonExe
-            $startInfo.Arguments = "`"$ScriptPath`""
+            $startInfo.Arguments = "`"$ScriptPath`" $StartArgs"
             $startInfo.UseShellExecute = $false
             $startInfo.CreateNoWindow = $true
             $startInfo.RedirectStandardOutput = $true
@@ -194,7 +196,8 @@ try {
             Write-Status "⚠️ Music Daemon appears hung - restarting" 'Yellow'
             Stop-Process -Id $musicProc.Id -Force
             Start-Sleep -Seconds 2
-            $result = Start-Daemon -Name 'Music Daemon' -ScriptPath $musicScript -Retries $RetryCount
+            $startArgs = if ($EnableAutoGoal) { '--auto-goal' } else { '' }
+            $result = Start-Daemon -Name 'Music Daemon' -ScriptPath $musicScript -Retries $RetryCount -StartArgs $startArgs
             $status.music.action = 'restarted_hung'
             $status.music.running = $result.success
             $status.music.pid = $result.pid
@@ -211,12 +214,28 @@ try {
     }
     else {
         Write-Status "❌ Music Daemon not running - starting" 'Yellow'
-        $result = Start-Daemon -Name 'Music Daemon' -ScriptPath $musicScript -Retries $RetryCount
+        $startArgs = if ($EnableAutoGoal) { '--auto-goal' } else { '' }
+        $result = Start-Daemon -Name 'Music Daemon' -ScriptPath $musicScript -Retries $RetryCount -StartArgs $startArgs
         $status.music.action = 'started'
         $status.music.running = $result.success
         $status.music.pid = $result.pid
         if (-not $result.success) {
             $status.errors += $result.error
+        }
+    }
+
+    # === Music->Goal PoC listener ===
+    $musicToGoalScript = Join-Path $ws 'scripts\music_to_goal.py'
+    if (Test-Path $musicToGoalScript) {
+        $mtgProc = Get-DaemonProcess 'music_to_goal.py'
+        if (-not $mtgProc) {
+            Write-Status "🔁 Music->Goal PoC not running - starting" 'Cyan'
+            $result = Start-Daemon -Name 'Music->Goal' -ScriptPath $musicToGoalScript -Retries 1
+            $status.music_to_goal = @{ running = $result.success; pid = $result.pid }
+        }
+        else {
+            Write-Status "✅ Music->Goal PoC is running (PID: $($mtgProc.Id))" 'Green'
+            $status.music_to_goal = @{ running = $true; pid = $mtgProc.Id }
         }
     }
     

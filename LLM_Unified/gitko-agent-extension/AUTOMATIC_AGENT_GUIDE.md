@@ -109,12 +109,14 @@ Copilot: (자동 판단) → gitko_orchestrate 호출
 
 ```powershell
 # VS Code에서
-1. d:\nas_backup\LLM_Unified\gitko-agent-extension 폴더 열기
+1. (workspace)/LLM_Unified/gitko-agent-extension 폴더 열기
 2. F5 키 누르기 (Extension Development Host 실행)
 3. 새 창에서 아무 코드 파일 열기
 4. Copilot Chat 열기 (Ctrl+Shift+I)
 5. 자연어로 요청해보기
 ```
+
+> 💡 `gitkoAgent.*` 설정을 비워둬도 확장이 현재 워크스페이스 내 `.venv`와 `LLM_Unified/ion-mentoring/gitko_cli.py`를 자동으로 탐지합니다. 여러 프로젝트에서 재사용하려면 `${workspaceFolder}` 템플릿을 활용하세요.
 
 ### 2. Tool 활성화 확인
 
@@ -141,6 +143,12 @@ def calculate(a, b, c, d):
 # Copilot이 자동으로 sian_refactor 호출
 # 결과: "가변 인자(*args)로 개선 가능합니다..."
 ```
+
+### Copilot 안전장치 (v0.2+)
+
+- Language Model Tool/Chat Participant 출력은 3,200자 이내로 자동 절단되어 GitHub Copilot의 400 `invalid_request_body` 오류를 예방합니다.
+- 실행 타임아웃(기본 5분)과 취소 신호가 강제되며, 전체 stdout/stderr는 `Gitko Agent Runtime` Output Channel에서 확인할 수 있습니다.
+- 필수 파일을 찾지 못하면 도구 등록 전 단계에서 경고 후 비활성화되므로 잘못된 경로가 Copilot 세션을 깨뜨리지 않습니다.
 
 ## 📊 기존 vs 개선
 

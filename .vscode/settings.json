@@ -18,7 +18,11 @@
         "ai_binoche_conversation_origin": true,
         "music": true,
         "backups": true,
-        "session_memory": true
+        "session_memory": true,
+        "**/.pytest_cache": true,
+        "**/.coverage": true,
+        "**/htmlcov": true,
+        "**/*.egg-info": true
     },
     "search.exclude": {
         "**/.venv": true,
@@ -31,7 +35,15 @@
         "music": true,
         "backups": true,
         "session_memory": true,
-        "fdo_agi_repo/memory": true
+        "fdo_agi_repo/memory": true,
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true,
+        "**/htmlcov": true,
+        "**/*.egg-info": true,
+        "**/wheels": true,
+        "**/lib64": true,
+        "fdo_agi_repo/.venv": true
     },
     "files.watcherExclude": {
         "**/.venv/**": true,
@@ -43,8 +55,28 @@
         "music/**": true,
         "backups/**": true,
         "session_memory/**": true,
-        "fdo_agi_repo/memory/**": true
+        "fdo_agi_repo/memory/**": true,
+        "**/.pytest_cache/**": true,
+        "**/htmlcov/**": true,
+        "**/*.pyc": true,
+        "**/*.pyo": true,
+        "**/*.egg-info/**": true,
+        "fdo_agi_repo/.venv/**": true,
+        "LLM_Unified/.venv/**": true,
+        "**/dist/**": true,
+        "**/build/**": true
     },
+    // Gitko Agent backend integration paths (set by Copilot)
+    // If these paths are incorrect, Gitko may fail with invalid_request_body (400)
+    // because the extension cannot execute the CLI and returns empty/invalid JSON.
+    // Adjust to your actual workspace layout if different.
+    "gitkoAgent.pythonPath": "C:/workspace/agi/LLM_Unified/.venv/Scripts/python.exe",
+    "gitkoAgent.scriptPath": "C:/workspace/agi/LLM_Unified/ion-mentoring/gitko_cli.py",
+    "gitkoAgent.workingDirectory": "C:/workspace/agi/LLM_Unified/ion-mentoring",
+    // Optional diagnostics
+    "gitkoAgent.enableLogging": true,
+    // Optional: increase if large contexts are processed via Copilot tools bridge
+    "gitkoAgent.timeout": 120000,
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,
@@ -131,6 +163,24 @@
     "extensions.ignoreRecommendations": true,
     "remote.autoForwardPorts": false,
     "docker.showRemoteWorkspaceWarning": false,
+    // Performance: Reduce file indexing overhead
+    "typescript.disableAutomaticTypeAcquisition": true,
+    "javascript.suggest.enabled": false,
+    "html.suggest.html5": false,
+    "css.lint.enabled": false,
+    // Performance: Reduce IntelliSense overhead
+    "editor.suggest.snippetsPreventQuickSuggestions": true,
+    "editor.suggest.localityBonus": false,
+    "editor.suggest.shareSuggestSelections": false,
+    // Performance: Reduce validation overhead
+    "json.validate.enable": false,
+    "css.validate": false,
+    "html.validate.scripts": false,
+    "html.validate.styles": false,
+    // Performance: Reduce file watching overhead
+    "files.watcherExcludeMaxFileSize": 1024,
+    "files.hotExit": "off",
+    "files.autoSave": "off",
     // Markdown Folding & Outline Settings
     "[markdown]": {
         "editor.folding": true,

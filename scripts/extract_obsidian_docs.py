@@ -1,10 +1,10 @@
-"""
+﻿"""
 Obsidian 문서 추출 스크립트
 """
 import pathlib
 import json
 
-vault_path = pathlib.Path(r"D:\nas_backup\Obsidian_Vault\Nas_Obsidian_Vault")
+vault_path = pathlib.Path(r"C:\\workspace\\agi\Obsidian_Vault\Nas_Obsidian_Vault")
 
 target_files = [
     "✨ 〈루멘 선언문〉.md",

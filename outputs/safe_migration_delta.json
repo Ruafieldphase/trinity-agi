@@ -1,0 +1,56 @@
+﻿[
+    {
+        "Folder":  "scripts",
+        "Src":  true,
+        "Dst":  true,
+        "Missing":  0,
+        "Conflicts":  57,
+        "Same":  163,
+        "Total":  220
+    },
+    {
+        "Folder":  "outputs",
+        "Src":  true,
+        "Dst":  true,
+        "Missing":  40,
+        "Conflicts":  21,
+        "Same":  947,
+        "Total":  1008
+    },
+    {
+        "Folder":  "session_memory",
+        "Src":  true,
+        "Dst":  true,
+        "Missing":  0,
+        "Conflicts":  3,
+        "Same":  114,
+        "Total":  117
+    },
+    {
+        "Folder":  "docs",
+        "Src":  true,
+        "Dst":  true,
+        "Missing":  0,
+        "Conflicts":  2,
+        "Same":  172,
+        "Total":  174
+    },
+    {
+        "Folder":  "configs",
+        "Src":  true,
+        "Dst":  true,
+        "Missing":  0,
+        "Conflicts":  0,
+        "Same":  6,
+        "Total":  6
+    },
+    {
+        "Folder":  "knowledge_base",
+        "Src":  true,
+        "Dst":  true,
+        "Missing":  0,
+        "Conflicts":  0,
+        "Same":  5,
+        "Total":  5
+    }
+]

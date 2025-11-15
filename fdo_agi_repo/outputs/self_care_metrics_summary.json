@@ -1,0 +1,15 @@
+{
+  "count": 10,
+  "hours": 24,
+  "stagnation_avg": 0.4,
+  "stagnation_std": 0.5163977794943223,
+  "stagnation_p95": 1.0,
+  "stagnation_over_03": 4,
+  "stagnation_over_05": 4,
+  "queue_ratio_avg": 1.1,
+  "memory_growth_avg": 0.066,
+  "latency_p99_avg": 1100.0,
+  "throughput_ratio_avg": 0.8,
+  "circulation_ok_rate": 0.6,
+  "generated_at": "2025-11-14T17:28:00.789138"
+}

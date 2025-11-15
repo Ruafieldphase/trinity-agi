@@ -41,7 +41,14 @@ $collectorArgs = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `
 if ($Register) {
     Write-Info "Registering scheduled task '$TaskName' (every $IntervalMinutes minutes)"
 
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $collectorArgs -WorkingDirectory $WorkspaceRoot
+        # 인자 구성 (조용한 모드 추가)
+    $arguments = "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`" -IntervalSeconds $IntervalMinutes -DurationMinutes 1440 -Silent"
+    
+    # 작업 액션 생성
+    $action = New-ScheduledTaskAction `
+        -Execute "powershell.exe" `
+        -Argument $arguments `
+        -WorkingDirectory $workspaceFolder
 
     # Start once at top of the next minute, repeat indefinitely at fixed interval
     $startTime = (Get-Date).Date.AddMinutes([math]::Ceiling(((Get-Date) - (Get-Date).Date).TotalMinutes))

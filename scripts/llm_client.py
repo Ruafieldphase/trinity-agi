@@ -14,6 +14,7 @@ Primary target: Google AI Studio (Gemini API)
 Safe-by-default:
  - Strict allowed intents; returns None (fallback to rules) if unavailable.
  - JSON-only response enforced by prompt; parser validates and sanitizes.
+ - Emoji filtering applied to all LLM outputs.
 """
 from __future__ import annotations
 
@@ -21,7 +22,12 @@ import json
 import os
 import sys
 import warnings
+from pathlib import Path
 from typing import Optional
+
+# Import emoji filter
+sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+from utils.emoji_filter import remove_emojis
 
 
 ALLOWED_PREFIXES = {"switch_scene:"}
@@ -97,7 +103,7 @@ def _google_ai_studio_classify(utter: str) -> Optional[str]:
         if not resp or not resp.text:
             return None
         
-        text = resp.text.strip()
+        text = remove_emojis(resp.text).strip()
         # Remove markdown code fences if present
         if text.startswith("```"):
             lines = text.split("\n")
@@ -139,7 +145,7 @@ def _vertex_classify(utter: str) -> Optional[str]:
             resp = model.generate_content(prompt, generation_config={"temperature": 0})
             # Extract text from response
             if hasattr(resp, "text") and resp.text:
-                text = resp.text
+                text = remove_emojis(resp.text)
             elif hasattr(resp, "candidates") and resp.candidates:
                 # Try to extract from candidates list
                 parts = []
@@ -147,7 +153,7 @@ def _vertex_classify(utter: str) -> Optional[str]:
                     if hasattr(candidate, "content") and hasattr(candidate.content, "parts"):
                         for part in candidate.content.parts:
                             if hasattr(part, "text"):
-                                parts.append(part.text)
+                                parts.append(remove_emojis(part.text))
                 text = "".join(parts) if parts else None
             else:
                 text = None
@@ -169,7 +175,7 @@ def _vertex_classify(utter: str) -> Optional[str]:
                 + "\n\nAnswer with JSON only."
             )
             pred = model.predict(prompt=prompt, temperature=0)
-            text = getattr(pred, "text", None)
+            text = remove_emojis(getattr(pred, "text", "")) if hasattr(pred, "text") else None
         if not text:
             return None
         # Extract first JSON object

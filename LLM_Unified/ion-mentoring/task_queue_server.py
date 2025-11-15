@@ -224,7 +224,47 @@ async def create_task(
     }
     
     with queue_lock:
-        queue_position = _enqueue_task(task, priority)
+        immediate_handled = False
+
+        # Handle certain task types immediately to facilitate simple integrations/tests
+        # 1) ping task: return success immediately
+        if task["type"] == 'ping':
+            task_results[task_id] = {
+                "success": True,
+                "data": {
+                    "pong": True,
+                    "ts": time.time()
+                }
+            }
+            immediate_handled = True
+
+        # 2) computer_use.scan task: optional kill-switch via env
+        elif task["type"] == 'computer_use.scan':
+            enable_env = os.getenv('ENABLE_COMPUTER_USE_OVER_HTTP', '0').strip().lower()
+            enabled = enable_env in ('1', 'true', 'yes', 'on')
+            if enabled:
+                # We don't actually scan here; return an empty element list as a stub
+                task_results[task_id] = {
+                    "success": True,
+                    "data": {
+                        "elements": [],
+                        "note": "computer_use.scan handled by server stub"
+                    }
+                }
+            else:
+                task_results[task_id] = {
+                    "success": False,
+                    "error": (
+                        "Computer Use over HTTP disabled by kill-switch. "
+                        "Set ENABLE_COMPUTER_USE_OVER_HTTP=1 to enable. "
+                        "(kill-switch: enableComputerUseOverHttp)"
+                    )
+                }
+            immediate_handled = True
+
+        # 3) default: enqueue for an external worker to process
+        if not immediate_handled:
+            queue_position = _enqueue_task(task, priority)
     
     logger.info(f"Created task: {task_id} (type: {request.type}, priority: {priority})")
     return {

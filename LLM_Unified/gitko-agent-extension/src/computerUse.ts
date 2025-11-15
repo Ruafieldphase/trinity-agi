@@ -2,6 +2,11 @@
 import * as vscode from 'vscode';
 import { spawn } from 'child_process';
 import * as path from 'path';
+import { createLogger } from './logger';
+import { PerformanceMonitor } from './performanceMonitor';
+
+const logger = createLogger('ComputerUse');
+const perfMonitor = PerformanceMonitor.getInstance();
 
 /**
  * Computer Use 기능 구현
@@ -53,6 +58,8 @@ export class ComputerUseAgent {
      * 화면 캡처 + OCR로 요소 찾기
      */
     async findElementByText(searchText: string): Promise<ScreenElement | null> {
+        const opId = perfMonitor.startOperation('computerUse.findElement', { searchText });
+
         return new Promise((resolve, reject) => {
             const args = [
                 this.scriptPath,
@@ -80,13 +87,27 @@ export class ComputerUseAgent {
                 if (code === 0) {
                     try {
                         const result = JSON.parse(output);
+                        logger.debug(`Found element: ${searchText}`);
+                        perfMonitor.endOperation(opId, true);
                         resolve(result);
                     } catch (error) {
-                        reject(new Error(`Failed to parse result: ${error}`));
+                        const errMsg = `Failed to parse JSON result: ${error instanceof Error ? error.message : String(error)}`;
+                        logger.error(errMsg, error as Error);
+                        perfMonitor.endOperation(opId, false);
+                        reject(new Error(errMsg));
                     }
                 } else {
-                    reject(new Error(`Process exited with code ${code}: ${errorOutput}`));
+                    const errMsg = `Process exited with code ${code}: ${errorOutput}`;
+                    logger.error(`Find element failed: ${searchText}`, new Error(errMsg));
+                    perfMonitor.endOperation(opId, false);
+                    reject(new Error(errMsg));
                 }
+            });
+
+            child.on('error', (err) => {
+                logger.error('Failed to spawn Python process', err);
+                perfMonitor.endOperation(opId, false);
+                reject(new Error(`Failed to start process: ${err.message}`));
             });
         });
     }
@@ -116,10 +137,18 @@ export class ComputerUseAgent {
 
             child.on('close', (code: number | null) => {
                 if (code === 0) {
+                    logger.debug(`Clicked at (${x}, ${y})`);
                     resolve(true);
                 } else {
-                    reject(new Error(`Click failed: ${errorOutput}`));
+                    const errMsg = `Click failed at (${x}, ${y}): ${errorOutput}`;
+                    logger.error(errMsg);
+                    reject(new Error(errMsg));
                 }
+            });
+
+            child.on('error', (err) => {
+                logger.error('Failed to spawn Python process for click', err);
+                reject(new Error(`Failed to start process: ${err.message}`));
             });
         });
     }
@@ -131,15 +160,19 @@ export class ComputerUseAgent {
         try {
             const element = await this.findElementByText(searchText);
             if (!element) {
-                throw new Error(`Element with text "${searchText}" not found`);
+                const errMsg = `Element with text "${searchText}" not found`;
+                logger.warn(errMsg);
+                throw new Error(errMsg);
             }
 
             // 요소 중심 클릭
-            const centerX = element.x + element.width / 2;
-            const centerY = element.y + element.height / 2;
+            const centerX = Math.round(element.x + element.width / 2);
+            const centerY = Math.round(element.y + element.height / 2);
 
+            logger.info(`Clicking element "${searchText}" at (${centerX}, ${centerY})`);
             return await this.clickAt(centerX, centerY);
         } catch (error) {
+            logger.error(`Failed to click element by text: ${searchText}`, error as Error);
             throw error;
         }
     }
@@ -168,10 +201,18 @@ export class ComputerUseAgent {
 
             child.on('close', (code: number | null) => {
                 if (code === 0) {
+                    logger.debug(`Typed text: ${text.substring(0, 20)}...`);
                     resolve(true);
                 } else {
-                    reject(new Error(`Type failed: ${errorOutput}`));
+                    const errMsg = `Type failed: ${errorOutput}`;
+                    logger.error(errMsg);
+                    reject(new Error(errMsg));
                 }
+            });
+
+            child.on('error', (err) => {
+                logger.error('Failed to spawn Python process for type', err);
+                reject(new Error(`Failed to start process: ${err.message}`));
             });
         });
     }
@@ -206,13 +247,23 @@ export class ComputerUseAgent {
                 if (code === 0) {
                     try {
                         const result = JSON.parse(output);
+                        logger.debug(`Screen scan found ${result.length} elements`);
                         resolve(result);
                     } catch (error) {
-                        reject(new Error(`Failed to parse result: ${error}`));
+                        const errMsg = `Failed to parse scan result: ${error instanceof Error ? error.message : String(error)}`;
+                        logger.error(errMsg, error as Error);
+                        reject(new Error(errMsg));
                     }
                 } else {
-                    reject(new Error(`Scan failed: ${errorOutput}`));
+                    const errMsg = `Scan failed with code ${code}: ${errorOutput}`;
+                    logger.error(errMsg);
+                    reject(new Error(errMsg));
                 }
+            });
+
+            child.on('error', (err) => {
+                logger.error('Failed to spawn Python process for scan', err);
+                reject(new Error(`Failed to start process: ${err.message}`));
             });
         });
     }

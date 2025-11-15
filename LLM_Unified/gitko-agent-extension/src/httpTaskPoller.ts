@@ -1,4 +1,8 @@
 import * as vscode from 'vscode';
+import { createLogger } from './logger';
+
+const logger = createLogger('HttpTaskPoller');
+
 /**
  * HTTP-based Task Poller for Gitko Extension
  *
@@ -12,13 +16,13 @@ import * as vscode from 'vscode';
 interface Task {
     task_id: string;
     type: string;
-    data: any;
+    data: unknown;
     created_at: string;
 }
 
 interface SubmitResult {
     success: boolean;
-    data?: any;
+    data?: unknown;
     error?: string;
 }
 
@@ -53,7 +57,7 @@ export class HttpTaskPoller {
         if (this.outputCallback) {
             this.outputCallback(message);
         } else {
-            console.log(message);
+            logger.info(message);
         }
     }
 
@@ -275,26 +279,39 @@ export class HttpTaskPoller {
         };
     }
 
-    private async handleCalculation(data: any): Promise<any> {
-        const { operation, numbers } = data;
+    private async handleCalculation(data: unknown): Promise<{
+        result: number;
+        operation: string;
+        input: number[];
+    }> {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid data: object required');
+        }
+
+        const { operation, numbers } = data as { operation?: string; numbers?: unknown };
+
+        if (!operation || typeof operation !== 'string') {
+            throw new Error('Invalid data: operation string required');
+        }
 
         if (!numbers || !Array.isArray(numbers)) {
             throw new Error('Invalid data: numbers array required');
         }
 
+        const numArray = numbers as number[];
         let result = 0;
 
         if (operation === 'add') {
-            result = numbers.reduce((a: number, b: number) => a + b, 0);
+            result = numArray.reduce((a, b) => a + b, 0);
         } else if (operation === 'multiply') {
-            result = numbers.reduce((a: number, b: number) => a * b, 1);
-        } else if (operation === 'divide' && numbers.length === 2) {
-            if (numbers[1] === 0) {
+            result = numArray.reduce((a, b) => a * b, 1);
+        } else if (operation === 'divide' && numArray.length === 2) {
+            if (numArray[1] === 0) {
                 throw new Error('Division by zero');
             }
-            result = numbers[0] / numbers[1];
+            result = numArray[0] / numArray[1];
         } else if (operation === 'average') {
-            result = numbers.reduce((a: number, b: number) => a + b, 0) / numbers.length;
+            result = numArray.reduce((a, b) => a + b, 0) / numArray.length;
         } else {
             throw new Error(`Unsupported operation: ${operation}`);
         }
@@ -302,15 +319,23 @@ export class HttpTaskPoller {
         return {
             result,
             operation,
-            input: numbers
+            input: numArray
         };
     }
 
-    private async handleDataTransform(data: any): Promise<any> {
-        const { operation, text } = data;
+    private async handleDataTransform(data: unknown): Promise<{ result: string | number }> {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid data: object required');
+        }
 
-        if (!text) {
+        const { operation, text } = data as { operation?: string; text?: string };
+
+        if (!text || typeof text !== 'string') {
             throw new Error('Invalid data: text field required');
+        }
+
+        if (!operation || typeof operation !== 'string') {
+            throw new Error('Invalid data: operation field required');
         }
 
         if (operation === 'uppercase') {
@@ -382,53 +407,80 @@ export class HttpTaskPoller {
     }
 
     // ==================== Computer Use handlers ====================
-    private async handleCuScan(): Promise<any> {
+    private async handleCuScan(): Promise<{ elements: unknown[] }> {
         this.ensureCuEnabled();
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
         const elements = await agent.scanScreen();
+        logger.info(`Scanned screen: ${elements.length} elements found`);
         return { elements };
     }
 
-    private async handleCuFind(data: any): Promise<any> {
-        if (!data || typeof data.text !== 'string' || !data.text.trim()) {
+    private async handleCuFind(data: unknown): Promise<{ element: unknown }> {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid data: object required');
+        }
+
+        const { text } = data as { text?: unknown };
+
+        if (typeof text !== 'string' || !text.trim()) {
             throw new Error('Invalid data: { text: string } required');
         }
+
         this.ensureCuEnabled();
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
-        const element = await agent.findElementByText(data.text);
+        const element = await agent.findElementByText(text);
+        logger.info(`Found element: ${text}`);
         return { element };
     }
 
-    private async handleCuClick(data: any): Promise<any> {
+    private async handleCuClick(data: unknown): Promise<{ success: boolean }> {
         this.ensureCuEnabled();
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
 
         let ok = false;
-        if (data && typeof data.x === 'number' && typeof data.y === 'number') {
-            ok = await agent.clickAt(data.x, data.y);
-        } else if (data && typeof data.text === 'string' && data.text.trim()) {
-            ok = await agent.clickElementByText(data.text);
+
+        if (data && typeof data === 'object') {
+            const clickData = data as { x?: unknown; y?: unknown; text?: unknown };
+
+            if (typeof clickData.x === 'number' && typeof clickData.y === 'number') {
+                ok = await agent.clickAt(clickData.x, clickData.y);
+                logger.info(`Clicked at (${clickData.x}, ${clickData.y})`);
+            } else if (typeof clickData.text === 'string' && clickData.text.trim()) {
+                ok = await agent.clickElementByText(clickData.text);
+                logger.info(`Clicked element: ${clickData.text}`);
+            } else {
+                throw new Error('Invalid data: provide either { x:number, y:number } or { text:string }');
+            }
         } else {
-            throw new Error('Invalid data: provide either { x:number, y:number } or { text:string }');
+            throw new Error('Invalid data: object required');
         }
+
         return { success: ok };
     }
 
-    private async handleCuType(data: any): Promise<any> {
-        if (!data || typeof data.text !== 'string') {
+    private async handleCuType(data: unknown): Promise<{ success: boolean }> {
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid data: object required');
+        }
+
+        const { text } = data as { text?: unknown };
+
+        if (typeof text !== 'string') {
             throw new Error('Invalid data: { text: string } required');
         }
+
         this.ensureCuEnabled();
         const { ComputerUseAgent } = await import('./computerUse');
         const agent = new ComputerUseAgent();
         await this.enforceUiCooldown();
-        const ok = await agent.type(data.text);
+        const ok = await agent.type(text);
+        logger.info(`Typed text: ${text.substring(0, 20)}...`);
         return { success: ok };
     }
 

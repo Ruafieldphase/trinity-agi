@@ -6642,6 +6642,45 @@
 			"group": "build"
 		},
 		{
+			"label": "🎵 Goal: Realtime Context (5min)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/realtime_goal_context_tracker.py' --minutes 5 } else { python '${workspaceFolder}/scripts/realtime_goal_context_tracker.py' --minutes 5 }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎵 Goal: Realtime Context (15min, open)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe') { & '${workspaceFolder}/fdo_agi_repo/.venv/Scripts/python.exe' '${workspaceFolder}/scripts/realtime_goal_context_tracker.py' --minutes 15 --open } else { python '${workspaceFolder}/scripts/realtime_goal_context_tracker.py' --minutes 15 --open }"
+			],
+			"group": "test"
+		},
+		{
+			"label": "🎵 Goal: Open Latest Context (MD)",
+			"type": "shell",
+			"command": "powershell",
+			"args": [
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				"if (Test-Path '${workspaceFolder}/outputs/realtime_goal_context_latest.md') { code ${workspaceFolder}/outputs/realtime_goal_context_latest.md } else { Write-Host 'No context found. Run: 🎵 Goal: Realtime Context (5min)' -ForegroundColor Yellow }"
+			],
+			"group": "none"
+		},
+		{
 			"label": "Autopoietic: Evaluate Engine Promotion",
 			"type": "shell",
 			"command": "powershell",

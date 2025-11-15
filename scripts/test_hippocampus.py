@@ -59,8 +59,19 @@ def test_basic_operations():
         print(f"   {i}. Type: {mem['type']}, Importance: {mem.get('importance', 0):.2f}")
     print()
     
-    # 6. Handover 생성
-    print("6️⃣ Generating handover...")
+    # 6. Everything 검색 테스트 (단일 경로에서만 검색)
+    print("6️⃣ Testing Everything search (single path)...")
+    search_results = hippo.search_files(
+        query="AGI",
+        path_filter="c:\\workspace\\agi\\docs"
+    )
+    print(f"   Found {len(search_results)} files in docs folder")
+    for i, result in enumerate(search_results[:3], 1):
+        print(f"   {i}. {result}")
+    print()
+    
+    # 7. Handover 생성
+    print("7️⃣ Generating handover...")
     handover = hippo.generate_handover()
     print(f"   ✅ Handover generated: {workspace}/outputs/copilot_handover_latest.json")
     print(f"   - Session: {handover['session_id']}")

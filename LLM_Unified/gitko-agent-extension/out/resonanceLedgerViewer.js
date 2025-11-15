@@ -37,6 +37,8 @@ exports.ResonanceLedgerViewer = void 0;
 const vscode = __importStar(require("vscode"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+const logger_1 = require("./logger");
+const logger = (0, logger_1.createLogger)('ResonanceLedger');
 /**
  * Resonance Ledger Viewer
  * fdo_agi_repo/memory/resonance_ledger.jsonl 실시간 시각화
@@ -99,10 +101,14 @@ class ResonanceLedgerViewer {
                         this._update();
                     }
                 });
+                logger.debug(`Watching ledger file: ${this._ledgerPath}`);
+            }
+            else {
+                logger.warn(`Ledger file not found: ${this._ledgerPath}`);
             }
         }
         catch (error) {
-            console.error('Failed to watch ledger file:', error);
+            logger.error('Failed to watch ledger file', error);
         }
     }
     _update(filterAgent) {

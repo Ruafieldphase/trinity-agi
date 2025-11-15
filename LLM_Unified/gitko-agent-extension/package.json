@@ -2,7 +2,7 @@
     "name": "gitko-agent-extension",
     "displayName": "Gitko AI Agent Orchestrator",
     "description": "Multi-agent orchestration for GitHub Copilot Chat with real-time monitoring",
-    "version": "0.2.0",
+    "version": "0.3.1",
     "publisher": "naeda",
     "engines": {
         "vscode": "^1.90.0"
@@ -53,6 +53,45 @@
                 "command": "gitko.computerUse.scanScreen",
                 "title": "Gitko: Computer Use - Scan Screen",
                 "category": "Gitko"
+            },
+            {
+                "command": "gitko.validateConfig",
+                "title": "Gitko: Validate Configuration",
+                "category": "Gitko",
+                "icon": "$(check)"
+            },
+            {
+                "command": "gitko.showPerformanceViewer",
+                "title": "Gitko: Show Performance Monitor",
+                "category": "Gitko",
+                "icon": "$(dashboard)"
+            },
+            {
+                "command": "gitko.showActivityViewer",
+                "title": "Gitko: Show Activity Tracker",
+                "category": "Gitko",
+                "icon": "$(pulse)"
+            },
+            {
+                "command": "gitko.runIntegrationTests",
+                "title": "Gitko: Run Integration Tests",
+                "category": "Gitko",
+                "icon": "$(testing-run-icon)"
+            },
+            {
+                "command": "gitko.dev.healthCheck",
+                "title": "Gitko Dev: Health Check",
+                "category": "Gitko Dev"
+            },
+            {
+                "command": "gitko.dev.exportDiagnostics",
+                "title": "Gitko Dev: Export Diagnostics",
+                "category": "Gitko Dev"
+            },
+            {
+                "command": "gitko.dev.showMemoryStats",
+                "title": "Gitko Dev: Show Memory Stats",
+                "category": "Gitko Dev"
             }
         ],
         "languageModelTools": [
@@ -242,7 +281,11 @@
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "pretest": "npm run compile",
-        "lint": "eslint src --ext ts"
+        "lint": "eslint src --ext ts",
+        "clean": "rimraf out",
+        "rebuild": "npm run clean && npm run compile",
+        "package": "vsce package",
+        "stats": "echo 'Source Files:' && dir /s /b src\\*.ts | find /c \"\\\" && echo 'Total Lines:' && powershell \"Get-Content src\\*.ts | Measure-Object -Line\""
     },
     "devDependencies": {
         "@types/node": "^20.x",

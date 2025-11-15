@@ -2,6 +2,23 @@
 
 🤖 GitHub Copilot과 통합된 멀티 에이전트 오케스트레이션 시스템
 
+**Current Version**: v0.3.1
+
+## 📖 문서
+
+- 🚀 [Quick Start Guide](QUICKSTART.md) - 5분 안에 시작하기
+- 📚 [실전 사용 예제](USAGE_EXAMPLES.md) - **NEW!** 상세한 활용 가이드
+- 📝 [Release Notes v0.3.1](RELEASE_NOTES_v0.3.1.md) - 최신 기능 (Activity Tracker!)
+- 📝 [Release Notes v0.3.0](RELEASE_NOTES_v0.3.0.md) - Performance Monitor
+- 📝 [Release Notes v0.2.1](RELEASE_NOTES_v0.2.1.md) - Stability & Quality
+- 📊 [Final Summary](FINAL_SUMMARY.md) - 전체 프로젝트 요약
+- ⚙️ [Setup Guide](SETUP_GUIDE.md) - 상세 설정 가이드
+
+### 🧪 테스트 & 검증
+
+- 🔍 [자동 테스트](test-extension.ps1) - F5 전 빠른 검증
+- 📊 [프로젝트 통계](project-stats.ps1) - 코드 통계 확인
+
 ## ✨ 주요 기능
 
 ### 🔧 Language Model Tools (자동 호출)
@@ -60,13 +77,13 @@ code --install-extension gitko-agent-extension-0.1.0.vsix
 
 ```json
 {
-  "gitkoAgent.pythonPath": "D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe",
-  "gitkoAgent.scriptPath": "D:/nas_backup/LLM_Unified/ion-mentoring/gitko_cli.py",
-  "gitkoAgent.workingDirectory": "D:/nas_backup/LLM_Unified/ion-mentoring",
+  "gitkoAgent.pythonPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "gitkoAgent.scriptPath": "${workspaceFolder}/LLM_Unified/ion-mentoring/gitko_cli.py",
+  "gitkoAgent.workingDirectory": "${workspaceFolder}/LLM_Unified/ion-mentoring",
   "gitkoAgent.enableLogging": true,
   "gitkoAgent.timeout": 300000,
-  "gitkoAgent.computerUsePythonPath": "D:/nas_backup/LLM_Unified/.venv/Scripts/python.exe",
-  "gitkoAgent.computerUseScriptPath": "D:/nas_backup/LLM_Unified/ion-mentoring/computer_use.py"
+  "gitkoAgent.computerUsePythonPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "gitkoAgent.computerUseScriptPath": "${workspaceFolder}/LLM_Unified/ion-mentoring/computer_use.py"
 }
 ```
 
@@ -82,6 +99,12 @@ code --install-extension gitko-agent-extension-0.1.0.vsix
 | `computerUsePythonPath` | Computer Use용 Python 경로 | `pythonPath` → 자동 |
 | `computerUseScriptPath` | Computer Use 백엔드(`computer_use.py`) 경로 | 기본값 자동 |
 | `ocrBackend` | OCR 백엔드 선택: `auto`(기본), `tesseract`, `rapidocr` | `auto` |
+
+### 자동 경로 감지 & Copilot 안전 장치
+
+- **자동 탐지**: 설정을 비워두면 확장이 워크스페이스(`workspaceFolder`), `.venv`, `LLM_Unified/ion-mentoring` 등을 순회하며 Python 실행 파일과 `gitko_cli.py`를 자동으로 찾습니다. `${workspaceFolder}` 템플릿과 `~` 확장을 지원하므로 여러 프로젝트에서 동일 설정을 재사용할 수 있습니다.
+- **경고 후 비활성화**: 필수 파일을 찾지 못하면 Copilot Tool을 등록하지 않고 경고만 표시하므로, 잘못된 절대 경로 때문에 Copilot 요청이 실패하지 않습니다.
+- **타임아웃 & 출력 절단**: Language Model Tool/Chat Participant 실행은 기본 5분 타임아웃과 취소 신호를 강제하며, Copilot으로 전달되는 응답을 3,200자 이내로 자동 절단해 400 `invalid_request_body` 오류를 예방합니다. 전체 stdout/stderr는 `Gitko Agent Runtime` Output Channel에서 확인할 수 있습니다.
 
 ## 📖 사용법
 

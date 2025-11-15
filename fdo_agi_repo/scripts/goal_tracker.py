@@ -37,6 +37,13 @@ class GoalTracker:
                  description: str = "", tags: List[str] = None) -> str:
         """Add a new goal"""
         data = self._load_data()
+
+        # Prevent duplicate active goals with exact same title
+        normalized = title.strip().lower()
+        for g in data.get("goals", []):
+            if g.get("title", "").strip().lower() == normalized and g.get("status") in ("proposed","in_progress"):
+                print(f"⚠️ Goal with title already exists (status={g.get('status')}): {g.get('id', '<no-id>')} - {title}")
+                return g.get("id")
         
         # Generate ID
         goal_id = f"goal_{datetime.now().strftime('%Y%m%d%H%M%S')}"
@@ -68,7 +75,8 @@ class GoalTracker:
         data = self._load_data()
         
         for goal in data["goals"]:
-            if goal["id"] == goal_id:
+            # Some older goals may not have an 'id' field; compare safely
+            if goal.get("id") == goal_id:
                 goal["status"] = "in_progress"
                 goal["started_at"] = datetime.now().isoformat()
                 goal["updated_at"] = datetime.now().isoformat()
@@ -83,7 +91,8 @@ class GoalTracker:
         data = self._load_data()
         
         for goal in data["goals"]:
-            if goal["id"] == goal_id:
+            # Use .get to avoid KeyError for older entries without 'id'
+            if goal.get("id") == goal_id:
                 goal["status"] = "completed"
                 goal["completed_at"] = datetime.now().isoformat()
                 goal["updated_at"] = datetime.now().isoformat()
@@ -121,7 +130,7 @@ class GoalTracker:
         data = self._load_data()
         
         for goal in data["goals"]:
-            if goal["id"] == goal_id:
+            if goal.get("id") == goal_id:
                 return goal
         
         return None
@@ -146,8 +155,9 @@ class GoalTracker:
                 print(f"\n{status.upper()} ({len(goals)} goals):")
                 for goal in sorted(goals, key=lambda x: x.get("priority", 0), reverse=True):
                     priority_str = f"[P{goal['priority']}]"
-                    days_str = f"{goal['estimated_days']}d"
-                    print(f"  {priority_str:6} {days_str:5} {goal['id']:20} {goal['title']}")
+                    days_str = f"{goal.get('estimated_days','?')}d"
+                    goal_id = goal.get('id', '<no-id>')
+                    print(f"  {priority_str:6} {days_str:5} {goal_id:20} {goal['title']}")
                     if goal.get("outcome"):
                         print(f"         → {goal['outcome']}")
         

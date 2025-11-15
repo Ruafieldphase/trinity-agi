@@ -27,7 +27,8 @@
 param(
     [int]$IntervalSeconds = 300,
     [int]$DurationMinutes = 60,
-    [int]$MaxSamples = 0
+    [int]$MaxSamples = 0,
+    [switch]$Silent  # 조용한 모드 (출력 최소화)
 )
 
 $ErrorActionPreference = "Continue"
@@ -55,19 +56,21 @@ if (-not (Test-Path $outputDir)) {
 # 설정 출력
 # ========================================
 
-Write-Host ""
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
-Write-Host "  Monitoring Data Collection" -ForegroundColor White
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "Configuration:" -ForegroundColor Cyan
-Write-Host "   Interval:      $IntervalSeconds seconds" -ForegroundColor White
-Write-Host "   Duration:      $DurationMinutes minutes" -ForegroundColor White
-if ($MaxSamples -gt 0) {
-    Write-Host "   Max Samples:   $MaxSamples" -ForegroundColor White
+if (-not $Silent) {
+    Write-Host ""
+    Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "  Monitoring Data Collection" -ForegroundColor White
+    Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Configuration:" -ForegroundColor Cyan
+    Write-Host "   Interval:      $IntervalSeconds seconds" -ForegroundColor White
+    Write-Host "   Duration:      $DurationMinutes minutes" -ForegroundColor White
+    if ($MaxSamples -gt 0) {
+        Write-Host "   Max Samples:   $MaxSamples" -ForegroundColor White
+    }
+    Write-Host "   Output:        $outputPath" -ForegroundColor White
+    Write-Host ""
 }
-Write-Host "   Output:        $outputPath" -ForegroundColor White
-Write-Host ""
 
 # ========================================
 # 수집 루프
@@ -77,45 +80,62 @@ $startTime = Get-Date
 $endTime = $startTime.AddMinutes($DurationMinutes)
 $sampleCount = 0
 
-Write-Host "[START] Starting data collection..." -ForegroundColor Green
-Write-Host "   Start:  $($startTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
-Write-Host "   End:    $($endTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
-Write-Host ""
+if (-not $Silent) {
+    Write-Host "[START] Starting data collection..." -ForegroundColor Green
+    Write-Host "   Start:  $($startTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
+    Write-Host "   End:    $($endTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Gray
+    Write-Host ""
+}
 
 while ($true) {
     $now = Get-Date
     
     # 종료 조건 확인
     if ($now -ge $endTime) {
-        Write-Host ""
-        Write-Host "[STOP] Duration reached. Stopping collection." -ForegroundColor Yellow
+        if (-not $Silent) {
+            Write-Host ""
+            Write-Host "[STOP] Duration reached. Stopping collection." -ForegroundColor Yellow
+        }
         break
     }
     
     if ($MaxSamples -gt 0 -and $sampleCount -ge $MaxSamples) {
-        Write-Host ""
-        Write-Host "[STOP] Max samples reached. Stopping collection." -ForegroundColor Yellow
+        if (-not $Silent) {
+            Write-Host ""
+            Write-Host "[STOP] Max samples reached. Stopping collection." -ForegroundColor Yellow
+        }
         break
     }
     
     # 샘플 수집
     $sampleCount++
-    Write-Host "[$($now.ToString('HH:mm:ss'))] Sample #$sampleCount collecting..." -ForegroundColor Cyan -NoNewline
+    if (-not $Silent) {
+        Write-Host "[$($now.ToString('HH:mm:ss'))] Sample #$sampleCount collecting..." -ForegroundColor Cyan -NoNewline
+    }
     
     try {
         # quick_status.ps1 실행 (-LogJsonl 옵션으로 JSONL에 기록)
-        $result = & $quickStatusScript -LogJsonl 2>&1 | Out-String
-        
-        # 성공 확인
-        if ($LASTEXITCODE -eq 0) {
-            Write-Host " [OK]" -ForegroundColor Green
+        if ($Silent) {
+            $result = & $quickStatusScript -LogJsonl 2>&1 | Out-Null
         }
         else {
-            Write-Host " [WARN] (exit code: $LASTEXITCODE)" -ForegroundColor Yellow
+            $result = & $quickStatusScript -LogJsonl 2>&1 | Out-String
+        }
+        
+        # 성공 확인
+        if (-not $Silent) {
+            if ($LASTEXITCODE -eq 0) {
+                Write-Host " [OK]" -ForegroundColor Green
+            }
+            else {
+                Write-Host " [WARN] (exit code: $LASTEXITCODE)" -ForegroundColor Yellow
+            }
         }
     }
     catch {
-        Write-Host " [ERROR] Error: $($_.Exception.Message)" -ForegroundColor Red
+        if (-not $Silent) {
+            Write-Host " [ERROR] Error: $($_.Exception.Message)" -ForegroundColor Red
+        }
     }
     
     # 다음 샘플까지 대기
@@ -131,14 +151,16 @@ while ($true) {
 # 완료 요약
 # ========================================
 
-Write-Host ""
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
-Write-Host "  Collection Complete" -ForegroundColor White
-Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "Summary:" -ForegroundColor Cyan
-Write-Host "   Total Samples:     $sampleCount" -ForegroundColor White
-Write-Host "   Output File:       $outputPath" -ForegroundColor White
+if (-not $Silent) {
+    Write-Host ""
+    Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host "  Collection Complete" -ForegroundColor White
+    Write-Host "═══════════════════════════════════════════════════════" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "Summary:" -ForegroundColor Cyan
+    Write-Host "   Total Samples:     $sampleCount" -ForegroundColor White
+    Write-Host "   Output File:       $outputPath" -ForegroundColor White
+}
 
 if (Test-Path $outputPath) {
     $lines = Get-Content -LiteralPath $outputPath | Measure-Object -Line

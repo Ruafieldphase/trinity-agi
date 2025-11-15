@@ -1,0 +1,350 @@
+﻿# Conflict Resolution Plan
+- Generated: 2025-11-14 14:46:36
+- Source: D:\nas_backup
+- Target: C:\workspace\agi
+
+## Summary
+- Prefer Source (newer at source): 0
+- Prefer Target (newer at target): 83
+- Manual Review (tie/unknown): 0
+
+## Prefer Source (newer at source)
+(none)
+
+## Prefer Target (newer at target)
+- scripts/agi_session_start.ps1
+  - Source: size=7350 time=2025-10-25T11:11:05.1916769Z
+  - Target: size=7358 time=2025-10-29T12:03:36.8690260Z
+  - Action: keep target (no changes)
+- scripts/analyze_cache_effectiveness.py
+  - Source: size=9414 time=2025-10-28T03:00:22.5114935Z
+  - Target: size=9512 time=2025-10-30T01:58:31.8897904Z
+  - Action: keep target (no changes)
+- scripts/auto_backup.ps1
+  - Source: size=6209 time=2025-10-28T00:24:20.8382534Z
+  - Target: size=6005 time=2025-10-29T12:03:36.8735308Z
+  - Action: keep target (no changes)
+- scripts/auto_cache_validation.ps1
+  - Source: size=5752 time=2025-10-28T03:19:57.6493908Z
+  - Target: size=6052 time=2025-10-30T01:40:43.4313199Z
+  - Action: keep target (no changes)
+- scripts/build_other_ai_index.ps1
+  - Source: size=3955 time=2025-10-09T01:53:58.1882551Z
+  - Target: size=3808 time=2025-10-29T12:03:36.8952881Z
+  - Action: keep target (no changes)
+- scripts/cache_monitor_timeline.py
+  - Source: size=9780 time=2025-10-28T03:13:15.5675033Z
+  - Target: size=9869 time=2025-10-30T01:58:31.8527876Z
+  - Action: keep target (no changes)
+- scripts/cache_validation_monitor_daemon.ps1
+  - Source: size=5581 time=2025-10-28T03:25:22.1971284Z
+  - Target: size=5875 time=2025-10-31T02:48:04.5762545Z
+  - Action: keep target (no changes)
+- scripts/chatops_intent.py
+  - Source: size=6627 time=2025-10-28T06:18:44.3506587Z
+  - Target: size=17131 time=2025-11-02T14:00:10.3825211Z
+  - Action: keep target (no changes)
+- scripts/chatops_router.ps1
+  - Source: size=14745 time=2025-10-28T06:18:44.2865109Z
+  - Target: size=48340 time=2025-11-13T06:21:36.8338957Z
+  - Action: keep target (no changes)
+- scripts/check_24h_reminder.ps1
+  - Source: size=4844 time=2025-10-28T00:24:20.8398174Z
+  - Target: size=4724 time=2025-10-29T12:03:36.9012875Z
+  - Action: keep target (no changes)
+- scripts/cleanup_bg.ps1
+  - Source: size=1542 time=2025-10-25T12:15:01.6417762Z
+  - Target: size=1545 time=2025-10-29T12:03:36.9048240Z
+  - Action: keep target (no changes)
+- scripts/cleanup_snapshot_archives.ps1
+  - Source: size=1324 time=2025-10-28T00:41:15.7656854Z
+  - Target: size=1327 time=2025-10-29T12:03:36.9068288Z
+  - Action: keep target (no changes)
+- scripts/compare_performance.ps1
+  - Source: size=3304 time=2025-10-25T13:52:02.9311931Z
+  - Target: size=5038 time=2025-11-02T09:28:49.5856555Z
+  - Action: keep target (no changes)
+- scripts/convert_emoji_to_ascii.py
+  - Source: size=3943 time=2025-10-28T00:25:53.4220657Z
+  - Target: size=3871 time=2025-10-29T12:03:36.9100708Z
+  - Action: keep target (no changes)
+- scripts/correlate_sena_with_ledger.py
+  - Source: size=12245 time=2025-10-28T02:41:08.6255677Z
+  - Target: size=12248 time=2025-10-29T12:03:36.9130725Z
+  - Action: keep target (no changes)
+- scripts/create_ping_task.ps1
+  - Source: size=795 time=2025-10-29T05:32:26.6472802Z
+  - Target: size=800 time=2025-10-30T04:34:03.4668807Z
+  - Action: keep target (no changes)
+- scripts/daily_monitoring_maintenance.ps1
+  - Source: size=2614 time=2025-10-28T00:47:33.9678924Z
+  - Target: size=2617 time=2025-10-29T12:03:36.9155824Z
+  - Action: keep target (no changes)
+- scripts/generate_monitoring_report.ps1
+  - Source: size=92006 time=2025-10-28T00:24:20.8428238Z
+  - Target: size=118266 time=2025-11-13T06:21:36.9885506Z
+  - Action: keep target (no changes)
+- scripts/generate_weekly_report.ps1
+  - Source: size=13990 time=2025-10-28T00:24:20.8438253Z
+  - Target: size=14410 time=2025-10-30T04:34:03.4678803Z
+  - Action: keep target (no changes)
+- scripts/list_ws_processes.ps1
+  - Source: size=711 time=2025-10-25T12:15:01.7772247Z
+  - Target: size=717 time=2025-10-29T12:03:36.9268425Z
+  - Action: keep target (no changes)
+- scripts/manual_submit_test.ps1
+  - Source: size=1689 time=2025-10-29T05:32:26.9042942Z
+  - Target: size=1698 time=2025-10-30T04:34:03.4698804Z
+  - Action: keep target (no changes)
+- scripts/monitoring_dashboard_template.html
+  - Source: size=107659 time=2025-10-26T13:57:56.7232376Z
+  - Target: size=55585 time=2025-11-06T05:15:32.4904945Z
+  - Action: keep target (no changes)
+- scripts/obs_quick_setup.ps1
+  - Source: size=5104 time=2025-10-28T00:24:20.8463280Z
+  - Target: size=5233 time=2025-10-30T04:34:03.4708809Z
+  - Action: keep target (no changes)
+- scripts/open_analysis_dashboard.py
+  - Source: size=1667 time=2025-10-28T03:13:15.2490044Z
+  - Target: size=1656 time=2025-10-29T12:03:36.9338430Z
+  - Action: keep target (no changes)
+- scripts/ping_and_wait.ps1
+  - Source: size=1269 time=2025-10-29T05:32:26.7999991Z
+  - Target: size=1278 time=2025-10-30T04:34:03.4708809Z
+  - Action: keep target (no changes)
+- scripts/prepare_lubit_review_packet.ps1
+  - Source: size=2961 time=2025-10-22T03:50:36.1285079Z
+  - Target: size=2953 time=2025-10-29T12:03:36.9366442Z
+  - Action: keep target (no changes)
+- scripts/protect_code_dirs.ps1
+  - Source: size=2717 time=2025-10-28T02:42:03.0177632Z
+  - Target: size=2726 time=2025-10-29T12:03:36.9399287Z
+  - Action: keep target (no changes)
+- scripts/quick_cache_verify.py
+  - Source: size=3999 time=2025-10-28T03:13:15.3014810Z
+  - Target: size=4090 time=2025-10-30T01:58:31.9456690Z
+  - Action: keep target (no changes)
+- scripts/quick_diagnose.ps1
+  - Source: size=2617 time=2025-10-24T09:55:16.2026263Z
+  - Target: size=2562 time=2025-10-29T12:03:36.9440143Z
+  - Action: keep target (no changes)
+- scripts/quick_session_start.ps1
+  - Source: size=8015 time=2025-10-27T13:35:44.7467336Z
+  - Target: size=7997 time=2025-10-29T12:03:36.9450192Z
+  - Action: keep target (no changes)
+- scripts/quick_status.ps1
+  - Source: size=31280 time=2025-10-29T10:21:26.6198575Z
+  - Target: size=50655 time=2025-11-13T06:21:36.8534963Z
+  - Action: keep target (no changes)
+- scripts/register_24h_stability_check.ps1
+  - Source: size=3675 time=2025-10-28T00:24:20.8483362Z
+  - Target: size=3661 time=2025-10-29T12:03:36.9513930Z
+  - Action: keep target (no changes)
+- scripts/register_cache_validation_tasks.ps1
+  - Source: size=8723 time=2025-10-28T03:19:57.8157221Z
+  - Target: size=8961 time=2025-10-30T01:29:42.5752430Z
+  - Action: keep target (no changes)
+- scripts/register_daily_maintenance_task.ps1
+  - Source: size=3438 time=2025-10-28T00:47:34.1453207Z
+  - Target: size=3472 time=2025-11-06T09:47:36.5381773Z
+  - Action: keep target (no changes)
+- scripts/register_monitoring_collector_task.ps1
+  - Source: size=3365 time=2025-10-28T00:31:08.5724465Z
+  - Target: size=3523 time=2025-11-06T09:12:10.6968704Z
+  - Action: keep target (no changes)
+- scripts/register_snapshot_rotation_task.ps1
+  - Source: size=9682 time=2025-10-29T08:42:03.4416980Z
+  - Target: size=9735 time=2025-11-06T09:47:36.5707671Z
+  - Action: keep target (no changes)
+- scripts/reindex_vector_store.ps1
+  - Source: size=1549 time=2025-10-27T01:42:27.5024777Z
+  - Target: size=1771 time=2025-11-03T01:00:04.0581843Z
+  - Action: keep target (no changes)
+- scripts/reload_vscode.ps1
+  - Source: size=1535 time=2025-10-29T05:34:54.6587338Z
+  - Target: size=1543 time=2025-10-30T04:34:03.4728810Z
+  - Action: keep target (no changes)
+- scripts/rotate_status_snapshots.ps1
+  - Source: size=4562 time=2025-10-29T08:02:05.7587865Z
+  - Target: size=4568 time=2025-10-29T12:03:36.9671619Z
+  - Action: keep target (no changes)
+- scripts/run_intent_shadow.ps1
+  - Source: size=3135 time=2025-10-16T01:34:17.2380849Z
+  - Target: size=3100 time=2025-10-29T12:03:36.9691652Z
+  - Action: keep target (no changes)
+- scripts/run_luon_pipeline.ps1
+  - Source: size=2800 time=2025-10-16T00:11:54.8745470Z
+  - Target: size=2803 time=2025-10-29T12:03:36.9728686Z
+  - Action: keep target (no changes)
+- scripts/run_parallel_lubit_and_gemini.ps1
+  - Source: size=2637 time=2025-10-22T03:53:09.8888576Z
+  - Target: size=2649 time=2025-10-29T12:03:36.9758687Z
+  - Action: keep target (no changes)
+- scripts/start_ai_dev_stream.ps1
+  - Source: size=4179 time=2025-10-27T03:30:37.3038297Z
+  - Target: size=4100 time=2025-10-29T12:03:36.9833758Z
+  - Action: keep target (no changes)
+- scripts/start_cache_validation_monitor.ps1
+  - Source: size=4400 time=2025-10-28T03:25:22.0064750Z
+  - Target: size=4882 time=2025-10-31T03:03:33.3140544Z
+  - Action: keep target (no changes)
+- scripts/start_flask_proxy_8090.ps1
+  - Source: size=2081 time=2025-10-28T00:24:20.8503339Z
+  - Target: size=1999 time=2025-10-29T12:03:36.9876995Z
+  - Action: keep target (no changes)
+- scripts/start_local_llm_proxy.ps1
+  - Source: size=1435 time=2025-10-24T09:55:16.0590649Z
+  - Target: size=1382 time=2025-10-29T12:03:36.9917087Z
+  - Action: keep target (no changes)
+- scripts/start_local_proxy.ps1
+  - Source: size=2845 time=2025-10-28T00:24:20.8513344Z
+  - Target: size=2853 time=2025-10-29T12:03:36.9947099Z
+  - Action: keep target (no changes)
+- scripts/start_luon_watch.ps1
+  - Source: size=2481 time=2025-10-15T23:31:21.7513001Z
+  - Target: size=2487 time=2025-10-29T12:03:36.9962149Z
+  - Action: keep target (no changes)
+- scripts/system_check_alias.ps1
+  - Source: size=1160 time=2025-10-25T14:11:49.0926967Z
+  - Target: size=1163 time=2025-10-29T12:03:36.9997274Z
+  - Action: keep target (no changes)
+- scripts/system_health_check.ps1
+  - Source: size=14072 time=2025-10-29T06:55:38.2405947Z
+  - Target: size=22293 time=2025-11-02T13:23:57.3317791Z
+  - Action: keep target (no changes)
+- scripts/test_lm_studio_performance.ps1
+  - Source: size=2911 time=2025-10-25T13:57:31.0213066Z
+  - Target: size=4673 time=2025-11-02T09:28:39.8917952Z
+  - Action: keep target (no changes)
+- scripts/test_proxy_recovery.ps1
+  - Source: size=18426 time=2025-10-28T00:24:20.8523328Z
+  - Target: size=17603 time=2025-10-29T12:03:37.0081669Z
+  - Action: keep target (no changes)
+- scripts/unified_dashboard.ps1
+  - Source: size=7313 time=2025-10-28T00:24:20.8533329Z
+  - Target: size=7217 time=2025-10-29T12:03:37.0111724Z
+  - Action: keep target (no changes)
+- scripts/update_todo_week3.ps1
+  - Source: size=5199 time=2025-10-28T00:24:20.8543349Z
+  - Target: size=4807 time=2025-10-29T12:03:37.0141738Z
+  - Action: keep target (no changes)
+- scripts/rune\bqi_adapter.py
+  - Source: size=7261 time=2025-10-28T04:30:46.3380256Z
+  - Target: size=7123 time=2025-10-31T03:12:53.8961367Z
+  - Action: keep target (no changes)
+- scripts/rune\__pycache__\bqi_adapter.cpython-313.pyc
+  - Source: size=10849 time=2025-10-28T05:34:52.0963941Z
+  - Target: size=10882 time=2025-10-31T03:13:31.9674406Z
+  - Action: keep target (no changes)
+- scripts/__pycache__\llm_client.cpython-313.pyc
+  - Source: size=9194 time=2025-10-27T06:19:29.9296357Z
+  - Target: size=9215 time=2025-10-31T03:20:38.9558763Z
+  - Action: keep target (no changes)
+- outputs/cache_analysis_latest.json
+  - Source: size=1456 time=2025-10-29T11:31:26.2663077Z
+  - Target: size=244 time=2025-11-11T10:10:44.6133863Z
+  - Action: keep target (no changes)
+- outputs/cache_analysis_latest.md
+  - Source: size=961 time=2025-10-29T11:31:26.2678216Z
+  - Target: size=141 time=2025-11-11T10:10:44.6133863Z
+  - Action: keep target (no changes)
+- outputs/cache_timeline_latest.json
+  - Source: size=1229 time=2025-10-28T03:08:50.7795042Z
+  - Target: size=34 time=2025-11-11T10:10:44.2676386Z
+  - Action: keep target (no changes)
+- outputs/cache_timeline_latest.md
+  - Source: size=873 time=2025-10-28T03:08:50.7805035Z
+  - Target: size=226 time=2025-11-11T10:10:44.2681750Z
+  - Action: keep target (no changes)
+- outputs/cache_validation_monitor.log
+  - Source: size=6203 time=2025-10-29T00:19:43.1771840Z
+  - Target: size=10750 time=2025-11-05T09:50:55.7846212Z
+  - Action: keep target (no changes)
+- outputs/cache_validation_schedule.json
+  - Source: size=142 time=2025-10-28T03:24:39.3677016Z
+  - Target: size=142 time=2025-11-05T00:55:55.5523283Z
+  - Action: keep target (no changes)
+- outputs/cache_validation_state.json
+  - Source: size=135 time=2025-10-29T00:49:43.2447639Z
+  - Target: size=135 time=2025-11-05T10:35:55.8839688Z
+  - Action: keep target (no changes)
+- outputs/citations_summary.json
+  - Source: size=1388 time=2025-10-27T03:18:29.1956841Z
+  - Target: size=1427 time=2025-11-02T14:35:06.9946261Z
+  - Action: keep target (no changes)
+- outputs/health_gate_state.json
+  - Source: size=260 time=2025-10-29T15:15:02.6047774Z
+  - Target: size=149 time=2025-11-14T05:24:04.2337929Z
+  - Action: keep target (no changes)
+- outputs/last_alert.txt
+  - Source: size=21 time=2025-10-28T02:22:42.1627505Z
+  - Target: size=21 time=2025-11-07T03:22:32.4462641Z
+  - Action: keep target (no changes)
+- outputs/local_latency_probe_latest.json
+  - Source: size=2231 time=2025-10-29T10:17:14.3552147Z
+  - Target: size=2228 time=2025-10-30T22:53:58.6372299Z
+  - Action: keep target (no changes)
+- outputs/lubit_analysis.json
+  - Source: size=736 time=2025-10-22T07:40:58.9305628Z
+  - Target: size=1214 time=2025-11-04T20:49:01.2897618Z
+  - Action: keep target (no changes)
+- outputs/monitoring_dashboard_latest.html
+  - Source: size=128714 time=2025-10-30T21:51:06.3145341Z
+  - Target: size=55588 time=2025-11-14T05:24:09.8313256Z
+  - Action: keep target (no changes)
+- outputs/monitoring_events_latest.csv
+  - Source: size=11744 time=2025-10-30T21:51:06.2376910Z
+  - Target: size=5547 time=2025-11-14T05:24:09.8259155Z
+  - Action: keep target (no changes)
+- outputs/monitoring_metrics_latest.json
+  - Source: size=21071 time=2025-10-30T21:51:06.2171624Z
+  - Target: size=18206 time=2025-11-14T05:24:09.8145237Z
+  - Action: keep target (no changes)
+- outputs/monitoring_report_latest.md
+  - Source: size=5116 time=2025-10-30T21:51:05.9203629Z
+  - Target: size=6566 time=2025-11-14T05:24:09.6937645Z
+  - Action: keep target (no changes)
+- outputs/monitoring_timeseries_latest.csv
+  - Source: size=2280 time=2025-10-30T21:51:06.2280812Z
+  - Target: size=10705 time=2025-11-14T05:24:09.8214080Z
+  - Action: keep target (no changes)
+- outputs/quick_status_20251029_163128.json
+  - Source: size=693 time=2025-10-29T07:31:29.6921168Z
+  - Target: size=690 time=2025-10-30T22:53:58.7642751Z
+  - Action: keep target (no changes)
+- outputs/quick_status_latest.json
+  - Source: size=760 time=2025-10-29T10:11:12.4669284Z
+  - Target: size=838 time=2025-11-14T04:16:36.8099100Z
+  - Action: keep target (no changes)
+- outputs/replan_analysis_latest.json
+  - Source: size=808 time=2025-10-27T06:47:22.3980468Z
+  - Target: size=808 time=2025-11-02T13:01:07.6819057Z
+  - Action: keep target (no changes)
+- outputs/status_snapshots.jsonl
+  - Source: size=411841 time=2025-10-30T03:25:05.4469092Z
+  - Target: size=3042566 time=2025-11-14T05:39:10.1830953Z
+  - Action: keep target (no changes)
+- session_memory/docker-compose.yml
+  - Source: size=4765 time=2025-10-19T03:56:24.9307380Z
+  - Target: size=5839 time=2025-11-03T00:03:42.7846883Z
+  - Action: keep target (no changes)
+- session_memory/__pycache__\database_models.cpython-313.pyc
+  - Source: size=28646 time=2025-10-19T03:44:24.9581310Z
+  - Target: size=28916 time=2025-10-31T03:20:39.0023450Z
+  - Action: keep target (no changes)
+- session_memory/__pycache__\security_jwt_auth.cpython-313.pyc
+  - Source: size=24591 time=2025-10-19T03:53:47.6268574Z
+  - Target: size=24698 time=2025-10-31T03:20:40.1165113Z
+  - Action: keep target (no changes)
+- docs/ChatOps_QuickStart.md
+  - Source: size=5452 time=2025-10-27T06:41:48.9649213Z
+  - Target: size=8956 time=2025-10-31T03:06:44.8583347Z
+  - Action: keep target (no changes)
+- docs/phase_injection_paper\__pycache__\system_c_v8_allinone.cpython-313.pyc
+  - Source: size=55714 time=2025-10-14T03:36:53.6001444Z
+  - Target: size=58476 time=2025-10-31T03:20:37.1661816Z
+  - Action: keep target (no changes)
+
+## Manual Review (tie/unknown)
+(none)
+

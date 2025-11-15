@@ -6,6 +6,11 @@ Sian (Gemini CLI) - 메타층 오케스트레이터
 import os
 import sys
 import argparse
+from pathlib import Path
+
+# Import emoji filter
+sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+from utils.emoji_filter import remove_emojis
 
 try:
     import google.generativeai as genai
@@ -65,7 +70,7 @@ def main():
         model = genai.GenerativeModel(model_name)
         response = model.generate_content(prompt)
         
-        print(response.text)
+        print(remove_emojis(response.text))
         
         if not args.quiet:
             print("-" * 60)

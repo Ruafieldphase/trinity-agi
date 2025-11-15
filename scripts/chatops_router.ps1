@@ -830,7 +830,7 @@ function Resume-SavedContext {
         
         # 3. Resonance Ledger 최근 이벤트 확인
         Info "[3/4] Resonance Ledger 최근 활동 확인 중..."
-        $ledgerPath = "D:\nas_backup\fdo_agi_repo\memory\resonance_ledger.jsonl"
+        $ledgerPath = "C:\\workspace\\agi\fdo_agi_repo\memory\resonance_ledger.jsonl"
         if (Test-Path $ledgerPath) {
             $recentEvents = Get-Content $ledgerPath -Tail 5 -Encoding UTF8 |
             ForEach-Object {

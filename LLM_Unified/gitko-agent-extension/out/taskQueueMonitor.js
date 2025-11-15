@@ -39,6 +39,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TaskQueueMonitor = void 0;
 const vscode = __importStar(require("vscode"));
 const axios_1 = __importDefault(require("axios"));
+const logger_1 = require("./logger");
+const logger = (0, logger_1.createLogger)('TaskQueueMonitor');
+// Axios retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
+/**
+ * Axios request with retry logic
+ */
+async function axiosWithRetry(config, retries = MAX_RETRIES) {
+    try {
+        const response = await (0, axios_1.default)(config);
+        return response.data;
+    }
+    catch (error) {
+        const axiosError = error;
+        if (retries > 0 && shouldRetry(axiosError)) {
+            logger.warn(`Request failed, retrying... (${MAX_RETRIES - retries + 1}/${MAX_RETRIES})`);
+            await delay(RETRY_DELAY);
+            return axiosWithRetry(config, retries - 1);
+        }
+        logger.error('Request failed after all retries', axiosError);
+        throw error;
+    }
+}
+function shouldRetry(error) {
+    // Retry on network errors or 5xx server errors
+    return (!error.response ||
+        (error.response.status >= 500 && error.response.status < 600) ||
+        error.code === 'ECONNREFUSED' ||
+        error.code === 'ETIMEDOUT');
+}
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 /**
  * Task Queue Monitor Panel
  * Port 8091의 Task Queue Server를 실시간 모니터링
@@ -99,29 +133,48 @@ class TaskQueueMonitor {
         }
     }
     async _fetchHealth() {
-        const response = await axios_1.default.get(`${this._serverUrl}/api/health`);
-        return response.data;
+        logger.debug('Fetching health status');
+        return axiosWithRetry({
+            method: 'GET',
+            url: `${this._serverUrl}/api/health`
+        });
     }
     async _fetchTasks() {
-        const response = await axios_1.default.get(`${this._serverUrl}/api/tasks`);
-        return response.data;
+        logger.debug('Fetching tasks');
+        return axiosWithRetry({
+            method: 'GET',
+            url: `${this._serverUrl}/api/tasks`
+        });
     }
     async _fetchInflight() {
-        const response = await axios_1.default.get(`${this._serverUrl}/api/inflight`);
-        return response.data;
+        logger.debug('Fetching inflight tasks');
+        return axiosWithRetry({
+            method: 'GET',
+            url: `${this._serverUrl}/api/inflight`
+        });
     }
     async _fetchResults() {
-        const response = await axios_1.default.get(`${this._serverUrl}/api/results`);
-        return response.data;
+        logger.debug('Fetching results');
+        return axiosWithRetry({
+            method: 'GET',
+            url: `${this._serverUrl}/api/results`
+        });
     }
     async _clearCompleted() {
         try {
-            await axios_1.default.post(`${this._serverUrl}/api/clear-completed`);
+            logger.info('Clearing completed tasks');
+            await axiosWithRetry({
+                method: 'POST',
+                url: `${this._serverUrl}/api/clear-completed`
+            });
             vscode.window.showInformationMessage('✅ Completed tasks cleared');
+            logger.info('Completed tasks cleared successfully');
             this._update();
         }
         catch (error) {
-            vscode.window.showErrorMessage(`❌ Failed to clear tasks: ${error}`);
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            logger.error('Failed to clear completed tasks', error);
+            vscode.window.showErrorMessage(`❌ Failed to clear tasks: ${errorMsg}`);
         }
     }
     _getHtmlContent(health, tasks, inflight, results) {

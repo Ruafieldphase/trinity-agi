@@ -1,7 +1,7 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
-    D:\nas_backup Complete Structure and Content Analysis
+    C:\\workspace\\agi Complete Structure and Content Analysis
 .DESCRIPTION
     Performs comprehensive analysis including directory structure, file statistics,
     document classification, and code analysis to generate a complete knowledge map.
@@ -9,7 +9,7 @@
 
 [CmdletBinding()]
 param(
-    [string]$SourcePath = "D:\nas_backup",
+    [string]$SourcePath = "C:\\workspace\\agi",
     [string]$OutputPath = "C:\workspace\agi\outputs",
     [switch]$SkipLargeFiles,
     [int]$MaxDepth = 10
@@ -24,7 +24,7 @@ if (-not (Test-Path $analysisDir)) {
     New-Item -ItemType Directory -Path $analysisDir -Force | Out-Null
 }
 
-Write-Host "[INFO] Starting comprehensive analysis of D:\nas_backup..." -ForegroundColor Cyan
+Write-Host "[INFO] Starting comprehensive analysis of C:\\workspace\\agi..." -ForegroundColor Cyan
 Write-Host "       Output path: $analysisDir" -ForegroundColor Gray
 
 # =============================================================================

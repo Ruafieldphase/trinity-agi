@@ -48,7 +48,7 @@ def test_consolidate_dedup(tmp_path: Path):
 
     # 내부 dedup 함수가 기대대로 동작하는지 사전 검증
     deduped = hp._deduplicate_items(
-        [item1, item2, item3], threshold=hp.consolidation_config["dedup_threshold"]
+        [a, b, c], threshold=hp.consolidation_config["dedup_threshold"]
     )
     assert len(deduped) == 2
 

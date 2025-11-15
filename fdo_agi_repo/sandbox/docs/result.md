@@ -1,22 +1,27 @@
-```markdown
-## 작업 계획 (Force Replan) - 최종 결과 문서
+# 결과 요약: Ledger policy+closed-loop test
 
-**결과 요약:** 현재 시스템 정보 부족으로 인해 재계획 목표 설정 및 실질적인 재계획 진행이 불가하며, 가정 기반의 시나리오 제시 및 추가 정보 획득이 필요하다. "[ANTITHESIS]"에 따라, 근거 부족을 해소하고, 구체적인 목표를 설정하며, 산출물 경로를 명시해야 한다.
+## 목표
+- quick run for ledger events
 
-**목표:** 시스템 재계획의 필요성을 명확히 정의하고, 구체적인 목표를 설정하여 측정 가능한 지표를 포함한다. 시스템 정보 부족을 극복하기 위해 가정 기반 시나리오를 제시하고, 각 시나리오에 따른 재계획 방안을 도출한다. 산출물의 저장 위치와 형식을 명확히 지정한다.
+## 제안 (Thesis)
+[THESIS] 목표: quick run for ledger events
+- 접근: 3단계 실행 계획 수립 (요구 분석 → 근거 확보 → 산출물 작성)
+- 근거: 로컬 참조 3개 활용 (coord_test-ledger-1763108143-2, coord_test-ledger-1763108143, outputs\autopoietic_loop_report_latest.md#0)
+- 출력: sandbox/docs/result.md에 초안 저장 및 증거 보강 계획 포함
 
-**제안 (수정됨):** 현재 시스템 정보가 부족하므로, 몇 가지 시나리오를 가정하여 재계획 방안을 모색한다. 예를 들어, "만약 시스템이 A 종류이고, 최근 오류가 B 유형으로 발생했다면, 재계획은 C 방향으로 진행될 수 있다"와 같은 시나리오를 제시한다.  각 시나리오별로 필요한 조치 사항, 예상 결과, 검증 방법을 구체적으로 명시한다. 재계획 결과는 `sandbox/docs/replan_result.md`에 저장하고, 각 시나리오별 분석 결과는 JSON 형식으로 `sandbox/data/replan_scenarios.json`에 저장한다. [참고: "force replan (no citations)" 제약 조건 하에서, 가정 기반 시나리오를 통해 정보 부족을 극복하고자 함]
+## 검증 (Antithesis)
+[ANTITHESIS] 검증: 기본 OK
+- 권고: 추가 검증 항목 없음
 
-**검증:** 각 시나리오별 재계획 방안을 실제로 적용했을 때의 결과를 예측하고, 그 결과를 검증할 방법을 제시한다. 시스템 성능 지표, 사용자 만족도 조사, 오류 발생 빈도 등을 측정하여 재계획의 효과를 평가한다.  성능 측정 지표 예시: 응답 시간 감소 (초), 오류 발생 빈도 감소 (건/시간).  검증 결과는 `sandbox/docs/replan_validation.md`에 기록하고, 각 지표별 변화량을 시각화하여 `sandbox/images/replan_performance.png`에 저장한다. [참고: 측정 가능한 지표를 통해 재계획 효과를 객관적으로 평가]
+## 참고 (Local)
+- coordinate: coord_test-ledger-1763108143-2
+- coordinate: coord_test-ledger-1763108143
+- codebase: outputs\autopoietic_loop_report_latest.md#0
+- coordinate: coord_test-ledger-1763108143-2
+- coordinate: coord_test-ledger-1763108143
+- codebase: outputs\autopoietic_loop_report_latest.md#0
 
-**참고 (Local):**
-*   이전 작업 내역 (`sandbox/docs/result.md`)을 참조하여 문제 발생 유형을 파악한다 (단, 내용 확인 불가).
-*   시스템 종류, 사용 기술 스택 정보는 현재 알 수 없으므로, 추후 확인 후 시나리오에 반영한다.
-*   [가정] 시스템은 자동화 파이프라인으로 가정하며, 성능 저하 또는 오류 발생으로 인해 재계획이 필요하다고 가정한다.
-
-**다음 단계:**
-1.  시스템 종류, 사용 기술 스택, 이전 문제 발생 유형 등 시스템 관련 정보 획득 (우선순위 높음).
-2.  획득한 정보를 기반으로 시나리오 구체화 및 재계획 방안 상세화.
-3.  각 시나리오별 재계획 방안의 실행 가능성 및 예상 효과 분석.
-4.  실제 시스템에 재계획 방안 적용 및 검증 (가상 환경에서 먼저 수행).
-```
+## 다음 단계
+1. 참고 소스에서 핵심 근거 2개 발췌해 본문 보강
+2. 산출물 구조(서론-본론-결론)로 확장
+3. 품질 점검(간결성/근거성/완결성) 후 제출

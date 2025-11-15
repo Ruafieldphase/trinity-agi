@@ -11,21 +11,22 @@
       "action_name": "test_click",
       "action_type": "CLICK",
       "success": true,
-      "screenshot_before": "outputs\\phase3_test\\verification\\screenshots\\test_action_before_20251104_200433.png",
-      "screenshot_after": "outputs\\phase3_test\\verification\\screenshots\\test_action_after_20251104_200434.png",
+      "screenshot_before": "outputs\\phase3_test\\verification\\screenshots\\test_action_before_20251114_172735.png",
+      "screenshot_after": "outputs\\phase3_test\\verification\\screenshots\\test_action_after_20251114_172736.png",
       "comparison": {
         "method": "SSIM",
-        "similarity": 0.9998129918441835,
-        "difference": 0.00018700815581651486,
+        "similarity": 0.9861814366840933,
+        "difference": 0.013818563315906696,
         "is_similar": true,
         "threshold": 0.85
       },
       "execution_time": 0.5,
-      "timestamp": 1762254275.1736891,
+      "timestamp": 1763108857.7194078,
       "error_message": null,
       "metadata": {
         "expect_change": false,
-        "dry_run": false
+        "dry_run": false,
+        "tolerance_applied": false
       }
     }
   ],

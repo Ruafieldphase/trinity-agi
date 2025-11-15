@@ -1,9 +1,10 @@
 {
-  "generated_at": "2025-11-05T11:09:01.599504Z",
+  "generated_at": "2025-11-14T08:28:38.842458Z",
   "window_hours": 24,
   "input_sources": {
     "resonance_metrics": "outputs/resonance_simulation_latest.json",
-    "trinity_report": "outputs/lumen_enhanced_synthesis_latest.md"
+    "trinity_report": "outputs/lumen_enhanced_synthesis_latest.md",
+    "self_care_summary": "outputs/self_care_metrics_summary.json"
   },
   "resonance_states": [
     "stable_dynamics"
@@ -13,24 +14,225 @@
     "elo_status": "unknown",
     "lumen_recommendations": []
   },
+  "self_care": {
+    "states": [
+      "selfcare_high_stagnation",
+      "selfcare_stagnation_spikes",
+      "selfcare_low_circulation",
+      "selfcare_queue_pressure"
+    ],
+    "summary": {
+      "count": 10,
+      "hours": 24,
+      "stagnation_avg": 0.4,
+      "stagnation_std": 0.5163977794943223,
+      "stagnation_p95": 1.0,
+      "stagnation_over_03": 4,
+      "stagnation_over_05": 4,
+      "queue_ratio_avg": 1.1,
+      "memory_growth_avg": 0.066,
+      "latency_p99_avg": 1100.0,
+      "throughput_ratio_avg": 0.8,
+      "circulation_ok_rate": 0.6,
+      "generated_at": "2025-11-14T17:28:00.789138"
+    }
+  },
   "goals": [
+    {
+      "title": "Stabilize Self-Care Loop",
+      "description": "Reduce stagnation levels by tuning Self-Care thresholds and routines (current stagnation_avg=0.40)",
+      "base_priority": 9,
+      "type": "self_care",
+      "source": "resonance",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/update_self_care_metrics.ps1",
+        "args": [
+          "-Hours",
+          "24",
+          "-Json",
+          "-OpenSummary"
+        ],
+        "timeout": 420
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 10,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_std": 0.5163977794943223,
+          "stagnation_p95": 1.0,
+          "stagnation_over_03": 4,
+          "stagnation_over_05": 4,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "generated_at": "2025-11-14T17:28:00.789138"
+        }
+      },
+      "id": 1,
+      "urgency_boost": 0.0,
+      "impact_boost": 8.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.27,
+      "memory_boost": 0.0,
+      "final_priority": 17.27,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    },
+    {
+      "title": "Investigate Self-Care Spikes",
+      "description": "Analyze recent Self-Care spikes and implement mitigation actions (current stagnation_avg=0.40)",
+      "base_priority": 8,
+      "type": "self_care",
+      "source": "resonance",
+      "executable": {
+        "type": "python",
+        "script": "${workspaceFolder}/scripts/render_self_care_report.py",
+        "timeout": 180
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 10,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_std": 0.5163977794943223,
+          "stagnation_p95": 1.0,
+          "stagnation_over_03": 4,
+          "stagnation_over_05": 4,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "generated_at": "2025-11-14T17:28:00.789138"
+        }
+      },
+      "id": 2,
+      "urgency_boost": 0.0,
+      "impact_boost": 3.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 11.0,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    },
+    {
+      "title": "Restore Circulation Health",
+      "description": "Increase circulation_ok_rate by addressing bottlenecks in care actions (current stagnation_avg=0.40) (circulation_ok_rate=60.0%)",
+      "base_priority": 8,
+      "type": "self_care",
+      "source": "resonance",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/update_self_care_metrics.ps1",
+        "args": [
+          "-Hours",
+          "24"
+        ],
+        "timeout": 420
+      },
+      "metadata": {
+        "severity": "critical",
+        "self_care": {
+          "count": 10,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_std": 0.5163977794943223,
+          "stagnation_p95": 1.0,
+          "stagnation_over_03": 4,
+          "stagnation_over_05": 4,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "generated_at": "2025-11-14T17:28:00.789138"
+        }
+      },
+      "id": 3,
+      "urgency_boost": 0.0,
+      "impact_boost": 3.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 11.0,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    },
     {
       "title": "Incremental Improvements",
       "description": "System is stable, focus on gradual enhancements",
       "base_priority": 5,
+      "type": "maintenance",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/system_health_check.ps1",
+        "timeout": 180
+      },
       "source": "resonance",
-      "id": 1,
-      "urgency_boost": 0,
-      "impact_boost": 2,
-      "final_priority": 7,
-      "estimated_effort": "2 days",
+      "metadata": {
+        "severity": "medium"
+      },
+      "id": 4,
+      "urgency_boost": 0.0,
+      "impact_boost": 5.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 10.0,
+      "estimated_effort": "3 days",
+      "dependencies": []
+    },
+    {
+      "title": "Reduce Self-Care Queue Pressure",
+      "description": "Lower queue usage ratio by clearing backlog and optimizing cadence (current stagnation_avg=0.40)",
+      "base_priority": 7,
+      "type": "self_care",
+      "source": "resonance",
+      "executable": {
+        "type": "script",
+        "script": "${workspaceFolder}/scripts/quick_status.ps1",
+        "timeout": 180
+      },
+      "metadata": {
+        "severity": "high",
+        "self_care": {
+          "count": 10,
+          "hours": 24,
+          "stagnation_avg": 0.4,
+          "stagnation_std": 0.5163977794943223,
+          "stagnation_p95": 1.0,
+          "stagnation_over_03": 4,
+          "stagnation_over_05": 4,
+          "queue_ratio_avg": 1.1,
+          "memory_growth_avg": 0.066,
+          "latency_p99_avg": 1100.0,
+          "throughput_ratio_avg": 0.8,
+          "circulation_ok_rate": 0.6,
+          "generated_at": "2025-11-14T17:28:00.789138"
+        }
+      },
+      "id": 5,
+      "urgency_boost": 0.0,
+      "impact_boost": 3.0,
+      "feedback_boost": 0.0,
+      "habit_boost": 0.0,
+      "memory_boost": 0.0,
+      "final_priority": 10.0,
+      "estimated_effort": "3 days",
       "dependencies": []
     }
   ],
   "summary": {
-    "total_goals": 1,
-    "high_priority": 0,
-    "medium_priority": 1,
+    "total_goals": 5,
+    "high_priority": 5,
+    "medium_priority": 0,
     "low_priority": 0
   }
 }

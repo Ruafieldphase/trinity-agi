@@ -1,11 +1,11 @@
 {
   "version": "1.2.0",
-  "created_at": "2025-11-07T16:40:13.616137",
+  "created_at": "2025-11-14T18:27:59.029259",
   "stats": {
-    "total_tasks": 35,
-    "total_decisions": 29,
-    "approve_rate": 1.0,
-    "revise_rate": 0.0,
+    "total_tasks": 50,
+    "total_decisions": 37,
+    "approve_rate": 0.972972972972973,
+    "revise_rate": 0.02702702702702703,
     "reject_rate": 0.0
   },
   "decision_patterns": {
@@ -161,7 +161,23 @@
         "confidence": null
       }
     ],
-    "revise": [],
+    "revise": [
+      {
+        "bqi": {
+          "timestamp": "2025-11-13T23:15:24.814664+00:00",
+          "rhythm_phase": "planning",
+          "emotion": {
+            "keywords": [
+              "neutral"
+            ]
+          },
+          "priority": 1,
+          "raw_prompt": "force replan (no citations)"
+        },
+        "quality": 0.4,
+        "confidence": null
+      }
+    ],
     "reject": []
   },
   "bqi_probabilities": {
@@ -169,7 +185,13 @@
       "approve_prob": 1.0,
       "revise_prob": 0.0,
       "reject_prob": 0.0,
-      "sample_count": 29
+      "sample_count": 36
+    },
+    "p1_e:neutral_r:planning": {
+      "approve_prob": 0.0,
+      "revise_prob": 1.0,
+      "reject_prob": 0.0,
+      "sample_count": 1
     }
   },
   "conversation_insights": {
@@ -181,42 +203,42 @@
         "samples": 2
       }
     },
-    "total_analyzed": 29,
-    "goals_loaded": 774
+    "total_analyzed": 37,
+    "goals_loaded": 783
   },
   "information_theory": {
     "decision_entropy": {
-      "entropy": 0.0,
+      "entropy": 0.1793,
       "max_entropy": 1.585,
-      "normalized": 0.0,
+      "normalized": 0.1131,
       "interpretation": "low"
     },
     "bqi_predictive_power": {
-      "mutual_info": 0.0,
-      "decision_entropy": 0.0,
+      "mutual_info": 0.1793,
+      "decision_entropy": 0.1793,
       "conditional_entropy": 0.0,
-      "reduction_percent": 0.0,
-      "interpretation": "none"
+      "reduction_percent": 100.0,
+      "interpretation": "strong"
     },
     "quality_predictive_power": {
-      "mutual_info": 0.0,
-      "decision_entropy": 0.0,
+      "mutual_info": 0.1793,
+      "decision_entropy": 0.1793,
       "conditional_entropy": 0.0,
-      "reduction_percent": 0.0,
-      "interpretation": "none"
+      "reduction_percent": 100.0,
+      "interpretation": "strong"
     },
     "ensemble_predictive_power": {
-      "mutual_info": 0.0,
-      "decision_entropy": 0.0,
-      "conditional_entropy": 0.0,
-      "reduction_percent": 0.0,
-      "interpretation": "none"
+      "mutual_info": 0.0022,
+      "decision_entropy": 0.1793,
+      "conditional_entropy": 0.1771,
+      "reduction_percent": 1.24,
+      "interpretation": "weak"
     },
     "summary": {
       "decision_consistency": "low",
-      "bqi_usefulness": "none",
-      "quality_usefulness": "none",
-      "ensemble_usefulness": "none"
+      "bqi_usefulness": "strong",
+      "quality_usefulness": "strong",
+      "ensemble_usefulness": "weak"
     }
   },
   "tech_preferences": {
@@ -224,7 +246,7 @@
     "tools_used": {}
   },
   "work_style": {
-    "quality_threshold": 0.8500000000000002,
+    "quality_threshold": 0.8500000000000001,
     "prefers_documentation": false,
     "prefers_tdd": false,
     "communication_style": "balanced"
@@ -234,7 +256,7 @@
       "condition": "BQI matches 'p1_e:neutral_r:exploration'",
       "action": "approve",
       "confidence": 1.0,
-      "reasoning": "과거 29건 중 100% 승인"
+      "reasoning": "과거 36건 중 100% 승인"
     },
     {
       "condition": "quality < 0.5",

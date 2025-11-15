@@ -24,7 +24,7 @@ def load_goal_tracker() -> Dict[str, Any]:
     if not GOAL_TRACKER.exists():
         return {"goals": []}
     
-    with open(GOAL_TRACKER, 'r', encoding='utf-8') as f:
+    with open(GOAL_TRACKER, 'r', encoding='utf-8-sig') as f:
         return json.load(f)
 
 
@@ -76,7 +76,8 @@ def analyze_metrics(tracker: Dict[str, Any]) -> Dict[str, Any]:
             "success_rate": 0.0,
             "avg_execution_time": 0.0,
             "last_execution": None,
-            "execution_history": []
+            "execution_history": [],
+            "source_breakdown": {}
         }
     
     total_goals = len(goals)
@@ -88,8 +89,18 @@ def analyze_metrics(tracker: Dict[str, Any]) -> Dict[str, Any]:
     pending_count = 0
     execution_times = []
     execution_history = []
+    source_breakdown = {}
     
     for goal in goals:
+        # source 분류
+        tags = goal.get("tags", [])
+        source = "manual"
+        for tag in tags:
+            if tag.startswith("source:"):
+                source = tag.split(":", 1)[1]
+                break
+        source_breakdown[source] = source_breakdown.get(source, 0) + 1
+        
         execs = goal.get("executions", [])
         if not execs:
             pending_count += 1
@@ -132,7 +143,8 @@ def analyze_metrics(tracker: Dict[str, Any]) -> Dict[str, Any]:
         "success_rate": round(success_rate, 1),
         "avg_execution_time": round(avg_time, 2),
         "last_execution": last_execution,
-        "execution_history": execution_history[:20]  # 최근 20개만
+        "execution_history": execution_history[:20],  # 최근 20개만
+        "source_breakdown": source_breakdown
     }
 
 
@@ -182,6 +194,29 @@ def generate_default_html(metrics: Dict[str, Any], current_goals: List[Dict[str,
     """기본 HTML (템플릿 없을 때)"""
     
     loop_badge = "🟢 Running" if loop_status["status"] == "running" else "🔴 Stopped"
+    
+    # Source 분류 카드 생성
+    source_counts = {}
+    for g in current_goals:
+        source = g.get("source", "unknown")
+        source_counts[source] = source_counts.get(source, 0) + 1
+    
+    source_cards = ""
+    source_icons = {
+        "music_daemon": "🎵",
+        "manual": "✋",
+        "auto": "🤖",
+        "rhythm": "🌊",
+        "unknown": "❓"
+    }
+    for source, count in source_counts.items():
+        icon = source_icons.get(source, "📦")
+        source_cards += f"""
+        <div class="metric-card">
+            <div class="metric-value">{count}</div>
+            <div class="metric-label">{icon} {source}</div>
+        </div>
+        """
     
     history_rows = ""
     for h in metrics["execution_history"][:10]:
@@ -256,6 +291,11 @@ def generate_default_html(metrics: Dict[str, Any], current_goals: List[Dict[str,
                 <div class="metric-value">{loop_badge}</div>
                 <div class="metric-label">백그라운드 루프</div>
             </div>
+        </div>
+        
+        <h2>🏷️ Source 분류</h2>
+        <div class="metrics">
+            {source_cards}
         </div>
         
         <h2>📊 최근 실행 이력 (최근 10개)</h2>

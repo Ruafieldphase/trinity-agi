@@ -1,5 +1,12 @@
 import * as vscode from 'vscode';
-import axios from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { createLogger } from './logger';
+
+const logger = createLogger('TaskQueueMonitor');
+
+// Axios retry configuration
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
 
 interface TaskQueueStatus {
     pending: number;
@@ -13,6 +20,41 @@ interface TaskQueueHealth {
     queue_size: number;
     success_rate: number;
     avg_duration_ms: number;
+}
+
+/**
+ * Axios request with retry logic
+ */
+async function axiosWithRetry<T>(config: AxiosRequestConfig, retries = MAX_RETRIES): Promise<T> {
+    try {
+        const response = await axios(config);
+        return response.data as T;
+    } catch (error) {
+        const axiosError = error as AxiosError;
+        
+        if (retries > 0 && shouldRetry(axiosError)) {
+            logger.warn(`Request failed, retrying... (${MAX_RETRIES - retries + 1}/${MAX_RETRIES})`);
+            await delay(RETRY_DELAY);
+            return axiosWithRetry<T>(config, retries - 1);
+        }
+        
+        logger.error('Request failed after all retries', axiosError);
+        throw error;
+    }
+}
+
+function shouldRetry(error: AxiosError): boolean {
+    // Retry on network errors or 5xx server errors
+    return (
+        !error.response || 
+        (error.response.status >= 500 && error.response.status < 600) ||
+        error.code === 'ECONNREFUSED' ||
+        error.code === 'ETIMEDOUT'
+    );
+}
+
+function delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -100,32 +142,51 @@ export class TaskQueueMonitor {
     }
 
     private async _fetchHealth(): Promise<TaskQueueHealth> {
-        const response = await axios.get(`${this._serverUrl}/api/health`);
-        return response.data;
+        logger.debug('Fetching health status');
+        return axiosWithRetry<TaskQueueHealth>({
+            method: 'GET',
+            url: `${this._serverUrl}/api/health`
+        });
     }
 
     private async _fetchTasks(): Promise<any[]> {
-        const response = await axios.get(`${this._serverUrl}/api/tasks`);
-        return response.data;
+        logger.debug('Fetching tasks');
+        return axiosWithRetry<any[]>({
+            method: 'GET',
+            url: `${this._serverUrl}/api/tasks`
+        });
     }
 
     private async _fetchInflight(): Promise<any> {
-        const response = await axios.get(`${this._serverUrl}/api/inflight`);
-        return response.data;
+        logger.debug('Fetching inflight tasks');
+        return axiosWithRetry<any>({
+            method: 'GET',
+            url: `${this._serverUrl}/api/inflight`
+        });
     }
 
     private async _fetchResults(): Promise<any[]> {
-        const response = await axios.get(`${this._serverUrl}/api/results`);
-        return response.data;
+        logger.debug('Fetching results');
+        return axiosWithRetry<any[]>({
+            method: 'GET',
+            url: `${this._serverUrl}/api/results`
+        });
     }
 
     private async _clearCompleted(): Promise<void> {
         try {
-            await axios.post(`${this._serverUrl}/api/clear-completed`);
+            logger.info('Clearing completed tasks');
+            await axiosWithRetry<void>({
+                method: 'POST',
+                url: `${this._serverUrl}/api/clear-completed`
+            });
             vscode.window.showInformationMessage('✅ Completed tasks cleared');
+            logger.info('Completed tasks cleared successfully');
             this._update();
         } catch (error) {
-            vscode.window.showErrorMessage(`❌ Failed to clear tasks: ${error}`);
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            logger.error('Failed to clear completed tasks', error as Error);
+            vscode.window.showErrorMessage(`❌ Failed to clear tasks: ${errorMsg}`);
         }
     }
 

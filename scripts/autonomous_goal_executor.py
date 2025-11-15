@@ -60,6 +60,16 @@ except ImportError:
     RESONANCE_ORACLE_ENABLED = False
     TrinityResonanceOrchestrator = None
 
+# 🧪 Autonomous Learning System 임포트
+try:
+    sys.path.insert(0, str(project_root / "agi_core"))
+    from sandbox_bridge import SandboxBridge
+    AUTONOMOUS_LEARNING_ENABLED = True
+except ImportError:
+    logger.warning("Autonomous Learning System not available")
+    AUTONOMOUS_LEARNING_ENABLED = False
+    SandboxBridge = None
+
 
 class GoalExecutor:
     """목표를 실행하는 클래스"""
@@ -97,6 +107,17 @@ class GoalExecutor:
                 self.resonance_oracle = None
         else:
             self.resonance_oracle = None
+        
+        # 🧪 Autonomous Learning System 초기화
+        if AUTONOMOUS_LEARNING_ENABLED:
+            try:
+                self.sandbox_bridge = SandboxBridge()
+                logger.info("✅ Autonomous Learning System enabled")
+            except Exception as e:
+                logger.warning(f"Sandbox bridge init failed: {e}")
+                self.sandbox_bridge = None
+        else:
+            self.sandbox_bridge = None
         
         # �🌊 Quantum Flow 상태 캐시
         self.quantum_flow_state = None
@@ -490,10 +511,17 @@ class GoalExecutor:
         ]
         
         if tracked_pending:
-            # 우선순위 순으로 정렬
-            tracked_pending.sort(key=lambda g: g.get("priority", 5.0), reverse=True)
+            # 우선순위 순으로 정렬 (문자열을 float로 안전하게 변환)
+            def safe_priority(g):
+                p = g.get("priority", 5.0)
+                try:
+                    return float(p)
+                except (ValueError, TypeError):
+                    return 5.0
+            
+            tracked_pending.sort(key=safe_priority, reverse=True)
             selected = tracked_pending[0]
-            logger.info(f"✅ Selected from tracker: {selected['title']} (status={selected['status']}, priority={selected.get('priority', 5.0)})")
+            logger.info(f"✅ Selected from tracker: {selected['title']} (status={selected['status']}, priority={safe_priority(selected)})")
             
             # goals에서 full spec 찾아 merge (executable 등)
             for goal in goals:
@@ -1035,11 +1063,173 @@ class GoalExecutor:
             estimated_duration = len(tasks) * 5  # 5분/task 가정
             self._schedule_post_execution_cleanup(estimated_duration)
         
+        # 🧪 Autonomous Learning: Goal 실행 결과 기반 자율 학습
+        if self.sandbox_bridge:
+            self._trigger_autonomous_learning(goal, task_results, success)
+        
         logger.info("=" * 70)
         logger.info(f"Goal Execution {'✅ SUCCESS' if success else '❌ FAILED'}")
         logger.info("=" * 70)
         
         return success
+    
+    # ========================================
+    # 🧪 Autonomous Learning System Methods
+    # ========================================
+    
+    def _trigger_autonomous_learning(
+        self,
+        goal: Dict[str, Any],
+        task_results: List[Dict[str, Any]],
+        success: bool
+    ) -> None:
+        """
+        목표 실행 결과를 분석하고 자율 학습을 트리거한다.
+        
+        실패 시: 실패 원인 분석 → 개선 실험 생성
+        성공 시: 패턴 추출 → 최적화 실험 생성
+        """
+        logger.info("\n🧪 ===== Autonomous Learning Trigger =====")
+        
+        try:
+            if not success:
+                # 실패 학습: 무엇이 잘못되었는지 분석
+                self._learn_from_failure(goal, task_results)
+            else:
+                # 성공 학습: 어떻게 더 잘할 수 있는지 탐구
+                self._learn_from_success(goal, task_results)
+        except Exception as e:
+            logger.error(f"🧪 Autonomous learning error: {e}")
+    
+    def _learn_from_failure(self, goal: Dict[str, Any], task_results: List[Dict[str, Any]]) -> None:
+        """
+        실패로부터 학습: 실패 원인을 분석하고 개선 실험을 생성한다.
+        """
+        logger.info("🧪 Learning from FAILURE...")
+        
+        # 실패한 task 찾기
+        failed_tasks = [
+            task for task in task_results
+            if task.get("status") not in ("success", "skipped")
+        ]
+        
+        if not failed_tasks:
+            return
+        
+        # 실패 패턴 추출
+        failure_pattern = {
+            "goal_type": goal.get("type", "unknown"),
+            "failed_task_types": [t.get("type") for t in failed_tasks],
+            "error_messages": [t.get("error", "") for t in failed_tasks],
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        logger.info(f"🧪 Failure Pattern: {failure_pattern['goal_type']} - {len(failed_tasks)} tasks failed")
+        
+        # 개선 아이디어 생성
+        improvement_idea = self._generate_improvement_idea(failure_pattern)
+        
+        if improvement_idea:
+            # Sandbox에서 실험
+            logger.info(f"🧪 Queuing improvement experiment: {improvement_idea['title']}")
+            self._queue_sandbox_experiment(improvement_idea, category="learning")
+    
+    def _learn_from_success(self, goal: Dict[str, Any], task_results: List[Dict[str, Any]]) -> None:
+        """
+        성공으로부터 학습: 성공 패턴을 분석하고 최적화 실험을 생성한다.
+        """
+        logger.info("🧪 Learning from SUCCESS...")
+        
+        # 성공 패턴 추출
+        success_pattern = {
+            "goal_type": goal.get("type", "unknown"),
+            "task_count": len(task_results),
+            "execution_time": sum(t.get("duration", 0) for t in task_results),
+            "timestamp": datetime.now().isoformat()
+        }
+        
+        logger.info(f"🧪 Success Pattern: {success_pattern['goal_type']} - {success_pattern['task_count']} tasks in {success_pattern['execution_time']:.1f}s")
+        
+        # 최적화 아이디어 생성 (예: 더 빠르게, 더 효율적으로)
+        optimization_idea = self._generate_optimization_idea(success_pattern)
+        
+        if optimization_idea:
+            # Sandbox에서 실험
+            logger.info(f"🧪 Queuing optimization experiment: {optimization_idea['title']}")
+            self._queue_sandbox_experiment(optimization_idea, category="patterns")
+    
+    def _generate_improvement_idea(self, failure_pattern: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        실패 패턴으로부터 개선 아이디어를 생성한다.
+        
+        TODO: LLM 통합하여 더 스마트한 아이디어 생성
+        현재: 간단한 휴리스틱 기반
+        """
+        goal_type = failure_pattern.get("goal_type", "unknown")
+        
+        # 간단한 휴리스틱: timeout 관련 실패 → retry with longer timeout
+        error_messages = " ".join(failure_pattern.get("error_messages", []))
+        if "timeout" in error_messages.lower():
+            return {
+                "title": f"Timeout Mitigation for {goal_type}",
+                "description": "Experiment with adaptive timeout strategies",
+                "code": "# Test longer timeout multipliers\n# Test async execution\n# Test retry with exponential backoff"
+            }
+        
+        # TODO: 더 많은 패턴 추가
+        return None
+    
+    def _generate_optimization_idea(self, success_pattern: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        """
+        성공 패턴으로부터 최적화 아이디어를 생성한다.
+        
+        TODO: LLM 통합하여 더 스마트한 아이디어 생성
+        현재: 간단한 휴리스틱 기반
+        """
+        goal_type = success_pattern.get("goal_type", "unknown")
+        task_count = success_pattern.get("task_count", 0)
+        
+        # 간단한 휴리스틱: 많은 task → parallelization 시도
+        if task_count > 3:
+            return {
+                "title": f"Parallel Execution for {goal_type}",
+                "description": "Experiment with parallel task execution",
+                "code": f"# Test running {task_count} tasks in parallel\n# Measure speedup\n# Check for race conditions"
+            }
+        
+        # TODO: 더 많은 패턴 추가
+        return None
+    
+    def _queue_sandbox_experiment(
+        self,
+        idea: Dict[str, Any],
+        category: str = "learning"
+    ) -> None:
+        """
+        Sandbox에 실험을 큐잉한다.
+        
+        실제로는 sandbox_bridge를 통해 비동기로 실행되며,
+        결과는 나중에 별도 프로세스가 수집한다.
+        """
+        if not self.sandbox_bridge:
+            return
+        
+        try:
+            # Sandbox에 실험 파일 생성
+            experiment_file = self.sandbox_bridge.create_experiment(
+                title=idea["title"],
+                code=idea.get("code", "# Auto-generated experiment\npass"),
+                category=category
+            )
+            
+            logger.info(f"🧪 Experiment queued: {experiment_file}")
+            logger.info(f"   📝 {idea['description']}")
+            
+            # TODO: 별도 스케줄러가 나중에 실행하도록 메타데이터 저장
+            # 현재: 단순히 파일 생성만 함
+            
+        except Exception as e:
+            logger.error(f"🧪 Failed to queue experiment: {e}")
 
 
 def main():

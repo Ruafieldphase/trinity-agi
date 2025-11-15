@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-11-13T23:26:04.058045+00:00",
+  "generated_at": "2025-11-15T03:12:49.789657+00:00",
   "analysis_period_hours": 24,
   "current_state": {
     "state": "unknown",
@@ -9,34 +9,48 @@
     }
   },
   "activity_summary": {
-    "total_records": 983,
-    "activity_ratio": 0.06,
-    "flow_sessions": 1,
-    "total_flow_minutes": 67.41987785000003,
-    "interruptions": 3
+    "total_records": 15837,
+    "activity_ratio": 0.92,
+    "flow_sessions": 2,
+    "total_flow_minutes": 1225.6542837166603,
+    "interruptions": 20
   },
   "flow_quality": "fair",
   "interruptions": [
     {
       "type": "flow_interruption",
-      "from_focus": "Code:send_to_chatgpt_lua.ps1 - agi - Visual Studio Code",
-      "to_focus": "comet:김어준의 겸손은힘들다 뉴스공장 2025년 11월 13일 목요일 [김병기, 양부남, 이건태, 김기표, 김교흥, 홍사훈, 노영희, 주진우, 박구용, 정혜승, 스포츠공장] + 텐밀희 - YouTube - Comet",
-      "focus_duration_minutes": 15.30516265,
-      "timestamp": "2025-11-13T04:33:56.261448+00:00"
+      "from_focus": "Code:emoji_filter.py - agi - Visual Studio Code",
+      "to_focus": "Code:dual-workspace.code-workspace - playground - Visual Studio Code - 채팅에서 보류 중인 변경 내용",
+      "focus_duration_minutes": 35.13197098333333,
+      "timestamp": "2025-11-14T08:09:24.321045+00:00"
     },
     {
       "type": "flow_interruption",
-      "from_focus": "comet:김어준의 겸손은힘들다 뉴스공장 2025년 11월 13일 목요일 [김병기, 양부남, 이건태, 김기표, 김교흥, 홍사훈, 노영희, 주진우, 박구용, 정혜승, 스포츠공장] + 텐밀희 - YouTube - Comet",
+      "from_focus": "Code:RHYTHM_STATUS_LATEST.md - agi - Visual Studio Code - 이 파일의 문제 3개",
+      "to_focus": "WindowsTerminal:C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
+      "focus_duration_minutes": 16.303720433333332,
+      "timestamp": "2025-11-14T09:19:43.299619+00:00"
+    },
+    {
+      "type": "flow_interruption",
+      "from_focus": "Code:goal_tracker.json - agi - Visual Studio Code",
       "to_focus": "python:관리자: C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
-      "focus_duration_minutes": 29.66626518333334,
-      "timestamp": "2025-11-13T05:23:54.922181+00:00"
+      "focus_duration_minutes": 15.130481166666675,
+      "timestamp": "2025-11-14T09:53:54.848747+00:00"
     },
     {
       "type": "flow_interruption",
-      "from_focus": "Code:send_to_chatgpt_lua.ps1 - agi - Visual Studio Code",
-      "to_focus": "Code:autopoietic_trinity_unified_latest.md - agi - Visual Studio Code",
-      "focus_duration_minutes": 30.48697545,
-      "timestamp": "2025-11-13T07:07:00.939881+00:00"
+      "from_focus": "Code:goal_tracker.json - agi - Visual Studio Code",
+      "to_focus": "python:관리자: C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
+      "focus_duration_minutes": 21.73654991666666,
+      "timestamp": "2025-11-14T10:23:55.699037+00:00"
+    },
+    {
+      "type": "flow_interruption",
+      "from_focus": "Code:goal_tracker.json - agi - Visual Studio Code",
+      "to_focus": "python:관리자: C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Scripts\\python.exe",
+      "focus_duration_minutes": 24.744693816666665,
+      "timestamp": "2025-11-14T10:53:56.404708+00:00"
     }
   ],
   "recommendations": [

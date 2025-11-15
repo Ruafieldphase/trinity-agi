@@ -6,6 +6,12 @@
 
 ## 최근 변경 사항 (2025-11-14 12:01)
 
+### Gitko 확장 Copilot 안전화
+
+- `LLM_Unified/gitko-agent-extension`: VS Code 설정(`gitkoAgent.pythonPath/scriptPath/workingDirectory`) 혹은 현재 워크스페이스를 기준으로 Python/`gitko_cli.py` 경로를 자동 탐지하고, 찾지 못하면 Copilot Tool 등록 전에 경고 후 안전하게 무시(이전처럼 D: 고정 경로로 실패하지 않음).
+- Language Model Tool 및 Chat Participant 출력은 확장에서 3.2k자로 자동 절단하고, 기본 5분 타임아웃·취소 신호를 강제해 Copilot 400 `invalid_request_body` 루프를 차단.
+- `Gitko Agent Runtime` Output Channel과 설정 변경 감시를 추가하여 런타임 해석 결과·stdout/stderr 길이를 추적 가능.
+
 ### Lua Bridge Copilot Payload Guard
 
 - `scripts/send_to_chatgpt_lua.ps1`: Added `Apply-ContextLimit` so Markdown handoffs are capped (default 8k chars, min 500) with WARN logging + metadata to stop Copilot `invalid_request_body` loops.

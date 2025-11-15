@@ -41,6 +41,28 @@ function Write-Status {
     }
 }
 
+function Invoke-AutoHippocampusRecall {
+    # 🧠 자동 장기기억 회상 (무의식 시스템)
+    Write-Status "🧠 Auto-recalling from long-term memory..." 'Magenta'
+    
+    $py = Join-Path $ws 'fdo_agi_repo\.venv\Scripts\python.exe'
+    if (!(Test-Path -LiteralPath $py)) { $py = 'python' }
+    
+    try {
+        & $py (Join-Path $ws 'scripts\auto_hippocampus_recall.py') 2>&1 | Out-Null
+        $unconsciousState = Join-Path $ws 'outputs\unconscious_state.json'
+        if (Test-Path $unconsciousState) {
+            $state = Get-Content $unconsciousState -Raw | ConvertFrom-Json
+            Write-Status "✅ Unconscious memory loaded: $($state.recent_recall.recent_systems.Count) systems" 'Green'
+            return $state
+        }
+    }
+    catch {
+        Write-Status "⚠️ Auto-recall failed (working without unconscious): $_" 'Yellow'
+    }
+    return $null
+}
+
 function Get-LatestSessionSnapshot {
     $snapshotDir = Join-Path $ws 'outputs\session_memory'
     if (Test-Path $snapshotDir) {
@@ -112,11 +134,36 @@ function Get-CoreProcessesStatus {
 Write-Status "`n🔄 세션 연속성 복원 시작..." -Color Green
 Write-Status "시간: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')`n"
 
+# 0. 🧠 자동 무의식 회상 (먼저 실행!)
+$unconsciousMemory = Invoke-AutoHippocampusRecall
+
 $report = @()
 $report += "# 세션 연속성 복원 리포트"
 $report += ""
 $report += "**복원 시간**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 $report += ""
+
+# 무의식 기억 상태
+if ($unconsciousMemory) {
+    $report += "## 🧠 무의식 기억 상태"
+    $report += "- **상태**: ✅ 활성 (장기기억 자동 로드)"
+    $report += "- **최근 시스템**: $($unconsciousMemory.recent_recall.recent_systems.Count)개"
+    $report += "- **기억 범위**: $($unconsciousMemory.recent_recall.hours_back)시간"
+    
+    if ($unconsciousMemory.recent_recall.recent_systems.Count -gt 0) {
+        $report += ""
+        $report += "### 주요 장기기억"
+        foreach ($sys in $unconsciousMemory.recent_recall.recent_systems | Select-Object -First 5) {
+            $report += "- 📦 **$($sys.name)**: $($sys.last_used)"
+        }
+    }
+    $report += ""
+}
+else {
+    $report += "## 🧠 무의식 기억 상태"
+    $report += "- **상태**: ⚠️ 비활성 (장기기억 없이 작동)"
+    $report += ""
+}
 
 # 1. 최근 세션 스냅샷
 Write-Status "📸 최근 세션 스냅샷 확인..."

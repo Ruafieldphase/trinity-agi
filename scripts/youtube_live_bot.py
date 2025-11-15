@@ -29,6 +29,12 @@ from dotenv import load_dotenv  # type: ignore
 
 load_dotenv(override=False)
 
+# Add emoji filter
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+sys.path.insert(0, os.path.join(REPO_ROOT, "fdo_agi_repo"))
+from utils.emoji_filter import remove_emojis
+
 SCOPES = [
     "https://www.googleapis.com/auth/youtube",
     "https://www.googleapis.com/auth/youtube.force-ssl",
@@ -118,7 +124,7 @@ def answer_with_openai(prompt: str) -> Optional[str]:
             temperature=float(os.environ.get("AI_TEMPERATURE", 0.2)),
             max_tokens=int(os.environ.get("AI_MAX_TOKENS", 300))
         )
-        return resp.choices[0].message.content
+        return remove_emojis(resp.choices[0].message.content)
     except Exception:
         return None
 
@@ -135,7 +141,7 @@ def answer_with_gemini(prompt: str) -> Optional[str]:
     model = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
     try:
         resp = genai.GenerativeModel(model).generate_content(prompt)
-        return resp.text
+        return remove_emojis(resp.text)
     except Exception:
         return None
 
@@ -150,7 +156,7 @@ def answer_with_gateway(prompt: str) -> Optional[str]:
     try:
         with rq.urlopen(req, timeout=15) as r:
             data = _json.loads(r.read().decode("utf-8"))
-            return data.get("output")
+            return remove_emojis(data.get("output"))
     except Exception:
         return None
 

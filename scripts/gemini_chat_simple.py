@@ -17,6 +17,8 @@ except ImportError:
     print("Install with: pip install google-generativeai", file=sys.stderr)
     sys.exit(1)
 
+from fdo_agi_repo.utils.emoji_filter import remove_emojis
+
 # Ensure UTF-8 output to avoid cp949 encoding issues on Windows terminals.
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -126,9 +128,11 @@ def chat_with_gemini(
         return "[Empty response from API]"
 
     # Sanitize output for Windows pipeline compatibility:
-    # 1. Remove surrogate pairs (unpaired UTF-16 surrogates)
-    # 2. Replace problematic characters with safe alternatives
-    # 3. Keep common emojis and Unicode but ensure they're valid
+    # 1. Remove emojis
+    # 2. Remove surrogate pairs (unpaired UTF-16 surrogates)
+    # 3. Replace problematic characters with safe alternatives
+    text = remove_emojis(text)
+    
     sanitized = []
     for ch in text:
         code_point = ord(ch)

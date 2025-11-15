@@ -1,4 +1,4 @@
-# harvest_daily_conversations.ps1
+﻿# harvest_daily_conversations.ps1
 # 4-Persona 일일 대화 수집 및 Resonance Ledger 기록
 #
 # Usage:
@@ -26,7 +26,7 @@ catch {}
 $GitkoPath = "C:\Users\kuirv\AppData\Roaming\Code\User\workspaceStorage"
 $SenaPath = "C:\Users\kuirv\.claude\projects"
 $LubitPath = "C:\Users\kuirv\.codex\sessions"
-$LedgerPath = "D:\nas_backup\fdo_agi_repo\memory\resonance_ledger.jsonl"
+$LedgerPath = "C:\\workspace\\agi\fdo_agi_repo\memory\resonance_ledger.jsonl"
 $OutputDir = "C:\workspace\agi\outputs\session_harvests"
 
 # 출력 디렉토리 생성

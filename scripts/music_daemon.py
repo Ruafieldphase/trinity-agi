@@ -110,6 +110,35 @@ class MusicDaemon:
             })
             logger.debug(f"📡 Published rhythm_pulse: {brainwave} @ {tempo_bpm} BPM")
         
+        # Optionally, create an auto-goal from the rhythm event when enabled
+        if getattr(self, 'auto_goal', False):
+            try:
+                from fdo_agi_repo.utils.music_goal_mapper import ensure_goal_from_event
+                goal_id = ensure_goal_from_event({
+                    'data': {'brainwave_target': brainwave, 'tempo_bpm': tempo_bpm},
+                    'timestamp': datetime.now().isoformat(),
+                    'tempo': tempo_bpm,
+                    'brainwave_band': brainwave
+                })
+                
+                if goal_id:
+                    logger.info(f"🎯 Auto-goal created: {goal_id}")
+                    
+                    # Log music-goal event
+                    event_log_path = self.workspace_root / "outputs" / "music_goal_events.jsonl"
+                    event_log_path.parent.mkdir(parents=True, exist_ok=True)
+                    with open(event_log_path, "a", encoding="utf-8") as f:
+                        event_record = {
+                            "timestamp": datetime.now().isoformat(),
+                            "tempo": tempo_bpm,
+                            "brainwave": brainwave,
+                            "goal_id": goal_id,
+                            "goal_created": True
+                        }
+                        f.write(json.dumps(event_record, ensure_ascii=False) + "\n")
+            except Exception:
+                logger.exception("Failed to ensure goal from rhythm event")
+    
     def get_latest_flow_report(self) -> dict:
         """최근 Flow Observer 리포트 읽기"""
         report_path = self.workspace_root / "outputs" / "flow_observer_report_latest.json"
@@ -453,12 +482,14 @@ def main():
     parser = argparse.ArgumentParser(description="🎵 Music Daemon - Auto Binaural Beat Player")
     parser.add_argument("--interval", type=int, default=60, help="Check interval (seconds)")
     parser.add_argument("--threshold", type=float, default=0.3, help="Flow threshold (0.0-1.0)")
+    parser.add_argument("--auto-goal", action="store_true", help="Automatically create goals from rhythm pulses")
     parser.add_argument("--once", action="store_true", help="Run once and exit")
     
     args = parser.parse_args()
     
     workspace_root = Path(__file__).parent.parent
     daemon = MusicDaemon(workspace_root, interval=args.interval, flow_threshold=args.threshold)
+    daemon.auto_goal = args.auto_goal
     
     if args.once:
         daemon.run_once()

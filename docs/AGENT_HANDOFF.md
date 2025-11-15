@@ -1,5 +1,19 @@
 # Agent Handoff Log
 
+## [2025-11-14 13:45] 🔧 Gitko 확장 Copilot 안전화
+
+### 30초 요약 (다음 에이전트용)
+
+- **런타임 자동 탐지**: `gitko-agent-extension`이 더 이상 `D:/nas_backup/...` 경로에 묶이지 않고, VS Code 설정(`gitkoAgent.*`) 혹은 현재 워크스페이스 기준으로 Python/`gitko_cli.py` 위치를 자동 탐지합니다. 경로가 비어 있으면 Copilot Tool 등록 전 단계에서 경고만 띄우고 안전하게 건너뜁니다.
+- **안전한 출력/타임아웃**: Language Model Tool과 Chat Participant 경로 모두 3200자 초과 출력은 자동으로 잘라붙이며, 기본 5분 타임아웃·취소 신호를 강제해 Copilot 요청 본문이 다시 400 `invalid_request_body`에 걸리지 않도록 했습니다.
+- **런타임 로그 채널**: `Gitko Agent Runtime` Output Channel과 설정 변경 감시를 추가했습니다. `gitkoAgent.*`가 바뀌면 캐시를 초기화하고 새 경로로 재탐색하며, 전체 명령/표준출력 길이가 기록됩니다.
+
+### 다음 우선순위 제안
+
+- P0: README/자동화 안내서에 “자동 감지 + 안전 제한” 내용을 반영하고, 사용자 지정 경로 입력 시 `${workspaceFolder}` 치환 사례를 추가하세요.
+- P1: Gitko CLI가 생산하는 Markdown을 자체적으로 요약하도록(현재는 확장에서만 잘림) 개선하면 Copilot 외부 채널에서도 동일한 한도가 유지됩니다.
+- P2: Copilot Tool 호출 성공/실패 메트릭을 `resonance_ledger`나 `outputs/copilot_error_recovery_log.jsonl`에 추가하여 회귀를 즉시 추적하세요.
+
 ## [2025-11-14 12:01] 🛡️ Lua Bridge Payload Guard 적용
 
 ### 30초 요약 (다음 에이전트용)

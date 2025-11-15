@@ -1,0 +1,101 @@
+﻿{
+    "timestamp":  "2025-11-15_121254",
+    "gitCommit":  "222da880cc04153d4c1211dcc7f7ba1166041be7",
+    "pythonVersion":  "3.13.7",
+    "recentFiles":  [
+                        {
+                            "FullName":  "C:\\workspace\\agi\\EXISTING_SYSTEMS_INVENTORY.md",
+                            "LastWriteTime":  "\/Date(1763125030258)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\FAST_FILE_READER_GUIDE.md",
+                            "LastWriteTime":  "\/Date(1763126423030)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\MIGRATION_REPORT_20251114_144415.md",
+                            "LastWriteTime":  "\/Date(1763099055598)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\.vscode\\settings.json",
+                            "LastWriteTime":  "\/Date(1763110085376)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\.vscode\\tasks.json",
+                            "LastWriteTime":  "\/Date(1763155222230)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\agi_core\\AUTONOMOUS_LEARNING.md",
+                            "LastWriteTime":  "\/Date(1763107804010)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\agi_core\\autonomous_learning_integration.py",
+                            "LastWriteTime":  "\/Date(1763107804001)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\agi_core\\sandbox_bridge.py",
+                            "LastWriteTime":  "\/Date(1763107605257)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\AGENT_HANDOFF.md",
+                            "LastWriteTime":  "\/Date(1763095426219)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\AGI_RESONANCE_INTEGRATION_PLAN.md",
+                            "LastWriteTime":  "\/Date(1763095460420)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\docs\\MUSIC_TO_GOAL_INTEGRATION.md",
+                            "LastWriteTime":  "\/Date(1763154647684)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\openai_mcp_bridge.py",
+                            "LastWriteTime":  "\/Date(1763110996836)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.pytest_tmp\\test_handover_version_and_load0\\outputs\\copilot_handover_latest.json",
+                            "LastWriteTime":  "\/Date(1763108845347)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Lib\\site-packages\\pytest_asyncio\\plugin.py",
+                            "LastWriteTime":  "\/Date(1763108825629)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\.venv\\Lib\\site-packages\\pytest_asyncio\\__init__.py",
+                            "LastWriteTime":  "\/Date(1763108825627)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\copilot\\hippocampus.py",
+                            "LastWriteTime":  "\/Date(1763125554830)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\copilot\\hippocampus_rag.py",
+                            "LastWriteTime":  "\/Date(1763130444559)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\docs\\EMOJI_FILTER_GUIDE.md",
+                            "LastWriteTime":  "\/Date(1763108650494)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\fdo_agi_repo\\.pytest_tmp\\test_handover_version_and_load0\\outputs\\copilot_handover_latest.json",
+                            "LastWriteTime":  "\/Date(1763108739112)\/"
+                        },
+                        {
+                            "FullName":  "C:\\workspace\\agi\\fdo_agi_repo\\fdo_agi_repo\\outputs\\test_execution_engine\\e2e\\docker_install_report.json",
+                            "LastWriteTime":  "\/Date(1763108738693)\/"
+                        }
+                    ],
+    "gitBranch":  "main",
+    "note":  "",
+    "nodeVersion":  "22.19.0",
+    "activeProcesses":  [
+                            {
+                                "port":  8091,
+                                "running":  true,
+                                "name":  "TaskQueueServer"
+                            },
+                            {
+                                "name":  "RPAWorker",
+                                "running":  false
+                            }
+                        ]
+}

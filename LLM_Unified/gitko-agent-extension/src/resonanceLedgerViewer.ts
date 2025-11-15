@@ -1,6 +1,9 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { createLogger } from './logger';
+
+const logger = createLogger('ResonanceLedger');
 
 interface ResonanceEvent {
     timestamp: string;
@@ -101,9 +104,12 @@ export class ResonanceLedgerViewer {
                         this._update();
                     }
                 });
+                logger.debug(`Watching ledger file: ${this._ledgerPath}`);
+            } else {
+                logger.warn(`Ledger file not found: ${this._ledgerPath}`);
             }
         } catch (error) {
-            console.error('Failed to watch ledger file:', error);
+            logger.error('Failed to watch ledger file', error as Error);
         }
     }
 

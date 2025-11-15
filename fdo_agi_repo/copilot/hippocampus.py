@@ -13,6 +13,15 @@ import json
 import logging
 import sqlite3
 
+# Everything 검색 통합 (Phase 2 & 3)
+try:
+    import sys
+    sys.path.append(str(Path(__file__).parent.parent / "utils"))
+    from everything_search import EverythingSearch
+    EVERYTHING_AVAILABLE = True
+except ImportError:
+    EVERYTHING_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,6 +47,15 @@ class CopilotHippocampus:
         
         # 장기 기억 (7개 시스템 연결)
         self.long_term = LongTermMemory(self.memory_root, self.outputs)
+        
+        # Everything 검색 통합 (Phase 2 & 3)
+        self.everything = None
+        if EVERYTHING_AVAILABLE:
+            try:
+                self.everything = EverythingSearch()
+                logger.info("🔍 Everything search integrated")
+            except Exception as e:
+                logger.warning(f"Everything search not available: {e}")
         
         # 공고화 설정
         self.consolidation_config = {
@@ -80,6 +98,115 @@ class CopilotHippocampus:
             관련 기억 리스트 (중요도 순)
         """
         # 타입별 수집
+        all_memories = []
+        
+        # Episodic (에피소드 기억)
+        episodic = self.long_term.search_episodic(query, limit=top_k)
+        all_memories.extend(episodic)
+        
+        # Semantic (의미 기억)
+        semantic = self.long_term.search_semantic(query, limit=top_k)
+        all_memories.extend(semantic)
+        
+        # Procedural (절차 기억)
+        procedural = self.long_term.search_procedural(query, limit=top_k)
+        all_memories.extend(procedural)
+        
+        # 중요도 순 정렬 후 상위 반환
+        sorted_memories = sorted(
+            all_memories, 
+            key=lambda m: m.get("importance", 0.0), 
+            reverse=True
+        )
+        
+        return sorted_memories[:top_k]
+    
+    def search_files(
+        self,
+        query: str,
+        max_results: int = 50,
+        extension: Optional[str] = None,
+        path_filter: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Everything을 사용한 초고속 파일 검색 (Phase 2 & 3)
+        
+        Args:
+            query: 검색어
+            max_results: 최대 결과 수
+            extension: 파일 확장자 필터 (예: "py", "md")
+            path_filter: 경로 필터 (예: "fdo_agi_repo")
+        
+        Returns:
+            검색 결과 리스트 (파일 정보)
+        
+        Examples:
+            >>> hip.search_files("hippocampus", extension="py")
+            >>> hip.search_files("goal", path_filter="memory")
+        """
+        if not self.everything:
+            logger.warning("Everything search not available - using fallback")
+            return self._fallback_file_search(query, max_results, extension, path_filter)
+        
+        try:
+            # Everything 검색 실행
+            results = self.everything.search(
+                query=query,
+                max_results=max_results,
+                extension=extension,
+                path_filter=path_filter,
+                timeout=10
+            )
+            
+            # 결과 변환
+            return [r.to_dict() for r in results]
+            
+        except Exception as e:
+            logger.error(f"Everything search failed: {e}")
+            return self._fallback_file_search(query, max_results, extension, path_filter)
+    
+    def _fallback_file_search(
+        self,
+        query: str,
+        max_results: int,
+        extension: Optional[str],
+        path_filter: Optional[str]
+    ) -> List[Dict[str, Any]]:
+        """Everything 미사용 시 폴백 검색"""
+        results = []
+        search_root = self.workspace
+        
+        if path_filter:
+            search_root = self.workspace / path_filter
+        
+        if not search_root.exists():
+            return results
+        
+        # 간단한 glob 검색
+        pattern = f"**/*{query}*"
+        if extension:
+            ext = extension if extension.startswith('.') else f'.{extension}'
+            pattern = f"**/*{query}*{ext}"
+        
+        try:
+            for path in search_root.glob(pattern):
+                if path.is_file():
+                    stat = path.stat()
+                    results.append({
+                        "name": path.name,
+                        "full_path": str(path),
+                        "directory": str(path.parent),
+                        "size": stat.st_size,
+                        "modified": datetime.fromtimestamp(stat.st_mtime).isoformat(),
+                        "extension": path.suffix
+                    })
+                    
+                    if len(results) >= max_results:
+                        break
+        except Exception as e:
+            logger.error(f"Fallback search failed: {e}")
+        
+        return results
         episodic = self.long_term.recall_episodic(query, top_k)
         semantic = self.long_term.recall_semantic(query, top_k)
         procedural = self.long_term.recall_procedural(query, top_k)
@@ -701,6 +828,50 @@ class LongTermMemory:
         
         with open(proc_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    
+    # ===================================================================
+    # Episodic Memory (에피소드 기억 - Everything 검색 통합)
+    # ===================================================================
+    
+    def search_episodic(self, query: str, top_k: int = 10) -> List[Dict[str, Any]]:
+        """
+        에피소드 기억 검색 (무의식 자동 회상)
+        Everything 검색 엔진 통합
+        
+        Args:
+            query: 검색 쿼리 (자연어)
+            top_k: 상위 몇 개 반환
+        
+        Returns:
+            관련 에피소드 리스트 (최근순 + 관련성순)
+        """
+        try:
+            from fdo_agi_repo.utils.everything_search import search_files
+            
+            # Everything 검색 실행
+            files = search_files(query, max_results=top_k)
+            
+            results = []
+            for file_info in files:
+                results.append({
+                    "timestamp": file_info.get("modified", ""),
+                    "type": "episodic",
+                    "data": {
+                        "path": file_info.get("path", ""),
+                        "name": file_info.get("name", ""),
+                        "size": file_info.get("size", 0),
+                        "modified": file_info.get("modified", ""),
+                        "relevance": file_info.get("relevance", 0.5),
+                    },
+                    "importance": file_info.get("relevance", 0.5),
+                })
+            
+            logger.info(f"✅ Episodic recall: {len(results)} results for '{query}'")
+            return results
+            
+        except Exception as e:
+            logger.warning(f"Episodic search error: {e}")
+            return []
     
     # ===================================================================
     # 유틸리티

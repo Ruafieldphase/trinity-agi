@@ -1,9 +1,9 @@
 {
   "meta": {
-    "created_at": "2025-11-07T07:40:12.996511Z",
-    "duration_sec": 0.161,
+    "created_at": "2025-11-14T09:27:58.380505Z",
+    "duration_sec": 0.129,
     "ledger_path": "C:\\workspace\\agi\\fdo_agi_repo\\memory\\resonance_ledger.jsonl",
-    "task_count": 34
+    "task_count": 49
   },
   "priority_rules": {},
   "emotion_rules": {},

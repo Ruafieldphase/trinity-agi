@@ -1,12 +1,12 @@
 ﻿{
     "metadata":  {
-                     "shannon_entropy":  1.353,
-                     "quality_coverage":  49.645948072383952,
-                     "info_density":  0.496
+                     "shannon_entropy":  1.582,
+                     "quality_coverage":  48.405797101449281,
+                     "info_density":  0.484
                  },
     "analysis_window_hours":  24,
     "source":  "Trinity Dialectics (Lua-Elo-Lumen)",
-    "timestamp":  "2025-11-13T23:00:13.2941190+09:00",
+    "timestamp":  "2025-11-15T10:57:08.7913019+09:00",
     "high_priority_count":  0,
     "target":  "Autopoietic Loop",
     "recommendations":  [
