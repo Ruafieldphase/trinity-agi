@@ -55,12 +55,19 @@ export class Logger {
     private loadOptionsFromConfig(): LoggerOptions {
         const cfg = vscode.workspace.getConfiguration('gitko');
         const levelStr = (cfg.get<string>('logLevel', 'info') || 'info').toLowerCase();
-        const levelMap: Record<string, LogLevel> = { debug: LogLevel.DEBUG, info: LogLevel.INFO, warn: LogLevel.WARN, error: LogLevel.ERROR };
+        const levelMap: Record<string, LogLevel> = {
+            debug: LogLevel.DEBUG,
+            info: LogLevel.INFO,
+            warn: LogLevel.WARN,
+            error: LogLevel.ERROR,
+        };
         const level = levelMap[levelStr] ?? LogLevel.INFO;
         const format = (cfg.get<string>('logFormat', 'plain') as LogFormat) || 'plain';
         const separateChannels = cfg.get<boolean>('separateOutputChannels', false) ?? false;
         const logToFile = cfg.get<boolean>('logToFile', false) ?? false;
-        const logFilePath = cfg.get<string>('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) || path.join(os.homedir(), 'gitko-agent.log');
+        const logFilePath =
+            cfg.get<string>('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) ||
+            path.join(os.homedir(), 'gitko-agent.log');
         return { level, format, separateChannels, logToFile, logFilePath };
     }
 

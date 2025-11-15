@@ -315,7 +315,10 @@ class HttpTaskPoller {
         }
         catch (error) {
             this.log(`[HttpPoller] ❌ Failed to submit result for ${taskId}: ${error instanceof Error ? error.message : String(error)}`);
-            perf.endOperation(opId, false, { task_id: taskId, error: error instanceof Error ? error.message : String(error) });
+            perf.endOperation(opId, false, {
+                task_id: taskId,
+                error: error instanceof Error ? error.message : String(error),
+            });
         }
     }
     // ==================== Task Handlers ====================
