@@ -287,6 +287,38 @@
                     "maximum": 5000,
                     "description": "Minimum interval between UI actions (milliseconds) enforced by the poller for safety. Set higher to slow down automation.",
                     "order": 14
+                },
+                "gitko.logLevel": {
+                    "type": "string",
+                    "enum": ["debug", "info", "warn", "error"],
+                    "default": "info",
+                    "description": "Logging level for Gitko extension",
+                    "order": 15
+                },
+                "gitko.logFormat": {
+                    "type": "string",
+                    "enum": ["plain", "json"],
+                    "default": "plain",
+                    "description": "Log output format (plain text or JSON)",
+                    "order": 16
+                },
+                "gitko.separateOutputChannels": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Create separate VS Code Output Channels per module (e.g., 'Gitko: HttpTaskPoller')",
+                    "order": 17
+                },
+                "gitko.logToFile": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Also write logs to a file on disk",
+                    "order": 18
+                },
+                "gitko.logFilePath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path to the log file. If empty, defaults to ~/gitko-agent.log",
+                    "order": 19
                 }
             }
         }

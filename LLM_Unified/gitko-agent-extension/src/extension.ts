@@ -8,7 +8,7 @@ import { HttpTaskPoller } from './httpTaskPoller';
 import { TaskQueueMonitor } from './taskQueueMonitor';
 import { ResonanceLedgerViewer } from './resonanceLedgerViewer';
 import { ConfigValidator } from './configValidator';
-import { createLogger } from './logger';
+import { createLogger, Logger } from './logger';
 import { PerformanceViewer } from './performanceViewer';
 import { registerIntegrationTestCommand } from './integrationTest';
 import { registerDevCommands } from './devUtils';
@@ -176,6 +176,11 @@ export function activate(context: vscode.ExtensionContext) {
         if (event.affectsConfiguration('gitkoAgent')) {
             resetRuntimeConfigCache();
             logGitko('gitkoAgent 설정 변경 감지: 런타임 구성을 초기화했습니다.', undefined, true);
+        }
+        if (event.affectsConfiguration('gitko')) {
+            // Reload logger configuration when gitko.* settings change
+            const { Logger } = require('./logger');
+            Logger.getInstance().reloadConfig();
         }
     });
     context.subscriptions.push(configWatcher);

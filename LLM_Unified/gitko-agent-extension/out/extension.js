@@ -164,6 +164,11 @@ function activate(context) {
             resetRuntimeConfigCache();
             logGitko('gitkoAgent 설정 변경 감지: 런타임 구성을 초기화했습니다.', undefined, true);
         }
+        if (event.affectsConfiguration('gitko')) {
+            // Reload logger configuration when gitko.* settings change
+            const { Logger } = require('./logger');
+            Logger.getInstance().reloadConfig();
+        }
     });
     context.subscriptions.push(configWatcher);
     // 🚀 HTTP Poller 자동 시작 (설정 기반)

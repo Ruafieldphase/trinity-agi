@@ -1,7 +1,10 @@
 "use strict";
 /**
  * Unified Logging Utility for Gitko Extension
- * Provides consistent logging across all modules
+ * - Structured logging (JSON/plain)
+ * - Log levels
+ * - Optional per-module output channels
+ * - Optional file sink
  */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -40,6 +43,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Logger = exports.LogLevel = void 0;
 exports.createLogger = createLogger;
 const vscode = __importStar(require("vscode"));
+const fs = __importStar(require("fs"));
+const os = __importStar(require("os"));
+const path = __importStar(require("path"));
 var LogLevel;
 (function (LogLevel) {
     LogLevel[LogLevel["DEBUG"] = 0] = "DEBUG";
@@ -48,52 +54,116 @@ var LogLevel;
     LogLevel[LogLevel["ERROR"] = 3] = "ERROR";
 })(LogLevel || (exports.LogLevel = LogLevel = {}));
 class Logger {
-    constructor(channelName) {
-        this.logLevel = LogLevel.INFO;
-        this.outputChannel = vscode.window.createOutputChannel(channelName);
+    constructor() {
+        this.channels = new Map();
+        this.defaultChannelName = 'Gitko Extension';
+        this.options = this.loadOptionsFromConfig();
+        // Create default channel
+        this.getChannel(this.defaultChannelName);
     }
-    static getInstance(channelName = 'Gitko Extension') {
+    static getInstance() {
         if (!Logger.instance) {
-            Logger.instance = new Logger(channelName);
+            Logger.instance = new Logger();
         }
         return Logger.instance;
     }
+    /** Reload options from settings */
+    reloadConfig() {
+        this.options = this.loadOptionsFromConfig();
+    }
+    loadOptionsFromConfig() {
+        const cfg = vscode.workspace.getConfiguration('gitko');
+        const levelStr = (cfg.get('logLevel', 'info') || 'info').toLowerCase();
+        const levelMap = { debug: LogLevel.DEBUG, info: LogLevel.INFO, warn: LogLevel.WARN, error: LogLevel.ERROR };
+        const level = levelMap[levelStr] ?? LogLevel.INFO;
+        const format = cfg.get('logFormat', 'plain') || 'plain';
+        const separateChannels = cfg.get('separateOutputChannels', false) ?? false;
+        const logToFile = cfg.get('logToFile', false) ?? false;
+        const logFilePath = cfg.get('logFilePath', path.join(os.homedir(), 'gitko-agent.log')) || path.join(os.homedir(), 'gitko-agent.log');
+        return { level, format, separateChannels, logToFile, logFilePath };
+    }
     setLogLevel(level) {
-        this.logLevel = level;
+        this.options.level = level;
     }
-    debug(message, source) {
-        if (this.logLevel <= LogLevel.DEBUG) {
-            this.write('DEBUG', message, source);
+    debug(message, source, metadata) {
+        if (this.options.level <= LogLevel.DEBUG) {
+            this.write('DEBUG', message, source, metadata);
         }
     }
-    info(message, source) {
-        if (this.logLevel <= LogLevel.INFO) {
-            this.write('INFO', message, source);
+    info(message, source, metadata) {
+        if (this.options.level <= LogLevel.INFO) {
+            this.write('INFO', message, source, metadata);
         }
     }
-    warn(message, source) {
-        if (this.logLevel <= LogLevel.WARN) {
-            this.write('WARN', message, source);
+    warn(message, source, metadata) {
+        if (this.options.level <= LogLevel.WARN) {
+            this.write('WARN', message, source, metadata);
         }
     }
-    error(message, error, source) {
-        if (this.logLevel <= LogLevel.ERROR) {
-            const errorMsg = error instanceof Error ? error.message : String(error || '');
-            const fullMessage = errorMsg ? `${message}: ${errorMsg}` : message;
-            this.write('ERROR', fullMessage, source);
+    error(message, error, source, metadata) {
+        if (this.options.level <= LogLevel.ERROR) {
+            const errorMsg = error instanceof Error ? error.message : error ? String(error) : undefined;
+            const meta = { ...(metadata || {}), error: errorMsg };
+            this.write('ERROR', message, source, meta);
         }
     }
-    write(level, message, source) {
+    getChannel(name) {
+        if (!this.channels.has(name)) {
+            this.channels.set(name, vscode.window.createOutputChannel(name));
+        }
+        return this.channels.get(name);
+    }
+    getTargetChannel(module) {
+        if (this.options.separateChannels && module) {
+            return this.getChannel(`Gitko: ${module}`);
+        }
+        return this.getChannel(this.defaultChannelName);
+    }
+    write(level, message, source, metadata) {
         const timestamp = new Date().toISOString();
-        const sourceTag = source ? `[${source}]` : '';
-        const logMessage = `[${timestamp}] [${level}]${sourceTag} ${message}`;
-        this.outputChannel.appendLine(logMessage);
+        let line;
+        if (this.options.format === 'json') {
+            const payload = {
+                ts: timestamp,
+                level,
+                module: source || 'core',
+                msg: message,
+            };
+            if (metadata && Object.keys(metadata).length > 0) {
+                payload.meta = metadata;
+            }
+            try {
+                line = JSON.stringify(payload);
+            }
+            catch {
+                line = JSON.stringify({ ts: timestamp, level, module: source || 'core', msg: String(message) });
+            }
+        }
+        else {
+            const sourceTag = source ? `[${source}]` : '';
+            line = `[${timestamp}] [${level}]${sourceTag} ${message}`;
+        }
+        // Output channel
+        const channel = this.getTargetChannel(source);
+        channel.appendLine(line);
+        // Optional file sink
+        if (this.options.logToFile && this.options.logFilePath) {
+            try {
+                fs.appendFile(this.options.logFilePath, line + os.EOL, () => { });
+            }
+            catch {
+                // ignore file errors to avoid crashing logging
+            }
+        }
     }
-    show() {
-        this.outputChannel.show();
+    show(module) {
+        this.getTargetChannel(module).show();
     }
     dispose() {
-        this.outputChannel.dispose();
+        for (const ch of this.channels.values()) {
+            ch.dispose();
+        }
+        this.channels.clear();
     }
 }
 exports.Logger = Logger;
@@ -103,10 +173,10 @@ exports.Logger = Logger;
 function createLogger(moduleName) {
     const logger = Logger.getInstance();
     return {
-        debug: (msg) => logger.debug(msg, moduleName),
-        info: (msg) => logger.info(msg, moduleName),
-        warn: (msg) => logger.warn(msg, moduleName),
-        error: (msg, err) => logger.error(msg, err, moduleName),
+        debug: (msg, meta) => logger.debug(msg, moduleName, meta),
+        info: (msg, meta) => logger.info(msg, moduleName, meta),
+        warn: (msg, meta) => logger.warn(msg, moduleName, meta),
+        error: (msg, err, meta) => logger.error(msg, err, moduleName, meta),
     };
 }
 //# sourceMappingURL=logger.js.map

@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import { createLogger } from './logger';
+import { PerformanceMonitor } from './performanceMonitor';
 import { validateTaskSafe, type Task, type SubmitResult } from './schemas';
 
 const logger = createLogger('HttpTaskPoller');
+const perf = PerformanceMonitor.getInstance();
 
 /**
  * HTTP-based Task Poller for Gitko Extension
@@ -110,6 +112,7 @@ export class HttpTaskPoller {
             }
         }
 
+        const opId = perf.startOperation('http.poll');
         try {
             const task = await this.getNextTask();
 
@@ -120,9 +123,11 @@ export class HttpTaskPoller {
 
             // Success: reset backoff
             this.onSuccess();
+            perf.endOperation(opId, true);
         } catch (error) {
             // Error: apply backoff
             this.onError(error);
+            perf.endOperation(opId, false, { error: error instanceof Error ? error.message : String(error) });
         }
 
         // Schedule next poll with backoff
@@ -232,6 +237,19 @@ export class HttpTaskPoller {
      */
     private async handleTask(task: Task) {
         let result: SubmitResult;
+        // Queue latency if provided
+        let queueLatencyMs: number | undefined;
+        if (task.created_at) {
+            const created = Date.parse(task.created_at);
+            if (!Number.isNaN(created)) {
+                queueLatencyMs = Date.now() - created;
+            }
+        }
+
+        const opId = perf.startOperation(`http.task.${task.type}`, {
+            task_id: task.task_id,
+            queueLatencyMs,
+        });
 
         try {
             let resultData: any;
@@ -283,6 +301,7 @@ export class HttpTaskPoller {
             };
 
             this.log(`[HttpPoller] ✅ Task completed: ${task.task_id}`);
+            perf.endOperation(opId, true, { task_id: task.task_id, queueLatencyMs });
         } catch (error) {
             result = {
                 success: false,
@@ -290,6 +309,7 @@ export class HttpTaskPoller {
             };
 
             this.log(`[HttpPoller] ❌ Task failed: ${task.task_id} - ${result.error}`);
+            perf.endOperation(opId, false, { task_id: task.task_id, queueLatencyMs, error: result.error });
         }
 
         // Submit result
@@ -300,6 +320,7 @@ export class HttpTaskPoller {
      * Submit task result to server
      */
     private async submitResult(taskId: string, result: SubmitResult) {
+        const opId = perf.startOperation('http.submit', { task_id: taskId, success: result.success });
         try {
             const response = await fetch(`${this.apiBase}/tasks/${taskId}/result`, {
                 method: 'POST',
@@ -314,10 +335,12 @@ export class HttpTaskPoller {
             }
 
             this.log(`[HttpPoller] 📤 Result submitted: ${taskId}`);
+            perf.endOperation(opId, true, { task_id: taskId });
         } catch (error) {
             this.log(
                 `[HttpPoller] ❌ Failed to submit result for ${taskId}: ${error instanceof Error ? error.message : String(error)}`
             );
+            perf.endOperation(opId, false, { task_id: taskId, error: error instanceof Error ? error.message : String(error) });
         }
     }
 
