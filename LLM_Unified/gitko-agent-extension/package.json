@@ -4,6 +4,11 @@
     "description": "Multi-agent orchestration for GitHub Copilot Chat with real-time monitoring",
     "version": "0.3.1",
     "publisher": "naeda",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Ruafieldphase/agi"
+    },
+    "homepage": "https://github.com/Ruafieldphase/agi",
     "engines": {
         "vscode": "^1.90.0"
     },
@@ -40,6 +45,12 @@
                 "title": "Gitko: Show Task Queue Monitor",
                 "category": "Gitko",
                 "icon": "$(pulse)"
+            },
+            {
+                "command": "gitko.showQueueSnapshot",
+                "title": "Gitko: Show Queue Snapshot",
+                "category": "Gitko",
+                "icon": "$(table)"
             },
             {
                 "command": "gitko.showResonanceLedger",
@@ -373,6 +384,14 @@
                     "description": "Task Queue Server base URL for monitoring",
                     "order": 12
                 },
+                "gitko.queueSnapshotInterval": {
+                    "type": "number",
+                    "default": 4000,
+                    "minimum": 1000,
+                    "maximum": 60000,
+                    "description": "Interval (ms) for background queue snapshot refresh when HTTP Poller or SSE client is active.",
+                    "order": 12.1
+                },
                 "gitko.httpPollingInterval": {
                     "type": "number",
                     "default": 2000,
@@ -511,7 +530,8 @@
         "rebuild": "npm run clean && npm run compile",
         "package": "vsce package",
         "stats": "echo 'Source Files:' && dir /s /b src\\*.ts | find /c \"\\\" && echo 'Total Lines:' && powershell \"Get-Content src\\*.ts | Measure-Object -Line\"",
-        "test": "vitest run --reporter=default"
+        "test": "vitest run --reporter=default",
+        "test:coverage": "vitest run --coverage --reporter=default"
     },
     "devDependencies": {
         "@types/adm-zip": "^0.5.7",
@@ -519,6 +539,8 @@
         "@types/vscode": "^1.90.0",
         "@typescript-eslint/eslint-plugin": "^7.18.0",
         "@typescript-eslint/parser": "^7.18.0",
+        "@vitest/coverage-v8": "^2.1.9",
+        "@vscode/vsce": "^3.7.0",
         "eslint": "^8.57.1",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-prettier": "^5.5.4",
