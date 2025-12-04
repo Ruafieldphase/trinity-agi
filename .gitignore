@@ -20,11 +20,6 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-.venv/
-venv/
-ENV/
-env/
 
 # IDE
 # .vscode/ - Keep VS Code settings for this project
@@ -123,6 +118,27 @@ outputs/cache_*
 # Realtime pipeline outputs
 outputs/realtime_pipeline_*
 
+# Default: ignore all generated outputs, keep specific important files (see negations below)
+outputs/*
+!outputs/autonomous_goals_latest.md
+!outputs/autonomous_goals_latest.json
+
+# ignore specific generated jsons
+fdo_agi_repo/outputs/*.json
+
+# LLM_Unified workspace artifacts
+LLM_Unified/**/coverage/
+LLM_Unified/**/coverage/*
+
+# Build outputs (compiled JS) and VS Code extension out dir
+LLM_Unified/gitko-agent-extension/out/
+LLM_Unified/**/out/
+
+# local package artifacts
+*.tgz
+dist/
+
+
 # Performance dashboards
 outputs/performance_dashboard_*
 
@@ -170,30 +186,18 @@ outputs/lumen_prism_cache.json
 !outputs/cache_analysis_latest.json
 !outputs/ledger_summary_latest.md
 !outputs/ledger_summary_latest.json
-!outputs/autonomous_goals_latest.md
-!outputs/autonomous_goals_latest.json
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
-*.old
-
-# Database
-*.db
 *.sqlite
 *.sqlite3
 
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Environment variables
-.env
-.env.local
-nul
-
-# Files with Korean filename encoding issues  
-outputs/*-✨-*
-outputs/*-🌊-*
-outputs/*이어내다씨앗코덱스*
-outputs/*-�-�-*
+# Code coverage
+.coverage
+*.old
+*.orig
+# Credentials (explicit)
+.env_credentials
+*_api_key*
+*_token*
+secrets.json
