@@ -1,4 +1,0 @@
-﻿- [x] 6개월 Perple 분석 정리 및 한국어 브리프 준비 완료.
-- [ ] 영문/한글 1-Pager, Ion 브리프를 PDF로 변환 후 패키지 구성.
-- [ ] Tier2 슬라이드: `six_month_intensity.png`, 키워드 통계 시각화 추가.
-- [ ] Tier3 실패 사례집: `conversation_samples.md`, `ChatGPT_언어적_감응_복원.md` 체계화.

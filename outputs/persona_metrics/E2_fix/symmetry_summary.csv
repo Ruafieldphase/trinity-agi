@@ -1,5 +1,0 @@
-symmetry_stage,symmetry_stage_label,turns,avg_residual,avg_tension,band_stable,band_creative,band_risk,band_stable_rate,band_creative_rate,band_risk_rate,decision_keep,decision_damp,decision_review
-1,Stage 1 - Folding,2,0.8200000000000001,0.26,0.0,2.0,0.0,0.0,1.0,0.0,2.0,0.0,0.0
-2,Stage 2 - Unfolding,2,0.5800000000000001,0.195,0.0,2.0,0.0,0.0,1.0,0.0,2.0,0.0,0.0
-3,Stage 3 - Integration,2,0.86,0.09,1.0,0.0,1.0,0.5,0.0,0.5,0.0,1.0,1.0
-4,Stage 4 - Symmetry,2,0.4,0.46,0.0,2.0,0.0,0.0,1.0,0.0,0.0,0.0,2.0

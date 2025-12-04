@@ -1,9 +1,0 @@
-﻿{
-    "timestamp":  "2025-11-03T18:45:23.2234157+09:00",
-    "type":  "rpa_worker_restart_limit",
-    "status":  "error",
-    "message":  "Restart limit reached for RPA worker ensure job.",
-    "recent_restarts":  3,
-    "max_restarts":  3,
-    "window_seconds":  600
-}

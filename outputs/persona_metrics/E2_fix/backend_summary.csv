@@ -1,3 +1,0 @@
-backend_id,backend_type,turns,injections,injection_rate
-local_ollama,subprocess,6,0,0.0
-unknown,unknown,2,0,0.0

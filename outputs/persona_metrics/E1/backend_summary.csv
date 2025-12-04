@@ -1,4 +1,0 @@
-backend_id,backend_type,turns,injections,injection_rate
-local_lmstudio,subprocess,92,0,0.0
-local_ollama,subprocess,46,0,0.0
-unknown,unknown,46,0,0.0

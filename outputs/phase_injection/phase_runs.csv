@@ -1,3 +1,0 @@
-scenario,description,affect,boundary_low,boundary_high,freedom,stability,loop_count,timeline_file
-baseline,Reference scenario with default affect amplitude.,0.22,,,0.62,0.72,,
-boosted,Higher affect amplitude with lower boundary window.,0.4,0.2,0.5,0.62,0.72,2.0,batch_boosted.json

@@ -1,8 +1,0 @@
-{"message":"System health check passed","timestamp":"2025-11-06T22:43:56.8315995+09:00","data":{"exit_code":0,"output_length":0},"type":"success","check_number":1}
-{"message":"Goal execution active","timestamp":"2025-11-06T22:43:56.8706513+09:00","data":{"completed":0,"recent_goals":0,"in_progress":0},"type":"success","check_number":1}
-{"message":"Task Queue Server is responsive","timestamp":"2025-11-06T22:43:56.8761575+09:00","data":{"status":"ok"},"type":"success","check_number":1}
-{"message":"Metrics collection may be stale","timestamp":"2025-11-06T22:43:56.8846652+09:00","data":{"recent":1,"found":3},"type":"warning","check_number":1}
-{"message":"System health check passed","timestamp":"2025-11-06T23:14:03.3738807+09:00","data":{"exit_code":0,"output_length":0},"type":"success","check_number":2}
-{"message":"Goal execution active","timestamp":"2025-11-06T23:14:03.3768850+09:00","data":{"completed":0,"recent_goals":0,"in_progress":0},"type":"success","check_number":2}
-{"message":"Task Queue Server is responsive","timestamp":"2025-11-06T23:14:03.3859828+09:00","data":{"status":"ok"},"type":"success","check_number":2}
-{"message":"Metrics collection may be stale","timestamp":"2025-11-06T23:14:03.3924046+09:00","data":{"recent":1,"found":3},"type":"warning","check_number":2}

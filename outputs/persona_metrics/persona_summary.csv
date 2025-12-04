@@ -1,4 +1,0 @@
-persona_id,persona_name,persona_role,backend,turns,injections,injection_rate,avg_affect_delta,avg_tokens,avg_characters
-antithesis,Boundary Challenger,Critical reflector,local_ollama,1,0,0.0,0.04999999999999999,184.0,1267.0
-synthesis,Fractal Synthesiser,Integrator,local_lmstudio,1,0,0.0,0.07,195.0,1325.0
-thesis,Dialectic Thesis,Seed explorer,local_lmstudio,1,0,0.0,0.05000000000000002,398.0,2688.0

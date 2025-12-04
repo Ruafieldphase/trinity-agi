@@ -1,8 +1,0 @@
-{
-  "phase_coherence": 0.5,
-  "state": "unknown",
-  "conductivity": 0.5,
-  "resistance": 2.0,
-  "timestamp": "2025-11-06T13:03:56.038143+00:00",
-  "error": "'QuantumFlowMonitor' object has no attribute 'calculate_coherence'"
-}

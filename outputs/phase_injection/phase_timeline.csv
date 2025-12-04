@@ -1,5 +1,0 @@
-scenario,step,node,language_frame,affect_amplitude,symbol_memory,boundary_window,freedom_level,stability_level,last_injection_time,loop_count,delta_keys
-boosted,0,initial,default,0.4,seed,0.2|0.5,0.62,0.72,2025-10-11T01:15:14.566584+00:00,2,
-boosted,1,analyze,default,0.4,seed,0.2|0.5,0.62,0.72,2025-10-11T01:15:14.566584+00:00,2,
-boosted,2,respond,default,0.4,seed,0.2|0.5,0.62,0.72,2025-10-11T01:15:14.566584+00:00,2,
-boosted,9223372036854775807,final,default,0.4,seed,0.2|0.5,0.62,0.72,2025-10-11T01:15:14.566584+00:00,2,

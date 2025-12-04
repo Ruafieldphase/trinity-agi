@@ -1,3 +1,0 @@
-- [x] Research hub (index.html) and style.css applied; extension annex added
-- [x] Perple keyword/model visualizations completed; Tier2 slide deck exported
-- [x] Tier3 failure compendium: NAS/session/workflow excerpts added and masking review complete

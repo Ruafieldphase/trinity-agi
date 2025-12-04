@@ -1,9 +1,0 @@
-Stage 1 - Folding: n=2 avg=0.725 μ=0.725 σ=0.148 band=[0.481, 0.969] out_of_band%=0.000 stable%=0.000 creative%=0.000 risk%=100.000 -> RETRY
-Stage 2 - Unfolding: n=2 avg=0.600 μ=0.600 σ=0.000 band=[0.600, 0.600] out_of_band%=0.000 stable%=0.000 creative%=0.000 risk%=100.000 -> RETRY
-Stage 3 - Integration: n=2 avg=0.880 μ=0.880 σ=0.085 band=[0.741, 1.019] out_of_band%=0.000 stable%=0.000 creative%=0.000 risk%=100.000 -> RETRY
-Stage 4 - Symmetry: n=2 avg=0.400 μ=0.400 σ=0.000 band=[0.400, 0.400] out_of_band%=0.000 stable%=0.000 creative%=0.000 risk%=100.000 -> RETRY
-
---- Global (band-mode) ---
-μ=0.651 σ=0.199 band=[0.325, 0.977] out_of_band%=0.000
-
-Band occupancy: stable 0.000%, creative 0.000%, risk 100.000%

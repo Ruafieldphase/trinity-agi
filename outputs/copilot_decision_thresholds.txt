@@ -1,4 +1,0 @@
-Generated: d:\nas_backup\outputs\copilot_kpi.csv
-Generated: d:\nas_backup\outputs\copilot_decisions.csv
-threshold_low=0.443999
-threshold_high=0.562199
