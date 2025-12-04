@@ -1,0 +1,45 @@
+{
+    "evidence_gate": {
+        "top_k": 8,
+        "include_types": [
+            "rune_validation",
+            "eval",
+            "rune",
+            "task_start",
+            "routing"
+        ],
+        "fallback_on_empty": true,
+        "fallback_include_types": null,
+        "min_relevance": 0.15
+    },
+    "bm25": {
+        "k1": 1.2,
+        "b": 0.75
+    },
+    "weights": {
+        "ledger": {
+            "eval": 2.0,
+            "rune": 2.0,
+            "default": 0.8
+        },
+        "coordinate": {
+            "rune_validation": 2.0,
+            "routing": 0.8,
+            "task_start": 1.0,
+            "default": 1.0
+        }
+    },
+    "recency": {
+        "enabled": true,
+        "half_life_hours": 24.0
+    },
+    "mmr": {
+        "enabled": true,
+        "lambda": 0.7
+    },
+    "hybrid": {
+        "enabled": true,
+        "rrf_k": 60,
+        "vector_store_path": "memory/vector_store.json"
+    }
+}

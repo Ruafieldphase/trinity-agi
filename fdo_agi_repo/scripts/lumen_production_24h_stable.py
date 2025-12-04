@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+"""
+Lumen Feedback System - 24시간 Production (개선 버전)
+time.sleep 사용으로 안정성 확보
+"""
+
+import json
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from lumen.feedback.feedback_orchestrator import FeedbackOrchestrator
+
+
+def run_24h_production_stable():
+    """24시간 Production (안정화 버전)"""
+    
+    print("\n" + "="*60)
+    print("🚀 Lumen Feedback - 24시간 Production")
+    print("="*60)
+    
+    start_time = datetime.now()
+    end_time = start_time + timedelta(hours=24)
+    
+    # Orchestrator 초기화
+    orchestrator = FeedbackOrchestrator(
+        project_id="agi-lumen-feedback",
+        service_name="production-24h-stable"
+    )
+    
+    # 로그 파일
+    log_file = Path("outputs/lumen_production_24h_stable.jsonl")
+    log_file.parent.mkdir(exist_ok=True)
+    
+    print(f"\n⏰ 시작: {start_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"⏰ 종료 예정: {end_time.strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"\n📝 로그: {log_file}")
+    print(f"🔄 사이클: 5분마다 (총 288회)")
+    print(f"📊 예상 최적화: 115회 (40% 기준)\n")
+    
+    cycle_count = 0
+    total_optimizations = 0
+    
+    try:
+        while datetime.now() < end_time:
+            cycle_count += 1
+            cycle_start = time.time()
+            
+            print(f"{'='*50}")
+            print(f"🔄 사이클 #{cycle_count} - {datetime.now().strftime('%H:%M:%S')}")
+            
+            # 시스템 분석
+            gate_result = orchestrator.unified_gate()
+            
+            if gate_result["should_optimize"]:
+                total_optimizations += 1
+                print(f"✅ 최적화 실행 (#{total_optimizations})")
+            else:
+                print(f"⏭️  최적화 스킵 ({gate_result['system_state']})")
+            
+            # 메트릭 출력
+            metrics = gate_result.get("system_metrics", {})
+            print(f"   Cache: {metrics.get('cache_hit_rate', 0):.1f}%")
+            print(f"   GPU: {metrics.get('gpu_memory_used_gb', 0):.1f} GB")
+            print(f"   Latency: {metrics.get('system_latency_ms', 0):.0f} ms")
+            
+            # 로그 기록
+            elapsed_hours = (datetime.now() - start_time).total_seconds() / 3600
+            log_entry = {
+                "timestamp": datetime.now().isoformat(),
+                "cycle": cycle_count,
+                "elapsed_hours": elapsed_hours,
+                "system_state": gate_result["system_state"],
+                "should_optimize": gate_result["should_optimize"],
+                "total_optimizations": total_optimizations,
+                "metrics": gate_result.get("system_metrics", {}),
+            }
+            
+            with open(log_file, "a", encoding="utf-8") as f:
+                f.write(json.dumps(log_entry, ensure_ascii=False) + "\n")
+            
+            # 진행률
+            progress = (elapsed_hours / 24) * 100
+            print(f"\n📊 진행률: {progress:.1f}% ({elapsed_hours:.1f}h / 24h)")
+            print(f"   최적화 횟수: {total_optimizations}/{cycle_count} ({total_optimizations/cycle_count*100:.0f}%)")
+            
+            # 주기적 요약 (매 1시간 = 12 사이클)
+            if cycle_count % 12 == 0:
+                print(f"\n🎯 1시간 요약:")
+                print(f"   경과: {elapsed_hours:.1f}시간")
+                print(f"   사이클: {cycle_count}/288")
+                print(f"   최적화율: {total_optimizations/cycle_count*100:.0f}%")
+            
+            # 다음 사이클까지 대기
+            if datetime.now() < end_time:
+                cycle_duration = time.time() - cycle_start
+                wait_time = max(0, 300 - cycle_duration)  # 5분 = 300초
+                
+                remaining = (end_time - datetime.now()).total_seconds()
+                if remaining < wait_time:
+                    wait_time = max(0, remaining)
+                
+                if wait_time > 0:
+                    print(f"⏳ 대기: {wait_time:.0f}초 (다음: {(datetime.now() + timedelta(seconds=wait_time)).strftime('%H:%M:%S')})\n")
+                    time.sleep(wait_time)
+    
+    except KeyboardInterrupt:
+        print("\n\n⚠️  사용자 중단")
+    
+    except Exception as e:
+        print(f"\n\n❌ 오류 발생: {e}")
+        import traceback
+        traceback.print_exc()
+    
+    finally:
+        # 최종 리포트
+        elapsed = (datetime.now() - start_time).total_seconds()
+        
+        print("\n" + "="*60)
+        print("📊 Lumen Production 24h - 최종 리포트")
+        print("="*60)
+        print(f"\n⏱️  실행 시간: {elapsed/3600:.1f}시간")
+        print(f"🔄 총 사이클: {cycle_count}")
+        print(f"✅ 최적화 횟수: {total_optimizations}")
+        
+        if cycle_count > 0:
+            print(f"📈 최적화 비율: {(total_optimizations/cycle_count*100):.1f}%")
+        
+        # 요약 저장
+        summary = {
+            "start_time": start_time.isoformat(),
+            "end_time": datetime.now().isoformat(),
+            "duration_hours": elapsed / 3600,
+            "total_cycles": cycle_count,
+            "total_optimizations": total_optimizations,
+            "optimization_rate": total_optimizations / cycle_count if cycle_count > 0 else 0,
+            "log_file": str(log_file),
+        }
+        
+        summary_file = Path("outputs/lumen_production_24h_stable_summary.json")
+        with open(summary_file, "w", encoding="utf-8") as f:
+            json.dump(summary, f, indent=2, ensure_ascii=False)
+        
+        print(f"\n💾 요약: {summary_file}")
+        print("✨ 완료!\n")
+
+
+if __name__ == "__main__":
+    run_24h_production_stable()

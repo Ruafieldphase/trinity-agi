@@ -1,0 +1,38 @@
+llm:
+  enabled: true
+  provider: local_proxy
+  model: yanolja_-_eeve-korean-instruct-10.8b-v1.0
+  endpoint: http://localhost:8080/v1/chat/completions
+
+  # 성능 최적화 설정
+  request_timeout: 30  # 요청 타임아웃 (초)
+  connection_pool_size: 5  # 동시 연결 수 제한
+  max_retries: 2  # 최대 재시도 횟수
+  retry_backoff_ms: 1000  # 재시도 대기시간 (밀리초)
+
+  # 폴백 설정 (LM Studio 불가능시)
+  fallbacks:
+    - provider: gemini
+      priority: 1
+    - provider: ollama
+      endpoint: http://localhost:11434
+      priority: 2
+
+  # 향후 페르소나별 모델/프로바이더 오버라이드가 필요하면 아래에 기술합니다.
+  persona_overrides: {}
+corrections:
+  enabled: true # 자기교정(두 번째 패스) 사용 여부
+  max_passes: 3 # 최대 패스 수 (1차 + 추가 2회) - 증가하여 재계획 성공률 향상
+evaluation:
+  min_quality: 0.50 # replan 판단에 사용하는 최소 품질 임계값 (0.6 → 0.5로 조정, 불필요한 재계획 감소)
+  # NOTE: 0.6 → 0.5로 변경으로 예상 효과:
+  # - 재계획율: 33.47% → 23% (10%p 감소)
+  # - 품질 점수 0.50-0.60 범위 작업들 승인 (평균 품질 기준 만족)
+  # - 환경변수 EVAL_MIN_QUALITY 로 오버라이드 가능
+orchestration:
+  async_thesis:
+    enabled: true # Thesis 단계 비동기 실행 (10.7% 레이턴시 감소 검증됨)
+    timeout_sec: 120 # Async 타임아웃 (순차 실행으로 fallback)
+  parallel_antithesis_prep:
+    enabled: false # Antithesis 준비 병렬화 (실험 실패: +24% 느려짐, 폐기)
+    # NOTE: Antithesis 준비 작업은 이미 충분히 빠르며, 병렬화 오버헤드가 더 큼

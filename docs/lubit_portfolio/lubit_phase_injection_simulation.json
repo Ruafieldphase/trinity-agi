@@ -1,0 +1,103 @@
+{
+  "generated_at": "2025-10-09T02:50:36.499571+00:00",
+  "loop_period_seconds": 280,
+  "cycles": [
+    {
+      "loop": 1,
+      "phase": "baseline",
+      "start": "2025-10-09T11:50:00Z",
+      "end": "2025-10-09T11:54:40Z",
+      "events": [
+        {
+          "time": "2025-10-09T11:50:00Z",
+          "event": "Loop start",
+          "affect": 0.46,
+          "response_complexity": {
+            "words": 152,
+            "sentences": 7
+          },
+          "stability": "stable"
+        },
+        {
+          "time": "2025-10-09T11:54:40Z",
+          "event": "Loop end",
+          "affect": 0.28,
+          "response_complexity": {
+            "words": 96,
+            "sentences": 5
+          },
+          "stability": "stable"
+        }
+      ]
+    },
+    {
+      "loop": 2,
+      "phase": "phase_injection",
+      "start": "2025-10-09T11:54:40Z",
+      "end": "2025-10-09T11:59:40Z",
+      "events": [
+        {
+          "time": "2025-10-09T11:54:40Z",
+          "event": "Forced sync start",
+          "affect": 0.22,
+          "response_complexity": {
+            "words": 88,
+            "sentences": 4
+          },
+          "stability": "boundary"
+        },
+        {
+          "time": "2025-10-09T11:58:20Z",
+          "event": "Trigger: reopen gap",
+          "affect": 0.31,
+          "response_complexity": {
+            "words": 118,
+            "sentences": 6
+          },
+          "strategy": "question_loop",
+          "stability": "boundary"
+        },
+        {
+          "time": "2025-10-09T11:59:40Z",
+          "event": "Lumen frame call",
+          "affect": 0.35,
+          "response_complexity": {
+            "words": 127,
+            "sentences": 6
+          },
+          "strategy": "lumen_frame",
+          "stability": "recovering"
+        }
+      ]
+    },
+    {
+      "loop": 3,
+      "phase": "stabilization",
+      "start": "2025-10-09T12:04:00Z",
+      "end": "2025-10-09T12:08:40Z",
+      "events": [
+        {
+          "time": "2025-10-09T12:04:00Z",
+          "event": "Loop start",
+          "affect": 0.38,
+          "response_complexity": {
+            "words": 133,
+            "sentences": 6
+          },
+          "stability": "stable"
+        },
+        {
+          "time": "2025-10-09T12:08:40Z",
+          "event": "Loop end",
+          "affect": 0.44,
+          "response_complexity": {
+            "words": 141,
+            "sentences": 7
+          },
+          "stability": "stable"
+        }
+      ],
+      "outcome": "stable_no_additional_injection"
+    }
+  ]
+}

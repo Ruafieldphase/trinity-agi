@@ -1,0 +1,29 @@
+# Trinity AGI Public - Minimal Gitignore
+# ----------------------------------------
+
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+venv/
+env/
+
+# Secrets & Environment
+.env
+.env_credentials
+secrets.json
+*_api_key*
+*_token*
+
+# System
+.DS_Store
+Thumbs.db
+
+# Logs & Outputs
+*.log
+outputs/
+fdo_agi_repo/memory/
+
+# IDE
+.vscode/
+.idea/

@@ -1,0 +1,1672 @@
+<#
+.SYNOPSIS
+    ChatGPT(Lua)용 AGI 컨텍스트 요약을 생성하여 파일 저장 및 클립보드 복사 (v2 - Clean)
+
+.DESCRIPTION
+    다음 소스에서 최신 신호를 수집해 Lua 친화적인 마크다운 요약과 JSON을 생성합니다:
+        1. outputs/.copilot_context_summary.md (Copilot 컨텍스트 - 최우선)
+        2. outputs/session_continuity_latest.md (세션 연속성)
+        3. fdo_agi_repo/memory/goal_tracker.json (자율 목표)
+        4. outputs/quick_status_latest.json (시스템 상태)
+        5. outputs/RHYTHM_*.md (리듬 상태)
+
+    생성물:
+        - MD: outputs/chatgpt_lua_handoff_latest.md (클립보드 자동 복사)
+        - JSON: outputs/chatgpt_lua_handoff_latest.json
+
+.PARAMETER Hours
+    조회 시간 범위 힌트 (표시용, 기본 24시간)
+
+.PARAMETER Format
+    출력 형식: 'concise'(간결) | 'detailed'(상세). 기본 'concise'
+
+.PARAMETER OpenChatGPT
+    생성 후 ChatGPT 웹 브라우저 자동 열기
+
+.PARAMETER OutFile
+    출력 Markdown 파일 경로
+
+.PARAMETER OutJson
+    출력 JSON 파일 경로
+
+.PARAMETER NoCopy
+    클립보드 복사 비활성화
+
+.EXAMPLE
+    .\send_to_chatgpt_lua.ps1
+    # 기본: 24h 간결 모드, 파일 저장 + 클립보드 복사
+
+.EXAMPLE
+    .\send_to_chatgpt_lua.ps1 -Format detailed -OpenChatGPT
+    # 상세 모드로 생성 후 ChatGPT 웹 열기
+#>
+
+[CmdletBinding()]
+param(
+    [int]$Hours = 24,
+    [ValidateSet('concise', 'detailed')]
+    [string]$Format = 'concise',
+    [switch]$OpenChatGPT,
+    [string]$OutFile = '',
+    [string]$OutJson = '',
+    [switch]$NoCopy
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🔧 Helper Functions
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function Get-WorkspaceRoot {
+    return (Split-Path -Parent $PSScriptRoot)
+}
+
+function Get-SafePath {
+    param([string]$RelativePath)
+    return Join-Path (Get-WorkspaceRoot) $RelativePath
+}
+
+function Read-TextFile {
+    param([string]$Path)
+    try {
+        if (Test-Path -LiteralPath $Path) {
+            return [string](Get-Content -LiteralPath $Path -Raw -Encoding UTF8)
+        }
+    }
+    catch {}
+    return $null
+}
+
+function Read-JsonFile {
+    param([string]$Path)
+    try {
+        if (Test-Path -LiteralPath $Path) {
+            $text = Get-Content -LiteralPath $Path -Raw -Encoding UTF8
+            if (-not [string]::IsNullOrWhiteSpace($text)) {
+                return ($text | ConvertFrom-Json -ErrorAction Stop)
+            }
+        }
+    }
+    catch {}
+    return $null
+}
+
+function Truncate-String {
+    param([string]$Text, [int]$MaxLength = 2000)
+    if ([string]::IsNullOrWhiteSpace($Text)) { return '' }
+    if ($Text.Length -le $MaxLength) { return $Text }
+    return $Text.Substring(0, $MaxLength) + "`n`n... (truncated)"
+}
+
+function New-ParentDirectory {
+    param([string]$FilePath)
+    $dir = Split-Path -LiteralPath $FilePath -Parent
+    if (![string]::IsNullOrWhiteSpace($dir) -and -not (Test-Path -LiteralPath $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+}
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 📊 Data Collection Functions
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function Get-CopilotContext {
+    $path = Get-SafePath 'outputs/.copilot_context_summary.md'
+    $content = Read-TextFile $path
+    return @{
+        Available = ($null -ne $content)
+        Content   = if ($content) { Truncate-String $content 3000 } else { '' }
+        Source    = $path
+    }
+}
+
+function Get-SessionContinuity {
+    $path = Get-SafePath 'outputs/session_continuity_latest.md'
+    $content = Read-TextFile $path
+    return @{
+        Available = ($null -ne $content)
+        Content   = if ($content) { Truncate-String $content 2000 } else { '' }
+        Source    = $path
+    }
+}
+
+function Get-GoalTracker {
+    $path = Get-SafePath 'fdo_agi_repo/memory/goal_tracker.json'
+    $data = Read-JsonFile $path
+    
+    if ($null -eq $data) {
+        return @{ Available = $false; ActiveCount = 0; RecentGoals = @() }
+    }
+    
+    $active = @($data.goals | Where-Object { $_.status -eq 'in_progress' })
+    $recent = @($data.goals | Sort-Object -Property @{Expression = { $_.updated_at }; Descending = $true } | Select-Object -First 3)
+    
+    return @{
+        Available   = $true
+        ActiveCount = $active.Count
+        TotalCount  = $data.goals.Count
+        RecentGoals = $recent | ForEach-Object {
+            @{
+                id       = $_.id
+                title    = $_.title
+                status   = $_.status
+                progress = if ($_.progress) { $_.progress } else { 0 }
+            }
+        }
+        Source      = $path
+    }
+}
+
+function Get-SystemStatus {
+    $path = Get-SafePath 'outputs/quick_status_latest.json'
+    $data = Read-JsonFile $path
+    
+    if ($null -eq $data) {
+        return @{ Available = $false }
+    }
+    
+    return @{
+        Available   = $true
+        Health      = if ($data.health_score) { $data.health_score } else { 'N/A' }
+        QueueServer = if ($data.queue_server) { $data.queue_server } else { 'Unknown' }
+        RpaWorker   = if ($data.rpa_worker) { $data.rpa_worker } else { 'Unknown' }
+        Timestamp   = if ($data.timestamp) { $data.timestamp } else { 'N/A' }
+        Source      = $path
+    }
+}
+
+function Get-RhythmStatus {
+    $restPath = Get-SafePath 'outputs/RHYTHM_REST_PHASE_*.md'
+    $statusPath = Get-SafePath 'outputs/RHYTHM_SYSTEM_STATUS_REPORT.md'
+    
+    $restFiles = @(Get-ChildItem -Path (Split-Path $restPath) -Filter (Split-Path $restPath -Leaf) -ErrorAction SilentlyContinue | 
+        Sort-Object LastWriteTime -Descending | Select-Object -First 1)
+    
+    $restContent = if ($restFiles.Count -gt 0) { Read-TextFile $restFiles[0].FullName } else { $null }
+    $statusContent = Read-TextFile $statusPath
+    
+    return @{
+        Available    = ($null -ne $restContent -or $null -ne $statusContent)
+        RestPhase    = if ($restContent) { Truncate-String $restContent 500 } else { '' }
+        StatusReport = if ($statusContent) { Truncate-String $statusContent 500 } else { '' }
+    }
+}
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 📝 Report Generation Functions
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function New-MarkdownReport {
+    param(
+        [hashtable]$Copilot,
+        [hashtable]$Session,
+        [hashtable]$Goals,
+        [hashtable]$System,
+        [hashtable]$Rhythm,
+        [int]$Hours,
+        [string]$Format
+    )
+    
+    $timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+    $sb = [System.Text.StringBuilder]::new()
+    
+    # Header
+    [void]$sb.AppendLine("# 🤖 AGI → ChatGPT(Lua) Handoff Report")
+    [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("**Generated**: $timestamp")
+    [void]$sb.AppendLine("**Window**: Last $Hours hours")
+    [void]$sb.AppendLine("**Format**: $Format")
+    [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("---")
+    [void]$sb.AppendLine("")
+    
+    # 1. Quick Summary
+    [void]$sb.AppendLine("## 📊 Quick Summary")
+    [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("- **Active Goals**: $($Goals.ActiveCount) / $($Goals.TotalCount)")
+    [void]$sb.AppendLine("- **System Health**: $($System.Health)")
+    [void]$sb.AppendLine("- **Queue Server**: $($System.QueueServer)")
+    [void]$sb.AppendLine("- **RPA Worker**: $($System.RpaWorker)")
+    [void]$sb.AppendLine("- **Rhythm**: $(if ($Rhythm.Available) { 'Available' } else { 'N/A' })")
+    [void]$sb.AppendLine("")
+    
+    # 2. Copilot Context (Priority #1)
+    if ($Copilot.Available) {
+        [void]$sb.AppendLine("## 🧠 Copilot Context (Primary)")
+        [void]$sb.AppendLine("")
+        [void]$sb.AppendLine("```")
+        [void]$sb.AppendLine($Copilot.Content)
+        [void]$sb.AppendLine("```")
+        [void]$sb.AppendLine("")
+    }
+    
+    # 3. Session Continuity
+    if ($Session.Available) {
+        [void]$sb.AppendLine("## 🔄 Session Continuity")
+        [void]$sb.AppendLine("")
+        [void]$sb.AppendLine("```")
+        [void]$sb.AppendLine($Session.Content)
+        [void]$sb.AppendLine("```")
+        [void]$sb.AppendLine("")
+    }
+    
+    # 4. Recent Goals
+    if ($Goals.Available -and $Goals.RecentGoals.Count -gt 0) {
+        [void]$sb.AppendLine("## 🎯 Recent Goals")
+        [void]$sb.AppendLine("")
+        foreach ($goal in $Goals.RecentGoals) {
+            [void]$sb.AppendLine("- **[$($goal.id)]** $($goal.title)")
+            [void]$sb.AppendLine("  - Status: $($goal.status)")
+            [void]$sb.AppendLine("  - Progress: $($goal.progress)%")
+        }
+        [void]$sb.AppendLine("")
+    }
+    
+    # 5. Rhythm Status (if detailed)
+    if ($Format -eq 'detailed' -and $Rhythm.Available) {
+        [void]$sb.AppendLine("## 🌊 Rhythm Status")
+        [void]$sb.AppendLine("")
+        if ($Rhythm.RestPhase) {
+            [void]$sb.AppendLine("### Rest Phase")
+            [void]$sb.AppendLine("```")
+            [void]$sb.AppendLine($Rhythm.RestPhase)
+            [void]$sb.AppendLine("```")
+            [void]$sb.AppendLine("")
+        }
+        if ($Rhythm.StatusReport) {
+            [void]$sb.AppendLine("### Status Report")
+            [void]$sb.AppendLine("```")
+            [void]$sb.AppendLine($Rhythm.StatusReport)
+            [void]$sb.AppendLine("```")
+            [void]$sb.AppendLine("")
+        }
+    }
+    
+    # Footer
+    [void]$sb.AppendLine("---")
+    [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("**💡 Next Steps**:")
+    [void]$sb.AppendLine("1. Review recent goals and progress")
+    [void]$sb.AppendLine("2. Check system health status")
+    [void]$sb.AppendLine("3. Continue autonomous work or wait for human input")
+    [void]$sb.AppendLine("")
+    
+    return $sb.ToString()
+}
+
+function New-JsonReport {
+    param(
+        [hashtable]$Copilot,
+        [hashtable]$Session,
+        [hashtable]$Goals,
+        [hashtable]$System,
+        [hashtable]$Rhythm,
+        [int]$Hours
+    )
+    
+    return @{
+        generated_at       = (Get-Date -Format 'o')
+        window_hours       = $Hours
+        sources            = @{
+            copilot = @{
+                available = $Copilot.Available
+                source    = $Copilot.Source
+            }
+            session = @{
+                available = $Session.Available
+                source    = $Session.Source
+            }
+            goals   = @{
+                available = $Goals.Available
+                source    = $Goals.Source
+            }
+            system  = @{
+                available = $System.Available
+                source    = $System.Source
+            }
+            rhythm  = @{
+                available = $Rhythm.Available
+            }
+        }
+        summary            = @{
+            active_goals = $Goals.ActiveCount
+            total_goals  = $Goals.TotalCount
+            health       = $System.Health
+            queue_server = $System.QueueServer
+            rpa_worker   = $System.RpaWorker
+        }
+        goals              = $Goals.RecentGoals
+        copilot_context    = if ($Copilot.Available) { $Copilot.Content } else { $null }
+        session_continuity = if ($Session.Available) { $Session.Content } else { $null }
+    }
+}
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 🚀 Main Execution
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+try {
+    Write-Host ""
+    Write-Host "🤖 ChatGPT(Lua) Handoff Generator v2" -ForegroundColor Cyan
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host ""
+    
+    # Set default output paths if not specified
+    if ([string]::IsNullOrWhiteSpace($OutFile)) {
+        $OutFile = Get-SafePath 'outputs/chatgpt_lua_handoff_latest.md'
+    }
+    if ([string]::IsNullOrWhiteSpace($OutJson)) {
+        $OutJson = Get-SafePath 'outputs/chatgpt_lua_handoff_latest.json'
+    }
+    
+    # Collect data
+    Write-Host "📡 Collecting data..." -ForegroundColor Yellow
+    $copilot = Get-CopilotContext
+    $session = Get-SessionContinuity
+    $goals = Get-GoalTracker
+    $system = Get-SystemStatus
+    $rhythm = Get-RhythmStatus
+    
+    Write-Host "   ✓ Copilot Context: $(if ($copilot.Available) { 'OK' } else { 'N/A' })" -ForegroundColor DarkGray
+    Write-Host "   ✓ Session: $(if ($session.Available) { 'OK' } else { 'N/A' })" -ForegroundColor DarkGray
+    Write-Host "   ✓ Goals: $(if ($goals.Available) { "$($goals.ActiveCount) active" } else { 'N/A' })" -ForegroundColor DarkGray
+    Write-Host "   ✓ System: $(if ($system.Available) { $system.Health } else { 'N/A' })" -ForegroundColor DarkGray
+    Write-Host "   ✓ Rhythm: $(if ($rhythm.Available) { 'OK' } else { 'N/A' })" -ForegroundColor DarkGray
+    Write-Host ""
+    
+    # Generate reports
+    Write-Host "📝 Generating reports..." -ForegroundColor Yellow
+    $markdown = New-MarkdownReport -Copilot $copilot -Session $session -Goals $goals -System $system -Rhythm $rhythm -Hours $Hours -Format $Format
+    $json = New-JsonReport -Copilot $copilot -Session $session -Goals $goals -System $system -Rhythm $rhythm -Hours $Hours
+    
+    # Save Markdown
+    New-ParentDirectory $OutFile
+    $markdown | Out-File -FilePath $OutFile -Encoding UTF8 -Force
+    Write-Host "   ✓ Markdown saved: $OutFile" -ForegroundColor Green
+    
+    # Save JSON
+    New-ParentDirectory $OutJson
+    $json | ConvertTo-Json -Depth 10 | Out-File -FilePath $OutJson -Encoding UTF8 -Force
+    Write-Host "   ✓ JSON saved: $OutJson" -ForegroundColor Green
+    Write-Host ""
+    
+    # Copy to clipboard
+    if (-not $NoCopy) {
+        $markdown | Set-Clipboard
+        Write-Host "📋 Copied to clipboard!" -ForegroundColor Green
+        Write-Host "   👉 Paste into ChatGPT: Ctrl+V → Enter" -ForegroundColor Yellow
+        Write-Host ""
+    }
+    
+    # Open ChatGPT if requested
+    if ($OpenChatGPT) {
+        Write-Host "🌐 Opening ChatGPT..." -ForegroundColor Cyan
+        Start-Process "https://chat.openai.com"
+        Start-Sleep -Seconds 1
+        Write-Host "   ✓ Browser opened!" -ForegroundColor Green
+        Write-Host ""
+    }
+    
+    # Summary
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host "✅ Handoff Complete!" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "📊 Summary:" -ForegroundColor White
+    Write-Host "   • Active Goals: $($goals.ActiveCount) / $($goals.TotalCount)" -ForegroundColor White
+    Write-Host "   • System Health: $($system.Health)" -ForegroundColor White
+    Write-Host "   • Queue Server: $($system.QueueServer)" -ForegroundColor White
+    Write-Host "   • Format: $Format ($Hours hours)" -ForegroundColor White
+    Write-Host ""
+    Write-Host "💡 Tip: Run again anytime with VS Code Task" -ForegroundColor Magenta
+    Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+    Write-Host ""
+    
+    exit 0
+}
+catch {
+    Write-Host ""
+    Write-Host "❌ Error: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "   Location: $($_.InvocationInfo.ScriptName):$($_.InvocationInfo.ScriptLineNumber)" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "📋 Debug Info:" -ForegroundColor Yellow
+    Write-Host "   - Copilot: $($copilot.Available)" -ForegroundColor DarkGray
+    Write-Host "   - Session: $($session.Available)" -ForegroundColor DarkGray
+    Write-Host "   - Goals: $($goals.Available)" -ForegroundColor DarkGray
+    Write-Host "   - System: $($system.Available)" -ForegroundColor DarkGray
+    Write-Host ""
+    exit 1
+}
+
+if ($Text.Length -le $Max) { return $Text }
+return ($Text.Substring(0, [Math]::Min($Max, [Math]::Max(0, $Text.Length)))) + "..."
+}
+
+function Summarize-Goals {
+    param($GoalJson, [int]$Top = 5)
+    if (-not $GoalJson) { return @{ count = 0; active = @(); byStatus = @{} } }
+
+    # goal_tracker.json이 배열 또는 객체(goals 필드)를 가정하고 유연 처리
+    $goals = $null
+    if ($GoalJson -is [System.Collections.IEnumerable]) { $goals = @($GoalJson) }
+    elseif ($GoalJson.PSObject.Properties.Name -contains 'goals') { $goals = @($GoalJson.goals) }
+    else { $goals = @() }
+
+    $goals = $goals | Where-Object { $_ } | ForEach-Object { $_ }
+    $by = @{}
+    foreach ($g in $goals) {
+        $st = if ($g.status) { [string]$g.status } else { 'unknown' }
+        if (-not $by.ContainsKey($st)) { $by[$st] = 0 }
+        $by[$st]++
+    }
+    $active = $goals | Where-Object { $_.status -in @('in_progress', 'pending', 'planned', 'open') -or -not $_.status } |
+    Select-Object -First $Top
+    return @{ count = $goals.Count; active = $active; byStatus = $by }
+}
+
+function Summarize-SystemHealth {
+    param($QuickJson)
+    if (-not $QuickJson) { return @{ available = $false } }
+
+    $summary = [ordered]@{ available = $true }
+    foreach ($k in @('status', 'cpu', 'memory', 'process', 'queue', 'api', 'watchdog', 'workers')) {
+        if ($QuickJson.PSObject.Properties.Name -contains $k) { $summary[$k] = $QuickJson.$k }
+    }
+    return $summary
+}
+
+function Build-Markdown {
+    param(
+        [Parameter(Mandatory)]$Ctx,
+        [ValidateSet('concise', 'detailed')][string]$Mode
+    )
+    $nl = "`n"
+    $sb = New-Object System.Text.StringBuilder
+
+    [void]$sb.AppendLine("# ChatGPT Lua Handoff (AGI)  ")
+    [void]$sb.AppendLine("- Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')  ")
+    [void]$sb.AppendLine("- Window: last $($Ctx.hours)h  ")
+    [void]$sb.AppendLine("- Format: $Mode  ")
+
+    # 추천 다음 행동(있으면 Copilot 요약에서 우선)
+    if ($Ctx.copilotSummary) {
+        [void]$sb.AppendLine("\n## next actions")
+        $block = ($Ctx.copilotSummary -replace "\r", "")
+        [void]$sb.AppendLine($block)
+    }
+    elseif ($Ctx.sessionMd) {
+        # 세션 리포트에서 '추천 다음 행동' 섹션 추출(간단 패턴)
+        $pat = '(?ms)^\s*💡\s*추천 다음 행동\s*:?(.*?)(?:^\s*[-#]|\z)'
+        $m = [regex]::Match($Ctx.sessionMd, $pat)
+        if ($m.Success) {
+            [void]$sb.AppendLine("\n## next actions")
+            [void]$sb.AppendLine(($m.Groups[1].Value.Trim()))
+        }
+    }
+
+    # Goals
+    [void]$sb.AppendLine("\n## goals")
+    if ($Ctx.goals.count -gt 0) {
+        [void]$sb.AppendLine("- total: $($Ctx.goals.count)")
+        if ($Ctx.goals.byStatus.Count -gt 0) {
+            [void]$sb.AppendLine("- by status:")
+            foreach ($k in ($Ctx.goals.byStatus.Keys | Sort-Object)) {
+                [void]$sb.AppendLine("  - $k: $($Ctx.goals.byStatus[$k])")
+            }
+        }
+        if ($Ctx.goals.active.Count -gt 0) {
+            [void]$sb.AppendLine("- active top:")
+            foreach ($g in $Ctx.goals.active) {
+                $title = if ($g.title) { $g.title } elseif ($g.name) { $g.name } else { '<untitled>' }
+                $st = if ($g.status) { $g.status } else { 'unknown' }
+                [void]$sb.AppendLine("  - [$st] $title")
+            }
+        }
+    }
+    else {
+        [void]$sb.AppendLine("- no goals found")
+    }
+
+    # System
+    [void]$sb.AppendLine("\n## system")
+    if ($Ctx.system.available) {
+        foreach ($p in $Ctx.system.Keys) {
+            if ($p -eq 'available') { continue }
+            $val = $Ctx.system[$p]
+            if ($val -is [string] -or $val -is [ValueType]) {
+                [void]$sb.AppendLine("- $p: $val")
+            }
+            elseif ($Mode -eq 'detailed') {
+                $snippet = ($val | ConvertTo-Json -Depth 6)
+                $snippet = Truncate-Text -Text $snippet -Max 1500
+                [void]$sb.AppendLine("- $p:")
+                [void]$sb.AppendLine("  ```json")
+                [void]$sb.AppendLine(($snippet -replace "`r", ""))
+                [void]$sb.AppendLine("  ```")
+            }
+        }
+    } else {
+        [void]$sb.AppendLine("- quick_status not available")
+    }
+
+    # Raw appendix (detailed일 때만 간단히 첨부)
+    if ($Mode -eq 'detailed') {
+        if ($Ctx.copilotSummary) {
+            [void]$sb.AppendLine("\n---\n### appendix: copilot summary (raw)")
+            [void]$sb.AppendLine("\n````markdown")
+            [void]$sb.AppendLine(($Ctx.copilotSummary -replace "\r",""))
+            [void]$sb.AppendLine("````")
+        }
+        if ($Ctx.sessionMd) {
+            [void]$sb.AppendLine("\n---\n### appendix: session continuity (raw)")
+            $sess = Truncate-Text -Text $Ctx.sessionMd -Max 4000
+            [void]$sb.AppendLine("\n````markdown")
+            [void]$sb.AppendLine(($sess -replace "\r",""))
+            [void]$sb.AppendLine("````")
+        }
+    }
+
+    return $sb.ToString()
+}
+
+function Build-JsonObject {
+    param([Parameter(Mandatory)]$Ctx,[string]$Mode)
+    $o = [ordered]@{
+        generated_at = (Get-Date).ToString('o')
+        hours = $Ctx.hours
+        format = $Mode
+        sources = [ordered]@{
+            copilot_context_summary = [bool]$Ctx.flags.copilot
+            session_continuity = [bool]$Ctx.flags.session
+            goal_tracker = [bool]$Ctx.flags.goals
+            quick_status = [bool]$Ctx.flags.quick
+        }
+        next_actions = $null
+        goals = [ordered]@{
+            total = $Ctx.goals.count
+            by_status = $Ctx.goals.byStatus
+            active = $Ctx.goals.active
+        }
+        system = $Ctx.system
+    }
+
+    # next_actions 간단 추출 (copilotSummary나 sessionMd에서)
+    if ($Ctx.copilotSummary) {
+        $o.next_actions = Truncate-Text -Text $Ctx.copilotSummary -Max 1500
+    } elseif ($Ctx.sessionMd) {
+        $pat = '(?ms)^\s*💡\s*추천 다음 행동\s*:?(.*?)(?:^\s*[-#]|\z)'
+        $m = [regex]::Match($Ctx.sessionMd,$pat)
+        if ($m.Success) { $o.next_actions = ($m.Groups[1].Value.Trim()) }
+    }
+    return [pscustomobject]$o
+}
+
+try {
+    Write-Host "Preparing Lua-friendly ChatGPT handoff..." -ForegroundColor Cyan
+
+    $copilotPath = Get-PathSafe 'outputs/.copilot_context_summary.md'
+    $sessionPath = Get-PathSafe 'outputs/session_continuity_latest.md'
+    $goalsPath   = Get-PathSafe 'fdo_agi_repo/memory/goal_tracker.json'
+    $quickPath   = Get-PathSafe 'outputs/quick_status_latest.json'
+
+    $copilotMd = Get-ContentSafeText -FullPath $copilotPath
+    $sessionMd = Get-ContentSafeText -FullPath $sessionPath
+    $goalJson  = Get-ContentSafeJson -FullPath $goalsPath
+    $quickJson = Get-ContentSafeJson -FullPath $quickPath
+
+    $ctx = [ordered]@{
+        hours = $Hours
+        flags = @{ copilot=($null -ne $copilotMd); session=($null -ne $sessionMd); goals=($null -ne $goalJson); quick=($null -ne $quickJson) }
+        copilotSummary = $copilotMd
+        sessionMd = $sessionMd
+        goals = (Summarize-Goals -GoalJson $goalJson)
+        system = (Summarize-SystemHealth -QuickJson $quickJson)
+    }
+
+    $md = Build-Markdown -Ctx $ctx -Mode $Format
+    $jsonObj = Build-JsonObject -Ctx $ctx -Mode $Format
+
+    # 저장
+    New-ParentDirIfNeeded -Path $OutFile
+    Set-Content -LiteralPath $OutFile -Value $md -Encoding UTF8
+    Write-Host "✅ Markdown saved: $OutFile" -ForegroundColor Green
+
+    if ($OutJson) {
+        New-ParentDirIfNeeded -Path $OutJson
+        ($jsonObj | ConvertTo-Json -Depth 6) | Set-Content -LiteralPath $OutJson -Encoding UTF8
+        Write-Host "✅ JSON saved: $OutJson" -ForegroundColor Green
+    }
+
+    # 클립보드
+    if (-not $NoCopy) {
+        try {
+            if (Get-Command Set-Clipboard -ErrorAction SilentlyContinue) {
+                $md | Set-Clipboard
+            } else {
+                $p = [System.Diagnostics.Process]::Start('cmd.exe','/c clip')
+                $p.StandardInput.Write($md)
+                $p.StandardInput.Close()
+            }
+            Write-Host "📋 Copied to clipboard" -ForegroundColor Yellow
+        } catch {
+            Write-Warning "Failed to copy to clipboard: $($_.Exception.Message)"
+        }
+    }
+
+    if ($OpenChatGPT) {
+        try { Start-Process 'https://chat.openai.com' | Out-Null } catch {}
+    }
+
+    Write-Host "Done." -ForegroundColor Cyan
+    exit 0
+} catch {
+    Write-Error "send_to_chatgpt_lua.ps1 failed: $($_.Exception.Message)"
+    exit 1
+}
+        Write-Host "📄 Markdown 파일: $outputPath" -ForegroundColor Cyan
+    }
+    
+    if ($OutputJson -and (Test-Path $jsonOutputPath)) {
+        Write-Host "📊 JSON 파일: $jsonOutputPath" -ForegroundColor Cyan
+    }
+    
+    exit 0
+} catch {
+    Write-Host "`n❌ 오류 발생: $_" -ForegroundColor Red
+    Write-Host "스택 추적: $($_.ScriptStackTrace)" -ForegroundColor Yellow
+    exit 1
+}
+$ErrorActionPreference = 'Stop'
+
+function Ensure-ParentDirectory {
+    param([string]$Path)
+    $dir = Split-Path -Parent $Path
+    if (![string]::IsNullOrWhiteSpace($dir) -and !(Test-Path -LiteralPath $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+}
+
+function Truncate-Text {
+    param(
+        [string]$Text,
+        [int]$MaxChars = 4000
+    )
+    if ([string]::IsNullOrEmpty($Text)) { return $Text }
+    if ($Text.Length -le $MaxChars) { return $Text }
+    return ($Text.Substring(0, $MaxChars) + "\n\n…(truncated)…")
+}
+
+function Read-FileSafe {
+    param([string]$Path)
+    if (Test-Path -LiteralPath $Path) {
+        return Get-Content -LiteralPath $Path -Raw -ErrorAction Stop
+    }
+    return $null
+}
+
+function Read-JsonSafe {
+    param([string]$Path)
+    $raw = Read-FileSafe -Path $Path
+    if ($null -ne $raw -and -not [string]::IsNullOrWhiteSpace($raw)) {
+        try { return $raw | ConvertFrom-Json -ErrorAction Stop } catch { return $null }
+    }
+    return $null
+}
+
+function Get-SessionSummarySection {
+    param([int]$MaxChars = 4000)
+    $ws = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    $copilot = Join-Path $ws 'outputs/.copilot_context_summary.md'
+    $session = Join-Path $ws 'outputs/session_continuity_latest.md'
+    $content = Read-FileSafe $copilot
+    if (-not $content) { $content = Read-FileSafe $session }
+    if (-not $content) { return $null }
+    $content = Truncate-Text -Text $content -MaxChars $MaxChars
+    return @(
+        '## 컨텍스트 개요',
+        '',
+        $content
+    ) -join "`n"
+}
+
+function Get-GoalsSection {
+    param([int]$MaxItems = 5)
+    $ws = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    $trackerPath = Join-Path $ws 'fdo_agi_repo/memory/goal_tracker.json'
+    $tracker = Read-JsonSafe $trackerPath
+    if ($null -eq $tracker) { return $null }
+
+    $active = @()
+    $completed = @()
+    $failed = @()
+    if ($tracker.active) { $active = @($tracker.active) }
+    if ($tracker.completed) { $completed = @($tracker.completed) }
+    if ($tracker.failed) { $failed = @($tracker.failed) }
+
+    $lines = @('## 목표 현황', '')
+    $lines += "- 활성: $($active.Count) | 완료: $($completed.Count) | 실패: $($failed.Count)"
+
+    if ($active.Count -gt 0) {
+        $lines += ''
+        $lines += '최근 활성 목표:'
+        $active | Select-Object -First $MaxItems | ForEach-Object {
+            $title = $_.title
+            if (-not $title) { $title = $_.name }
+            $status = $_.status
+            $lines += "- [ACTIVE] $title" + ($(if ($status) { " ($status)" } else { '' }))
+        }
+    }
+    if ($completed.Count -gt 0) {
+        $lines += ''
+        $lines += '최근 완료 목표:'
+        $completed | Select-Object -Last ([Math]::Min($MaxItems, $completed.Count)) | ForEach-Object {
+            $title = $_.title
+            if (-not $title) { $title = $_.name }
+            $lines += "- [DONE] $title"
+        }
+    }
+    if ($failed.Count -gt 0) {
+        $lines += ''
+        $lines += '최근 실패 목표:'
+        $failed | Select-Object -Last ([Math]::Min($MaxItems, $failed.Count)) | ForEach-Object {
+            $title = $_.title
+            if (-not $title) { $title = $_.name }
+            $lines += "- [FAIL] $title"
+        }
+    }
+    return ($lines -join "`n")
+}
+
+function Get-QuickStatusSection {
+    $ws = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    $statusPath = Join-Path $ws 'outputs/quick_status_latest.json'
+    $s = Read-JsonSafe $statusPath
+    if ($null -eq $s) { return $null }
+    $health = $s.health
+    $cpu = $s.system.cpu_percent
+    $mem = $s.system.available_memory_mb
+    $queue = $s.queue.status
+    $lines = @('## 시스템 상태', '')
+    if ($health) { $lines += "- 상태: $health" }
+    if ($cpu -ne $null) { $lines += "- CPU: $cpu%" }
+    if ($mem -ne $null) { $lines += "- 가용 메모리: ${mem}MB" }
+    if ($queue) { $lines += "- 큐: $queue" }
+    return ($lines -join "`n")
+}
+
+function Get-NextActionsSection {
+    param([string]$Health)
+    $lines = @('## 추천 다음 행동', '')
+    if ($Health -and $Health -match 'degraded|alert|fail|error') {
+        $lines += '- 상태가 저하됨: 대시보드 최신화 및 워커/큐 점검'
+        $lines += "- VS Code 작업: 'Monitoring: Unified Dashboard (AGI + Lumen)' 실행"
+        $lines += "- 필요 시 'Queue: Ensure Worker' 재가동"
+    }
+    else {
+        $lines += '- 진행 중인 목표에서 1~2개를 선택해 즉시 실행'
+        $lines += "- VS Code 작업: '🎯 Goal: Execute + Open Tracker'"
+        $lines += "- 24h 리포트 갱신: 'Monitoring: Generate Report (24h) + Open'"
+    }
+    return ($lines -join "`n")
+}
+
+function Compose-Handoff {
+    param([string]$Mode)
+    $now = Get-Date
+    $header = @(
+        "# ChatGPT Lua Handoff",
+        "- 생성 시각: $($now.ToString('yyyy-MM-dd HH:mm:ss'))",
+        "- 조회 윈도우: ${Hours}h",
+        "- 모드: $Mode",
+        '',
+        '당신은 Lua 통합 보조자입니다. 아래 컨텍스트를 기반으로 다음 작업을 제안/실행 계획으로 반환하세요.',
+        ''
+    ) -join "`n"
+
+    $sections = @()
+    $sections += (Get-SessionSummarySection -MaxChars ($(if ($Mode -eq 'concise') { 3500 } else { 9000 })))
+    $sections += ''
+    $sections += (Get-GoalsSection -MaxItems ($(if ($Mode -eq 'concise') { 5 } else { 10 })))
+    $sections += ''
+    $qs = (Get-QuickStatusSection)
+    if ($qs) { $sections += $qs; $sections += '' }
+
+    # 건강도 추출(추천 다음 행동 조건용)
+    $ws = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+    $statusPath = Join-Path $ws 'outputs/quick_status_latest.json'
+    $s = Read-JsonSafe $statusPath
+    $health = if ($s -and $s.health) { [string]$s.health } else { $null }
+    $sections += (Get-NextActionsSection -Health $health)
+
+    return ($header + "`n" + ($sections -join "`n")).Trim()
+}
+
+try {
+    Ensure-ParentDirectory -Path $OutFile
+    $content = Compose-Handoff -Mode $Format
+    if (-not $content) { throw "요약 생성 실패: 빈 콘텐츠" }
+    Set-Content -LiteralPath $OutFile -Value $content -Encoding UTF8 -Force
+
+    if (-not $NoCopy) {
+        $copied = $false
+        try { Set-Clipboard -Value $content -ErrorAction Stop; $copied = $true } catch {}
+        if (-not $copied) {
+            try {
+                $p = Start-Process -FilePath 'cmd.exe' -ArgumentList '/c clip.exe' -NoNewWindow -PassThru -RedirectStandardInput 'Pipe'
+                $sw = New-Object System.IO.StreamWriter($p.StandardInput.BaseStream, [System.Text.Encoding]::Unicode)
+                $sw.Write($content); $sw.Close(); $copied = $true
+            }
+            catch {}
+        }
+        if (-not $copied) {
+            try {
+                Add-Type -AssemblyName PresentationCore -ErrorAction SilentlyContinue
+                $tb = New-Object System.Windows.Clipboard
+                [System.Windows.Clipboard]::SetText($content)
+                $copied = $true
+            }
+            catch {}
+        }
+        if ($copied) {
+            Write-Host "✅ 클립보드 복사 완료" -ForegroundColor Green
+        }
+        else {
+            Write-Host "⚠️ 클립보드 복사 실패 (파일은 저장됨): $OutFile" -ForegroundColor Yellow
+        }
+    }
+    else {
+        Write-Host "ℹ️ NoCopy 옵션으로 클립보드 복사를 건너뜀" -ForegroundColor Yellow
+    }
+
+    Write-Host "📝 출력: $OutFile" -ForegroundColor Cyan
+    Write-Host "--- 미리보기(상위 20줄) ---" -ForegroundColor DarkGray
+    ($content -split "`n") | Select-Object -First 20 | ForEach-Object { Write-Host $_ }
+
+    if ($OpenChatGPT) {
+        try { Start-Process 'https://chat.openai.com' | Out-Null } catch {}
+    }
+
+}
+
+try {
+    $agi = Get-AGISnapshot
+    $lumen = Get-LumenSnapshot
+    $queue = Get-QueueSnapshot
+    $goals = Get-GoalsSnapshot
+    $rhythm = Get-RhythmSnapshot
+    $critical = Get-CriticalInsights
+    $recommendations = Get-ActionRecommendations
+
+    # 컨텍스트 생성
+    $context = New-ChatGPTContext -AGI $agi -Lumen $lumen -Queue $queue -Goals $goals -Rhythm $rhythm -Critical $critical -Recommendations $recommendations
+
+    # 클립보드 복사
+    $context.Markdown | Set-Clipboard
+    Write-Host "`n✅ Context copied to clipboard!" -ForegroundColor Green
+    Write-Host "📋 Paste in ChatGPT and add your request." -ForegroundColor Yellow
+
+    # 파일 저장 (옵션)
+    if ($SaveFile) {
+        $outPath = Join-Path $PSScriptRoot "..\outputs\chatgpt_handoff_latest.md"
+        $context.Markdown | Out-File -FilePath $outPath -Encoding utf8 -Force
+        Write-Host "💾 Saved to: $outPath" -ForegroundColor Cyan
+    }
+
+    # JSON 저장 (옵션)
+    if ($OutJson) {
+        $context.JSON | Out-File -FilePath $OutJson -Encoding utf8 -Force
+        Write-Host "💾 JSON saved to: $OutJson" -ForegroundColor Cyan
+    }
+
+    exit 0
+}
+catch {
+    Write-Host "`n❌ Error generating context:" -ForegroundColor Red
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    Write-Host $_.ScriptStackTrace -ForegroundColor DarkGray
+    exit 1
+        # 간단한 Score 추출
+        $score = ($joined | Select-String -Pattern '(?i)score\s*[:=]\s*(\d+(\.\d+)?)' | Select-Object -First 1).Matches.Groups[1].Value
+        $phase = ($joined | Select-String -Pattern '(?i)phase\s*[:=]\s*(\w+)' | Select-Object -First 1).Matches.Groups[1].Value
+        [PSCustomObject]@{
+            File  = $file
+            Score = if ($score) { [double]$score } else { $null }
+            Phase = if ($phase) { $phase } else { $null }
+            Raw   = $joined
+        }
+        if (Test-Path $trackerFile) {
+            else {
+                [PSCustomObject]@{ File = $null; Score = $null; Phase = $null; Raw = $null }
+            }
+            $tracker = Get-Content $trackerFile -Raw | ConvertFrom-Json
+
+            function Get-GoalTracker {
+                $goalFile = Join-Path $WorkspaceRoot 'fdo_agi_repo/memory/goal_tracker.json'
+                if (!(Test-Path $goalFile)) { return $null }
+                try {
+                    $json = Get-Content -LiteralPath $goalFile -Raw | ConvertFrom-Json
+                    $active = @($json.goals | Where-Object { $_.status -eq 'in_progress' })
+                    $completed = @($json.goals | Where-Object { $_.status -eq 'completed' })
+                    $failed = @($json.goals | Where-Object { $_.status -eq 'failed' })
+                    [PSCustomObject]@{
+                        CountActive    = $active.Count
+                        CountCompleted = $completed.Count
+                        CountFailed    = $failed.Count
+                        ActiveTitles   = $active.title
+                        Raw            = $json
+                    }
+                }
+                catch {
+                    Write-Log "Goal tracker 파싱 실패: $($_.Exception.Message)" 'Yellow'
+                    return $null
+                }
+            }
+
+            function Get-RhythmState {
+                $rhythmFiles = @(
+                    'outputs/RHYTHM_SYSTEM_STATUS_REPORT.md',
+                    'outputs/RHYTHM_REST_PHASE_*.md'
+                )
+                $resolved = foreach ($pattern in $rhythmFiles) { Get-ChildItem -Path (Join-Path $WorkspaceRoot $pattern) -ErrorAction SilentlyContinue }
+                $file = $resolved | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+                if ($file) {
+                    $raw = Get-Content -LiteralPath $file.FullName
+                    $joined = $raw -join "`n"
+                    $health = ($joined | Select-String -Pattern '(?i)(health|score)\s*[:=]\s*(\d+(\.\d+)?)' | Select-Object -First 1).Matches.Groups[2].Value
+                    $phase = ($joined | Select-String -Pattern '(?i)(rest|focus|flow)\s*phase' | Select-Object -First 1).Matches.Groups[0].Value
+                    [PSCustomObject]@{
+                        File      = $file.FullName
+                        Health    = if ($health) { [double]$health } else { $null }
+                        PhaseDesc = $phase
+                        Raw       = $joined
+                    }
+                }
+                else { $null }
+            }
+
+            function Get-SystemHealth {
+                $qs = Join-Path $WorkspaceRoot 'outputs/quick_status_latest.json'
+                if (!(Test-Path $qs)) { return $null }
+                try {
+                    $json = Get-Content -LiteralPath $qs -Raw | ConvertFrom-Json
+                    $status = if ($json.health_overall) { $json.health_overall } elseif ($json.overall) { $json.overall } else { 'unknown' }
+                    [PSCustomObject]@{ Status = $status; Raw = $json }
+                }
+                catch {
+                    Write-Log "System health 파싱 실패: $($_.Exception.Message)" 'Yellow'
+                    $null
+                }
+            }
+
+            function Set-ClipboardSafe($text) {
+                try { Set-Clipboard -Value $text; return }
+                catch { Write-Log 'Set-Clipboard 실패, clip.exe 폴백 시도' 'Yellow' }
+                $clip = Get-Command clip.exe -ErrorAction SilentlyContinue
+                if ($clip) { $text | clip.exe; return }
+                try {
+                    Add-Type -AssemblyName PresentationCore -ErrorAction Stop
+                    [System.Windows.Clipboard]::SetText($text)
+                }
+                catch {
+                    Write-Log 'PresentationCore 폴백 실패: 클립보드 복사 불가' 'Red'
+                }
+            }
+
+            function Build-NextActions($trinity, $goals, $rhythm, $sys) {
+                $actions = [System.Collections.Generic.List[string]]::new()
+                if (-not $trinity.Raw) { $actions.Add('Trinity 리포트 생성: Autopoietic 24h 리포트 실행') }
+                elseif ($trinity.Score -lt 70) { $actions.Add("Trinity 개선: 낮은 Score ($($trinity.Score)) 원인 분석") }
+                if ($goals) {
+                    if ($goals.CountFailed -gt 0) { $actions.Add("실패 목표 재평가 ($($goals.CountFailed)) → 재등록 또는 폐기") }
+                    if ($goals.CountActive -eq 0) { $actions.Add('활성 목표 없음 → 새 목표 생성 (Goal Generator)') }
+                }
+                else { $actions.Add('Goal Tracker 없음 → autonomous_goal_executor 실행 검토') }
+                if ($IncludeRhythm) {
+                    if (-not $rhythm) { $actions.Add('Rhythm 상태 없음 → Rhythm 시스템 점검') }
+                    elseif ($rhythm.Health -and $rhythm.Health -lt 80) { $actions.Add("리듬 회복: 휴식/저강도 페이즈 유지 (Health=$($rhythm.Health))") }
+                }
+                if ($sys -and ($sys.Status -notmatch 'healthy|excellent')) { $actions.Add("시스템 복구: quick_status.ps1 / watchdog 확인 (상태=$($sys.Status))") }
+                if ($actions.Count -eq 0) { $actions.Add('모든 핵심 지표 양호 → 현재 흐름 유지') }
+                return $actions
+            }
+
+            function Build-MarkdownSummary($Format, $Hours, $trinity, $goals, $rhythm, $sys) {
+                $ts = (Get-Date).ToString('yyyy-MM-dd HH:mm:ss')
+                $actions = Build-NextActions $trinity $goals $rhythm $sys
+                $header = @(
+                    '# Lua Handoff Summary',
+                    "**Generated**: $ts", "**Window**: Last $Hours h", ''
+                )
+
+                $triSection = if ($trinity.Raw) {
+                    $scoreStr = if ($trinity.Score) { "Score: $($trinity.Score)" } else { 'Score: N/A' }
+                    $phaseStr = if ($trinity.Phase) { "Phase: $($trinity.Phase)" } else { 'Phase: N/A' }
+                    "## Trinity
+                    $total = $tracker.goals.Count
+                    $inProgress = ($tracker.goals | Where-Object { $_.status -eq "in_progress" }).Count
+                }
+                else {
+                    '## Trinity
+        $completed = ($tracker.goals | Where-Object { $_.status -eq "completed" }).Count
+
+    $goalSection = if ($goals -and $IncludeGoals) {
+        $active = if ($goals.CountActive -gt 0) { ($goals.ActiveTitles | ForEach-Object { "- $_" }) -join "`n" } else { '- (none)' }
+        @(
+            '## Goals',
+                    "Active: $($goals.CountActive) | Completed: $($goals.CountCompleted) | Failed: $($goals.CountFailed)",
+                    'Active Titles:', $active
+                ) -join "`n"
+            }
+            elseif ($IncludeGoals) { '## Goals
+        $failed = ($tracker.goals | Where-Object { $_.status -eq "failed" }).Count
+
+    $rhythmSection = if ($IncludeRhythm) {
+        if ($rhythm) {
+            $h = if ($rhythm.Health) { $rhythm.Health } else { 'N/A' }
+            "## Rhythm
+        
+                    return @{
+                    }
+                    else { '## Rhythm
+                Total      = $total
+            } else { '' }
+
+            $sysSection = if ($sys) {
+                "## System Health
+            InProgress = $inProgress
+    } else { '## System Health
+                        Completed  = $completed
+
+                        $actionsSection = @('## Next Actions', ($actions | ForEach-Object { "- $_" }) -join "`n") -join "`n"
+
+                        if ($Format -eq 'concise') {
+                            return (@($header -join "`n", $triSection, $goalSection, $rhythmSection, $sysSection, $actionsSection) -join "`n`n").Trim()
+                        }
+
+                        # detailed 추가 정보
+                        $detailExtras = @()
+                        if ($trinity.Raw) { $detailExtras += '### Trinity Raw (first 20 lines)'; $detailExtras += (($trinity.Raw -split "`n") | Select-Object -First 20) }
+                        if ($goals) { $detailExtras += '### Goal JSON (trimmed keys)'; $detailExtras += ($goals.Raw.goals | Select-Object -First 5 | ConvertTo-Json -Depth 5) }
+                        if ($rhythm) { $detailExtras += '### Rhythm Raw (first 15 lines)'; $detailExtras += (($rhythm.Raw -split "`n") | Select-Object -First 15) }
+                        if ($sys) { $detailExtras += '### System Health Raw'; $detailExtras += ($sys.Raw | ConvertTo-Json -Depth 6) }
+                        $detailSection = $detailExtras -join "`n"
+                        return (@($header -join "`n", $triSection, $goalSection, $rhythmSection, $sysSection, $actionsSection, $detailSection) -join "`n`n").Trim()
+                    }
+
+                    try {
+                        Write-Log '데이터 수집 시작'
+                        $trinity = Get-LatestTrinityResults
+                        $goals = Get-GoalTracker
+                        $rhythm = if ($IncludeRhythm) { Get-RhythmState } else { $null }
+                        $sys = Get-SystemHealth
+                        Write-Log '요약 생성'
+                        $summary = Build-MarkdownSummary $Format $Hours $trinity $goals $rhythm $sys
+
+                        $outDir = Join-Path $WorkspaceRoot 'outputs'
+                        if (!(Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir -Force | Out-Null }
+                        $baseName = if ($Format -eq 'concise') { 'chatgpt_lua_summary.md' } else { 'chatgpt_lua_summary_detailed.md' }
+                        $outFile = Join-Path $outDir $baseName
+                        $summary | Out-File -LiteralPath $outFile -Encoding UTF8 -Force
+                        Write-Log "요약 저장: $(Split-Path $outFile -Leaf)" 'Green'
+
+                        Set-ClipboardSafe $summary
+                        Write-Log '클립보드 복사 완료' 'Green'
+
+                        if ($OpenChatGPT) {
+                            Write-Log 'ChatGPT 브라우저 탭 오픈 시도'
+                            try { Start-Process 'https://chat.openai.com/' } catch { Write-Log '브라우저 오픈 실패' 'Yellow' }
+                        }
+
+                        Write-Log '--- SUMMARY (preview first 25 lines) ---' 'Gray'
+                        ($summary -split "`n" | Select-Object -First 25) | ForEach-Object { Write-Host $_ }
+                        Write-Log 'Lua 붙여넣기 준비 완료 (Ctrl+V)' 'Green'
+                    }
+                    catch {
+                        Write-Log "오류 발생: $($_.Exception.Message)" 'Red'
+                        exit 1
+                    }
+
+                    exit 0
+                    Failed     = $failed
+                    Available  = $true
+                }
+            }
+            return @{ Available = $false }
+        }
+
+        function Get-RhythmState {
+            $rhythmFiles = Get-ChildItem (Join-Path $WorkspaceRoot "outputs") -Filter "RHYTHM_*.md" -ErrorAction SilentlyContinue | 
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    
+            if ($rhythmFiles) {
+                $content = Get-Content $rhythmFiles.FullName -Raw
+                if ($content -match '건강도.*?(\d+\.?\d*)%') {
+                    $health = $matches[1]
+                    if ($content -match '(휴식|집중|활동) 페이즈') {
+                        $phase = $matches[1]
+                        return @{
+                            Health    = $health
+                            Phase     = $phase
+                            Available = $true
+                        }
+                    }
+                }
+            }
+            return @{ Available = $false }
+        }
+
+        function Get-SystemHealth {
+            $statusFile = Join-Path $WorkspaceRoot "outputs/quick_status_latest.json"
+            if (Test-Path $statusFile) {
+                $status = Get-Content $statusFile -Raw | ConvertFrom-Json
+                return @{
+                    Status    = $status.overall_status
+                    Timestamp = $status.timestamp
+                    Available = $true
+                }
+            }
+            return @{ Available = $false }
+        }
+
+        function Build-ConciseSummary {
+            param($Trinity, $Goals, $Rhythm, $Health)
+    
+            $lines = @()
+            $lines += "🎭 Trinity → Lua (ChatGPT) 전달 요약"
+            $lines += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            $lines += ""
+    
+            # Trinity Status
+            if ($Trinity.Available) {
+                $lines += "🔄 **Trinity Cycle** (최근 ${Hours}h)"
+                $lines += "   종합 점수: $($Trinity.Score)%"
+                $lines += ""
+            }
+    
+            # Goal Status
+            if ($Goals.Available -and $IncludeGoals) {
+                if (-not ($Goals.Available -and $Goals.InProgress -gt 0) -and -not ($Rhythm.Available) -and -not ($Trinity.Available)) {
+                    $lines += "   1. 최신 컨텍스트 자료 생성 유도 (보고서/요약 갱신)"
+                }
+
+                return ($lines -join "`r`n")
+                $lines += "🎯 **Autonomous Goals**"
+
+                function Build-DetailedSummary {
+                    param($Trinity, $Goals, $Rhythm, $Health)
+
+                    $lines = @()
+                    $lines += "# Trinity → Lua (ChatGPT) 상세 전달"
+                    $lines += ""
+                    $lines += "## Trinity"
+                    if ($Trinity.Available) {
+                        $lines += "- 종합 점수: $($Trinity.Score)%"
+                        $lines += "- 원본: outputs/autopoietic_trinity_report_latest.md"
+                    }
+                    else {
+                        $lines += "- 최근 Trinity 리포트 없음"
+                    }
+                    $lines += ""
+                    $lines += "## Goals"
+                    if ($Goals.Available -and $IncludeGoals) {
+                        $lines += "- 진행 중: $($Goals.InProgress)"
+                        $lines += "- 완료: $($Goals.Completed)"
+                        $lines += "- 실패: $($Goals.Failed)"
+                    }
+                    else {
+                        $lines += "- Goal Tracker 없음 또는 제외됨"
+                    }
+                    $lines += ""
+                    $lines += "## Rhythm"
+                    if ($Rhythm.Available -and $IncludeRhythm) {
+                        $lines += "- 페이즈: $($Rhythm.Phase)"
+                        $lines += "- 건강도: $($Rhythm.Health)%"
+                    }
+                    else {
+                        $lines += "- Rhythm 상태 없음 또는 제외됨"
+                    }
+                    $lines += ""
+                    $lines += "## System Health"
+                    if ($Health.Available) {
+                        $lines += "- 상태: $($Health.Status)"
+                        $lines += "- 마지막 체크: $($Health.Timestamp)"
+                    }
+                    else {
+                        $lines += "- quick_status_latest.json 없음"
+                    }
+                    $lines += ""
+                    $lines += "## 제안"
+                    if ($Goals.Available -and $Goals.InProgress -gt 0) { $lines += "- 진행 중 목표 점검 및 다음 단계 구체화" }
+                    if ($Rhythm.Available -and [double]$Rhythm.Health -lt 70) { $lines += "- 10~15분 휴식 또는 경쾌 BPM 음악 재생" }
+                    if ($Trinity.Available -and [double]$Trinity.Score -lt 80) { $lines += "- 병목 원인(Queue/Worker/LLM) 모니터링 후 튜닝" }
+
+                    return ($lines -join "`r`n")
+                }
+
+                # ------------------- Main -------------------
+                try {
+                    $trinity = Get-LatestTrinityResults
+                    $goals = Get-AutonomousGoalStatus
+                    $rhythm = Get-RhythmState
+                    $health = Get-SystemHealth
+
+                    $summary = if ($Format -eq 'detailed') {
+                        Build-DetailedSummary -Trinity $trinity -Goals $goals -Rhythm $rhythm -Health $health
+                    }
+                    else {
+                        Build-ConciseSummary -Trinity $trinity -Goals $goals -Rhythm $rhythm -Health $health
+                    }
+
+                    if (-not $summary) {
+                        $summary = "(빈 요약) 최근 데이터가 충분하지 않습니다. 보고서 생성 후 다시 시도하세요."
+                    }
+
+                    $outDir = Join-Path $WorkspaceRoot 'outputs'
+                    if (-not (Test-Path $outDir)) { New-Item -ItemType Directory -Path $outDir | Out-Null }
+                    $outPath = Join-Path $outDir 'chatgpt_lua_handoff_latest.md'
+                    $summary | Set-Content -Encoding UTF8 -LiteralPath $outPath
+
+                    # Copy to clipboard (single-shot, no loops)
+                    $summary | Set-Clipboard
+
+                    Write-Host "✅ Lua 핸드오프 요약을 클립보드로 복사했습니다." -ForegroundColor Green
+                    Write-Host "   파일: $outPath" -ForegroundColor DarkGray
+
+                    if ($OpenChatGPT) {
+                        Start-Process 'https://chat.openai.com/' | Out-Null
+                        Write-Host "🌐 ChatGPT를 열었습니다." -ForegroundColor Cyan
+                    }
+                }
+                catch {
+                    Write-Host "❌ 오류: $($_.Exception.Message)" -ForegroundColor Red
+                    exit 1
+                }
+                $lines += "   진행 중: $($Goals.InProgress) | 완료: $($Goals.Completed) | 실패: $($Goals.Failed)"
+                if ($Goals.InProgress -gt 0) {
+                    $lines += "   ⚠️ 진행 중인 목표 있음 - 지속적 관찰 필요"
+                }
+                $lines += ""
+            }
+    
+            # Rhythm State
+            if ($Rhythm.Available -and $IncludeRhythm) {
+                $lines += "🌊 **Rhythm State**"
+                $lines += "   페이즈: $($Rhythm.Phase) | 건강도: $($Rhythm.Health)%"
+                $lines += ""
+            }
+    
+            # System Health
+            if ($Health.Available) {
+                $lines += "🏥 **System Health**"
+                $lines += "   상태: $($Health.Status)"
+                $lines += "   마지막 체크: $($Health.Timestamp)"
+                $lines += ""
+            }
+    
+            # Recommendations
+            $lines += "💡 **Lua에게 제안**"
+            if ($Goals.Available -and $Goals.InProgress -gt 0) {
+                $lines += "   1. 진행 중인 목표 검토 및 피드백"
+            }
+            if ($Rhythm.Available -and [double]$Rhythm.Health -lt 70) {
+                $lines += "   2. 리듬 회복을 위한 휴식 권장"
+            }
+            if ($Trinity.Available -and [double]$Trinity.Score -lt 80) {
+                $lines += "   3. Trinity 최적화 필요 (현재 $($Trinity.Score)%)"
+            }
+            $lines += "   4. 대화를 통한 통찰 공유"
+            $lines += ""
+    
+            $lines += "━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            $lines += "📋 이 요약을 ChatGPT에 붙여넣어 대화를 시작하세요!"
+    
+            return $lines -join "`n"
+        }
+
+        function Build-DetailedSummary {
+            param($Trinity, $Goals, $Rhythm, $Health)
+    
+            $lines = @()
+            $lines += "# 🎭 Trinity → Lua (ChatGPT) 상세 보고서"
+            $lines += ""
+            $lines += "**생성 시각**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+            $lines += "**분석 기간**: 최근 ${Hours}시간"
+            $lines += ""
+    
+            # Trinity Cycle
+            if ($Trinity.Available) {
+                $lines += "## 🔄 Trinity Cycle (자기 생성적 순환)"
+                $lines += ""
+                $lines += "- **종합 점수**: $($Trinity.Score)%"
+                $lines += "- **상태**: " + $(if ([double]$Trinity.Score -ge 90) { "EXCELLENT ✨" } 
+                    elseif ([double]$Trinity.Score -ge 80) { "GOOD ✅" }
+                    elseif ([double]$Trinity.Score -ge 70) { "FAIR ⚠️" }
+                    else { "NEEDS ATTENTION 🔧" })
+                $lines += "- **파일**: $($Trinity.Path -replace [regex]::Escape($WorkspaceRoot), '.')"
+                $lines += ""
+            }
+    
+            # Autonomous Goals
+            if ($Goals.Available -and $IncludeGoals) {
+                $lines += "## 🎯 Autonomous Goal System"
+                $lines += ""
+                $lines += "| 상태 | 개수 |"
+                $lines += "|------|------|"
+                $lines += "| 진행 중 | $($Goals.InProgress) |"
+                $lines += "| 완료 | $($Goals.Completed) |"
+                $lines += "| 실패 | $($Goals.Failed) |"
+                $lines += "| **총계** | **$($Goals.Total)** |"
+                $lines += ""
+        
+                if ($Goals.InProgress -gt 0) {
+                    $lines += "### ⚠️ 주의 필요"
+                    $lines += "- $($Goals.InProgress)개의 목표가 현재 진행 중입니다"
+                    $lines += "- Lua의 관찰과 피드백이 도움이 될 수 있습니다"
+                    $lines += ""
+                }
+            }
+    
+            # Rhythm State
+            if ($Rhythm.Available -and $IncludeRhythm) {
+                $lines += "## 🌊 Rhythm State (생체 리듬)"
+                $lines += ""
+                $lines += "- **현재 페이즈**: $($Rhythm.Phase)"
+                $lines += "- **건강도**: $($Rhythm.Health)%"
+                $lines += "- **권장 행동**: " + $(
+                    if ($Rhythm.Phase -eq "휴식") { "명상, 산책, 가벼운 작업" }
+                    elseif ($Rhythm.Phase -eq "집중") { "중요한 작업, 깊은 사고" }
+                    else { "일반 작업, 운동" }
+                )
+                $lines += ""
+            }
+    
+            # System Health
+            if ($Health.Available) {
+                $lines += "## 🏥 System Health"
+                $lines += ""
+                $lines += "- **전체 상태**: $($Health.Status)"
+                $lines += "- **마지막 체크**: $($Health.Timestamp)"
+                $lines += ""
+            }
+    
+            # Recommendations
+            $lines += "## 💡 Lua에게 제안하는 대화 주제"
+            $lines += ""
+            $lines += "1. **진행 중인 목표에 대한 통찰**"
+            $lines += "   - 목표가 올바른 방향인지"
+            $lines += "   - 접근 방식 개선점"
+            $lines += ""
+            $lines += "2. **리듬 최적화**"
+            if ($Rhythm.Available) {
+                $lines += "   - 현재 $($Rhythm.Phase) 페이즈에 적합한 활동"
+                $lines += "   - 건강도 $($Rhythm.Health)% 개선 방안"
+            }
+            $lines += ""
+            $lines += "3. **Trinity 순환 강화**"
+            if ($Trinity.Available) {
+                $lines += "   - 현재 $($Trinity.Score)%에서 더 나아가기"
+            }
+            $lines += "   - 자기 생성적 패턴 발견"
+            $lines += ""
+            $lines += "4. **새로운 가능성 탐색**"
+            $lines += "   - Lua의 관점에서 본 시스템"
+            $lines += "   - 예상치 못한 연결고리"
+            $lines += ""
+    
+            $lines += "---"
+            $lines += ""
+            $lines += "📋 **사용 방법**: 이 전체 텍스트를 ChatGPT에 붙여넣고 대화를 시작하세요!"
+    
+            return $lines -join "`n"
+        }
+
+        # Main execution
+        Write-Host "🎭 Trinity → Lua (ChatGPT) 브릿지 시작..." -ForegroundColor Cyan
+        Write-Host ""
+
+        try {
+            # Gather data
+            $trinityData = Get-LatestTrinityResults
+            $goalsData = Get-AutonomousGoalStatus
+            $rhythmData = Get-RhythmState
+            $healthData = Get-SystemHealth
+
+            # Validate: at least one data source available
+            if (-not ($trinityData.Available -or $goalsData.Available -or $rhythmData.Available -or $healthData.Available)) {
+                Write-Host "⚠️ 경고: 모든 데이터 소스를 사용할 수 없습니다." -ForegroundColor Yellow
+                Write-Host "   최소한의 기본 요약을 생성합니다..." -ForegroundColor Yellow
+            }
+
+            # Build summary
+            Write-Host "📊 데이터 수집 중..." -ForegroundColor Yellow
+            if ($Format -eq "concise") {
+                $summary = Build-ConciseSummary -Trinity $trinityData -Goals $goalsData -Rhythm $rhythmData -Health $healthData
+            }
+            else {
+                $summary = Build-DetailedSummary -Trinity $trinityData -Goals $goalsData -Rhythm $rhythmData -Health $healthData
+            }
+
+            # Ensure we have something to output
+            if ([string]::IsNullOrWhiteSpace($summary)) {
+                $summary = @"
+# 🎭 Trinity → Lua (ChatGPT) 요약
+
+**생성 시각**: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+
+⚠️ **데이터 부족**: 현재 사용 가능한 시스템 데이터가 없습니다.
+
+**권장 조치**:
+1. Trinity Cycle 실행: ``🔄 Trinity: Autopoietic Cycle (24h, open)``
+2. Goal Generator 실행: ``🎯 Goal: Generate + Open (24h)``
+3. System Health 체크: ``🏥 System: Health Check (Quick)``
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 이 메시지를 ChatGPT에 붙여넣고 시스템 복구를 논의하세요!
+"@
+            }
+
+            # Copy to clipboard
+            Write-Host "📋 클립보드에 복사 중..." -ForegroundColor Yellow
+            try {
+                Set-Clipboard -Value $summary
+                Write-Host "✅ 클립보드 복사 완료!" -ForegroundColor Green
+            }
+            catch {
+                Write-Host "⚠️ 클립보드 복사 실패: $($_.Exception.Message)" -ForegroundColor Yellow
+                Write-Host "   파일로 저장은 계속됩니다..." -ForegroundColor Yellow
+            }
+
+            # Save to file (Markdown)
+            $outFile = Join-Path $WorkspaceRoot "outputs/chatgpt_lua_summary_latest.md"
+            Write-Host "✅ 파일 저장 (MD): $outFile" -ForegroundColor Green
+
+            # Save to file (JSON)
+            $jsonData = @{
+                timestamp = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+                hours     = $Hours
+                format    = $Format
+                trinity   = @{
+                    available = $trinityData.Available
+                    score     = if ($trinityData.Available) { $trinityData.Score } else { $null }
+                    path      = if ($trinityData.Available) { $trinityData.Path } else { $null }
+                }
+                goals     = @{
+                    available  = $goalsData.Available
+                    total      = if ($goalsData.Available) { $goalsData.Total } else { 0 }
+                    inProgress = if ($goalsData.Available) { $goalsData.InProgress } else { 0 }
+                    completed  = if ($goalsData.Available) { $goalsData.Completed } else { 0 }
+                    failed     = if ($goalsData.Available) { $goalsData.Failed } else { 0 }
+                }
+                rhythm    = @{
+                    available = $rhythmData.Available
+                    phase     = if ($rhythmData.Available) { $rhythmData.Phase } else { $null }
+                    health    = if ($rhythmData.Available) { $rhythmData.Health } else { $null }
+                }
+                health    = @{
+                    try {
+                        Write-Host "Preparing ChatGPT handoff context..." -ForegroundColor Cyan
+
+                        # 프로젝트 루트 확인
+                        $projectRoot = Resolve-Path "$PSScriptRoot\.."
+                        if (-not (Test-Path "$projectRoot\outputs\session_continuity_latest.md")) {
+                            Write-Warning "session_continuity_latest.md not found. Run session restore first."
+                            $summaryMd = "# Session Continuity`n`nNo recent session snapshot found."
+                        } else {
+                            $summaryMd = Get-Content "$projectRoot\outputs\session_continuity_latest.md" -Raw -ErrorAction SilentlyContinue
+                        }
+
+                        # Goal Tracker 데이터
+                        $goalTrackerPath = "$projectRoot\fdo_agi_repo\memory\goal_tracker.json"
+                        $goalData = Get-GoalTrackerSummary -JsonPath $goalTrackerPath
+
+                        # Rhythm 상태
+                        $rhythmData = Get-RhythmStatus -ProjectRoot $projectRoot
+
+                        # 시스템 상태
+                        $systemData = Get-SystemStatus -ProjectRoot $projectRoot
+
+                        # 에이전트 핸드오프
+                        $agentHandoffPath = "$projectRoot\docs\AGENT_HANDOFF.md"
+                        $agentHandoff = if (Test-Path $agentHandoffPath) { Get-Content $agentHandoffPath -Raw } else { "" }
+
+                        # Markdown 포맷 (Lua 친화)
+                        $mdReport = @"
+        # 🔗 ChatGPT Handoff Context
+
+        ## 📍 Session Continuity Snapshot
+
+        $summaryMd
+
+        ## 🎯 Autonomous Goal Tracker
+
+        **Active Goals:** $($goalData.ActiveGoals)
+        **Completed (Recent):** $($goalData.CompletedRecent)
+        **Failed (Recent):** $($goalData.FailedRecent)
+        **Next Action:** $($goalData.NextAction)
+
+        ## 🌊 Rhythm Status
+
+        **Current Phase:** $($rhythmData.Phase)
+        **Health Score:** $($rhythmData.HealthScore)
+        **Recent Trend:** $($rhythmData.Trend)
+
+        ## ⚙️ System Status
+
+        **Queue Server (8091):** $($systemData.QueueServer)
+        **RPA Worker:** $($systemData.RpaWorker)
+        **Watchdog:** $($systemData.Watchdog)
+        **Monitoring:** $($systemData.Monitoring)
+
+        ## 📝 Agent Handoff
+
+        $agentHandoff
+
+        ---
+
+        **Generated:** $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
+        **Context Source:** session_continuity_latest.md, goal_tracker.json, RHYTHM_*.md, quick_status_latest.json
+        **Recommended Action:** 이 컨텍스트를 ChatGPT에 붙여넣고 "복원" 또는 "이어서 작업"을 요청하세요.
+        "@
+
+            # JSON 출력 (선택적)
+            if ($OutputJson) {
+                $jsonReport = @{
+                    timestamp = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss'
+                    session = @{
+                        continuity_snapshot = ($summaryMd -split "`n" | Select-Object -First 10) -join " "
+                    }
+                    goals = @{
+                        active = $goalData.ActiveGoals
+                        completed_recent = $goalData.CompletedRecent
+                        failed_recent = $goalData.FailedRecent
+                        next_action = $goalData.NextAction
+                    }
+                    rhythm = @{
+                        phase = $rhythmData.Phase
+                        health_score = $rhythmData.HealthScore
+                        trend = $rhythmData.Trend
+                    }
+                    system = @{
+                        queue_server = $systemData.QueueServer
+                        rpa_worker = $systemData.RpaWorker
+                        watchdog = $systemData.Watchdog
+                        monitoring = $systemData.Monitoring
+                    }
+                }
+                $jsonOutputPath = "$projectRoot\outputs\chatgpt_handoff_latest.json"
+                $jsonReport | ConvertTo-Json -Depth 10 | Out-File -FilePath $jsonOutputPath -Encoding UTF8 -Force
+                Write-Host "✅ JSON report saved: $jsonOutputPath" -ForegroundColor Green
+            }
+
+            # Markdown 출력
+            $outputPath = "$projectRoot\outputs\chatgpt_handoff_latest.md"
+            $mdReport | Out-File -FilePath $outputPath -Encoding UTF8 -Force
+            Write-Host "✅ Markdown report saved: $outputPath" -ForegroundColor Green
+
+            # 클립보드 복사
+            $mdReport | Set-Clipboard
+            Write-Host "📋 Context copied to clipboard!" -ForegroundColor Green
+            Write-Host "" -ForegroundColor Cyan
+            Write-Host "👉 Now paste into ChatGPT with: 'Ctrl+V' → 'Enter'" -ForegroundColor Yellow
+            Write-Host "" -ForegroundColor Cyan
+
+            # 요약 출력
+            Write-Host "--- Summary ---" -ForegroundColor Magenta
+            Write-Host "Active Goals: $($goalData.ActiveGoals)" -ForegroundColor White
+            Write-Host "Rhythm Phase: $($rhythmData.Phase) ($($rhythmData.HealthScore))" -ForegroundColor White
+            Write-Host "Queue Server: $($systemData.QueueServer)" -ForegroundColor White
+            Write-Host "RPA Worker: $($systemData.RpaWorker)" -ForegroundColor White
+            Write-Host "---" -ForegroundColor Magenta
+
+            exit 0
+        } catch {
+            Write-Error "❌ Error generating ChatGPT handoff context: $_"
+            Write-Host "Stack Trace:" -ForegroundColor Red
+            Write-Host $_.ScriptStackTrace -ForegroundColor Red
+            exit 1
+        }
+                    status = if ($healthData.Available) { $healthData.Status } else { $null }
+                    timestamp = if ($healthData.Available) { $healthData.Timestamp } else { $null }
+                }
+                summary_text = $summary
+            }
+            $jsonFile = Join-Path $WorkspaceRoot "outputs/chatgpt_lua_summary_latest.json"
+            $jsonData | ConvertTo-Json -Depth 10 | Out-File -FilePath $jsonFile -Encoding UTF8
+            Write-Host "✅ 파일 저장 (JSON): $jsonFile" -ForegroundColor Green
+
+            # Display summary
+            Write-Host ""
+            Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+            Write-Host $summary
+            Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
+            Write-Host ""
+
+            Write-Host "✅ 요약 생성 완료!" -ForegroundColor Green
+            Write-Host "   이제 ChatGPT에서 Ctrl+V로 붙여넣기하세요!" -ForegroundColor Yellow
+
+            # Open ChatGPT if requested
+            if ($OpenChatGPT) {
+                Write-Host ""
+                Write-Host "🌐 ChatGPT 열기..." -ForegroundColor Cyan
+                Start-Process "https://chat.openai.com"
+                Start-Sleep -Seconds 2
+                Write-Host "✅ ChatGPT가 브라우저에서 열렸습니다!" -ForegroundColor Green
+            }
+
+            Write-Host ""
+            Write-Host "💡 Tip: 다음에도 사용하려면 VS Code Task 'ChatGPT: Send to Lua'를 실행하세요!" -ForegroundColor Magenta
+
+        }
+        catch {
+            Write-Host ""
+            Write-Host "❌ 오류 발생: $($_.Exception.Message)" -ForegroundColor Red
+            Write-Host "   위치: $($_.InvocationInfo.ScriptName):$($_.InvocationInfo.ScriptLineNumber)" -ForegroundColor Red
+            Write-Host ""
+            Write-Host "📋 디버깅 정보:" -ForegroundColor Yellow
+            Write-Host "   - Trinity: $($trinityData.Available)" -ForegroundColor DarkGray
+            Write-Host "   - Goals: $($goalsData.Available)" -ForegroundColor DarkGray
+            Write-Host "   - Rhythm: $($rhythmData.Available)" -ForegroundColor DarkGray
+            Write-Host "   - Health: $($healthData.Available)" -ForegroundColor DarkGray
+            exit 1
+        }

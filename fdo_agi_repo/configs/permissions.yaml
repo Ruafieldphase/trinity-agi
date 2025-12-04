@@ -1,0 +1,12 @@
+levels:
+  EXEC:
+    approver: elo
+    require_ticket: true
+  READ:
+    approver: auto
+  WEB:
+    approver: elo
+    domains:
+    - whitelist
+  WRITE:
+    approver: elo
