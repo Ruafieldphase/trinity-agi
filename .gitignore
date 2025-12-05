@@ -7,6 +7,8 @@ __pycache__/
 *.py[cod]
 venv/
 env/
+.venv/
+fdo_agi_repo/.venv/
 
 # Secrets & Environment
 .env
@@ -27,3 +29,10 @@ fdo_agi_repo/memory/
 # IDE
 .vscode/
 .idea/
+
+# Large files
+*.webm
+*.webm.part
+*.mp4
+*.part
+
