@@ -1,0 +1,19 @@
+[Unit]
+Description=AGI Background Self Bridge (Alpha)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/bino/venv/bin/python3 /home/bino/agi/scripts/background_self_bridge.py
+WorkingDirectory=/home/bino/agi/scripts
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/bino/agi/logs/background_self.log
+StandardError=append:/home/bino/agi/logs/background_self.error.log
+Environment=PYTHONUNBUFFERED=1
+Environment=GOOGLE_APPLICATION_CREDENTIALS=/home/bino/agi/config/naeda-genesis-5034a5936036.json
+Environment=VERTEX_PROJECT_ID=naeda-genesis
+Environment=VERTEX_LOCATION=global
+
+[Install]
+WantedBy=default.target

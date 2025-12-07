@@ -336,6 +336,18 @@ function Switch-Context {
         Write-Host "🔬 Quick Life Check..." -ForegroundColor Cyan
         & $healthScript -OutFile (Join-Path $WorkspaceRoot "outputs\life_continuity_latest.json")
     }
+
+    # 7. Context Anchor 업데이트 (새 세션 진입점 통합)
+    $anchorScript = Join-Path $WorkspaceRoot "scripts\generate_context_anchor.py"
+    if (Test-Path $anchorScript) {
+        try {
+            Write-Host "Updating context anchor (context_anchor_latest.md)..." -ForegroundColor Cyan
+            & python $anchorScript
+        }
+        catch {
+            Write-Host "Warning: failed to update context anchor: $_" -ForegroundColor Yellow
+        }
+    }
 }
 
 # Main Logic

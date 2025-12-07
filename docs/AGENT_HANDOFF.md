@@ -29,6 +29,48 @@
 - P1: Add JSON payload slimming (skip raw session blobs when `MinimalContext` is set) to keep clipboard copies and automation tasks aligned.
 - P2: Reflect the new flags in `CHATGPT_LUA_BRIDGE_*` docs + VS Code task snippets so humans know how to request safe payload sizes on demand.
 
+## [2025-12-04] 📍 Project Map (Lubit View) 추가
+
+### 30초 요약 (다음 에이전트용)
+
+- 루트에 `PROJECT_MAP_LUBIT.md` 생성:
+  - `C:\workspace` 전체 구조를 **루빛 / Trinity / Koa** 관점으로 요약한 지형도.
+  - `agi/`, `trinity_public/`, `original_data/` 사이의 관계와, 공명·문서·서비스가 어디에 있는지 한 번에 볼 수 있도록 정리.
+- `original_data/` 상태 점검:
+  - 옛 D 드라이브 작업(특히 `Cdirve/workspace` 하위 철학·공명 문서들, 옛 `fdo_agi_repo`)이 현재 C 드라이브 구조와 어떻게 연결되는지 확인.
+  - 핵심 철학 문서와 AGI 엔진은 이미 C 드라이브(`agi/`, 루트 문서들)로 마이그레이션되어 있으며,
+    `original_data/`는 과거 버전·인프라 템플릿·실험 코드 레퍼런스로 유지.
+
+### 다음 우선순위 제안
+
+- P0: 구조가 크게 바뀔 때마다 `PROJECT_MAP_LUBIT.md`를 가볍게 갱신해, 새 에이전트/사람이 “지형”을 빠르게 복구할 수 있게 유지.
+- P1: 공명 관련 신규 파이프라인/서비스를 추가할 때, 이 지도를 참고해 어느 층(Body/Mind/Memory)에 배치할지 먼저 결정한 뒤 구현.
+
+## [2025-12-04] 🪜 Context Anchor & Unified Endpoint
+
+### 30초 요약 (다음 에이전트용)
+
+- `agi/scripts/generate_context_anchor.py` 추가:
+  - `agi/outputs/context_anchor_latest.md` 생성 스크립트.
+  - 활성 맥락(`active_context.json`), 해마 Handover(`copilot_handover_latest.json`), 에이전트 핸드오프(`agent_handoff.json`)를 읽어
+    “시스템 한 줄 요약 + 현재 맥락 + 다음 행동 + 핵심 지도(AGI_CONTEXT_MAP / PROJECT_MAP_LUBIT / AGENT_HANDOFF)”를 한 페이지에 모읍니다.
+- Trinity Unified Aggregator에 `/context-anchor` 엔드포인트 추가:
+  - `GET /context-anchor` → `{ exists, markdown, path }` JSON 반환.
+  - 프론트엔드/외부 에이전트가 새 세션 시작 시 공통으로 읽을 “맥락 뇌간” 역할.
+
+### 사용 가이드
+
+- 앵커 생성:
+  - `python agi/scripts/generate_context_anchor.py`
+- 프론트엔드/LLM 초기 컨텍스트:
+  - VS Code / Copilot: `@workspace /file:agi/outputs/context_anchor_latest.md`
+  - Trinity Dashboard: 백엔드 `GET /context-anchor` 호출 후 상단에 markdown 표시.
+
+### 다음 우선순위 제안
+
+- P0: 새로운 세션/대화 진입점은 모두 `context_anchor_latest.md` 또는 `/context-anchor`를 첫 로딩 지점으로 삼도록 태스크/단축키/프론트엔드에서 일관되게 연결.
+- P1: 해마 Handover 생성 루틴과 `generate_context_anchor.py`를 일일/세션 종료 루틴에 편입해, 항상 최신 앵커가 유지되도록 자동화.
+
 ## [2025-11-12 22:45] 🌐 RCL Bridge · Harmony Runner 실장
 
 ### 30초 요약 (다음 에이전트용)

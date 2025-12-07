@@ -242,6 +242,17 @@ def generate_llm_response(user_text, conversation_history):
             "Be friendly, natural, and conversational."
         )
 
+        # Inject Context Anchor if available
+        try:
+            anchor_path = Path(__file__).parent.parent.parent / "outputs" / "context_anchor_latest.md"
+            if anchor_path.exists():
+                anchor_content = anchor_path.read_text(encoding="utf-8")
+                # Extract summary parts to avoid token overflow
+                context_parts.append("\n[System Context Anchor]:")
+                context_parts.append(anchor_content[:2000] + "..." if len(anchor_content) > 2000 else anchor_content)
+        except Exception:
+            pass
+
         # Add conversation history for context
         if conversation_history:
             context_parts.append("\nPrevious conversation:")

@@ -1,0 +1,257 @@
+[
+  {
+    "goal": "ADHD 스타일 학습 시스템을 만들어줘",
+    "task_type": "system_task",
+    "target": "Trinity",
+    "action": "LEARN",
+    "steps": [
+      {
+        "action": "EXECUTE_TRINITY_TASK",
+        "status": "success",
+        "retry_count": 0,
+        "details": {
+          "status": "success",
+          "log": "c:\\workspace\\agi\\memory\\learning_log.jsonl"
+        }
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-11-06T16:49:37.315491",
+    "source": "trinity_migration"
+  },
+  {
+    "goal": "YouTube 분석 시스템 만들어줘 youtube_analyzer.py",
+    "task_type": "system_task",
+    "target": "Trinity",
+    "action": "CREATE_FILE",
+    "steps": [
+      {
+        "action": "EXECUTE_TRINITY_TASK",
+        "status": "success",
+        "retry_count": 0,
+        "details": {
+          "status": "success",
+          "file": "c:\\workspace\\agi\\youtube_analyzer.py"
+        }
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-11-06T16:52:15.174741",
+    "source": "trinity_migration"
+  },
+  {
+    "goal": "Twitter 모니터링 시스템 만들어줘 twitter_monitor.py",
+    "task_type": "system_task",
+    "target": "Trinity",
+    "action": "CREATE_FILE",
+    "steps": [
+      {
+        "action": "EXECUTE_TRINITY_TASK",
+        "status": "success",
+        "retry_count": 0,
+        "details": {
+          "status": "success",
+          "file": "c:\\workspace\\agi\\twitter_monitor.py"
+        }
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-11-06T16:52:15.677831",
+    "source": "trinity_migration"
+  },
+  {
+    "goal": "Reddit 크롤러 시스템 만들어줘 reddit_crawler.py",
+    "task_type": "system_task",
+    "target": "Trinity",
+    "action": "CREATE_FILE",
+    "steps": [
+      {
+        "action": "EXECUTE_TRINITY_TASK",
+        "status": "success",
+        "retry_count": 0,
+        "details": {
+          "status": "success",
+          "file": "c:\\workspace\\agi\\reddit_crawler.py"
+        }
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-11-06T16:52:16.192210",
+    "source": "trinity_migration"
+  },
+  {
+    "goal": "Instagram 분석 시스템 만들어줘 instagram_analyzer.py",
+    "task_type": "system_task",
+    "target": "Trinity",
+    "action": "CREATE_FILE",
+    "steps": [
+      {
+        "action": "EXECUTE_TRINITY_TASK",
+        "status": "success",
+        "retry_count": 0,
+        "details": {
+          "status": "success",
+          "file": "c:\\workspace\\agi\\instagram_analyzer.py"
+        }
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-11-06T16:52:16.704237",
+    "source": "trinity_migration"
+  },
+  {
+    "goal": "TikTok 학습 시스템 만들어줘 tiktok_learner.py",
+    "task_type": "system_task",
+    "target": "Trinity",
+    "action": "CREATE_FILE",
+    "steps": [
+      {
+        "action": "EXECUTE_TRINITY_TASK",
+        "status": "success",
+        "retry_count": 0,
+        "details": {
+          "status": "success",
+          "file": "c:\\workspace\\agi\\tiktok_learner.py"
+        }
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-11-06T16:52:17.225684",
+    "source": "trinity_migration"
+  },
+  {
+    "goal": "ADHD 스타일 학습 시스템을 만들어줘",
+    "task_type": "system_task",
+    "target": "Trinity",
+    "action": "LEARN",
+    "steps": [
+      {
+        "action": "EXECUTE_TRINITY_TASK",
+        "status": "success",
+        "retry_count": 0,
+        "details": {
+          "status": "success",
+          "log": "c:\\workspace\\agi\\memory\\learning_log.jsonl"
+        }
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-11-13T20:48:22.434063",
+    "source": "trinity_migration"
+  },
+  {
+    "goal": "메모장 열기",
+    "task_type": "ui_task",
+    "target": "Notepad",
+    "action": "OPEN",
+    "steps": [
+      {
+        "action": "OPEN_APP",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "WAIT_READY",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "VERIFY_OPEN",
+        "status": "success",
+        "retry_count": 0
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-12-07T15:51:47.923641"
+  },
+  {
+    "goal": "메모장에 'Ari 범용자동화 테스트 성공!' 입력",
+    "task_type": "ui_task",
+    "target": "Notepad",
+    "action": "TYPE_TEXT",
+    "steps": [
+      {
+        "action": "FOCUS_APP",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "ACTIVATE_INPUT",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "TYPE",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "VERIFY_INPUT",
+        "status": "success",
+        "retry_count": 0
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-12-07T15:51:54.228112"
+  },
+  {
+    "goal": "메모장에 '\\n[v2] 기존 창 활성화 성공!' 입력",
+    "task_type": "ui_task",
+    "target": "Notepad",
+    "action": "TYPE_TEXT",
+    "steps": [
+      {
+        "action": "FOCUS_APP",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "ACTIVATE_INPUT",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "TYPE",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "VERIFY_INPUT",
+        "status": "success",
+        "retry_count": 0
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-12-07T15:54:24.097209"
+  },
+  {
+    "goal": "메모장에 'FSD-Ari Integration Test' 입력",
+    "task_type": "ui_task",
+    "target": "Notepad",
+    "action": "TYPE_TEXT",
+    "steps": [
+      {
+        "action": "FOCUS_APP",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "ACTIVATE_INPUT",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "TYPE",
+        "status": "success",
+        "retry_count": 0
+      },
+      {
+        "action": "VERIFY_INPUT",
+        "status": "success",
+        "retry_count": 0
+      }
+    ],
+    "success": true,
+    "timestamp": "2025-12-07T15:57:16.144219"
+  }
+]

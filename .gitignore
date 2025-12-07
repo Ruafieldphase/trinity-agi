@@ -201,3 +201,20 @@ outputs/lumen_prism_cache.json
 *_api_key*
 *_token*
 secrets.json
+
+# Memory and Learned Data (Contains Secrets)
+fdo_agi_repo/memory/
+outputs/
+
+# Heavy & Sensitive Directories (Clean Status)
+fdo_agi_repo/memory/
+outputs/
+ai_binoche_conversation_origin/
+music/
+LLM_Unified/
+services/__pycache__/
+scripts/__pycache__/
+active_interface/__pycache__/
+fdo_agi_repo/__pycache__/
+
+node_modules/

@@ -166,7 +166,7 @@ try {
             Write-Host "[$(Get-Date -Format 'HH:mm:ss')] 🚀 Goal Executor 실행 중 (Quantum Mode)..." -ForegroundColor Cyan
             "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Executor 시작 (Quantum)" | Out-File -FilePath $LogFile -Append
         
-            & $PythonExe $ExecutorScript --use-quantum 2>&1 | Out-File -FilePath $LogFile -Append
+            & $PythonExe $ExecutorScript 2>&1 | Out-File -FilePath $LogFile -Append
         
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] ✅ 완료" -ForegroundColor Green
