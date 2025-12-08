@@ -2,6 +2,10 @@
 echo Starting AGI Unified Frontend Backend Services...
 echo.
 
+:: Set Vertex AI environment variables for FSD real mode
+set GOOGLE_CLOUD_PROJECT=naeda-genesis
+set GOOGLE_CLOUD_LOCATION=us-central1
+
 cd /d c:\workspace\agi\services
 
 echo Starting Consciousness API (port 8100)...
@@ -18,6 +22,10 @@ timeout /t 2 /nobreak >nul
 
 echo Starting Unified Aggregator (port 8104)...
 start /B C:\Python313\python.exe -u unified_aggregator.py > unified_aggregator.log 2>&1
+timeout /t 2 /nobreak >nul
+
+echo Starting FSD Controller API (port 8105)...
+start /B C:\Python313\python.exe -u fsd_server.py > outputs\fsd_server.log 2>&1
 timeout /t 2 /nobreak >nul
 
 echo Starting Resonance Learning System (Lymphatic)...
@@ -56,6 +64,7 @@ echo   - Consciousness: http://localhost:8100
 echo   - Unconscious:   http://localhost:8101
 echo   - Background:    http://localhost:8102
 echo   - Aggregator:    http://localhost:8104
+echo   - FSD:           http://localhost:8105
 echo.
 echo Press any key to view aggregator status...
 pause >nul
