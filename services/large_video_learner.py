@@ -86,7 +86,7 @@ class LargeVideoLearner:
         """Sends frames to Gemini for analysis."""
         logger.info("Sending frames to Gemini for analysis...")
         
-        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         
         prompt = [
             "Analyze this sequence of screenshots from a user's computer session.",
