@@ -28,6 +28,10 @@ echo Starting FSD Controller API (port 8105)...
 start /B C:\Python313\python.exe -u fsd_server.py > outputs\fsd_server.log 2>&1
 timeout /t 2 /nobreak >nul
 
+echo Starting Lua Flow Collector (daemon)...
+start /B C:\Python313\python.exe -u lua_flow_collector.py --daemon > outputs\lua_flow_collector.log 2>&1
+timeout /t 1 /nobreak >nul
+
 echo Starting Resonance Learning System (Lymphatic)...
 cd /d c:\workspace\agi\body
 start /B C:\Python313\python.exe -u lymphatic_system.py > lymphatic.log 2>&1

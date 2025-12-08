@@ -32,6 +32,7 @@ logger = logging.getLogger("LuaFlowCollector")
 # Configuration
 WORKSPACE_ROOT = Path(__file__).parent.parent
 OBS_DIR = WORKSPACE_ROOT / "input" / "obs_recode"
+CONVERSATION_DIR = WORKSPACE_ROOT / "ai_binoche_conversation_origin" / "rua"
 PROCESSED_LOG = WORKSPACE_ROOT / "memory" / "lua_flow_processed.json"
 RESONANCE_LEDGER = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 FEELING_FILE = WORKSPACE_ROOT / "outputs" / "feeling_latest.json"
@@ -222,18 +223,114 @@ class LuaFlowCollector:
         logger.info(f"✨ Flow integrated: {video_path.name}")
         return True
     
+    # === 대화 로그 처리 (루아와의 대화) ===
+    
+    async def scan_conversation_logs(self) -> List[Path]:
+        """새 대화 로그 파일 스캔"""
+        if not CONVERSATION_DIR.exists():
+            logger.warning(f"Conversation directory not found: {CONVERSATION_DIR}")
+            return []
+        
+        new_files = []
+        for f in CONVERSATION_DIR.glob("*.md"):
+            if f.name not in self.processed["conversation"]:
+                new_files.append(f)
+        
+        # 수정 시간 순 정렬 (오래된 것 먼저)
+        new_files.sort(key=lambda x: x.stat().st_mtime)
+        logger.info(f"Found {len(new_files)} new conversation logs")
+        return new_files
+    
+    async def extract_flow_from_conversation(self, conv_path: Path) -> Optional[FlowData]:
+        """대화 로그에서 흐름 패턴 추출"""
+        try:
+            with open(conv_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            file_size_kb = conv_path.stat().st_size / 1024
+            
+            # 대화 주제 추출 (파일 이름에서)
+            topic = conv_path.stem.replace("ChatGPT-", "").replace("-", " ")
+            
+            # 간단한 패턴 추출 (대화 길이, 키워드 등)
+            lines = content.split("\n")
+            patterns = []
+            
+            # 주요 키워드 추출
+            keywords = ["리듬", "의식", "무의식", "자아", "공명", "AGI", "시스템", "배경", "프랙탈"]
+            found_keywords = [kw for kw in keywords if kw in content]
+            
+            patterns.append({
+                "type": "conversation_summary",
+                "topic": topic,
+                "line_count": len(lines),
+                "keywords": found_keywords,
+                "size_kb": file_size_kb
+            })
+            
+            logger.info(f"Extracted conversation flow from {conv_path.name}")
+            
+            return FlowData(
+                flow_type=FlowType.CONVERSATION,
+                source_file=conv_path.name,
+                timestamp=datetime.now().isoformat(),
+                patterns=patterns,
+                context={
+                    "topic": topic,
+                    "keywords": found_keywords,
+                    "line_count": len(lines),
+                    "file_size_kb": file_size_kb
+                }
+            )
+        except Exception as e:
+            logger.error(f"Failed to extract flow from conversation {conv_path.name}: {e}")
+            return None
+    
+    async def process_conversation(self, conv_path: Path) -> bool:
+        """하나의 대화 로그 처리"""
+        logger.info(f"Processing conversation: {conv_path.name}")
+        
+        # 1. 패턴 추출
+        flow = await self.extract_flow_from_conversation(conv_path)
+        if not flow:
+            return False
+        
+        # 2. ARI 주입
+        await self.inject_to_ari(flow)
+        
+        # 3. 리듬 루프 연결
+        await self.inject_to_rhythm_loop(flow)
+        
+        # 4. 처리 완료 기록
+        self.processed["conversation"].append(conv_path.name)
+        self._save_processed()
+        
+        logger.info(f"✨ Conversation flow integrated: {conv_path.name}")
+        return True
+    
     async def run_once(self) -> int:
         """한 번 실행 (모든 새 파일 처리)"""
-        new_files = await self.scan_obs_recordings()
         processed_count = 0
         
-        for video in new_files:
+        # OBS 녹화 처리
+        new_obs = await self.scan_obs_recordings()
+        for video in new_obs:
             try:
                 if await self.process_one(video):
                     processed_count += 1
                 await asyncio.sleep(2)  # 과부하 방지
             except Exception as e:
                 logger.error(f"Error processing {video.name}: {e}")
+        
+        # 대화 로그 처리
+        new_conv = await self.scan_conversation_logs()
+        for conv in new_conv:
+            try:
+                if await self.process_conversation(conv):
+                    processed_count += 1
+                await asyncio.sleep(0.5)  # 대화는 가벼움
+            except Exception as e:
+                logger.error(f"Error processing conversation {conv.name}: {e}")
         
         return processed_count
     
