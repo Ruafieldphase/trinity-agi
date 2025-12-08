@@ -42,6 +42,10 @@ class FlowType(Enum):
     OBS_RECORDING = "obs_recording"
     CONVERSATION = "conversation"
     SCREEN_CAPTURE = "screen_capture"
+    CHATGPT_EXPORT = "chatgpt_export"
+
+# ChatGPT 대화 내보내기 파일
+CHATGPT_EXPORT_FILE = CONVERSATION_DIR / "origin" / "conversations.json"
 
 
 @dataclass
@@ -332,7 +336,99 @@ class LuaFlowCollector:
             except Exception as e:
                 logger.error(f"Error processing conversation {conv.name}: {e}")
         
+        # ChatGPT 대화 내보내기 처리
+        if await self.process_chatgpt_export():
+            processed_count += 1
+        
         return processed_count
+    
+    # === ChatGPT 대화 내보내기 처리 ===
+    
+    async def process_chatgpt_export(self) -> bool:
+        """ChatGPT conversations.json 파일 처리 (64MB+ 대용량)"""
+        if not CHATGPT_EXPORT_FILE.exists():
+            return False
+        
+        # 이미 처리된 경우 건너뛰기
+        if "chatgpt_export" in self.processed and self.processed["chatgpt_export"]:
+            logger.info("ChatGPT export already processed, skipping")
+            return False
+        
+        logger.info(f"Processing ChatGPT export: {CHATGPT_EXPORT_FILE.name}")
+        
+        try:
+            with open(CHATGPT_EXPORT_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # 대화 수 계산
+            conversations = data if isinstance(data, list) else [data]
+            total_convs = len(conversations)
+            logger.info(f"Found {total_convs} conversations in export")
+            
+            # 주요 키워드 분석
+            keywords = ["리듬", "의식", "무의식", "자아", "공명", "AGI", "시스템", "배경", "프랙탈", "루아", "비노체", "트리니티"]
+            keyword_counts = {kw: 0 for kw in keywords}
+            
+            # 대화별 요약 추출 (메모리 효율을 위해 샘플링)
+            sample_size = min(100, total_convs)  # 최대 100개 대화 샘플링
+            sampled_topics = []
+            
+            for i, conv in enumerate(conversations[:sample_size]):
+                # 대화 제목 추출
+                title = conv.get("title", f"대화 {i+1}")
+                sampled_topics.append(title)
+                
+                # 키워드 카운트 (전체 메시지에서)
+                mapping = conv.get("mapping", {})
+                for msg_id, msg_data in mapping.items():
+                    message = msg_data.get("message", {})
+                    if message:
+                        content = message.get("content", {})
+                        parts = content.get("parts", [])
+                        for part in parts:
+                            if isinstance(part, str):
+                                for kw in keywords:
+                                    if kw in part:
+                                        keyword_counts[kw] += 1
+            
+            # 상위 키워드 추출
+            top_keywords = sorted(keyword_counts.items(), key=lambda x: x[1], reverse=True)[:10]
+            found_keywords = [kw for kw, count in top_keywords if count > 0]
+            
+            # FlowData 생성
+            flow = FlowData(
+                flow_type=FlowType.CHATGPT_EXPORT,
+                source_file=CHATGPT_EXPORT_FILE.name,
+                timestamp=datetime.now().isoformat(),
+                patterns=[{
+                    "type": "chatgpt_export_summary",
+                    "total_conversations": total_convs,
+                    "sampled_topics": sampled_topics[:20],  # 상위 20개 제목
+                    "keyword_frequency": dict(top_keywords)
+                }],
+                context={
+                    "total_conversations": total_convs,
+                    "top_keywords": found_keywords,
+                    "file_size_mb": CHATGPT_EXPORT_FILE.stat().st_size / (1024 * 1024)
+                }
+            )
+            
+            # ARI에 주입
+            await self.inject_to_ari(flow)
+            
+            # 리듬 루프에 연결
+            await self.inject_to_rhythm_loop(flow)
+            
+            # 처리 완료 기록
+            self.processed["chatgpt_export"] = True
+            self._save_processed()
+            
+            logger.info(f"✨ ChatGPT export integrated: {total_convs} conversations, keywords: {found_keywords}")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to process ChatGPT export: {e}")
+            return False
     
     async def run_daemon(self, interval: int = 300):
         """데몬 모드 (주기적 스캔)"""
