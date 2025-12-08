@@ -1,0 +1,84 @@
+
+"""
+Ari Engine - Adaptive Rhythm Intelligence Core
+==============================================
+The engine responsible for accumulating learned patterns,
+forming the "Sub-conscious" skill layer of the AGI.
+"""
+import json
+import logging
+import os
+from pathlib import Path
+from typing import List, Dict, Any, Optional
+from dataclasses import dataclass, asdict
+from enum import Enum
+
+logger = logging.getLogger(__name__)
+
+# Constants
+WORKSPACE_ROOT = Path(__file__).parent.parent
+MEMORY_DIR = WORKSPACE_ROOT / "memory"
+BUFFER_FILE = MEMORY_DIR / "ari_learning_buffer.json"
+
+class TaskType(Enum):
+    UI_TASK = "ui_task"
+    CLI_TASK = "cli_task"
+    COGNITIVE_TASK = "cognitive_task"
+    UNKNOWN = "unknown"
+
+@dataclass
+class ParsedGoal:
+    goal: str
+    task_type: TaskType
+    steps: List[Dict[str, Any]]
+    success: bool = False
+    source: str = "unknown"
+
+class AriLearningBuffer:
+    """
+    In-memory buffer for learned experiences before they are crystallized.
+    """
+    def __init__(self):
+        self.experiences: List[Dict[str, Any]] = []
+        self._load_buffer()
+
+    def _load_buffer(self):
+        if BUFFER_FILE.exists():
+            try:
+                with open(BUFFER_FILE, 'r', encoding='utf-8') as f:
+                    self.experiences = json.load(f)
+            except Exception as e:
+                logger.error(f"Failed to load Ari buffer: {e}")
+                self.experiences = []
+        else:
+            self.experiences = []
+
+    def _save_buffer(self):
+        try:
+            if not MEMORY_DIR.exists():
+                MEMORY_DIR.mkdir(parents=True, exist_ok=True)
+                
+            with open(BUFFER_FILE, 'w', encoding='utf-8') as f:
+                json.dump(self.experiences, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            logger.error(f"Failed to save Ari buffer: {e}")
+
+    def add_experience(self, experience: Dict[str, Any]):
+        self.experiences.append(experience)
+        self._save_buffer()
+
+class AriEngine:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(AriEngine, cls).__new__(cls)
+            cls._instance.learning = AriLearningBuffer()
+            # Future: Initialize other ARI components here
+        return cls._instance
+
+    def get_learned_patterns(self) -> List[Dict[str, Any]]:
+        return self.learning.experiences
+
+def get_ari_engine() -> AriEngine:
+    return AriEngine()

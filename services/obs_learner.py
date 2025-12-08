@@ -16,6 +16,11 @@ from datetime import datetime
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
+import sys
+
+# Add project root to path for imports
+sys.path.append(str(Path(__file__).parent.parent))
+
 # Ari Engine 연동
 from services.ari_engine import get_ari_engine, ParsedGoal, TaskType
 
@@ -26,11 +31,12 @@ class OBSLearner:
     OBS 비디오 학습기
     """
     
-    def __init__(self, obs_dir: str = "C:/workspace/agi/obs_recode"):
+    def __init__(self, obs_dir: str = "C:/workspace/agi/input/obs_recode"):
         self.obs_dir = Path(obs_dir)
         self.processed_files_log = self.obs_dir / "processed_videos.json"
         self.processed_files = self._load_processed_log()
         self.ari_engine = get_ari_engine()
+        self.size_limit_mb = 1024 # 1GB limit for "small" files
         
         # API Key 설정 (환경변수 또는 하드코딩된 값 확인)
         # 실제 환경에서는 os.environ["GOOGLE_API_KEY"]가 설정되어 있어야 함
@@ -54,13 +60,24 @@ class OBSLearner:
             logger.error(f"Failed to save processed log: {e}")
 
     def get_new_videos(self) -> List[Path]:
-        """새로운 비디오 파일 탐색"""
+        """새로운 비디오 파일 탐색 (용량 제한 적용)"""
         if not self.obs_dir.exists():
             logger.warning(f"OBS directory not found: {self.obs_dir}")
             return []
             
         videos = list(self.obs_dir.glob("*.mp4"))
-        new_videos = [v for v in videos if v.name not in self.processed_files]
+        new_videos = []
+        
+        for v in videos:
+            if v.name in self.processed_files:
+                continue
+                
+            size_mb = v.stat().st_size / (1024 * 1024)
+            if size_mb > self.size_limit_mb:
+                logger.info(f"Skipping large video: {v.name} ({size_mb:.2f} MB)")
+                continue
+                
+            new_videos.append(v)
         
         # 최신 순 정렬
         new_videos.sort(key=lambda x: x.stat().st_mtime, reverse=True)
@@ -68,55 +85,71 @@ class OBSLearner:
 
     async def analyze_video(self, video_path: Path) -> Optional[Dict[str, Any]]:
         """
-        Gemini Vision으로 비디오 분석
+        Extract frames and analyze with Gemini Vision (no file upload).
         """
-        logger.info(f"Analyzing video: {video_path.name}...")
+        logger.info(f"Analyzing video via frame extraction: {video_path.name}...")
         
         try:
-            # 1. 파일 업로드
-            video_file = genai.upload_file(path=str(video_path))
-            logger.info(f"Uploaded video: {video_file.name}")
+            import cv2
+            from PIL import Image
             
-            # 2. 처리 대기
-            while video_file.state.name == "PROCESSING":
-                logger.info("Waiting for video processing...")
-                await asyncio.sleep(5)
-                video_file = genai.get_file(video_file.name)
+            # 1. Extract frames at intervals
+            FRAME_INTERVAL_SEC = 10  # Extract 1 frame every 10 seconds
+            MAX_FRAMES = 30  # Limit frames to fit in context
+            
+            cam = cv2.VideoCapture(str(video_path))
+            fps = cam.get(cv2.CAP_PROP_FPS)
+            total_frames = int(cam.get(cv2.CAP_PROP_FRAME_COUNT))
+            duration = total_frames / fps if fps > 0 else 0
+            
+            frames = []
+            current_time = 0
+            
+            while current_time < duration and len(frames) < MAX_FRAMES:
+                cam.set(cv2.CAP_PROP_POS_MSEC, current_time * 1000)
+                ret, frame = cam.read()
+                if ret:
+                    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    pil_img = Image.fromarray(rgb_frame)
+                    pil_img.thumbnail((640, 640))
+                    frames.append(pil_img)
+                current_time += FRAME_INTERVAL_SEC
                 
-            if video_file.state.name == "FAILED":
-                logger.error("Video processing failed on Google side.")
+            cam.release()
+            logger.info(f"Extracted {len(frames)} frames from {video_path.name}")
+            
+            if not frames:
+                logger.warning("No frames extracted.")
                 return None
-                
-            # 3. 분석 요청
-            model = genai.GenerativeModel('gemini-1.5-pro-latest')
+            
+            # 2. Send frames to Gemini
+            model = genai.GenerativeModel('gemini-1.5-flash')
             
             prompt = """
-            Analyze the user's desktop actions in this video to teach an AI automation agent.
+            Analyze the user's desktop actions in these screenshots to teach an AI automation agent.
             
-            1. Identify the high-level **GOAL** of the user (e.g., "Write a report in Notepad", "Search specifically for Python tutorials").
+            1. Identify the high-level **GOAL** of the user.
             2. Breakdown the actions into granular **STEPS**.
-            3. For each step, identify the **Action** (CLICK, TYPE, OPEN_APP, SCROLL, etc.) and **Target** (App name, UI element text).
             
             Format the output strictly as JSON:
             {
                 "goal": "...",
                 "task_type": "ui_task",
                 "target_app": "...",
-                "action_verb": "...",
                 "steps": [
-                    {"step_index": 1, "action": "OPEN_APP", "target": "Chrome", "reason": "..."},
-                    {"step_index": 2, "action": "CLICK", "target": "SearchBar", "parameters": {"x": 0, "y": 0}},
-                    {"step_index": 3, "action": "TYPE", "target": "SearchBar", "parameters": {"content": "..."}}
+                    {"step_index": 1, "action": "OPEN_APP", "target": "..."},
+                    {"step_index": 2, "action": "CLICK", "target": "..."}
                 ]
             }
             """
             
+            content = [prompt] + frames
+            
             response = model.generate_content(
-                [prompt, video_file],
+                content,
                 generation_config={"response_mime_type": "application/json"}
             )
             
-            # 4. 결과 파싱
             result_json = json.loads(response.text)
             logger.info(f"Analysis complete: {result_json.get('goal')}")
             
@@ -185,6 +218,20 @@ class OBSLearner:
 
 # 단독 실행 테스트용
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    # Ensure logs directory exists
+    log_dir = Path(__file__).parent.parent / "logs"
+    log_dir.mkdir(exist_ok=True)
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        filename=log_dir / "obs_learner.log",
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
     learner = OBSLearner()
-    asyncio.run(learner.process_new_videos())
+    # Create event loop for async run
+    import asyncio
+    try:
+        logging.info("Starting OBS Learner Loop...")
+        asyncio.run(learner.process_new_videos())
+    except Exception as e:
+        logging.error(f"Fatal error: {e}")
