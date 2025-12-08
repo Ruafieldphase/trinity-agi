@@ -66,6 +66,26 @@ class AriLearningBuffer:
     def add_experience(self, experience: Dict[str, Any]):
         self.experiences.append(experience)
         self._save_buffer()
+        self._notify_rhythm_loop(experience)
+    
+    def _notify_rhythm_loop(self, experience: Dict[str, Any]):
+        """리듬 루프에 새 경험 신호 전달"""
+        try:
+            feeling_file = WORKSPACE_ROOT / "outputs" / "feeling_latest.json"
+            feeling = {}
+            if feeling_file.exists():
+                with open(feeling_file, 'r', encoding='utf-8') as f:
+                    feeling = json.load(f)
+            feeling["ari_new_experience"] = {
+                "type": experience.get("type", "unknown"),
+                "source": experience.get("source", "unknown"),
+                "timestamp": experience.get("timestamp", "")
+            }
+            with open(feeling_file, 'w', encoding='utf-8') as f:
+                json.dump(feeling, f, indent=2, ensure_ascii=False)
+            logger.info(f"Notified rhythm loop: {experience.get('type', 'unknown')}")
+        except Exception as e:
+            logger.warning(f"Failed to notify rhythm loop: {e}")
 
 class AriEngine:
     _instance = None

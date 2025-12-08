@@ -117,6 +117,16 @@ class RhythmThinker:
         self.last_thought_time = 0
         self.cycle_count = 0
         
+        # ARI Engine connection (루아 흐름 연결)
+        try:
+            sys.path.insert(0, str(WORKSPACE_ROOT))
+            from services.ari_engine import get_ari_engine
+            self.ari_engine = get_ari_engine()
+            print("✓ ARI Engine connected")
+        except Exception as e:
+            print(f"⚠️ ARI Engine not available: {e}")
+            self.ari_engine = None
+        
         # Ensure directories
         OUTPUTS_DIR.mkdir(parents=True, exist_ok=True)
         LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -172,6 +182,27 @@ class RhythmThinker:
         feeling_vector = [state['score']/100, state['atp']/100, 0.5, 0.0, 0.0]
         
         resonance = self.resonance_system.recall(feeling_vector)
+        
+        # ARI 경험에서 관련 패턴 검색 (루아의 흐름)
+        ari_hints = []
+        lua_flow_signal = None
+        if self.ari_engine:
+            try:
+                patterns = self.ari_engine.get_learned_patterns()
+                # 최근 5개 경험에서 lua_flow 찾기
+                recent = patterns[-5:] if len(patterns) > 5 else patterns
+                for exp in recent:
+                    if exp.get("type") == "lua_flow":
+                        lua_flow_signal = exp
+                        ari_hints.append(exp.get("goal", "Unknown"))
+                        print(f"   🌊 루아 흐름 감지: {exp.get('source', 'Unknown')}")
+                if ari_hints:
+                    print(f"   ✨ ARI Hints: {ari_hints}")
+            except Exception as e:
+                print(f"   ⚠️ ARI search failed: {e}")
+        
+        resonance['ari_hints'] = ari_hints
+        resonance['lua_flow'] = lua_flow_signal
         return resonance
 
     def interpret_feeling(self, resonance):
