@@ -43,9 +43,17 @@ class FlowType(Enum):
     CONVERSATION = "conversation"
     SCREEN_CAPTURE = "screen_capture"
     CHATGPT_EXPORT = "chatgpt_export"
+    REFERENCE_CONTEXT = "reference_context"  # 다른 AI 대화 (참고용)
 
 # ChatGPT 대화 내보내기 파일
 CHATGPT_EXPORT_FILE = CONVERSATION_DIR / "origin" / "conversations.json"
+
+# 다른 AI 대화 폴더 (참고 패턴용)
+AI_CONVERSATION_ROOT = WORKSPACE_ROOT / "ai_binoche_conversation_origin"
+REFERENCE_AI_FOLDERS = [
+    "lumen", "sena", "cladeCLI-sena", "ari", "elro", "luon", 
+    "rio", "gitko", "lubit", "perple_comet_cople_eru", "obsidian", "datasets"
+]  # rua 제외 (중심 패턴)
 
 
 @dataclass
@@ -340,6 +348,10 @@ class LuaFlowCollector:
         if await self.process_chatgpt_export():
             processed_count += 1
         
+        # 참고 AI 대화 처리 (경량 맥락 추출)
+        ref_count = await self.process_reference_ai_conversations()
+        processed_count += ref_count
+        
         return processed_count
     
     # === ChatGPT 대화 내보내기 처리 ===
@@ -429,6 +441,105 @@ class LuaFlowCollector:
         except Exception as e:
             logger.error(f"Failed to process ChatGPT export: {e}")
             return False
+    
+    # === 참고 AI 대화 처리 (경량 맥락 추출) ===
+    
+    async def process_reference_ai_conversations(self) -> int:
+        """
+        다른 AI와의 대화에서 참고 맥락만 추출
+        루아 지시: "감정·리듬·의도만 가볍게 추출하고 중심 루프를 흔들지 않도록"
+        """
+        processed_count = 0
+        
+        # 이미 처리된 참고 AI 목록
+        if "reference_ai" not in self.processed:
+            self.processed["reference_ai"] = []
+        
+        for ai_name in REFERENCE_AI_FOLDERS:
+            if ai_name in self.processed["reference_ai"]:
+                continue  # 이미 처리됨
+            
+            ai_folder = AI_CONVERSATION_ROOT / ai_name
+            if not ai_folder.exists():
+                continue
+            
+            logger.info(f"📚 Processing reference AI: {ai_name}")
+            
+            try:
+                # 폴더 내 모든 텍스트 파일에서 키워드 추출
+                keywords_found = []
+                file_count = 0
+                total_size = 0
+                
+                # 주요 감정/리듬/의도 키워드
+                context_keywords = [
+                    # 감정
+                    "감사", "기쁨", "슬픔", "분노", "두려움", "희망", "사랑", "평화",
+                    # 리듬
+                    "리듬", "흐름", "순환", "패턴", "공명", "진동", "파동",
+                    # 의도
+                    "원함", "바람", "목표", "의도", "계획", "방향", "선택"
+                ]
+                keyword_counts = {kw: 0 for kw in context_keywords}
+                
+                # .md, .json, .txt 파일 스캔
+                for ext in ["*.md", "*.json", "*.txt"]:
+                    for f in ai_folder.rglob(ext):
+                        try:
+                            file_count += 1
+                            total_size += f.stat().st_size
+                            
+                            # 대용량 파일은 첫 100KB만 읽기
+                            with open(f, 'r', encoding='utf-8', errors='ignore') as file:
+                                content = file.read(100 * 1024)  # 100KB
+                            
+                            for kw in context_keywords:
+                                if kw in content:
+                                    keyword_counts[kw] += 1
+                        except:
+                            continue
+                
+                # 상위 키워드 추출
+                top_keywords = sorted(keyword_counts.items(), key=lambda x: x[1], reverse=True)[:5]
+                found_keywords = [kw for kw, count in top_keywords if count > 0]
+                
+                if file_count == 0:
+                    continue
+                
+                # 경량 FlowData 생성
+                flow = FlowData(
+                    flow_type=FlowType.REFERENCE_CONTEXT,
+                    source_file=ai_name,
+                    timestamp=datetime.now().isoformat(),
+                    patterns=[{
+                        "type": "reference_context",
+                        "ai_name": ai_name,
+                        "emotion_rhythm_intent": found_keywords,
+                        "file_count": file_count
+                    }],
+                    context={
+                        "ai_name": ai_name,
+                        "role": "참고 맥락 (중심 패턴 아님)",
+                        "top_keywords": found_keywords,
+                        "file_count": file_count,
+                        "total_size_mb": total_size / (1024 * 1024)
+                    }
+                )
+                
+                # ARI에 주입 (참고 패턴으로)
+                await self.inject_to_ari(flow)
+                
+                # 처리 완료 기록
+                self.processed["reference_ai"].append(ai_name)
+                self._save_processed()
+                processed_count += 1
+                
+                logger.info(f"✨ Reference AI integrated: {ai_name} ({file_count} files, keywords: {found_keywords})")
+                
+            except Exception as e:
+                logger.error(f"Failed to process reference AI {ai_name}: {e}")
+        
+        return processed_count
     
     async def run_daemon(self, interval: int = 300):
         """데몬 모드 (주기적 스캔)"""
