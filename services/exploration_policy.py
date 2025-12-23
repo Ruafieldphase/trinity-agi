@@ -40,6 +40,8 @@ class ExplorationPhase(Enum):
     EVALUATE = "evaluate"    # 평가
     ADJUST = "adjust"        # 수정
 
+TRIGGER_BOREDOM_EXPLORATION = "existential_boredom"
+
 
 @dataclass
 class ExplorationStep:
@@ -56,6 +58,7 @@ class ExplorationSession:
     """탐색 세션"""
     goal: str
     mode: ExecutionMode
+    trigger: str = "user_command"  # [NEW] Trigger source (e.g., "existential_boredom")
     steps: List[ExplorationStep] = field(default_factory=list)
     started_at: str = field(default_factory=lambda: datetime.now().isoformat())
     completed_at: Optional[str] = None
@@ -126,9 +129,9 @@ class ExplorationPolicy:
         # 기본: UI 탐색
         return ExecutionMode.UI_EXPLORATION
     
-    def start_exploration(self, goal: str, mode: ExecutionMode) -> ExplorationSession:
+    def start_exploration(self, goal: str, mode: ExecutionMode, trigger: str = "user_command") -> ExplorationSession:
         """탐색 세션 시작"""
-        session = ExplorationSession(goal=goal, mode=mode)
+        session = ExplorationSession(goal=goal, mode=mode, trigger=trigger)
         self.sessions.append(session)
         logger.info(f"Exploration session started: {goal[:50]}...")
         return session

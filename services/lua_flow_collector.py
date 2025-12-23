@@ -199,17 +199,30 @@ class LuaFlowCollector:
         
         # Feeling 업데이트 - 리듬에 새 흐름 신호 전달
         try:
-            feeling = {"flow_received": True, "last_flow": flow.source_file, "timestamp": flow.timestamp}
+            def _atomic_write_json(path: Path, obj: Dict[str, Any]) -> None:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                tmp = path.with_suffix(path.suffix + ".tmp")
+                with open(tmp, "w", encoding="utf-8") as f:
+                    json.dump(obj, f, indent=2, ensure_ascii=False)
+                os.replace(tmp, path)
+
+            feeling: Dict[str, Any] = {"flow_received": True, "last_flow": flow.source_file, "timestamp": flow.timestamp}
             if FEELING_FILE.exists():
-                with open(FEELING_FILE, 'r', encoding='utf-8') as f:
-                    feeling = json.load(f)
-                feeling["lua_flow_signal"] = {
-                    "source": flow.source_file,
-                    "timestamp": flow.timestamp,
-                    "goal": flow.context.get("goal", "")
-                }
-            with open(FEELING_FILE, 'w', encoding='utf-8') as f:
-                json.dump(feeling, f, indent=2, ensure_ascii=False)
+                try:
+                    with open(FEELING_FILE, "r", encoding="utf-8") as f:
+                        loaded = json.load(f)
+                        if isinstance(loaded, dict):
+                            feeling = loaded
+                except Exception:
+                    # 부분 기록(트렁케이트)된 파일이어도 새 신호는 기록한다.
+                    pass
+
+            feeling["lua_flow_signal"] = {
+                "source": flow.source_file,
+                "timestamp": flow.timestamp,
+                "goal": flow.context.get("goal", ""),
+            }
+            _atomic_write_json(FEELING_FILE, feeling)
         except Exception as e:
             logger.error(f"Failed to update feeling: {e}")
     

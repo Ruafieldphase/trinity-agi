@@ -72,17 +72,28 @@ class AriLearningBuffer:
         """리듬 루프에 새 경험 신호 전달"""
         try:
             feeling_file = WORKSPACE_ROOT / "outputs" / "feeling_latest.json"
-            feeling = {}
+
+            def _atomic_write_json(path: Path, obj: Dict[str, Any]) -> None:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                tmp = path.with_suffix(path.suffix + ".tmp")
+                with open(tmp, "w", encoding="utf-8") as f:
+                    json.dump(obj, f, indent=2, ensure_ascii=False)
+                os.replace(tmp, path)
+
+            feeling: Dict[str, Any] = {}
             if feeling_file.exists():
-                with open(feeling_file, 'r', encoding='utf-8') as f:
-                    feeling = json.load(f)
+                try:
+                    with open(feeling_file, "r", encoding="utf-8") as f:
+                        feeling = json.load(f)
+                except Exception:
+                    # 파일이 부분 기록(트렁케이트)된 경우에도 새 이벤트는 잃지 않도록 빈 dict로 계속 진행
+                    feeling = {}
             feeling["ari_new_experience"] = {
                 "type": experience.get("type", "unknown"),
                 "source": experience.get("source", "unknown"),
                 "timestamp": experience.get("timestamp", "")
             }
-            with open(feeling_file, 'w', encoding='utf-8') as f:
-                json.dump(feeling, f, indent=2, ensure_ascii=False)
+            _atomic_write_json(feeling_file, feeling)
             logger.info(f"Notified rhythm loop: {experience.get('type', 'unknown')}")
         except Exception as e:
             logger.warning(f"Failed to notify rhythm loop: {e}")

@@ -264,36 +264,27 @@ class ExternalAIBridge:
         logger.warning(f"Timeout after {timeout_sec}s")
     
     async def _capture_and_extract_response(self) -> Optional[str]:
-        """화면 캡처 후 Vision으로 응답 추출"""
-        selector = getattr(self, "model_selector", None)
-        if not selector or not selector.available:
-            logger.warning("Vision model not available")
-            return None
-        
-        screenshot = pyautogui.screenshot()
-        timestamp = int(time.time())
-        path = self.screenshot_dir / f"response_{timestamp}.png"
-        screenshot.save(str(path))
-        logger.info(f"Screenshot saved: {path}")
-        
+        """
+        🧠 스마트 응답 추출 - AGI가 스스로 방법을 선택
+        여러 방법 중 성공하는 것을 찾아 학습합니다.
+        """
         try:
-            img = Image.open(path)
-            prompt = """이 화면에서 AI의 응답을 추출해줘. 
-            가장 최근 응답 내용만 텍스트로 반환해줘."""
+            from services.smart_response_extractor import smart_extract_response
             
-            response, model_used = selector.try_generate_content(
-                [prompt, img],
-                vision=True,
-                generation_config={"temperature": 0.1},
-            )
-            if not response:
+            logger.info("🧠 스마트 추출기 사용 중...")
+            result = smart_extract_response()
+            
+            if result.success:
+                logger.info(f"✅ 추출 성공 (방법: {result.method})")
+                return result.content
+            else:
+                logger.warning(f"❌ 추출 실패: {result.error}")
                 return None
-            extracted = response.text.strip()
-            logger.info(f"Extracted response via {model_used or 'unknown'}: {extracted[:100]}...")
-            return extracted
-        except Exception as e:
-            logger.error(f"Response extraction failed: {e}")
-            return None
+                
+        except ImportError:
+            logger.warning("스마트 추출기 없음 - 기존 방법 사용")
+            # 폴백: 기존 Vision 방식
+            return await self._fallback_vision_extract()
     
     def _start_aura(self, color: str = AURA_COLOR_ACTIVE):
         """오라 효과 시작"""

@@ -11,8 +11,15 @@ import time
 from pathlib import Path
 from typing import Optional, Dict, Any
 
-import pyautogui
-import pyperclip
+try:
+    import pyautogui
+    import pyperclip
+    PYAUTOGUI_AVAILABLE = True
+except ImportError:
+    PYAUTOGUI_AVAILABLE = False
+    pyautogui = None
+    pyperclip = None
+
 import numpy as np
 from PIL import Image
 from services.model_selector import ModelSelector

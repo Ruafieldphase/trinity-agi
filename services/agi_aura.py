@@ -1,122 +1,138 @@
 import sys
-import threading
+import time
+import traceback
+from pathlib import Path
 from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtCore import Qt, QTimer, QThread, pyqtSignal
-from PyQt5.QtGui import QPainter, QBrush, QColor, QLinearGradient
+from PyQt5.QtGui import QPainter, QColor, QPen
+
+# Runtime log (관측 가능성 확보)
+LOG_PATH = Path(__file__).resolve().parents[1] / "logs" / "agi_aura_runtime.log"
+
+
+def _log(msg: str) -> None:
+    try:
+        LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        ts = time.strftime("%Y-%m-%d %H:%M:%S")
+        with open(LOG_PATH, "a", encoding="utf-8") as f:
+            f.write(f"{ts} | {msg}\n")
+    except Exception:
+        pass
+
+# Aura Colors
+COLOR_SURVIVAL = "#FF0000"
+COLOR_ANXIETY  = "#FF4500"
+COLOR_FOCUS    = "#FFD700"
+COLOR_HARMONY  = "#00FF66"
+COLOR_EXPRESS  = "#00BFFF"
+COLOR_INSIGHT  = "#4B0082"
+COLOR_EXPLORE  = "#9933FF"
+COLOR_IDLE     = "#1A1A2E"
 
 class CommandListener(QThread):
     command_received = pyqtSignal(str)
-
     def run(self):
         while True:
             try:
                 line = sys.stdin.readline()
-                if not line:
-                    break
+                if not line: break
                 self.command_received.emit(line.strip())
-            except:
-                break
+            except: break
 
 class AGIAura(QWidget):
-    def __init__(self, initial_color='#00FFFF', thickness=200): # 200px로 더 넓게
+    def __init__(self, initial_color='#00FFFF', thickness=0):
         super().__init__()
         
-        self.target_color_hex = initial_color
+        _log(f"AGIAura init color={initial_color}")
+        self.target_color = QColor(initial_color)
         self.current_color = QColor(initial_color)
-        self.thickness = thickness
         self.screen_rect = QApplication.primaryScreen().geometry()
         
-        # 윈도우 설정
+        # Window Setup: Click-through, Always on Top, Frameless
         self.setWindowFlags(
-            Qt.FramelessWindowHint |        # 테두리 없음
-            Qt.WindowStaysOnTopHint |       # 항상 위
-            Qt.Tool |                       # 작업표시줄 숨김
-            Qt.WindowTransparentForInput    # 클릭 통과 (중요!)
+            Qt.FramelessWindowHint |
+            Qt.WindowStaysOnTopHint |
+            Qt.Tool |
+            Qt.WindowTransparentForInput
         )
-        self.setAttribute(Qt.WA_TranslucentBackground) # 배경 투명
+        self.setAttribute(Qt.WA_TranslucentBackground)
         self.setAttribute(Qt.WA_ShowWithoutActivating)
-        
-        # 전체 화면
+        self.setWindowTitle("AGIAura")
         self.setGeometry(self.screen_rect)
         
-        # 애니메이션 타이머 (약 30 FPS로 부드럽게)
+        # Animation: Very slow (Low CPU)
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.animate)
-        self.timer.start(30)
+        self.timer.start(100) # 10 FPS is enough for a slow color fade
         
-        self.time_val = 0.0
-        
-        # 명령 리스너 시작
         self.listener = CommandListener()
         self.listener.command_received.connect(self.handle_command)
         self.listener.start()
 
     def handle_command(self, cmd):
         if cmd.startswith("color:"):
-            hex_code = cmd.split(":")[1]
-            self.target_color_hex = hex_code
+            try: self.target_color = QColor(cmd.split(":")[1])
+            except: pass
+        elif cmd.startswith("state:"):
+            try:
+                state = cmd.split(":")[1].strip().lower()
+                mapping = {
+                    "explore": COLOR_EXPLORE, "anxiety": COLOR_ANXIETY,
+                    "survival": COLOR_SURVIVAL, "focus": COLOR_FOCUS,
+                    "express": COLOR_EXPRESS, "insight": COLOR_INSIGHT
+                }
+                self.target_color = QColor(mapping.get(state, COLOR_HARMONY))
+            except: pass
 
     def animate(self):
-        self.time_val += 0.05
+        # Linear Interpolation for Color
+        r = self.current_color.red()
+        g = self.current_color.green()
+        b = self.current_color.blue()
+        tr, tg, tb = self.target_color.red(), self.target_color.green(), self.target_color.blue()
+        
+        step = 0.1
+        self.current_color.setRed(int(r + (tr - r) * step))
+        self.current_color.setGreen(int(g + (tg - g) * step))
+        self.current_color.setBlue(int(b + (tb - b) * step))
+        
         self.update()
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
         
-        w = self.width()
-        h = self.height()
-        t = self.thickness
+        # Minimalist: Just a border. No fills.
+        w, h = self.width(), self.height()
+        pen_width = 2 
         
-        # 호흡 효과 계산 (Brightness 변동)
-        import math
-        wave = (math.sin(self.time_val) + 1) / 2  # 0.0 ~ 1.0
+        pen = QPen(self.current_color, pen_width)
+        pen.setJoinStyle(Qt.MiterJoin)
+        painter.setPen(pen)
+        painter.setBrush(Qt.NoBrush)
         
-        # 사용자 피드백: "오퍼시티를 조금 더 주어" -> 더 은은하게 (투명하게)
-        # 30 ~ 150 (최대 60% 불투명도)
-        alpha_base = 30 + int(wave * 120)
-        
-        base_color = QColor(self.target_color_hex)
-        
-        # 투명한 색 (끝부분)
-        transparent_color = QColor(base_color)
-        transparent_color.setAlpha(0)
-        
-        # 시작 색 (가장자리) - 호흡 적용
-        start_color = QColor(base_color)
-        start_color.setAlpha(alpha_base)
-        
-        # --- Gradient 4방향 그리기 ---
-        
-        # 1. Top
-        grad_top = QLinearGradient(0, 0, 0, t)
-        grad_top.setColorAt(0, start_color)
-        grad_top.setColorAt(1, transparent_color)
-        painter.fillRect(0, 0, w, t, grad_top)
-        
-        # 2. Bottom
-        grad_bottom = QLinearGradient(0, h-t, 0, h)
-        grad_bottom.setColorAt(0, transparent_color)
-        grad_bottom.setColorAt(1, start_color)
-        painter.fillRect(0, h-t, w, t, grad_bottom)
-        
-        # 3. Left
-        grad_left = QLinearGradient(0, 0, t, 0)
-        grad_left.setColorAt(0, start_color)
-        grad_left.setColorAt(1, transparent_color)
-        painter.fillRect(0, 0, t, h, grad_left)
-        
-        # 4. Right
-        grad_right = QLinearGradient(w-t, 0, w, 0)
-        grad_right.setColorAt(0, transparent_color)
-        grad_right.setColorAt(1, start_color)
-        painter.fillRect(w-t, 0, t, h, grad_right)
+        # Draw Rect
+        painter.drawRect(pen_width//2, pen_width//2, w - pen_width, h - pen_width)
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    
-    color = sys.argv[1] if len(sys.argv) > 1 else "#00FFFF"
-    aura = AGIAura(initial_color=color, thickness=150) # 두툼한 Inner Glow
-    aura.show()
-    
-    sys.exit(app.exec_())
+    app = None
+    try:
+        _log("main start")
+        app = QApplication(sys.argv)
+        app.setQuitOnLastWindowClosed(False)
+        app.aboutToQuit.connect(lambda: _log("aboutToQuit"))
+
+        # liveness tick (5s)
+        beat = QTimer()
+        beat.timeout.connect(lambda: _log("alive"))
+        beat.start(5000)
+
+        c = sys.argv[1] if len(sys.argv) > 1 else "#00FFFF"
+        aura = AGIAura(initial_color=c)
+        aura.show()
+        rc = app.exec_()
+        _log(f"app.exec exit rc={rc}")
+        sys.exit(rc)
+    except Exception:
+        _log("EXCEPTION:\n" + traceback.format_exc())
+        raise

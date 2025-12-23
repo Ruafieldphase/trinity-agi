@@ -1,6 +1,8 @@
 import logging
 import os
 import time
+from pathlib import Path
+import warnings
 from typing import Any, Dict, List, Optional, Tuple
 
 # Try importing both SDKs (Vertex AI and AI Studio)
@@ -12,13 +14,43 @@ except ImportError:
     VERTEX_AVAILABLE = False
 
 try:
-    import google.generativeai as genai
+    # google.generativeai는 deprecated 되어 import 시 FutureWarning을 발생시킬 수 있다.
+    # "접속 실패"로 오해되는 로그 노이즈를 줄이기 위해 import 구간에서만 경고를 숨긴다.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=FutureWarning)
+        import google.generativeai as genai
     GENAI_AVAILABLE = True
 except ImportError:
     GENAI_AVAILABLE = False
 
 
 RATE_LIMIT_MARKERS = ("429", "rate limit", "quota", "exhausted", "exceeded")
+
+
+def _load_dotenv_value(name: str) -> str | None:
+    """
+    Process env에 키가 없더라도, 워크스페이스의 .env에서 값을 읽어올 수 있게 한다.
+    - 값을 출력/로그하지 않는다.
+    - 기존 env가 있으면 덮어쓰지 않는다.
+    """
+    try:
+        root = Path(__file__).resolve().parents[1]  # C:\workspace\agi
+        for env_path in (root / ".env_credentials", root / ".env"):
+            if not env_path.exists():
+                continue
+            text = env_path.read_text(encoding="utf-8", errors="replace").splitlines()
+            for line in text:
+                s = line.strip()
+                if not s or s.startswith("#") or "=" not in s:
+                    continue
+                k, v = s.split("=", 1)
+                if k.strip() != name:
+                    continue
+                val = v.strip().strip('"').strip("'")
+                return val or None
+    except Exception:
+        return None
+    return None
 
 
 class ModelSelector:
@@ -36,12 +68,12 @@ class ModelSelector:
         self.logger = logger or logging.getLogger("ModelSelector")
         self.project = project or os.getenv("GOOGLE_CLOUD_PROJECT")
         self.location = location or os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
-        self.api_key = os.getenv("GOOGLE_API_KEY")
+        self.api_key = os.getenv("GOOGLE_API_KEY") or _load_dotenv_value("GOOGLE_API_KEY")
 
         # Model preferences (override with env to try Gemini 3.0 / experimental models)
         # Default to generic aliases for maximum compatibility (especially with GenAI/AI Studio)
-        self.fast_model = os.getenv("GEMINI_FAST_MODEL", "gemini-2.0-flash")
-        self.balanced_model = os.getenv("GEMINI_BALANCED_MODEL", "gemini-2.0-flash")
+        self.fast_model = os.getenv("GEMINI_FAST_MODEL", "gemini-2.5-flash")
+        self.balanced_model = os.getenv("GEMINI_BALANCED_MODEL", "gemini-2.5-flash")
         self.vision_model = os.getenv("GEMINI_VISION_MODEL", self.balanced_model)
         self.top_model = (
             os.getenv("GEMINI_TOP_TIER_MODEL")
@@ -51,6 +83,8 @@ class ModelSelector:
 
         self.backend = "none" # 'vertex' or 'genai'
         self._cache: Dict[str, Any] = {}
+        # Feature flags (avoid repeated 404 calls)
+        self.supports_gemini_25_flash = False
         self._init_backend()
 
     def _init_backend(self) -> None:
@@ -67,6 +101,23 @@ class ModelSelector:
                 genai.configure(api_key=self.api_key)
                 self.backend = "genai"
                 self.logger.info(f"Initialized Google AI Studio (GenAI) backend.")
+                # Detect whether Gemini 2.5 Flash is available (so we can prefer it without spamming 404s).
+                try:
+                    names = []
+                    for m in genai.list_models():
+                        try:
+                            if "generateContent" not in getattr(m, "supported_generation_methods", []):
+                                continue
+                            n = str(getattr(m, "name", "") or "")
+                            if n.startswith("models/"):
+                                n = n[len("models/") :]
+                            if n:
+                                names.append(n)
+                        except Exception:
+                            continue
+                    self.supports_gemini_25_flash = any(n.startswith("gemini-2.5-flash") for n in names)
+                except Exception:
+                    self.supports_gemini_25_flash = False
                 return
             except Exception as e:
                 self.logger.warning(f"GenAI init failed: {e}")
@@ -151,6 +202,10 @@ class ModelSelector:
         
         # If using GenAI, sometimes "gemini-1.5-flash" (no suffix) is best
         if self.backend == "genai":
+            # Prefer Gemini 2.5 Flash when the backend reports it is available.
+            if self.supports_gemini_25_flash:
+                pref = ["gemini-2.5-flash", "gemini-2.5-flash-002", "gemini-2.5-flash-001"]
+                full_list = [p for p in pref if p not in full_list] + full_list
              # Ensure generic names are present for GenAI aliases
             if "gemini-1.5-flash" not in full_list: full_list.append("gemini-1.5-flash")
             if "gemini-1.5-pro" not in full_list: full_list.append("gemini-1.5-pro")
@@ -202,7 +257,8 @@ class ModelSelector:
         )
 
         errors = []
-        print(f"[DEBUG] Candidates: {candidates}")
+        # stdout print는 운영 로그/대시보드에 노이즈를 만들 수 있어 debug 로깅으로만 남긴다.
+        self.logger.debug(f"Candidates: {candidates}")
         for model_name in candidates:
             try:
                 print(f"[DEBUG] Trying model: {model_name}")
