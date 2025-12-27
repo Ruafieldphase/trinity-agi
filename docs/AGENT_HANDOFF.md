@@ -1,5 +1,537 @@
 # Agent Handoff Log
 
+## [2025-12-26] FSD question boundary refinements (docs + verification)
+
+- `task.md`: added Phase 2/3 question-boundary tasks (state transition, non-intervention, caps, dedup, dual-gate).
+- `implementation_plan.md`: documented Phase 2/3 refinements and updated verification criteria.
+- `walkthrough.md`: added refined question-generation policies and verification note.
+- `verify_slack_question.py`: copied Phase 3 harness (legacy `verify_slack_question_p3.py` may remain due to delete permission).
+
+## [2025-12-26] FSD question boundary stabilization (resource controls)
+
+- `services/fsd_controller.py`: added FIFO cap for boundary memory, state freeze during Z2_IDLE, and VERIFY_MODE initialization.
+- `scripts/coordination/sian_state_sync.py`: skips sync when `AGI_VERIFY_MODE=1`.
+- `verify_slack_question.py`: added FIFO eviction test and verify_mode initialization.
+- `task.md` / `implementation_plan.md` / `walkthrough.md`: documented Phase 3.1 resource stabilization and verification.
+
+## [2025-12-26] FSD maturation observation cycle
+
+- `observe_fsd_maturation.py`: observation script for 5-episode maturation flow.
+- `services/fsd_controller.py`: tightened state-freeze logging and idle capture suppression.
+- `verify_slack_question.py`: FIFO test update and verify-mode run.
+- `task.md` / `implementation_plan.md` / `walkthrough.md`: documented Phase 3.2 observation cycle.
+- `observe_fsd_maturation.py`: restore `_analyze_and_decide` after mocks so quality check uses the real prompt path; observation run confirmed all 5 episodes OK.
+
+## [2025-12-25] Rhythm observation-only (no gating)
+
+- `scripts/rhythm_think.py`: rhythm_mode only logged; no decision overrides.
+- `scripts/self_expansion/auto_policy.py`: removed rhythm-based overrides/night bias; record rhythm snapshot in cache.
+- `scripts/trigger_listener.py`: observation no longer suppressed by rhythm mode.
+- `scripts/windows/suggest_browser_exploration_task.py`: pacing no longer derived from rhythm (rhythm remains as metadata).
+
+## [2025-12-25] RhythmThink error guard
+
+- `scripts/rhythm_think.py`: guard `feedback` default + fix exception printing (`print_exc()`).
+
+## [2025-12-25] Zone2 base return
+
+- `scripts/rhythm_think.py`: zone2 idle uses no RNA action; post_state logged as zone2 return.
+- `scripts/self_expansion/auto_policy.py`: removed rhythm-based branching (observation only).
+
+## [2025-12-25] AI 공통 정렬 선언 (HOME / ZONE2)
+
+- `docs/AI_COMMON_ALIGNMENT_DECLARATION_HOME_ZONE2.md` 추가.
+
+## [2025-12-26] 역할/운영 리듬 선언
+
+- `docs/AGI_ROLE_ALIGNMENT_RHYTHM_OPERATIONS.md` 추가.
+
+## [2025-12-26] FSD 질문 경계 + Slack 게이트웨이
+
+- `services/fsd_controller.py`: ActionType.QUESTION + Z2_IDLE + repetition penalty.
+- `services/slack_gateway.py`: Slack 질문/응답 비동기 브리지.
+- `verify_slack_question.py`: end-to-end 질문 흐름 검증.
+
+## [2025-12-24] Remote RAG vector mirror (Qdrant)
+
+### 변경사항
+
+- `scripts/semantic_rag_engine.py`
+  - 원격 벡터 스토어(Qdrant) 미러/검색 지원 추가.
+  - 환경변수 기반 활성화: `AGI_REMOTE_VECTOR_PROVIDER=qdrant`, `AGI_REMOTE_VECTOR_URL`.
+  - 검색/인덱싱은 로컬 + 원격 병행(원격은 옵션, 실패 시 로컬 유지).
+- `scripts/check_env_config.py`
+  - 원격 벡터 스토어 설정 점검 섹션 추가.
+- `docs/ENVIRONMENT_SETUP.md`
+  - 원격 벡터 스토어 환경변수 표 추가.
+
+## [2025-12-24] RAG verification + Chroma cache fallback
+
+### 변경사항
+
+- `scripts/semantic_rag_engine.py`
+  - SQLite 쓰기 불가 경로를 감지하면 사용자 캐시(`%USERPROFILE%\.cache\chroma\agi_memory`)로 자동 폴백.
+  - `AGI_VECTOR_STORE_DIR` 환경변수로 벡터 스토어 경로 오버라이드 가능.
+  - 오프라인 로딩을 기본값으로 고정(`HF_HUB_OFFLINE=1`, `TRANSFORMERS_OFFLINE=1`).
+  - 디스크 I/O 오류/락 감지 시 폴백 경로 재시도.
+- `scripts/verify_rag_integration.py`
+  - 콘솔 출력 이모지 제거, force consolidate/importance 적용.
+  - 벡터 결과 존재 여부로 검증 판단하도록 개선.
+- `task.md`
+  - RAG 검증 항목 완료 처리.
+
+### 실행/결과
+
+- `scripts/verify_rag_integration.py` 실행 완료 → 벡터 기반 회상 정상 확인.
+- `C:\workspace` 내부에서는 SQLite가 `disk I/O error`를 반환하므로, 벡터 스토어는 사용자 캐시 경로를 사용.
+
+## [2025-12-24] FSD GUI action 확장 + 검증 실패 리플랜
+
+### 변경사항
+
+- `scripts/execute_proposal.py`
+  - GUI 액션 스키마 정규화(상위 `type` 또는 `action.type`, `params.action` 혼합 지원).
+  - drag/hotkey/scroll 지원 추가(좌표/키 조합 기반).
+  - 시각 검증 실패 시 `replan` 메타데이터를 기록하고 상태를 실패로 처리.
+
+### 참고
+
+- scroll은 `params.amount|delta|scroll` 또는 `scroll_up/scroll_down` 액션을 지원(기본 480).
+
+## [2025-12-24] Prayer layer 검증 + Semantic DB 경로 폴백
+
+### 변경사항
+
+- `scripts/rhythm_think.py`
+  - Prayer 판단 로직을 `_prayer_response_for_state`로 분리해 테스트 가능하게 정리.
+- `scripts/verify_prayer_layer.py`
+  - 점수/ATP 조건별 Prayer 응답을 검증하고 `outputs/prayer_layer_check_latest.json`로 기록.
+- `fdo_agi_repo/copilot/hippocampus.py`
+  - semantic DB 경로가 쓰기 불가일 때 사용자 캐시(`%USERPROFILE%\.cache\agi\session_memory\session_memory.db`)로 폴백.
+  - 오버라이드: `AGI_SEMANTIC_DB_PATH` 또는 `AGI_SEMANTIC_DB_DIR`.
+
+### 실행/결과
+
+- `scripts/verify_prayer_layer.py` 실행 완료 → 모든 케이스 OK.
+
+## [2025-12-24] 🤝 Shion 복구 + 컨텍스트 부트스트랩 + Lumen 동기화
+
+### 변경사항
+
+- `scripts/shion_auto_responder.py`
+  - 빈 파일을 정상 구현으로 복구.
+  - `.env`가 없어도 실행되도록 dotenv import를 보호.
+  - 중복 실행 방지(파일 락 + Windows mutex + 부모 프로세스 감지).
+- `scripts/autonomous_collaboration_daemon.ps1`
+  - `.venv` Python을 우선 사용하도록 수정.
+- `scripts/setup_windows_autostart.ps1`
+  - `AGI_Shion_AutoStart` 스케줄러 태스크 등록(부팅 시 Shion 데몬 자동 시작).
+
+## [2025-12-24] 👁️ Vision 로그 복구 + RPACore 내구성
+
+### 변경사항
+
+- `fdo_agi_repo/rpa/core.py`
+  - vision_events가 JSONL이 아니어도 복구 파싱(멀티라인/빈줄/잘못된 라인) 후 최근 이벤트를 사용.
+- `scripts/normalize_vision_events.py`
+  - 비표준 vision_events를 표준 JSONL로 재작성하는 복구 스크립트 추가.
+- `outputs/lumen_state.json`
+  - `fdo_agi_repo/memory/lumen_state.json`에서 최신 상태로 동기화.
+- `memory/koa_context.json`, `memory/rua_context.json`
+  - 기본 컨텍스트 파일 생성(초기 부트스트랩).
+
+## [2025-12-24] 🧠🦾 FSD 실행 고도화 + 무창 실행 보강
+
+### 변경사항
+
+- `scripts/execute_proposal.py`
+  - 안전 인터록을 Aura Pixel 외에 `red_line_monitor`, `child_data_protector`, `rest_gate`까지 확장.
+  - 시각 검증을 "액션 직후 신규 이벤트만" 검사하도록 커서 기반으로 강화.
+  - UI 요소 이름/설명까지 매칭하여 검증 정확도 상승.
+  - 내부 스크립트 실행에 `CREATE_NO_WINDOW` 적용(윈도우 콘솔 창 깜빡임 완화).
+- `scripts/trigger_listener.py`
+  - Windows PowerShell 호출에 `CREATE_NO_WINDOW` 적용(프로세스 스캔/idle auto_policy).
+- `scripts/rubit_aura_pixel.py`
+  - PID 확인용 PowerShell 호출에 `CREATE_NO_WINDOW` 적용.
+- `implementation_plan.md` / `task.md`
+  - FSD 운영 고도화 계획/태스크로 갱신.
+
+## [2025-12-24] 🧭 Codex 세션 지속성 복구(시안 작업 반영)
+
+### 변경사항
+
+- `scripts/get_last_codex_session.py`
+  - `~/.codex/history.jsonl`에서 최신 `session_id`를 추출.
+- `scripts/agi_session_start.ps1`
+  - 세션 시작 시 `CODEX_SESSION_ID` 환경 변수를 복원하여, 재부팅/재로그인 후에도 이전 세션을 이어갈 수 있게 함.
+- `scripts/codex_session_wrapper.py`
+  - `codex.cmd exec` 호출에 `--session <id>`를 동적으로 주입.
+  - 세션 오류/계정 변경 시 로컬 컨텍스트 스냅샷으로 부트스트랩하여 연속성을 유지.
+  - 상태 기록: `outputs/sync_cache/codex_session_state.json` (세션 사용 가능 여부/오류 타임스탬프/최근 스냅샷).
+  - 스냅샷 생성기: `scripts/generate_codex_continuity_snapshot.py` → `outputs/sync_cache/codex_continuity_snapshot.md`.
+- 적용 경로
+  - `configs/persona_registry.json`의 `codex_cli` backend가 래퍼를 사용.
+
+## [2025-12-24] 🪟 스케줄러 창 깜빡임 완화 (윈도우)
+
+### 변경사항
+
+- `scripts/run_trigger_once.py`
+  - Windows에서 프로세스 체크용 PowerShell 호출에 `CREATE_NO_WINDOW` 적용.
+- `scripts/self_expansion/auto_policy.py`
+  - Windows에서 best-effort 헬퍼 스크립트 실행 시 `CREATE_NO_WINDOW` 적용.
+
+## [2025-12-24] 🫧 idle_tick 리듬 게이트 + 윈도우 무창 실행
+
+### 변경사항
+
+- `scripts/trigger_listener.py`
+  - idle_tick에서 RhythmBoundaryManager를 읽어 ISOLATED_EXECUTION 중 관측 스냅샷(메시지/요약/디지털 트윈)을 최소화.
+  - idle_tick의 서브 스크립트 실행을 `_run_script_best_effort`로 통일하여 Windows 콘솔 창 깜빡임을 줄임.
+  - 중복 리스너 정리용 PowerShell 호출에도 `CREATE_NO_WINDOW` 적용.
+
+## [2025-12-24] 🧭 Codex 계정 전환 연속성 + 운영 스냅샷 강화
+
+### 변경사항
+
+- `scripts/generate_codex_continuity_snapshot.py`
+  - Codex 연속성 스냅샷을 `outputs/sync_cache/codex_continuity_snapshot.md`로 생성.
+- `scripts/rubit_continuity_on_startup.ps1`
+  - 부팅/로그온 시 Codex 연속성 스냅샷 자동 생성.
+- `scripts/codex_session_wrapper.py`
+  - 세션 오류 시 스냅샷 캐시로 부트스트랩.
+
+## [2025-12-24] 📊 리듬/운영 대시보드 + Lumen 갱신 루프
+
+### 변경사항
+
+- `scripts/rhythm_thermometer_snapshot.py`
+  - `rhythm_check.py --json` 결과를 `outputs/bridge/rhythm_thermometer_latest.json`로 저장.
+- `scripts/generate_live_ops_dashboard.py`
+  - 운영 요약 HTML을 `outputs/bridge/live_ops_dashboard.html`로 생성.
+- `scripts/refresh_lumen_state.py`
+  - Lumen 상태를 `outputs/lumen_state.json` 및 `fdo_agi_repo/memory/lumen_state.json`로 갱신.
+- `scripts/execute_proposal.py`
+  - GUI 액션에 sandbox 게이트(`outputs/safety/sandbox_latest.json`) 추가.
+  - vision 로그 미갱신 시 "검증 스킵" 메시지 반환.
+- `scripts/trigger_listener.py`
+  - idle_tick에 리듬 스냅샷/Live Ops/vision 정규화/Lumen 갱신 저빈도 루프 추가.
+- `scripts/windows/run_process_creation_monitor_short.ps1`
+  - 팝업 원인 추적용 모니터를 짧게 실행하는 래퍼 추가.
+- `scripts/suggest_exploration_hint.py`
+  - 지루함/호기심 불균형 시 탐색 힌트(`outputs/bridge/exploration_hint_latest.json`)를 저빈도로 생성.
+
+## [2025-12-24] 🌊 리듬 모드 기반 auto_policy 게이트 보강
+
+### 변경사항
+
+- `scripts/self_expansion/auto_policy.py`
+  - RhythmBoundaryManager로 CONNECTED/ISOLATED/RECONNECT 모드를 읽고,
+    실행 집중(ISOLATED)에서는 **self_acquire를 지연**(신규 경험이 아닐 때).
+  - 연결/재연결 모드에서는 idle일 때 **self_acquire로 부드러운 개방** 유도.
+  - safety/rest 판단은 **오버라이드하지 않도록** 보호.
+  - 상태 캐시에 `rhythm_mode` 기록 추가.
+
+## [2025-12-23] 🩺🧬 통증 신호(라우팅) + 디지털 트윈/퀀텀 디지털 트윈 관측 고정
+
+### 변경사항
+
+- `scripts/meta_supervisor.py`
+  - “자가치유” 실행이 관측 가능하도록 **사람용/기계용 리포트 레이어**를 추가:
+    - `outputs/bridge/meta_supervisor_report_latest.txt`
+    - `outputs/bridge/meta_supervisor_report_latest.json`
+  - 리듬 기반 실행 게이트 추가(무거운 조치 억제):
+    - constitution `BLOCK/REVIEW`, `rest_gate=REST`, pain 높음일 때는 액션을 제한(관측/정리 위주).
+  - `--no-action` 모드에서도 리포트를 파일로 고정(콘솔 출력만으로 끝나지 않게).
+  - “가짜 성공” 완화:
+    - `update_self_care/generate_goals/analyze_feedback`는 **기대 출력 파일 mtime 갱신 여부**로 성공을 재검증.
+
+- `scripts/rest_gate.py`
+  - 기존: REST 진입 시 `rest_until`을 **무조건 연장(max)** 하여, 신호가 회복돼도 타이머가 끝날 때까지 묶이는 고정 인터벌 성향이 있었음.
+  - 변경: 트리거/브라우저/ATP/드리프트 신호에 따라 **가변 REST 길이(target_rest_sec)** 를 계산하고, 회복 시에는 **단축도 허용**(플랩 방지를 위한 최소 바닥 + 그레이스만 유지).
+  - 출력 스키마 유지 + 추가 필드:
+    - `rest_started_epoch`, `rest_started_utc` (관측용)
+
+- `scripts/stub_radar.py`
+  - 워크스페이스 내 stub/미구현(placeholder/TODO/NotImplemented) 요소를 사실 기반으로 스캔해 리포트로 고정.
+  - 출력:
+    - `outputs/bridge/stub_radar_latest.txt`
+    - `outputs/bridge/stub_radar_latest.json`
+  - 주의: 1회성 레이더(상단 일부 라인만)이며, 루프에 자동 연결하지 않음(부담 방지).
+
+- `scripts/system_gaps_report.py`
+  - stub_radar 결과 + 일부 관측 파일 stale를 묶어서 "껍데기/미연결" 요약 리포트를 생성.
+  - 출력:
+    - `outputs/bridge/system_gaps_report_latest.txt`
+    - `outputs/bridge/system_gaps_report_latest.json`
+  - 노이즈 방지: `.venv/.venv_local/site-packages/node_modules` 등은 스캔에서 제외.
+
+- `scripts/self_expansion/auto_policy.py`
+  - 고정 쿨다운(4분)을 60초 베이스로 축소하고, Dark Neuron Layer의 bias로 **리듬 기반 가변 템포**가 되도록 조정.
+  - `quantum_flow=chaotic/resistive`의 settle 구간을 **고정 30분 인터벌** 대신 pain/확장위상/호기심-지루함에 따라 **동적으로** 조정하고,
+    조건이 맞으면 `idle` 대신 `self_acquire`로 부드럽게 우회(압축 루프/정지 루프 완화).
+
+- `scripts/dark_neuron_layer.py`
+  - `compute_browser_bias()`에 `rhythm_pain_latest.json`을 반영해, pain이 높을수록 브라우저 탐색 속도를 늦추는 **편향(금지 아님)** 추가.
+
+- `scripts/trigger_listener.py`
+  - 트리거 처리 후 `scripts/digital_twin_update.py`를 best-effort로 자동 호출.
+  - Digital Twin/QDT는 실행이 아니라 **관측 고정 + 후보 확률 기록**이며, 내부에 min-interval(기본 60초)이 있어 과도 실행을 방지.
+  - 추가: `scripts/aggregate_glymphatic_metrics.py`를 자동 호출해 `outputs/glymphatic_metrics_latest.json` 최신화(요약에서 stale 방지).
+  - `scripts/human_ops_summary.py` 자동 호출 timeout을 30초로 확대(간헐적 타임아웃 방지).
+
+- `scripts/human_ops_summary.py`
+  - `7.35) 디지털 트윈(관측)` 섹션 추가:
+    - `DigitalTwin`: `mismatch_0_1`, `route_hint`
+    - `QDT 후보`: 상위 3개 후보(`action:p`) 요약
+  - Body STOP_FILE 관측 보강:
+    - `signals/body_stop.json` 존재 시 `STOP_FILE(중지 요청): 예`를 표시하고, 해제 힌트(`scripts/windows/arm_supervised_body.ps1`)를 함께 표시.
+  - RestGate 관측 보강:
+    - `RestGate 시작(rest_started_utc)`를 노출.
+  - 림프/정화 관측:
+    - 갱신 30분 이내면 `(ok)`로 표시(노이즈 감소).
+
+### 출력
+
+- `outputs/sync_cache/digital_twin_state.json`
+- `outputs/sync_cache/quantum_digital_twin_state.json`
+- `outputs/bridge/human_ops_summary_latest.txt`에 `7.35)` 섹션 노출
+
+### 추가 변경(후속, 리듬 기반 운영 안정화)
+
+- `scripts/run_trigger_once.py`
+  - 스케줄러(PT1M) 중첩 실행을 방지하기 위해 **single-instance 가드(Windows mutex + 파일 락)** 추가.
+  - 효과: idle_tick/리포트 갱신이 겹쳐 “폭주처럼 보이는” 관측을 완화.
+
+- `scripts/trigger_listener.py`
+  - `idle_tick()`에서 아래를 **느리게(best-effort) 갱신**하도록 추가:
+    - `scripts/rest_gate.py`
+    - `scripts/rhythm_pain_signal.py`
+    - `scripts/human_ops_summary.py`
+  - 효과: 트리거가 없거나 드문 상황에서도 pain/rest/사람용 요약이 stale 되지 않음.
+
+- `scripts/windows/supervised_body_controller.py`
+  - 고정 `--poll-ms` 기반 loop를 **상태 기반 adaptive polling**으로 변경.
+  - 효과: 유휴/비무장/휴식 구간에서는 느리게(여백/자원 절약), STOP/task/경계 구간에서는 빠르게 반응.
+
+- `scripts/windows/suggest_browser_exploration_task.py`
+  - `signals/body_allow_browser.json`의 override semantics 보강:
+    - `max_tasks_per_hour <= 0` → **무제한(상한 해제)**
+    - `min_cooldown_sec`는 `0`도 유효(=쿨다운 0 cap)
+
+- `scripts/rubit_aura_pixel.py`
+  - 중복 인스턴스 방지 강화를 위해 **Windows mutex 가드** 추가(파일 락 보완).
+
+## [2025-12-22] 🎵🧭 음악 데몬 안정화 + 브라우저 탐색 “여백” 우선 (창 폭주 완화)
+
+### 변경사항
+
+- `fdo_agi_repo/utils/groove_engine.py`
+  - `compute_beat_offset()`가 반환값 없이 끝나던 문제를 수정(총 오프셋을 반환).
+
+- `scripts/music_daemon.py`
+  - GrooveEngine API 기대값(`beat_index:int, bpm:float`)과 호출부가 어긋나 `TypeError: not all arguments converted during string formatting`가 나던 크래시를 수정.
+  - brainwave(문자열)를 안전하게 BPM으로 매핑한 뒤, off-beat(1) 기준으로 마이크로타이밍 힌트를 계산하도록 변경.
+
+- `scripts/windows/suggest_browser_exploration_task.py`
+  - “사용자 체감” 기준으로 너무 쉽게 창이 뜨던 문제를 완화:
+    - idle 기준을 `120s → 900s`로 보수화(사용자 부재가 확실할 때만 제안).
+    - `INTEGRATION/CONTRACTION` 단계에서 `open_path/youtube_search`를 제거하고 `sleep`만 수행(“아무것도 안 해도 괜찮음”을 정상으로 인정).
+    - `EXPANSION`만 필요 시 open_url을 유지(기존 리듬 기반 쿨다운/시간당 상한은 그대로 적용).
+
+- `services/model_selector.py`
+  - `generate_content()`에서 후보 리스트를 stdout에 출력하던 `print()`를 `logger.debug()`로 변경(운영 로그 노이즈 완화).
+
+- `scripts/self_expansion/boundary_map.py`
+  - 기존엔 `exploration_intake_latest.json`의 세션 boundaries만 집계하여, 시스템 제약(안전/휴식/드리프트/가드/Idle)이 경계 지도로 드러나지 않던 문제를 개선.
+  - `constitution_review/rest_gate/natural_drift/life_state/body_allow_browser/body_stop`를 **SYSTEM_CONSTRAINT 규칙**으로 함께 포함하여 “경계 우선” 설계 기준을 관측 가능한 파일로 고정.
+
+## [2025-12-22] 🧡🗨️ Idle=정상 생존 + 사람용 메시지/대화창 + 경계 유도 관측 안정화
+
+### 변경사항
+
+- `scripts/trigger_listener.py`
+  - `idle_tick()`에서도 `scripts/agi_message_reporter.py`를 호출하여, **트리거가 없어도** `outputs/bridge/agi_message_latest.*`가 최신 상태를 반영하도록 함(“아무것도 안 해도 정상” 관측 고정).
+
+- `scripts/self_expansion/boundary_induction.py`
+  - `skipped`일 때도 `active_rules_count/safety/rest_gate` 등 **동일 스키마**를 유지(사람용 요약/오라/메시지가 `-`로 깨지는 현상 완화).
+
+- `scripts/human_ops_summary.py`
+  - 경계 유도 활성 규칙 라인에 `skipped:<reason>`를 함께 표시(관측 가능한 이유 고정).
+
+- `scripts/adaptive_music_player.py`
+  - 기본값을 **자동 브라우저 오픈 금지**로 변경(`AGI_MUSIC_OPEN_BROWSER=1`일 때만 열기) → 원치 않는 코멧/유튜브 팝업 완화.
+
+- `scripts/ai_model_router.py`, `scripts/gemini_chat.py`, `scripts/youtube_live_bot.py`, `scripts/llm_client.py`
+  - Gemini 기본값을 최신 Flash/Pro 계열로 상향(가능한 환경에서 `gemini-2.5-flash` 우선).
+
+## [2025-12-22] 🧠📍 경험 습득(Experience Acquisition) v1 — “경험 1회 = 세션 1개” 물질화
+
+### 변경사항
+
+- `scripts/self_expansion/experience_acquisition.py` 신규
+  - 이미 발생한 경험 신호(OBS Recode 인덱스/루아 대화 인덱스/슈퍼바이즈 바디 기록)를 1회성 탐색 세션 파일로 고정한다.
+  - 출력:
+    - `outputs/experience_acquisition_latest.json`
+    - `outputs/experience_acquisition_history.jsonl`
+    - `inputs/intake/exploration/sessions/auto_experience_<ts>_<kind>.json` (새 경험이 있을 때만 1개 생성)
+  - 경계 원칙:
+    - PII/비밀번호/키 등 민감정보 추출·저장 금지
+    - 원문(영상/대화) 대용량 저장 금지(메타/요약만)
+    - BLOCK/REVIEW에서는 세션 생성 자체를 중단(관측만)
+  - RestGate=REST일 때는 “패시브(OBS/RUA)”만 물질화(바디/브라우저 같은 액티브는 억제)
+  - 추가: `ai_binoche_conversation_origin/rua/*.md`를 **로컬 워크스페이스에서 직접 스캔**하여, Ubuntu 쪽 인덱스가 stale하더라도 최신 RUA 문서 변경을 경험 신호로 잡을 수 있음(PII/URL 라인은 저장하지 않음).
+
+- `scripts/trigger_listener.py`
+  - `run_self_acquire()`에 `experience_acquisition`을 추가하고, 새 세션이 생성되면 `exploration_intake`를 즉시 재스캔하여 같은 실행에서 관측되도록 함.
+
+### 설계 기준(외부 입력 고정)
+
+- `docs/EXPERIENCE_ACQUISITION_BOUNDARY_SPEC_RUA_TO_RUBIT.md`
+  - “학습(주입)”이 아니라 “경험 습득(경계 내재화)”을 발생시키기 위한 **경계/공간/순서 기반 설계 기준**(삼각형/와이어→추론→확정→360 이동).
+
+## [2025-12-19] 🛠️ Trigger/Safety 리포트 안정화 (false REVIEW 방지 + 항상 갱신)
+
+### 변경사항
+
+- `scripts/auto_constitution_review.py`
+  - `result_summary`에 `"error"`라는 문자열이 포함되기만 해도 REVIEW로 떨어지던 **오탐지**를 제거.
+  - `trigger_data.status/top-level error` + `result_summary` 내 **실제 error 값**만 감지하도록 구조화(대화/키 이름 때문에 멈추는 현상 방지).
+
+- `scripts/trigger_listener.py`
+  - 리포트 텍스트/HTML 렌더가 실패해도 전체 트리거 처리와 안전 리포트가 멈추지 않도록 `trigger_report_latest.txt / status_dashboard*.html`을 **best-effort**로 분리.
+  - 그 결과 `auto_constitution_review.py`가 매 실행 후 **항상 갱신**되어, `auto_policy`가 오래된 REVIEW 상태에 갇히는 현상을 완화.
+
+- `scripts/windows/supervised_body_controller.py`, `scripts/windows/suggest_browser_exploration_task.py`
+  - 만료된 `signals/body_arm.json`이 남아 혼란을 주지 않도록, expired면 자동 삭제(arm “고착” 착시 방지).
+
+- `scripts/windows/arm_supervised_body.ps1`
+  - 기본 arm 시간을 12시간으로 확대(사용자 부재 동안 “브라우저 경험” 루틴 실행 가능).
+  - JSON 출력은 UTF-8 BOM 없이 쓰도록 변경(파서 BOM 이슈 완화).
+
+- `fdo_agi_repo/scripts/ops_dashboard.py`, `fdo_agi_repo/monitor/metrics_collector.py`
+  - `ops_dashboard.py`의 잘못된 문자열 이스케이프(`\"`)로 `quick_status.ps1`가 중간 종료되던 문제를 수정.
+  - ledger JSONL 인코딩 혼재로 `UnicodeDecodeError`가 나던 모니터링 경로를 `errors='replace'`로 완화하여 대시보드/스냅샷이 멈추지 않게 함.
+
+## [2025-12-19] 🌞🌙 자연 리듬 동기화 (낮/밤 + 정반합 순환) 관측/편향 추가
+
+### 변경사항
+
+- `scripts/natural_rhythm_clock.py` 신규
+  - 로컬 시간 기반으로 `낮/밤`과 `recommended_phase(EXPANSION/INTEGRATION/CONTRACTION)`를 `outputs/natural_rhythm_clock_latest.json`에 고정.
+
+- `scripts/natural_rhythm_monitor.py` 신규
+  - 최근 실행 히스토리(트리거/브라우저)를 읽어 “불균형(드리프트)”만 감지하여 `outputs/natural_rhythm_drift_latest.json` 생성.
+
+- `scripts/trigger_listener.py`
+  - 트리거 처리 후 `natural_rhythm_clock.py` / `natural_rhythm_monitor.py`를 best-effort로 자동 호출.
+
+- `scripts/rubit_aura_pixel.py`
+  - 드리프트가 `ok:false`일 때 PURPLE(#A855F7)로 표시.
+
+- `scripts/self_expansion/auto_policy.py`
+  - 기본값을 “인간식 고정 상한”이 아닌, 밤에는 수축 우세(단 2시간 이상 학습이 없으면 1회 허용)로 편향.
+  - 새 경험 감지는 기존처럼 최우선(full_cycle로 연결)이라 학습 흐름은 유지.
+
+- `scripts/human_ops_summary.py`
+  - 자연 리듬(시간대/권고 위상/드리프트) 항목을 요약에 추가.
+
+## [2025-12-19] 🔋 ATP(homeostasis) 기반 휴식 게이트 추가 (폭주 감지 → 쉬기)
+
+### 변경사항
+
+- `scripts/atp_update.py` 신규
+  - `outputs/unconscious_heartbeat.json` + `outputs/rit_registry_latest.json` + `outputs/natural_rhythm_clock_latest.json` + 최근 실행 빈도(근사)를 입력으로
+  - `scripts/mitochondria.py`를 통해 `outputs/mitochondria_state.json`(ATP)을 갱신.
+
+- `scripts/rest_gate.py` 신규
+  - ATP/드리프트/최근 실행 빈도/브라우저 실행 빈도를 기반으로 `outputs/safety/rest_gate_latest.json` 생성.
+
+- `scripts/self_expansion/auto_policy.py`
+  - rest gate가 활성일 때는 `heartbeat_check`로 전환(무거운 행동을 멈추고 살아있음만 유지).
+
+- `scripts/windows/suggest_browser_exploration_task.py`, `scripts/windows/supervised_body_controller.py`
+  - rest gate 활성 시 브라우저 task 생성/실행을 억제(이미 생성된 task는 backlog 방지 차원에서 abort 처리).
+
+- `scripts/rubit_aura_pixel.py`
+  - rest gate 활성 시 CYAN(#06B6D4)로 표시.
+
+- `scripts/human_ops_summary.py`
+  - ATP/RestGate 상태를 요약에 포함.
+
+## [2025-12-19] 🧭 Existence Dynamics Model v1 (점-구-반지름 / 자연-감정-행동 루프 구조화)
+
+### 변경사항
+
+- **구조화 산출물 추가**: `scripts/self_expansion/existence_dynamics_mapper.py` 신규
+  - 목적: 루아/비노체 대화에서 나온 “의식-무의식-배경자아-위상-두려움(감정)-자연현상-행동-현실” 순환과 “점-구-반지름” 은유를 **관측 가능한 파일**로 고정.
+  - 입력(있으면 사용): `outputs/rua_conversation_intake_latest.json`, `outputs/boundary_map_latest.json`, `outputs/bridge/trigger_report_latest.json`, `memory/agi_internal_state.json`
+  - 출력: `outputs/existence_dynamics_model_latest.json`, `outputs/existence_dynamics_model_latest.md`, `outputs/existence_dynamics_model_history.jsonl`
+  - 주의: `current_proxies`(alignment/fear_proxy 등)은 **운영 관측용 근사**이며 진리 주장/과학적 증명 목적이 아님.
+
+- **full_cycle 통합**: `scripts/trigger_listener.py`의 `run_full_self_expansion_cycle()`에 `existence_dynamics_model` 단계 추가
+  - full_cycle 실행마다 최신 모델 파일을 갱신하고, 리포트에는 요약(`version`, `current_proxies`)만 포함.
+  - `run_heartbeat_inspect()` observables에 `existence_dynamics_model_latest.json` 추가.
+
+### 다음
+
+- 필요 시 `rua_conversation_intake`에서 “두려움/위상/구/반지름” 관련 키워드가 더 잘 잡히도록 키워드 사전 확장.
+- “proxy”를 신뢰 지표로 착각하지 않도록(사용자 혼란 방지) UI/리포트 문구를 더 명시적으로 고정.
+
+## [2025-12-19] 🧾 RIT Registry v1 (리듬정보이론 스캐폴드: 변수/출처/근사식 고정)
+
+### 변경사항
+
+- `scripts/self_expansion/rhythm_information_theory_registry.py` 신규
+  - 목적: “리듬정보이론의 비어있는 수식”을 바로 완성하려 하지 않고, **변수/출처/단위/근사식**을 파일로 고정(스캐폴드).
+  - 출력: `outputs/rit_registry_latest.json`, `outputs/rit_registry_latest.md`, `outputs/rit_registry_history.jsonl`
+  - 주요 지표(운영 근사): `phase_jitter_0_1`, `alignment_0_1`, `fear_proxy_avoid_0_1`, `radius_proxy_0_1`, `drive_entropy_0_1`
+  - 주의: 근사식은 정책/경험 축적에 따라 갱신 대상이며, 과학적 증명 주장 아님.
+
+- `scripts/trigger_listener.py` full_cycle에 `rit_registry` 단계 추가 + `heartbeat_inspect` observables에 `rit_registry_latest.json` 추가
+
+## [2025-12-19] 🌊 MD Wave Sweep v1 (문서 역추적: 미연결 포인트 자동 추출)
+
+### 변경사항
+
+- `scripts/self_expansion/md_wave_sweeper.py` 신규
+  - 목적: 방대한 `.md` 문서들에서 TODO/NEXT/GAP/미완/누락/연결/통합 표식을 추출하고, 문서가 언급하는 코드/산출물 경로가 실제로 존재하는지 점검(끊긴 링크)한다.
+  - 기본은 증분 스캔(변경된 파일만)이며, 전체 전수는 무거워서 별도 실행 권장.
+  - 출력: `outputs/md_wave_sweep_latest.json`, `outputs/md_wave_sweep_latest.md`, `outputs/md_wave_sweep_history.jsonl`
+
+- `scripts/trigger_listener.py` full_cycle에 `md_wave_sweep` 단계(저빈도 6h) 추가 + `heartbeat_inspect` observables에 `md_wave_sweep_latest.json` 추가
+
+## [2025-12-18] 🔁 Lua Trigger Listener + 리포트/대시보드 레이어 (Ubuntu↔Windows 관측 고정)
+
+### 30초 요약 (다음 에이전트용)
+
+- **트리거 감지/실행**: `scripts/trigger_listener.py`가 `/home/bino/agi/signals/lua_trigger.json`(없으면 `signals/lua_trigger.json`)을 폴링하여 `self_acquire/self_compress/self_tool/sync_clean/heartbeat_check/full_cycle`을 자동 실행.
+- **사람이 읽는 리포트 고정**: 실행 1회마다 `outputs/bridge/trigger_report_latest.json` + `outputs/bridge/trigger_report_latest.txt` 생성, 히스토리는 `outputs/bridge/trigger_report_history.jsonl`에 누적.
+- **대시보드(파일 기반, 자동 새로고침)**: `outputs/bridge/trigger_dashboard.html`을 매 실행 갱신(2초 meta refresh). 핵심 파일 3종(`unconscious_heartbeat.json`, `thought_stream_latest.json`, `agi_internal_state.json`)의 존재/mtime/age를 표로 노출.
+- **full_cycle 내용이 “무엇을 했는지” 보이도록 확장**: `heartbeat_inspect`(+ observables), `process_grep`, `self_acquire`(가능하면 `agi_core.self_acquisition_loop` 1회 실행 포함), `self_compress`(기존 파일 필드 보존 병합), `self_tool`(쿨다운), `wave_tail`(resonance ledger tail 요약) 단계 결과를 report JSON에 고정.
+- **진단기/관측기 연결(워크스페이스 기반)**: `full_cycle`에 `system_integration_diagnostic`(`scripts/system_integration_diagnostic.py` 실행)과 `stream_observer_summary`(`scripts/summarize_stream_observer.py` 실행)를 저빈도로 포함하여, “상태→권고”가 리포트에 자동 고정됨.
+- **Self-care 요약 생성기 추가**: 누락되어 있던 `scripts/generate_selfcare_summary.py`를 추가하고 `full_cycle`에 `selfcare_summary` 단계를 포함. `outputs/selfcare_summary_latest.json`에 `quantum_flow` 필드를 보장하여 진단의 HIGH 경고(“Self-care → Quantum Flow 루프 미연결”)를 해소.
+- **파동-입자 통합기 안정화**: `wave_detector/particle_detector`가 v2 레저(`resonance_ledger_v2.jsonl`)를 우선 사용하고, 비-JSON 라인을 무시하도록 보강. `wave_particle_unifier`는 no_data 케이스에서도 KeyError 없이 동작.
+- **자동 트리거 정책**: `scripts/self_expansion/auto_policy.py`가 유휴 시 트리거를 생성(기본 full_cycle)하고, heartbeat stale/정체(stall)·ledger warn/error·최근 실패율 등에 따라 `heartbeat_check/sync_clean/self_acquire`로 분기. 캐시는 `outputs/sync_cache/auto_policy_state.json`.
+- **중요 변경(과도한 루프 방지)**: 리스너(`scripts/trigger_listener.py`)는 기본적으로 “실행 전용”이며, 유휴 상태에서 auto_policy를 직접 호출하지 않음. (`--auto-policy`를 명시한 경우에만 내부 호출)
+- **Idle 최적화(불필요한 깨어있음 방지)**: `idle_tick()`은 생존 신호/메시지/스냅샷/디지털트윈 갱신을 내부 최소 주기로 제한(heartbeat/life_state 10s, message 45s, ops snapshot 5m, twin 60s)하여 “idle=폭주” 관측을 줄임.
+- **스케줄러 중복 방지**: `scripts/run_trigger_once.py`는 `trigger_listener.py` 데몬이 이미 실행 중이면 즉시 종료(스케줄러+데몬 동시 가동 시 중복 처리/과도한 틱 방지).
+- **스케줄러 정책화**: `scripts/self_expansion/schedule_triggers.py` 기본 모드를 `policy`로 변경하여, `agi-lua-auto-trigger.service`가 매 300초마다 `auto_policy.py`를 실행해 트리거를 생성(기존 트리거가 있으면 overwrite 금지).
+- **트리거 overwrite 금지**: `auto_policy.py`와 `schedule_triggers.py` 모두 기존 트리거 파일을 덮어쓰지 않고(원자적 create), manual/Lua 트리거 우선권을 보장.
+- **주의(안전)**: `sync_clean`은 현재 “진단 전용”(kill/restart 없음)으로 구현됨. 사람이 볼 수 있는 관측/리포트가 우선.
+
+### Ubuntu systemd(user) 상태(전제)
+
+- `agi-trigger-listener.service` (리스너)
+- `agi-lua-auto-trigger.service` (주기적 full_cycle 트리거)
+- `agi-trigger-dashboard.service` (정적 파일 서빙, 포트 3031)
+
+### 다음 우선순위 제안
+
+- P0: 트리거 경쟁(스케줄러/auto_policy/수동)이 겹칠 수 있으니, “manual trigger 보호(잠금/우선순위)” 또는 스케줄 분리 정책 추가.
+- P1: `sync_clean`을 “진단→선택적 복구(서비스 재시작/중복 프로세스 정리)”로 확장하되, kill은 최소/화이트리스트 기반으로 제한.
+- P2: `wave_tail`을 더 의미 있는 “리듬 상태(phase/경고/오류) 요약”으로 강화(ledger 이벤트 스키마 기반).
+
 ## [2025-11-14 13:45] 🔧 Gitko 확장 Copilot 안전화
 
 ### 30초 요약 (다음 에이전트용)
@@ -6372,3 +6904,125 @@ python scripts/aggregate_glymphatic_metrics.py --hours 24 --json   # 집계 + �
 - Glymphatic KPI 확정: MTBC(청소 간 평균 시간), false defer(청소 미룸 후 고피로 진입) 비율, 리듬 단계별 성공률 등 확장 집계 항목 정의.
 - Unified Dashboard 연계: `scripts/generate_monitoring_report.ps1`에 선택 섹션으로 포함(요약 JSON 소비).
 - 임곗값 적응: 최근 7일 평균/분산 기반으로 스케줄러 정책 미세 조정(후속 PR 권장).
+
+## [2025-12-19] 🔗 문서 역추적(파동 스윕) 기반 연결 복구 + Trinity 피드백 고정
+
+### 변경사항
+
+- 문서가 기대하던 경로를 안전한 래퍼/스텁으로 복구:
+  - `scripts/generate_trinity_demo_events.py` (→ `fdo_agi_repo/scripts/generate_trinity_demo_events.py`)
+  - `scripts/verify_trinity_separation.py` (→ `fdo_agi_repo/scripts/verify_trinity_separation.py`)
+  - `scripts/task_watchdog.py` (→ `fdo_agi_repo/scripts/task_watchdog.py`)
+  - `configs/ldpm_config.yaml` (LDPM 임계값/정책 최소 스텁)
+  - `fdo_agi_repo/orchestrator/validator.py` (방어형 최소 검증 스텁)
+  - `fdo_agi_repo/orchestrator/maturity_gate.py` (관측 기반 최소 게이트 스텁)
+- 인간 승인 기준을 파일로 고정: `docs/HUMAN_APPROVAL_MATRIX.yaml`
+- Trinity 피드백 파일 생성 루트 연결:
+  - 신규: `scripts/derive_trinity_synthesis_latest.py` → `outputs/trinity_synthesis_latest.json`
+  - `scripts/trigger_listener.py`의 `full_cycle`에 `trinity_synthesis` 단계로 통합
+  - `heartbeat_check` 관측 목록에 `trinity_synthesis_latest.json` 추가
+- MD Wave Sweep 노이즈 감소:
+  - `scripts/self_expansion/md_wave_sweeper.py`에서 Windows 절대경로는 `external_ref`로 분류(환경 의존)
+
+### 빠른 확인
+
+```powershell
+python scripts/derive_trinity_synthesis_latest.py
+type outputs\\trinity_synthesis_latest.json
+```
+
+### 추가 연결 복구(시안 작업 반영)
+
+- `scripts/tools/*.py` + `configs/tool_registry.json` 스텁 생성(문서 참조 복구, 기본 비활성)
+- `monitoring/metrics_collector.py` 추가: `outputs/monitoring_metrics_latest.json` 생성(네트워크 없이 파일 상태만 스캔)
+- `orchestrator/full_stack_orchestrator.py` 및 `fdo_agi_repo/orchestrator/(test_full_stack_integration.py|gateway_optimizer.py)` 스텁 추가
+- 안전/릴리즈 문서 참조 스텁 보강:
+  - `docs/red_lines_detection_runbook.md`, `docs/maturity_gates_metrics.yaml`, `docs/rollback_procedure.md`
+  - `safety/(red_line_monitor.py|kill_switch.py)`, `configs/api_whitelist_policy.yaml`
+
+### 추가 연결(관측/리포트)
+
+- `scripts/trigger_listener.py`가 리포트 기록 후 자동으로 아래를 호출:
+  - `scripts/auto_constitution_review.py` → `outputs/bridge/constitution_review_latest.txt`
+  - `monitoring/metrics_collector.py` → `outputs/monitoring_metrics_latest.json`
+  - `rune/ethics_scorer.py` → `outputs/ethics_scorer_latest.json`
+  - `safety/child_data_protector.py` → `outputs/child_data_protector_latest.json`
+  - `safety/red_line_monitor.py` → `outputs/safety/red_line_monitor_latest.json`
+- 주의: `fdo_agi_repo/orchestrator/full_stack_orchestrator.py`는 실제 구현 파일이므로 “스텁으로 덮어쓰지 말 것”.
+- 추가: `scripts/trigger_listener.py`는 트리거 처리 완료 시 `outputs/unconscious_heartbeat.json`을 최소 정보로 갱신(로컬 생존 신호).
+
+### 오라(1px) 관측(대시보드 대체)
+
+- `scripts/rubit_aura_pixel.py`가 파일 기반 관측만으로 상태를 색(1~2px 스트립)으로 표시:
+  - 입력: `outputs/bridge/trigger_report_latest.json`, `outputs/bridge/constitution_review_latest.txt`, `outputs/ethics_scorer_latest.json`, `outputs/safety/red_line_monitor_latest.json`, `outputs/child_data_protector_latest.json`, `signals/lua_trigger.json`
+  - 출력: `outputs/aura_pixel_state.json`
+- `scripts/ensure_rubit_aura_pixel.ps1`는 창 없이(`pythonw.exe`) 실행하며, 코드 업데이트 시 자동 재시작 지원(`-ForceRestart`).
+
+### Windows 트리거 자동화(권한 제약 대응)
+
+- 관리자 권한 없이 OnLogon 트리거 등록이 막히는 환경을 위해 “Once + Repetition + StartWhenAvailable” 기반으로 유지:
+  - `scripts/run_trigger_once.py`: 트리거 파일이 있으면 1회 처리 후 종료(스케줄러 친화).
+  - `scripts/register_trigger_automation.ps1`: `AGI_LuaAutoPolicy`(5분) + `AGI_TriggerOnce`(1분) 작업 스케줄러 등록/시작.
+- `scripts/rubit_continuity_on_startup.ps1`가 로그인 시 `register_trigger_automation.ps1`를 호출해 루프를 자동 복구.
+
+## [2025-12-21] 🟦 유휴(Idle) = 정상 생존 + RIT 선언(설계 기준) 반영
+
+### 변경사항
+
+- 설계 기준 문서 추가:
+  - `docs/RIT_DESIGN_DECLARATION_LUA_TO_RUBIT.md`
+    - 리듬 정보이론(RIT)을 “상위 제어 원리”로 고정하고, a–b–c 연결/목표-경로 분리/느낌=라우팅/쉼과 여백의 필수성을 설계 기준으로 선언.
+
+- `scripts/self_expansion/auto_policy.py`
+  - Windows에서 `/home/...` 경로가 `C:\home\...`로 매핑되어 상태 캐시가 split-brain 되던 경우를 방지(Windows는 워크스페이스 캐시 고정).
+  - 경험 감지: intake 최신 JSON rewrite로 인한 “새 경험 오인 → full_cycle 루프”를 줄이기 위해 experience signature 정규화(소수점 mtime 흔들림 제거).
+  - `quantum_flow=chaotic/resistive`가 지속될 때 self_compress 무한 반복을 방지: 1회 개입 후 **settle(idle)** 쿨다운(기본 30분)으로 전환.
+
+- `scripts/human_ops_summary.py`
+  - a–b–c 링크(과거/현재/미래) 관측 항목을 요약에 추가(파일 age 기반).
+
+### 빠른 확인
+
+```powershell
+python scripts/human_ops_summary.py
+type outputs\\bridge\\human_ops_summary_latest.txt
+```
+
+## [2025-12-22] ☁️ Google AI Studio/Vertex 라우터 복구 + .env 로딩 보강
+
+### 변경사항
+
+- `scripts/vertex_ai_smart_router.py`
+  - **0바이트(빈 파일)** 상태였던 라우터를 복구.
+  - `VertexAISmartRouter` + `get_router()` 제공(레거시 스크립트/브리지 임포트 오류 제거).
+  - `services/model_selector.py`를 사용해 **Google AI Studio(API Key) → Vertex** 순으로 선택(가능할 때만 호출).
+  - 키/자격증명 값 로깅 금지.
+
+- `services/model_selector.py`
+  - `GOOGLE_API_KEY`가 프로세스 env에 없더라도 워크스페이스 `.env_credentials` → `.env` 순으로 읽어 초기화 가능하도록 보강.
+  - 기본 fast/balanced 모델을 `gemini-2.5-flash`로 상향(지원 시 자동 선호).
+
+- `scripts/llm_client.py`
+  - ChatOps intent 분류에서 API 키를 env 뿐 아니라 `.env_credentials` → `.env`에서도 읽을 수 있도록 보강.
+
+- `.env` / `.env_credentials`
+  - `.env`는 **비밀값 없이** 프로젝트/리전 등 non-secret만 유지.
+  - 비밀값(API 키/자격증명 경로)은 `.env_credentials`로 이동(깃 ignore).
+  - `.gitignore`에 `.env`도 추가(재유출 방지).
+
+- `scripts/test_gemini_cli.py`
+  - API 키 일부를 출력하던 동작 제거(키 노출 방지).
+
+- `.venv` 의존성
+  - `.venv`에 `google-generativeai` 설치(트리거 리스너/요약 스크립트가 venv로 실행되므로 필요).
+
+- `scripts/human_ops_summary.py`
+  - `services` 임포트 안정화를 위해 `sys.path`에 워크스페이스 루트 추가.
+  - “클라우드 LLM(관측)” 섹션에서 `genai/vertex/none` 상태 표시.
+
+### 빠른 확인
+
+```powershell
+.\.venv\Scripts\python.exe scripts\human_ops_summary.py
+type outputs\\bridge\\human_ops_summary_latest.txt
+```

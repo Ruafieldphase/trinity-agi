@@ -253,7 +253,7 @@ class OpsDashboard:
                 print(f"  {self._status_icon(False)} Monitoring Loop: No logs found")
             
             # 최근 probe 결과 읽기 시도
-            probe_pattern = str(workspace / \"LLM_Unified\" / \"ion-mentoring\" / \"logs\" / \"probe_iter_*.json\")
+            probe_pattern = str(workspace / "LLM_Unified" / "ion-mentoring" / "logs" / "probe_iter_*.json")
             probe_files = glob.glob(probe_pattern)
             if probe_files:
                 latest_probe = max(probe_files, key=lambda p: Path(p).stat().st_mtime)

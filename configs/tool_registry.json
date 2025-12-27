@@ -1,0 +1,24 @@
+{
+    "tools": {
+        "file_read": {
+            "path": "scripts/tools/file_read.py",
+            "enabled": true,
+            "mode": "offline_stub"
+        },
+        "calculator": {
+            "path": "scripts/tools/calculator.py",
+            "enabled": true,
+            "mode": "offline_stub"
+        },
+        "code_executor": {
+            "path": "scripts/tools/code_executor.py",
+            "enabled": true,
+            "mode": "offline_stub"
+        },
+        "web_search": {
+            "path": "scripts/tools/web_search.py",
+            "enabled": true,
+            "mode": "offline_stub"
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "source": "google_earth",
+  "title": "supervised_browser: browser_exploration",
+  "tags": [
+    "supervised",
+    "browser",
+    "google_earth"
+  ],
+  "notes": "goal: browser_exploration\nurls:\n- https://earth.google.com/web/",
+  "timestamp": 1766453568.3443515,
+  "where": {},
+  "who": {
+    "role": "agi",
+    "mode": "supervised_body"
+  }
+}

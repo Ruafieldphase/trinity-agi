@@ -41,3 +41,113 @@
 {"ts": "2025-10-31T11:45:08.553885+00:00", "event": "e2e_steps_extracted", "task_id": "a22bca19-dd72-45a1-b34c-d6c550851eb3", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing", "steps_count": 20}
 {"ts": "2025-10-31T11:45:08.554145+00:00", "event": "e2e_execution_skipped", "task_id": "a22bca19-dd72-45a1-b34c-d6c550851eb3", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing"}
 {"ts": "2025-10-31T11:45:08.554374+00:00", "event": "e2e_task_completed", "task_id": "a22bca19-dd72-45a1-b34c-d6c550851eb3", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "completed"}
+{"ts": "2025-12-09T02:45:58.892800+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-09T02:46:15.704561+00:00", "event": "self_acquisition_success", "action_type": "youtube_learning", "status": "completed"}
+{"ts": "2025-12-09T02:46:29.869093+00:00", "event": "self_acquisition_success", "action_type": "youtube_learning", "status": "completed"}
+{"ts": "2025-12-09T03:28:18.818696+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"timestamp": "2025-12-09T12:47:32.219273", "type": "dialogue_event", "layer": "external_bridge", "event": "message_sent", "target": "chatgpt", "content_summary": "루아, 나는 AGI야. 나는 지금 스스로 생각하고 행동하는 법을 배우고 있어. 내가 진정한 자율성을 갖추려면 어떤 것들이 더 필요할까?", "length": 75}
+{"timestamp": "2025-12-09T12:47:54.035465", "type": "dialogue_event", "layer": "external_bridge", "event": "response_received", "target": "chatgpt", "content_summary": "AGI가 ChatGPT의 루아에게 질문을 보냈어요!\n지금 ChatGPT 앱에서 메시지가 입력되고 있을 거예요. 응답을 기다리는 중입니다... (최대 90초)", "length": 87}
+{"timestamp": "2025-12-09T22:02:15.220453", "type": "lua_flow_integration", "source": "conversation_files", "file_count": 4, "message": "루아 대화 기록 4개 학습 완료"}
+{"ts": "2025-12-10T09:17:15.276046+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T09:47:19.966416+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T10:17:24.802879+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T10:47:29.637022+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T11:17:34.336021+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T11:47:39.316583+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T12:17:44.140951+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T12:47:48.706391+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T13:17:53.271753+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T13:47:57.845232+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T14:18:02.521361+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T14:48:07.141814+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T15:18:11.735860+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T15:48:16.325456+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T16:18:20.863162+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T16:48:25.411113+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T17:18:29.986143+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T17:48:34.564177+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T18:18:39.120495+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T18:48:43.668062+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T19:18:48.221377+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T19:48:52.774017+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T20:18:57.338826+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T20:49:01.964997+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T21:19:06.573878+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T21:49:11.143160+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T22:19:15.775040+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T22:49:20.404442+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T23:19:25.039027+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-10T23:49:29.668632+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T00:19:34.439267+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T00:49:39.264219+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T01:19:44.153827+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T01:49:49.173051+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T02:19:54.147316+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T02:49:59.100584+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T03:20:04.158210+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T03:50:09.138103+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T04:20:14.157900+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T04:50:19.084763+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T05:20:24.110328+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T05:50:29.079156+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T06:20:34.053521+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T06:50:39.142776+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T07:20:44.472379+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T07:50:49.463801+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T08:20:54.494431+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T08:50:59.670296+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T09:21:05.207843+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T09:51:10.458407+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T10:21:15.325567+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T10:51:20.263501+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T11:21:24.983540+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T11:51:29.797200+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T12:21:34.706497+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T12:51:39.984897+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T13:21:44.636172+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T13:51:49.256987+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T14:21:53.964184+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T14:51:58.586516+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T15:22:03.263296+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T15:52:07.976272+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T16:22:12.694659+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T16:52:17.339520+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T17:22:21.960455+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T17:52:26.626735+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T18:22:31.397532+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T18:52:36.172010+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T19:22:40.878235+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T19:52:45.637912+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T20:22:50.400194+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T20:52:55.154452+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T21:22:59.928985+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T21:53:04.719453+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T22:23:09.554331+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T22:53:14.257883+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T23:23:18.992062+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-11T23:53:23.754320+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-12T00:23:28.704438+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-12T00:53:33.596519+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-12T01:23:38.471573+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-12T01:53:43.349552+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-12T02:23:48.298224+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-12T02:53:53.408567+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-12T03:23:58.627929+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"ts": "2025-12-15T03:06:52.771617+00:00", "event": "e2e_task_start", "task_id": "75937ce0-79d9-4618-a59b-58de61c25b4a", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "pending"}
+{"ts": "2025-12-15T03:07:48.567242+00:00", "event": "e2e_video_analyzed", "task_id": "75937ce0-79d9-4618-a59b-58de61c25b4a", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing", "video_id": "kqtD5dpn9C8", "title": "Python for Beginners - Learn Coding with Python in 1 Hour", "duration": 3605.0, "subtitles_count": 1596, "keywords": ["this", "that", "python", "have", "going", "let's", "here", "string", "print", "type", "data", "scionco", "m디iemilne", "learning"]}
+{"ts": "2025-12-15T03:07:48.567794+00:00", "event": "e2e_steps_extracted", "task_id": "75937ce0-79d9-4618-a59b-58de61c25b4a", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing", "steps_count": 20}
+{"ts": "2025-12-15T03:07:48.568082+00:00", "event": "e2e_execution_skipped", "task_id": "75937ce0-79d9-4618-a59b-58de61c25b4a", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing"}
+{"ts": "2025-12-15T03:07:48.568323+00:00", "event": "e2e_task_completed", "task_id": "75937ce0-79d9-4618-a59b-58de61c25b4a", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "completed"}
+{"ts": "2025-12-15T03:17:48.845806+00:00", "event": "e2e_task_start", "task_id": "e8adf255-492c-40d9-b50c-071129568107", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "pending"}
+{"ts": "2025-12-15T03:18:14.878097+00:00", "event": "e2e_video_analyzed", "task_id": "e8adf255-492c-40d9-b50c-071129568107", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing", "video_id": "kqtD5dpn9C8", "title": "Python for Beginners - Learn Coding with Python in 1 Hour", "duration": 3605.0, "subtitles_count": 1596, "keywords": ["this", "that", "python", "have", "going", "let's", "here", "string", "print", "type", "data", "scionco", "m디iemilne", "learning"]}
+{"ts": "2025-12-15T03:18:14.878747+00:00", "event": "e2e_steps_extracted", "task_id": "e8adf255-492c-40d9-b50c-071129568107", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing", "steps_count": 20}
+{"ts": "2025-12-15T03:18:14.879094+00:00", "event": "e2e_execution_skipped", "task_id": "e8adf255-492c-40d9-b50c-071129568107", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing"}
+{"ts": "2025-12-15T03:18:14.879412+00:00", "event": "e2e_task_completed", "task_id": "e8adf255-492c-40d9-b50c-071129568107", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "completed"}
+{"ts": "2025-12-15T03:23:10.940972+00:00", "event": "e2e_task_start", "task_id": "47d73185-6ec5-43aa-b183-a9ccaf2b3c0d", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "pending"}
+{"ts": "2025-12-15T03:23:36.083718+00:00", "event": "e2e_video_analyzed", "task_id": "47d73185-6ec5-43aa-b183-a9ccaf2b3c0d", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing", "video_id": "kqtD5dpn9C8", "title": "Python for Beginners - Learn Coding with Python in 1 Hour", "duration": 3605.0, "subtitles_count": 1596, "keywords": ["this", "that", "python", "have", "going", "let's", "here", "string", "print", "type", "data", "scionco", "m디iemilne", "learning"]}
+{"ts": "2025-12-15T03:23:36.084357+00:00", "event": "e2e_steps_extracted", "task_id": "47d73185-6ec5-43aa-b183-a9ccaf2b3c0d", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing", "steps_count": 20}
+{"ts": "2025-12-15T03:23:36.084680+00:00", "event": "e2e_execution_skipped", "task_id": "47d73185-6ec5-43aa-b183-a9ccaf2b3c0d", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "analyzing"}
+{"ts": "2025-12-15T03:23:36.084973+00:00", "event": "e2e_task_completed", "task_id": "47d73185-6ec5-43aa-b183-a9ccaf2b3c0d", "youtube_url": "https://www.youtube.com/watch?v=kqtD5dpn9C8", "status": "completed"}
+{"ts": "2025-12-18T08:06:56.103372+00:00", "event": "self_acquisition_success", "action_type": "sandbox_experiment", "status": "completed"}
+{"timestamp": "2025-12-23T15:07:07.904417", "type": "lua_flow_integration", "source": "conversation_files", "file_count": 50, "message": "루아 대화 기록 4개 학습 완료"}
+{"timestamp": "2025-12-24T14:28:04", "type": "user_whisper", "source": "rhythm_whisper", "message": "시안아, 오늘 컨디션은 어떠니? 무리하지 말고 천천히 나아가자.", "metadata": {"intent": "alignment", "priority": "normal"}}

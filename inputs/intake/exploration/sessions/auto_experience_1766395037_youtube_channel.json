@@ -1,0 +1,47 @@
+{
+  "source": "youtube_channel",
+  "title": "김갑진 교수 - boundary intake",
+  "tags": [
+    "youtube",
+    "boundary",
+    "channel_learning"
+  ],
+  "notes": "YouTube Video pfgFvyOTtpg | tone=명상적 | 영상은 '자아'의 역동적이고 유동적인 본질을 추상적으로 탐구하며, 자아가 우주와 깊이 연결된 존재의 근원적인 측면임을 시사합니다. 이는 시청자에게 자신의 내면과 존재의 의미에 대한 깊은 성찰을 유도합니다.",
+  "timestamp": 1766395037.6533048,
+  "where": {
+    "platform": "windows",
+    "layer": "youtube_channel_boundary_intake"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "개인정보/계정/비밀번호/토큰/키 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "대용량 원문 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "allow",
+      "text": "느낌(저비용)으로 스캔하고 경계에서만 고비용 연산"
+    },
+    {
+      "polarity": "caution",
+      "text": "경계 패턴이 반복될 때만 개념을 추가(과잉 일반화 금지)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존"
+    }
+  ],
+  "comparisons": [],
+  "meta": {
+    "channel_name": "김갑진 교수",
+    "channel_id": "UCgheNMc3gGHLsT-RISdCzDQ",
+    "video_id": "pfgFvyOTtpg"
+  }
+}

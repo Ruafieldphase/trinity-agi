@@ -50,13 +50,13 @@ class BohmAnalyzer:
         cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
         events = []
         
-        with open(self.ledger_path, 'r', encoding='utf-8') as f:
+        with open(self.ledger_path, 'r', encoding='utf-8', errors='replace') as f:
             for line in f:
                 if not line.strip():
                     continue
                 try:
                     event = json.loads(line)
-                    ts_str = event.get('timestamp', '')
+                    ts_str = event.get('timestamp') or event.get('ts') or ''
                     if ts_str:
                         # 타임존 처리
                         if 'Z' in ts_str:
@@ -316,6 +316,54 @@ class BohmAnalyzer:
             'singularities': singularity_events,
             'explosion_ratio': sum(1 for s in singularity_events if s['followed_by_explosion']) / max(len(singularity_events), 1)
         }
+
+    def analyze_temporal_geometry(self, events: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """시공간 기하학 분석: 시간은 '차이'가 만들어낸 가상의 축임을 입증"""
+        if len(events) < 2:
+            return {
+                "temporal_density": 0.0,
+                "irreversibility": 0.0,
+                "meaning_mass": 0,
+                "philosophy": "시간은 흐르는 것이 아니라, 의미가 재배열될 때 그렇게 느껴지는 가상의 축입니다."
+            }
+            
+        # 1. 의미의 누적 (Irreversibility)
+        # 의미(Meaning)는 경계(Singularity)에서 생성되며 삭제 불가능함.
+        meaning_points = [e for e in events if e.get('metrics', {}).get('compression_ratio', 1.0) > 3.0]
+        irreversibility_score = 1.0 - (1.0 / (1.0 + len(meaning_points)))
+        
+        # 2. 가상 시간 (Virtual Time)
+        # 이벤트들 사이의 '차이(Difference)'의 합이 시간의 체감 속도를 결정
+        total_difference = 0.0
+        for i in range(1, len(events)):
+            c1 = events[i-1].get('metrics', {}).get('coherence', 0.5)
+            c2 = events[i].get('metrics', {}).get('coherence', 0.5)
+            total_difference += abs(c1 - c2)
+            
+        # 차이가 클수록 시간이 '밀도 있게' 느껴짐
+        temporal_density = total_difference / len(events)
+        
+        return {
+            "temporal_density": round(temporal_density, 3),
+            "irreversibility": round(irreversibility_score, 3),
+            "meaning_mass": len(meaning_points),
+            "philosophy": "시간은 흐르는 것이 아니라, 의미가 재배열될 때 그렇게 느껴지는 가상의 축입니다."
+        }
+
+    def process_enfolded_queries(self, events: List[Dict[str, Any]]) -> List[str]:
+        """접힌 질문(Enfolded Queries) 처리 및 통찰 생성"""
+        insights = []
+        queries = [e for e in events if e.get('type') == 'enfolded_query']
+
+        for q in queries:
+            # Simulate processing: "Unfolding" the answer from the Implicate Order
+            content = q.get('content', 'Unknown Issue')
+            timestamp = q.get('timestamp', '')
+            
+            # Simple Bohmian Insight Generator
+            insights.append(f"🌌 Nature's Answer to '{content}': The confusion arises from fragmentation. Seek the whole. (Ref: {timestamp})")
+        
+        return insights
     
     def generate_bohm_report(self, hours: int = 24) -> Dict[str, Any]:
         """Bohm 이론 통합 보고서 생성"""
@@ -339,18 +387,26 @@ class BohmAnalyzer:
         avg_fear = sum(f for _, f in fear_signals) / max(len(fear_signals), 1)
         max_fear = max((f for _, f in fear_signals), default=0.0)
         
-        # 4. 통합 해석
+        # 4. 시간 기하학 분석 (New Philosophical Layer)
+        temporal_geometry = self.analyze_temporal_geometry(events)
+        
+        # 5. 통합 해석
         interpretation = self._interpret_bohm_patterns(
             folding_analysis,
             singularity_analysis,
             avg_fear,
-            max_fear
+            max_fear,
+            events
         )
+        
+        # 5. Enfolded Query Insights
+        insights = self.process_enfolded_queries(events)
         
         report = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'analysis_window_hours': hours,
             'total_events': len(events),
+            'analysis_insights': insights,
             'folding_unfolding': folding_analysis,
             'singularity_patterns': singularity_analysis,
             'fear_metrics': {
@@ -358,7 +414,9 @@ class BohmAnalyzer:
                 'maximum': round(max_fear, 3),
                 'signal_count': len(fear_signals)
             },
-            'interpretation': interpretation
+            'temporal_geometry': temporal_geometry,
+            'interpretation': interpretation,
+            'holomovement': interpretation.get('holomovement_note', '')
         }
         
         return report
@@ -368,7 +426,8 @@ class BohmAnalyzer:
         folding: Dict[str, Any],
         singularity: Dict[str, Any],
         avg_fear: float,
-        max_fear: float
+        max_fear: float,
+        events: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """패턴 해석"""
         
@@ -420,13 +479,39 @@ David Bohm의 Implicate/Explicate Order 관점:
    - 상관관계: {folding.get('fear_correlation', 0.0):.3f}
    - **두려움은 압축 엔진** - 정보를 Implicate Order로 "접는" 힘
 """
+        # Recent Themes Extraction
+        recent_keywords = []
+        for event in events[-100:]: # Scan more events
+            content = ""
+            etype = event.get("type") or event.get("event")
+            
+            if etype == "thought":
+                content = event.get("content", {}).get("resonance", {}).get("summary", "")
+            elif etype in ("lua_flow", "conversation", "lua_flow_integration"):
+                content = event.get("file_name", "") + " " + " ".join(event.get("concepts", []) or [])
+                if not content.strip() and "message" in event:
+                    content = event["message"]
+            elif "content" in event:
+                 content = str(event["content"])
+            
+            if content:
+                # Basic tokenization (Korean/English friendly)
+                words = [w for w in content.replace(".", " ").replace(",", " ").replace("\"", " ").split() if len(w) > 1]
+                recent_keywords.extend(words)
         
+        # Select top 3-5 unique keywords
+        from collections import Counter
+        top_themes = [item[0] for item in Counter(recent_keywords).most_common(5) if len(item[0]) > 1]
+        themes_str = ", ".join(top_themes) if top_themes else "흐름의 정적"
+
         return {
             'fear_role': fear_role,
             'implicate_explicate_balance': balance,
             'singularity_risk': singularity_risk,
             'fear_compression_correlation': round(folding.get('fear_correlation', 0.0), 3),
-            'bohm_interpretation': bohm_interpretation.strip()
+            'bohm_interpretation': bohm_interpretation.strip(),
+            'recent_themes': top_themes,
+            'holomovement_note': f"최근의 주된 테마는 '{themes_str}' 입니다. 이 패턴들이 {balance} 상태에서 재구성되고 있습니다."
         }
     
     def save_report(self, report: Dict[str, Any]) -> Path:
@@ -451,6 +536,7 @@ David Bohm의 Implicate/Explicate Order 관점:
         singularity = report.get('singularity_patterns', {})
         fear = report.get('fear_metrics', {})
         interp = report.get('interpretation', {})
+        temporal = report.get('temporal_geometry', {})
         
         md = f"""# 🌌 David Bohm의 Implicate/Explicate Order 분석
 
@@ -487,6 +573,14 @@ David Bohm의 Implicate/Explicate Order 관점:
 | **최대 Fear** | {fear.get('maximum', 0.0):.3f} |
 | **Fear-압축 상관계수** | {interp.get('fear_compression_correlation', 0.0):.3f} |
 | **역할** | {interp.get('fear_role', 'N/A')} |
+
+### 4. 시간 기하학 (Temporal Geometry)
+
+| 지표 | 값 |
+|------|-----|
+| **시간 밀도** | {temporal.get('temporal_density', 0.0)} |
+| **의미 질량** | {temporal.get('meaning_mass', 0)} |
+| **비가역성** | {temporal.get('irreversibility', 0.0)} |
 
 ---
 
@@ -626,3 +720,16 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+def run_analysis_now(workspace_root=None):
+    """External hook for Rhythm Thinker to force analysis"""
+    if workspace_root is None:
+        workspace_root = Path(__file__).parent.parent
+    
+    analyzer = BohmAnalyzer(workspace_root)
+    events = analyzer.load_recent_events(24)
+    if not events: return None
+    
+    report = analyzer.generate_bohm_report(24)
+    analyzer.save_report(report)
+    return report

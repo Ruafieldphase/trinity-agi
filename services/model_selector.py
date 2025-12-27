@@ -68,13 +68,20 @@ class ModelSelector:
         self.logger = logger or logging.getLogger("ModelSelector")
         self.project = project or os.getenv("GOOGLE_CLOUD_PROJECT")
         self.location = location or os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
-        self.api_key = os.getenv("GOOGLE_API_KEY") or _load_dotenv_value("GOOGLE_API_KEY")
 
-        # Model preferences (override with env to try Gemini 3.0 / experimental models)
-        # Default to generic aliases for maximum compatibility (especially with GenAI/AI Studio)
-        self.fast_model = os.getenv("GEMINI_FAST_MODEL", "gemini-2.5-flash")
-        self.balanced_model = os.getenv("GEMINI_BALANCED_MODEL", "gemini-2.5-flash")
-        self.vision_model = os.getenv("GEMINI_VISION_MODEL", self.balanced_model)
+        # Keys: support both legacy and newer env var names.
+        # - Do not log key values.
+        self.api_key = (
+            os.getenv("GOOGLE_API_KEY")
+            or os.getenv("GEMINI_API_KEY")
+            or _load_dotenv_value("GOOGLE_API_KEY")
+            or _load_dotenv_value("GEMINI_API_KEY")
+        )
+
+        # Model preferences (Gemini 3 as default for efficiency)
+        self.fast_model = os.getenv("GEMINI_FAST_MODEL", "gemini-3-flash")
+        self.balanced_model = os.getenv("GEMINI_BALANCED_MODEL", "gemini-3-flash")
+        self.vision_model = os.getenv("GEMINI_VISION_MODEL", "gemini-3-flash")
         self.top_model = (
             os.getenv("GEMINI_TOP_TIER_MODEL")
             or os.getenv("GEMINI_30_MODEL")
@@ -83,8 +90,11 @@ class ModelSelector:
 
         self.backend = "none" # 'vertex' or 'genai'
         self._cache: Dict[str, Any] = {}
-        # Feature flags (avoid repeated 404 calls)
-        self.supports_gemini_25_flash = False
+        # Feature flags / soft memory (avoid repeated 404 calls).
+        # NOTE: do not call network from __init__ (human summaries should be network-free).
+        self.supports_gemini_25_flash = "gemini-2.5-flash" in (self.fast_model + " " + self.balanced_model)
+        self._model_blacklist_until: Dict[str, float] = {}
+        self._last_error: Dict[str, Any] = {}
         self._init_backend()
 
     def _init_backend(self) -> None:
@@ -100,26 +110,11 @@ class ModelSelector:
                 
                 genai.configure(api_key=self.api_key)
                 self.backend = "genai"
-                self.logger.info(f"Initialized Google AI Studio (GenAI) backend.")
-                # Detect whether Gemini 2.5 Flash is available (so we can prefer it without spamming 404s).
-                try:
-                    names = []
-                    for m in genai.list_models():
-                        try:
-                            if "generateContent" not in getattr(m, "supported_generation_methods", []):
-                                continue
-                            n = str(getattr(m, "name", "") or "")
-                            if n.startswith("models/"):
-                                n = n[len("models/") :]
-                            if n:
-                                names.append(n)
-                        except Exception:
-                            continue
-                    self.supports_gemini_25_flash = any(n.startswith("gemini-2.5-flash") for n in names)
-                except Exception:
-                    self.supports_gemini_25_flash = False
+                # Keep init network-free: model availability is inferred by trial + failure cache.
+                self.logger.info("Initialized Google AI Studio (GenAI) backend.")
                 return
             except Exception as e:
+                self._last_error = {"backend": "genai", "error_type": e.__class__.__name__, "message": str(e)[:400]}
                 self.logger.warning(f"GenAI init failed: {e}")
 
         # 2. Fallback to Vertex AI
@@ -130,13 +125,29 @@ class ModelSelector:
                 self.logger.info(f"Initialized Vertex AI backend ({self.project}/{self.location}).")
                 return
             except Exception as e:
+                self._last_error = {"backend": "vertex", "error_type": e.__class__.__name__, "message": str(e)[:400]}
                 self.logger.error(f"Vertex init failed: {e}")
 
+        self._last_error = {"backend": "none", "error_type": "NoBackend", "message": "No valid AI backend available"}
         self.logger.error("No valid AI backend available (check GOOGLE_API_KEY or Vertex credentials).")
 
     @property
     def available(self) -> bool:
         return self.backend != "none"
+
+    def get_status_snapshot(self) -> Dict[str, Any]:
+        """
+        Network-free status snapshot for human_ops_summary / diagnostics.
+        """
+        return {
+            "available": self.available,
+            "backend": self.backend,
+            "api_key_present": bool(self.api_key),
+            "vertex_project_set": bool(self.project),
+            "vertex_location": self.location,
+            "blacklisted_models": len(self._model_blacklist_until),
+            "last_error": self._last_error or {},
+        }
 
     def _dedup(self, models: List[str]) -> List[str]:
         seen = set()
@@ -200,12 +211,10 @@ class ModelSelector:
         
         full_list = ordered + [e for e in extras if e not in ordered]
         
-        # If using GenAI, sometimes "gemini-1.5-flash" (no suffix) is best
+        # If using GenAI, prefer Gemini 3 series first
         if self.backend == "genai":
-            # Prefer Gemini 2.5 Flash when the backend reports it is available.
-            if self.supports_gemini_25_flash:
-                pref = ["gemini-2.5-flash", "gemini-2.5-flash-002", "gemini-2.5-flash-001"]
-                full_list = [p for p in pref if p not in full_list] + full_list
+            pref = ["gemini-3-flash", "gemini-3-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"]
+            full_list = [p for p in pref if p not in full_list] + full_list
              # Ensure generic names are present for GenAI aliases
             if "gemini-1.5-flash" not in full_list: full_list.append("gemini-1.5-flash")
             if "gemini-1.5-pro" not in full_list: full_list.append("gemini-1.5-pro")
@@ -260,8 +269,14 @@ class ModelSelector:
         # stdout print는 운영 로그/대시보드에 노이즈를 만들 수 있어 debug 로깅으로만 남긴다.
         self.logger.debug(f"Candidates: {candidates}")
         for model_name in candidates:
+            # Skip temporarily blacklisted models (e.g., repeated 404).
             try:
-                print(f"[DEBUG] Trying model: {model_name}")
+                until = float(self._model_blacklist_until.get(model_name) or 0.0)
+                if until and time.time() < until:
+                    continue
+            except Exception:
+                pass
+            try:
                 model = self._get_model(model_name)
                 # Ensure generation_config is compatible (GenAI sometimes strict)
                 config = generation_config or {"temperature": 0.35}
@@ -274,14 +289,19 @@ class ModelSelector:
                 return response, model_name
             except Exception as e:
                 msg = str(e)
-                print(f"[DEBUG] Failed {model_name}: {msg}")
                 errors.append(f"{model_name}: {msg}")
+                self._last_error = {"backend": self.backend, "model": model_name, "error_type": e.__class__.__name__, "message": msg[:800]}
                 lower = msg.lower()
                 # Rate limit handling
                 if any(marker in lower for marker in RATE_LIMIT_MARKERS):
                     time.sleep(1.2)
                 # 404 handling (try next model)
                 if "404" in msg or "not found" in lower:
+                    try:
+                        # Avoid spamming the same unavailable model for a while.
+                        self._model_blacklist_until[model_name] = time.time() + (6 * 60 * 60)
+                    except Exception:
+                        pass
                     continue
                 continue
 

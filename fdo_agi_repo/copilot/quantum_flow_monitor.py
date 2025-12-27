@@ -15,8 +15,9 @@ Quantum Flow Monitor - 양자적 결맞음 기반 Flow State 감지
 
 import json
 import math
+import os
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
@@ -66,6 +67,70 @@ class QuantumFlowMonitor:
         # 물리 상수
         self.PLANCK_CONSTANT = 6.62607015e-34  # J·s
         self.ELECTRON_CHARGE = 1.602176634e-19  # C
+
+    def _select_ledger_file(self) -> Path:
+        """
+        공명 원장(ledger) 선택.
+
+        - v2(utf-8/jsonl, 최신) 우선
+        - 없으면 v1로 폴백
+        """
+        v2 = self.memory_dir / "resonance_ledger_v2.jsonl"
+        v1 = self.memory_dir / "resonance_ledger.jsonl"
+        if v2.exists() and v2.stat().st_size > 0:
+            return v2
+        return v1
+
+    def _normalize_event_kind(self, event: Dict) -> str:
+        return str(
+            event.get("type")
+            or event.get("event_type")
+            or event.get("event")
+            or ""
+        )
+
+    def _parse_event_timestamp(self, event: Dict) -> Optional[float]:
+        raw = event.get("timestamp") or event.get("created_at") or event.get("time")
+        if raw is None:
+            return None
+
+        if isinstance(raw, (int, float)):
+            return float(raw)
+
+        if isinstance(raw, str):
+            try:
+                iso = raw.strip()
+                if iso.endswith("Z"):
+                    iso = iso[:-1] + "+00:00"
+                dt = datetime.fromisoformat(iso)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return dt.timestamp()
+            except Exception:
+                return None
+
+        return None
+
+    def _read_tail_lines(self, ledger_file: Path, max_bytes: int = 2_000_000) -> List[str]:
+        """
+        원장이 커졌을 때 전체를 읽지 않도록 파일 끝부분만 로드.
+        (최근 N분 이벤트만 필요하므로 tail 방식이 충분)
+        """
+        try:
+            with open(ledger_file, "rb") as f:
+                f.seek(0, os.SEEK_END)
+                size = f.tell()
+                start = max(0, size - max_bytes)
+                f.seek(start)
+                data = f.read()
+            text = data.decode("utf-8", errors="replace")
+            lines = text.splitlines()
+            if start > 0 and lines:
+                # partial line drop
+                lines = lines[1:]
+            return lines
+        except Exception:
+            return []
         
     def measure_hippocampus_phase(self) -> PhaseState:
         """
@@ -76,7 +141,7 @@ class QuantumFlowMonitor:
         - 자동 패턴 인식 활동
         - 암묵적 학습 신호
         """
-        ledger_file = self.memory_dir / "resonance_ledger.jsonl"
+        ledger_file = self._select_ledger_file()
         
         if not ledger_file.exists():
             # 기본값 반환
@@ -91,10 +156,13 @@ class QuantumFlowMonitor:
         recent_events = self._load_recent_events(ledger_file, minutes=10)
         
         # 패턴 인식 관련 이벤트 필터
-        implicit_events = [
-            e for e in recent_events
-            if e.get("type") in ["memory_recall", "pattern_detected", "auto_response"]
-        ]
+        implicit_kinds = {
+            "memory_recall",
+            "pattern_detected",
+            "auto_response",
+            "autopoietic_phase",
+        }
+        implicit_events = [e for e in recent_events if self._normalize_event_kind(e) in implicit_kinds]
         
         if not implicit_events:
             return PhaseState(
@@ -134,7 +202,7 @@ class QuantumFlowMonitor:
         - 의도적 작업 실행
         - 명시적 학습/판단
         """
-        ledger_file = self.memory_dir / "resonance_ledger.jsonl"
+        ledger_file = self._select_ledger_file()
         
         if not ledger_file.exists():
             return PhaseState(
@@ -147,10 +215,14 @@ class QuantumFlowMonitor:
         recent_events = self._load_recent_events(ledger_file, minutes=10)
         
         # 의식적 실행 관련 이벤트
-        explicit_events = [
-            e for e in recent_events
-            if e.get("type") in ["task_started", "goal_set", "decision_made", "explicit_action"]
-        ]
+        explicit_kinds = {
+            "task_started",
+            "goal_set",
+            "decision_made",
+            "explicit_action",
+            "trigger_action",
+        }
+        explicit_events = [e for e in recent_events if self._normalize_event_kind(e) in explicit_kinds]
         
         if not explicit_events:
             return PhaseState(
@@ -261,6 +333,35 @@ class QuantumFlowMonitor:
             return 1.0 / conductivity
         else:
             return float('inf')  # 완전 차단
+
+    def calculate_coherence(
+        self,
+        hippocampus: PhaseState,
+        executive: PhaseState,
+    ) -> CoherenceMetrics:
+        """
+        (외부 통합 스크립트 호환용) 주어진 두 위상 상태로 CoherenceMetrics를 계산.
+
+        과거/외부 모듈이 `calculate_coherence()`를 기대하는 경우가 있어, `measure_flow_state()`의
+        핵심 계산을 래핑한다.
+        """
+        phase_coherence = self.calculate_phase_coherence(hippocampus, executive)
+        amplitude_sync = self.calculate_amplitude_sync(hippocampus, executive)
+        frequency_match = self.calculate_frequency_match(hippocampus, executive)
+
+        metrics = CoherenceMetrics(
+            phase_coherence=phase_coherence,
+            amplitude_sync=amplitude_sync,
+            frequency_match=frequency_match,
+            electron_flow_resistance=0.0,
+            conductivity=0.0,
+            state="",
+        )
+
+        metrics.conductivity = phase_coherence * amplitude_sync * frequency_match
+        metrics.electron_flow_resistance = self.calculate_electron_flow_resistance(metrics)
+        metrics.state = self.classify_flow_state(phase_coherence)
+        return metrics
     
     def classify_flow_state(self, phase_coherence: float) -> str:
         """
@@ -431,23 +532,24 @@ class QuantumFlowMonitor:
         cutoff = time.time() - (minutes * 60)
         events = []
         
-        with open(ledger_file, "r", encoding="utf-8") as f:
-            for line in f:
-                try:
-                    event = json.loads(line.strip())
-                    timestamp = event.get("timestamp", 0)
-                    
-                    if isinstance(timestamp, str):
-                        # ISO format
-                        dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-                        timestamp = dt.timestamp()
-                    
-                    if timestamp >= cutoff:
-                        event["timestamp"] = timestamp
-                        events.append(event)
-                except:
+        for line in self._read_tail_lines(ledger_file):
+            try:
+                s = line.strip()
+                if not s:
                     continue
-        
+                event = json.loads(s)
+            except Exception:
+                continue
+
+            ts = self._parse_event_timestamp(event)
+            if ts is None:
+                continue
+            if ts < cutoff:
+                continue
+            event["timestamp"] = ts
+            events.append(event)
+
+        events.sort(key=lambda e: float(e.get("timestamp", 0.0)))
         return events
 
 

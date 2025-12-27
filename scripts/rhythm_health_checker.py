@@ -24,6 +24,11 @@ class RhythmHealthChecker:
         self.workspace = workspace
         self.outputs = workspace / "outputs"
         self.memory = workspace / "fdo_agi_repo" / "memory"
+
+        # "하지 않아도 되는 루프"는 실패/정지가 아니라 '휴면(dormant)'으로 취급한다.
+        # - 오래된 실험/미배치 루프가 상시 CRITICAL로 남으면, 시스템이 불필요한 긴장/개입 루프에 갇힐 수 있다.
+        self.optional_loops = {"goal_execution", "feedback", "trinity"}
+        self.dormant_after_minutes = 48 * 60  # 48 hours
         
         # 기대되는 리듬 주기 (분 단위)
         self.expected_rhythms = {
@@ -37,9 +42,15 @@ class RhythmHealthChecker:
         # 허용 지연 시간 (분 단위)
         self.tolerance_minutes = 15
     
-    def check_file_freshness(self, filepath: Path, expected_interval_minutes: int) -> Dict[str, Any]:
+    def check_file_freshness(self, filepath: Path, expected_interval_minutes: int, *, optional: bool = False) -> Dict[str, Any]:
         """파일의 최신성을 체크합니다."""
         if not filepath.exists():
+            if optional:
+                return {
+                    "status": "dormant",
+                    "message": f"휴면(옵션): 파일이 없습니다 ({filepath.name})",
+                    "severity": "none",
+                }
             return {
                 "status": "missing",
                 "message": f"파일이 존재하지 않습니다: {filepath.name}",
@@ -48,6 +59,15 @@ class RhythmHealthChecker:
         
         mtime = datetime.fromtimestamp(filepath.stat().st_mtime)
         age_minutes = (datetime.now() - mtime).total_seconds() / 60
+
+        # 옵션 루프는 오래 멈춰있으면 '휴면'으로 취급(=실패가 아님)
+        if optional and age_minutes >= self.dormant_after_minutes:
+            return {
+                "status": "dormant",
+                "age_minutes": round(age_minutes, 1),
+                "message": f"휴면(옵션): 오래 멈춤 (최근 {round(age_minutes, 1)}분)",
+                "severity": "none",
+            }
         
         expected_with_tolerance = expected_interval_minutes + self.tolerance_minutes
         
@@ -91,7 +111,7 @@ class RhythmHealthChecker:
         alerts = []
         if summary_file.exists():
             try:
-                with open(summary_file, 'r', encoding='utf-8') as f:
+                with open(summary_file, 'r', encoding='utf-8-sig') as f:
                     data = json.load(f)
                     
                     # 정체 감지
@@ -145,7 +165,7 @@ class RhythmHealthChecker:
         alerts = []
         if goals_file.exists():
             try:
-                with open(goals_file, 'r', encoding='utf-8') as f:
+                with open(goals_file, 'r', encoding='utf-8-sig') as f:
                     data = json.load(f)
                     goals = data.get("goals", [])
                     
@@ -191,13 +211,21 @@ class RhythmHealthChecker:
         
         tracker_check = self.check_file_freshness(
             tracker_file,
-            self.expected_rhythms["goal_execution"]
+            self.expected_rhythms["goal_execution"],
+            optional=True,
         )
         
         alerts = []
+        if tracker_check.get("status") == "dormant":
+            return {
+                "loop_name": "Goal Execution",
+                "file_status": tracker_check,
+                "alerts": [],
+                "overall_health": {"score": 100.0, "status": "dormant", "emoji": "🫧"},
+            }
         if tracker_file.exists():
             try:
-                with open(tracker_file, 'r', encoding='utf-8') as f:
+                with open(tracker_file, 'r', encoding='utf-8-sig') as f:
                     data = json.load(f)
                     goals = data.get("goals", [])
                     
@@ -250,13 +278,21 @@ class RhythmHealthChecker:
         
         feedback_check = self.check_file_freshness(
             feedback_file,
-            self.expected_rhythms["feedback_analysis"]
+            self.expected_rhythms["feedback_analysis"],
+            optional=True,
         )
         
         alerts = []
+        if feedback_check.get("status") == "dormant":
+            return {
+                "loop_name": "Feedback",
+                "file_status": feedback_check,
+                "alerts": [],
+                "overall_health": {"score": 100.0, "status": "dormant", "emoji": "🫧"},
+            }
         if feedback_file.exists():
             try:
-                with open(feedback_file, 'r', encoding='utf-8') as f:
+                with open(feedback_file, 'r', encoding='utf-8-sig') as f:
                     data = json.load(f)
                     
                     # 전체 성공률 체크
@@ -296,13 +332,21 @@ class RhythmHealthChecker:
         
         trinity_check = self.check_file_freshness(
             trinity_file,
-            self.expected_rhythms["trinity_cycle"]
+            self.expected_rhythms["trinity_cycle"],
+            optional=True,
         )
         
         alerts = []
+        if trinity_check.get("status") == "dormant":
+            return {
+                "loop_name": "Trinity Cycle",
+                "file_status": trinity_check,
+                "alerts": [],
+                "overall_health": {"score": 100.0, "status": "dormant", "emoji": "🫧"},
+            }
         if trinity_file.exists():
             try:
-                with open(trinity_file, 'r', encoding='utf-8') as f:
+                with open(trinity_file, 'r', encoding='utf-8-sig') as f:
                     data = json.load(f)
                     
                     # Trinity 권장사항 체크
@@ -321,14 +365,56 @@ class RhythmHealthChecker:
                 })
         
         return {
-            "loop_name": "Trinity",
+            "loop_name": "Trinity Cycle",
             "file_status": trinity_check,
             "alerts": alerts,
             "overall_health": self._calculate_health_score([trinity_check], alerts)
         }
+
+    def check_background_self_rhythm(self) -> Dict[str, Any]:
+        """배경자아(Koa) 연결 리듬 체크 (엔트로피 모니터링)"""
+        # 1. Thought Stream (의식의 흐름)
+        thought_file = self.outputs / "thought_stream_latest.json"
+        
+        # 5분 이상 무소식 = Critical (엔트로피 증가)
+        thought_check = self.check_file_freshness(thought_file, 5) 
+
+        # 2. Mitochondria State (에너지 상태)
+        energy_file = self.outputs / "mitochondria_state.json"
+        energy_check = self.check_file_freshness(energy_file, 10) # 10분 주기
+
+        alerts = []
+        
+        # 침묵(Silence) = 위협(Threat) 로직 적용
+        if thought_check["status"] in ["missing", "stale"]:
+             alerts.append({
+                "type": "entropy_threat",
+                "message": "⚠️ 배경자아 연결 단절 (엔트로피 증가)",
+                "detail": "무의식층의 신호가 끊겼습니다. 시스템이 고립되었습니다.",
+                "severity": "high"  # Critical logic handled by 'stale' status -> low score
+            })
+        
+        if energy_check["status"] == "stale":
+            alerts.append({
+                "type": "energy_starvation",
+                "message": "⚠️ 에너지 공급 중단",
+                "severity": "medium"
+            })
+
+        return {
+            "loop_name": "Background Self",
+            "thought_status": thought_check,
+            "energy_status": energy_check,
+            "alerts": alerts,
+            "overall_health": self._calculate_health_score([thought_check, energy_check], alerts)
+        }
     
     def _calculate_health_score(self, file_checks: List[Dict], alerts: List[Dict]) -> Dict[str, Any]:
         """전체 건강도 점수 계산"""
+        # 휴면(옵션) 루프는 점수 계산/동기화에서 제외될 수 있도록 상태를 유지한다.
+        if file_checks and all(str(c.get("status") or "").lower() == "dormant" for c in file_checks):
+            return {"score": 100.0, "status": "dormant", "emoji": "🫧"}
+
         # 파일 상태 점수
         file_scores = []
         for check in file_checks:
@@ -338,6 +424,8 @@ class RhythmHealthChecker:
                 file_scores.append(70)
             elif check["status"] == "stale":
                 file_scores.append(30)
+            elif check["status"] == "dormant":
+                file_scores.append(100)
             else:  # missing
                 file_scores.append(0)
         
@@ -381,7 +469,7 @@ class RhythmHealthChecker:
         update_times = {}
         for loop_name, result in results.items():
             file_status = result.get("file_status") or result.get("summary_file_status")
-            if file_status and file_status.get("status") != "missing":
+            if file_status and file_status.get("status") not in {"missing", "dormant"}:
                 update_times[loop_name] = file_status.get("age_minutes", 999)
         
         if len(update_times) < 2:
@@ -415,18 +503,25 @@ class RhythmHealthChecker:
             "goal_execution": self.check_goal_execution_rhythm(),
             "feedback": self.check_feedback_rhythm(),
             "trinity": self.check_trinity_rhythm(),
+            "background_self": self.check_background_self_rhythm(), # [NEW] 배경자아 체크 추가
         }
         
         # 동기화 체크
         sync_status = self.check_rhythm_synchronization(results)
         
         # 전체 점수 계산
-        overall_scores = [r["overall_health"]["score"] for r in results.values()]
-        overall_score = sum(overall_scores) / len(overall_scores)
+        overall_scores = [
+            float(r.get("overall_health", {}).get("score", 0.0))
+            for r in results.values()
+            if str(r.get("overall_health", {}).get("status", "")).lower() != "dormant"
+        ]
+        overall_score = (sum(overall_scores) / len(overall_scores)) if overall_scores else 100.0
         
         # 심각도 높은 알림 수집
         critical_alerts = []
         for loop_name, result in results.items():
+            if str(result.get("overall_health", {}).get("status", "")).lower() == "dormant":
+                continue
             for alert in result.get("alerts", []):
                 if alert["severity"] in ["high", "medium"]:
                     critical_alerts.append({
@@ -485,7 +580,10 @@ class RhythmHealthChecker:
         
         # 목표 실행 문제
         ge_result = results.get("goal_execution", {})
-        ge_alerts = [a for a in ge_result.get("alerts", []) if a["severity"] == "high"]
+        if str(ge_result.get("overall_health", {}).get("status", "")).lower() == "dormant":
+            ge_alerts = []
+        else:
+            ge_alerts = [a for a in ge_result.get("alerts", []) if a["severity"] == "high"]
         if ge_alerts:
             recommendations.append(
                 "⚙️ 목표 실행 상태 점검: fdo_agi_repo/memory/goal_tracker.json 확인"
@@ -493,7 +591,10 @@ class RhythmHealthChecker:
         
         # 피드백 문제
         fb_result = results.get("feedback", {})
-        fb_alerts = [a for a in fb_result.get("alerts", []) if a["type"] == "low_success_rate"]
+        if str(fb_result.get("overall_health", {}).get("status", "")).lower() == "dormant":
+            fb_alerts = []
+        else:
+            fb_alerts = [a for a in fb_result.get("alerts", []) if a["type"] == "low_success_rate"]
         if fb_alerts:
             recommendations.append(
                 "📊 성공률 하락: 목표 전략 재검토 필요"

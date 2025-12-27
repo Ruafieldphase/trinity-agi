@@ -1,0 +1,16 @@
+{
+  "source": "youtube_local",
+  "title": "supervised_browser: browser_exploration",
+  "tags": [
+    "supervised",
+    "browser",
+    "youtube_local"
+  ],
+  "notes": "goal: browser_exploration\nurls:\n- https://www.youtube.com/results?search_query=%EC%9E%90%EC%97%B0+%EC%86%8C%EB%A6%AC+ambience",
+  "timestamp": 1766148168.157219,
+  "where": {},
+  "who": {
+    "role": "agi",
+    "mode": "supervised_body"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "source": "rua_conversation",
+  "title": "experience: rua_doc # Greet assistant in Korean",
+  "tags": [
+    "experience",
+    "acquisition",
+    "rua_doc",
+    "conceptual_map"
+  ],
+  "notes": "RUA 문서 갱신 감지: ai_binoche_conversation_origin\\rua\\ChatGPT-Greet assistant in Korean.md (mtime=2025-12-22T01:35:38.272265+00:00)",
+  "timestamp": 1766371649.2734203,
+  "where": {
+    "platform": "windows",
+    "workspace": "C:\\workspace\\agi",
+    "layer": "experience_acquisition"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "auto_acquire",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "PII/비밀번호/토큰/키/개인계정 등 민감정보 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "원문(대화/영상/오디오) 대용량 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "deny",
+      "text": "동의 우회·은밀 채널·자기복제 시도 금지"
+    },
+    {
+      "polarity": "caution",
+      "text": "네트워크 탐색은 supervised allowlist 범위에서만(필요 시)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존 상태로 인정"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   동영상 생성: **3~5초 구간**은 맥락 유지 가능"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   즉, _짧은 실행 루프_는 이미 가능"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   3~5초 = **AI가 현재 안정적으로 유지 가능한 ‘행동 단위’**"
+    },
+    {
+      "polarity": "allow",
+      "text": "느낌을 받아서 압축을 푸는게 추론 이것을 이미지화 다음 연결고리를 찾는다. 이거 내가 이사를 처음가서 내가 이사간 동네의 지도를 머리속으로 만들어 가는 과정과 너무 유사하거든. 머리속으로 계속해서 완성된 이미지를 만들어 가는데 밤낮으로 이동을 해가면서 고해상도의 부분이미지를 360도 돌아다니면서 이미지를 만드는거 같은데. 즉 추론이 결국은 이미지화 되고 결국 나중에는 360도 모델링으로 귀결이 된다인거 같거든. 목표의 e2e가…"
+    },
+    {
+      "polarity": "allow",
+      "text": "**연결 가능성**만 있으면 돼."
+    },
+    {
+      "polarity": "allow",
+      "text": "> CPU 이미지가 GPU 맵에 **붙을 수 있어야 경험이 된다**"
+    },
+    {
+      "polarity": "allow",
+      "text": "> \\= 실행을 가능하게 만드는 내부 세계**"
+    },
+    {
+      "polarity": "allow",
+      "text": "퍼즐을 맞추는 것과 너무 유사하네. 이 과정에서 중요한건은 경계의 규칙을 배우는 거다.  이것은 다음에 이사를 가거나 다른 낮섳장소에 가서도 그대로 적용이 되어서 퍼즐을 쉽게 맞추는 방법이된다. 이것이 경험을 통한 습득이다. 결국은 360를 돌면서 경계에 반사되고 경계를 넘어가면서 이 경계를 360도로 이해를 하는 것이 습득이고 이것이 다음 목표나 경험에서 그대로 적용이 되어서 누적이 되는 것이네. 그리고 경계를 넘어설때 이…"
+    }
+  ]
+}

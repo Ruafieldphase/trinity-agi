@@ -239,7 +239,7 @@ class E2EPipeline:
                 success, trial_results = await self.trial_error_engine.execute_with_retry(
                     task_fn=self._execute_single_step,
                     task_name=step['action'],
-                    initial_params=step['params'],
+                    initial_params={**step['params'], "action": step['action'], "description": step['description']},
                     state={"step_index": i, "description": step['description']}
                 )
                 
@@ -264,10 +264,41 @@ class E2EPipeline:
         return results
     
     async def _execute_single_step(self, **params) -> bool:
-        """단일 스텝 실행 (예제)"""
-        # TODO: 실제 RPA 액션 실행
-        await asyncio.sleep(0.5)
-        return True
+        """단일 스텝 실행 (RPACore 활용)"""
+        action = params.get("action")
+        value = params.get("value", "")
+        desc = params.get("description", "")
+        
+        self.logger.info(f"🎬 Executing action: {action} ({desc})")
+        
+        try:
+            if action == "click":
+                # 좌표가 있으면 클릭, 없으면 텍스트나 템플릿 검색 (여기선 단순화)
+                x, y = params.get("x"), params.get("y")
+                if x is not None and y is not None:
+                    await self.rpa_core.click(x, y)
+                else:
+                    self.logger.warning("Click requested without coordinates.")
+                    return False
+            elif action == "type":
+                await self.rpa_core.type_text(value)
+            elif action == "press":
+                await self.rpa_core.press_key(value)
+            elif action == "open":
+                # URL 열기 (브라우저나 쉘 사용)
+                import webbrowser
+                webbrowser.open(value)
+            elif action == "wait":
+                wait_time = float(value) if value else 1.0
+                await asyncio.sleep(wait_time)
+            else:
+                self.logger.info(f"Unknown action type: {action}. Simulating success.")
+                await asyncio.sleep(0.5)
+            
+            return True
+        except Exception as e:
+            self.logger.error(f"Action failed: {e}")
+            return False
     
     async def _log_event(
         self,

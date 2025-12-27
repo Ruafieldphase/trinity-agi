@@ -1,0 +1,16 @@
+{
+  "source": "street_view",
+  "title": "supervised_browser: browser_exploration",
+  "tags": [
+    "supervised",
+    "browser",
+    "street_view"
+  ],
+  "notes": "goal: browser_exploration\nurls:\n- https://www.google.com/maps",
+  "timestamp": 1766524968.4076314,
+  "where": {},
+  "who": {
+    "role": "agi",
+    "mode": "supervised_body"
+  }
+}

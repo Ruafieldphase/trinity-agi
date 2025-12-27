@@ -1,41 +1,53 @@
 import os
-from dotenv import load_dotenv
-import google.generativeai as genai
 from pathlib import Path
 
-# Load environment variables
-env_path = Path(__file__).parent / '.env'
-print(f"Loading .env from: {env_path}")
-load_dotenv(dotenv_path=env_path)
+from dotenv import load_dotenv
+import google.generativeai as genai
 
-api_key = os.getenv("GOOGLE_API_KEY")
-print(f"API Key found: {'Yes' if api_key else 'No'}")
 
-if api_key:
-    print(f"API Key prefix: {api_key[:5]}...")
+def _load_env() -> None:
+    root = Path(__file__).resolve().parent
+    cred = root / ".env_credentials"
+    if cred.exists():
+        load_dotenv(dotenv_path=cred, override=False)
+    load_dotenv(dotenv_path=root / ".env", override=False)
+
+
+def main() -> int:
+    _load_env()
+
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    print(f"API Key found: {'Yes' if api_key else 'No'}")
+    if not api_key:
+        print("ERROR: GOOGLE_API_KEY/GEMINI_API_KEY not found.")
+        return 2
+
     try:
         genai.configure(api_key=api_key)
-        print("Listing models with 'generateContent' method...")
-        
-        working_models = []
+        working_models: list[str] = []
         for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                print(f"- {m.name}")
-                working_models.append(m.name)
-        
-        if not working_models:
-            print("WARNING: No models found with 'generateContent' capability.")
-        else:
-            print(f"\nFound {len(working_models)} suitable models. Testing the first one...")
-            test_model = working_models[0]
             try:
-                model = genai.GenerativeModel(test_model)
-                response = model.generate_content("Hello")
-                print(f"SUCCESS: {test_model} worked! Response: {response.text}")
-            except Exception as e:
-                print(f"FAILED: {test_model} - {e}")
+                if "generateContent" not in getattr(m, "supported_generation_methods", []):
+                    continue
+                working_models.append(str(getattr(m, "name", "") or ""))
+            except Exception:
+                continue
 
+        if not working_models:
+            print("WARNING: No models found with 'generateContent'.")
+            return 1
+
+        preferred = "models/gemini-2.5-flash"
+        test_model = preferred if preferred in working_models else working_models[0]
+        model = genai.GenerativeModel(test_model)
+        response = model.generate_content("Hello")
+        ok = bool(response and getattr(response, "text", None))
+        print(f"Model test: {test_model} -> {'OK' if ok else 'NO_TEXT'}")
+        return 0 if ok else 1
     except Exception as e:
         print(f"ERROR: Script failed: {e}")
-else:
-    print("ERROR: GOOGLE_API_KEY not found in environment.")
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

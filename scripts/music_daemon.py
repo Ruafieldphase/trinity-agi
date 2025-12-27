@@ -295,15 +295,54 @@ class MusicDaemon:
         flow_analysis["system_stress"] = system_stress
         
         return flow_analysis
+
+    def _brainwave_to_bpm(self, brainwave: str) -> float:
+        """
+        Binaural target(알파/세타 등)를 '느슨한 템포'로 매핑한다.
+        - 정확한 과학적 변환이 아니라, GrooveEngine에 넣을 BPM 스케일링용 근사치.
+        """
+        bw = str(brainwave or "").strip().lower()
+        # 느슨한 근사: 더 느린 대역일수록 BPM을 낮춘다.
+        mapping = {
+            "delta": 42.0,
+            "theta": 50.0,
+            "alpha": 60.0,
+            "beta": 80.0,
+            "gamma": 110.0,
+        }
+        return float(mapping.get(bw, 60.0))
+
+    def _get_groove_hint(self, brainwave: str) -> dict:
+        """
+        GrooveEngine의 microtiming을 안전하게 가져온다.
+        - GrooveEngine API는 beat_index(int), bpm(float)을 기대한다.
+        - brainwave 문자열을 beat_index로 넘기면 TypeError가 나므로, 여기서 변환한다.
+        """
+        bpm = self._brainwave_to_bpm(brainwave)
+        hint: dict = {"offset_ms": 0.0, "swing_factor": 0.0, "bpm": bpm, "source": "none"}
+        if not self.groove_engine:
+            return hint
+        try:
+            # off-beat(1)에서 swing 영향이 더 드러나므로 1을 사용
+            offset_sec = float(self.groove_engine.compute_beat_offset(1, bpm))
+            hint["offset_ms"] = offset_sec * 1000.0
+            hint["swing_factor"] = float(getattr(self.groove_engine.profile, "swing_ratio", 0.0))
+            hint["source"] = "groove_engine"
+            return hint
+        except Exception as e:
+            hint["source"] = "groove_engine_error"
+            hint["error"] = str(e)
+            logger.warning(f"⚠️ Groove hint failed: {e}")
+            return hint
     
     def generate_binaural_beat(self, brainwave: str, duration: int = 300) -> Path:
         """Binaural Beat 생성 (Groove Engine 적용)"""
         logger.info(f"🎼 Generating {brainwave} binaural beat ({duration}s)...")
         
-        # Groove Engine에서 microtiming offset 가져오기
-        groove_hint = self.groove_engine.compute_microtiming_offset(brainwave, 1.0)  # phase=1.0 (기본)
-        offset_ms = groove_hint.get("offset_ms", 0.0)
-        swing_factor = groove_hint.get("swing_factor", 0.0)
+        # Groove Engine에서 microtiming hint 가져오기 (안전 변환 포함)
+        groove_hint = self._get_groove_hint(brainwave)
+        offset_ms = float(groove_hint.get("offset_ms", 0.0) or 0.0)
+        swing_factor = float(groove_hint.get("swing_factor", 0.0) or 0.0)
         
         logger.info(f"🎵 Groove: offset={offset_ms:.1f}ms, swing={swing_factor:.2f}")
         

@@ -1,0 +1,16 @@
+{
+  "source": "google_earth",
+  "title": "supervised_browser: browser_exploration",
+  "tags": [
+    "supervised",
+    "browser",
+    "google_earth"
+  ],
+  "notes": "goal: browser_exploration\nurls:\n- https://earth.google.com/web/\n- https://www.google.com/search?q=%EC%83%88%EB%A1%9C%EC%9A%B4+%EC%9E%A5%EC%86%8C+%ED%83%90%EC%83%89&safe=active",
+  "timestamp": 1766145770.1932127,
+  "where": {},
+  "who": {
+    "role": "agi",
+    "mode": "supervised_body"
+  }
+}

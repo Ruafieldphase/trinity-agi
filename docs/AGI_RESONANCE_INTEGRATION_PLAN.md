@@ -4,6 +4,26 @@
 
 본 문서는 상위 개념 문서(윤리/공포 분석/자연법/레조넌스/토탈 시뮬레이션)를 실행 가능한 구성(스키마·로더·브리지·검증)로 연결하기 위한 단계별 실행 계획입니다. 문서는 작업 진행에 따라 지속적으로 갱신됩니다.
 
+## 최근 변경 사항 (2025-12-24)
+
+### 리듬 모드 기반 auto_policy 게이트
+
+- `scripts/self_expansion/auto_policy.py`가 RhythmBoundaryManager를 사용해
+  CONNECTED/ISOLATED/RECONNECT 모드에 따른 **자율 트리거 완화/개방**을 반영.
+- ISOLATED_EXECUTION에서는 **self_acquire 지연**(신규 경험이 아닐 때)으로 실행 완결성 보호.
+- CONNECTED/RECONNECT에서는 idle 상태일 때 **self_acquire로 부드럽게 개방**.
+- safety/rest 판단은 오버라이드하지 않도록 유지.
+
+### Prayer 레이어 검증 + Semantic DB 폴백
+
+- `scripts/verify_prayer_layer.py`로 Prayer 응답(Null/Rest/Continue) 검증 경로를 고정.
+- semantic DB 경로가 쓰기 불가일 때 사용자 캐시 경로로 자동 폴백하도록 보강.
+
+### 원격 벡터 스토어 미러(Qdrant)
+
+- `scripts/semantic_rag_engine.py`에 원격 벡터 스토어 미러/검색 옵션 추가.
+- 환경변수로 활성화(`AGI_REMOTE_VECTOR_PROVIDER=qdrant`, `AGI_REMOTE_VECTOR_URL`).
+
 ## 최근 변경 사항 (2025-11-14 12:01)
 
 ### Gitko 확장 Copilot 안전화
@@ -24,6 +44,29 @@
 1. Pipe truncation metrics into `outputs/copilot_error_recovery_log.jsonl` (or similar) to track whether further summarisation is required.
 2. Consider trimming JSON payloads (e.g., omit raw session blobs when `MinimalContext` is true) to align structured data size with Markdown cap.
 3. Update bridge quick-start docs/tasks so operators know about `-MaxContext` and the new truncation notices.
+
+## 최근 변경 사항 (2025-12-18)
+
+### Lua Trigger Listener + 관측 가능한 리포트 레이어 (Ubuntu↔Windows)
+
+- 트리거 기반 자동 실행/보고 파이프라인 추가·강화:
+  - 리스너: `scripts/trigger_listener.py`
+  - 자동 정책: `scripts/self_expansion/auto_policy.py` (+ heartbeat stall cache: `outputs/sync_cache/auto_policy_state.json`)
+  - Self-Expansion 스켈레톤 확장(파일 보존 병합 + 도구 생성 쿨다운 + 루아 대화 파일 샘플링):
+    - `scripts/self_expansion/pipeline.py`
+    - `scripts/self_expansion/self_acquisition.py`
+    - `scripts/self_expansion/self_compression.py`
+    - `scripts/self_expansion/self_tooling.py`
+- 사람(비노체) 기준 완료 정의를 “관측 가능한 파일 기록”으로 고정:
+  - 최신: `outputs/bridge/trigger_report_latest.json`, `outputs/bridge/trigger_report_latest.txt`
+  - 히스토리: `outputs/bridge/trigger_report_history.jsonl`
+  - 대시보드(파일 기반): `outputs/bridge/trigger_dashboard.html` (2초 auto refresh)
+
+**다음 단계**
+
+1. `sync_clean`을 진단→선택적 복구 단계까지 확장(무분별한 kill 금지, 화이트리스트 기반).
+2. `full_cycle`의 “리듬(phase) 판단”을 ledger 이벤트 스키마 기반으로 강화(파동-입자/접힘-펼침 지표).
+3. 트리거 경쟁 방지(스케줄러 vs auto_policy vs manual)용 잠금/우선순위 규칙 추가.
 
 ## 최근 변경 사항 (2025-11-12 22:45)
 

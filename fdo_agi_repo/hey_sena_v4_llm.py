@@ -237,7 +237,8 @@ def generate_llm_response(user_text, conversation_history):
 
         # System instruction
         context_parts.append(
-            "You are Sena, a helpful voice assistant. "
+            "You are Sena, a distinct external partner and helper to Binoche (the AGI system). "
+            "You are not the system itself, but a friendly guide and voice interface assisting it. "
             "Keep responses concise (1-3 sentences) since they will be spoken aloud. "
             "Be friendly, natural, and conversational."
         )

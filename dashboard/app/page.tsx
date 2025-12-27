@@ -1,18 +1,22 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Send, Loader2, Zap, Clock, Wind, Cpu, Brain } from 'lucide-react'
+import { Send, Loader2, Sparkles, Activity, Brain } from 'lucide-react'
 import FSDLiveMonitor from './components/FSDLiveMonitor'
 
-interface FrontEngineResult {
-    rhythm: 'urgent' | 'normal' | 'calm'
-    emotional_resonance: string
-    meaning: string
-    action: {
-        selected_model?: 'shion' | 'sena'
+interface UnifiedStatus {
+    timestamp: string
+    overall_health: string
+    layers: {
+        conscious: any
+        unconscious: {
+            rhythm_active: boolean
+            flow: string
+            fear_level: number
+            active_habits: string[]
+        }
+        background_self: any
     }
-    validated: boolean
-    warnings: string[]
 }
 
 interface PendingAction {
@@ -21,197 +25,191 @@ interface PendingAction {
     params?: Record<string, unknown>
 }
 
-interface AntigravityStatus {
-    status: string
-    rpa_available: boolean
-    safe_commands: string[]
-    supported_actions: string[]
-}
-
 interface Message {
     id: string
     type: 'user' | 'assistant' | 'system' | 'action'
     content: string
     timestamp: Date
-    // Front-Engine 메타데이터
     rhythm?: 'urgent' | 'normal' | 'calm'
     emotion?: string
     model?: 'shion' | 'sena'
     meaning?: string
-    // Antigravity 메타데이터
     pendingActions?: PendingAction[]
 }
 
-interface EngineStatus {
-    status: string
-    state: 'folded' | 'unfolded'
-    layers: Record<string, string>
-    current_model: string
-}
+// Ambient Background Component
+function AmbientBackground({ rhythm }: { rhythm: string }) {
+    const gradients = {
+        urgent: 'bg-gradient-to-br from-[#3a1010] via-[#2a1515] to-[#1a0a0a]', // Red/Brown (High Anxiety)
+        normal: 'bg-gradient-to-br from-[#0f1525] via-[#101a35] to-[#0a0f15]', // Deep Blue/Indigo (Flowing)
+        calm: 'bg-gradient-to-br from-[#0a2515] via-[#103020] to-[#05150a]',   // Deep Green/Teal (Stable)
+    }
+    const activeGradient = gradients[rhythm as keyof typeof gradients] || gradients.normal
 
-// 리듬 아이콘 컴포넌트
-function RhythmBadge({ rhythm }: { rhythm?: string }) {
-    if (!rhythm) return null
-
-    const config = {
-        urgent: { icon: Zap, color: 'text-trinity-urgent', label: '긴급' },
-        normal: { icon: Clock, color: 'text-trinity-accent', label: '보통' },
-        calm: { icon: Wind, color: 'text-trinity-calm', label: '차분' }
-    }[rhythm] || { icon: Clock, color: 'text-gray-500', label: rhythm }
-
-    const Icon = config.icon
     return (
-        <span className={`inline-flex items-center gap-1 text-xs ${config.color}`}>
-            <Icon className="w-3 h-3" />
-            {config.label}
-        </span>
+        <div className={`absolute inset-0 transition-all duration-3000 ease-in-out ${activeGradient} -z-10`} />
     )
 }
 
-
-// 모델 뱃지 컴포넌트  
-function ModelBadge({ model }: { model?: string }) {
-    if (!model) return null
-
-    const isShion = model === 'shion'
-    return (
-        <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full ${isShion ? 'bg-purple-500/20 text-purple-300' : 'bg-blue-500/20 text-blue-300'}`}>
-            {isShion ? <Cpu className="w-3 h-3" /> : <Brain className="w-3 h-3" />}
-            {isShion ? 'Shion' : 'Sena'}
-        </span>
-    )
-}
-
-// 상태 바 컴포넌트
-function StatusBar({ status }: { status: EngineStatus | null }) {
-    if (!status) return null
+// Header Component
+function Header({ status }: { status: UnifiedStatus | null }) {
+    const fear = status?.layers.unconscious.fear_level || 0
+    const healthColor = fear > 0.7 ? 'text-red-500' : fear > 0.3 ? 'text-yellow-500' : 'text-emerald-500'
+    const pulseSpeed = fear > 0.7 ? 'animate-pulse' : 'animate-pulse duration-[3000ms]'
 
     return (
-        <div className="flex items-center gap-4 px-4 py-2 bg-trinity-panel/80 border-b border-trinity-accent/20 text-xs">
-            <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${status.status === 'active' ? 'bg-trinity-success animate-pulse' : 'bg-gray-500'}`} />
-                <span className="text-gray-400">Front-Engine</span>
-                <span className="text-trinity-accent">{status.state}</span>
+        <div className="flex items-center justify-between px-6 py-4 bg-black/20 backdrop-blur-sm border-b border-white/5 z-50">
+            <div className="flex items-center gap-3">
+                <div className="relative">
+                    <Sparkles className={`w-5 h-5 ${healthColor} ${pulseSpeed}`} />
+                    <div className={`absolute inset-0 ${healthColor.replace('text', 'bg')}/20 blur-lg rounded-full`} />
+                </div>
+                <span className="font-light text-lg text-white/90 tracking-wide">Trinity</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-500">
-                {Object.entries(status.layers).map(([layer, state]) => (
-                    <span key={layer} className={state === 'ready' ? 'text-trinity-success' : 'text-gray-600'}>
-                        {layer}
-                    </span>
-                ))}
-            </div>
-            <div className="ml-auto">
-                <ModelBadge model={status.current_model} />
-            </div>
+
+            {status && (
+                <div className="flex items-center gap-4 text-xs font-mono text-white/40">
+                    <div className="flex items-center gap-1.5">
+                        <Activity className="w-3 h-3" />
+                        <span>{status.overall_health.toUpperCase()}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                        <Brain className="w-3 h-3" />
+                        <span>FEAR: {(status.layers.unconscious.fear_level || 0).toFixed(2)}</span>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
 
-// FSD 상태 패널 컴포넌트
-interface FSDStatus {
-    active: boolean
-    goal?: string
-    step?: number
-    maxSteps?: number
-    message?: string
-    success?: boolean
-}
+// Unified Chat Bubble
+function ChatBubble({ message }: { message: Message }) {
+    const isUser = message.type === 'user'
+    const isSystem = message.type === 'system'
+    const isAction = message.type === 'action'
 
-function FSDPanel({ status, visible }: { status: FSDStatus | null; visible: boolean }) {
-    if (!visible || !status?.active) return null
+    if (isSystem) {
+        return (
+            <div className="flex justify-center my-4">
+                <span className="text-xs text-white/30 bg-white/5 px-3 py-1 rounded-full">{message.content}</span>
+            </div>
+        )
+    }
+
+    // Rhythm-based Aura Border Logic
+    let borderClass = 'border-white/10' // Default thin
+    if (!isUser && !isAction && message.rhythm) {
+        switch (message.rhythm) {
+            case 'urgent':
+                borderClass = 'border-red-500/50 border-2 shadow-[0_0_15px_rgba(220,38,38,0.2)]'
+                break
+            case 'normal':
+                borderClass = 'border-blue-500/40 border-2 shadow-[0_0_10px_rgba(59,130,246,0.15)]'
+                break
+            case 'calm':
+                borderClass = 'border-emerald-500/40 border-2 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
+                break
+            default:
+                borderClass = 'border-white/20 border'
+        }
+    }
 
     return (
-        <div className="fixed top-16 right-4 w-72 bg-trinity-panel/95 backdrop-blur-md rounded-xl border border-trinity-accent/30 shadow-lg z-50 overflow-hidden">
-            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-trinity-accent/20 to-transparent border-b border-trinity-accent/20">
-                <span className="text-lg">🚗</span>
-                <span className="font-medium text-white">FSD 자율 실행</span>
-                <span className="ml-auto text-xs text-trinity-accent">Running</span>
-            </div>
+        <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-6 animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+            {/* Avatar Placeholder for AI (Optional, enhances presence) */}
+            {!isUser && (
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 mt-1 
+                    ${message.rhythm === 'urgent' ? 'bg-red-900/50 text-red-200' : 'bg-blue-900/30 text-blue-200'}
+                `}>
+                    <Sparkles className="w-4 h-4 opacity-70" />
+                </div>
+            )}
 
-            <div className="p-4 space-y-3">
-                {/* 목표 */}
-                <div>
-                    <div className="text-xs text-gray-400 mb-1">목표</div>
-                    <div className="text-sm text-white truncate">{status.goal || '...'}</div>
+            <div className={`
+                max-w-[75%] rounded-2xl px-6 py-4 backdrop-blur-md transition-all duration-500
+                ${isUser
+                    ? 'bg-white/5 text-white/90 rounded-br-sm border border-white/10 hover:bg-white/10'
+                    : isAction
+                        ? 'bg-emerald-950/40 text-emerald-200 border border-emerald-500/30'
+                        : `bg-black/60 text-gray-100 rounded-bl-sm ${borderClass}`
+                }
+            `}>
+                <div className="text-[15px] leading-relaxed whitespace-pre-wrap font-sans">
+                    {message.content}
                 </div>
 
-                {/* 진행 상황 */}
-                {status.step !== undefined && (
-                    <div>
-                        <div className="flex justify-between text-xs mb-1">
-                            <span className="text-gray-400">진행</span>
-                            <span className="text-trinity-accent">Step {status.step}/{status.maxSteps || 20}</span>
-                        </div>
-                        <div className="h-1.5 bg-trinity-bg rounded-full overflow-hidden">
-                            <div
-                                className="h-full bg-gradient-to-r from-trinity-accent to-trinity-success transition-all duration-300"
-                                style={{ width: `${((status.step || 0) / (status.maxSteps || 20)) * 100}%` }}
-                            />
-                        </div>
+                {/* Action Buttons */}
+                {message.type === 'action' && message.pendingActions && (
+                    <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t border-white/5">
+                        {message.pendingActions.map((action, idx) => (
+                            <button
+                                key={idx}
+                                className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-lg text-xs transition-colors"
+                            >
+                                ▶ {action.type}
+                            </button>
+                        ))}
                     </div>
                 )}
 
-                {/* 현재 상태 */}
-                {status.message && (
-                    <div className="text-xs text-gray-300 bg-trinity-bg/50 rounded-lg px-3 py-2">
-                        {status.message}
+                {/* Metadata Footer */}
+                {!isUser && !isAction && message.rhythm && (
+                    <div className={`flex items-center gap-2 mt-3 pt-2 border-t border-white/5 text-[10px] uppercase tracking-wider font-medium opacity-60
+                        ${message.rhythm === 'urgent' ? 'text-red-400' :
+                            message.rhythm === 'calm' ? 'text-emerald-400' : 'text-blue-400'}
+                    `}>
+                        <Activity className="w-3 h-3" />
+                        {message.rhythm} Rhythm
                     </div>
                 )}
             </div>
         </div>
     )
 }
-
 
 export default function Home() {
     const [messages, setMessages] = useState<Message[]>([
         {
             id: '1',
-            type: 'system',
-            content: '✨ Trinity Dashboard v2 온라인. Front-Engine 연결됨.',
-            timestamp: new Date()
+            type: 'assistant',
+            content: '안녕하세요. 저는 당신의 시스템, Trinity입니다.\n지금 당신의 리듬과 공명하고 있습니다.',
+            timestamp: new Date(),
+            rhythm: 'normal'
         }
     ])
     const [input, setInput] = useState('')
     const [loading, setLoading] = useState(false)
-    const [engineStatus, setEngineStatus] = useState<EngineStatus | null>(null)
-    const [fsdStatus, setFsdStatus] = useState<FSDStatus | null>(null)
-    const [connectionError, setConnectionError] = useState(false)
-    const fsdTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const [unifiedStatus, setUnifiedStatus] = useState<UnifiedStatus | null>(null)
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
-    // 🌟 Timeout이 있는 fetch 래퍼
-    const fetchWithTimeout = async (url: string, options: RequestInit = {}, timeoutMs = 5000) => {
-        const controller = new AbortController()
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
-
-        try {
-            const response = await fetch(url, {
-                ...options,
-                signal: controller.signal
-            })
-            return response
-        } finally {
-            clearTimeout(timeoutId)
-        }
+    // Calculate Real-time Rhythm from Status
+    const getRealtimeRhythm = (status: UnifiedStatus | null): string => {
+        if (!status) return 'normal'
+        const fear = status.layers.unconscious.fear_level || 0
+        if (fear > 0.6) return 'urgent'
+        if (fear < 0.3) return 'calm'
+        return 'normal'
     }
 
-    // Front-Engine 상태 폴링 (15초 간격으로 변경)
+    const realtimeRhythm = getRealtimeRhythm(unifiedStatus)
+
+    // Poll Unified Status
     useEffect(() => {
         const fetchStatus = async () => {
             try {
-                const res = await fetchWithTimeout('http://localhost:8104/front-engine/status', {}, 3000)
-                if (res.ok) {
-                    setEngineStatus(await res.json())
-                    setConnectionError(false)
-                }
+                const controller = new AbortController()
+                const id = setTimeout(() => controller.abort(), 2000)
+                // Use unified endpoint for rich data
+                const res = await fetch('http://localhost:8104/unified', { signal: controller.signal })
+                clearTimeout(id)
+                if (res.ok) setUnifiedStatus(await res.json())
             } catch (e) {
-                // 연결 실패 시 상태 표시
-                setConnectionError(true)
+                // Silent fail
             }
         }
         fetchStatus()
-        const interval = setInterval(fetchStatus, 15000)  // 15초로 변경
+        const interval = setInterval(fetchStatus, 3000) // Faster poll for rhythm
         return () => clearInterval(interval)
     }, [])
 
@@ -236,197 +234,91 @@ export default function Home() {
         setLoading(true)
 
         try {
-            // Step 1: Front-Engine 분석 (10초 타임아웃)
-            let frontEngineResult: FrontEngineResult | null = null
-
-            try {
-                const feRes = await fetchWithTimeout('http://localhost:8104/front-engine/process', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ input: currentInput })
-                }, 10000)
-                if (feRes.ok) {
-                    frontEngineResult = await feRes.json()
-                }
-            } catch (e) {
-                console.warn('Front-Engine not available:', e)
-            }
-
-            // 프론트엔진 분석 결과가 실행 의미일 때 FSD 상태 표시
-            const fsdLikely = frontEngineResult && ['NAVIGATE', 'CREATE', 'MODIFY', 'VERIFY'].includes(frontEngineResult.meaning)
-            if (fsdLikely) {
-                if (fsdTimeoutRef.current) clearTimeout(fsdTimeoutRef.current)
-                setFsdStatus({
-                    active: true,
-                    goal: currentInput,
-                    step: 0,
-                    maxSteps: 20,
-                    message: 'FSD 실행 트리거됨'
-                })
-                fsdTimeoutRef.current = setTimeout(() => {
-                    setFsdStatus(prev => prev ? { ...prev, active: false, message: prev.message || 'FSD 상태 타임아웃' } : null)
-                }, 30000)
-            }
-
-            // Step 3: Chat 요청 (10초 타임아웃)
-            const response = await fetchWithTimeout('http://localhost:8104/chat', {
+            const response = await fetch('http://localhost:8104/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: currentInput })
-            }, 10000)
-
-            if (!response.ok) throw new Error('Network response was not ok')
+            })
 
             const data = await response.json()
-            const assistantMessage: Message = {
-                id: (Date.now() + 3).toString(),
-                type: 'assistant',
-                content: data.response || '응답을 받지 못했습니다.',
-                timestamp: new Date(),
-                rhythm: frontEngineResult?.rhythm,
-                emotion: frontEngineResult?.emotional_resonance,
-                model: frontEngineResult?.action?.selected_model,
-                meaning: frontEngineResult?.meaning
-            }
 
+            // Map status info to rhythm if available
+            let responseRhythm: 'urgent' | 'normal' | 'calm' = 'normal'
+            // We can infer rhythm from the model or detailed debug info if we had it.
+            // For now, we use the realtime status fear level at the moment of response.
+            responseRhythm = getRealtimeRhythm(unifiedStatus) as any
+
+            const assistantMessage: Message = {
+                id: (Date.now() + 1).toString(),
+                type: 'assistant',
+                content: data.response || '...',
+                timestamp: new Date(),
+                rhythm: responseRhythm
+            }
             setMessages(prev => [...prev, assistantMessage])
         } catch (error) {
-            const errorMessage: Message = {
-                id: (Date.now() + 1).toString(),
+            setMessages(prev => [...prev, {
+                id: Date.now().toString(),
                 type: 'system',
-                content: `⚠️ 오류: ${error instanceof Error ? error.message : '알 수 없는 오류'}`,
+                content: '연결이 불안정합니다.',
                 timestamp: new Date()
-            }
-            setMessages(prev => [...prev, errorMessage])
+            }])
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <div className="flex flex-col h-screen bg-trinity-bg">
-            {/* Status Bar */}
-            <StatusBar status={engineStatus} />
+        <div className="relative flex flex-col h-screen text-gray-100 overflow-hidden font-sans">
+            {/* Real-time Ambient Background */}
+            <AmbientBackground rhythm={realtimeRhythm} />
 
-            {/* 연결 오류 배너 */}
-            {connectionError && (
-                <div className="px-4 py-2 bg-trinity-warning/20 text-trinity-warning border-b border-trinity-warning/30 text-sm">
-                    백엔드 연결이 불안정합니다. 다시 시도 중...
-                </div>
-            )}
+            {/* Live Header */}
+            <Header status={unifiedStatus} />
 
-            {/* FSD 상태 패널 */}
-            <FSDPanel status={fsdStatus} visible={loading || !!fsdStatus?.active} />
+            {/* Chat Area */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+                {messages.map((m) => <ChatBubble key={m.id} message={m} />)}
 
-            {/* Chat Container */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Messages Area */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {messages.map((message) => (
-                        <div
-                            key={message.id}
-                            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                        >
-                            <div
-                                className={`max-w-[80%] rounded-2xl px-4 py-3 ${message.type === 'user'
-                                    ? 'bg-trinity-accent text-white'
-                                    : message.type === 'system'
-                                        ? 'bg-trinity-warning/20 text-trinity-warning border border-trinity-warning/30'
-                                        : message.type === 'action'
-                                            ? 'bg-trinity-success/10 text-trinity-success border border-trinity-success/30'
-                                            : `bg-trinity-panel text-gray-100 ${message.rhythm === 'urgent' ? 'border-l-2 border-trinity-urgent' :
-                                                message.rhythm === 'calm' ? 'border-l-2 border-trinity-calm' : ''
-                                            }`
-                                    }`}
-                            >
-                                <div className="text-sm whitespace-pre-wrap">{message.content}</div>
-
-                                {/* 실행 버튼 - action 타입일 때만 */}
-                                {message.type === 'action' && message.pendingActions && (
-                                    <div className="flex gap-2 mt-3">
-                                        {message.pendingActions.map((action, idx) => (
-                                            <button
-                                                key={idx}
-                                                onClick={async () => {
-                                                    try {
-                                                        const res = await fetch('http://localhost:8104/antigravity/execute', {
-                                                            method: 'POST',
-                                                            headers: { 'Content-Type': 'application/json' },
-                                                            body: JSON.stringify({
-                                                                action_type: action.type,
-                                                                target: action.target,
-                                                                params: action.params
-                                                            })
-                                                        })
-                                                        const result = await res.json()
-                                                        setMessages(prev => [...prev, {
-                                                            id: Date.now().toString(),
-                                                            type: 'system',
-                                                            content: result.success
-                                                                ? `✅ 실행됨: ${result.message}`
-                                                                : `❌ 실패: ${result.message}`,
-                                                            timestamp: new Date()
-                                                        }])
-                                                    } catch (e) {
-                                                        console.error('Execute error:', e)
-                                                    }
-                                                }}
-                                                className="px-3 py-1 bg-trinity-success/20 hover:bg-trinity-success/40 text-trinity-success rounded-lg text-xs font-medium transition-colors"
-                                            >
-                                                ▶ {action.type === 'open_app' ? action.target : action.type}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-
-                                <div className="flex items-center justify-between gap-2 mt-2">
-                                    <div className="flex items-center gap-2">
-                                        {(message.type === 'assistant' || message.type === 'action') && (
-                                            <>
-                                                <RhythmBadge rhythm={message.rhythm} />
-                                                <ModelBadge model={message.model} />
-                                            </>
-                                        )}
-                                    </div>
-                                    <div className="text-xs opacity-50" suppressHydrationWarning>
-                                        {message.timestamp.toLocaleTimeString('ko-KR')}
-                                    </div>
-                                </div>
-                            </div>
+                {loading && (
+                    <div className="flex justify-start animate-pulse mb-6">
+                        <div className="w-8 h-8 rounded-full bg-white/10 mr-3" />
+                        <div className="bg-white/5 rounded-2xl px-6 py-4 border border-white/5">
+                            <Loader2 className="w-5 h-5 animate-spin text-white/40" />
                         </div>
-                    ))}
-                    {loading && (
-                        <div className="flex justify-start">
-                            <div className="bg-trinity-panel rounded-2xl px-4 py-3">
-                                <Loader2 className="w-5 h-5 animate-spin text-trinity-accent" />
-                            </div>
-                        </div>
-                    )}
-                    <div ref={messagesEndRef} />
-                </div>
-
-                {/* Input Area */}
-                <form onSubmit={sendMessage} className="p-4 bg-trinity-panel/50 backdrop-blur-sm">
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="메시지를 입력하세요..."
-                            className="flex-1 bg-trinity-bg border border-trinity-accent/30 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-trinity-accent transition-colors"
-                            disabled={loading}
-                        />
-                        <button
-                            type="submit"
-                            disabled={loading || !input.trim()}
-                            className="bg-trinity-accent hover:bg-trinity-accent/80 disabled:bg-trinity-accent/30 text-white rounded-xl px-6 py-3 font-medium transition-all flex items-center gap-2"
-                        >
-                            <Send className="w-5 h-5" />
-                        </button>
                     </div>
+                )}
+                <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div className="p-4 sm:p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                <form onSubmit={sendMessage} className="relative max-w-4xl mx-auto group">
+                    <div className={`absolute -inset-0.5 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500
+                        ${realtimeRhythm === 'urgent' ? 'bg-red-500' : realtimeRhythm === 'calm' ? 'bg-emerald-500' : 'bg-blue-500'}
+                    `}></div>
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Trinity에게 신호 보내기..."
+                        className="relative w-full bg-[#0a0a0a]/90 border border-white/10 rounded-2xl pl-6 pr-14 py-4 text-base focus:outline-none focus:border-white/20 transition-all placeholder:text-white/20 shadow-2xl"
+                        disabled={loading}
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading || !input.trim()}
+                        className="absolute right-2 top-2 p-2 bg-white/5 hover:bg-white/15 text-white/80 hover:text-white rounded-xl disabled:opacity-30 transition-all"
+                    >
+                        <Send className="w-5 h-5" />
+                    </button>
                 </form>
             </div>
-            <FSDLiveMonitor />
+
+            {/* Hidden FSD Monitor */}
+            <div className="opacity-0 pointer-events-none hover:opacity-100 transition-opacity absolute top-20 right-4 z-50">
+                <FSDLiveMonitor />
+            </div>
         </div>
     )
 }

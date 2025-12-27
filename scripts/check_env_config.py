@@ -98,7 +98,7 @@ class EnvChecker:
             config["model"] = True
         else:
             print(
-                f"{YELLOW}⚠{RESET} Model: Not set (will use default: gemini-1.5-flash-002)"
+                f"{YELLOW}⚠{RESET} Model: Not set (will use default: gemini-2.5-flash)"
             )
             self.warnings.append(f"Consider setting one of: {', '.join(model_vars)}")
             config["model"] = False
@@ -171,6 +171,56 @@ class EnvChecker:
             )
             config["enabled"] = False
             config["configured"] = False
+
+        return config
+
+    def check_remote_vector_config(self) -> Dict[str, bool]:
+        """Remote vector store 설정 검증"""
+        print(f"\n{BOLD}{BLUE}🔍 Remote Vector Store Configuration{RESET}")
+        print("=" * 60)
+
+        config: Dict[str, bool] = {}
+        provider = os.getenv("AGI_REMOTE_VECTOR_PROVIDER", "").strip().lower()
+        if not provider:
+            print(f"{YELLOW}⚠{RESET} Remote Vector Store: Disabled (AGI_REMOTE_VECTOR_PROVIDER not set)")
+            self.info.append("Remote vector store disabled. Set AGI_REMOTE_VECTOR_PROVIDER to enable.")
+            config["enabled"] = False
+            return config
+
+        config["enabled"] = True
+        print(f"{GREEN}✓{RESET} Provider: {provider}")
+
+        if provider != "qdrant":
+            print(f"{RED}✗{RESET} Provider: Unsupported ({provider})")
+            self.issues.append(f"Unsupported AGI_REMOTE_VECTOR_PROVIDER: {provider}")
+            return config
+
+        url = os.getenv("AGI_REMOTE_VECTOR_URL") or os.getenv("QDRANT_URL")
+        if url:
+            print(f"{GREEN}✓{RESET} URL: {url}")
+            config["url"] = True
+        else:
+            print(f"{RED}✗{RESET} URL: Not set")
+            self.issues.append("Set AGI_REMOTE_VECTOR_URL or QDRANT_URL for remote vector store")
+            config["url"] = False
+
+        api_key = os.getenv("AGI_REMOTE_VECTOR_API_KEY") or os.getenv("QDRANT_API_KEY")
+        if api_key:
+            masked = api_key[:6] + "..." + api_key[-4:] if len(api_key) > 10 else "***"
+            print(f"{GREEN}✓{RESET} API Key: {masked}")
+            config["api_key"] = True
+        else:
+            print(f"{YELLOW}⚠{RESET} API Key: Not set (OK if server is open)")
+            config["api_key"] = False
+
+        collection = os.getenv("AGI_REMOTE_VECTOR_COLLECTION") or "agi_memory"
+        print(f"{GREEN}✓{RESET} Collection: {collection}")
+        config["collection"] = True
+
+        read_enabled = os.getenv("AGI_REMOTE_VECTOR_READ", "1").strip().lower() in ("1", "true", "yes", "on")
+        write_enabled = os.getenv("AGI_REMOTE_VECTOR_WRITE", "1").strip().lower() in ("1", "true", "yes", "on")
+        print(f"{GREEN}✓{RESET} Read Enabled: {read_enabled}")
+        print(f"{GREEN}✓{RESET} Write Enabled: {write_enabled}")
 
         return config
 
@@ -301,6 +351,7 @@ def main():
     checker.check_env_file()
     vertex_config = checker.check_vertex_ai_config()
     redis_config = checker.check_redis_config()
+    remote_config = checker.check_remote_vector_config()
     monitoring_config = checker.check_monitoring_config()
 
     # 요약 출력

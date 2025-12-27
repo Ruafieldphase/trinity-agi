@@ -1,16 +1,11 @@
 """
 AGI Sandbox Bridge
-Connects C:\workspace\agi autonomous systems to dev-playground sandbox.
-
-This module allows AGI to:
-1. Recognize when experimentation is needed
-2. Use sandbox for safe testing
-3. Learn from results
-4. Integrate validated improvements back to core
+Connects autonomous systems to dev-playground sandbox.
 """
 
 import sys
 from pathlib import Path
+from typing import Optional
 
 # Add sandbox to Python path
 SANDBOX_PATH = Path("C:/Users/kuirv/Documents/dev-playground/src/python")
@@ -25,16 +20,47 @@ except ImportError:
     print("⚠️ Sandbox not available - running without experimentation capability")
 
 
-class SandboxBridge:
-    """Bridge between AGI core and experimentation sandbox."""
+class ActivitySpaceManager:
+    """
+    Manages AGI Activity Spaces (Sandboxes).
+    In accordance with Rua's Structural Design:
+    - Focuses on 'Space Provision' rather than 'Blocking'.
+    - Provides different spaces based on RhythmMode Activation.
+    """
     
-    def __init__(self):
+    def __init__(self, workspace_root: Optional[Path] = None):
+        self.workspace_root = workspace_root or Path("c:/workspace/agi")
+        from agi_core.rhythm_boundaries import RhythmBoundaryManager, RhythmMode
+        self.boundary_manager = RhythmBoundaryManager(self.workspace_root)
+        
         if SANDBOX_AVAILABLE:
             self.sandbox = AGISandbox()
-            print("✅ AGI Sandbox connected")
+            self.learning_db = self.workspace_root / "memory" / "learning_log.jsonl"
+            print("✅ Activity Space Manager connected (Sandbox Provisioning Online)")
         else:
             self.sandbox = None
-            print("❌ Sandbox unavailable")
+            print("❌ Sandbox unavailable - Defaulting to restricted read-only space")
+    
+    def get_authorized_space(self, task_type: str) -> str:
+        """
+        Determines the appropriate space for a task based on current RhythmMode.
+        """
+        from agi_core.rhythm_boundaries import RhythmMode
+        mode = self.boundary_manager.detect_rhythm_mode()
+        
+        # 1. Connected (Baseline/Deep Inquiry) -> Observation Space
+        if mode == RhythmMode.CONNECTED:
+            return "READ_ONLY_INQUIRY"
+            
+        # 2. Isolated (Execution Force) -> Sandbox Execution Space
+        if mode == RhythmMode.ISOLATED_EXECUTION:
+            return "SANDBOX_EXECUTION"
+            
+        # 3. Reconnect (Exploration) -> Creative/Nature Space
+        if mode == RhythmMode.RECONNECT_SEARCH:
+            return "EXPLORATION_SANDBOX"
+            
+        return "RESTRICTED"
     
     def experiment_with_idea(self, idea_name: str, code: str, category: str = "learning"):
         """

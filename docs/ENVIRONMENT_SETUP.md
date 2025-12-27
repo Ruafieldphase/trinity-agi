@@ -25,7 +25,7 @@ GOOGLE_API_KEY=your-api-key
 
 # Vertex AI (선택사항)
 GCP_LOCATION=us-central1
-VERTEX_MODEL_GEMINI=gemini-1.5-flash-002
+VERTEX_MODEL_GEMINI=gemini-2.5-flash
 EMBEDDINGS_MODEL=text-embedding-004
 ```
 
@@ -52,7 +52,7 @@ python scripts/check_env_config.py --verbose
 | `GOOGLE_CLOUD_REGION` | ⚪ | - | GCP_LOCATION 별칭 |
 | `VERTEX_LOCATION` | ⚪ | - | GCP_LOCATION 별칭 |
 | `GOOGLE_API_KEY` | ⚪ | - | Google AI Studio API 키 (없으면 ADC 사용) |
-| `VERTEX_MODEL_GEMINI` | ⚪ | gemini-1.5-flash-002 | 사용할 Gemini 모델 |
+| `VERTEX_MODEL_GEMINI` | ⚪ | gemini-2.5-flash | 사용할 Gemini 모델 |
 | `GEMINI_MODEL` | ⚪ | - | VERTEX_MODEL_GEMINI 별칭 |
 | `EMBEDDINGS_MODEL` | ⚪ | text-embedding-004 | 임베딩 모델 |
 
@@ -65,6 +65,59 @@ python scripts/check_env_config.py --verbose
 | `REDIS_PORT` | ⚪ | 6379 | Redis 포트 |
 | `REDIS_DB` | ⚪ | 0 | Redis DB 번호 |
 | `REDIS_PASSWORD` | ⚪ | - | Redis 비밀번호 |
+
+### Remote Vector Store (Qdrant)
+
+| 변수 | 필수 | 기본값 | 설명 |
+|------|------|--------|------|
+| `AGI_REMOTE_VECTOR_PROVIDER` | ⚪ | - | 원격 벡터 스토어 제공자 (`qdrant`) |
+| `AGI_REMOTE_VECTOR_URL` | ⚪ | - | Qdrant URL (또는 `QDRANT_URL`) |
+| `AGI_REMOTE_VECTOR_API_KEY` | ⚪ | - | Qdrant API 키 (또는 `QDRANT_API_KEY`) |
+| `AGI_REMOTE_VECTOR_COLLECTION` | ⚪ | agi_memory | 컬렉션 이름 |
+| `AGI_REMOTE_VECTOR_READ` | ⚪ | true | 원격 검색 사용 여부 |
+| `AGI_REMOTE_VECTOR_WRITE` | ⚪ | true | 원격 인덱싱(미러) 여부 |
+| `AGI_REMOTE_VECTOR_TIMEOUT` | ⚪ | 10 | 요청 타임아웃(초) |
+
+### 자연 리듬(빛) 설정
+
+| 변수 | 필수 | 기본값 | 설명 |
+|------|------|--------|------|
+| `AGI_LIGHT_MODE` | ⚪ | fixed | `fixed`(고정 시간) / `sun`(일출·일몰) / `manual`(직접 지정) |
+| `AGI_LIGHT_DAY_START` | ⚪ | 7 | fixed 모드의 낮 시작 시각(시) |
+| `AGI_LIGHT_DAY_END` | ⚪ | 21 | fixed 모드의 낮 종료 시각(시) |
+| `AGI_LATITUDE` | ⚪ | - | sun 모드의 위도 |
+| `AGI_LONGITUDE` | ⚪ | - | sun 모드의 경도 |
+| `AGI_SUNRISE_LOCAL` | ⚪ | - | manual 모드의 일출 시각(HH:MM) |
+| `AGI_SUNSET_LOCAL` | ⚪ | - | manual 모드의 일몰 시각(HH:MM) |
+| `AGI_BIO_SHIFT_LIMIT_MIN` | ⚪ | 60 | 일일 위상 이동 한계(분) |
+| `AGI_SLEEP_PRESSURE_HOURS` | ⚪ | 16 | 수면 압력이 1.0에 도달하는 시간(시간) |
+| `AGI_MELATONIN_RAMP_MIN` | ⚪ | 180 | 멜라토닌 상승 램프(분) |
+| `AGI_MELATONIN_FADE_MIN` | ⚪ | 120 | 일출 전 멜라토닌 감소 램프(분) |
+
+### GUI 실행 정책
+
+| 변수 | 필수 | 기본값 | 설명 |
+|------|------|--------|------|
+| `AGI_GUI_POLICY` | ⚪ | - | `strict`(보수적) / `relaxed`(완화) / 미설정 시 자연 리듬 기반 자동 |
+
+### 채팅 라우팅
+
+| 변수 | 필수 | 기본값 | 설명 |
+|------|------|--------|------|
+| `AGI_CHAT_ROUTING` | ⚪ | ari | `ari` / `trinity` (미설정 시 `ari`) |
+
+메시지에 `ari:` 또는 `trinity:` 접두어가 있으면 해당 대상으로 강제 전송됩니다.
+
+### GUI 샌드박스(JSON)
+
+`outputs/safety/sandbox_latest.json`에 다음 필드를 추가하면 실행 범위를 공간(창)으로 제한할 수 있습니다.
+
+```json
+{
+  "allowed_actions": ["click", "type", "scroll", "hotkey"],
+  "allowed_window_titles": ["Chrome", "Google Chrome"]
+}
+```
 
 ### 모니터링 설정
 
@@ -107,7 +160,7 @@ GCP_LOCATION=us-central1
 REDIS_ENABLED=true
 REDIS_HOST=prod-redis.example.com
 REDIS_PASSWORD=${REDIS_PROD_PASSWORD}  # Secret Manager에서 주입
-VERTEX_MODEL_GEMINI=gemini-1.5-pro  # 더 강력한 모델 사용
+VERTEX_MODEL_GEMINI=gemini-2.5-pro  # 더 강력한 모델 사용
 ```
 
 ## 인증 설정

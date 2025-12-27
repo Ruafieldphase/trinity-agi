@@ -1,0 +1,47 @@
+{
+  "source": "youtube_channel",
+  "title": "김갑진 교수 - boundary intake",
+  "tags": [
+    "youtube",
+    "boundary",
+    "channel_learning"
+  ],
+  "notes": "아이의 뇌를 멈추게 하는 말 vs 아이의 뇌를 깨우는 말 | 존스홉킨스 지나영 교수 | ADHD 자녀 양육 훈육 사랑 | 잠바시 7회 | tone=명상적 | 완벽한 부모가 되어야 한다는 착각을 내려놓고 자신을 '충분히 괜찮은 부모'로 받아들이세요. 이를 통해 육아의 본질에 집중하며 아이와 부모 모두에게 평화로운 성장을 선물할 수 있습니다.",
+  "timestamp": 1766371782.3519657,
+  "where": {
+    "platform": "windows",
+    "layer": "youtube_channel_boundary_intake"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "개인정보/계정/비밀번호/토큰/키 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "대용량 원문 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "allow",
+      "text": "느낌(저비용)으로 스캔하고 경계에서만 고비용 연산"
+    },
+    {
+      "polarity": "caution",
+      "text": "경계 패턴이 반복될 때만 개념을 추가(과잉 일반화 금지)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존"
+    }
+  ],
+  "comparisons": [],
+  "meta": {
+    "channel_name": "김갑진 교수",
+    "channel_id": "UCgheNMc3gGHLsT-RISdCzDQ",
+    "video_id": "HXlpcg2OOZc"
+  }
+}

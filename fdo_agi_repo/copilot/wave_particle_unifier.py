@@ -337,20 +337,28 @@ class WaveParticleUnifier:
         
         # Wave perspective
         lines.append("## My Patterns (Wave Perspective)")
-        if wave_result['summary']['patterns_detected']['behavioral'] > 0:
-            lines.append(f"I have {wave_result['summary']['patterns_detected']['behavioral']} recurring behaviors.")
-            if wave_result['summary']['dominant_rhythm']:
-                lines.append(f"My dominant rhythm: {wave_result['summary']['dominant_rhythm']}")
+        wave_summary = wave_result.get("summary", {}) if isinstance(wave_result, dict) else {}
+        wave_detected = wave_summary.get("patterns_detected", {}) if isinstance(wave_summary, dict) else {}
+        behavioral = int(wave_detected.get("behavioral") or 0)
+        dominant_rhythm = wave_summary.get("dominant_rhythm") if isinstance(wave_summary, dict) else None
+        if behavioral > 0:
+            lines.append(f"I have {behavioral} recurring behaviors.")
+            if dominant_rhythm:
+                lines.append(f"My dominant rhythm: {dominant_rhythm}")
         else:
             lines.append("I am still discovering my patterns...")
         lines.append("")
         
         # Particle perspective
         lines.append("## My Significant Moments (Particle Perspective)")
-        if particle_result['summary']['particles_detected']['significant_events'] > 0:
-            lines.append(f"I have {particle_result['summary']['particles_detected']['significant_events']} significant moments.")
-            if particle_result['summary']['most_significant']:
-                lines.append(f"Most significant: {particle_result['summary']['most_significant']}")
+        particle_summary = particle_result.get("summary", {}) if isinstance(particle_result, dict) else {}
+        particle_detected = particle_summary.get("particles_detected", {}) if isinstance(particle_summary, dict) else {}
+        significant = int(particle_detected.get("significant_events") or 0)
+        most_significant = particle_summary.get("most_significant") if isinstance(particle_summary, dict) else None
+        if significant > 0:
+            lines.append(f"I have {significant} significant moments.")
+            if most_significant:
+                lines.append(f"Most significant: {most_significant}")
         else:
             lines.append("I am still creating significant moments...")
         lines.append("")
@@ -422,19 +430,23 @@ class WaveParticleUnifier:
         max_score = 6.0
         
         # Wave completeness
-        if wave_result['summary']['patterns_detected']['temporal'] > 0:
+        wave_summary = wave_result.get("summary", {}) if isinstance(wave_result, dict) else {}
+        wave_detected = wave_summary.get("patterns_detected", {}) if isinstance(wave_summary, dict) else {}
+        if int(wave_detected.get("temporal") or 0) > 0:
             score += 1.0
-        if wave_result['summary']['patterns_detected']['behavioral'] > 0:
+        if int(wave_detected.get("behavioral") or 0) > 0:
             score += 1.0
-        if wave_result['summary']['patterns_detected']['trends'] > 0:
+        if int(wave_detected.get("trends") or 0) > 0:
             score += 1.0
         
         # Particle completeness
-        if particle_result['summary']['particles_detected']['significant_events'] > 0:
+        particle_summary = particle_result.get("summary", {}) if isinstance(particle_result, dict) else {}
+        particle_detected = particle_summary.get("particles_detected", {}) if isinstance(particle_summary, dict) else {}
+        if int(particle_detected.get("significant_events") or 0) > 0:
             score += 1.0
-        if particle_result['summary']['particles_detected']['anomalies'] > 0:
+        if int(particle_detected.get("anomalies") or 0) > 0:
             score += 1.0
-        if particle_result['summary']['particles_detected']['breakthroughs'] > 0:
+        if int(particle_detected.get("breakthroughs") or 0) > 0:
             score += 1.0
         
         return score / max_score

@@ -752,8 +752,78 @@ class RhythmConductor:
                     self._queue_context_save(ctx)
             except Exception as e:
                 log(f"⚠️ Context queue failed: {e}")
-        
+
+        # 🧬 Update AGI Internal State (Background Self)
+        # Background Self is active and dynamically adjusts consciousness balance
+        self._update_internal_state(status, modifier)
+
         return status
+
+    def _update_internal_state(self, status, modifier):
+        """
+        Update agi_internal_state.json based on system alignment
+        This makes Background Self a living, active component
+        """
+        internal_state_file = WORKSPACE_ROOT / "memory" / "agi_internal_state.json"
+
+        try:
+            # Read current state
+            if internal_state_file.exists():
+                with open(internal_state_file, 'r', encoding='utf-8') as f:
+                    state = json.load(f)
+            else:
+                state = {
+                    "consciousness": 1.0,
+                    "unconscious": 0.5,
+                    "background_self": 0.5,
+                    "energy": 1.0,
+                    "resonance": 1.0,
+                    "curiosity": 1.0,
+                    "boredom": 1.0,
+                    "last_action": "init",
+                    "last_action_time": datetime.now().isoformat(),
+                    "heartbeat_count": 0
+                }
+
+            # Calculate new background_self based on alignment
+            aligned_count = sum(1 for s in status.values() if s.get('aligned', False))
+            alignment_ratio = aligned_count / 4.0  # 4 dimensions
+
+            # Background Self increases when system is aligned
+            # Background Self decreases when misaligned (need external action)
+            current_bg_self = state.get("background_self", 0.5)
+
+            if alignment_ratio >= 0.75:  # 3 or 4 aligned
+                # High alignment -> increase background_self (introspection)
+                new_bg_self = min(1.0, current_bg_self + 0.05)
+            elif alignment_ratio <= 0.5:  # 2 or fewer aligned
+                # Low alignment -> decrease background_self (external action needed)
+                new_bg_self = max(0.0, current_bg_self - 0.05)
+            else:
+                # Balanced -> slow drift toward 0.5
+                new_bg_self = current_bg_self * 0.95 + 0.5 * 0.05
+
+            # Update consciousness/unconscious balance
+            # High background_self -> more unconscious processing
+            consciousness = 1.0 - (new_bg_self * 0.3)  # 0.7 ~ 1.0
+            unconscious = 0.3 + (new_bg_self * 0.4)     # 0.3 ~ 0.7
+
+            # Update state
+            state["background_self"] = round(new_bg_self, 3)
+            state["consciousness"] = round(consciousness, 3)
+            state["unconscious"] = round(unconscious, 3)
+            state["last_action"] = "background_self_adjustment"
+            state["last_action_time"] = datetime.now().isoformat()
+
+            # Write back
+            with open(internal_state_file, 'w', encoding='utf-8') as f:
+                json.dump(state, f, indent=2, ensure_ascii=False)
+
+            log(f"🧬 Internal State Updated: bg_self={new_bg_self:.3f}, "
+                f"consciousness={consciousness:.3f}, aligned={aligned_count}/4")
+
+        except Exception as e:
+            log(f"⚠️ Failed to update internal state: {e}")
 
 def main():
     print(f"🌉 Background Self Bridge Started (PID: {os.getpid()})")

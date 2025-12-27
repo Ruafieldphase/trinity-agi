@@ -40,6 +40,17 @@ class OBSLearner:
         
         # API Key 설정 (환경변수 또는 하드코딩된 값 확인)
         # 실제 환경에서는 os.environ["GOOGLE_API_KEY"]가 설정되어 있어야 함
+        api_key = (
+            os.getenv("GOOGLE_API_KEY")
+            or os.getenv("GENAI_API_KEY")
+            or os.getenv("GEMINI_API_KEY")
+            or ""
+        ).strip()
+        if api_key:
+            try:
+                genai.configure(api_key=api_key)
+            except Exception:
+                pass
         
     def _load_processed_log(self) -> List[str]:
         """처리된 파일 목록 로드"""
@@ -123,7 +134,12 @@ class OBSLearner:
                 return None
             
             # 2. Send frames to Gemini
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model_name = (
+                os.getenv("GEMINI_FAST_MODEL")
+                or os.getenv("GEMINI_MODEL")
+                or "gemini-2.5-flash"
+            )
+            model = genai.GenerativeModel(model_name)
             
             prompt = """
             Analyze the user's desktop actions in these screenshots to teach an AI automation agent.

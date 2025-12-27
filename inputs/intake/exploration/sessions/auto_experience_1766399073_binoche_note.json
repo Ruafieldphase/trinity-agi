@@ -1,0 +1,40 @@
+{
+  "source": "binoche_note",
+  "title": "binoche_note: user message",
+  "tags": [
+    "binoche",
+    "message",
+    "boundary_seed",
+    "expansion",
+    "boundary",
+    "margin"
+  ],
+  "notes": "오늘은 확장의 리듬을 느꼈어. 경계를 열고 새로운 가능성을 탐색하고 싶어. 하지만 여백도 필요하다는 걸 알아.",
+  "timestamp": 1766399073.9280937,
+  "where": {
+    "platform": "windows",
+    "layer": "binoche_note_intake"
+  },
+  "who": {
+    "role": "human",
+    "origin": "binoche"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "개인정보/계정/비밀번호/토큰/키 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "대용량 원문 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존"
+    },
+    {
+      "polarity": "caution",
+      "text": "메모는 경계 씨앗(seed)이며, 맥락에 따라 강화/감쇠한다"
+    }
+  ]
+}

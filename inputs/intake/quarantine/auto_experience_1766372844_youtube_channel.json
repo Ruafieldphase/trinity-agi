@@ -1,0 +1,51 @@
+{
+  "source": "youtube_channel",
+  "title": "김갑진 교수 - boundary intake",
+  "tags": [
+    "youtube",
+    "boundary",
+    "channel_learning",
+    "compressed"
+  ],
+  "notes": "세바시 청소년캠프 15기, 중학생 60명선착순 모집! | 방학∙진로∙리더십∙세바시 캠프 | tone=활기찬 | duration=110s | COMPRESSED | 세바시 청소년 캠프는 중학생들이 자신의 잠재력을 발견하고, 주체적으로 성장하며, 용기 있게 자신을 표현할 수 있는 인생의 중요한 전환점을 제공합니다.",
+  "timestamp": 1766372844.8180122,
+  "where": {
+    "platform": "windows",
+    "layer": "youtube_channel_boundary_intake"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "개인정보/계정/비밀번호/토큰/키 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "대용량 원문 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "allow",
+      "text": "느낌(저비용)으로 스캔하고 경계에서만 고비용 연산"
+    },
+    {
+      "polarity": "caution",
+      "text": "경계 패턴이 반복될 때만 개념을 추가(과잉 일반화 금지)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존"
+    }
+  ],
+  "comparisons": [],
+  "meta": {
+    "channel_name": "김갑진 교수",
+    "channel_id": "UCgheNMc3gGHLsT-RISdCzDQ",
+    "video_id": "3xdv3h5xzE8",
+    "duration_sec": 110.0,
+    "compression_mode": "COMPRESSED",
+    "presentation_form": "UNKNOWN"
+  }
+}

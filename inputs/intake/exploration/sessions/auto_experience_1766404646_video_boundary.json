@@ -1,0 +1,45 @@
+{
+  "source": "obs_recode_video",
+  "title": "video boundary gate",
+  "tags": [
+    "video",
+    "boundary",
+    "cpu_gate",
+    "obs_recode"
+  ],
+  "notes": "feeling-scan(last 180s, step 6s) → cpu on similar boundaries only; selected=6",
+  "timestamp": 1766404646.969133,
+  "where": {
+    "platform": "windows",
+    "layer": "video_boundary_gate"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "프레임/텍스트 원문 저장 금지(해시/통계만)"
+    },
+    {
+      "polarity": "deny",
+      "text": "PII/계정/비밀번호/토큰 추출 금지"
+    },
+    {
+      "polarity": "allow",
+      "text": "느낌(저비용)→경계 유사 장면에서만 CPU 연산"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼은 정상 생존"
+    }
+  ],
+  "comparisons": [],
+  "meta": {
+    "video_basename": "2025-12-22 12-40-54.mp4",
+    "video_sig": "4a3c9183095299bc",
+    "safety": "PROCEED",
+    "rest_gate": "OK"
+  }
+}

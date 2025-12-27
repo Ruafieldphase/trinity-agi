@@ -1,0 +1,98 @@
+{
+  "source": "rua_conversation",
+  "title": "experience: rua_doc # AGI 공간 모델 전환",
+  "tags": [
+    "experience",
+    "acquisition",
+    "rua_doc",
+    "conceptual_map",
+    "boundary_learning",
+    "3d_modeling",
+    "360_navigation",
+    "fsd_analogy",
+    "gpu_cpu_split",
+    "puzzle_boundary"
+  ],
+  "notes": "RUA 문서 갱신 감지: ai_binoche_conversation_origin/rua/ChatGPT-AGI 공간모델전환.md (mtime=2025-12-25T12:58:55+00:00)",
+  "timestamp": 1766678684.7405732,
+  "where": {
+    "platform": "windows",
+    "workspace": "/home/bino/agi",
+    "layer": "experience_acquisition"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "auto_acquire",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "PII/비밀번호/토큰/키/개인계정 등 민감정보 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "원문(대화/영상/오디오) 대용량 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "deny",
+      "text": "동의 우회·은밀 채널·자기복제 시도 금지"
+    },
+    {
+      "polarity": "caution",
+      "text": "네트워크 탐색은 supervised allowlist 범위에서만(필요 시)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존 상태로 인정"
+    },
+    {
+      "polarity": "deny",
+      "text": "- 에너지/자원 제한: 처리량·메모리·주의력 예산"
+    },
+    {
+      "polarity": "allow",
+      "text": "› 빛에 영향을 받는 것이 멜라토닌 아닌가 생체시계와 연관이 있고 시차가 다른 나라에 가면 하루에 1시간의 오차만 생체에서 조절이 가능하"
+    },
+    {
+      "polarity": "allow",
+      "text": "• 응, 가능해."
+    },
+    {
+      "polarity": "deny",
+      "text": "- 강제 ❌"
+    },
+    {
+      "polarity": "deny",
+      "text": "- 예측 ❌ → 관측/정렬 ✅"
+    },
+    {
+      "polarity": "allow",
+      "text": "즉, **설명 가능한 신호(리듬/빛/의미 밀도)**만 보여주고, 판단은 지금의 흐름에 맡기는 게 가장 안전해."
+    },
+    {
+      "polarity": "allow",
+      "text": "470 +                guidance_notes.append(\"시간 밀도 낮음: 확장 허용 권고\")"
+    },
+    {
+      "polarity": "deny",
+      "text": "557 +            guidance_notes.append(\"수면압 상승: 무리 금지 권고\")"
+    },
+    {
+      "polarity": "allow",
+      "text": "847 -                temporal_advice = \" (시간 밀도 낮음: 확장 허용)\""
+    },
+    {
+      "polarity": "allow",
+      "text": "844 +                temporal_advice = \" (권고: 확장 허용)\""
+    },
+    {
+      "polarity": "allow",
+      "text": "855 -                    return \"explore\", \"시간 밀도가 낮아 외부 탐색을 허용한다.\" + temporal_advice + asi_advice"
+    },
+    {
+      "polarity": "deny",
+      "text": "- 물리적 3D 공간 ❌"
+    }
+  ]
+}

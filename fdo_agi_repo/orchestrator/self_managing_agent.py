@@ -256,15 +256,32 @@ class SelfManagingAgent:
             dep_status["health_ok"] = self.check_http_health(config["health_url"])
         
         # 4. 자동 수정 시도
+        # 4. 자동 수정 시도
         if self.auto_fix and dep_status["critical"]:
             # 예약 작업 미등록 시 등록 시도
-            if "scheduled_task" in config and config["scheduled_task"] and not dep_status["scheduled_task_registered"]:
-                if "register_script" in config:
-                    success = self.register_scheduled_task(dep_name, config["register_script"])
-                    if success:
-                        dep_status["scheduled_task_registered"] = True
+            if "scheduled_task" in config and config["scheduled_task"]:
+                if not dep_status["scheduled_task_registered"]:
+                    if "register_script" in config:
+                        success = self.register_scheduled_task(dep_name, config["register_script"])
+                        if success:
+                            dep_status["scheduled_task_registered"] = True
+                            dep_status["auto_fixed"] = True
+                
+                # 예약 작업이 비활성화된 경우 활성화 시도
+                elif dep_status["scheduled_task_state"] == "Disabled":
+                    self.log(f"Enabling disabled task {config['scheduled_task']}...", "ACTION")
+                    try:
+                        subprocess.run(
+                            ["powershell", "-NoProfile", "-Command", 
+                             f"Enable-ScheduledTask -TaskName '{config['scheduled_task']}'"],
+                            check=True
+                        )
+                        self.log(f"Successfully enabled {config['scheduled_task']}", "SUCCESS")
+                        dep_status["scheduled_task_state"] = "Ready"
                         dep_status["auto_fixed"] = True
-            
+                    except Exception as e:
+                        self.log(f"Failed to enable task {config['scheduled_task']}: {e}", "ERROR")
+
             # 프로세스 미실행 시 시작 시도
             if "start_script" in config and config["start_script"] and not dep_status["process_running"]:
                 success = self.start_dependency(dep_name, config["start_script"])

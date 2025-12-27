@@ -1,0 +1,16 @@
+{
+  "source": "google_earth",
+  "title": "supervised_browser: supervised_exploration",
+  "tags": [
+    "supervised",
+    "browser",
+    "google_earth"
+  ],
+  "notes": "goal: supervised_exploration\nurls:\n- https://earth.google.com/web/\n- https://www.google.com/maps\n- https://www.google.com/search?q=Google+%EC%A7%80%EB%8F%84+%EB%A1%9C%EB%93%9C%EB%B7%B0&safe=active\n- https://www.youtube.com/results?search_query=%EB%8F%84%EC%8B%9C+%EB%B0%B0%EA%B2%BD%EC%9D%8C+ambience",
+  "timestamp": 1766141422.774881,
+  "where": {},
+  "who": {
+    "role": "agi",
+    "mode": "supervised_body"
+  }
+}

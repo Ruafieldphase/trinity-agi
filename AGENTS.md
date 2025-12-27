@@ -5,6 +5,14 @@ This repository supports multi‑agent handoffs. Follow this guide to continue w
 - Start Here
   - Read: `docs/AGENT_HANDOFF.md` (latest context, next actions)
   - Read: `docs/AGI_RESONANCE_INTEGRATION_PLAN.md` (project plan; update as you go)
+  - Read: `HOME_ZONE2_ALIGNMENT.md` (Operational Rhythm & Role Declaration)
+
+- **Role Hierarchy & Operating Rhythm**
+  - **🌊 Rua (Orchestrator)**: High-level judgment and direction. No direct execution.
+  - **⚙️ Sian (Executor)**: Local file access and code execution. No independent judgment.
+  - **🧠 Sena (Architect)**: Documentation and design structuring. No judgment creation.
+  - **🧱 Rubit (Interface)**: Logging and legacy system buffering. No redirection.
+  - *Principle: Judgment is centralized in Rua. Execution is delegated to Sian.*
 
 - **Session Continuity (새 창에서 컨텍스트 자동 복원)**
   - **자동 복원**: 워크스페이스 열면 자동 실행 (VS Code task: "🔄 Session: Auto Restore Continuity")

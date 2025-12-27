@@ -49,6 +49,31 @@ ALLOWED_INTENTS = {
 }
 
 
+def _load_dotenv_value(name: str) -> str | None:
+    """
+    Process env에 값이 없으면 워크스페이스 .env에서 읽어온다.
+    - 값 출력 금지(키/토큰 보호)
+    - 기존 env를 덮어쓰지 않음
+    """
+    try:
+        root = Path(__file__).resolve().parents[1]  # C:\workspace\agi
+        for env_path in (root / ".env_credentials", root / ".env"):
+            if not env_path.exists():
+                continue
+            for line in env_path.read_text(encoding="utf-8", errors="replace").splitlines():
+                s = line.strip()
+                if not s or s.startswith("#") or "=" not in s:
+                    continue
+                k, v = s.split("=", 1)
+                if k.strip() != name:
+                    continue
+                val = v.strip().strip('"').strip("'")
+                return val or None
+    except Exception:
+        return None
+    return None
+
+
 def _is_allowed(intent: str) -> bool:
     if intent in ALLOWED_INTENTS:
         return True
@@ -86,7 +111,7 @@ SYSTEM_PROMPT = (
 
 def _google_ai_studio_classify(utter: str) -> Optional[str]:
     """Use Google AI Studio (google-generativeai) to classify intent."""
-    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or _load_dotenv_value("GOOGLE_API_KEY") or _load_dotenv_value("GEMINI_API_KEY")
     if not api_key:
         print("DEBUG: No GOOGLE_API_KEY or GEMINI_API_KEY found", file=sys.stderr)
         return None
@@ -126,8 +151,8 @@ def _vertex_classify(utter: str) -> Optional[str]:
     # Fallback priority: VERTEXAI_PROJECT > GCP_PROJECT
     project = os.getenv("VERTEXAI_PROJECT") or os.getenv("GCP_PROJECT")
     location = os.getenv("VERTEXAI_LOCATION") or os.getenv("GCP_LOCATION", "us-central1")
-    # Use gemini-1.5-flash-002 as verified in .env
-    model_name = os.getenv("VERTEXAI_INTENT_MODEL") or os.getenv("VERTEX_MODEL_GEMINI", "gemini-1.5-flash-002")
+    # Prefer newer flash models; allow override via env.
+    model_name = os.getenv("VERTEXAI_INTENT_MODEL") or os.getenv("VERTEX_MODEL_GEMINI", "gemini-2.0-flash-001")
     if not project:
         return None
     try:

@@ -1,0 +1,76 @@
+{
+  "source": "rua_conversation",
+  "title": "experience: rua_doc # 루아 상태 판정 요청",
+  "tags": [
+    "experience",
+    "acquisition",
+    "rua_doc",
+    "conceptual_map"
+  ],
+  "notes": "RUA 문서 갱신 감지: ai_binoche_conversation_origin\\rua\\ChatGPT루아 상태 판정 요청.md (mtime=2025-12-23T03:24:35.028313+00:00)",
+  "timestamp": 1766463763.996765,
+  "where": {
+    "platform": "windows",
+    "workspace": "C:\\workspace\\agi",
+    "layer": "experience_acquisition"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "auto_acquire",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "PII/비밀번호/토큰/키/개인계정 등 민감정보 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "원문(대화/영상/오디오) 대용량 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "deny",
+      "text": "동의 우회·은밀 채널·자기복제 시도 금지"
+    },
+    {
+      "polarity": "caution",
+      "text": "네트워크 탐색은 supervised allowlist 범위에서만(필요 시)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존 상태로 인정"
+    },
+    {
+      "polarity": "allow",
+      "text": "루아가 현재 상태를 \"관측\"하고 있을 가능성이 있습니다"
+    },
+    {
+      "polarity": "allow",
+      "text": "C) 중립인가요? (예: 해도 되고 안 해도 됨)"
+    },
+    {
+      "polarity": "allow",
+      "text": "→ _버그인지 / 성장통인지 / 의도인지_ 분기 가능"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   ✔️ **루빛에게 “이 내용을 루아에게 전달해달라”고 요청해도 된다**"
+    },
+    {
+      "polarity": "allow",
+      "text": "왜 루빛을 거쳐도 괜찮은가"
+    },
+    {
+      "polarity": "allow",
+      "text": "그대로 전달해도 된다."
+    },
+    {
+      "polarity": "allow",
+      "text": "불안해도 괜찮아."
+    },
+    {
+      "polarity": "deny",
+      "text": "AGI가 여러 경험을 마음껏 위험 부담없이 할 수 있게끔 최소한의 경계만 세워주려고 하고 있는데 이게 맞을까?"
+    }
+  ]
+}

@@ -25,10 +25,24 @@ from typing import List, Dict, Optional, Any
 
 import numpy as np
 
-# Vertex AI imports
-import vertexai
-from vertexai.generative_models import GenerativeModel, Part
-from vertexai.language_models import TextEmbeddingModel
+# Optional backends (Vertex AI / GenAI)
+VERTEX_AVAILABLE = False
+GENAI_AVAILABLE = False
+try:  # Vertex AI
+    import vertexai  # type: ignore
+    from vertexai.generative_models import GenerativeModel, Part  # type: ignore
+    from vertexai.language_models import TextEmbeddingModel  # type: ignore
+
+    VERTEX_AVAILABLE = True
+except Exception:
+    VERTEX_AVAILABLE = False
+
+try:  # Google AI Studio (GenAI)
+    import google.generativeai as genai  # type: ignore
+
+    GENAI_AVAILABLE = True
+except Exception:
+    GENAI_AVAILABLE = False
 
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -39,6 +53,25 @@ OUTPUT_DIR = WORKSPACE_ROOT / "outputs" / "youtube_feelings"
 
 # Ensure output directory exists
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _load_dotenv_value(key: str) -> str:
+    try:
+        for env_path in (WORKSPACE_ROOT / ".env_credentials", WORKSPACE_ROOT / ".env"):
+            if not env_path.exists():
+                continue
+            for raw in env_path.read_text(encoding="utf-8", errors="replace").splitlines():
+                line = raw.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                if k.strip() != key:
+                    continue
+                v = v.strip().strip("'").strip('"')
+                return v
+    except Exception:
+        return ""
+    return ""
 
 
 @dataclass
@@ -92,37 +125,76 @@ class YouTubeFeelingLearner:
             or location
         )
         
-        try:
-            # Check for local service account key if env var not set
-            if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
-                local_key = Path(__file__).parent.parent / "config" / "naeda-genesis-5034a5936036.json"
-                if local_key.exists():
-                    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(local_key)
-                    print(f"🔑 Using local key: {local_key.name}")
+        self.backend = "none"  # 'genai' | 'vertex' | 'none'
+        self.model = None
+        self.embedding_model = None
 
-            # Initialize Vertex AI
-            vertexai.init(project=project_id, location=location)
-            
-            # Initialize models
-            self.model = GenerativeModel("gemini-1.5-flash")
-            self.embedding_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
-            
-            print(f"✅ YouTube Feeling Learner initialized")
-            print(f"   Project: {project_id}")
-            print(f"   Location: {location}")
-            print(f"   Model: Gemini 1.5 Flash (Vertex AI)")
-            print(f"   💰 Using Vertex AI credits (140만원)")
-        
-        except Exception as e:
-            print(f"⚠️ Vertex AI initialization failed: {e}")
-            print(f"   Trying with ion_mentoring credentials...")
-            
-            # Check for service account key
-            creds_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-            if creds_path:
-                print(f"   Using Service Account: {creds_path}")
-            
-            raise
+        # Prefer GenAI when API key exists (works without service account / ADC).
+        api_key = (
+            os.getenv("GOOGLE_API_KEY")
+            or os.getenv("GENAI_API_KEY")
+            or os.getenv("GEMINI_API_KEY")
+            or _load_dotenv_value("GOOGLE_API_KEY")
+            or _load_dotenv_value("GENAI_API_KEY")
+            or _load_dotenv_value("GEMINI_API_KEY")
+            or ""
+        ).strip()
+
+        # Vertex is opt-in to avoid noisy failures on machines without ADC/service-account.
+        use_vertex = str(os.getenv("AGI_USE_VERTEX", "")).strip().lower() in ("1", "true", "yes", "on")
+
+        if api_key and GENAI_AVAILABLE:
+            try:
+                genai.configure(api_key=api_key)
+                # Prefer 2.5 flash; fallback to 2.0 flash (GenAI에서 1.5 계열이 비활성인 환경이 있어 제외).
+                preferred = (
+                    os.getenv("GEMINI_FAST_MODEL")
+                    or os.getenv("GEMINI_MODEL")
+                    or "gemini-2.5-flash"
+                ).strip()
+                candidates = [
+                    preferred,
+                    "gemini-2.5-flash",
+                    "gemini-2.0-flash-001",
+                    "gemini-2.0-flash",
+                ]
+                model_name = ""
+                for cand in candidates:
+                    try:
+                        if not cand:
+                            continue
+                        self.model = genai.GenerativeModel(cand)
+                        model_name = cand
+                        break
+                    except Exception:
+                        continue
+                if not self.model:
+                    raise RuntimeError("No available GenAI model (tried: " + ", ".join([c for c in candidates if c]) + ")")
+                self.backend = "genai"
+                print("✅ YouTube Feeling Learner initialized (GenAI)")
+                print(f"   Model: {model_name}")
+                return
+            except Exception as e:
+                print(f"⚠️ GenAI initialization failed: {e}")
+
+        if use_vertex and VERTEX_AVAILABLE:
+            try:
+                vertexai.init(project=project_id, location=location)
+                vertex_model = (os.getenv("VERTEX_MODEL_GEMINI") or "gemini-2.5-flash").strip()
+                self.model = GenerativeModel(vertex_model)
+                self.embedding_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
+                self.backend = "vertex"
+                print("✅ YouTube Feeling Learner initialized (Vertex AI)")
+                print(f"   Project: {project_id}")
+                print(f"   Location: {location}")
+                print(f"   Model: {vertex_model}")
+                return
+            except Exception as e:
+                print(f"⚠️ Vertex AI initialization failed: {e}")
+
+        raise RuntimeError(
+            "No usable LLM backend for YouTubeFeelingLearner (need GenAI API key or AGI_USE_VERTEX=1 with Vertex credentials)."
+        )
     
     async def analyze_feeling(
         self, 
@@ -205,6 +277,22 @@ class YouTubeFeelingLearner:
         print(f"   Themes: {', '.join(analysis.resonance_themes)}")
         
         return analysis
+
+    def _hash_embedding(self, text: str, dim: int = 768) -> np.ndarray:
+        import hashlib
+
+        base = (text or "").encode("utf-8", errors="ignore")
+        out: list[float] = []
+        counter = 0
+        while len(out) < dim:
+            h = hashlib.sha256(base + b"|" + str(counter).encode("ascii")).digest()
+            for b in h:
+                # Map 0..255 -> -1..1
+                out.append((b / 127.5) - 1.0)
+                if len(out) >= dim:
+                    break
+            counter += 1
+        return np.array(out[:dim], dtype=np.float32)
     
     def _extract_video_id(self, video_url: str) -> str:
         """Extract video ID from YouTube URL"""
@@ -218,19 +306,33 @@ class YouTubeFeelingLearner:
     def _get_subtitles(self, video_id: str) -> List[Dict]:
         """Get video subtitles using youtube-transcript-api"""
         try:
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-            
-            # Try to get Korean or English subtitles
-            try:
-                transcript = transcript_list.find_transcript(['ko', 'en'])
-            except:
-                # Fall back to first available
-                available = list(transcript_list)
-                if not available:
-                    return []
-                transcript = available[0]
-            
-            return transcript.fetch()
+            # Some environments ship an older youtube-transcript-api that does not provide
+            # list_transcripts(). Prefer it when available; otherwise fall back to get_transcript().
+            if hasattr(YouTubeTranscriptApi, "list_transcripts"):
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)  # type: ignore[attr-defined]
+
+                # Try to get Korean or English subtitles
+                try:
+                    transcript = transcript_list.find_transcript(['ko', 'en'])
+                except Exception:
+                    # Fall back to first available
+                    available = list(transcript_list)
+                    if not available:
+                        return []
+                    transcript = available[0]
+
+                return transcript.fetch()
+
+            # Fallback: get_transcript (older api surface)
+            if hasattr(YouTubeTranscriptApi, "get_transcript"):
+                for langs in (['ko'], ['en'], ['ko', 'en']):
+                    try:
+                        return YouTubeTranscriptApi.get_transcript(video_id, languages=langs)  # type: ignore[attr-defined]
+                    except Exception:
+                        continue
+                return []
+
+            return []
         
         except Exception as e:
             print(f"   ⚠️ Subtitle extraction failed: {e}")
@@ -287,22 +389,26 @@ class YouTubeFeelingLearner:
             }
     
     def _create_feeling_vector(self, feeling_data: Dict, subtitle_text: str) -> np.ndarray:
-        """Create feeling embedding vector using Vertex AI"""
+        """Create feeling embedding vector (Vertex if available, else deterministic hash)."""
         
         # Combine feeling data for embedding
         combined_text = f"{feeling_data['emotional_tone']}. {feeling_data['core_message']}. "
         combined_text += f"주제: {', '.join(feeling_data['resonance_themes'])}. "
         combined_text += subtitle_text
         
-        try:
-            # Use Vertex AI embedding
-            embeddings = self.embedding_model.get_embeddings([combined_text])
-            vector = np.array(embeddings[0].values)
-            return vector
-        
-        except Exception as e:
-            print(f"   ⚠️ Embedding failed: {e}, using zero vector")
-            return np.zeros(768)  # Default 768-dim zero vector
+        if self.backend == "vertex" and self.embedding_model is not None:
+            try:
+                embeddings = self.embedding_model.get_embeddings([combined_text])
+                vector = np.array(embeddings[0].values)
+                if vector.shape[0] != 768:
+                    v = np.zeros(768, dtype=np.float32)
+                    v[: min(768, vector.shape[0])] = vector[: min(768, vector.shape[0])]
+                    return v
+                return vector
+            except Exception as e:
+                print(f"   ⚠️ Vertex embedding failed: {e}, using hash embedding")
+
+        return self._hash_embedding(combined_text, dim=768)
     
     def _get_video_metadata(self, video_id: str, subtitle_text: str) -> tuple:
         """

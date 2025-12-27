@@ -98,6 +98,22 @@ class AdaptiveGlymphaticSystem:
                 "cleanup_start",
                 {
                     "workload_percent": current_workload.get("workload_percent"),
+                    "fatigue_level": current_fatigue.get("fatigue_level"),
+                },
+            )
+            
+            # 🧹 Active Clean: Call PowerShell Script
+            import subprocess
+            cleanup_script = r"c:\workspace\agi\scripts\metabolic_cleanup.ps1"
+            print(f"🧹 Invoking Active Metabolic Cleaner: {cleanup_script}")
+            subprocess.run(
+                ["powershell", "-ExecutionPolicy", "Bypass", "-File", cleanup_script], 
+                check=False,
+                creationflags=0x08000000  # CREATE_NO_WINDOW
+            )
+            
+        except Exception as e:
+            print(f"❌ Cleanup Execution Failed: {e}")
                     "cpu_percent": current_workload.get("cpu_percent"),
                     "memory_percent": current_workload.get("memory_percent"),
                     "fatigue_level": current_fatigue.get("fatigue_level"),

@@ -1,0 +1,35 @@
+{
+  "source": "boundary_induction",
+  "title": "boundary_induction: self-set boundary candidates",
+  "tags": [
+    "boundary",
+    "induction",
+    "self_set"
+  ],
+  "notes": "rua=unknown yt=UNKNOWN life=ALIVE_IDLE",
+  "timestamp": 1766381587.4187474,
+  "where": {
+    "platform": "windows",
+    "layer": "boundary_induction"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "polarity": "caution",
+      "text": "Idle은 정상 생존이다. 생존(ATP/RestGate)을 해치면 경계 생성도 중단한다."
+    }
+  ],
+  "meta": {
+    "evidence": {
+      "rua_dominant_mode": "unknown",
+      "rua_ratio": null,
+      "yt_compression_mode": "UNKNOWN",
+      "yt_presentation_form": "UNKNOWN",
+      "life_state": "ALIVE_IDLE"
+    }
+  }
+}

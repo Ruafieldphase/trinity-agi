@@ -1,5 +1,5 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/LLM_Unified/.venv/Scripts/python.exe",
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
     "python.analysis.typeCheckingMode": "off",
     "python.analysis.autoImportCompletions": false,
     "python.analysis.memory.keepLibraryAst": false,
@@ -70,7 +70,7 @@
     // If these paths are incorrect, Gitko may fail with invalid_request_body (400)
     // because the extension cannot execute the CLI and returns empty/invalid JSON.
     // Adjust to your actual workspace layout if different.
-    "gitkoAgent.pythonPath": "C:/workspace/agi/LLM_Unified/.venv/Scripts/python.exe",
+    "gitkoAgent.pythonPath": "C:/workspace/agi/.venv/Scripts/python.exe",
     "gitkoAgent.scriptPath": "C:/workspace/agi/LLM_Unified/ion-mentoring/gitko_cli.py",
     "gitkoAgent.workingDirectory": "C:/workspace/agi/LLM_Unified/ion-mentoring",
     // Optional diagnostics

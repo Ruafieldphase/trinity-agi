@@ -10,7 +10,7 @@ Part of Phase 2: Wave-Particle Duality in Self-Reference
 """
 
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional, Tuple
 import json
 from collections import defaultdict, Counter
@@ -86,7 +86,10 @@ class WaveDetector:
     def __init__(self, workspace_root: Path):
         self.workspace = workspace_root
         self.memory_root = workspace_root / "fdo_agi_repo" / "memory"
-        self.ledger_path = self.memory_root / "resonance_ledger.jsonl"
+        # Prefer v2 ledger if present (newer, richer events), fallback to v1.
+        ledger_v2 = self.memory_root / "resonance_ledger_v2.jsonl"
+        ledger_v1 = self.memory_root / "resonance_ledger.jsonl"
+        self.ledger_path = ledger_v2 if ledger_v2.exists() else ledger_v1
         
         # Pattern detection parameters
         self.min_pattern_occurrences = 3  # Minimum to consider it a pattern
@@ -147,24 +150,35 @@ class WaveDetector:
         if not self.ledger_path.exists():
             return []
         
-        cutoff = datetime.now() - timedelta(hours=lookback_hours)
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=lookback_hours)
         memories = []
+
+        def parse_ts(value: Any) -> datetime | None:
+            try:
+                if isinstance(value, (int, float)):
+                    return datetime.fromtimestamp(float(value), tz=timezone.utc)
+                if not isinstance(value, str) or not value:
+                    return None
+                dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+                if dt.tzinfo is None:
+                    return dt.replace(tzinfo=timezone.utc)
+                return dt.astimezone(timezone.utc)
+            except Exception:
+                return None
         
         try:
             with open(self.ledger_path, 'r', encoding='utf-8') as f:
                 for line in f:
                     if line.strip():
-                        entry = json.loads(line)
+                        try:
+                            entry = json.loads(line)
+                        except Exception:
+                            continue
                         
                         # Parse timestamp
-                        ts_str = entry.get('timestamp', '')
-                        if ts_str:
-                            try:
-                                ts = datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
-                                if ts >= cutoff:
-                                    memories.append(entry)
-                            except:
-                                continue
+                        ts = parse_ts(entry.get("timestamp") or entry.get("ts"))
+                        if ts and ts >= cutoff:
+                            memories.append(entry)
         except Exception as e:
             print(f"⚠️ Error loading memories: {e}")
         
@@ -184,6 +198,8 @@ class WaveDetector:
             if ts_str:
                 try:
                     ts = datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
+                    if ts.tzinfo is not None:
+                        ts = ts.astimezone(timezone.utc)
                     hour = ts.hour
                     hour_activities[hour].append(mem)
                 except:
@@ -247,6 +263,7 @@ class WaveDetector:
             # Try different fields where action might be
             action = (
                 mem.get('event_type') or
+                mem.get('event') or
                 mem.get('action') or
                 mem.get('type') or
                 'unknown'
@@ -372,10 +389,20 @@ class WaveDetector:
     
     def _get_strongest_pattern(self) -> Optional[str]:
         """Get description of strongest pattern"""
-        all_patterns = (
-            [(p.strength, p.description) for p in self.temporal_patterns] +
-            [(p.strength, p.description) for p in self.behavior_patterns]
-        )
+        all_patterns = []
+        for p in self.temporal_patterns:
+            try:
+                all_patterns.append((float(p.strength), str(p.description)))
+            except Exception:
+                continue
+        for p in self.behavior_patterns:
+            try:
+                label = getattr(p, "description", None)
+                if not label:
+                    label = f"behavior: {getattr(p, 'action', 'unknown')}"
+                all_patterns.append((float(getattr(p, "strength", 0.0)), str(label)))
+            except Exception:
+                continue
         
         if all_patterns:
             strongest = max(all_patterns, key=lambda x: x[0])

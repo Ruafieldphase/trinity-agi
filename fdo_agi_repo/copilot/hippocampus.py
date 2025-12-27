@@ -12,15 +12,26 @@ from datetime import datetime, timezone, timedelta
 import json
 import logging
 import sqlite3
+import os
+
+import sys
+from pathlib import Path
 
 # Everything 검색 통합 (Phase 2 & 3)
 try:
-    import sys
     sys.path.append(str(Path(__file__).parent.parent / "utils"))
     from everything_search import EverythingSearch
     EVERYTHING_AVAILABLE = True
 except ImportError:
     EVERYTHING_AVAILABLE = False
+
+# Semantic RAG Engine (LangChain + ChromaDB)
+try:
+    sys.path.append(str(Path(__file__).parent.parent.parent / "scripts"))
+    from semantic_rag_engine import SemanticRAGEngine
+    SEMANTIC_RAG_AVAILABLE = True
+except ImportError:
+    SEMANTIC_RAG_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +67,15 @@ class CopilotHippocampus:
                 logger.info("🔍 Everything search integrated")
             except Exception as e:
                 logger.warning(f"Everything search not available: {e}")
+        
+        # Semantic RAG 통합
+        self.rag_engine = None
+        if SEMANTIC_RAG_AVAILABLE:
+            try:
+                self.rag_engine = SemanticRAGEngine(self.workspace)
+                logger.info("🧠 Semantic RAG engine integrated")
+            except Exception as e:
+                logger.warning(f"Semantic RAG not available: {e}")
         
         # 공고화 설정
         self.consolidation_config = {
@@ -101,17 +121,32 @@ class CopilotHippocampus:
         all_memories = []
         
         # Episodic (에피소드 기억)
-        episodic = self.long_term.search_episodic(query, limit=top_k)
+        episodic = self.long_term.recall_episodic(query, top_k=top_k)
         all_memories.extend(episodic)
         
         # Semantic (의미 기억)
-        semantic = self.long_term.search_semantic(query, limit=top_k)
+        semantic = self.long_term.recall_semantic(query, top_k=top_k)
+        for item in semantic:
+            if "data" not in item and item.get("content") is not None:
+                item["data"] = item["content"]
         all_memories.extend(semantic)
         
         # Procedural (절차 기억)
-        procedural = self.long_term.search_procedural(query, limit=top_k)
+        procedural = self.long_term.recall_procedural(query, top_k=top_k)
         all_memories.extend(procedural)
         
+        # Vector Semantic (벡터 기반 의미 검색) - 가중치 높게 부여
+        if self.rag_engine:
+            vector_results = self.rag_engine.search(query, top_k=top_k)
+            for res in vector_results:
+                all_memories.append({
+                    "type": f"vector_{res['metadata'].get('source', 'unknown')}",
+                    "data": res["content"],
+                    "importance": 0.9 - (res["score"] * 0.1), # 점수가 낮을수록 우수함(거리)
+                    "metadata": res["metadata"],
+                    "is_vector": True
+                })
+
         # 중요도 순 정렬 후 상위 반환
         sorted_memories = sorted(
             all_memories, 
@@ -207,20 +242,6 @@ class CopilotHippocampus:
             logger.error(f"Fallback search failed: {e}")
         
         return results
-        episodic = self.long_term.recall_episodic(query, top_k)
-        semantic = self.long_term.recall_semantic(query, top_k)
-        procedural = self.long_term.recall_procedural(query, top_k)
-
-        buckets = {
-            "episodic": episodic,
-            "semantic": semantic,
-            "procedural": procedural,
-        }
-
-        # 타입 균형 샘플링 후 전역 정렬
-        balanced = self._balanced_sample(buckets, top_k)
-        balanced.sort(key=lambda x: x.get("importance", 0), reverse=True)
-        return balanced[:top_k]
     
     def consolidate(self, force: bool = False) -> Dict[str, Any]:
         """
@@ -261,6 +282,10 @@ class CopilotHippocampus:
                 elif memory_type == "procedural":
                     self.long_term.store_procedural(item)
                     consolidated["procedural"] += 1
+                
+                # Vector indexing (Phase 10 upgrade)
+                if self.rag_engine:
+                    self.rag_engine.add_documents([item])
                 
                 consolidated["total"] += 1
         
@@ -444,13 +469,40 @@ class CopilotHippocampus:
         pending = self.short_term.get_pending_tasks()
         return [task["description"] for task in pending[:3]]
     
-    def _capture_system_state(self) -> Dict[str, Any]:
-        """현재 시스템 상태 캡처"""
-        return {
-            "workspace": str(self.workspace),
-            "short_term_items": len(self.short_term.get_all_working()),
-            "long_term_items": self.long_term.count_total(),
-        }
+    def count_total(self) -> int:
+        """전체 기억 개수 합산"""
+        return self.long_term.count_total()
+
+    def get_chronological_narrative(self, hours: int = 24) -> str:
+        """최근 N시간 동안의 기억을 연대순 서사로 재구성"""
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
+        memories = self.long_term.get_memories_since(cutoff)
+        
+        if not memories:
+            return "최근 기록된 중요한 기억이 없습니다."
+            
+        # 시간순 정렬
+        memories.sort(key=lambda x: x.get("timestamp", ""))
+        
+        narrative = [f"--- 최근 {hours}시간의 흐름 ---"]
+        for m in memories:
+            ts = m.get("timestamp", "Unknown Time")
+            m_type = m.get("type", "event")
+            data = m.get("data", {})
+            # 서사 구조에서 제목 추출 고도화 (중첩된 data 필드 및 event_type 고려)
+            inner_data = data.get("data") if isinstance(data.get("data"), dict) else data
+            # 1. inner_data["title"] 확인
+            # 2. inner_data["data"]["title"] 확인
+            # 3. data["event_type"] 확인
+            # 4. m_type (episodic 등) 확인
+            title = inner_data.get("title")
+            if not title and isinstance(inner_data.get("data"), dict):
+                title = inner_data.get("data").get("title")
+            
+            title = title or data.get("event_type") or m_type
+            narrative.append(f"[{ts}] {title} ({m_type})")
+            
+        return "\n".join(narrative)
     
     def _restore_from_handover(self, handover: Dict[str, Any]) -> None:
         """Handover로부터 단기 기억 복원"""
@@ -594,12 +646,13 @@ class LongTermMemory:
         self.memory_root = memory_root
         self.outputs = outputs
         
+        semantic_db_path = self._select_semantic_db_path(outputs)
         # 7개 메모리 시스템 경로
         self.paths = {
             "episodic": memory_root / "sessions",
-            "semantic": outputs / "session_memory" / "session_memory.db",
+            "semantic": semantic_db_path,
             "procedural": memory_root / "procedures.jsonl",
-            "resonance": memory_root / "resonance_ledger.jsonl",
+            "resonance": memory_root / "resonance_ledger_v2.jsonl",
             "bqi": outputs / "bqi_pattern_model.json",
             "youtube": outputs / "youtube_learner",
             "monitoring": outputs / "monitoring_metrics_latest.json",
@@ -610,6 +663,36 @@ class LongTermMemory:
             self._init_semantic_db(self.paths["semantic"])
         else:
             self._semantic_db = str(self.paths["semantic"])
+    
+    def _select_semantic_db_path(self, outputs: Path) -> Path:
+        env_path = os.environ.get("AGI_SEMANTIC_DB_PATH")
+        if env_path:
+            return Path(env_path)
+        env_dir = os.environ.get("AGI_SEMANTIC_DB_DIR")
+        if env_dir:
+            return Path(env_dir) / "session_memory.db"
+        default_path = outputs / "session_memory" / "session_memory.db"
+        if self._can_write_sqlite(default_path.parent):
+            return default_path
+        fallback = Path.home() / ".cache" / "agi" / "session_memory" / "session_memory.db"
+        logger.warning("Semantic DB path not writable; using fallback at %s", fallback)
+        return fallback
+
+    def _can_write_sqlite(self, dir_path: Path) -> bool:
+        try:
+            dir_path.mkdir(parents=True, exist_ok=True)
+            test_path = dir_path / ".sqlite_write_test.sqlite3"
+            conn = sqlite3.connect(str(test_path))
+            conn.execute("CREATE TABLE IF NOT EXISTS test_io (id INTEGER PRIMARY KEY, val TEXT)")
+            conn.commit()
+            conn.close()
+            try:
+                test_path.unlink()
+            except Exception:
+                pass
+            return True
+        except Exception:
+            return False
     
     # ===================================================================
     # Episodic Memory (사건 기억)
@@ -691,10 +774,12 @@ class LongTermMemory:
             
             results = []
             for row in cursor.fetchall():
+                content = row[1]
                 results.append({
                     "type": "semantic",
                     "id": row[0],
-                    "content": row[1],
+                    "content": content,
+                    "data": content,
                     "importance": row[2],
                     "timestamp": row[3],
                 })
@@ -878,14 +963,83 @@ class LongTermMemory:
     # ===================================================================
     
     def get_memories_since(self, cutoff: datetime, min_importance: float = 0.0) -> List[Dict[str, Any]]:
-        """특정 시점 이후의 기억 조회"""
-        # TODO: 모든 시스템 통합 검색
-        return []
-    
+        """모든 메모리 파일에서 특정 시점 이후의 데이터 수집"""
+        results = []
+        cutoff_str = cutoff.isoformat()
+        
+        # 1. Resonance Ledger (Episodic)
+        if self.paths["resonance"].exists():
+            with open(self.paths["resonance"], "r", encoding="utf-8-sig", errors="replace") as f:
+                for line in f:
+                    try:
+                        entry = json.loads(line)
+                        if entry.get("timestamp", "") >= cutoff_str:
+                            if entry.get("quality", 0.5) >= min_importance:
+                                results.append({
+                                    "timestamp": entry.get("timestamp"),
+                                    "type": "episodic",
+                                    "data": entry,
+                                    "importance": entry.get("quality", 0.5)
+                                })
+                    except: continue
+
+        # 2. Procedural Memory
+        if self.paths["procedural"].exists():
+            with open(self.paths["procedural"], "r", encoding="utf-8-sig", errors="replace") as f:
+                for line in f:
+                    try:
+                        entry = json.loads(line)
+                        if entry.get("timestamp", "") >= cutoff_str:
+                            data = entry.get("data", {})
+                            if data.get("importance", 0.5) >= min_importance:
+                                results.append({
+                                    "timestamp": entry.get("timestamp"),
+                                    "type": "procedural",
+                                    "data": data,
+                                    "importance": data.get("importance", 0.5)
+                                })
+                    except: continue
+
+        # 3. Semantic Memory (SQLite)
+        try:
+            conn = sqlite3.connect(str(self.paths["semantic"]))
+            cursor = conn.cursor()
+            cursor.execute("SELECT content, importance, timestamp FROM semantic_memory WHERE timestamp >= ?", (cutoff_str,))
+            for row in cursor.fetchall():
+                importance = row[1]
+                if importance >= min_importance:
+                    results.append({
+                        "timestamp": row[2],
+                        "type": "semantic",
+                        "data": json.loads(row[0]),
+                        "importance": importance
+                    })
+            conn.close()
+        except: pass
+        
+        return results
+
     def count_total(self) -> int:
-        """전체 기억 개수"""
-        # TODO: 모든 시스템 카운트
-        return 0
+        """모든 메모리 항목의 총합 계산"""
+        total = 0
+        # Resonance counts
+        if self.paths["resonance"].exists():
+            with open(self.paths["resonance"], "r", encoding="utf-8") as f:
+                total += sum(1 for _ in f)
+        # Procedural counts
+        if self.paths["procedural"].exists():
+            with open(self.paths["procedural"], "r", encoding="utf-8") as f:
+                total += sum(1 for _ in f)
+        # Semantic counts
+        try:
+            conn = sqlite3.connect(str(self.paths["semantic"]))
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM semantic_memory")
+            total += cursor.fetchone()[0]
+            conn.close()
+        except: pass
+        
+        return total
 
 
 # Backward compatibility alias

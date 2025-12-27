@@ -19,6 +19,7 @@ Design:
 import asyncio
 import logging
 import time
+import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -342,6 +343,133 @@ class RPACore:
         await self.type_text(text)
         return True
 
+    # ========================================================================
+    # Semantic Actions (Vision-based)
+    # ========================================================================
+    
+    async def click_by_description(self, description: str, timeout: Optional[float] = None) -> bool:
+        """비전 분석 결과를 검색하여 설명에 맞는 요소를 클릭"""
+        timeout = timeout or self.config.default_timeout
+        start_time = time.time()
+        
+        vision_log_path = Path(__file__).parent.parent.parent / "agi_core" / "memory" / "vision_events.jsonl"
+        # 위 경로가 맞는지 확인 (LiveFrameAnalyzer 기준)
+        if not vision_log_path.exists():
+            # 대안 경로 (상위 디렉토리 구조 차이 대비)
+            vision_log_path = Path("agi_core/memory/vision_events.jsonl")
+            if not vision_log_path.exists():
+                vision_log_path = Path("memory/vision_events.jsonl")
+
+        self.logger.info(f"Searching for UI element by description: '{description}'")
+        
+        while time.time() - start_time < timeout:
+            if not vision_log_path.exists():
+                await asyncio.sleep(2.0)
+                continue
+            
+            # 최신 비전 이벤트 읽기 (JSONL + 복구 모드)
+            events = self._load_recent_vision_events(vision_log_path, max_events=5)
+            if not events:
+                await asyncio.sleep(2.0)
+                continue
+
+            for data in reversed(events):
+                ui_elements = data.get("ui_elements", [])
+
+                if not isinstance(ui_elements, list):
+                    continue
+
+                for element in ui_elements:
+                    # 이름 또는 설명에 포함되어 있는지 확인
+                    name = str(element.get("name", "")).lower()
+                    desc = str(element.get("description", "")).lower()
+                    match_text = f"{name} {desc}".lower()
+
+                    if description.lower() in match_text:
+                        rect = element.get("rect_normalized")
+                        if rect and len(rect) == 4:
+                            # [ymin, xmin, ymax, xmax]
+                            ymin, xmin, ymax, xmax = rect
+
+                            # 화면 크기 가져오기
+                            screen_w, screen_h = pyautogui.size()
+
+                            # 중심 좌표 계산
+                            target_x = int(((xmin + xmax) / 2) * screen_w)
+                            target_y = int(((ymin + ymax) / 2) * screen_h)
+
+                            self.logger.info(f"Target found: '{name}' at ({target_x}, {target_y})")
+                            await self.click(target_x, target_y)
+                            return True
+            
+            await asyncio.sleep(2.0)
+            
+        self.logger.warning(f"Failed to find element by description: '{description}'")
+        return False
+
+    async def type_in_element_by_description(
+        self,
+        description: str,
+        text: str,
+        timeout: Optional[float] = None
+    ) -> bool:
+        """설명으로 요소를 찾아 클릭 후 텍스트 입력"""
+        success = await self.click_by_description(description, timeout)
+        if success:
+            await self.type_text(text)
+            return True
+        return False
+
+    def _load_vision_events_linewise(self, text: str, max_events: int) -> List[Dict[str, Any]]:
+        events: List[Dict[str, Any]] = []
+        for line in text.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                obj = json.loads(line)
+            except Exception:
+                continue
+            if isinstance(obj, dict):
+                events.append(obj)
+        return events[-max_events:]
+
+    def _load_recent_vision_events(self, vision_log_path: Path, max_events: int = 5) -> List[Dict[str, Any]]:
+        try:
+            text = vision_log_path.read_text(encoding="utf-8", errors="ignore").strip()
+            if not text:
+                return []
+            try:
+                data = json.loads(text)
+                if isinstance(data, list):
+                    return [d for d in data if isinstance(d, dict)][-max_events:]
+                if isinstance(data, dict):
+                    return [data]
+            except Exception:
+                pass
+
+            decoder = json.JSONDecoder()
+            idx = 0
+            length = len(text)
+            events: List[Dict[str, Any]] = []
+            while idx < length:
+                while idx < length and text[idx].isspace():
+                    idx += 1
+                if idx >= length:
+                    break
+                try:
+                    obj, end = decoder.raw_decode(text, idx)
+                except Exception:
+                    return self._load_vision_events_linewise(text, max_events)
+                if isinstance(obj, dict):
+                    events.append(obj)
+                idx = end
+            if not events:
+                return self._load_vision_events_linewise(text, max_events)
+            return events[-max_events:]
+        except Exception as e:
+            self.logger.error(f"Error reading vision log: {e}")
+            return []
     async def evaluate_and_decide(
         self,
         task_goal: str,

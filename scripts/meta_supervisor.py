@@ -10,13 +10,18 @@ import json
 import sys
 import subprocess
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any, Optional
 import argparse
+import os
+import time
 
 # 프로젝트 루트를 Python 경로에 추가
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
+
+# Windows process creation flag to hide window
+CREATE_NO_WINDOW = 0x08000000
 
 class MetaSupervisor:
     """메타-감독 클래스"""
@@ -26,6 +31,9 @@ class MetaSupervisor:
         self.outputs = workspace / "outputs"
         self.scripts = workspace / "scripts"
         self.fdo_agi_repo = workspace / "fdo_agi_repo"
+        self.bridge = self.outputs / "bridge"
+        self.safety = self.outputs / "safety"
+        self.sync_cache = self.outputs / "sync_cache"
         
         # 파이썬 실행 파일 경로
         self.python_exe = self._find_python_exe()
@@ -34,9 +42,13 @@ class MetaSupervisor:
         self.intervention_threshold = 40  # 점수가 이 이하면 자동 개입
         self.critical_threshold = 30  # 이 이하면 긴급 개입
 
+        # 실행 게이트(리듬 기반): 무거운 개입을 억제하는 경계
+        self.pain_high_threshold = 0.80
+        self.pain_medium_threshold = 0.60
+
     def _run_cmd(self, cmd: List[str]) -> Dict[str, Any]:
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8')
+            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', creationflags=CREATE_NO_WINDOW)
             return {
                 "exit_code": result.returncode,
                 "stdout": result.stdout[-800:],
@@ -45,6 +57,104 @@ class MetaSupervisor:
             }
         except Exception as e:
             return {"exit_code": -1, "stderr": str(e), "stdout": "", "success": False}
+
+    def _file_mtime(self, path: Path) -> float | None:
+        try:
+            if not path.exists():
+                return None
+            return float(path.stat().st_mtime)
+        except Exception:
+            return None
+
+    def _utc_now_iso(self) -> str:
+        return datetime.now(tz=timezone.utc).isoformat()
+
+    def _atomic_write_text(self, path: Path, text: str) -> None:
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(path.suffix + ".tmp")
+            tmp.write_text(text, encoding="utf-8")
+            os.replace(tmp, path)
+        except Exception:
+            return
+
+    def _atomic_write_json(self, path: Path, obj: dict) -> None:
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            tmp = path.with_suffix(path.suffix + ".tmp")
+            tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
+            os.replace(tmp, path)
+        except Exception:
+            return
+
+    def _load_json_best_effort(self, path: Path) -> Dict[str, Any]:
+        try:
+            if not path.exists():
+                return {}
+            return json.loads(path.read_text(encoding="utf-8-sig"))
+        except Exception:
+            return {}
+
+    def _load_gate_context(self) -> Dict[str, Any]:
+        """
+        meta-supervisor가 액션을 실행하기 전 참고할 "리듬/안전/통증" 컨텍스트.
+        - 네트워크 호출 없음
+        """
+        const = self._load_json_best_effort(self.bridge / "constitution_review_latest.json")
+        rest_gate = self._load_json_best_effort(self.safety / "rest_gate_latest.json")
+        pain = self._load_json_best_effort(self.sync_cache / "rhythm_pain_latest.json")
+        body = self._load_json_best_effort(self.sync_cache / "body_life_state.json")
+        pain_0_1 = 0.0
+        try:
+            pain_0_1 = float(pain.get("pain_0_1") or 0.0)
+        except Exception:
+            pain_0_1 = 0.0
+        return {
+            "constitution_status": str((const.get("status") or "")).upper().strip(),
+            "rest_gate_status": str((rest_gate.get("status") or "")).upper().strip(),
+            "pain_0_1": pain_0_1,
+            "pain_recommendation": str(pain.get("recommendation") or ""),
+            "pain_reasons": pain.get("reasons") if isinstance(pain.get("reasons"), list) else [],
+            "body_mode": str(body.get("mode") or ""),
+        }
+
+    def _filter_actions_by_gate(self, actions: List[str], gate: Dict[str, Any], *, no_action: bool = False) -> tuple[List[str], List[str]]:
+        """
+        리듬 기반 실행 게이트.
+        - goal이 아니라 boundary(경계)로서 '무거운 조치'만 억제한다.
+        반환: (filtered_actions, notes)
+        """
+        notes: List[str] = []
+        if not actions:
+            return [], notes
+
+        if no_action:
+            notes.append("no_action_mode: actions skipped")
+            return [], notes
+
+        constitution = str(gate.get("constitution_status") or "")
+        rest_gate = str(gate.get("rest_gate_status") or "")
+        pain = float(gate.get("pain_0_1") or 0.0)
+
+        # 허용 액션(무거운 조치 억제)
+        light_allow = {"run_health_check", "update_self_care", "generate_goals", "check_goal_tracker", "analyze_feedback", "notify_admin"}
+
+        if constitution in {"BLOCK", "REVIEW"}:
+            notes.append(f"gate:constitution={constitution}")
+            return [a for a in actions if a in {"run_health_check", "update_self_care", "notify_admin"}], notes
+
+        if rest_gate == "REST":
+            notes.append("gate:rest_gate=REST")
+            return [a for a in actions if a in light_allow], notes
+
+        if pain >= self.pain_high_threshold:
+            notes.append(f"gate:pain_high({pain:.2f})")
+            return [a for a in actions if a in light_allow], notes
+
+        if pain >= self.pain_medium_threshold:
+            notes.append(f"gate:pain_medium({pain:.2f})")
+
+        return actions, notes
 
     def determine_verification_level(self, health_data: Dict[str, Any], analysis: Dict[str, Any]) -> str:
         """건강 신호 기반 검증 강도(light/medium/strict) 결정"""
@@ -81,7 +191,9 @@ class MetaSupervisor:
 
         if level in ("medium", "strict"):
             if val_perf_ps.exists():
-                add_task("validate_performance_dashboard", ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(val_perf_ps), "-VerboseOutput"])  # type: ignore
+                # Fix: Use subprocess.run with creationflags to hide window
+                cmd = ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(val_perf_ps), "-VerboseOutput"]
+                self._run_cmd(cmd)  # Use internal _run_cmd which has creationflags
 
         if level == "strict":
             if diag_sys.exists():
@@ -125,16 +237,20 @@ class MetaSupervisor:
         output_file = self.outputs / "rhythm_health_latest.json"
         
         try:
+            if not checker_script.exists():
+                print(f"⚠️  건강도 체크 스크립트 없음: {checker_script}")
+                return {}
             result = subprocess.run(
                 [self.python_exe, str(checker_script), "--output", str(output_file)],
                 capture_output=True,
                 text=True,
-                encoding='utf-8'
+                encoding='utf-8',
+                creationflags=CREATE_NO_WINDOW
             )
             
             # 결과 로드
             if output_file.exists():
-                with open(output_file, 'r', encoding='utf-8') as f:
+                with open(output_file, 'r', encoding='utf-8-sig') as f:
                     return json.load(f)
             else:
                 print(f"⚠️  건강도 체크 결과 파일 없음: {output_file}")
@@ -256,13 +372,69 @@ class MetaSupervisor:
                 "success": False,
                 "message": f"알 수 없는 액션: {action}"
             }
+
+        # "가짜 성공" 방지: 액션별로 기대되는 출력이 실제로 갱신되었는지 확인한다.
+        expected_outputs: List[Path] = []
+        if action == "update_self_care":
+            expected_outputs = [
+                self.outputs / "self_care_metrics_summary.json",
+                self.outputs / "self_care_report.md",
+            ]
+        elif action == "generate_goals":
+            expected_outputs = [
+                self.outputs / "autonomous_goals_latest.json",
+                self.outputs / "autonomous_goals_latest.md",
+            ]
+        elif action == "analyze_feedback":
+            expected_outputs = [
+                self.outputs / "autonomous_goal_feedback_latest.json",
+            ]
+
+        before_mtimes = {str(p): self._file_mtime(p) for p in expected_outputs}
         
         try:
             result = action_func()
+            ok = True
+            msg: Any = result
+            if isinstance(result, dict):
+                if "ok" in result:
+                    ok = bool(result.get("ok"))
+                elif "success" in result:
+                    ok = bool(result.get("success"))
+                msg = result.get("message") or result.get("result") or result
+            elif isinstance(result, str):
+                low = result.lower()
+                # 문자열 기반 결과는 휴리스틱으로 성공/실패를 판단한다(예외를 던지지 않는 스크립트가 있어 "가짜 성공"을 막기 위함).
+                if ("실패" in result) or ("error" in low) or ("없음" in result and "완료" not in result):
+                    ok = False
+
+            # 파일 기반 검증: 기대 출력이 하나도 갱신되지 않았다면 실패로 취급한다.
+            updated: List[str] = []
+            stale: List[str] = []
+            for p in expected_outputs:
+                after = self._file_mtime(p)
+                before = before_mtimes.get(str(p))
+                if after is None:
+                    stale.append(f"missing:{p.name}")
+                    continue
+                if before is None:
+                    updated.append(p.name)
+                    continue
+                if float(after) > float(before):
+                    updated.append(p.name)
+                else:
+                    stale.append(f"not_updated:{p.name}")
+            if expected_outputs and not updated:
+                ok = False
+                if isinstance(msg, str) and msg:
+                    msg = f"{msg} | output_not_updated: {', '.join(stale[:4])}"
+                else:
+                    msg = {"result": msg, "output_not_updated": stale[:8]}
             return {
-                "success": True,
+                "success": ok,
                 "action": action,
-                "result": result
+                "result": msg,
+                "outputs_expected": [p.name for p in expected_outputs],
             }
         except Exception as e:
             return {
@@ -280,50 +452,82 @@ class MetaSupervisor:
             results.append(self.execute_action(action))
         return results
     
-    def _update_self_care(self) -> str:
+    def _update_self_care(self) -> Dict[str, Any]:
         """Self-care 요약 갱신"""
         script = self.scripts / "update_self_care_metrics.ps1"
         if not script.exists():
-            return "Self-care 갱신 스크립트 없음"
+            return {"ok": False, "message": "Self-care 갱신 스크립트 없음"}
         
         result = subprocess.run(
             ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(script)],
             capture_output=True,
             text=True,
-            encoding='utf-8'
+            encoding='utf-8',
+            creationflags=CREATE_NO_WINDOW
         )
-        return "Self-care 요약 갱신 완료" if result.returncode == 0 else f"갱신 실패: {result.stderr}"
+        ok = result.returncode == 0
+        msg = "Self-care 요약 갱신 완료" if ok else f"갱신 실패: {(result.stderr or '')[-800:]}"
+
+        # 호환: rhythm_health_checker가 보는 `outputs/self_care_report.md`를 함께 갱신해
+        # "리포트 stale"로 인한 과도한 비동기 판단을 줄인다.
+        try:
+            render = self.scripts / "render_self_care_report.py"
+            if render.exists():
+                rep = subprocess.run(
+                    [
+                        self.python_exe,
+                        str(render),
+                        "--summary-path",
+                        str(self.outputs / "self_care_metrics_summary.json"),
+                        "--output",
+                        str(self.outputs / "self_care_report.md"),
+                    ],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    creationflags=CREATE_NO_WINDOW,
+                )
+                if rep.returncode != 0:
+                    msg += f" | report_render_failed: {(rep.stderr or '')[-200:]}"
+        except Exception:
+            pass
+
+        return {"ok": ok, "message": msg}
     
-    def _generate_goals(self) -> str:
+    def _generate_goals(self) -> Dict[str, Any]:
         """목표 생성"""
         script = self.scripts / "autonomous_goal_generator.py"
         if not script.exists():
-            return "목표 생성 스크립트 없음"
+            return {"ok": False, "message": "목표 생성 스크립트 없음"}
         
         result = subprocess.run(
             [self.python_exe, str(script), "--hours", "6"],
             capture_output=True,
             text=True,
-            encoding='utf-8'
+            encoding='utf-8',
+            creationflags=CREATE_NO_WINDOW
         )
-        return "목표 생성 완료" if result.returncode == 0 else f"생성 실패: {result.stderr}"
+        ok = result.returncode == 0
+        msg = "목표 생성 완료" if ok else f"생성 실패: {(result.stderr or '')[-800:]}"
+        return {"ok": ok, "message": msg}
     
-    def _analyze_feedback(self) -> str:
+    def _analyze_feedback(self) -> Dict[str, Any]:
         """피드백 분석"""
         # 먼저 feedback 분석 실행
         analyze_script = self.scripts / "analyze_feedback.py"
         if not analyze_script.exists():
-            return "피드백 분석 스크립트 없음"
+            return {"ok": False, "message": "피드백 분석 스크립트 없음"}
         
         result = subprocess.run(
             [self.python_exe, str(analyze_script), "--hours", "24"],
             capture_output=True,
             text=True,
-            encoding='utf-8'
+            encoding='utf-8',
+            creationflags=CREATE_NO_WINDOW
         )
         
         if result.returncode != 0:
-            return f"분석 실패: {result.stderr}"
+            return {"ok": False, "message": f"분석 실패: {(result.stderr or '')[-800:]}"} 
         
         # 분석 완료 후 액션 적용
         action_script = self.scripts / "apply_feedback_actions.py"
@@ -332,23 +536,26 @@ class MetaSupervisor:
                 [self.python_exe, str(action_script)],
                 capture_output=True,
                 text=True,
-                encoding='utf-8'
+                encoding='utf-8',
+                creationflags=CREATE_NO_WINDOW
             )
-            return "피드백 분석 및 액션 적용 완료"
+            ok = action_result.returncode == 0
+            msg = "피드백 분석 및 액션 적용 완료" if ok else f"피드백 액션 적용 실패: {(action_result.stderr or '')[-800:]}"
+            return {"ok": ok, "message": msg}
         
-        return "피드백 분석 완료"
+        return {"ok": True, "message": "피드백 분석 완료"}
     
-    def _check_goal_tracker(self) -> str:
+    def _check_goal_tracker(self) -> Dict[str, Any]:
         """목표 추적 상태 확인"""
         tracker_file = self.fdo_agi_repo / "memory" / "goal_tracker.json"
         if not tracker_file.exists():
-            return "목표 추적 파일 없음"
+            return {"ok": False, "message": "목표 추적 파일 없음"}
         
-        with open(tracker_file, 'r', encoding='utf-8') as f:
+        with open(tracker_file, 'r', encoding='utf-8-sig') as f:
             data = json.load(f)
             goals = data.get("goals", [])
             in_progress = [g for g in goals if g.get("status") == "in_progress"]
-            return f"확인 완료: {len(goals)}개 목표 중 {len(in_progress)}개 진행 중"
+            return {"ok": True, "message": f"확인 완료: {len(goals)}개 목표 중 {len(in_progress)}개 진행 중"}
     
     def _emergency_recovery(self) -> str:
         """긴급 복구"""
@@ -362,7 +569,8 @@ class MetaSupervisor:
                 ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(server_script)],
                 capture_output=True,
                 text=True,
-                encoding='utf-8'
+                encoding='utf-8',
+                creationflags=CREATE_NO_WINDOW
             )
             recovery_steps.append("Task Queue Server 재시작" if result.returncode == 0 else "Server 재시작 실패")
         
@@ -373,7 +581,8 @@ class MetaSupervisor:
                 ["powershell", "-ExecutionPolicy", "Bypass", "-File", str(worker_script)],
                 capture_output=True,
                 text=True,
-                encoding='utf-8'
+                encoding='utf-8',
+                creationflags=CREATE_NO_WINDOW
             )
             recovery_steps.append("RPA Worker 재시작" if result.returncode == 0 else "Worker 재시작 실패")
         
@@ -399,6 +608,8 @@ class MetaSupervisor:
                                      health_data: Dict[str, Any],
                                      analysis: Dict[str, Any],
                                      action_results: List[Dict[str, Any]],
+                                     gate_context: Optional[Dict[str, Any]] = None,
+                                     gate_notes: Optional[List[str]] = None,
                                      verification_level: Optional[str] = None,
                                      verification_results: Optional[List[Dict[str, Any]]] = None,
                                      remediation_notes: Optional[List[str]] = None) -> str:
@@ -448,6 +659,24 @@ class MetaSupervisor:
             f"- {sync.get('message', '')}",
             ""
         ])
+
+        # 실행 게이트(리듬/안전/통증) — 행동을 '막는 버튼'이 아니라, 무거운 조치만 억제하는 경계.
+        if gate_context:
+            report_lines.extend([
+                "## 🧷 실행 게이트(관측)",
+                "",
+                f"- constitution: `{gate_context.get('constitution_status')}`",
+                f"- rest_gate: `{gate_context.get('rest_gate_status')}`",
+                f"- pain_0_1: `{gate_context.get('pain_0_1')}`",
+                f"- pain_recommendation: `{gate_context.get('pain_recommendation')}`",
+                f"- body_mode: `{gate_context.get('body_mode')}`",
+                ""
+            ])
+            if gate_notes:
+                report_lines.append("**게이트 메모**:")
+                for n in gate_notes[:6]:
+                    report_lines.append(f"- {n}")
+                report_lines.append("")
         
         # 개입 필요 여부
         if analysis.get("needs_intervention"):
@@ -521,22 +750,35 @@ class MetaSupervisor:
         
         return "\n".join(report_lines)
     
-    def run_supervision_cycle(self) -> Dict[str, Any]:
+    def run_supervision_cycle(self, *, no_action: bool = False) -> Dict[str, Any]:
         """감독 사이클 실행"""
         print("🌊 메타-감독 사이클 시작...")
         print(f"⏰ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+        started = time.time()
         
         # 1. 건강도 체크
         health_data = self.run_rhythm_health_check()
         if not health_data:
             print("❌ 건강도 데이터를 가져올 수 없습니다.")
-            return {
-                "success": False,
-                "error": "건강도 체크 실패"
+            gate_ctx = self._load_gate_context()
+            analysis = {
+                "needs_intervention": True,
+                "intervention_level": "critical",
+                "reasons": ["건강도 체크 실패"],
+                "actions": [],
+                "score": 0,
+                "status": "unknown",
             }
+            report_md = self.generate_supervision_report(health_data or {}, analysis, [], gate_ctx, ["health_check_failed"])
+            self._atomic_write_text(self.outputs / "meta_supervision_report.md", report_md)
+            self._atomic_write_json(self.outputs / "meta_supervision_latest.json", {"timestamp": self._utc_now_iso(), "success": False, "analysis": analysis, "gate": gate_ctx})
+            self._atomic_write_text(self.bridge / "meta_supervisor_report_latest.txt", "메타-감독: 건강도 체크 실패 (리포트만 고정)\n")
+            self._atomic_write_json(self.bridge / "meta_supervisor_report_latest.json", {"ok": False, "reason": "health_check_failed"})
+            return {"success": False, "error": "건강도 체크 실패"}
         
         # 2. 상태 분석
         analysis = self.analyze_health_status(health_data)
+        gate_ctx = self._load_gate_context()
         
         print(f"\n📊 분석 결과:")
         print(f"  점수: {analysis['score']}/100")
@@ -551,9 +793,12 @@ class MetaSupervisor:
         
         # 3. 필요시 액션 실행
         action_results: List[Dict[str, Any]] = []
-        if analysis['needs_intervention'] and analysis['actions']:
+        gate_notes: List[str] = []
+        if analysis.get('needs_intervention') and analysis.get('actions'):
             print(f"\n⚙️  액션 실행 중...")
-            action_results = self.execute_actions(analysis['actions'])
+            filtered, gate_notes = self._filter_actions_by_gate(list(analysis.get('actions') or []), gate_ctx, no_action=no_action)
+            if filtered:
+                action_results = self.execute_actions(filtered)
             for r in action_results:
                 status = "✅" if r.get('success') else "❌"
                 print(f"  {status} {r.get('action', 'unknown')}")
@@ -567,7 +812,16 @@ class MetaSupervisor:
         remediation_notes = self.attempt_auto_remediation(verification_results)
 
         # 6. 보고서 생성
-        report_md = self.generate_supervision_report(health_data, analysis, action_results, ver_level, verification_results, remediation_notes)
+        report_md = self.generate_supervision_report(
+            health_data,
+            analysis,
+            action_results,
+            gate_ctx,
+            gate_notes,
+            ver_level,
+            verification_results,
+            remediation_notes,
+        )
         report_file = self.outputs / "meta_supervision_report.md"
         with open(report_file, 'w', encoding='utf-8') as f:
             f.write(report_md)
@@ -587,6 +841,37 @@ class MetaSupervisor:
         report_json_file = self.outputs / "meta_supervision_latest.json"
         with open(report_json_file, 'w', encoding='utf-8') as f:
             json.dump(report_json, f, indent=2, ensure_ascii=False)
+
+        # 비프로그래머용 "한 눈 요약" (bridge에 고정)
+        duration = max(0.0, time.time() - started)
+        short_lines = [
+            f"[MetaSupervisor] {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+            f"- health: {health_data.get('overall_status', 'unknown')} ({health_data.get('overall_score', 0)}/100)",
+            f"- intervention: {analysis.get('intervention_level', 'none')}",
+            f"- gate: constitution={gate_ctx.get('constitution_status')}, rest_gate={gate_ctx.get('rest_gate_status')}, pain={gate_ctx.get('pain_0_1')}",
+            f"- actions_ran: {len(action_results)} (requested={len(analysis.get('actions') or [])})",
+            f"- verification: {ver_level}",
+            f"- duration_sec: {duration:.1f}",
+        ]
+        if gate_notes:
+            short_lines.append(f"- gate_notes: {', '.join(gate_notes[:4])}")
+        self._atomic_write_text(self.bridge / "meta_supervisor_report_latest.txt", "\n".join(short_lines) + "\n")
+        self._atomic_write_json(
+            self.bridge / "meta_supervisor_report_latest.json",
+            {
+                "ok": True,
+                "timestamp": self._utc_now_iso(),
+                "health_score": analysis.get("score"),
+                "health_status": analysis.get("status"),
+                "intervention_level": analysis.get("intervention_level"),
+                "gate": gate_ctx,
+                "gate_notes": gate_notes,
+                "actions_requested": list(analysis.get("actions") or []),
+                "actions_ran": action_results,
+                "verification_level": ver_level,
+                "duration_sec": duration,
+            },
+        )
         
         print(f"\n✅ 보고서 생성: {report_file}")
         
@@ -654,11 +939,9 @@ def main():
     
     if args.no_action:
         print("ℹ️  --no-action 모드: 액션 실행 없이 분석만 수행합니다.\n")
-        # 분석만 수행
-        health_data = supervisor.run_rhythm_health_check()
-        if health_data:
-            analysis = supervisor.analyze_health_status(health_data)
-            print(f"\n분석 결과: {json.dumps(analysis, indent=2, ensure_ascii=False)}")
+        # 분석만 수행(그러나 결과는 파일로도 고정하여 사람이 확인 가능하게 함)
+        result = supervisor.run_supervision_cycle(no_action=True)
+        print(f"\n분석 결과: {json.dumps(result, indent=2, ensure_ascii=False)}")
     else:
         # 전체 사이클 실행
         result = supervisor.run_supervision_cycle()

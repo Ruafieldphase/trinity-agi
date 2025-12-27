@@ -1,0 +1,55 @@
+{
+  "source": "youtube_channel",
+  "title": "김영한의 도올TV - boundary intake",
+  "tags": [
+    "youtube",
+    "boundary",
+    "channel_learning",
+    "mixed",
+    "kr",
+    "kr_mix_expand_contract"
+  ],
+  "notes": "[도올김용옥] 장흥의 동학농민혁명과 항일독립운동의 의미 - 동학전사東學全史, 장흥의 불꽃 이 땅에 피우다 | tone=열정적 | duration=2700s | MIXED | 이 영상은 장흥의 동학농민혁명과 항일독립운동이 지닌 심오한 역사적 의미를 조명하며, 한국 민족정신과 정의 추구에 미친 지속적인 유산을 강조합니다. 이는 국가 정체성과 회복력의 뿌리를 이해하기 위해 과거의 투쟁을 성찰해야 함을 상기시킵니다.",
+  "timestamp": 1766455146.7525716,
+  "where": {
+    "platform": "windows",
+    "layer": "youtube_channel_boundary_intake"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "개인정보/계정/비밀번호/토큰/키 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "대용량 원문 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "allow",
+      "text": "느낌(저비용)으로 스캔하고 경계에서만 고비용 연산"
+    },
+    {
+      "polarity": "caution",
+      "text": "경계 패턴이 반복될 때만 개념을 추가(과잉 일반화 금지)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존"
+    }
+  ],
+  "comparisons": [],
+  "meta": {
+    "channel_name": "김영한의 도올TV",
+    "channel_id": "UCIpQ4Z_y2dObDVDt4T_nleQ",
+    "video_id": "YH8-kpU0r5A",
+    "duration_sec": 2700.0,
+    "compression_mode": "MIXED",
+    "presentation_form": "UNKNOWN",
+    "culture": "KR",
+    "lens": "KR_MIX_EXPAND_CONTRACT"
+  }
+}
