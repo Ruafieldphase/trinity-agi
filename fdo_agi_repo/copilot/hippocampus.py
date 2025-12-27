@@ -12,6 +12,7 @@ from datetime import datetime, timezone, timedelta
 import json
 import logging
 import sqlite3
+<<<<<<< HEAD
 import os
 
 import sys
@@ -19,12 +20,19 @@ from pathlib import Path
 
 # Everything 검색 통합 (Phase 2 & 3)
 try:
+=======
+
+# Everything 검색 통합 (Phase 2 & 3)
+try:
+    import sys
+>>>>>>> origin/main
     sys.path.append(str(Path(__file__).parent.parent / "utils"))
     from everything_search import EverythingSearch
     EVERYTHING_AVAILABLE = True
 except ImportError:
     EVERYTHING_AVAILABLE = False
 
+<<<<<<< HEAD
 # Semantic RAG Engine (LangChain + ChromaDB)
 try:
     sys.path.append(str(Path(__file__).parent.parent.parent / "scripts"))
@@ -33,6 +41,8 @@ try:
 except ImportError:
     SEMANTIC_RAG_AVAILABLE = False
 
+=======
+>>>>>>> origin/main
 logger = logging.getLogger(__name__)
 
 
@@ -68,6 +78,7 @@ class CopilotHippocampus:
             except Exception as e:
                 logger.warning(f"Everything search not available: {e}")
         
+<<<<<<< HEAD
         # Semantic RAG 통합
         self.rag_engine = None
         if SEMANTIC_RAG_AVAILABLE:
@@ -77,6 +88,8 @@ class CopilotHippocampus:
             except Exception as e:
                 logger.warning(f"Semantic RAG not available: {e}")
         
+=======
+>>>>>>> origin/main
         # 공고화 설정
         self.consolidation_config = {
             "importance_threshold": 0.7,  # 이 이상만 장기 기억으로
@@ -121,6 +134,7 @@ class CopilotHippocampus:
         all_memories = []
         
         # Episodic (에피소드 기억)
+<<<<<<< HEAD
         episodic = self.long_term.recall_episodic(query, top_k=top_k)
         all_memories.extend(episodic)
         
@@ -147,6 +161,19 @@ class CopilotHippocampus:
                     "is_vector": True
                 })
 
+=======
+        episodic = self.long_term.search_episodic(query, limit=top_k)
+        all_memories.extend(episodic)
+        
+        # Semantic (의미 기억)
+        semantic = self.long_term.search_semantic(query, limit=top_k)
+        all_memories.extend(semantic)
+        
+        # Procedural (절차 기억)
+        procedural = self.long_term.search_procedural(query, limit=top_k)
+        all_memories.extend(procedural)
+        
+>>>>>>> origin/main
         # 중요도 순 정렬 후 상위 반환
         sorted_memories = sorted(
             all_memories, 
@@ -242,6 +269,23 @@ class CopilotHippocampus:
             logger.error(f"Fallback search failed: {e}")
         
         return results
+<<<<<<< HEAD
+=======
+        episodic = self.long_term.recall_episodic(query, top_k)
+        semantic = self.long_term.recall_semantic(query, top_k)
+        procedural = self.long_term.recall_procedural(query, top_k)
+
+        buckets = {
+            "episodic": episodic,
+            "semantic": semantic,
+            "procedural": procedural,
+        }
+
+        # 타입 균형 샘플링 후 전역 정렬
+        balanced = self._balanced_sample(buckets, top_k)
+        balanced.sort(key=lambda x: x.get("importance", 0), reverse=True)
+        return balanced[:top_k]
+>>>>>>> origin/main
     
     def consolidate(self, force: bool = False) -> Dict[str, Any]:
         """
@@ -283,10 +327,13 @@ class CopilotHippocampus:
                     self.long_term.store_procedural(item)
                     consolidated["procedural"] += 1
                 
+<<<<<<< HEAD
                 # Vector indexing (Phase 10 upgrade)
                 if self.rag_engine:
                     self.rag_engine.add_documents([item])
                 
+=======
+>>>>>>> origin/main
                 consolidated["total"] += 1
         
         # 단기 기억 정리
@@ -469,6 +516,7 @@ class CopilotHippocampus:
         pending = self.short_term.get_pending_tasks()
         return [task["description"] for task in pending[:3]]
     
+<<<<<<< HEAD
     def count_total(self) -> int:
         """전체 기억 개수 합산"""
         return self.long_term.count_total()
@@ -503,6 +551,15 @@ class CopilotHippocampus:
             narrative.append(f"[{ts}] {title} ({m_type})")
             
         return "\n".join(narrative)
+=======
+    def _capture_system_state(self) -> Dict[str, Any]:
+        """현재 시스템 상태 캡처"""
+        return {
+            "workspace": str(self.workspace),
+            "short_term_items": len(self.short_term.get_all_working()),
+            "long_term_items": self.long_term.count_total(),
+        }
+>>>>>>> origin/main
     
     def _restore_from_handover(self, handover: Dict[str, Any]) -> None:
         """Handover로부터 단기 기억 복원"""
@@ -646,6 +703,7 @@ class LongTermMemory:
         self.memory_root = memory_root
         self.outputs = outputs
         
+<<<<<<< HEAD
         semantic_db_path = self._select_semantic_db_path(outputs)
         # 7개 메모리 시스템 경로
         self.paths = {
@@ -653,6 +711,14 @@ class LongTermMemory:
             "semantic": semantic_db_path,
             "procedural": memory_root / "procedures.jsonl",
             "resonance": memory_root / "resonance_ledger_v2.jsonl",
+=======
+        # 7개 메모리 시스템 경로
+        self.paths = {
+            "episodic": memory_root / "sessions",
+            "semantic": outputs / "session_memory" / "session_memory.db",
+            "procedural": memory_root / "procedures.jsonl",
+            "resonance": memory_root / "resonance_ledger.jsonl",
+>>>>>>> origin/main
             "bqi": outputs / "bqi_pattern_model.json",
             "youtube": outputs / "youtube_learner",
             "monitoring": outputs / "monitoring_metrics_latest.json",
@@ -664,6 +730,7 @@ class LongTermMemory:
         else:
             self._semantic_db = str(self.paths["semantic"])
     
+<<<<<<< HEAD
     def _select_semantic_db_path(self, outputs: Path) -> Path:
         env_path = os.environ.get("AGI_SEMANTIC_DB_PATH")
         if env_path:
@@ -694,6 +761,8 @@ class LongTermMemory:
         except Exception:
             return False
     
+=======
+>>>>>>> origin/main
     # ===================================================================
     # Episodic Memory (사건 기억)
     # ===================================================================
@@ -774,12 +843,19 @@ class LongTermMemory:
             
             results = []
             for row in cursor.fetchall():
+<<<<<<< HEAD
                 content = row[1]
                 results.append({
                     "type": "semantic",
                     "id": row[0],
                     "content": content,
                     "data": content,
+=======
+                results.append({
+                    "type": "semantic",
+                    "id": row[0],
+                    "content": row[1],
+>>>>>>> origin/main
                     "importance": row[2],
                     "timestamp": row[3],
                 })
@@ -963,6 +1039,7 @@ class LongTermMemory:
     # ===================================================================
     
     def get_memories_since(self, cutoff: datetime, min_importance: float = 0.0) -> List[Dict[str, Any]]:
+<<<<<<< HEAD
         """모든 메모리 파일에서 특정 시점 이후의 데이터 수집"""
         results = []
         cutoff_str = cutoff.isoformat()
@@ -1040,6 +1117,16 @@ class LongTermMemory:
         except: pass
         
         return total
+=======
+        """특정 시점 이후의 기억 조회"""
+        # TODO: 모든 시스템 통합 검색
+        return []
+    
+    def count_total(self) -> int:
+        """전체 기억 개수"""
+        # TODO: 모든 시스템 카운트
+        return 0
+>>>>>>> origin/main
 
 
 # Backward compatibility alias

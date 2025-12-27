@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, Optional
+<<<<<<< HEAD
 import os
 import atexit
 
@@ -157,6 +158,17 @@ def _release_single_instance_lock() -> None:
         except Exception:
             pass
         _MUTEX_HANDLE = None
+=======
+import google.generativeai as genai
+import os
+
+# Configure Gemini
+from dotenv import load_dotenv
+load_dotenv()
+API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+if API_KEY:
+    genai.configure(api_key=API_KEY)
+>>>>>>> origin/main
 
 
 class AutonomousCollaborationMode:
@@ -231,9 +243,12 @@ class AutonomousCollaborationMode:
         """Gemini를 사용하여 자동 응답 생성"""
         if not API_KEY:
             return "자동 응답 시스템이 API 키를 찾을 수 없습니다."
+<<<<<<< HEAD
         genai = _get_genai()
         if genai is None:
             return "자동 응답 시스템이 Gemini 클라이언트를 초기화하지 못했습니다."
+=======
+>>>>>>> origin/main
         
         system_context = self._get_system_context()
         
@@ -436,9 +451,12 @@ def main():
     args = parser.parse_args()
     
     workspace_root = Path(__file__).parent.parent
+<<<<<<< HEAD
     if not _acquire_single_instance_lock(workspace_root):
         print("⚠️ shion_auto_responder: already running, exiting.")
         return
+=======
+>>>>>>> origin/main
     mode = AutonomousCollaborationMode(workspace_root)
     
     if args.daemon:

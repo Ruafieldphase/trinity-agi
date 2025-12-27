@@ -295,6 +295,7 @@ class MusicDaemon:
         flow_analysis["system_stress"] = system_stress
         
         return flow_analysis
+<<<<<<< HEAD
 
     def _brainwave_to_bpm(self, brainwave: str) -> float:
         """
@@ -334,15 +335,24 @@ class MusicDaemon:
             hint["error"] = str(e)
             logger.warning(f"⚠️ Groove hint failed: {e}")
             return hint
+=======
+>>>>>>> origin/main
     
     def generate_binaural_beat(self, brainwave: str, duration: int = 300) -> Path:
         """Binaural Beat 생성 (Groove Engine 적용)"""
         logger.info(f"🎼 Generating {brainwave} binaural beat ({duration}s)...")
         
+<<<<<<< HEAD
         # Groove Engine에서 microtiming hint 가져오기 (안전 변환 포함)
         groove_hint = self._get_groove_hint(brainwave)
         offset_ms = float(groove_hint.get("offset_ms", 0.0) or 0.0)
         swing_factor = float(groove_hint.get("swing_factor", 0.0) or 0.0)
+=======
+        # Groove Engine에서 microtiming offset 가져오기
+        groove_hint = self.groove_engine.compute_microtiming_offset(brainwave, 1.0)  # phase=1.0 (기본)
+        offset_ms = groove_hint.get("offset_ms", 0.0)
+        swing_factor = groove_hint.get("swing_factor", 0.0)
+>>>>>>> origin/main
         
         logger.info(f"🎵 Groove: offset={offset_ms:.1f}ms, swing={swing_factor:.2f}")
         

@@ -145,9 +145,13 @@ class MetricsCollector:
         cutoff_time = datetime.now().timestamp() - (hours * 3600)
         events = []
 
+<<<<<<< HEAD
         # Ledger는 다양한 소스가 append하는 JSONL이라 인코딩이 섞일 수 있다.
         # 모니터링이 전체를 멈추지 않도록 디코드 오류는 치환 후 파서에서 스킵한다.
         with open(self.ledger_path, 'r', encoding='utf-8', errors='replace') as f:
+=======
+        with open(self.ledger_path, 'r', encoding='utf-8') as f:
+>>>>>>> origin/main
             for line in f:
                 line = line.strip()
                 if not line:

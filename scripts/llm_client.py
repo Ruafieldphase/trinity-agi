@@ -49,6 +49,7 @@ ALLOWED_INTENTS = {
 }
 
 
+<<<<<<< HEAD
 def _load_dotenv_value(name: str) -> str | None:
     """
     Process env에 값이 없으면 워크스페이스 .env에서 읽어온다.
@@ -74,6 +75,8 @@ def _load_dotenv_value(name: str) -> str | None:
     return None
 
 
+=======
+>>>>>>> origin/main
 def _is_allowed(intent: str) -> bool:
     if intent in ALLOWED_INTENTS:
         return True
@@ -111,7 +114,11 @@ SYSTEM_PROMPT = (
 
 def _google_ai_studio_classify(utter: str) -> Optional[str]:
     """Use Google AI Studio (google-generativeai) to classify intent."""
+<<<<<<< HEAD
     api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or _load_dotenv_value("GOOGLE_API_KEY") or _load_dotenv_value("GEMINI_API_KEY")
+=======
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+>>>>>>> origin/main
     if not api_key:
         print("DEBUG: No GOOGLE_API_KEY or GEMINI_API_KEY found", file=sys.stderr)
         return None
@@ -151,8 +158,13 @@ def _vertex_classify(utter: str) -> Optional[str]:
     # Fallback priority: VERTEXAI_PROJECT > GCP_PROJECT
     project = os.getenv("VERTEXAI_PROJECT") or os.getenv("GCP_PROJECT")
     location = os.getenv("VERTEXAI_LOCATION") or os.getenv("GCP_LOCATION", "us-central1")
+<<<<<<< HEAD
     # Prefer newer flash models; allow override via env.
     model_name = os.getenv("VERTEXAI_INTENT_MODEL") or os.getenv("VERTEX_MODEL_GEMINI", "gemini-2.0-flash-001")
+=======
+    # Use gemini-1.5-flash-002 as verified in .env
+    model_name = os.getenv("VERTEXAI_INTENT_MODEL") or os.getenv("VERTEX_MODEL_GEMINI", "gemini-1.5-flash-002")
+>>>>>>> origin/main
     if not project:
         return None
     try:

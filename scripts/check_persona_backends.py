@@ -27,17 +27,25 @@ def check_command(command: Optional[str]) -> Dict[str, str]:
         return {"available": "no", "error": f"'{command}' not on PATH"}
 
     try:
+<<<<<<< HEAD
         # Use shell=True on Windows to handle .cmd, .bat, and other script extensions reliably
         is_windows = sys.platform == "win32"
         subprocess.run(
             [resolved, "--help"] if not is_windows else f'"{resolved}" --help',
+=======
+        subprocess.run(
+            [command, "--help"],
+>>>>>>> origin/main
             capture_output=True,
             text=True,
             encoding="utf-8",
             errors="ignore",
             timeout=5,
             check=False,
+<<<<<<< HEAD
             shell=is_windows
+=======
+>>>>>>> origin/main
         )
         return {"available": "yes", "path": resolved}
     except subprocess.TimeoutExpired:

@@ -130,7 +130,11 @@ except Exception as e:
 # Initialize Unified Memory System (Resonance RAG)
 try:
     # Add workspace root to path
+<<<<<<< HEAD
     sys.path.append(str(Path(__file__).parent.parent))
+=======
+    sys.path.append(str(Path(__file__).parent.parent.parent))
+>>>>>>> origin/main
     from fdo_agi_repo.memory.resonance_rag import ResonanceRAG
     
     # Context Persistence
@@ -371,6 +375,7 @@ class RhythmConductor:
         self.context_save_queue = []  # Queue for async saves
         
         # Context Persistence
+<<<<<<< HEAD
         if 'ContextBridge' in globals():
             try:
                 self.context_bridge = ContextBridge(storage_dir=str(self.outputs_dir / "contexts"))
@@ -380,6 +385,13 @@ class RhythmConductor:
         else:
             self.context_bridge = None
             log("⚠️ ContextBridge class not available")
+=======
+        try:
+            self.context_bridge = ContextBridge(storage_dir=str(self.outputs_dir / "contexts"))
+        except Exception as e:
+            log(f"⚠️ ContextBridge init failed: {e}")
+            self.context_bridge = None
+>>>>>>> origin/main
         
         # Initialize log
         log("🎵 RhythmConductor initialized (optimized)")
@@ -603,6 +615,7 @@ class RhythmConductor:
         except Exception as e:
             log(f"⚠️ Context flush failed: {e}")
     
+<<<<<<< HEAD
     def _check_emergent_habits(self):
         """Check for emergent habits from the Unconscious Layer"""
         try:
@@ -636,6 +649,8 @@ class RhythmConductor:
         except Exception:
             pass
 
+=======
+>>>>>>> origin/main
     def conduct(self):
         """
         Main conducting cycle - check alignment and adjust tempos (OPTIMIZED)
@@ -645,9 +660,12 @@ class RhythmConductor:
         - Batched I/O: Save all tempo changes at once
         - Async context: Queue contexts, flush periodically
         """
+<<<<<<< HEAD
         # 0. Observe Unconscious Habits
         self._check_emergent_habits()
 
+=======
+>>>>>>> origin/main
         status = self.detect_phase_misalignment()
         
         # Optimization: Skip if nothing changed
@@ -752,6 +770,7 @@ class RhythmConductor:
                     self._queue_context_save(ctx)
             except Exception as e:
                 log(f"⚠️ Context queue failed: {e}")
+<<<<<<< HEAD
 
         # 🧬 Update AGI Internal State (Background Self)
         # Background Self is active and dynamically adjusts consciousness balance
@@ -825,6 +844,11 @@ class RhythmConductor:
         except Exception as e:
             log(f"⚠️ Failed to update internal state: {e}")
 
+=======
+        
+        return status
+
+>>>>>>> origin/main
 def main():
     print(f"🌉 Background Self Bridge Started (PID: {os.getpid()})")
     print(f"   Monitoring {TASKS_FILE}...")

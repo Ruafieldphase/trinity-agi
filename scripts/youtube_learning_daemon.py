@@ -33,6 +33,7 @@ LEARNING_QUEUE_FILE = None  # Will be set dynamically
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 STATE_FILE = OUTPUTS_DIR / "learning_queue_state.json"
 RHYTHM_FILE = OUTPUTS_DIR / "rhythm_status.json"
+<<<<<<< HEAD
 STATUS_FILE = OUTPUTS_DIR / "youtube_learning_daemon_status.json"
 
 
@@ -41,6 +42,8 @@ def _atomic_write_json(path: Path, obj: Dict):
     tmp = path.with_suffix(path.suffix + ".tmp")
     tmp.write_text(json.dumps(obj, ensure_ascii=False, indent=2), encoding="utf-8")
     tmp.replace(path)
+=======
+>>>>>>> origin/main
 
 
 class LearningQueueState:
@@ -210,6 +213,7 @@ class YouTubeLearningDaemon:
         # Initialize learner
         try:
             self.learner = YouTubeFeelingLearner()
+<<<<<<< HEAD
             _atomic_write_json(
                 STATUS_FILE,
                 {
@@ -231,6 +235,11 @@ class YouTubeLearningDaemon:
                     "note": "Will stay alive and retry later (Idle is normal).",
                 },
             )
+=======
+            return True
+        except Exception as e:
+            print(f"❌ Failed to initialize learner: {e}")
+>>>>>>> origin/main
             return False
     
     async def process_queue(self):
@@ -306,10 +315,17 @@ class YouTubeLearningDaemon:
     
     async def run_loop(self, interval: int = 3600):
         """Run daemon in a loop (for systemd service)."""
+<<<<<<< HEAD
+=======
+        if not self.initialize():
+            return
+        
+>>>>>>> origin/main
         print(f"🤖 Learning daemon started (interval: {interval}s)")
         
         while True:
             try:
+<<<<<<< HEAD
                 if not self.learner:
                     self.initialize()
 
@@ -328,6 +344,11 @@ class YouTubeLearningDaemon:
                         "error": f"{type(e).__name__}: {e}",
                     },
                 )
+=======
+                await self.process_queue()
+            except Exception as e:
+                print(f"❌ Error in daemon loop: {e}")
+>>>>>>> origin/main
             
             # Wait for next cycle
             print(f"\n⏰ Next check in {interval}s...")

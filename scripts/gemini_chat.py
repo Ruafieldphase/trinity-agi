@@ -16,7 +16,11 @@ def chat_with_gemini(
     prompt: str,
     project_id: str = "naeda-genesis",
     location: str = "us-central1",
+<<<<<<< HEAD
     model_name: str = "gemini-2.5-flash",
+=======
+    model_name: str = "gemini-1.5-flash-002",
+>>>>>>> origin/main
     max_output_tokens: int = 2048,
     temperature: float = 0.7,
 ) -> str:
@@ -43,7 +47,11 @@ def chat_with_gemini(
 
     use_project = project_id or env_project or "naeda-genesis"
     use_location = location or env_location or "us-central1"
+<<<<<<< HEAD
     use_model = model_name or env_model or "gemini-2.5-flash"
+=======
+    use_model = model_name or env_model or "gemini-1.5-flash-002"
+>>>>>>> origin/main
 
     # Pass api_key to init if present; otherwise rely on ADC
     if api_key:
@@ -57,6 +65,7 @@ def chat_with_gemini(
         temperature=temperature,
     )
     
+<<<<<<< HEAD
     # Create model instance (fallback list for environments where some models are not enabled)
     candidates = [use_model, "gemini-2.0-flash-001", "gemini-1.5-flash-002"]
     last_err: Optional[Exception] = None
@@ -71,6 +80,10 @@ def chat_with_gemini(
             continue
     if model is None:
         raise RuntimeError(f"Failed to initialize Gemini model (tried: {', '.join(candidates)}): {last_err}")
+=======
+    # Create model instance
+    model = GenerativeModel(use_model)
+>>>>>>> origin/main
     
     # Generate response
     response = model.generate_content(

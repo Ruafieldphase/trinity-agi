@@ -98,6 +98,7 @@ class AdaptiveGlymphaticSystem:
                 "cleanup_start",
                 {
                     "workload_percent": current_workload.get("workload_percent"),
+<<<<<<< HEAD
                     "fatigue_level": current_fatigue.get("fatigue_level"),
                 },
             )
@@ -114,6 +115,8 @@ class AdaptiveGlymphaticSystem:
             
         except Exception as e:
             print(f"❌ Cleanup Execution Failed: {e}")
+=======
+>>>>>>> origin/main
                     "cpu_percent": current_workload.get("cpu_percent"),
                     "memory_percent": current_workload.get("memory_percent"),
                     "fatigue_level": current_fatigue.get("fatigue_level"),

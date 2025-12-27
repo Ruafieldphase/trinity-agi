@@ -12,6 +12,7 @@ WS_EX_TRANSPARENT = 0x00000020
 LWA_COLORKEY = 0x00000001
 LWA_ALPHA = 0x00000002
 
+<<<<<<< HEAD
 # Aura Colors (Full Spectrum)
 COLOR_SURVIVAL = "#FF0000"   # Red: Critical Threat / Survival Mode
 COLOR_ANXIETY  = "#FF4500"   # Orange: Anxiety / Need / Warning
@@ -21,6 +22,8 @@ COLOR_EXPRESS  = "#00BFFF"   # Blue: Communication / Output / Speaking
 COLOR_INSIGHT  = "#4B0082"   # Indigo: Deep Thought / Unconscious / Data Mining
 COLOR_EXPLORE  = "#9933FF"   # Purple: Creativity / Exploration / Novelty
 
+=======
+>>>>>>> origin/main
 class VisualOverlay:
     def __init__(self, initial_color='#00FFFF', thickness=100):
         self.root = tk.Tk()
@@ -155,6 +158,7 @@ class VisualOverlay:
                 if cmd.startswith("color:"):
                     color = cmd.split(":")[1]
                     self.root.after(0, lambda: self.set_color(color))
+<<<<<<< HEAD
                 elif cmd.startswith("state:"):
                     state = cmd.split(":")[1].strip().lower()
                     if state == "explore":
@@ -171,6 +175,8 @@ class VisualOverlay:
                         self.root.after(0, lambda: self.set_color(COLOR_INSIGHT))
                     else:
                         self.root.after(0, lambda: self.set_color(COLOR_HARMONY))
+=======
+>>>>>>> origin/main
             except:
                 break
 

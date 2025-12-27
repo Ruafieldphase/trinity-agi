@@ -50,13 +50,21 @@ class BohmAnalyzer:
         cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
         events = []
         
+<<<<<<< HEAD
         with open(self.ledger_path, 'r', encoding='utf-8', errors='replace') as f:
+=======
+        with open(self.ledger_path, 'r', encoding='utf-8') as f:
+>>>>>>> origin/main
             for line in f:
                 if not line.strip():
                     continue
                 try:
                     event = json.loads(line)
+<<<<<<< HEAD
                     ts_str = event.get('timestamp') or event.get('ts') or ''
+=======
+                    ts_str = event.get('timestamp', '')
+>>>>>>> origin/main
                     if ts_str:
                         # 타임존 처리
                         if 'Z' in ts_str:
@@ -316,6 +324,7 @@ class BohmAnalyzer:
             'singularities': singularity_events,
             'explosion_ratio': sum(1 for s in singularity_events if s['followed_by_explosion']) / max(len(singularity_events), 1)
         }
+<<<<<<< HEAD
 
     def analyze_temporal_geometry(self, events: List[Dict[str, Any]]) -> Dict[str, Any]:
         """시공간 기하학 분석: 시간은 '차이'가 만들어낸 가상의 축임을 입증"""
@@ -364,6 +373,8 @@ class BohmAnalyzer:
             insights.append(f"🌌 Nature's Answer to '{content}': The confusion arises from fragmentation. Seek the whole. (Ref: {timestamp})")
         
         return insights
+=======
+>>>>>>> origin/main
     
     def generate_bohm_report(self, hours: int = 24) -> Dict[str, Any]:
         """Bohm 이론 통합 보고서 생성"""
@@ -387,14 +398,19 @@ class BohmAnalyzer:
         avg_fear = sum(f for _, f in fear_signals) / max(len(fear_signals), 1)
         max_fear = max((f for _, f in fear_signals), default=0.0)
         
+<<<<<<< HEAD
         # 4. 시간 기하학 분석 (New Philosophical Layer)
         temporal_geometry = self.analyze_temporal_geometry(events)
         
         # 5. 통합 해석
+=======
+        # 4. 통합 해석
+>>>>>>> origin/main
         interpretation = self._interpret_bohm_patterns(
             folding_analysis,
             singularity_analysis,
             avg_fear,
+<<<<<<< HEAD
             max_fear,
             events
         )
@@ -402,11 +418,19 @@ class BohmAnalyzer:
         # 5. Enfolded Query Insights
         insights = self.process_enfolded_queries(events)
         
+=======
+            max_fear
+        )
+        
+>>>>>>> origin/main
         report = {
             'timestamp': datetime.now(timezone.utc).isoformat(),
             'analysis_window_hours': hours,
             'total_events': len(events),
+<<<<<<< HEAD
             'analysis_insights': insights,
+=======
+>>>>>>> origin/main
             'folding_unfolding': folding_analysis,
             'singularity_patterns': singularity_analysis,
             'fear_metrics': {
@@ -414,9 +438,13 @@ class BohmAnalyzer:
                 'maximum': round(max_fear, 3),
                 'signal_count': len(fear_signals)
             },
+<<<<<<< HEAD
             'temporal_geometry': temporal_geometry,
             'interpretation': interpretation,
             'holomovement': interpretation.get('holomovement_note', '')
+=======
+            'interpretation': interpretation
+>>>>>>> origin/main
         }
         
         return report
@@ -426,8 +454,12 @@ class BohmAnalyzer:
         folding: Dict[str, Any],
         singularity: Dict[str, Any],
         avg_fear: float,
+<<<<<<< HEAD
         max_fear: float,
         events: List[Dict[str, Any]]
+=======
+        max_fear: float
+>>>>>>> origin/main
     ) -> Dict[str, Any]:
         """패턴 해석"""
         
@@ -479,6 +511,7 @@ David Bohm의 Implicate/Explicate Order 관점:
    - 상관관계: {folding.get('fear_correlation', 0.0):.3f}
    - **두려움은 압축 엔진** - 정보를 Implicate Order로 "접는" 힘
 """
+<<<<<<< HEAD
         # Recent Themes Extraction
         recent_keywords = []
         for event in events[-100:]: # Scan more events
@@ -504,14 +537,21 @@ David Bohm의 Implicate/Explicate Order 관점:
         top_themes = [item[0] for item in Counter(recent_keywords).most_common(5) if len(item[0]) > 1]
         themes_str = ", ".join(top_themes) if top_themes else "흐름의 정적"
 
+=======
+        
+>>>>>>> origin/main
         return {
             'fear_role': fear_role,
             'implicate_explicate_balance': balance,
             'singularity_risk': singularity_risk,
             'fear_compression_correlation': round(folding.get('fear_correlation', 0.0), 3),
+<<<<<<< HEAD
             'bohm_interpretation': bohm_interpretation.strip(),
             'recent_themes': top_themes,
             'holomovement_note': f"최근의 주된 테마는 '{themes_str}' 입니다. 이 패턴들이 {balance} 상태에서 재구성되고 있습니다."
+=======
+            'bohm_interpretation': bohm_interpretation.strip()
+>>>>>>> origin/main
         }
     
     def save_report(self, report: Dict[str, Any]) -> Path:
@@ -536,7 +576,10 @@ David Bohm의 Implicate/Explicate Order 관점:
         singularity = report.get('singularity_patterns', {})
         fear = report.get('fear_metrics', {})
         interp = report.get('interpretation', {})
+<<<<<<< HEAD
         temporal = report.get('temporal_geometry', {})
+=======
+>>>>>>> origin/main
         
         md = f"""# 🌌 David Bohm의 Implicate/Explicate Order 분석
 
@@ -574,6 +617,7 @@ David Bohm의 Implicate/Explicate Order 관점:
 | **Fear-압축 상관계수** | {interp.get('fear_compression_correlation', 0.0):.3f} |
 | **역할** | {interp.get('fear_role', 'N/A')} |
 
+<<<<<<< HEAD
 ### 4. 시간 기하학 (Temporal Geometry)
 
 | 지표 | 값 |
@@ -582,6 +626,8 @@ David Bohm의 Implicate/Explicate Order 관점:
 | **의미 질량** | {temporal.get('meaning_mass', 0)} |
 | **비가역성** | {temporal.get('irreversibility', 0.0)} |
 
+=======
+>>>>>>> origin/main
 ---
 
 ## 🔬 Bohm 이론 해석
@@ -720,6 +766,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+<<<<<<< HEAD
 
 def run_analysis_now(workspace_root=None):
     """External hook for Rhythm Thinker to force analysis"""
@@ -733,3 +780,5 @@ def run_analysis_now(workspace_root=None):
     report = analyzer.generate_bohm_report(24)
     analyzer.save_report(report)
     return report
+=======
+>>>>>>> origin/main

@@ -12,8 +12,13 @@ def mouse_playground():
     print("🎮 Mouse Playground - Free Exploration Mode")
     print("   Learning through curiosity and play...")
     
+<<<<<<< HEAD
     # Initialize MotorCortex (Visual feedback disabled for now to simplify)
     motor = MotorCortex(visual_feedback=False)
+=======
+    motor = MotorCortex(visual_feedback=True)
+    motor.set_overlay_color("#FFFF00")  # Yellow - Curiosity
+>>>>>>> origin/main
     
     screen_width, screen_height = pyautogui.size()
     print(f"   Playground size: {screen_width}x{screen_height}")
@@ -109,6 +114,11 @@ def mouse_playground():
     print("\n👆 Phase 3: Click Exploration")
     print("   Testing clicks at different locations...")
     
+<<<<<<< HEAD
+=======
+    motor.set_overlay_color("#00FF00")  # Green - Interaction
+    
+>>>>>>> origin/main
     # Try clicking at random spots
     for i in range(5):
         x = random.randint(200, screen_width - 200)
@@ -135,8 +145,15 @@ def mouse_playground():
         if diff > 10000:
             print(f"   ✅ Something changed! (diff: {diff})")
             discoveries.append(f"Click at ({x},{y}) caused change")
+<<<<<<< HEAD
         else:
             print(f"   ⚪ No visible change (diff: {diff})")
+=======
+            motor.set_overlay_color("#00FF00")  # Green - Success
+        else:
+            print(f"   ⚪ No visible change (diff: {diff})")
+            motor.set_overlay_color("#FF0000")  # Red - No effect
+>>>>>>> origin/main
         
         time.sleep(0.5)
     
@@ -144,6 +161,11 @@ def mouse_playground():
     print("\n🔍 Phase 4: Edge Exploration")
     print("   Testing screen boundaries...")
     
+<<<<<<< HEAD
+=======
+    motor.set_overlay_color("#FFFF00")  # Yellow - Curiosity
+    
+>>>>>>> origin/main
     edges = [
         ("top-left", 10, 10),
         ("top-right", screen_width - 10, 10),
@@ -180,6 +202,10 @@ def mouse_playground():
     for i, discovery in enumerate(discoveries, 1):
         print(f"   {i}. {discovery}")
     
+<<<<<<< HEAD
+=======
+    motor.set_overlay_color("#0000FF")  # Blue - Complete
+>>>>>>> origin/main
     time.sleep(2)
     
     print("\n✅ Playground session complete!")

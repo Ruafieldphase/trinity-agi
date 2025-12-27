@@ -148,9 +148,12 @@ class GrooveEngine:
         if self.profile.microtiming_variance > 0:
             max_variance_ms = 5.0 * self.profile.microtiming_variance
             variance_offset = np.random.uniform(-max_variance_ms, max_variance_ms) / 1000.0
+<<<<<<< HEAD
 
         total_offset = base_offset_sec + swing_offset + variance_offset
         return float(total_offset)
+=======
+>>>>>>> origin/main
     
     def compute_microtiming_offset(self, beat_index: int, bpm: float) -> float:
         """
@@ -164,6 +167,13 @@ class GrooveEngine:
             Timing offset in seconds
         """
         return self.compute_beat_offset(beat_index, bpm)
+<<<<<<< HEAD
+=======
+        
+        total_offset = base_offset_sec + swing_offset + variance_offset
+        
+        return total_offset
+>>>>>>> origin/main
     
     def get_spectral_eq_hints(self) -> Dict[str, float]:
         """

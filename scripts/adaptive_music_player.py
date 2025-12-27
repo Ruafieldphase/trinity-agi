@@ -5,7 +5,10 @@
 리듬 상태, 작업 컨텍스트, 시간대에 맞춰 자동으로 음악 재생
 """
 import json
+<<<<<<< HEAD
 import os
+=======
+>>>>>>> origin/main
 import random
 import subprocess
 import webbrowser
@@ -127,6 +130,7 @@ def select_music(phase: str = None, context: str = None) -> dict:
 
 def play_music(url: str, browser: str = "comet"):
     """음악 재생 (브라우저에서 열기)"""
+<<<<<<< HEAD
     # 기본은 "자동 팝업 금지": 음악은 제안(리포트)만 하고, 필요 시에만 명시적으로 연다.
     # - AGI_MUSIC_OPEN_BROWSER=1 일 때만 브라우저를 연다.
     open_browser = str(os.getenv("AGI_MUSIC_OPEN_BROWSER", "")).strip().lower() in ("1", "true", "yes", "on")
@@ -135,6 +139,8 @@ def play_music(url: str, browser: str = "comet"):
         print(f"   URL: {url}")
         return
 
+=======
+>>>>>>> origin/main
     print(f"🎵 Opening music in {browser}...")
     
     if browser.lower() == "comet":

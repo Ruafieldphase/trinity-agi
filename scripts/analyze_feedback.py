@@ -39,7 +39,11 @@ def load_goal_tracker() -> Optional[Dict[str, Any]]:
         return None
     
     try:
+<<<<<<< HEAD
         with open(tracker_path, 'r', encoding='utf-8-sig', errors='replace') as f:
+=======
+        with open(tracker_path, 'r', encoding='utf-8') as f:
+>>>>>>> origin/main
             data = json.load(f)
         logger.info(f"Goal Tracker 로드 완료: {len(data.get('goals', []))} goals")
         return data
@@ -50,12 +54,16 @@ def load_goal_tracker() -> Optional[Dict[str, Any]]:
 
 def load_resonance_ledger(hours: int) -> List[Dict[str, Any]]:
     """Resonance Ledger에서 최근 이벤트 로드"""
+<<<<<<< HEAD
     # v2가 있으면 우선 사용 (인코딩 혼재 가능성에 대비해 errors='replace')
     cand = [
         MEMORY_DIR / "resonance_ledger_v2.jsonl",
         MEMORY_DIR / "resonance_ledger.jsonl",
     ]
     ledger_path = next((p for p in cand if p.exists()), cand[-1])
+=======
+    ledger_path = MEMORY_DIR / "resonance_ledger.jsonl"
+>>>>>>> origin/main
     
     if not ledger_path.exists():
         logger.warning(f"Resonance Ledger 없음: {ledger_path}")
@@ -65,7 +73,11 @@ def load_resonance_ledger(hours: int) -> List[Dict[str, Any]]:
     events = []
     
     try:
+<<<<<<< HEAD
         with open(ledger_path, 'r', encoding='utf-8-sig', errors='replace') as f:
+=======
+        with open(ledger_path, 'r', encoding='utf-8') as f:
+>>>>>>> origin/main
             for line in f:
                 line = line.strip()
                 if not line:
@@ -97,7 +109,11 @@ def load_self_care_summary() -> Optional[Dict[str, Any]]:
         return None
     
     try:
+<<<<<<< HEAD
         with open(summary_path, 'r', encoding='utf-8-sig', errors='replace') as f:
+=======
+        with open(summary_path, 'r', encoding='utf-8') as f:
+>>>>>>> origin/main
             data = json.load(f)
         logger.info("Self-Care 요약 로드 완료")
         return data

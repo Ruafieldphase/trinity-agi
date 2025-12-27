@@ -4,6 +4,7 @@
 
 본 문서는 상위 개념 문서(윤리/공포 분석/자연법/레조넌스/토탈 시뮬레이션)를 실행 가능한 구성(스키마·로더·브리지·검증)로 연결하기 위한 단계별 실행 계획입니다. 문서는 작업 진행에 따라 지속적으로 갱신됩니다.
 
+<<<<<<< HEAD
 ## 최근 변경 사항 (2025-12-24)
 
 ### 리듬 모드 기반 auto_policy 게이트
@@ -24,6 +25,8 @@
 - `scripts/semantic_rag_engine.py`에 원격 벡터 스토어 미러/검색 옵션 추가.
 - 환경변수로 활성화(`AGI_REMOTE_VECTOR_PROVIDER=qdrant`, `AGI_REMOTE_VECTOR_URL`).
 
+=======
+>>>>>>> origin/main
 ## 최근 변경 사항 (2025-11-14 12:01)
 
 ### Gitko 확장 Copilot 안전화
@@ -45,6 +48,7 @@
 2. Consider trimming JSON payloads (e.g., omit raw session blobs when `MinimalContext` is true) to align structured data size with Markdown cap.
 3. Update bridge quick-start docs/tasks so operators know about `-MaxContext` and the new truncation notices.
 
+<<<<<<< HEAD
 ## 최근 변경 사항 (2025-12-18)
 
 ### Lua Trigger Listener + 관측 가능한 리포트 레이어 (Ubuntu↔Windows)
@@ -68,6 +72,8 @@
 2. `full_cycle`의 “리듬(phase) 판단”을 ledger 이벤트 스키마 기반으로 강화(파동-입자/접힘-펼침 지표).
 3. 트리거 경쟁 방지(스케줄러 vs auto_policy vs manual)용 잠금/우선순위 규칙 추가.
 
+=======
+>>>>>>> origin/main
 ## 최근 변경 사항 (2025-11-12 22:45)
 
 ### RCL Secure Loop 실구현 (Lua ↔ VSCode ↔ Runner)

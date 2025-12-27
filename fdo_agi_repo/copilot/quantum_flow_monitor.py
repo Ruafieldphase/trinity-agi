@@ -15,9 +15,14 @@ Quantum Flow Monitor - 양자적 결맞음 기반 Flow State 감지
 
 import json
 import math
+<<<<<<< HEAD
 import os
 import time
 from datetime import datetime, timedelta, timezone
+=======
+import time
+from datetime import datetime, timedelta
+>>>>>>> origin/main
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, asdict
@@ -67,6 +72,7 @@ class QuantumFlowMonitor:
         # 물리 상수
         self.PLANCK_CONSTANT = 6.62607015e-34  # J·s
         self.ELECTRON_CHARGE = 1.602176634e-19  # C
+<<<<<<< HEAD
 
     def _select_ledger_file(self) -> Path:
         """
@@ -131,6 +137,8 @@ class QuantumFlowMonitor:
             return lines
         except Exception:
             return []
+=======
+>>>>>>> origin/main
         
     def measure_hippocampus_phase(self) -> PhaseState:
         """
@@ -141,7 +149,11 @@ class QuantumFlowMonitor:
         - 자동 패턴 인식 활동
         - 암묵적 학습 신호
         """
+<<<<<<< HEAD
         ledger_file = self._select_ledger_file()
+=======
+        ledger_file = self.memory_dir / "resonance_ledger.jsonl"
+>>>>>>> origin/main
         
         if not ledger_file.exists():
             # 기본값 반환
@@ -156,6 +168,7 @@ class QuantumFlowMonitor:
         recent_events = self._load_recent_events(ledger_file, minutes=10)
         
         # 패턴 인식 관련 이벤트 필터
+<<<<<<< HEAD
         implicit_kinds = {
             "memory_recall",
             "pattern_detected",
@@ -163,6 +176,12 @@ class QuantumFlowMonitor:
             "autopoietic_phase",
         }
         implicit_events = [e for e in recent_events if self._normalize_event_kind(e) in implicit_kinds]
+=======
+        implicit_events = [
+            e for e in recent_events
+            if e.get("type") in ["memory_recall", "pattern_detected", "auto_response"]
+        ]
+>>>>>>> origin/main
         
         if not implicit_events:
             return PhaseState(
@@ -202,7 +221,11 @@ class QuantumFlowMonitor:
         - 의도적 작업 실행
         - 명시적 학습/판단
         """
+<<<<<<< HEAD
         ledger_file = self._select_ledger_file()
+=======
+        ledger_file = self.memory_dir / "resonance_ledger.jsonl"
+>>>>>>> origin/main
         
         if not ledger_file.exists():
             return PhaseState(
@@ -215,6 +238,7 @@ class QuantumFlowMonitor:
         recent_events = self._load_recent_events(ledger_file, minutes=10)
         
         # 의식적 실행 관련 이벤트
+<<<<<<< HEAD
         explicit_kinds = {
             "task_started",
             "goal_set",
@@ -223,6 +247,12 @@ class QuantumFlowMonitor:
             "trigger_action",
         }
         explicit_events = [e for e in recent_events if self._normalize_event_kind(e) in explicit_kinds]
+=======
+        explicit_events = [
+            e for e in recent_events
+            if e.get("type") in ["task_started", "goal_set", "decision_made", "explicit_action"]
+        ]
+>>>>>>> origin/main
         
         if not explicit_events:
             return PhaseState(
@@ -333,6 +363,7 @@ class QuantumFlowMonitor:
             return 1.0 / conductivity
         else:
             return float('inf')  # 완전 차단
+<<<<<<< HEAD
 
     def calculate_coherence(
         self,
@@ -362,6 +393,8 @@ class QuantumFlowMonitor:
         metrics.electron_flow_resistance = self.calculate_electron_flow_resistance(metrics)
         metrics.state = self.classify_flow_state(phase_coherence)
         return metrics
+=======
+>>>>>>> origin/main
     
     def classify_flow_state(self, phase_coherence: float) -> str:
         """
@@ -532,6 +565,7 @@ class QuantumFlowMonitor:
         cutoff = time.time() - (minutes * 60)
         events = []
         
+<<<<<<< HEAD
         for line in self._read_tail_lines(ledger_file):
             try:
                 s = line.strip()
@@ -550,6 +584,25 @@ class QuantumFlowMonitor:
             events.append(event)
 
         events.sort(key=lambda e: float(e.get("timestamp", 0.0)))
+=======
+        with open(ledger_file, "r", encoding="utf-8") as f:
+            for line in f:
+                try:
+                    event = json.loads(line.strip())
+                    timestamp = event.get("timestamp", 0)
+                    
+                    if isinstance(timestamp, str):
+                        # ISO format
+                        dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+                        timestamp = dt.timestamp()
+                    
+                    if timestamp >= cutoff:
+                        event["timestamp"] = timestamp
+                        events.append(event)
+                except:
+                    continue
+        
+>>>>>>> origin/main
         return events
 
 

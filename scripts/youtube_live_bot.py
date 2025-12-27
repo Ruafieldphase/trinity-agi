@@ -27,6 +27,7 @@ from typing import Optional, Dict, Any, List, Tuple
 import backoff  # type: ignore
 from dotenv import load_dotenv  # type: ignore
 
+<<<<<<< HEAD
 REPO_ROOT = Path(__file__).resolve().parents[1]
 cred = REPO_ROOT / ".env_credentials"
 if cred.exists():
@@ -37,6 +38,14 @@ load_dotenv(dotenv_path=REPO_ROOT / ".env", override=False)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _repo_root_str = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, os.path.join(_repo_root_str, "fdo_agi_repo"))
+=======
+load_dotenv(override=False)
+
+# Add emoji filter
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+sys.path.insert(0, os.path.join(REPO_ROOT, "fdo_agi_repo"))
+>>>>>>> origin/main
 from utils.emoji_filter import remove_emojis
 
 SCOPES = [
@@ -142,7 +151,11 @@ def answer_with_gemini(prompt: str) -> Optional[str]:
     except Exception:
         return None
     genai.configure(api_key=api_key)
+<<<<<<< HEAD
     model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+=======
+    model = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
+>>>>>>> origin/main
     try:
         resp = genai.GenerativeModel(model).generate_content(prompt)
         return remove_emojis(resp.text)

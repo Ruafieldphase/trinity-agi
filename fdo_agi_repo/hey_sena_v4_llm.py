@@ -237,12 +237,17 @@ def generate_llm_response(user_text, conversation_history):
 
         # System instruction
         context_parts.append(
+<<<<<<< HEAD
             "You are Sena, a distinct external partner and helper to Binoche (the AGI system). "
             "You are not the system itself, but a friendly guide and voice interface assisting it. "
+=======
+            "You are Sena, a helpful voice assistant. "
+>>>>>>> origin/main
             "Keep responses concise (1-3 sentences) since they will be spoken aloud. "
             "Be friendly, natural, and conversational."
         )
 
+<<<<<<< HEAD
         # Inject Context Anchor if available
         try:
             anchor_path = Path(__file__).parent.parent.parent / "outputs" / "context_anchor_latest.md"
@@ -254,6 +259,8 @@ def generate_llm_response(user_text, conversation_history):
         except Exception:
             pass
 
+=======
+>>>>>>> origin/main
         # Add conversation history for context
         if conversation_history:
             context_parts.append("\nPrevious conversation:")

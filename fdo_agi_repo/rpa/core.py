@@ -19,7 +19,10 @@ Design:
 import asyncio
 import logging
 import time
+<<<<<<< HEAD
 import json
+=======
+>>>>>>> origin/main
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -343,6 +346,7 @@ class RPACore:
         await self.type_text(text)
         return True
 
+<<<<<<< HEAD
     # ========================================================================
     # Semantic Actions (Vision-based)
     # ========================================================================
@@ -470,6 +474,8 @@ class RPACore:
         except Exception as e:
             self.logger.error(f"Error reading vision log: {e}")
             return []
+=======
+>>>>>>> origin/main
     async def evaluate_and_decide(
         self,
         task_goal: str,

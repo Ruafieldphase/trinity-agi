@@ -1,5 +1,6 @@
 # Agent Handoff Log
 
+<<<<<<< HEAD
 ## [2025-12-26] FSD question boundary refinements (docs + verification)
 
 - `task.md`: added Phase 2/3 question-boundary tasks (state transition, non-intervention, caps, dedup, dual-gate).
@@ -532,6 +533,8 @@
 - P1: `sync_clean`을 “진단→선택적 복구(서비스 재시작/중복 프로세스 정리)”로 확장하되, kill은 최소/화이트리스트 기반으로 제한.
 - P2: `wave_tail`을 더 의미 있는 “리듬 상태(phase/경고/오류) 요약”으로 강화(ledger 이벤트 스키마 기반).
 
+=======
+>>>>>>> origin/main
 ## [2025-11-14 13:45] 🔧 Gitko 확장 Copilot 안전화
 
 ### 30초 요약 (다음 에이전트용)
@@ -561,6 +564,7 @@
 - P1: Add JSON payload slimming (skip raw session blobs when `MinimalContext` is set) to keep clipboard copies and automation tasks aligned.
 - P2: Reflect the new flags in `CHATGPT_LUA_BRIDGE_*` docs + VS Code task snippets so humans know how to request safe payload sizes on demand.
 
+<<<<<<< HEAD
 ## [2025-12-04] 📍 Project Map (Lubit View) 추가
 
 ### 30초 요약 (다음 에이전트용)
@@ -603,6 +607,8 @@
 - P0: 새로운 세션/대화 진입점은 모두 `context_anchor_latest.md` 또는 `/context-anchor`를 첫 로딩 지점으로 삼도록 태스크/단축키/프론트엔드에서 일관되게 연결.
 - P1: 해마 Handover 생성 루틴과 `generate_context_anchor.py`를 일일/세션 종료 루틴에 편입해, 항상 최신 앵커가 유지되도록 자동화.
 
+=======
+>>>>>>> origin/main
 ## [2025-11-12 22:45] 🌐 RCL Bridge · Harmony Runner 실장
 
 ### 30초 요약 (다음 에이전트용)
@@ -6904,6 +6910,7 @@ python scripts/aggregate_glymphatic_metrics.py --hours 24 --json   # 집계 + �
 - Glymphatic KPI 확정: MTBC(청소 간 평균 시간), false defer(청소 미룸 후 고피로 진입) 비율, 리듬 단계별 성공률 등 확장 집계 항목 정의.
 - Unified Dashboard 연계: `scripts/generate_monitoring_report.ps1`에 선택 섹션으로 포함(요약 JSON 소비).
 - 임곗값 적응: 최근 7일 평균/분산 기반으로 스케줄러 정책 미세 조정(후속 PR 권장).
+<<<<<<< HEAD
 
 ## [2025-12-19] 🔗 문서 역추적(파동 스윕) 기반 연결 복구 + Trinity 피드백 고정
 
@@ -7026,3 +7033,5 @@ type outputs\\bridge\\human_ops_summary_latest.txt
 .\.venv\Scripts\python.exe scripts\human_ops_summary.py
 type outputs\\bridge\\human_ops_summary_latest.txt
 ```
+=======
+>>>>>>> origin/main

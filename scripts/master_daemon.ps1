@@ -124,6 +124,7 @@ function Start-ManagedTask {
         if ($TaskConfig.pythonVenv) {
             # Python 스크립트
             $pythonExe = Join-Path $WorkspaceRoot $TaskConfig.pythonVenv
+<<<<<<< HEAD
             # 창 없는 실행을 우선한다 (pythonw가 있으면 사용).
             # - python.exe는 WindowStyle Hidden이어도 '깜빡임'이 발생할 수 있다.
             # - pythonw.exe는 콘솔 창을 만들지 않으므로 사용자 체감이 안정적이다.
@@ -133,6 +134,8 @@ function Start-ManagedTask {
                     if (Test-Path $pythonwExe) { $pythonExe = $pythonwExe }
                 }
             } catch { }
+=======
+>>>>>>> origin/main
             $argList = @($scriptPath) + $TaskConfig.args
             $executable = $pythonExe
         }

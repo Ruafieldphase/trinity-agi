@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ﻿# AGI Session Start Script
+=======
+# AGI Session Start Script
+>>>>>>> origin/main
 # UTF-8 BOM encoding to prevent emoji issues
 
 param(
@@ -18,10 +22,15 @@ function Write-Info { param($Text) Write-Host "[INFO] $Text" -ForegroundColor Bl
 # Workspace root
 $WorkspaceRoot = Split-Path $PSScriptRoot -Parent
 $FdoAgiRepo = Join-Path $WorkspaceRoot "fdo_agi_repo"
+<<<<<<< HEAD
 $MasterPlan = Join-Path $WorkspaceRoot "깃코_AGI_구축_마스?�플??2025-10-25.md"
 $QuickStart = Join-Path $WorkspaceRoot "깃코_AGI_빠른?�작_2025-10-25.md"
 
 
+=======
+$MasterPlan = Join-Path $WorkspaceRoot "깃코_AGI_구축_마스?�플??2025-10-25.md"
+$QuickStart = Join-Path $WorkspaceRoot "깃코_AGI_빠른?�작_2025-10-25.md"
+>>>>>>> origin/main
 
 # Get current phase
 function Get-CurrentPhase {
@@ -57,6 +66,7 @@ function Save-WorkState {
 try {
     if (-not $Silent) {
         Clear-Host
+<<<<<<< HEAD
 # Restore Codex Session
 Write-Header "Checking Codex Session..."
 $LastSessionId = python (Join-Path $PSScriptRoot "get_last_codex_session.py")
@@ -67,6 +77,8 @@ if ($LASTEXITCODE -eq 0 -and $LastSessionId) {
 else {
     Write-Warning "No active Codex session found. A new one will be created."
 }
+=======
+>>>>>>> origin/main
         Write-Host @"
 ================================================================
                 AGI Construction Session Start
@@ -220,5 +232,8 @@ catch {
     Write-Host $_.ScriptStackTrace -ForegroundColor Red
     exit 1
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/main

@@ -7,11 +7,14 @@ try:
 except Exception:  # pragma: no cover
     requests = None  # 런타임에 미설치일 수 있음 (llm.enabled=false일 때는 영향 없음)
 
+<<<<<<< HEAD
 from agi_core.rhythm_boundaries import RhythmBoundaryManager
 from pathlib import Path
 import os
 import warnings
 
+=======
+>>>>>>> origin/main
 
 class LLMClient:
     """
@@ -27,6 +30,7 @@ class LLMClient:
         self.kwargs = kwargs
 
     def generate(self, system_prompt: str, user_prompt: str, **kwargs: Any) -> Optional[str]:
+<<<<<<< HEAD
         # 🧬 Rhythm-Aware Parameters
         workspace_root = Path(__file__).parent.parent.parent # fdo_agi_repo/orchestrator -> workspace root
         boundary_manager = RhythmBoundaryManager(workspace_root)
@@ -45,11 +49,14 @@ class LLMClient:
         base_timeout = kwargs.get("timeout", self.kwargs.get("timeout", 30))
         kwargs["timeout"] = boundary_manager.adjust_threshold("timeout_seconds", base_timeout, rhythm_state)
 
+=======
+>>>>>>> origin/main
         # provider 분기
         if self.provider in (None, "", "disabled"):
             return None
         if self.provider == "local_proxy":
             return self._generate_via_local_proxy(system_prompt, user_prompt, **kwargs)
+<<<<<<< HEAD
         if self.provider in ("google", "genai", "google_ai_studio"):
             return self._generate_via_google(system_prompt, user_prompt, **kwargs)
         if self.provider in ("auto", "model_selector"):
@@ -146,6 +153,11 @@ class LLMClient:
         except Exception:
             return None
 
+=======
+        # TODO: openai, anthropic, vertex 등 추가 구현
+        return None
+
+>>>>>>> origin/main
     def _generate_via_local_proxy(self, system_prompt: str, user_prompt: str, **kwargs: Any) -> Optional[str]:
         if not self.endpoint or not requests:
             return None

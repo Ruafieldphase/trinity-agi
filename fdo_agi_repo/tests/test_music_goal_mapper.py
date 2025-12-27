@@ -24,7 +24,11 @@ def test_ensure_goal_rate_limit():
 def test_music_daemon_auto_goal_once(monkeypatch):
     # Run a minimal instantiation of MusicDaemon with auto_goal enabled
     from pathlib import Path
+<<<<<<< HEAD
     from scripts.music_daemon import MusicDaemon
+=======
+from scripts.music_daemon import MusicDaemon
+>>>>>>> origin/main
 
     class DummyEventBus:
         def publish(self, topic, data):

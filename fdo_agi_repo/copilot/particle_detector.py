@@ -11,7 +11,11 @@ Part of Phase 2: Wave-Particle Duality in Self-Reference
 """
 
 from pathlib import Path
+<<<<<<< HEAD
 from datetime import datetime, timedelta, timezone
+=======
+from datetime import datetime, timedelta
+>>>>>>> origin/main
 from typing import Dict, List, Any, Optional
 import json
 from collections import Counter
@@ -92,10 +96,14 @@ class ParticleDetector:
     def __init__(self, workspace_root: Path):
         self.workspace = workspace_root
         self.memory_root = workspace_root / "fdo_agi_repo" / "memory"
+<<<<<<< HEAD
         # Prefer v2 ledger if present (newer, richer events), fallback to v1.
         ledger_v2 = self.memory_root / "resonance_ledger_v2.jsonl"
         ledger_v1 = self.memory_root / "resonance_ledger.jsonl"
         self.ledger_path = ledger_v2 if ledger_v2.exists() else ledger_v1
+=======
+        self.ledger_path = self.memory_root / "resonance_ledger.jsonl"
+>>>>>>> origin/main
         
         # Detection thresholds
         self.high_importance_threshold = 0.7
@@ -157,6 +165,7 @@ class ParticleDetector:
         if not self.ledger_path.exists():
             return []
         
+<<<<<<< HEAD
         cutoff = datetime.now(timezone.utc) - timedelta(hours=lookback_hours)
         memories = []
 
@@ -172,11 +181,16 @@ class ParticleDetector:
                 return dt.astimezone(timezone.utc)
             except Exception:
                 return None
+=======
+        cutoff = datetime.now() - timedelta(hours=lookback_hours)
+        memories = []
+>>>>>>> origin/main
         
         try:
             with open(self.ledger_path, 'r', encoding='utf-8') as f:
                 for line in f:
                     if line.strip():
+<<<<<<< HEAD
                         try:
                             entry = json.loads(line)
                         except Exception:
@@ -186,6 +200,19 @@ class ParticleDetector:
                         ts = parse_ts(entry.get("timestamp") or entry.get("ts"))
                         if ts and ts >= cutoff:
                             memories.append(entry)
+=======
+                        entry = json.loads(line)
+                        
+                        # Parse timestamp
+                        ts_str = entry.get('timestamp', '')
+                        if ts_str:
+                            try:
+                                ts = datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
+                                if ts >= cutoff:
+                                    memories.append(entry)
+                            except:
+                                continue
+>>>>>>> origin/main
         except Exception as e:
             print(f"⚠️ Error loading memories: {e}")
         
@@ -199,6 +226,7 @@ class ParticleDetector:
         events = []
         
         for mem in memories:
+<<<<<<< HEAD
             event_type = (
                 mem.get("event_type")
                 or mem.get("event")
@@ -206,6 +234,8 @@ class ParticleDetector:
                 or mem.get("action")
                 or "unknown"
             )
+=======
+>>>>>>> origin/main
             # Check importance/priority fields
             importance = (
                 mem.get('importance') or
@@ -217,7 +247,11 @@ class ParticleDetector:
             if isinstance(importance, (int, float)) and importance >= self.high_importance_threshold:
                 event = SignificantEvent(
                     timestamp=mem.get('timestamp', ''),
+<<<<<<< HEAD
                     event_type=event_type,
+=======
+                    event_type=mem.get('event_type', 'unknown'),
+>>>>>>> origin/main
                     importance=float(importance),
                     description=self._extract_description(mem),
                     context=self._extract_context(mem),
@@ -230,7 +264,11 @@ class ParticleDetector:
                 importance = importance if importance > 0 else 0.75
                 event = SignificantEvent(
                     timestamp=mem.get('timestamp', ''),
+<<<<<<< HEAD
                     event_type=event_type,
+=======
+                    event_type=mem.get('event_type', 'unknown'),
+>>>>>>> origin/main
                     importance=importance,
                     description=self._extract_description(mem),
                     context=self._extract_context(mem),
@@ -258,10 +296,13 @@ class ParticleDetector:
             if ts_str:
                 try:
                     ts = datetime.fromisoformat(ts_str.replace('Z', '+00:00'))
+<<<<<<< HEAD
                     if ts.tzinfo is None:
                         ts = ts.replace(tzinfo=timezone.utc)
                     else:
                         ts = ts.astimezone(timezone.utc)
+=======
+>>>>>>> origin/main
                     timestamps.append((ts, mem))
                 except:
                     continue
@@ -296,10 +337,14 @@ class ParticleDetector:
                         anomalies.append(anomaly)
         
         # Analyze event types (unusual actions)
+<<<<<<< HEAD
         event_types = [
             (m.get("event_type") or m.get("event") or m.get("type") or m.get("action") or "unknown")
             for m in memories
         ]
+=======
+        event_types = [m.get('event_type', 'unknown') for m in memories]
+>>>>>>> origin/main
         type_counts = Counter(event_types)
         total = len(event_types)
         
@@ -309,10 +354,14 @@ class ParticleDetector:
             
             if frequency < 0.05 and count <= 2:  # Rare event (< 5% and <= 2 times)
                 # Find examples
+<<<<<<< HEAD
                 examples = [
                     m for m in memories
                     if (m.get("event_type") or m.get("event") or m.get("type") or m.get("action") or "unknown") == event_type
                 ]
+=======
+                examples = [m for m in memories if m.get('event_type') == event_type]
+>>>>>>> origin/main
                 if examples:
                     mem = examples[0]
                     anomaly = Anomaly(
@@ -338,6 +387,7 @@ class ParticleDetector:
         seen_achievements = set()
         
         for mem in memories:
+<<<<<<< HEAD
             event_type = (
                 mem.get("event_type")
                 or mem.get("event")
@@ -345,6 +395,9 @@ class ParticleDetector:
                 or mem.get("action")
                 or "unknown"
             )
+=======
+            event_type = mem.get('event_type', 'unknown')
+>>>>>>> origin/main
             
             # First time event type
             if event_type not in seen_types and event_type != 'unknown':
@@ -401,13 +454,18 @@ class ParticleDetector:
     def _extract_description(self, memory: Dict[str, Any]) -> str:
         """Extract human-readable description from memory"""
         # Try different description fields
+<<<<<<< HEAD
         for field in ['description', 'message', 'details', 'summary', 'event_type', 'event', 'action', 'type']:
+=======
+        for field in ['description', 'message', 'details', 'summary', 'event_type']:
+>>>>>>> origin/main
             if field in memory:
                 val = memory[field]
                 if val and isinstance(val, str):
                     return val
         
         # Fallback to event type
+<<<<<<< HEAD
         return (
             memory.get("event_type")
             or memory.get("event")
@@ -415,6 +473,9 @@ class ParticleDetector:
             or memory.get("action")
             or "Unknown event"
         )
+=======
+        return memory.get('event_type', 'Unknown event')
+>>>>>>> origin/main
     
     def _extract_context(self, memory: Dict[str, Any]) -> Dict[str, Any]:
         """Extract relevant context from memory"""
