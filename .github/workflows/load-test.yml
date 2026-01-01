@@ -265,7 +265,7 @@ jobs:
                   git config --local user.email "action@github.com"
                   git config --local user.name "GitHub Action"
                   git add docs/ops/load-test.md
-                  git diff --quiet && git diff --staged --quiet || (git commit -m "Ops: pin canonical load-test issue thread (SSOT)" && git push origin main)
+                  git diff --quiet && git diff --staged --quiet || (git commit -m "Ops: pin canonical load-test issue thread (SSOT)" && git push origin main || echo "Push failed (potentially due to branch protection)")
 
             - name: 테스트 결과 요약 생성
               if: always()
