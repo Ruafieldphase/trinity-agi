@@ -1,7 +1,7 @@
 name: 부하 테스트 (Scheduled Load Testing)
 
 permissions:
-  contents: read
+  contents: write
   issues: write
 
 concurrency:
@@ -202,21 +202,70 @@ jobs:
               run: |
                   cat outputs/weekly_report.md >> $GITHUB_STEP_SUMMARY
 
-            - name: Append Weekly Report to Thread Issue
+            - name: Resolve canonical + close duplicates (load-test-thread)
+              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              id: issue
+              uses: actions/github-script@v7
+              with:
+                script: |
+                  const owner = context.repo.owner, repo = context.repo.repo, label = "load-test-thread";
+                  const {data: issues} = await github.rest.issues.listForRepo({ owner, repo, labels: label, state: "open", per_page: 100 });
+                  let canonical = issues.sort((a,b) => new Date(a.created_at) - new Date(b.created_at))[0];
+                  if (!canonical) {
+                    canonical = (await github.rest.issues.create({
+                      owner, repo,
+                      title: "Load Test Weekly Reports (Thread)",
+                      body: "# Weekly Load Test Reports\nLiving thread for weekly results.\nLabel: load-test-thread",
+                      labels: [label, "ops", "load-test"]
+                    })).data;
+                  }
+                  const dupes = issues.filter(i => i.number !== canonical.number);
+                  for (const d of dupes) {
+                    await github.rest.issues.createComment({ owner, repo, issue_number: d.number, body: `DUPLICATE → canonical thread: #${canonical.number} (${canonical.html_url})\nClosing to keep a single operational timeline.` });
+                    await github.rest.issues.update({ owner, repo, issue_number: d.number, state: "closed" });
+                  }
+                  core.setOutput("number", canonical.number);
+                  core.setOutput("html_url", canonical.html_url);
+
+            - name: Update ops doc with canonical thread (SSOT)
+              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              run: |
+                  OPS="LLM_Unified/ion-mentoring/docs/ops/load-test.md"
+                  mkdir -p "$(dirname "$OPS")"
+                  CANON_NUM="${{ steps.issue.outputs.number }}"
+                  CANON_URL="${{ steps.issue.outputs.html_url }}"
+                  if [ ! -f "$OPS" ]; then
+                    cat > "$OPS" <<'MD'
+                  # 부하 테스트 운영 기록 (SSOT)
+                  ## Canonical Issue Thread
+                  - Thread: (unset)
+                  MD
+                  fi
+                  if grep -qE '^- Thread:' "$OPS"; then
+                    perl -0777 -i -pe "s/^- Thread:.*\$/- Thread: #$CANON_NUM ($CANON_URL)/m" "$OPS"
+                  else
+                    printf "\n## Canonical Issue Thread\n- Thread: #%s (%s)\n" "$CANON_NUM" "$CANON_URL" >> "$OPS"
+                  fi
+
+            - name: Comment weekly report to canonical issue
               if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
               uses: actions/github-script@v7
               with:
                 script: |
                   const fs = require('fs');
-                  const THREAD_LABEL = 'load-test-thread';
-                  const THREAD_TITLE = 'Load Test Weekly Reports (Thread)';
-                  const owner = context.repo.owner;
-                  const repo = context.repo.repo;
+                  const owner = context.repo.owner, repo = context.repo.repo;
+                  const issue_number = Number("${{ steps.issue.outputs.number }}");
                   const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
-                  const report = fs.readFileSync('LLM_Unified/ion-mentoring/outputs/weekly_report.md', 'utf8');
-                  const search = await github.rest.search.issuesAndPullRequests({ q: `repo:${owner}/${repo} is:issue label:${THREAD_LABEL}` });
-                  let issueNumber = search.data.items.length > 0 ? search.data.items[0].number : (await github.rest.issues.create({ owner, repo, title: THREAD_TITLE, body: '# Weekly Load Test Reports\nLiving thread for weekly results.', labels: [THREAD_LABEL, 'ops'] })).data.number;
-                  await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, body: `## Weekly All Summary\n- Run: ${runUrl}\n\n${report}` });
+                  const report = fs.existsSync('LLM_Unified/ion-mentoring/outputs/weekly_report.md') ? fs.readFileSync('LLM_Unified/ion-mentoring/outputs/weekly_report.md', 'utf8') : "(weekly_report.md missing)";
+                  await github.rest.issues.createComment({ owner, repo, issue_number, body: `## Weekly All Summary\n- Run: ${runUrl}\n\n${report}` });
+
+            - name: Commit ops SSOT update
+              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              run: |
+                  git config --local user.email "action@github.com"
+                  git config --local user.name "GitHub Action"
+                  git add LLM_Unified/ion-mentoring/docs/ops/load-test.md
+                  git diff --quiet && git diff --staged --quiet || (git commit -m "Ops: pin canonical load-test issue thread (SSOT)" && git push origin main)
 
             - name: 테스트 결과 요약 생성
               if: always()
