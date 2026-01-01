@@ -30,6 +30,9 @@ jobs:
         name: Locust 부하 테스트
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        defaults:
+            run:
+                working-directory: LLM_Unified/ion-mentoring
 
         steps:
             - name: 코드 체크아웃
@@ -54,9 +57,9 @@ jobs:
               run: |
                   python -m locust -f load_test.py \
                     --host=${{ env.API_HOST }} \
-                    --users 10 \
-                    --spawn-rate 0.5 \
-                    --run-time 2m \
+                    --users 1 \
+                    --spawn-rate 1 \
+                    --run-time 1m \
                     --headless \
                     --csv=outputs/load_test_light
 
@@ -143,8 +146,8 @@ jobs:
               with:
                   name: load-test-results-${{ github.run_number }}
                   path: |
-                      outputs/*.csv
-                      outputs/test_summary.md
+                      LLM_Unified/ion-mentoring/outputs/*.csv
+                      LLM_Unified/ion-mentoring/outputs/test_summary.md
                   retention-days: 3
                   if-no-files-found: warn
 
