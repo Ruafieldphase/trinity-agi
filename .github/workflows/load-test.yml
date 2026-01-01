@@ -12,12 +12,23 @@ on:
     # 수동 실행 지원
     workflow_dispatch:
         inputs:
+            scenario:
+                description: "실행할 시나리오 선택"
+                required: true
+                default: "all"
+                type: choice
+                options:
+                    - all
+                    - light
+                    - medium
+                    - heavy
+                    - stress
             test_duration:
-                description: "테스트 지속 시간 (분)"
+                description: "Stress 테스트 지속 시간 (분)"
                 required: false
                 default: "5"
             max_users:
-                description: "최대 동시 사용자 수"
+                description: "Stress 테스트 최대 동시 사용자 수"
                 required: false
                 default: "200"
 
@@ -53,17 +64,19 @@ jobs:
               run: mkdir -p outputs
 
             - name: Light 시나리오 실행
+              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'light'
               continue-on-error: true
               run: |
                   python -m locust -f load_test.py \
                     --host=${{ env.API_HOST }} \
-                    --users 1 \
-                    --spawn-rate 1 \
-                    --run-time 1m \
+                    --users 10 \
+                    --spawn-rate 0.5 \
+                    --run-time 2m \
                     --headless \
                     --csv=outputs/load_test_light
 
             - name: Medium 시나리오 실행
+              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'medium'
               continue-on-error: true
               run: |
                   sleep 30
@@ -76,6 +89,7 @@ jobs:
                     --csv=outputs/load_test_medium
 
             - name: Heavy 시나리오 실행
+              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'heavy'
               continue-on-error: true
               run: |
                   sleep 30
@@ -88,6 +102,7 @@ jobs:
                     --csv=outputs/load_test_heavy
 
             - name: Stress 시나리오 실행
+              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'stress'
               continue-on-error: true
               run: |
                   sleep 30
