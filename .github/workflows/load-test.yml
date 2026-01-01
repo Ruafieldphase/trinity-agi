@@ -5,9 +5,11 @@ concurrency:
   cancel-in-progress: true
 
 on:
-    # 매일 오전 3시(UTC) / 12 PM(KST)에 실행됩니다.
+    # Daily Light: 12:00 KST (03:00 UTC)
+    # Weekly All: Sunday 03:00 KST (Saturday 18:00 UTC)
     schedule:
         - cron: "0 3 * * *"
+        - cron: "0 18 * * 6"
 
     # 수동 실행 지원
     workflow_dispatch:
@@ -15,14 +17,14 @@ on:
             scenario:
                 description: "실행할 시나리오 선택"
                 required: true
-                default: "all"
+                default: "light"
                 type: choice
                 options:
-                    - all
                     - light
                     - medium
                     - heavy
                     - stress
+                    - all
             test_duration:
                 description: "Stress 테스트 지속 시간 (분)"
                 required: false
@@ -45,9 +47,24 @@ jobs:
             run:
                 working-directory: LLM_Unified/ion-mentoring
 
+        env:
+            SELECTED_SCENARIO: >-
+                ${{
+                  github.event_name == 'workflow_dispatch' && github.event.inputs.scenario ||
+                  (github.event.schedule == '0 3 * * *' && 'light') ||
+                  (github.event.schedule == '0 18 * * 6' && 'all') ||
+                  'light'
+                }}
+
         steps:
             - name: 코드 체크아웃
               uses: actions/checkout@v4
+
+            - name: 선택된 시나리오 출력
+              run: |
+                  echo "Event: ${{ github.event_name }}"
+                  echo "Schedule: ${{ github.event.schedule }}"
+                  echo "Selected Scenario: ${{ env.SELECTED_SCENARIO }}"
 
             - name: Python ${{ env.PYTHON_VERSION }} 설정
               uses: actions/setup-python@v4
@@ -64,7 +81,7 @@ jobs:
               run: mkdir -p outputs
 
             - name: Light 시나리오 실행
-              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'light'
+              if: env.SELECTED_SCENARIO == 'all' || env.SELECTED_SCENARIO == 'light'
               continue-on-error: true
               run: |
                   python -m locust -f load_test.py \
@@ -76,10 +93,10 @@ jobs:
                     --csv=outputs/load_test_light
 
             - name: Medium 시나리오 실행
-              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'medium'
+              if: env.SELECTED_SCENARIO == 'all' || env.SELECTED_SCENARIO == 'medium'
               continue-on-error: true
               run: |
-                  sleep 30
+                  sleep 10
                   python -m locust -f load_test.py \
                     --host=${{ env.API_HOST }} \
                     --users 50 \
@@ -89,10 +106,10 @@ jobs:
                     --csv=outputs/load_test_medium
 
             - name: Heavy 시나리오 실행
-              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'heavy'
+              if: env.SELECTED_SCENARIO == 'all' || env.SELECTED_SCENARIO == 'heavy'
               continue-on-error: true
               run: |
-                  sleep 30
+                  sleep 10
                   python -m locust -f load_test.py \
                     --host=${{ env.API_HOST }} \
                     --users 100 \
@@ -102,10 +119,10 @@ jobs:
                     --csv=outputs/load_test_heavy
 
             - name: Stress 시나리오 실행
-              if: github.event_name == 'schedule' || github.event.inputs.scenario == 'all' || github.event.inputs.scenario == 'stress'
+              if: env.SELECTED_SCENARIO == 'all' || env.SELECTED_SCENARIO == 'stress'
               continue-on-error: true
               run: |
-                  sleep 30
+                  sleep 10
                   python -m locust -f load_test.py \
                     --host=${{ env.API_HOST }} \
                     --users ${{ github.event.inputs.max_users || '150' }} \
