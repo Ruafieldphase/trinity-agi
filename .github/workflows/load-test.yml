@@ -44,13 +44,12 @@ jobs:
             - name: 의존성 설치
               run: |
                   python -m pip install --upgrade pip
-                  pip install -r ion-mentoring/requirements-api.txt
+                  pip install -r requirements-api.txt
 
             - name: 출력 디렉토리 생성
-              run: mkdir -p ion-mentoring/outputs
+              run: mkdir -p outputs
 
             - name: Light 시나리오 실행
-              working-directory: ion-mentoring
               continue-on-error: true
               run: |
                   python -m locust -f load_test.py \
@@ -62,7 +61,6 @@ jobs:
                     --csv=outputs/load_test_light
 
             - name: Medium 시나리오 실행
-              working-directory: ion-mentoring
               continue-on-error: true
               run: |
                   sleep 30
@@ -75,7 +73,6 @@ jobs:
                     --csv=outputs/load_test_medium
 
             - name: Heavy 시나리오 실행
-              working-directory: ion-mentoring
               continue-on-error: true
               run: |
                   sleep 30
@@ -88,7 +85,6 @@ jobs:
                     --csv=outputs/load_test_heavy
 
             - name: Stress 시나리오 실행
-              working-directory: ion-mentoring
               continue-on-error: true
               run: |
                   sleep 30
@@ -102,7 +98,6 @@ jobs:
 
             - name: 테스트 결과 요약 생성
               if: always()
-              working-directory: ion-mentoring
               run: |
                   cat > outputs/test_summary.md << 'EOF'
                   # 부하 테스트 결과 요약
@@ -137,7 +132,6 @@ jobs:
 
             - name: 불필요한 파일 정리
               if: always()
-              working-directory: ion-mentoring
               run: |
                   rm -f outputs/*.html || true
                   rm -rf outputs/load_test_*_stats_history.csv || true
@@ -149,8 +143,8 @@ jobs:
               with:
                   name: load-test-results-${{ github.run_number }}
                   path: |
-                      ion-mentoring/outputs/*.csv
-                      ion-mentoring/outputs/test_summary.md
+                      outputs/*.csv
+                      outputs/test_summary.md
                   retention-days: 3
 
             - name: 실패 시 Slack 알림 (선택사항)
