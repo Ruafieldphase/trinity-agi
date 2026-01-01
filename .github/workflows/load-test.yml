@@ -1,5 +1,9 @@
 name: 부하 테스트 (Scheduled Load Testing)
 
+permissions:
+  contents: read
+  issues: write
+
 concurrency:
   group: load-test-${{ github.ref }}
   cancel-in-progress: true
@@ -51,8 +55,8 @@ jobs:
             SELECTED_SCENARIO: >-
                 ${{
                   github.event_name == 'workflow_dispatch' && github.event.inputs.scenario ||
-                  (github.event.schedule == '0 3 * * *' && 'light') ||
-                  (github.event.schedule == '0 18 * * 6' && 'all') ||
+                  (github.event_name == 'schedule' && github.event.schedule == '0 3 * * *' && 'light') ||
+                  (github.event_name == 'schedule' && github.event.schedule == '0 18 * * 6' && 'all') ||
                   'light'
                 }}
 
@@ -122,14 +126,97 @@ jobs:
               if: env.SELECTED_SCENARIO == 'all' || env.SELECTED_SCENARIO == 'stress'
               continue-on-error: true
               run: |
+                  # Weekly all이면 비용/교착 방지용으로 Stress만 1분
+                  if [ "${SELECTED_SCENARIO}" = "all" ]; then
+                    STRESS_RUN_TIME="1m"
+                  else
+                    STRESS_RUN_TIME="${{ github.event.inputs.test_duration || '10' }}m"
+                  fi
+                  echo "STRESS_RUN_TIME=${STRESS_RUN_TIME}"
+
                   sleep 10
                   python -m locust -f load_test.py \
                     --host=${{ env.API_HOST }} \
                     --users ${{ github.event.inputs.max_users || '150' }} \
                     --spawn-rate 5 \
-                    --run-time ${{ github.event.inputs.test_duration || '10' }}m \
+                    --run-time "${STRESS_RUN_TIME}" \
                     --headless \
                     --csv=outputs/load_test_stress
+
+            - name: Daily Report 생성
+              if: always() && env.SELECTED_SCENARIO == 'light'
+              run: |
+                  python - << 'PY'
+                  import glob, csv, pathlib, os
+                  report = pathlib.Path("outputs/daily_report.md")
+                  run_url = f"https://github.com/{os.environ.get('GITHUB_REPOSITORY','')}/actions/runs/{os.environ.get('GITHUB_RUN_ID','')}"
+                  candidates = sorted(glob.glob("outputs/*light*stats.csv"))
+                  path = candidates[0] if candidates else None
+                  reqs=fails=0; rps=None; fail_rate=0.0
+                  if path:
+                      with open(path, newline="", encoding="utf-8") as f:
+                          rows=list(csv.DictReader(f))
+                      agg = next((r for r in rows if r.get("Name","").lower() in ("aggregated","total")), (rows[0] if rows else {}))
+                      def num(k):
+                          v=(agg.get(k) or "0").strip()
+                          try: return float(v)
+                          except: return 0.0
+                      reqs = num("Request Count") or num("# requests")
+                      fails = num("Failure Count") or num("# failures")
+                      rps = num("Requests/s") or num("RPS")
+                      fail_rate = (fails/reqs*100.0) if reqs else 0.0
+                  lines = ["# Daily Light Load Test (Heartbeat)", f"- Run: {run_url}", f"- Requests: {int(reqs)}", f"- Failures: {int(fails)} ({fail_rate:.2f}%)", f"- RPS: {rps:.2f}" if rps else "- RPS: (n/a)"]
+                  report.write_text("\n".join(lines) + "\n", encoding="utf-8")
+                  PY
+
+            - name: Weekly Report 생성
+              if: always() && env.SELECTED_SCENARIO == 'all'
+              run: |
+                  python - << 'PY'
+                  import glob, csv, os, pathlib
+                  report = pathlib.Path("outputs/weekly_report.md")
+                  run_url = f"https://github.com/{os.environ.get('GITHUB_REPOSITORY','')}/actions/runs/{os.environ.get('GITHUB_RUN_ID','')}"
+                  candidates = sorted(glob.glob("outputs/*stats.csv"))
+                  path = next((p for p in candidates if "stress" in p), candidates[-1]) if candidates else None
+                  reqs=fails=0; rps=avg=p50=p95=None; fail_rate=0.0
+                  if path:
+                      with open(path, newline="", encoding="utf-8") as f:
+                          rows=list(csv.DictReader(f))
+                      agg = next((r for r in rows if r.get("Name","").lower() in ("aggregated","total")), (rows[0] if rows else {}))
+                      def num(k):
+                          v=(agg.get(k) or "0").strip()
+                          try: return float(v)
+                          except: return 0.0
+                      reqs = num("Request Count") or num("# requests"); fails = num("Failure Count") or num("# failures")
+                      rps = num("Requests/s") or num("RPS"); avg = num("Average Response Time") or num("Average")
+                      p50 = num("50%"); p95 = num("95%")
+                      fail_rate = (fails/reqs*100.0) if reqs else 0.0
+                  lines = [f"# Weekly Load Test Report", f"- Run: {run_url}", f"- Requests: {int(reqs)}", f"- Failures: {int(fails)} ({fail_rate:.2f}%)",
+                           f"- RPS: {rps:.2f}" if rps else "- RPS: (n/a)",
+                           f"- Latency ms: avg={avg or 0:.0f}, p50={p50 or 0:.0f}, p95={p95 or 0:.0f}" if any([avg,p50,p95]) else "- Latency ms: (n/a)"]
+                  report.write_text("\n".join(lines) + "\n", encoding="utf-8")
+                  PY
+
+            - name: Weekly Summary (Actions UI)
+              if: always() && env.SELECTED_SCENARIO == 'all'
+              run: |
+                  cat outputs/weekly_report.md >> $GITHUB_STEP_SUMMARY
+
+            - name: Append Weekly Report to Thread Issue
+              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              uses: actions/github-script@v7
+              with:
+                script: |
+                  const fs = require('fs');
+                  const THREAD_LABEL = 'load-test-thread';
+                  const THREAD_TITLE = 'Load Test Weekly Reports (Thread)';
+                  const owner = context.repo.owner;
+                  const repo = context.repo.repo;
+                  const runUrl = `https://github.com/${owner}/${repo}/actions/runs/${context.runId}`;
+                  const report = fs.readFileSync('LLM_Unified/ion-mentoring/outputs/weekly_report.md', 'utf8');
+                  const search = await github.rest.search.issuesAndPullRequests({ q: `repo:${owner}/${repo} is:issue label:${THREAD_LABEL}` });
+                  let issueNumber = search.data.items.length > 0 ? search.data.items[0].number : (await github.rest.issues.create({ owner, repo, title: THREAD_TITLE, body: '# Weekly Load Test Reports\nLiving thread for weekly results.', labels: [THREAD_LABEL, 'ops'] })).data.number;
+                  await github.rest.issues.createComment({ owner, repo, issue_number: issueNumber, body: `## Weekly All Summary\n- Run: ${runUrl}\n\n${report}` });
 
             - name: 테스트 결과 요약 생성
               if: always()
@@ -179,21 +266,39 @@ jobs:
                   name: load-test-results-${{ github.run_number }}
                   path: |
                       LLM_Unified/ion-mentoring/outputs/*.csv
-                      LLM_Unified/ion-mentoring/outputs/test_summary.md
+                      LLM_Unified/ion-mentoring/outputs/*.md
                   retention-days: 3
                   if-no-files-found: warn
 
-            - name: 실패 시 Slack 알림 (선택사항)
-              if: failure()
+            - name: Slack alert (Daily light failure only)
+              if: failure() && env.SELECTED_SCENARIO == 'light' && github.event_name == 'schedule'
               env:
                 SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
               run: |
-                  echo "부하 테스트 실패! 상세 내용은 GitHub Actions 로그를 확인하세요."
-                  if [ -n "$SLACK_WEBHOOK_URL" ]; then
-                    curl -X POST -H 'Content-type: application/json' \
-                    --data "{\"text\":\"[${{ github.repository }}] 부하 테스트 실패! 확인이 필요합니다.\n링크: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
-                    "$SLACK_WEBHOOK_URL"
-                  fi
+                [ -z "${SLACK_WEBHOOK_URL}" ] && echo "Slack skip" && exit 0
+                python - << 'PY'
+                import os, json, urllib.request, pathlib
+                report = pathlib.Path("outputs/daily_report.md")
+                content = report.read_text(encoding="utf-8") if report.exists() else "Daily survey failed."
+                msg = f"*Daily Light FAILED*\n- Ref: {os.environ.get('GITHUB_REF_NAME','')}\n{content}"
+                req = urllib.request.Request(os.environ["SLACK_WEBHOOK_URL"], data=json.dumps({"text": msg}).encode("utf-8"), headers={"Content-Type":"application/json"})
+                urllib.request.urlopen(req)
+                PY
+
+            - name: Slack weekly summary (Weekly All)
+              if: always() && env.SELECTED_SCENARIO == 'all' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+              env:
+                SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+              run: |
+                [ -z "${SLACK_WEBHOOK_URL}" ] && echo "Slack skip" && exit 0
+                python - << 'PY'
+                import os, json, urllib.request, pathlib
+                report = pathlib.Path("outputs/weekly_report.md")
+                content = report.read_text(encoding="utf-8") if report.exists() else "Weekly survey complete."
+                msg = f"*Weekly All Load Test Summary*\n- Ref: {os.environ.get('GITHUB_REF_NAME','')}\n{content}"
+                req = urllib.request.Request(os.environ["SLACK_WEBHOOK_URL"], data=json.dumps({"text": msg}).encode("utf-8"), headers={"Content-Type":"application/json"})
+                urllib.request.urlopen(req)
+                PY
 
     analyze:
         name: 결과 분석 및 리포트
