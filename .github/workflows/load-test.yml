@@ -17,10 +17,6 @@ on:
                 required: false
                 default: "200"
 
-defaults:
-    run:
-        working-directory: LLM_Unified/ion-mentoring
-
 env:
     API_HOST: https://ion-api-64076350717.us-central1.run.app
     PYTHON_VERSION: "3.13"
@@ -30,10 +26,22 @@ jobs:
         name: Locust 부하 테스트
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        defaults:
+            run:
+                working-directory: LLM_Unified/ion-mentoring
 
         steps:
             - name: 코드 체크아웃
               uses: actions/checkout@v4
+
+            - name: Debug repo paths
+              run: |
+                  echo "PWD=$(pwd)"
+                  ls -la
+                  echo "---- find ion-mentoring ----"
+                  find . -maxdepth 4 -type d -name "ion-mentoring" -print
+                  echo "---- list LLM_Unified ----"
+                  ls -la LLM_Unified || true
 
             - name: Python ${{ env.PYTHON_VERSION }} 설정
               uses: actions/setup-python@v4
@@ -143,9 +151,10 @@ jobs:
               with:
                   name: load-test-results-${{ github.run_number }}
                   path: |
-                      outputs/*.csv
-                      outputs/test_summary.md
+                      LLM_Unified/ion-mentoring/outputs/*.csv
+                      LLM_Unified/ion-mentoring/outputs/test_summary.md
                   retention-days: 3
+                  if-no-files-found: warn
 
             - name: 실패 시 Slack 알림 (선택사항)
               if: failure()
