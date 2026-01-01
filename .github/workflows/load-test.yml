@@ -203,7 +203,7 @@ jobs:
                   cat outputs/weekly_report.md >> $GITHUB_STEP_SUMMARY
 
             - name: Resolve canonical + close duplicates (load-test-thread)
-              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              if: always() && env.SELECTED_SCENARIO == 'all' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
               id: issue
               uses: actions/github-script@v7
               with:
@@ -228,7 +228,7 @@ jobs:
                   core.setOutput("html_url", canonical.html_url);
 
             - name: Update ops doc with canonical thread (SSOT)
-              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              if: always() && env.SELECTED_SCENARIO == 'all' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
               run: |
                   OPS="LLM_Unified/ion-mentoring/docs/ops/load-test.md"
                   mkdir -p "$(dirname "$OPS")"
@@ -248,7 +248,7 @@ jobs:
                   fi
 
             - name: Comment weekly report to canonical issue
-              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              if: always() && env.SELECTED_SCENARIO == 'all' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
               uses: actions/github-script@v7
               with:
                 script: |
@@ -260,7 +260,7 @@ jobs:
                   await github.rest.issues.createComment({ owner, repo, issue_number, body: `## Weekly All Summary\n- Run: ${runUrl}\n\n${report}` });
 
             - name: Commit ops SSOT update
-              if: always() && env.SELECTED_SCENARIO == 'all' && github.event_name == 'schedule'
+              if: always() && env.SELECTED_SCENARIO == 'all' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
               run: |
                   git config --local user.email "action@github.com"
                   git config --local user.name "GitHub Action"
