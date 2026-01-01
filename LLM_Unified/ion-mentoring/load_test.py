@@ -49,13 +49,72 @@ CHAT_ONLY_MESSAGES = [
 ]
 
 
+# --- Base User with Retry Logic ---
+class BaseIonUser(HttpUser):
+    """
+    공통 재시도 로직과 유틸리티를 포함하는 베이스 사용자 클래스입니다.
+    """
+    abstract = True
+    wait_time = between(1, 3)
+
+    def post_with_retries(self, url, json_data, tag_name, max_retries=3, allow_429=False):
+        """재시도 로직과 Retry-After 대응을 포함한 POST 요청 메서드"""
+        import time
+        backoff = 1.0
+        for attempt in range(1, max_retries + 1):
+            with self.client.post(url, json=json_data, catch_response=True, name=url) as response:
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                        # 채팅 엔드포인트의 경우 필수 필드 검증
+                        if url == "/chat":
+                            has_response = "response" in data or "content" in data
+                            required_fields = ["persona_used", "resonance_key", "confidence"]
+                            if has_response and all(field in data for field in required_fields):
+                                response.success()
+                                return response
+                            else:
+                                response.failure(f"[{tag_name}] Missing required fields")
+                                return response
+                        else:
+                            response.success()
+                            return response
+                    except json.JSONDecodeError:
+                        response.failure(f"[{tag_name}] Invalid JSON response")
+                        return response
+                elif response.status_code == 429:
+                    retry_after = response.headers.get("Retry-After")
+                    sleep_time = backoff
+                    if retry_after and retry_after.isdigit():
+                        sleep_time = int(retry_after)
+                        logger.warning(f"[{tag_name}] Rate limited (429). Respecting Retry-After: {sleep_time}s.")
+                    else:
+                        logger.warning(f"[{tag_name}] Rate limited (429). Retrying in {sleep_time}s... (Attempt {attempt}/{max_retries})")
+                    
+                    if attempt < max_retries:
+                        time.sleep(sleep_time)
+                        backoff *= 2
+                        continue
+                    else:
+                        if allow_429:
+                            response.success()
+                            logger.info(f"[{tag_name}] Maximum retries reached for 429. Proceeding as success per allow_429.")
+                        else:
+                            response.failure(f"[{tag_name}] Rate limited (429) after {max_retries} retries")
+                        return response
+                elif response.status_code in (400, 422) and tag_name == "edge":
+                    # 엣지 케이스는 400, 422도 정상적인 거부로 간주
+                    response.success()
+                    return response
+                else:
+                    response.failure(f"[{tag_name}] Unexpected status code: {response.status_code}")
+                    return response
+
 # --- Standard User: All Endpoints ---
-class IonApiUser(HttpUser):
+class IonApiUser(BaseIonUser):
     """
     표준 사용자: ION Mentoring API의 모든 엔드포인트를 테스트합니다.
     """
-
-    wait_time = between(1, 3)
 
     @tag("health")
     @task(1)
@@ -74,25 +133,7 @@ class IonApiUser(HttpUser):
         """채팅 엔드포인트 테스트"""
         message = random.choice(STANDARD_MESSAGES)
         payload = {"message": message}
-        with self.client.post("/chat", json=payload, catch_response=True) as response:
-            if response.status_code == 200:
-                try:
-                    data = response.json()
-                    has_response = "response" in data or "content" in data
-                    required_fields = ["persona_used", "resonance_key", "confidence"]
-                    if has_response and all(field in data for field in required_fields):
-                        response.success()
-                    else:
-                        response.failure("Missing required fields in response")
-                        logger.warning(f"Chat response missing fields: {data}")
-                except json.JSONDecodeError:
-                    response.failure("Invalid JSON response")
-                    logger.error("Chat response is not valid JSON")
-            elif response.status_code == 429:
-                response.success()
-            else:
-                response.failure(f"Unexpected status code: {response.status_code}")
-                logger.warning(f"Chat request failed: {response.status_code}")
+        self.post_with_retries("/chat", payload, "chat")
 
     @tag("docs")
     @task(2)
@@ -107,12 +148,10 @@ class IonApiUser(HttpUser):
 
 
 # --- Edge Case User: Abnormal Payloads ---
-class EdgeCaseUser(HttpUser):
+class EdgeCaseUser(BaseIonUser):
     """
     엣지 케이스 사용자: 비정상적인 페이로드를 테스트합니다.
     """
-
-    wait_time = between(1, 3)
 
     @tag("edge")
     @task(1)
@@ -127,32 +166,24 @@ class EdgeCaseUser(HttpUser):
                 data=message,
                 headers={"Content-Type": "application/json"},
                 catch_response=True,
+                name="/chat (malformed)"
             ) as response:
                 if response.status_code in (200, 400, 422):
                     response.success()
                 else:
-                    response.failure(f"Unexpected status code: {response.status_code}")
-                    logger.warning(f"Malformed JSON test failed: {response.status_code}")
+                    response.failure(f"[edge] Unexpected status code: {response.status_code}")
             return
 
-        # 정상 케이스
+        # 엣지 케이스는 의도적으로 429를 유도할 수 있으므로, 최종적으로 429가 발생해도 성공으로 간주합니다.
         payload = {"message": message}
-        with self.client.post("/chat", json=payload, catch_response=True) as response:
-            # 엣지 케이스는 200, 400, 422를 모두 유효하다고 간주
-            if response.status_code in (200, 400, 422):
-                response.success()
-            else:
-                response.failure(f"Unexpected status code: {response.status_code}")
-                logger.warning(f"Edge case test failed: {response.status_code}")
+        self.post_with_retries("/chat", payload, "edge", allow_429=True)
 
 
 # --- Chat Only User: Only /chat endpoint ---
-class ChatOnlyUser(HttpUser):
+class ChatOnlyUser(BaseIonUser):
     """
     채팅 전용 사용자: /chat 엔드포인트만 집중적으로 테스트합니다.
     """
-
-    wait_time = between(1, 3)
 
     @tag("chatonly")
     @task(1)
@@ -160,12 +191,7 @@ class ChatOnlyUser(HttpUser):
         """채팅 엔드포인트 집중 테스트"""
         message = random.choice(CHAT_ONLY_MESSAGES)
         payload = {"message": message}
-        with self.client.post("/chat", json=payload, catch_response=True) as response:
-            if response.status_code in (200, 429):
-                response.success()
-            else:
-                response.failure(f"Unexpected status code: {response.status_code}")
-                logger.warning(f"Chat-only test failed: {response.status_code}")
+        self.post_with_retries("/chat", payload, "chatonly")
 
 
 # --- Usage Notes ---
