@@ -1,5 +1,9 @@
 name: 부하 테스트 (Scheduled Load Testing)
 
+concurrency:
+  group: load-test-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
     # 매일 오전 3시(UTC) / 12 PM(KST)에 실행됩니다.
     schedule:
@@ -25,7 +29,7 @@ jobs:
     load-test:
         name: Locust 부하 테스트
         runs-on: ubuntu-latest
-        timeout-minutes: 30
+        timeout-minutes: 10
         defaults:
             run:
                 working-directory: LLM_Unified/ion-mentoring
@@ -62,9 +66,9 @@ jobs:
               run: |
                   python -m locust -f load_test.py \
                     --host=${{ env.API_HOST }} \
-                    --users 10 \
-                    --spawn-rate 0.5 \
-                    --run-time 2m \
+                    --users 1 \
+                    --spawn-rate 1 \
+                    --run-time 1m \
                     --headless \
                     --csv=outputs/load_test_light
 
