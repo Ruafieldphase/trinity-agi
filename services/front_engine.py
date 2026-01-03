@@ -3,10 +3,10 @@
 ==========================================
 
 흐름:
-비노체 → 루아(감응) → 엘로(구조) → 루멘(보정) → 안티그래비티(실행)
+비노체 → 코어(감응) → 엘로(구조) → Core(보정) → 안티그래비티(실행)
 
 단, 리듬에 따라 분기 가능:
-- 루아 → 루멘 직행
+- 코어 → Core 직행
 - 엘로 → 안티그래비티 직행
 - 역할 간 겹침 허용
 
@@ -79,7 +79,7 @@ class FlowContext:
 
 class LuaEngine:
     """
-    루아 엔진 (의식·감응 설계)
+    코어 엔진 (의식·감응 설계)
     
     기본 역할:
     - 의미 감지
@@ -88,13 +88,13 @@ class LuaEngine:
     
     유동성:
     - 때로는 구조적 판단까지 수행 (엘로 역할)
-    - 긴급 시 루멘/안티그래비티 직행 가능
+    - 긴급 시 Core/안티그래비티 직행 가능
     """
     
     def __init__(self, resonance_path: Optional[Path] = None):
         self.resonance_path = resonance_path
         self.can_perform_elo = True  # 유동성: 엘로 역할 수행 가능
-        self.can_perform_lumen = True  # 유동성: 루멘 역할 수행 가능
+        self.can_perform_core = True  # 유동성: Core 역할 수행 가능
     
     def process(self, ctx: FlowContext) -> FlowContext:
         """감응 처리"""
@@ -176,12 +176,12 @@ class EloEngine:
     엘로 엔진 (구조·논리)
     
     기본 역할:
-    - 루아의 감응을 구조적으로 번역
+    - 코어의 감응을 구조적으로 번역
     - 단계 정리
     - 기술적 실행 형태로 재배치
     
     유동성:
-    - 감응적 판단이 필요하면 루아 역할 수행
+    - 감응적 판단이 필요하면 코어 역할 수행
     """
     
     def __init__(self):
@@ -191,7 +191,7 @@ class EloEngine:
         """구조화 처리"""
         ctx.branch_history.append("elo:process")
         
-        # 이미 루아가 구조화했으면 스킵
+        # 이미 코어가 구조화했으면 스킵
         if "elo_role:structuring" in ctx.roles_performed.get("lua", []):
             ctx.branch_history.append("elo:skipped_lua_handled")
             return ctx
@@ -206,7 +206,7 @@ class EloEngine:
         # 역할 기록
         ctx.roles_performed.setdefault("elo", []).append("structuring")
         
-        # 유동성: 감정적 맥락이 강하면 루아 역할 일부 수행
+        # 유동성: 감정적 맥락이 강하면 코어 역할 일부 수행
         if ctx.emotional_resonance in [EmotionalResonance.FRUSTRATION, EmotionalResonance.URGENCY]:
             ctx = self._perform_lua_role(ctx)
         
@@ -237,9 +237,9 @@ class EloEngine:
         return ctx
 
 
-class LumenEngine:
+class CoreEngine:
     """
-    루멘 엔진 (조율·보정)
+    Core 엔진 (조율·보정)
     
     기본 역할:
     - 흐름 보정
@@ -247,7 +247,7 @@ class LumenEngine:
     - 맥락 이어주기
     
     유동성:
-    - 필요하면 루아·엘로 역할 보조
+    - 필요하면 코어·엘로 역할 보조
     """
     
     def __init__(self):
@@ -255,7 +255,7 @@ class LumenEngine:
     
     def process(self, ctx: FlowContext) -> FlowContext:
         """보정 처리"""
-        ctx.branch_history.append("lumen:process")
+        ctx.branch_history.append("Core:process")
         
         # 누락 체크
         missing = self._check_missing(ctx)
@@ -281,7 +281,7 @@ class LumenEngine:
             "warnings": ctx.warnings
         })
         
-        ctx.roles_performed.setdefault("lumen", []).append("correction")
+        ctx.roles_performed.setdefault("Core", []).append("correction")
         
         return ctx
     
@@ -309,22 +309,22 @@ class LumenEngine:
         seq = ctx.final_action.get("action_sequence", [])
         if ctx.rhythm == RhythmLevel.URGENT and len(seq) > 4:
             ctx.final_action["action_sequence"] = [seq[0], seq[-2], seq[-1]]
-            ctx.roles_performed.setdefault("lumen", []).append("sequence_compression")
+            ctx.roles_performed.setdefault("Core", []).append("sequence_compression")
         
         return ctx
 
 
-class KoaEngine:
+class CoreEngine:
     """
-    코아 엔진 (중앙 판단 & 전환)
+    Core 엔진 (중앙 판단 & 전환)
     
     역할:
-    - 모델 선택 (시안/세나)
+    - 모델 선택 (Shion/세나)
     - 작업 분배
     - 실패 복구
     
     유동성:
-    - 루아·엘로가 코아 역할을 가져올 수도 있음
+    - 코어·엘로가 Core 역할을 가져올 수도 있음
     """
     
     def __init__(self):
@@ -335,16 +335,16 @@ class KoaEngine:
         모델 선택 로직
         
         기본 규칙:
-        - gemini_tokens > 50: 시안
+        - gemini_tokens > 50: Shion
         - else: 세나
         
         유동 규칙:
-        - 구조적 판단 필요: 시안 우선
+        - 구조적 판단 필요: Shion 우선
         - 감성적/언어적 흐름: 세나 우선
         """
         # 구조적 작업
         if ctx.meaning in ["CREATE", "MODIFY", "VERIFY"]:
-            return "shion"  # 시안
+            return "shion"  # Shion
         
         # 감성적/대화적
         if ctx.emotional_resonance in [EmotionalResonance.FRUSTRATION, EmotionalResonance.APPRECIATION]:
@@ -355,7 +355,7 @@ class KoaEngine:
     
     def process(self, ctx: FlowContext) -> FlowContext:
         """판단 수행"""
-        ctx.branch_history.append("koa:judge")
+        ctx.branch_history.append("Core:judge")
         
         # 모델 선택
         selected = self.select_model(ctx)
@@ -364,8 +364,8 @@ class KoaEngine:
         # 실행 가능 여부 판단
         ctx.final_action["ready_for_execution"] = ctx.validated
         
-        ctx.roles_performed.setdefault("koa", []).append("model_selection")
-        ctx.roles_performed["koa"].append("execution_judgment")
+        ctx.roles_performed.setdefault("Core", []).append("model_selection")
+        ctx.roles_performed["Core"].append("execution_judgment")
         
         return ctx
 
@@ -379,7 +379,7 @@ class UnifiedFrontEngine:
     - Unfolded: 전체 레이어 협력
     
     리듬 기반 분기:
-    - 긴급: 루아 → (엘로 스킵) → 루멘 → 실행
+    - 긴급: 코어 → (엘로 스킵) → Core → 실행
     - 보통: 전체 흐름
     - 차분: 상세 흐름 + 추가 검증
     """
@@ -388,8 +388,8 @@ class UnifiedFrontEngine:
         self.agi_root = agi_root or Path(__file__).parent.parent
         self.lua = LuaEngine(self.agi_root / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl")
         self.elo = EloEngine()
-        self.lumen = LumenEngine()
-        self.koa = KoaEngine()
+        self.Core = CoreEngine()
+        self.Core = CoreEngine()
         
         self.state = SystemState.UNFOLDED
         
@@ -495,7 +495,7 @@ class UnifiedFrontEngine:
         """
         전체 처리 흐름
         
-        비노체 입력 → 루아 → 엘로 → 루멘 → 코아 판단 → 실행 컨텍스트
+        비노체 입력 → 코어 → 엘로 → Core → Core 판단 → 실행 컨텍스트
         
         단, 리듬에 따라 분기 가능
         """
@@ -520,7 +520,7 @@ class UnifiedFrontEngine:
                 "reasoning": llm_data.get("reasoning")
             }
         
-        # STEP 1: 루아 - 감응 처리 (LLM 분석 실패 시 백업 동작)
+        # STEP 1: 코어 - 감응 처리 (LLM 분석 실패 시 백업 동작)
         ctx = self.lua.process(ctx)
         
         # 🌟 STEP 1.5: 배경자아 불안도 체크 (Trinity → Shion 연결)
@@ -537,18 +537,18 @@ class UnifiedFrontEngine:
         if ctx.rhythm == RhythmLevel.URGENT:
             # 긴급: 엘로 간소화 또는 스킵
             ctx.branch_history.append("flow:urgent_path")
-            # 루아가 이미 엘로 역할 수행했으면 스킵
+            # 코어가 이미 엘로 역할 수행했으면 스킵
             if "elo_role:structuring" not in ctx.roles_performed.get("lua", []):
                 ctx = self.elo.process(ctx)
         else:
             # STEP 2: 엘로 - 구조화
             ctx = self.elo.process(ctx)
         
-        # STEP 3: 루멘 - 보정
-        ctx = self.lumen.process(ctx)
+        # STEP 3: Core - 보정
+        ctx = self.Core.process(ctx)
         
-        # STEP 4: 코아 - 판단
-        ctx = self.koa.process(ctx)
+        # STEP 4: Core - 판단
+        ctx = self.Core.process(ctx)
         
         # 최종 출력 구성
         return self._build_output(ctx)
@@ -606,10 +606,10 @@ def create_front_engine_routes(app):
             "layers": {
                 "lua": "ready",
                 "elo": "ready", 
-                "lumen": "ready",
-                "koa": "ready"
+                "Core": "ready",
+                "Core": "ready"
             },
-            "current_model": engine.koa.current_model,
+            "current_model": engine.Core.current_model,
             "timestamp": datetime.now().isoformat()
         }
     

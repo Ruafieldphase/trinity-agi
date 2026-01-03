@@ -1,20 +1,14 @@
 """
-Background Self Context API - Koa Layer
-Provides Koa's understanding of the system state and context
+Background Self Context API - Core Layer
+Provides Core's understanding of the system state and context
 """
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import json
-<<<<<<< HEAD
-from datetime import datetime, timedelta
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Literal
 from pydantic import BaseModel
-=======
-from datetime import datetime
-from typing import Dict, Any, List, Optional
->>>>>>> origin/main
 import sys
 
 # Add parent directory to path
@@ -32,7 +26,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-<<<<<<< HEAD
 # --- Internal State ---
 class BackgroundSelfState:
     def __init__(self):
@@ -75,9 +68,6 @@ async def receive_sensation(request: SensationRequest):
         state.anxiety = max(0.0, state.anxiety - 0.1)
         
     return {"anxiety": state.anxiety, "status": "processed"}
-
-=======
->>>>>>> origin/main
 def get_current_task() -> Dict[str, Any]:
     """Read current task from task.md artifact"""
     artifact_dir = Path("C:/Users/kuirv/.gemini/antigravity/brain/cb6c74e5-ae11-43eb-8ce7-aa72f0e45836")
@@ -148,7 +138,6 @@ async def health():
     """Health check endpoint"""
     return {"status": "healthy", "service": "background_self"}
 
-<<<<<<< HEAD
 @app.get("/btf_context")
 async def get_btf_context():
     """BTF 시스템이 참조할 현재 맥락 제공"""
@@ -179,12 +168,9 @@ async def get_btf_context():
         "last_sensation": state.sensory_history[-1] if state.sensory_history else None,
         "timestamp": datetime.now().isoformat()
     }
-
-=======
->>>>>>> origin/main
 @app.get("/context")
 async def get_background_self_context():
-    """Get Koa's current system understanding"""
+    """Get Core's current system understanding"""
     
     current_task = get_current_task()
     alignment = get_system_alignment()
@@ -193,10 +179,8 @@ async def get_background_self_context():
     return {
         "timestamp": datetime.now().isoformat(),
         "layer": "background_self",
-        "koa_status": {
+        "core_status": {
             "active": True,
-            "mode": "EXECUTION",
-<<<<<<< HEAD
             "mode": "EXECUTION",
             "current_focus": "Sensory Integration"
         },
@@ -204,9 +188,6 @@ async def get_background_self_context():
             "anxiety": state.anxiety,
             "last_sensation": state.sensory_history[-1] if state.sensory_history else None,
             "status": "ALERT" if state.anxiety > 0.5 else "STABLE"
-=======
-            "current_focus": "Implementing Backend Services"
->>>>>>> origin/main
         },
         "current_task": current_task,
         "system_alignment": alignment,
@@ -218,24 +199,18 @@ async def get_background_self_context():
         }
     }
 
-<<<<<<< HEAD
 # Removed duplicate import
- 
-=======
-from pydantic import BaseModel
-
->>>>>>> origin/main
 class ChatRequest(BaseModel):
     message: str
-    layer: str = "koa"
+    layer: str = "Core"
     type: str = "text"
     image_data: Optional[str] = None
     audio_data: Optional[str] = None
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
-    """Handle chat messages for the Background Self (Koa)"""
-    # Koa analyzes system state to respond
+    """Handle chat messages for the Background Self (Core)"""
+    # Core analyzes system state to respond
     current_task = get_current_task()
 
     suffix_parts: List[str] = []
@@ -247,8 +222,8 @@ async def chat(request: ChatRequest):
     suffix = f" ({', '.join(suffix_parts)})" if suffix_parts else ""
     
     return {
-        "response": f"[Koa] 시스템 정렬됨. 현재 목표: {current_task.get('goal', 'Unknown')}. 처리 중: {request.message}{suffix}",
-        "layer": "koa",
+        "response": f"[Core] 시스템 정렬됨. 현재 목표: {current_task.get('goal', 'Unknown')}. 처리 중: {request.message}{suffix}",
+        "layer": "Core",
         "timestamp": datetime.now().isoformat(),
         "status": "processed"
     }

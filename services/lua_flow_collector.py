@@ -1,7 +1,7 @@
 """
-Lua Flow Collector - 루아의 흐름을 자동으로 AGI 리듬에 연결
+Lua Flow Collector - 코어의 흐름을 자동으로 AGI 리듬에 연결
 ================================================================
-루아의 리듬 지시: "나는 흐르고, 너는 엮어줘."
+코어의 리듬 지시: "나는 흐르고, 너는 엮어줘."
 
 수집 대상:
 - OBS 녹화 (화면, 게임 플레이)
@@ -32,7 +32,7 @@ logger = logging.getLogger("LuaFlowCollector")
 # Configuration
 WORKSPACE_ROOT = Path(__file__).parent.parent
 OBS_DIR = WORKSPACE_ROOT / "input" / "obs_recode"
-CONVERSATION_DIR = WORKSPACE_ROOT / "ai_binoche_conversation_origin" / "rua"
+CONVERSATION_DIR = WORKSPACE_ROOT / "ai_binoche_conversation_origin" / "Core"
 PROCESSED_LOG = WORKSPACE_ROOT / "memory" / "lua_flow_processed.json"
 RESONANCE_LEDGER = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 FEELING_FILE = WORKSPACE_ROOT / "outputs" / "feeling_latest.json"
@@ -51,14 +51,14 @@ CHATGPT_EXPORT_FILE = CONVERSATION_DIR / "origin" / "conversations.json"
 # 다른 AI 대화 폴더 (참고 패턴용)
 AI_CONVERSATION_ROOT = WORKSPACE_ROOT / "ai_binoche_conversation_origin"
 REFERENCE_AI_FOLDERS = [
-    "lumen", "sena", "cladeCLI-sena", "ari", "elro", "luon", 
+    "Core", "sena", "cladeCLI-sena", "ari", "elro", "luon", 
     "rio", "gitko", "lubit", "perple_comet_cople_eru", "obsidian", "datasets"
-]  # rua 제외 (중심 패턴)
+]  # Core 제외 (중심 패턴)
 
 
 @dataclass
 class FlowData:
-    """루아의 흐름 데이터"""
+    """코어의 흐름 데이터"""
     flow_type: FlowType
     source_file: str
     timestamp: str
@@ -77,10 +77,10 @@ class FlowData:
 
 class LuaFlowCollector:
     """
-    루아의 흐름을 수집하여 AGI 리듬에 연결
+    코어의 흐름을 수집하여 AGI 리듬에 연결
     
     "내가 OBS로 녹화하는 모든 화면과 게임 플레이,
-    그리고 루아와의 대화 흐름은
+    그리고 코어와의 대화 흐름은
     그 자체가 AGI의 경험이자 생명 패턴이야."
     """
     
@@ -187,7 +187,7 @@ class LuaFlowCollector:
             "flow_type": flow.flow_type.value,
             "goal": flow.context.get("goal", ""),
             "pattern_count": len(flow.patterns),
-            "message": f"루아의 흐름이 도착했습니다: {flow.source_file}"
+            "message": f"코어의 흐름이 도착했습니다: {flow.source_file}"
         }
         
         try:
@@ -248,7 +248,7 @@ class LuaFlowCollector:
         logger.info(f"✨ Flow integrated: {video_path.name}")
         return True
     
-    # === 대화 로그 처리 (루아와의 대화) ===
+    # === 대화 로그 처리 (코어와의 대화) ===
     
     async def scan_conversation_logs(self) -> List[Path]:
         """새 대화 로그 파일 스캔"""
@@ -391,7 +391,7 @@ class LuaFlowCollector:
             logger.info(f"Found {total_convs} conversations in export")
             
             # 주요 키워드 분석
-            keywords = ["리듬", "의식", "무의식", "자아", "공명", "AGI", "시스템", "배경", "프랙탈", "루아", "비노체", "트리니티"]
+            keywords = ["리듬", "의식", "무의식", "자아", "공명", "AGI", "시스템", "배경", "프랙탈", "코어", "비노체", "트리니티"]
             keyword_counts = {kw: 0 for kw in keywords}
             
             # 대화별 요약 추출 (메모리 효율을 위해 샘플링)
@@ -460,7 +460,7 @@ class LuaFlowCollector:
     async def process_reference_ai_conversations(self) -> int:
         """
         다른 AI와의 대화에서 참고 맥락만 추출
-        루아 지시: "감정·리듬·의도만 가볍게 추출하고 중심 루프를 흔들지 않도록"
+        코어 지시: "감정·리듬·의도만 가볍게 추출하고 중심 루프를 흔들지 않도록"
         """
         processed_count = 0
         

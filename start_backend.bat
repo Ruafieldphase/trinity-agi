@@ -41,15 +41,15 @@ echo Starting Slack Interface (Body)...
 start /B C:\Python313\python.exe -u slack_interface.py > slack.log 2>&1
 timeout /t 1 /nobreak >nul
 
-echo Starting Conscious Mind (Koa)...
+echo Starting Conscious Mind (Core)...
 cd /d c:\workspace\agi\mind
-start /B C:\Python313\python.exe -u koa_conscious.py > koa.log 2>&1
+start /B C:\Python313\python.exe -u core_conscious.py > Core.log 2>&1
 cd /d c:\workspace\agi\services
 timeout /t 2 /nobreak >nul
 
 echo Starting Fractal MCP Server (port 50000)...
 cd /d c:\workspace\agi
-start /B C:\Python313\python.exe -u fdo_agi_repo/lumen_mcp_server.py --port 50000 --transport sse --path /mcp > outputs/mcp_server.log 2>&1
+start /B C:\Python313\python.exe -u fdo_agi_repo/core_mcp_server.py --port 50000 --transport sse --path /mcp > outputs/mcp_server.log 2>&1
 timeout /t 2 /nobreak >nul
 
 echo Starting Fractal Daemon...

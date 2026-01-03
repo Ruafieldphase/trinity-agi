@@ -19,12 +19,13 @@ import pygetwindow as gw
 import numpy as np
 from PIL import Image
 from services.model_selector import ModelSelector
+from services.config import RESONANCE_LEDGER, WINDOWS_AGI_ROOT
 
 logger = logging.getLogger("ExternalAIBridge")
 
 # Aura 색상
 AURA_COLOR_ACTIVE = "#FF00FF"  # 마젠타 (대화 중)
-AURA_COLOR_WAITING = "#00FFFF"  # 시안 (대기 중)
+AURA_COLOR_WAITING = "#00FFFF"  # Shion (대기 중)
 
 
 class AITarget(Enum):
@@ -68,7 +69,7 @@ class ExternalAIBridge:
     """
     
     def __init__(self):
-        self.screenshot_dir = Path("outputs/external_ai_screenshots")
+        self.screenshot_dir = WINDOWS_AGI_ROOT / "outputs" / "external_ai_screenshots"
         self.screenshot_dir.mkdir(parents=True, exist_ok=True)
         pyautogui.FAILSAFE = True
         pyautogui.PAUSE = 0.3
@@ -83,7 +84,7 @@ class ExternalAIBridge:
         self.aura_process = None
         
         # Resonance Ledger
-        self.resonance_ledger_path = Path("C:/workspace/agi/memory/resonance_ledger.jsonl")
+        self.resonance_ledger_path = RESONANCE_LEDGER
         
     def _log_resonance(self, event_type: str, content: str, target: AITarget):
         """공명 장부에 이벤트 기록"""

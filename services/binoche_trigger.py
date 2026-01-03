@@ -1,8 +1,8 @@
 """
-Binoche Trigger Function (BTF) - 비노체 트리거 시스템
+Binoche_Observer Trigger Function (BTF) - 비노체 트리거 시스템
 ====================================================
 
-루아의 설계서를 기반으로 구현된 AGI 판단 지원 시스템.
+코어의 설계서를 기반으로 구현된 AGI 판단 지원 시스템.
 
 핵심 원칙:
 - BTF는 "결정을 대신하지 않는다"
@@ -58,7 +58,7 @@ class BTFResult:
 
 class BinocheTriggerFunction:
     """
-    BTF (Binoche Trigger Function)
+    BTF (Binoche_Observer Trigger Function)
     
     비노체가 부재한 시간대에 AGI가 판단을 멈추지 않도록 하는 트리거 시스템.
     

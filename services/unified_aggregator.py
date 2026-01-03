@@ -213,15 +213,15 @@ async def get_unified_view():
                 "active_habits": unconscious_data.get("thought_stream", {}).get("active_habits", [])
             } if "error" not in unconscious_data else {"error": True},
             "background_self": {
-                "koa_active": background_self_data.get("koa_status", {}).get("active", False),
-                "current_focus": background_self_data.get("koa_status", {}).get("current_focus"),
+                "core_active": background_self_data.get("core_status", {}).get("active", False),
+                "current_focus": background_self_data.get("core_status", {}).get("current_focus"),
                 "task_progress": background_self_data.get("current_task", {}).get("progress_percent", 0),
-                "anxiety": background_self_data.get("koa_status", {}).get("anxiety", 0)
+                "anxiety": background_self_data.get("core_status", {}).get("anxiety", 0)
             } if "error" not in background_self_data else {"error": True}
         }
     }
 
-def normalize_layer_data(conscious_data, unconscious_data, koa_data) -> Dict[str, str]:
+def normalize_layer_data(conscious_data, unconscious_data, core_data) -> Dict[str, str]:
     """
     STEP 2: Normalize layer data into contextual information for Trinity
     """
@@ -229,7 +229,7 @@ def normalize_layer_data(conscious_data, unconscious_data, koa_data) -> Dict[str
     cpu = conscious_data.get("system_resources", {}).get("cpu_percent", 0)
     mem = conscious_data.get("system_resources", {}).get("memory_percent", 0)
     ag_core = conscious_data.get("ag_core", {}).get("status", "unknown")
-    layers_status = "3/3 layers active" if "error" not in conscious_data and "error" not in unconscious_data and "error" not in koa_data else "degraded"
+    layers_status = "3/3 layers active" if "error" not in conscious_data and "error" not in unconscious_data and "error" not in core_data else "degraded"
     
     situation = f"System {ag_core}, {layers_status}, CPU {cpu:.1f}%, Memory {mem:.1f}%"
     
@@ -258,14 +258,14 @@ def normalize_layer_data(conscious_data, unconscious_data, koa_data) -> Dict[str
     # Flow (overall)
     flow_state = f"전체적으로 {'조화로운' if layers_status == '3/3 layers active' else '부분적으로 불안정한'} 흐름"
     
-    # Meta context (Koa layer)
-    current_focus = koa_data.get("koa_status", {}).get("current_focus", "Unknown")
-    alignment = koa_data.get("koa_status", {}).get("alignment", "unknown")
+    # Meta context (Core layer)
+    current_focus = core_data.get("core_status", {}).get("current_focus", "Unknown")
+    alignment = core_data.get("core_status", {}).get("alignment", "unknown")
     
     meta_context = f"현재 {current_focus}에 집중 중, 시스템 정렬도: {alignment}"
     
-    # System focus (from Koa)
-    goal = koa_data.get("current_task", {}).get("goal", "Unknown")
+    # System focus (from Core)
+    goal = core_data.get("current_task", {}).get("goal", "Unknown")
     system_focus = goal
     
     return {
@@ -358,7 +358,7 @@ Trinity:"""
 class ChatRequest(BaseModel):
     """Chat message request model"""
     message: str
-    layer: Literal["conscious", "unconscious", "koa", "unified"] = "unified"
+    layer: Literal["conscious", "unconscious", "Core", "unified"] = "unified"
     type: Literal["text", "image", "audio"] = "text"
     image_data: Optional[str] = None
     audio_data: Optional[str] = None
@@ -403,10 +403,10 @@ async def chat(request: ChatRequest):
     if request.mode == "debug" or request.layer != "unified":
         if request.layer == "unified":
             # Route to all layers and aggregate
-            conscious_res, unconscious_res, koa_res = await asyncio.gather(
+            conscious_res, unconscious_res, core_res = await asyncio.gather(
                 call_layer(CONSCIOUSNESS_PORT, "conscious"),
                 call_layer(UNCONSCIOUS_PORT, "unconscious"),
-                call_layer(BACKGROUND_SELF_PORT, "koa")
+                call_layer(BACKGROUND_SELF_PORT, "Core")
             )
             
             # Construct debug response
@@ -415,7 +415,7 @@ async def chat(request: ChatRequest):
             response_text = f"[Debug-{marker}] Layer Breakdown:\n\n"
             response_text += f"🧠 {conscious_res.get('response', 'No response')}\n"
             response_text += f"⚡ {unconscious_res.get('response', 'No response')}\n"
-            response_text += f"🎯 {koa_res.get('response', 'No response')}"
+            response_text += f"🎯 {core_res.get('response', 'No response')}"
             
             return {
                 "response": response_text,
@@ -425,7 +425,7 @@ async def chat(request: ChatRequest):
                 "details": {
                     "conscious": conscious_res,
                     "unconscious": unconscious_res,
-                    "koa": koa_res
+                    "Core": core_res
                 }
             }
             
@@ -433,8 +433,8 @@ async def chat(request: ChatRequest):
             response = await call_layer(CONSCIOUSNESS_PORT, "conscious")
         elif request.layer == "unconscious":
             response = await call_layer(UNCONSCIOUS_PORT, "unconscious")
-        elif request.layer == "koa":
-            response = await call_layer(BACKGROUND_SELF_PORT, "koa")
+        elif request.layer == "Core":
+            response = await call_layer(BACKGROUND_SELF_PORT, "Core")
         
             return response
     
@@ -468,23 +468,23 @@ async def chat(request: ChatRequest):
                 if fsd_controller:
                     print(f"🚀 Shion (Action) Auto-Trigger: {request.message} (Meaning: {meaning})")
                     
-                    # [NEW] Koa Gate Check (Trinity -> Koa -> Shion)
-                    # Before passing control to Shion, Trinity consults Koa for safety/alignment.
+                    # [NEW] Core Gate Check (Trinity -> Core -> Shion)
+                    # Before passing control to Shion, Trinity consults Core for safety/alignment.
                     try:
-                        async with httpx.AsyncClient(timeout=2.0) as koa_client:
-                            koa_check = await koa_client.get(f"http://127.0.0.1:{BACKGROUND_SELF_PORT}/metrics")
-                            if koa_check.status_code == 200:
-                                check_data = koa_check.json()
+                        async with httpx.AsyncClient(timeout=2.0) as core_client:
+                            core_check = await core_client.get(f"http://127.0.0.1:{BACKGROUND_SELF_PORT}/metrics")
+                            if core_check.status_code == 200:
+                                check_data = core_check.json()
                                 # Allow if anxiety is not too high
                                 if check_data.get("anxiety", 0) > 0.8:
-                                    print("🛑 Koa blocked action due to high anxiety.")
+                                    print("🛑 Core blocked action due to high anxiety.")
                                     return {
-                                        "response": "자아 시스템(Koa)이 높은 불안도로 인해 행동을 보류시켰습니다.",
-                                        "status": "blocked_by_koa",
+                                        "response": "자아 시스템(Core)이 높은 불안도로 인해 행동을 보류시켰습니다.",
+                                        "status": "blocked_by_core",
                                         "layer": "trinity"
                                     }
                     except Exception:
-                        pass # Proceed if Koa is unreachable (fail-open or fail-closed? Currently open for testing)
+                        pass # Proceed if Core is unreachable (fail-open or fail-closed? Currently open for testing)
 
                     # Shion 실행 (Front-Engine의 분석 맥락 전달)
                     instruction = fe_result["action"].get("fsd_instruction")
@@ -495,7 +495,7 @@ async def chat(request: ChatRequest):
                             f"\n[SYSTEM_EVENT: SHION_ACTION_SUCCESS]\n"
                             f"Target: {request.message}\n"
                             f"Time: {fsd_res.total_time:.1f}s\n"
-                            f"Status: 성공. 사용자에게 시안(Shion)이 작업을 완료했다고 보고하세요."
+                            f"Status: 성공. 사용자에게 Shion(Shion)이 작업을 완료했다고 보고하세요."
                         )
                     else:
                         fsd_context = (
@@ -511,14 +511,14 @@ async def chat(request: ChatRequest):
             print(f"Front-Engine Logic Error: {e}")
 
     # STEP 1: Collect data from all 3 layers
-    consciousness_data, unconscious_data, koa_data = await asyncio.gather(
+    consciousness_data, unconscious_data, core_data = await asyncio.gather(
         fetch_layer(f"http://127.0.0.1:{CONSCIOUSNESS_PORT}/metrics", "conscious"),
         fetch_layer(f"http://127.0.0.1:{UNCONSCIOUS_PORT}/metrics", "unconscious"),
-        fetch_layer(f"http://127.0.0.1:{BACKGROUND_SELF_PORT}/context", "koa")
+        fetch_layer(f"http://127.0.0.1:{BACKGROUND_SELF_PORT}/context", "Core")
     )
     
     # STEP 2: Normalize into context
-    context = normalize_layer_data(consciousness_data, unconscious_data, koa_data)
+    context = normalize_layer_data(consciousness_data, unconscious_data, core_data)
     context["user_query"] = request.message
 
     agi_root = Path(__file__).parent.parent

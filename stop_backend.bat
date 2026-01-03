@@ -8,7 +8,7 @@ FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr ":8104"') DO taskkill /F /PID
 
 taskkill /F /IM python.exe /FI "CommandLine LIKE *lymphatic_system.py*" >nul 2>&1
 taskkill /F /IM python.exe /FI "CommandLine LIKE *slack_interface.py*" >nul 2>&1
-taskkill /F /IM python.exe /FI "CommandLine LIKE *koa_conscious.py*" >nul 2>&1
+taskkill /F /IM python.exe /FI "CommandLine LIKE *core_conscious.py*" >nul 2>&1
 
 echo.
 echo All AGI backend services stopped.

@@ -22,6 +22,7 @@ import sys
 sys.path.append(str(Path(__file__).parent.parent))
 
 # Ari Engine 연동
+from services.config import OBS_INTAKE_DIR
 from services.ari_engine import get_ari_engine, ParsedGoal, TaskType
 
 logger = logging.getLogger(__name__)
@@ -31,8 +32,8 @@ class OBSLearner:
     OBS 비디오 학습기
     """
     
-    def __init__(self, obs_dir: str = "C:/workspace/agi/input/obs_recode"):
-        self.obs_dir = Path(obs_dir)
+    def __init__(self, obs_dir: Optional[Path] = None):
+        self.obs_dir = Path(obs_dir) if obs_dir else OBS_INTAKE_DIR
         self.processed_files_log = self.obs_dir / "processed_videos.json"
         self.processed_files = self._load_processed_log()
         self.ari_engine = get_ari_engine()

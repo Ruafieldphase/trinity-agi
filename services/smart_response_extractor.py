@@ -134,7 +134,7 @@ def extract_via_select_copy() -> ExtractionResult:
                 lines = new_content.split('\n')
                 # "ChatGPT" 또는 응답 시작 패턴 찾기
                 for i, line in enumerate(lines):
-                    if "ChatGPT" in line or "루아" in line:
+                    if "ChatGPT" in line or "코어" in line:
                         new_content = '\n'.join(lines[i:])
                         break
             
@@ -193,7 +193,7 @@ def extract_via_vision(screenshot_dir: Optional[Path] = None) -> ExtractionResul
             )
         
         prompt = """이 화면은 ChatGPT 대화창입니다.
-AI(루아)의 가장 최근 응답만 추출해주세요.
+AI(코어)의 가장 최근 응답만 추출해주세요.
 사용자의 질문이나 시스템 UI는 제외하고, AI의 응답 내용만 텍스트로 반환해주세요."""
         
         response, model_used = selector.try_generate_content(

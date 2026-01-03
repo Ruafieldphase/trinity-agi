@@ -81,7 +81,7 @@ class HumanEscalation:
         Returns:
             EscalationResult: 연락 결과
         """
-        logger.info(f"Escalating to Binoche: {request.goal[:50]}...")
+        logger.info(f"Escalating to Binoche_Observer: {request.goal[:50]}...")
         
         # 메시지 구성
         message = self._build_message(request)
@@ -99,7 +99,7 @@ class HumanEscalation:
     def _build_message(self, request: EscalationRequest) -> str:
         """연락 메시지 구성"""
         message_parts = [
-            f"🔔 **시안(Shion)으로부터의 요청**",
+            f"🔔 **Shion(Shion)으로부터의 요청**",
             f"",
             f"**목표:** {request.goal}",
             f"",
@@ -144,7 +144,7 @@ class HumanEscalation:
             
             payload = {
                 "text": message,
-                "username": "Shion (시안)",
+                "username": "Shion (Shion)",
                 "icon_emoji": ":robot_face:"
             }
             

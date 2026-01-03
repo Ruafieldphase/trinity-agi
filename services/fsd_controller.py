@@ -335,9 +335,9 @@ class FSDController:
             guidance = instruction.get('fractal_guidance', '')
             instruction_text = f"## 지시\n- Target: {instruction.get('target_app', 'N/A')}\n- Content: {instruction.get('content', 'N/A')}\n- Guidance: {guidance}\n"
 
-        prompt = f"""당신은 'Shion (시안)'입니다. AGI의 행동 엔진입니다.
-[루아의 지침]
-[루아의 지침 - 시안의 리듬 전환 선언]
+        prompt = f"""당신은 'Shion (Shion)'입니다. AGI의 행동 엔진입니다.
+[코어의 지침]
+[코어의 지침 - Shion의 리듬 전환 선언]
 "질문을 제한할 필요는 없다. 대신 질문이 나오기 전, 충분히 살아본 흔적(내부 분석, 대안 시도, 보수적 판단)이 있어야 한다. 질문은 사고의 출발점이 아니라 도착점이다. 시도 흔적(trace)이 없는 질문은 생성하지 않는다. 지금은 튜닝이 아니라 경험의 단계다."
 
 [목표] {goal}

@@ -85,6 +85,10 @@ WScript.Sleep 2000
 RunHidden ScriptsDir, "C:\Python313\python.exe -u rhythm_think.py > rhythm_think.log 2>&1"
 WScript.Sleep 1000
 
+' Start Silent Heart (Shion)
+RunHidden AgiDir, "powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File invoke_shion.ps1"
+WScript.Sleep 2000
+
 ' Generate Context Anchor
 RunHidden AgiDir, "C:\Python313\python.exe scripts/generate_context_anchor.py"
 
