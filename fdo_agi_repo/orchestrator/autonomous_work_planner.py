@@ -46,8 +46,8 @@ class AutonomousWorkPlanner:
             'monitor_24h': timedelta(hours=24),
             'autopoietic_report': timedelta(hours=24),
             'performance_dashboard': timedelta(hours=6),
-            # SiAN 추론 점검은 12시간마다 재실행
-            'sian_thinking': timedelta(hours=12),
+            # Shion 추론 점검은 12시간마다 재실행
+            'shion_thinking': timedelta(hours=12),
         }
         self._load_work_queue()
         # 기존 큐가 있는 경우에도 신규 기본 작업을 보강
@@ -88,12 +88,12 @@ class AutonomousWorkPlanner:
             now = datetime.utcnow().isoformat()
 
             backfilled = False
-            # SiAN 추론 점검 작업이 없다면 추가
-            if 'sian_thinking' not in existing_ids:
+            # Shion 추론 점검 작업이 없다면 추가
+            if 'shion_thinking' not in existing_ids:
                 self.work_queue.append(
                     WorkItem(
-                        id="sian_thinking",
-                        title="SiAN Meta Layer Quick Thinking Probe",
+                        id="shion_thinking",
+                        title="Shion Meta Layer Quick Thinking Probe",
                         description="Gemini 추론 모델로 메타층 상태 점검용 간단 질의 실행",
                         priority=8,
                         category="learning",
@@ -132,8 +132,8 @@ class AutonomousWorkPlanner:
                 status="pending"
             ),
             WorkItem(
-                id="sian_thinking",
-                title="SiAN Meta Layer Quick Thinking Probe",
+                id="shion_thinking",
+                title="Shion Meta Layer Quick Thinking Probe",
                 description="Gemini 추론 모델로 메타층 상태 점검용 간단 질의 실행",
                 priority=8,
                 category="learning",

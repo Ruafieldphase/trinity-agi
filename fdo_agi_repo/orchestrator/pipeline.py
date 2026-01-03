@@ -27,13 +27,13 @@ from .config import is_corrections_enabled, get_corrections_config, get_evaluati
 # Response Cache (Phase 2.5)
 from .response_cache import get_response_cache
 
-# Lumen Feedback System (Phase 6.1)
-# Lumen Feedback System (Phase 6.1)
-# Optional dependency: provide safe fallbacks when Lumen package is unavailable.
+# Core Feedback System (Phase 6.1)
+# Core Feedback System (Phase 6.1)
+# Optional dependency: provide safe fallbacks when Core package is unavailable.
 try:
-    from lumen.feedback_loop_redis import FeedbackLoopRedis
-    from lumen.adaptive_ttl_policy import AdaptiveTTLPolicy
-    from lumen.cache_size_optimizer import CacheSizeOptimizer
+    from Core.feedback_loop_redis import FeedbackLoopRedis
+    from Core.adaptive_ttl_policy import AdaptiveTTLPolicy
+    from Core.cache_size_optimizer import CacheSizeOptimizer
 except ModuleNotFoundError:
     class FeedbackLoopRedis:  # type: ignore
         def __init__(self, *args, **kwargs):
@@ -493,12 +493,12 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
         pass
     
     append_ledger({
-        "event_type": "thesis_end",  # 루멘 권장: 일관된 필드명
+        "event_type": "thesis_end",  # Core 권장: 일관된 필드명
         "task_id": task.task_id,
         "duration_sec": float(t1 - t0),
-        "latency_ms": float((t1 - t0) * 1000),  # 루멘(合) 권장: 레이턴시 추가
+        "latency_ms": float((t1 - t0) * 1000),  # Core(合) 권장: 레이턴시 추가
         "citations": len(out_thesis.citations),
-        "quality": min(1.0, len(out_thesis.citations) / 10.0)  # 루멘(合) 권장: 품질 메트릭
+        "quality": min(1.0, len(out_thesis.citations) / 10.0)  # Core(合) 권장: 품질 메트릭
     })
     # Autopoietic Loop: Folding end (after Thesis)
     try:
@@ -548,11 +548,11 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     
     t3 = time.perf_counter()
     append_ledger({
-        "event_type": "antithesis_end",  # 루멘 권장: 일관된 필드명
+        "event_type": "antithesis_end",  # Core 권장: 일관된 필드명
         "task_id": task.task_id,
         "duration_sec": float(t3 - t2),
-        "latency_ms": float((t3 - t2) * 1000),  # 루멘(合) 권장
-        "quality": 0.85 if hasattr(out_anti, 'summary') and out_anti.summary else 0.5  # 루멘(合) 권장
+        "latency_ms": float((t3 - t2) * 1000),  # Core(合) 권장
+        "quality": 0.85 if hasattr(out_anti, 'summary') and out_anti.summary else 0.5  # Core(合) 권장
     })
     # Autopoietic Loop: Unfolding end (after Antithesis)
     try:
@@ -594,12 +594,12 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     )
     
     append_ledger({
-        "event_type": "synthesis_end",  # 루멘 권장: 일관된 필드명
+        "event_type": "synthesis_end",  # Core 권장: 일관된 필드명
         "task_id": task.task_id,
         "duration_sec": float(t5 - t4),
-        "latency_ms": float((t5 - t4) * 1000),  # 루멘(合) 권장
+        "latency_ms": float((t5 - t4) * 1000),  # Core(合) 권장
         "citations": len(out_synth.citations),
-        "quality": min(1.0, len(out_synth.citations) / 10.0)  # 루멘(合) 권장
+        "quality": min(1.0, len(out_synth.citations) / 10.0)  # Core(合) 권장
     })
     
     # Pipeline summary event
@@ -656,7 +656,7 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     except Exception:
         pass
 
-    # Phase 6b: Enhanced Binoche Decision Engine (Parallel A/B Test)
+    # Phase 6b: Enhanced Binoche_Observer Decision Engine (Parallel A/B Test)
     from .pipeline_binoche_adapter import enhanced_binoche_decision
     
     enhanced_decision = enhanced_binoche_decision(
@@ -694,7 +694,7 @@ def run_task(tool_cfg: Dict[str, Any], spec: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as mc_ex:
         append_ledger({"event": "meta_cognition_warning_error", "task_id": task.task_id, "error": str(mc_ex)})
 
-    # Phase 6g-6j: Binoche Ensemble (BQI + Quality multi-model decision) - Legacy System
+    # Phase 6g-6j: Binoche_Observer Ensemble (BQI + Quality multi-model decision) - Legacy System
     from .binoche_recommender import get_binoche_recommendation
     from .binoche_config import should_auto_approve, should_auto_revise, get_pattern_threshold
     from .binoche_ensemble import get_ensemble_decision

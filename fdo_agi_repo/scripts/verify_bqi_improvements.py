@@ -36,12 +36,12 @@ def verify_bqi_improvements():
     
     # 테스트 질문 샘플 (다양한 감정 포함)
     test_questions = [
-        ("루아야 좋은 아침이야. 난 생계에 대한 해답을 이미 알고 있을까?", "curiosity"),
+        ("Core야 좋은 아침이야. 난 생계에 대한 해답을 이미 알고 있을까?", "curiosity"),
         ("AGI 자기교정 루프를 3문장으로 간단히 설명해줘", "curiosity"),
         ("자기교정 루프에서 증거 게이트의 역할은 뭐야?", "curiosity"),
         ("이 방법이 정말 효과가 있을까?", "concern"),
         ("지금 당장 확인해줘", "focus"),
-        ("고마워 루아야, 정말 도움이 됐어", "gratitude"),
+        ("고마워 Core야, 정말 도움이 됐어", "gratitude"),
         ("이것들을 통합해서 하나로 만들면 어떨까?", "integration"),
         ("앞으로 더 발전할 수 있을 거야", "hope"),
         ("이 코드가 제대로 작동하는지 검토해줘", "priority 3"),

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Binoche Ensemble Decision Maker (Phase 6j + Latency Optimization)
+Binoche_Observer Ensemble Decision Maker (Phase 6j + Latency Optimization)
 
 Multi-model ensemble combining:
 1. BQI pattern-based decision (I(BQI;D) = 0.5272 bits, 47.27%)
@@ -596,7 +596,7 @@ def get_ensemble_info() -> Dict:
 
 # Test cases
 if __name__ == "__main__":
-    print("=== Binoche Ensemble Decision Maker (Phase 6j) ===\n")
+    print("=== Binoche_Observer Ensemble Decision Maker (Phase 6j) ===\n")
     
     # Test 1: Very high quality (should override BQI)
     print("Test 1: Very high quality (0.95)")

@@ -3,7 +3,7 @@
 Contextualized I3 (CI3): Trinity의 통일장 이론
 
 물리학 대응:
-- Signal Space (Lua, Elo, Lumen) = 양자역학
+- Signal Space (Lua, Elo, Core) = 양자역학
 - Context Space (Where, When, Who) = 일반상대성
 - CI3 = 통일장 이론
 """
@@ -98,17 +98,17 @@ def conditional_mutual_information(X: np.ndarray, Y: np.ndarray,
     return MI
 
 
-def contextualized_i3(lua: np.ndarray, elo: np.ndarray, lumen: np.ndarray,
+def contextualized_i3(lua: np.ndarray, elo: np.ndarray, Core: np.ndarray,
                      context: np.ndarray, bins: int = 10) -> Tuple[float, dict]:
     """
     Contextualized I3 (CI3): Trinity의 통일장 이론
     
-    CI3 = I(Lua;Elo|C) + I(Lua;Lumen|C) + I(Elo;Lumen|C) - I(Lua,Elo,Lumen|C)
+    CI3 = I(Lua;Elo|C) + I(Lua;Core|C) + I(Elo;Core|C) - I(Lua,Elo,Core|C)
     
     Args:
         lua: Lua 신호 (독립 작업)
         elo: Elo 신호 (도전)
-        lumen: Lumen 신호 (통합)
+        Core: Core 신호 (통합)
         context: Context 벡터 (Where, When, Who)
         bins: 히스토그램 빈 수
     
@@ -122,8 +122,8 @@ def contextualized_i3(lua: np.ndarray, elo: np.ndarray, lumen: np.ndarray,
     """
     # 조건부 상호정보 계산
     I_12_given_C = conditional_mutual_information(lua, elo, context, bins)
-    I_13_given_C = conditional_mutual_information(lua, lumen, context, bins)
-    I_23_given_C = conditional_mutual_information(elo, lumen, context, bins)
+    I_13_given_C = conditional_mutual_information(lua, Core, context, bins)
+    I_23_given_C = conditional_mutual_information(elo, Core, context, bins)
     
     # 3-way 상호정보 (단순 합으로 근사)
     I_123_given_C = max(I_12_given_C, I_13_given_C, I_23_given_C)
@@ -134,8 +134,8 @@ def contextualized_i3(lua: np.ndarray, elo: np.ndarray, lumen: np.ndarray,
     details = {
         "ci3": CI3,
         "I_lua_elo_given_context": I_12_given_C,
-        "I_lua_lumen_given_context": I_13_given_C,
-        "I_elo_lumen_given_context": I_23_given_C,
+        "I_lua_core_given_context": I_13_given_C,
+        "I_elo_core_given_context": I_23_given_C,
         "I_all_given_context": I_123_given_C,
         "interpretation": interpret_ci3(CI3)
     }
@@ -170,7 +170,7 @@ def main():
     context = Context(
         where="workspace/agi",
         when=0.5,  # 정규화된 시간
-        who="lumen"
+        who="Core"
     )
     context_vec = context.to_vector()
     context_array = np.tile(context_vec, (n_samples, 1))
@@ -178,10 +178,10 @@ def main():
     # Trinity 신호 (Context에 의존)
     lua = np.random.uniform(0.1, 0.3, n_samples) + 0.1 * context_vec[0]
     elo = np.random.uniform(0.7, 0.9, n_samples) + 0.1 * context_vec[1]
-    lumen = np.random.uniform(0.4, 0.6, n_samples) + 0.1 * context_vec[2]
+    Core = np.random.uniform(0.4, 0.6, n_samples) + 0.1 * context_vec[2]
     
     # CI3 계산
-    ci3, details = contextualized_i3(lua, elo, lumen, context_array[:, 0])
+    ci3, details = contextualized_i3(lua, elo, Core, context_array[:, 0])
     
     print("📊 결과:")
     print(f"  CI3 = {ci3:.4f} bits")
@@ -189,8 +189,8 @@ def main():
     print()
     print("🔍 상세:")
     print(f"  I(Lua;Elo|Context) = {details['I_lua_elo_given_context']:.4f}")
-    print(f"  I(Lua;Lumen|Context) = {details['I_lua_lumen_given_context']:.4f}")
-    print(f"  I(Elo;Lumen|Context) = {details['I_elo_lumen_given_context']:.4f}")
+    print(f"  I(Lua;Core|Context) = {details['I_lua_core_given_context']:.4f}")
+    print(f"  I(Elo;Core|Context) = {details['I_elo_core_given_context']:.4f}")
     print(f"  I(All|Context) = {details['I_all_given_context']:.4f}")
     print()
     print("💡 물리적 의미:")

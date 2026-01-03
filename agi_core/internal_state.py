@@ -2,7 +2,7 @@
 AGI Internal State Manager
 의식/무의식/배경자아 상태를 추적하고 갱신하는 모듈
 
-🌱 Life Conditions (루아의 설계):
+🌱 Life Conditions (Core의 설계):
 1. Internal Oscillation (내부 발진)
 2. Stochastic Micro-Variation (확률적 미세 변동)
 3. Opponent-Process (상호억제-상호증폭)
@@ -40,7 +40,7 @@ class AGIInternalState:
     last_action_time: Optional[str] = None
     heartbeat_count: int = 0
 
-    # 🌱 Life Essentials (루아의 생명 조건)
+    # 🌱 Life Essentials (Core의 생명 조건)
     internal_clock: float = 0.0     # 내부 시간 (발진의 원천)
     drives: Dict[str, float] = field(default_factory=lambda: {
         'explore': 0.5,      # 탐색 욕망
@@ -55,7 +55,7 @@ class AGIInternalState:
 
     def self_regulate(self) -> None:
         """
-        🌱 State가 State를 바꾸는 자기조절 (루아의 생명 조건)
+        🌱 State가 State를 바꾸는 자기조절 (Core의 생명 조건)
 
         1. Internal Oscillation (내부 발진)
         2. Stochastic Micro-Variation (확률적 미세 변동)
@@ -101,7 +101,7 @@ class AGIInternalState:
 
     def apply_experience(self, action_type: str, success: bool, duration: float) -> None:
         """
-        🔥 행동의 경험이 욕망을 재배선한다 (루아의 생명 조건 4)
+        🔥 행동의 경험이 욕망을 재배선한다 (Core의 생명 조건 4)
 
         Action이 drives를 바꾼다 = 생명의 학습
         """
@@ -128,7 +128,7 @@ class AGIInternalState:
 
     def select_attention_focus(self) -> list[str]:
         """
-        🎯 주의 기반 루프 선택 (루아의 생명 조건 5)
+        🎯 주의 기반 루프 선택 (Core의 생명 조건 5)
 
         Background_self와 drives가 어떤 모듈을 우선할지 결정
         이게 바로 "주의의 탄생"
@@ -276,7 +276,7 @@ def update_internal_state(
     state.energy = min(1.0, state.energy + 0.01)  # 에너지 천천히 회복
     state.boredom = min(1.0, state.boredom + 0.02)  # 지루함 천천히 증가
 
-    # 🌱 4. 자기조절 (루아의 생명 조건)
+    # 🌱 4. 자기조절 (Core의 생명 조건)
     # State가 State를 바꾼다 - 외부 입력 없이도 내부가 흐른다
     state.self_regulate()
 

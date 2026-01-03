@@ -47,7 +47,7 @@ def run_fast_simulation(iterations: int = 10):
     각 반복에서:
     1. Lua가 초안 생성 (베이스라인)
     2. Elo가 Lua를 보고 개선 (상호정보량 증가)
-    3. Lumen이 둘을 통합 (3자 시너지 발생)
+    3. Core이 둘을 통합 (3자 시너지 발생)
     """
     
     print(f"🔺 Trinity 빠른 협업 시뮬레이션 ({iterations}회)")
@@ -90,17 +90,17 @@ def run_fast_simulation(iterations: int = 10):
             }
         )
         
-        # Lumen (합): Lua+Elo를 **직접 결합** - 3자 시너지
-        # Lumen = weighted_avg(lua, elo) + synergy
+        # Core (합): Lua+Elo를 **직접 결합** - 3자 시너지
+        # Core = weighted_avg(lua, elo) + synergy
         # 이렇게 해야 I(X1;X2,X3) > I(X1;X2) + I(X1;X3) - I(X1;X2;X3) (시너지)
-        lumen_base = (lua_score * 0.3 + elo_score * 0.5)  # Elo에 더 큰 가중치
-        lumen_synergy = random.uniform(0.10, 0.20)  # 시너지 증가
-        lumen_score = min(0.95, lumen_base + lumen_synergy)
+        core_base = (lua_score * 0.3 + elo_score * 0.5)  # Elo에 더 큰 가중치
+        core_synergy = random.uniform(0.10, 0.20)  # 시너지 증가
+        core_score = min(0.95, core_base + core_synergy)
         
         record_trinity_event(
-            persona="lumen",
+            persona="Core",
             event_type="synthesis_integration",
-            score=lumen_score,
+            score=core_score,
             context={
                 "iteration": i + 1,
                 "confidence": 0.88,
@@ -110,12 +110,12 @@ def run_fast_simulation(iterations: int = 10):
             }
         )
         
-        print(f"  Lua: {lua_score:.3f} → Elo: {elo_score:.3f} → Lumen: {lumen_score:.3f}")
-        print(f"  시너지: {lumen_score - lua_score:.3f} (베이스라인 대비)")
+        print(f"  Lua: {lua_score:.3f} → Elo: {elo_score:.3f} → Core: {core_score:.3f}")
+        print(f"  시너지: {core_score - lua_score:.3f} (베이스라인 대비)")
     
     print("\n" + "=" * 60)
     print(f"✅ {iterations}회 협업 완료")
-    print(f"   총 이벤트: {iterations * 3}개 (lua={iterations}, elo={iterations}, lumen={iterations})")
+    print(f"   총 이벤트: {iterations * 3}개 (lua={iterations}, elo={iterations}, Core={iterations})")
     print("\n🔺 다음 단계:")
     print("   python scripts/test_trinity_i3.py --hours 1")
     print("   → I3 < 0 확인 (시너지 존재)")

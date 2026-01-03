@@ -92,8 +92,8 @@
       "result": null
     },
     {
-      "id": "sian_thinking",
-      "title": "SiAN Meta Layer Quick Thinking Probe",
+      "id": "shion_thinking",
+      "title": "Shion Meta Layer Quick Thinking Probe",
       "description": "Gemini 추론 모델로 메타층 상태 점검용 간단 질의 실행",
       "priority": 8,
       "category": "learning",

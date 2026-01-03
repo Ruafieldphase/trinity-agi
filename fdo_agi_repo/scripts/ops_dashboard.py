@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 통합 운영 대시보드
-AGI + Lumen + Proxy + System 상태를 한눈에 표시
+AGI + Core + Proxy + System 상태를 한눈에 표시
 """
 
 import sys
@@ -253,11 +253,7 @@ class OpsDashboard:
                 print(f"  {self._status_icon(False)} Monitoring Loop: No logs found")
             
             # 최근 probe 결과 읽기 시도
-<<<<<<< HEAD
             probe_pattern = str(workspace / "LLM_Unified" / "ion-mentoring" / "logs" / "probe_iter_*.json")
-=======
-            probe_pattern = str(workspace / \"LLM_Unified\" / \"ion-mentoring\" / \"logs\" / \"probe_iter_*.json\")
->>>>>>> origin/main
             probe_files = glob.glob(probe_pattern)
             if probe_files:
                 latest_probe = max(probe_files, key=lambda p: Path(p).stat().st_mtime)
@@ -285,15 +281,15 @@ class OpsDashboard:
             print(f"  ⚠️  Canary status check failed: {str(e)[:50]}")
         print()
 
-        # Lumen Gateway
-        print(self._colorize("🌐 Lumen Gateway", "bold"))
-        lumen = health['external_services']['lumen']
-        print(f"  {self._status_icon(lumen['ok'])} Gateway: " +
-              (lumen.get('response_preview', lumen.get('error', 'unknown'))[:80]))
+        # Core Gateway
+        print(self._colorize("🌐 Core Gateway", "bold"))
+        Core = health['external_services']['Core']
+        print(f"  {self._status_icon(Core['ok'])} Gateway: " +
+              (Core.get('response_preview', Core.get('error', 'unknown'))[:80]))
         print()
 
         # Local Proxy (with resolved port)
-        print(self._colorize("🔌 Local Proxy", "bold"))
+        print(self._colorize("🔌 ARI Engine (Local LLM)", "bold"))
         proxy = health['external_services']['proxy']
         resolved_port = policy.get('resolved_proxy_port', proxy.get('port', 8090))
         print(f"  {self._status_icon(proxy['ok'])} Port {resolved_port}: {proxy.get('status', proxy.get('error', 'unknown'))}")

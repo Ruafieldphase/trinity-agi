@@ -73,7 +73,7 @@ TEST_SCENARIOS = [
     {
         "id": "complex_003",
         "title": "시스템 통합 분석",
-        "goal": "Lumen Gateway, Phase 5 오케스트레이션, AGI 시스템이 어떻게 통합되어 작동하는지 분석해주세요",
+        "goal": "Core Gateway, Phase 5 오케스트레이션, AGI 시스템이 어떻게 통합되어 작동하는지 분석해주세요",
         "expected": "quality >= 0.6, evidence_ok=True, replan=False"
     },
     {

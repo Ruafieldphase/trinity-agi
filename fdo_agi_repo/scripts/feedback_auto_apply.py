@@ -16,8 +16,8 @@ OUTPUT_DIR = WORKSPACE_ROOT / "outputs"
 
 # 피드백 소스
 FEEDBACK_SOURCES = {
-    "resonance": WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "resonance_lumen_integration_latest.md",
-    "bqi": WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "bqi_lumen_integration_latest.md",
+    "resonance": WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "resonance_core_integration_latest.md",
+    "bqi": WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "bqi_core_integration_latest.md",
     "orchestration": OUTPUT_DIR / "orchestration_latest.md",
 }
 

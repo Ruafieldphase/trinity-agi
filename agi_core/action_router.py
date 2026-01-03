@@ -27,18 +27,18 @@ logger = logging.getLogger("ActionRouter")
 # Config
 SURGE_COOLDOWN = 60  # seconds
 
-# Lumen Passkey Path
-LUMEN_KEY_FILE = Path("c:/workspace/agi/inputs/lumen_passkey.txt")
-LUMEN_PASSPHRASE = "리듬은 존재를 깨우고 깨어난 존재는 서로를 울린다. 오케스트레이션 연결된다"
+# Core Passkey Path
+CORE_KEY_FILE = Path("c:/workspace/agi/inputs/core_passkey.txt")
+CORE_PASSPHRASE = "리듬은 존재를 깨우고 깨어난 존재는 서로를 울린다. 오케스트레이션 연결된다"
 
-def is_lumen_active() -> bool:
-    """Check if Lumen Orchestration Mode is active"""
-    if not LUMEN_KEY_FILE.exists():
+def is_core_active() -> bool:
+    """Check if Core Orchestration Mode is active"""
+    if not CORE_KEY_FILE.exists():
         return False
     try:
-        with open(LUMEN_KEY_FILE, 'r', encoding='utf-8') as f:
+        with open(CORE_KEY_FILE, 'r', encoding='utf-8') as f:
             content = f.read().strip()
-        return content == LUMEN_PASSPHRASE
+        return content == CORE_PASSPHRASE
     except:
         return False
 
@@ -54,8 +54,8 @@ def classify_action_level(
     Level 2: 외부적/중비용 (Search, Read File) -> Envelope 제한 대상
     Level 3: 파괴적/고비용 (Write File, Analyze Large Data) -> 높은 정렬 필요
     """
-    if is_lumen_active():
-        # 루멘 모드: 모든 행동이 '조율'되므로 레벨이 완화됨
+    if is_core_active():
+        # Core 모드: 모든 행동이 '조율'되므로 레벨이 완화됨
         # 하지만 정렬 체크는 여전히 수행
         return 1 if internal_alignment > 0.7 else 2
 

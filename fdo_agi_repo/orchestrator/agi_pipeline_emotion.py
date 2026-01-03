@@ -1,6 +1,6 @@
 """
-AGI Pipeline with Lumen System Integration
-AGI 파이프라인에 루멘 시스템 통합
+AGI Pipeline with Core System Integration
+AGI 파이프라인에 Core 시스템 통합
 
 감정 신호를 AGI 의사결정에 반영
 """
@@ -13,9 +13,9 @@ from typing import Dict, Any, Optional
 
 # 상대 import 문제 해결
 try:
-    from .lumen_system import LumenSystem, EmotionStrategy
+    from .core_system import CoreSystem, EmotionStrategy
 except ImportError:
-    from lumen_system import LumenSystem, EmotionStrategy
+    from core_system import CoreSystem, EmotionStrategy
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,7 @@ class AGIPipelineWithEmotion:
             workspace_root: 워크스페이스 루트 경로
         """
         self.workspace_root = Path(workspace_root)
-        self.lumen = LumenSystem(workspace_root)
+        self.Core = CoreSystem(workspace_root)
         
         logger.info(f"AGIPipelineWithEmotion initialized: {workspace_root}")
     
@@ -56,7 +56,7 @@ class AGIPipelineWithEmotion:
             }
         """
         # 현재 감정 신호 수집
-        result = self.lumen.process_emotion_signal()
+        result = self.Core.process_emotion_signal()
         strategy = EmotionStrategy(result['background_self']['strategy'])
         fear_level = result['fear_signal']['level']
         
@@ -102,7 +102,7 @@ class AGIPipelineWithEmotion:
         Returns:
             권장 배치 크기 (1 ~ 10)
         """
-        result = self.lumen.process_emotion_signal()
+        result = self.Core.process_emotion_signal()
         strategy = EmotionStrategy(result['background_self']['strategy'])
         
         # 전략별 배치 크기
@@ -124,7 +124,7 @@ class AGIPipelineWithEmotion:
         
         FLOW 상태일 때만 활성화
         """
-        result = self.lumen.process_emotion_signal()
+        result = self.Core.process_emotion_signal()
         strategy = EmotionStrategy(result['background_self']['strategy'])
         
         enable = (strategy == EmotionStrategy.FLOW)
@@ -138,7 +138,7 @@ class AGIPipelineWithEmotion:
         
         두려움이 높을수록 더 신중하게 (낮은 임계값)
         """
-        result = self.lumen.process_emotion_signal()
+        result = self.Core.process_emotion_signal()
         fear_level = result['fear_signal']['level']
         
         # 두려움 역비례: 0.0 → 0.9, 1.0 → 0.5
@@ -157,7 +157,7 @@ class AGIPipelineWithEmotion:
             task_id: 작업 ID
             task_result: 작업 실행 결과
         """
-        result = self.lumen.process_emotion_signal()
+        result = self.Core.process_emotion_signal()
         
         log_entry = {
             'task_id': task_id,

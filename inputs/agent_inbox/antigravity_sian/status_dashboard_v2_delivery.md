@@ -1,7 +1,7 @@
 # Status Dashboard v2 Delivery Report
 
 ## Deliverables
-- `inputs/agent_inbox/antigravity_sian/status_dashboard_v2.html` (Newly created)
+- `inputs/agent_inbox/antigravity_shion/status_dashboard_v2.html` (Newly created)
 
 ## Implementation Details
 - **Tech**: Single-file HTML/JS (vanilla).
@@ -14,7 +14,7 @@
 
 ## Usage Guide (5 Lines)
 1. **VS Code**: Right-click `status_dashboard_v2.html` -> "Open with Live Server" (Recommended).
-2. **Python**: Run `python -m http.server` in `c:\workspace\agi`, then open `http://localhost:8000/inputs/agent_inbox/antigravity_sian/status_dashboard_v2.html`.
+2. **Python**: Run `python -m http.server` in `c:\workspace\agi`, then open `http://localhost:8000/inputs/agent_inbox/antigravity_shion/status_dashboard_v2.html`.
 3. **Direct File**: You can try opening it directly in a relaxed browser, but CORS policies might block local JSON reading.
 4. **Behavior**: The page will automatically update every 2 seconds. No manual refresh needed.
 5. **Alerts**: If a task fails, the "Current Status" card will glow red and show the error message.

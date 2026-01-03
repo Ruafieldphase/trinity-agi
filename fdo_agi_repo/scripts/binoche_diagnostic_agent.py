@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Binoche Diagnostic Agent
+Binoche_Observer Diagnostic Agent
 
 - Gathers server/worker diagnostics
-- Produces a markdown report with analysis and recommended fixes in Binoche's concise, confident style
+- Produces a markdown report with analysis and recommended fixes in Binoche_Observer's concise, confident style
 - Optional --auto-fix triggers auto_recover.py
 
 Usage:
@@ -73,7 +73,7 @@ def run_auto_fix(server: str) -> Dict[str, Any]:
 
 
 def main(argv=None):
-    p = argparse.ArgumentParser(description="Binoche Diagnostic Agent")
+    p = argparse.ArgumentParser(description="Binoche_Observer Diagnostic Agent")
     p.add_argument("--server", default="http://127.0.0.1:8091", help="Task Queue base URL")
     p.add_argument("--auto-fix", action="store_true", help="Attempt auto recovery if issues found")
     args = p.parse_args(argv)
@@ -137,7 +137,7 @@ def main(argv=None):
     (OUT_DIR / "binoche_diag_latest.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
 
     md_lines = [
-        f"# Binoche Diagnostic Report ({ts})",
+        f"# Binoche_Observer Diagnostic Report ({ts})",
         "",
         f"- server: {args.server}",
         f"- health: {health.get('status') if isinstance(health, dict) else health}",
@@ -148,7 +148,7 @@ def main(argv=None):
         "## quick look",
         f"- issues: {', '.join(issues) if issues else 'none'}",
         "",
-        "## proposed fixes (Binoche)",
+        "## proposed fixes (Binoche_Observer)",
     ] + [f"- {r}" for r in recs]
 
     if fix_out is not None:

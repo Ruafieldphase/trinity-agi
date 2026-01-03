@@ -1,5 +1,5 @@
 """
-Binoche Decision Recommender
+Binoche_Observer Decision Recommender
 
 Phase 6f 학습 결과를 활용하여 BQI 패턴 기반 자동 의사결정을 제공합니다.
 
@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 from typing import Dict, Any, Optional, Tuple
 
-# Binoche Persona 모델 경로
+# Binoche_Observer Persona 모델 경로
 BINOCHE_MODEL_PATH = Path(__file__).parent.parent / "outputs" / "binoche_persona.json"
 
 class BinocheRecommender:
@@ -33,7 +33,7 @@ class BinocheRecommender:
         self.bqi_patterns = self.model.get("bqi_probabilities", {})
         
     def _load_model(self) -> Dict[str, Any]:
-        """Binoche Persona 모델 로드"""
+        """Binoche_Observer Persona 모델 로드"""
         if not self.model_path.exists():
             return {}
         
@@ -59,7 +59,7 @@ class BinocheRecommender:
             - reason: 결정 이유 설명
         """
         if not self.bqi_patterns:
-            return "revise", 0.5, "Binoche model not loaded (fallback to revise)"
+            return "revise", 0.5, "Binoche_Observer model not loaded (fallback to revise)"
         
         # BQI 패턴 키 생성
         pattern_key = self._build_pattern_key(bqi_coord)
@@ -157,7 +157,7 @@ def get_binoche_recommendation(
     quality: float = 0.0
 ) -> Tuple[str, float, str]:
     """
-    편의 함수: Binoche 추천 가져오기
+    편의 함수: Binoche_Observer 추천 가져오기
     
     Args:
         bqi_coord: BQI 좌표
@@ -174,7 +174,7 @@ if __name__ == "__main__":
     # 테스트: p1_e:neutral_r:exploration (88% approve)
     recommender = BinocheRecommender()
     
-    print("🧬 Binoche Recommender Test\n")
+    print("🧬 Binoche_Observer Recommender Test\n")
     print(f"Model Info: {json.dumps(recommender.get_model_info(), indent=2)}\n")
     
     # Test case 1: exploration (should approve)

@@ -4,7 +4,7 @@ Trinity 비선형 시너지 시뮬레이션
 
 정보이론적 시너지 생성:
 - Lua ⊥ Elo (조건부 독립)
-- Lumen = 비선형 결합(Lua, Elo) → 시너지 발생
+- Core = 비선형 결합(Lua, Elo) → 시너지 발생
 """
 
 import json
@@ -91,7 +91,7 @@ def run_nonlinear_simulation(iterations: int = 20, synergy_mode: str = "xor"):
     비선형 시너지 시뮬레이션
     
     1. Lua와 Elo는 **독립적으로** 생성
-    2. Lumen은 **비선형 결합**으로 시너지 생성
+    2. Core은 **비선형 결합**으로 시너지 생성
     """
     
     print(f"🔺 Trinity 비선형 시너지 시뮬레이션 ({iterations}회)")
@@ -131,17 +131,17 @@ def run_nonlinear_simulation(iterations: int = 20, synergy_mode: str = "xor"):
             }
         )
         
-        # Lumen (합): **비선형 결합** → 시너지 발생!
-        lumen_base = nonlinear_synergy(lua_score, elo_score, mode=synergy_mode)
+        # Core (합): **비선형 결합** → 시너지 발생!
+        core_base = nonlinear_synergy(lua_score, elo_score, mode=synergy_mode)
         
         # 약간의 노이즈 추가 (완벽한 결정론 방지)
-        lumen_noise = random.gauss(0, 0.03)
-        lumen_score = max(0.5, min(0.95, lumen_base + lumen_noise))
+        core_noise = random.gauss(0, 0.03)
+        core_score = max(0.5, min(0.95, core_base + core_noise))
         
         record_trinity_event(
-            persona="lumen",
+            persona="Core",
             event_type="synthesis_integration",
-            score=lumen_score,
+            score=core_score,
             context={
                 "iteration": i + 1,
                 "confidence": 0.88,
@@ -153,17 +153,17 @@ def run_nonlinear_simulation(iterations: int = 20, synergy_mode: str = "xor"):
         
         # 시너지 계산
         avg_baseline = (lua_score + elo_score) / 2
-        synergy = lumen_score - avg_baseline
+        synergy = core_score - avg_baseline
         
         print(f"  Lua: {lua_score:.3f} (독립) | Elo: {elo_score:.3f} (독립)")
-        print(f"  → Lumen: {lumen_score:.3f} (비선형 결합)")
+        print(f"  → Core: {core_score:.3f} (비선형 결합)")
         print(f"  시너지: {synergy:+.3f} (평균 대비)")
     
     print("\n" + "=" * 60)
     print(f"✅ {iterations}회 비선형 협업 완료")
-    print(f"   총 이벤트: {iterations * 3}개 (lua={iterations}, elo={iterations}, lumen={iterations})")
-    print(f"\n🔺 핵심: Lua ⊥ Elo (독립), Lumen = 비선형 결합")
-    print(f"   → I(Lua;Elo) ≈ 0, I(Lua;Lumen|Elo) > 0")
+    print(f"   총 이벤트: {iterations * 3}개 (lua={iterations}, elo={iterations}, Core={iterations})")
+    print(f"\n🔺 핵심: Lua ⊥ Elo (독립), Core = 비선형 결합")
+    print(f"   → I(Lua;Elo) ≈ 0, I(Lua;Core|Elo) > 0")
     print(f"   → I3 < 0 예상 (시너지 존재)")
     print("\n🔺 다음 단계:")
     print("   python scripts/test_trinity_i3.py --hours 1")

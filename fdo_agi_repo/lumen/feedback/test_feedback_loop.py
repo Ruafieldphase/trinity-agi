@@ -1,5 +1,5 @@
 """
-Test suite for Lumen Feedback Loop system.
+Test suite for Core Feedback Loop system.
 
 Tests all components:
 - FeedbackLoopRedis cache monitoring
@@ -7,7 +7,7 @@ Tests all components:
 - CacheSizeOptimizer decisions
 - FeedbackOrchestrator complete integration
 
-Author: Lumen Feedback Team
+Author: Core Feedback Team
 Date: 2025-01
 Version: 1.0
 """
@@ -364,7 +364,7 @@ class TestFeedbackOrchestrator(unittest.TestCase):
 
 
 class TestCompleteIntegration(unittest.TestCase):
-    """Test complete Lumen feedback loop integration (Phase 1-4)."""
+    """Test complete Core feedback loop integration (Phase 1-4)."""
     
     def test_end_to_end_feedback_cycle(self):
         """Test complete feedback loop from monitoring to recommendations."""
@@ -440,7 +440,7 @@ def run_all_tests():
     
     # Summary
     print("\n" + "=" * 60)
-    print("Lumen Feedback Loop Test Summary")
+    print("Core Feedback Loop Test Summary")
     print("=" * 60)
     print(f"Tests run: {result.testsRun}")
     print(f"Successes: {result.testsRun - len(result.failures) - len(result.errors)}")

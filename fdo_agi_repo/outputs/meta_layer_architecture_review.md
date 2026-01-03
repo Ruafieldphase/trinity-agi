@@ -170,7 +170,7 @@
 2. ✅ 자동 시작 (완료)
 3. 🔄 Watchdog 강화 (진행 중)
 4. ⬜ unhealthy 원인 해결 (다음)
-5. ⬜ Sian 통합 검토 (다음)
+5. ⬜ Shion 통합 검토 (다음)
 
 ## 답변
 
@@ -189,4 +189,4 @@
 
 1. unhealthy 원인 파악 및 해결
 2. Watchdog 안정화
-3. Sian(Gemini CLI)과 메타층 페르소나 통합 검토
+3. Shion(Gemini CLI)과 메타층 페르소나 통합 검토

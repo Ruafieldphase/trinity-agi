@@ -1,5 +1,5 @@
 """
-Gemini CLI Bridge (Sian) - Alternative Fallback Agent
+Gemini CLI Bridge (Shion) - Alternative Fallback Agent
 Uses Google's Gemini API when OpenAI is unavailable or rate-limited
 """
 
@@ -21,16 +21,16 @@ class GeminiCLIBridge:
         self.api_key = api_key or Path("c:/workspace/agi/.env").read_text().split("GEMINI_API_KEY=")[1].strip()
         genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel('gemini-pro')
-        self.log_file = Path("c:/workspace/agi/outputs/sian_recovery_log.jsonl")
+        self.log_file = Path("c:/workspace/agi/outputs/shion_recovery_log.jsonl")
         
     def recover_from_error(self, context: str, mode: str = "error-recovery"):
         """
         Processes error context and provides recovery suggestions via Gemini
         """
-        print("🔄 Sian (Gemini CLI) activated for error recovery...")
+        print("🔄 Shion (Gemini CLI) activated for error recovery...")
         
         prompt = f"""
-You are Sian, a Gemini-powered fallback debugging agent.
+You are Shion, a Gemini-powered fallback debugging agent.
 
 **Error Context:**
 {context[:2000]}
@@ -48,7 +48,7 @@ Be concise but actionable.
             response = self.model.generate_content(prompt)
             result = response.text
             
-            print("\n✅ Sian Recovery Suggestion:\n")
+            print("\n✅ Shion Recovery Suggestion:\n")
             print(result)
             
             # Log result
@@ -65,11 +65,11 @@ Be concise but actionable.
             return result
             
         except Exception as e:
-            print(f"❌ Sian failed: {e}")
+            print(f"❌ Shion failed: {e}")
             return None
 
 def main():
-    parser = argparse.ArgumentParser(description="Gemini CLI Bridge (Sian)")
+    parser = argparse.ArgumentParser(description="Gemini CLI Bridge (Shion)")
     parser.add_argument("--mode", default="error-recovery", help="Operation mode")
     parser.add_argument("--context", default="clipboard", help="Source of error context")
     args = parser.parse_args()

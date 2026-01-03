@@ -256,7 +256,6 @@ class SelfManagingAgent:
             dep_status["health_ok"] = self.check_http_health(config["health_url"])
         
         # 4. 자동 수정 시도
-<<<<<<< HEAD
         # 4. 자동 수정 시도
         if self.auto_fix and dep_status["critical"]:
             # 예약 작업 미등록 시 등록 시도
@@ -283,17 +282,6 @@ class SelfManagingAgent:
                     except Exception as e:
                         self.log(f"Failed to enable task {config['scheduled_task']}: {e}", "ERROR")
 
-=======
-        if self.auto_fix and dep_status["critical"]:
-            # 예약 작업 미등록 시 등록 시도
-            if "scheduled_task" in config and config["scheduled_task"] and not dep_status["scheduled_task_registered"]:
-                if "register_script" in config:
-                    success = self.register_scheduled_task(dep_name, config["register_script"])
-                    if success:
-                        dep_status["scheduled_task_registered"] = True
-                        dep_status["auto_fixed"] = True
-            
->>>>>>> origin/main
             # 프로세스 미실행 시 시작 시도
             if "start_script" in config and config["start_script"] and not dep_status["process_running"]:
                 success = self.start_dependency(dep_name, config["start_script"])

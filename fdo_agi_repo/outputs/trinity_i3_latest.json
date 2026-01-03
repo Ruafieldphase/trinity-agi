@@ -10,7 +10,7 @@
     "personas": [
       "lua",
       "elo",
-      "lumen"
+      "Core"
     ],
     "signal_length": 145
   },

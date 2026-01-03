@@ -54,7 +54,7 @@
 
 **수정된 파일** (7개):
 
-- `LLM_Unified/ion-mentoring/lumen/feedback/feedback_orchestrator.py`
+- `LLM_Unified/ion-mentoring/Core/feedback/feedback_orchestrator.py`
 - `LLM_Unified/ion-mentoring/orchestrator/intent_router.py`
 - `fdo_agi_repo/scripts/auto_recover.py`
 - `scripts/monitoring_dashboard_template.html`
@@ -229,7 +229,7 @@ pip install scikit-learn pandas numpy
 # 1. 핵심 기능
 git add scripts/orchestration_bridge.py
 git add scripts/generate_autonomous_dashboard.py
-git add LLM_Unified/ion-mentoring/lumen/feedback/feedback_orchestrator.py
+git add LLM_Unified/ion-mentoring/Core/feedback/feedback_orchestrator.py
 git add LLM_Unified/ion-mentoring/orchestrator/intent_router.py
 git add fdo_agi_repo/scripts/auto_recover.py
 
@@ -281,7 +281,7 @@ powershell scripts/generate_monitoring_report.ps1 -Hours 24
 
 - **Ctrl+Shift+P** → `Tasks: Run Task`
 - **Monitoring: Generate Dashboard (24h HTML)**
-- **Monitoring: Unified Dashboard (AGI + Lumen)**
+- **Monitoring: Unified Dashboard (AGI + Core)**
 - **ChatOps: Unified Status (통합 상태)**
 
 ---

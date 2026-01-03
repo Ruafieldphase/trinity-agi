@@ -53,7 +53,7 @@ ALTS creds ignored. Not running on GCP and untrusted ALTS is not enabled.
 
 ## 🎯 권장 사항
 
-### 1. Sian 메타층 통합 시 사용할 모델
+### 1. Shion 메타층 통합 시 사용할 모델
 
 | 용도 | 모델 | 특징 |
 |------|------|------|
@@ -66,7 +66,7 @@ ALTS creds ignored. Not running on GCP and untrusted ALTS is not enabled.
 
 현재 Python SDK를 통한 접근만 확인됨. 다음 단계:
 
-- [ ] `scripts/sian_cli.py` - 명령줄 인터페이스
+- [ ] `scripts/shion_cli.py` - 명령줄 인터페이스
 - [ ] 메타층 오케스트레이터 통합
 - [ ] 자동 모델 선택 로직
 
@@ -99,9 +99,9 @@ python scripts/test_gemini_cli.py
 
 ## 🚀 다음 단계
 
-1. **Sian CLI 래퍼 작성** - 명령줄에서 쉽게 호출
+1. **Shion CLI 래퍼 작성** - 명령줄에서 쉽게 호출
 2. **메타층 통합** - 자율 워크 워커와 연결
-3. **페르소나 위임** - Sian이 하위 에이전트 조율
+3. **페르소나 위임** - Shion이 하위 에이전트 조율
 4. **성능 모니터링** - API 사용량 및 응답 시간 추적
 
 ---

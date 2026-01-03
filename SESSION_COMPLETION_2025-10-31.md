@@ -146,7 +146,7 @@ scripts/
 fdo_agi_repo/orchestrator/
 ├── binoche_integration.py      # Pipeline Adapter
 ├── event_emitter.py            # Event 로깅
-├── pipeline_binoche_adapter.py # Binoche 연동
+├── pipeline_binoche_adapter.py # Binoche_Observer 연동
 └── resonance_bridge.py         # Ledger 통합
 
 scripts/

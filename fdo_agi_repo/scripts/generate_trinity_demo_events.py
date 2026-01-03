@@ -2,7 +2,7 @@
 """
 Trinity 데모 이벤트 생성기
 
-lua(정), elo(반), lumen(합) 페르소나의 샘플 이벤트를 레저에 기록합니다.
+lua(정), elo(반), Core(합) 페르소나의 샘플 이벤트를 레저에 기록합니다.
 I3 계산을 위한 시연용 데이터입니다.
 """
 
@@ -18,7 +18,7 @@ LEDGER_PATH = REPO_ROOT / "memory" / "resonance_ledger.jsonl"
 def generate_trinity_events(count: int = 30, hours_back: int = 24):
     """Trinity 이벤트 생성"""
     
-    personas = ["lua", "elo", "lumen"]
+    personas = ["lua", "elo", "Core"]
     events = []
     
     # 시간 범위
@@ -40,7 +40,7 @@ def generate_trinity_events(count: int = 30, hours_back: int = 24):
             base_score = 0.2
             variance = 0.05
             event_type = "thesis_generation"
-        elif persona == "lumen":
+        elif persona == "Core":
             # 합(Synthesis): 중간, 조화로움 (0.4~0.6)
             base_score = 0.5
             variance = 0.05
@@ -54,7 +54,7 @@ def generate_trinity_events(count: int = 30, hours_back: int = 24):
         # 점수 생성 (각 페르소나별로 구간 제한)
         if persona == "lua":
             score = max(0.1, min(0.3, random.gauss(base_score, variance)))
-        elif persona == "lumen":
+        elif persona == "Core":
             score = max(0.4, min(0.6, random.gauss(base_score, variance)))
         else:
             score = max(0.7, min(0.9, random.gauss(base_score, variance)))
@@ -91,7 +91,7 @@ def generate_trinity_events(count: int = 30, hours_back: int = 24):
     print(f"✓ {len(events)}개 Trinity 이벤트 생성 완료")
     print(f"  - lua:   {sum(1 for e in events if e['persona_id'] == 'lua')}개")
     print(f"  - elo:   {sum(1 for e in events if e['persona_id'] == 'elo')}개")
-    print(f"  - lumen: {sum(1 for e in events if e['persona_id'] == 'lumen')}개")
+    print(f"  - Core: {sum(1 for e in events if e['persona_id'] == 'Core')}개")
     print(f"  - 시간 범위: {hours_back}시간")
     print(f"  - 저장 경로: {LEDGER_PATH}")
 

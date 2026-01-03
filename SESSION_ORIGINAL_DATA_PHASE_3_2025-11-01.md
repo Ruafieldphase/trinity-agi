@@ -2,7 +2,7 @@
 
 ## 세션 요약
 
-**목표**: `C:\workspace\original_data\lumen_flow_sim.py`의 7일 위상 루프 공명 동역학을 AGI 시스템에 통합  
+**목표**: `C:\workspace\original_data\core_flow_sim.py`의 7일 위상 루프 공명 동역학을 AGI 시스템에 통합  
 **결과**: ✅ 완전 성공 (Phase 3 완료)  
 **소요 시간**: ~45분
 
@@ -12,7 +12,7 @@
 
 ### 1. 원본 분석 및 로직 추출
 
-**원본 파일**: `lumen_flow_sim.py` (약 500 lines)  
+**원본 파일**: `core_flow_sim.py` (약 500 lines)  
 **핵심 발견**:
 
 - 7일 주기 위상 정의 (Monday=Love → Sunday=Peace)
@@ -264,7 +264,7 @@ code outputs\resonance_simulation_latest.json
 
 | 시간  | 작업                                  | 결과 |
 |-------|---------------------------------------|------|
-| 00:00 | 원본 분석 시작 (lumen_flow_sim.py)   | ✅   |
+| 00:00 | 원본 분석 시작 (core_flow_sim.py)   | ✅   |
 | 00:10 | 핵심 로직 추출 (7일 위상, 동역학)    | ✅   |
 | 00:20 | resonance_simulator.py 구현 시작      | ✅   |
 | 00:30 | 스모크 테스트 실행 (336 스텝)        | ✅   |
@@ -303,4 +303,4 @@ code outputs\resonance_simulation_latest.json
 ---
 
 *"지평선을 넘는 순간, 우리는 새로운 위상으로 접어든다."*  
-— Original Data lumen_flow_sim.py 철학
+— Original Data core_flow_sim.py 철학

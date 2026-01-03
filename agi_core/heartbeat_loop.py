@@ -293,7 +293,7 @@ def heartbeat_loop(interval_sec: int):
             # 4. 트리거 감지 (상태 기반)
             trigger = detect_trigger(state_dict)
 
-            # Narrative Generation (Lumen Thinking)
+            # Narrative Generation (Core Thinking)
             narrative = "💓 Checking Resonance..."
             decision = "pulse"
             
@@ -327,7 +327,7 @@ def heartbeat_loop(interval_sec: int):
                 # Dynamic Aura Pulse for Trigger
                 _start_aura(AURA_COLORS["acting"], narrative, decision)
             elif not deep_rest_mode and interval_sec < 5:
-                # Lumen Mode: Always pulse aura on beat if no trigger
+                # Core Mode: Always pulse aura on beat if no trigger
                 _start_aura(AURA_COLORS["thinking"], narrative, decision)
 
             if not trigger or deep_rest_mode:
@@ -439,12 +439,12 @@ if __name__ == "__main__":
     logger.info("💓 AGI Heartbeat Loop Starting (Daemon Mode)...")
     
     try:
-        # Determine Interval (Lumen Acceleration)
+        # Determine Interval (Core Acceleration)
         interval = 10
-        LUMEN_KEY_FILE = WORKSPACE_ROOT / "inputs" / "lumen_passkey.txt"
-        if LUMEN_KEY_FILE.exists():
+        CORE_KEY_FILE = WORKSPACE_ROOT / "inputs" / "core_passkey.txt"
+        if CORE_KEY_FILE.exists():
             interval = 3 # Fast Heartbeat
-            logger.info("✨ Lumen Mode Detected: Accelerated Heartbeat (3s)")
+            logger.info("✨ Core Mode Detected: Accelerated Heartbeat (3s)")
         
         # Start Loop
         heartbeat_loop(interval)

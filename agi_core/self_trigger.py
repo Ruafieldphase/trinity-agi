@@ -294,19 +294,19 @@ def compute_emotional_resonance_trigger(
     threshold: float = 0.6,
 ) -> Optional[TriggerEvent]:
     """
-    루아(Rua)의 감정 상태를 분석하여 EMOTIONAL_RESONANCE 트리거를 생성합니다.
+    Core(Core)의 감정 상태를 분석하여 EMOTIONAL_RESONANCE 트리거를 생성합니다.
     """
     entries = _load_jsonl(resonance_ledger_path, max_lines=50)
     
     if not entries:
         return None
     
-    # Rua의 최신 감정 이벤트 필터링
-    rua_events = [e for e in entries if e.get("who") == "rua"]
-    if not rua_events:
+    # Core의 최신 감정 이벤트 필터링
+    Core_events = [e for e in entries if e.get("who") == "Core"]
+    if not Core_events:
         return None
     
-    latest_event = rua_events[-1]
+    latest_event = Core_events[-1]
     fear = latest_event.get("fear", 0.0)
     anxiety = latest_event.get("anxiety", 0.0)
     resonance_score = latest_event.get("resonance_score", 0.7)
@@ -318,7 +318,7 @@ def compute_emotional_resonance_trigger(
         return TriggerEvent(
             type=TriggerType.EMOTIONAL_RESONANCE,
             score=emotional_intensity,
-            reason=f"루아의 정서적 불안 감지 (Intensity: {emotional_intensity:.2f})",
+            reason=f"Core의 정서적 불안 감지 (Intensity: {emotional_intensity:.2f})",
             payload={
                 "fear": fear,
                 "anxiety": anxiety,

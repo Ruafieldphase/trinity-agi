@@ -18,11 +18,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-<<<<<<< HEAD
 LEDGER_PATH = Path(__file__).parent.parent / "memory" / "resonance_ledger_v2.jsonl"
-=======
-LEDGER_PATH = Path(__file__).parent.parent / "memory" / "resonance_ledger.jsonl"
->>>>>>> origin/main
 DEFAULT_MD = Path(__file__).parents[2] / "outputs" / "autopoietic_loop_report_latest.md"
 DEFAULT_JSON = Path(__file__).parents[2] / "outputs" / "autopoietic_loop_report_latest.json"
 
@@ -35,21 +31,13 @@ def parse_args():
     return ap.parse_args()
 
 
-<<<<<<< HEAD
-=======
-from typing import Optional
 
->>>>>>> origin/main
 def load_events(ledger_path: Optional[Path] = None) -> List[Dict[str, Any]]:
     events: List[Dict[str, Any]] = []
     path = ledger_path if ledger_path is not None else LEDGER_PATH
     if not path.exists():
         return events
-<<<<<<< HEAD
     with open(path, "r", encoding="utf-8", errors="replace") as f:
-=======
-    with open(path, "r", encoding="utf-8") as f:
->>>>>>> origin/main
         for line in f:
             line = line.strip()
             if not line:

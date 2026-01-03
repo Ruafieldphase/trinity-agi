@@ -332,7 +332,7 @@ Documentation:     3 files
 ### Phase 2: 통합 강화 (1주)
 
 - [ ] Context Restore Manager 구현
-- [ ] Binoche Auto-Invoker 개선
+- [ ] Binoche_Observer Auto-Invoker 개선
 - [ ] 자동 핸드오버 생성 트리거
 
 ### Phase 3: 자동화 (1개월)

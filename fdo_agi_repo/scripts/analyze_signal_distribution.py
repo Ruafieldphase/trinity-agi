@@ -12,7 +12,7 @@ def load_recent_signals(hours: int = 1):
     ledger_path = Path(__file__).parent.parent / "memory" / "resonance_ledger.jsonl"
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     
-    signals = {"lua": [], "elo": [], "lumen": []}
+    signals = {"lua": [], "elo": [], "Core": []}
     
     with open(ledger_path, "r", encoding="utf-8") as f:
         for line in f:

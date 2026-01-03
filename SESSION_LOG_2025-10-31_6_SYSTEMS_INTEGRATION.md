@@ -14,10 +14,10 @@
 
 ### 시작 상태
 
-- Resonance Loop + 루멘 통합 완료
-- BQI Phase 6 + 루멘 통합 완료
+- Resonance Loop + Core 통합 완료
+- BQI Phase 6 + Core 통합 완료
 - 자동 오케스트레이션 완료
-- YouTube + 루멘 강화 완료
+- YouTube + Core 강화 완료
 - 지능형 피드백 자동 반영 완료
 
 ### 최종 상태
@@ -30,15 +30,15 @@
 
 ## 🎯 완성된 시스템
 
-### 1. Resonance Loop + 루멘 통합 ✅
+### 1. Resonance Loop + Core 통합 ✅
 
-- **파일**: `run_resonance_lumen_integration.ps1`
+- **파일**: `run_resonance_core_integration.ps1`
 - **페르소나**: 세나 (🌐)
 - **기능**: AGI 자기교정 루프의 이벤트를 페르소나 인사이트로 변환
 
-### 2. BQI Phase 6 + 루멘 통합 ✅
+### 2. BQI Phase 6 + Core 통합 ✅
 
-- **파일**: `run_bqi_lumen_integration.ps1`
+- **파일**: `run_bqi_core_integration.ps1`
 - **페르소나**: 엘로 (🌟)
 - **기능**: 비노슈 패턴 학습 강화
 
@@ -47,9 +47,9 @@
 - **파일**: `run_orchestration.ps1`
 - **기능**: 5명 페르소나 자동 협업 및 결과 통합
 
-### 4. YouTube 학습 + 루멘 강화 ✅
+### 4. YouTube 학습 + Core 강화 ✅
 
-- **파일**: `run_youtube_lumen_enhancement.ps1`
+- **파일**: `run_youtube_core_enhancement.ps1`
 - **페르소나**: 누리 (🌏)
 - **기능**: 영상 인사이트를 실행 가능한 액션으로 변환
 
@@ -113,9 +113,9 @@
 
 ```
 scripts/
-├── run_resonance_lumen_integration.ps1
-├── run_bqi_lumen_integration.ps1
-├── run_youtube_lumen_enhancement.ps1
+├── run_resonance_core_integration.ps1
+├── run_bqi_core_integration.ps1
+├── run_youtube_core_enhancement.ps1
 ├── run_intelligent_feedback.ps1
 ├── run_orchestration.ps1
 ├── generate_daily_briefing.ps1 (NEW)
@@ -133,10 +133,10 @@ outputs/
 ### Git 커밋
 
 ```
-1. feat: Add Resonance Loop + Lumen integration
-2. feat: Add BQI Phase 6 + Lumen integration
+1. feat: Add Resonance Loop + Core integration
+2. feat: Add BQI Phase 6 + Core integration
 3. feat: Add automated orchestration system
-4. feat: Add YouTube + Lumen enhancement
+4. feat: Add YouTube + Core enhancement
 5. feat: Add intelligent feedback auto-apply
 6. feat: Add daily briefing system
 7. docs: Final completion declaration for 6 integrated systems
@@ -227,7 +227,7 @@ cd C:\workspace\agi\scripts
 .\generate_daily_briefing.ps1 -OpenReport
 
 # 2. YouTube 영상 분석
-.\run_youtube_lumen_enhancement.ps1 `
+.\run_youtube_core_enhancement.ps1 `
     -Url "https://youtube.com/watch?v=..." `
     -OpenReport
 
@@ -320,9 +320,9 @@ code ..\outputs\daily_briefing_*.md
 
 ### 스크립트 위치
 
-- `scripts/run_resonance_lumen_integration.ps1`
-- `scripts/run_bqi_lumen_integration.ps1`
-- `scripts/run_youtube_lumen_enhancement.ps1`
+- `scripts/run_resonance_core_integration.ps1`
+- `scripts/run_bqi_core_integration.ps1`
+- `scripts/run_youtube_core_enhancement.ps1`
 - `scripts/run_intelligent_feedback.ps1`
 - `scripts/run_orchestration.ps1`
 - `scripts/generate_daily_briefing.ps1`
@@ -330,8 +330,8 @@ code ..\outputs\daily_briefing_*.md
 
 ### 출력 파일
 
-- `outputs/resonance_lumen_integration_latest.md`
-- `outputs/bqi_lumen_integration_latest.md`
+- `outputs/resonance_core_integration_latest.md`
+- `outputs/bqi_core_integration_latest.md`
 - `outputs/youtube_enhanced_*.md`
 - `outputs/feedback_implementation_plan.md`
 - `outputs/orchestration_latest.md`

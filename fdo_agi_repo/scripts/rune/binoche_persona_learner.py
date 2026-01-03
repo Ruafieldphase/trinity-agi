@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Binoche Persona Learner (Phase 6)
+Binoche_Observer Persona Learner (Phase 6)
 
 비노체의 과거 작업 패턴을 학습하여 디지털 트윈 페르소나 구축:
 - 의사결정 패턴 (승인/거절/수정 요청)
@@ -31,7 +31,7 @@ def load_ledger(ledger_path: Path) -> List[Dict[str, Any]]:
     """Load resonance ledger."""
     events = []
     if not ledger_path.exists():
-        print(f"[Binoche] Ledger not found: {ledger_path}")
+        print(f"[Binoche_Observer] Ledger not found: {ledger_path}")
         return events
     
     with open(ledger_path, 'r', encoding='utf-8') as f:
@@ -129,9 +129,9 @@ def analyze_decision_patterns(tasks: Dict[str, List[Dict]]) -> Dict[str, Any]:
                                 task_goals[task_id] = goal
                     except json.JSONDecodeError:
                         continue
-            print(f"[Binoche] Loaded {len(task_goals)} user goals for BQI generation")
+            print(f"[Binoche_Observer] Loaded {len(task_goals)} user goals for BQI generation")
         except Exception as e:
-            print(f"[Binoche] Warning: Could not load coordinate.jsonl: {e}")
+            print(f"[Binoche_Observer] Warning: Could not load coordinate.jsonl: {e}")
     
     # Phase 6e: Import analyse_question once at function start
     analyse_question = None
@@ -140,10 +140,10 @@ def analyze_decision_patterns(tasks: Dict[str, List[Dict]]) -> Dict[str, Any]:
         sys.path.insert(0, str(Path(__file__).parent))
         from bqi_adapter import analyse_question as aq_func
         analyse_question = aq_func
-        print(f"[Binoche] BQI adapter loaded successfully")
+        print(f"[Binoche_Observer] BQI adapter loaded successfully")
     except ImportError as e:
-        print(f"[Binoche] Warning: Could not import analyse_question: {e}")
-        print(f"[Binoche] Will use static BQI defaults (Phase 6b fallback)")
+        print(f"[Binoche_Observer] Warning: Could not import analyse_question: {e}")
+        print(f"[Binoche_Observer] Will use static BQI defaults (Phase 6b fallback)")
     
     for task_id, events in tasks.items():
         bqi = extract_bqi_from_task(events)
@@ -657,7 +657,7 @@ def generate_persona_rules(
     conversation_insights: Dict | None = None  # Phase 6c
 ) -> List[Dict[str, Any]]:
     """
-    Generate actionable rules for Binoche Persona.
+    Generate actionable rules for Binoche_Observer Persona.
     
     Phase 6c: Includes conversation-based rules.
     
@@ -736,7 +736,7 @@ def generate_persona_rules(
     return rules
 
 def main():
-    parser = argparse.ArgumentParser(description="Learn Binoche persona patterns")
+    parser = argparse.ArgumentParser(description="Learn Binoche_Observer persona patterns")
     parser.add_argument(
         '--ledger',
         type=Path,
@@ -756,70 +756,70 @@ def main():
     out_path = repo_root / args.out
     out_path.parent.mkdir(parents=True, exist_ok=True)
     
-    print("[Binoche] Loading resonance ledger...")
+    print("[Binoche_Observer] Loading resonance ledger...")
     events = load_ledger(ledger_path)
-    print(f"[Binoche] Loaded {len(events)} events")
+    print(f"[Binoche_Observer] Loaded {len(events)} events")
     
     if len(events) == 0:
-        print("[Binoche] No events found. Exiting.")
+        print("[Binoche_Observer] No events found. Exiting.")
         return
     
-    print("[Binoche] Grouping events by task...")
+    print("[Binoche_Observer] Grouping events by task...")
     tasks = group_by_task(events)
-    print(f"[Binoche] Analyzed {len(tasks)} tasks")
+    print(f"[Binoche_Observer] Analyzed {len(tasks)} tasks")
     
-    print("[Binoche] Analyzing decision patterns...")
+    print("[Binoche_Observer] Analyzing decision patterns...")
     decision_patterns = analyze_decision_patterns(tasks)
-    print(f"[Binoche] Decision Patterns:")
+    print(f"[Binoche_Observer] Decision Patterns:")
     print(f"  - Approve: {len(decision_patterns['approve'])} cases")
     print(f"  - Revise:  {len(decision_patterns['revise'])} cases")
     print(f"  - Reject:  {len(decision_patterns['reject'])} cases")
     
     total_decisions = sum(len(v) for v in decision_patterns.values())
     if total_decisions > 0:
-        print(f"[Binoche] Distribution:")
+        print(f"[Binoche_Observer] Distribution:")
         print(f"  - Approve: {len(decision_patterns['approve'])/total_decisions*100:.1f}%")
         print(f"  - Revise:  {len(decision_patterns['revise'])/total_decisions*100:.1f}%")
         print(f"  - Reject:  {len(decision_patterns['reject'])/total_decisions*100:.1f}%")
     
-    print("[Binoche] Analyzing BQI-decision correlation...")
+    print("[Binoche_Observer] Analyzing BQI-decision correlation...")
     bqi_probabilities = analyze_bqi_decision_correlation(decision_patterns)
-    print(f"[Binoche] Found {len(bqi_probabilities)} BQI patterns")
+    print(f"[Binoche_Observer] Found {len(bqi_probabilities)} BQI patterns")
     
     # Phase 6c: Conversation pattern analysis
-    print("[Binoche] Analyzing conversation patterns...")
+    print("[Binoche_Observer] Analyzing conversation patterns...")
     conversation_insights = analyze_conversation_patterns(decision_patterns)
     keyword_corr = conversation_insights.get("keyword_correlations", {})
     goals_loaded = conversation_insights.get("goals_loaded", 0)
-    print(f"[Binoche] Loaded {goals_loaded} user goals from coordinate.jsonl")
-    print(f"[Binoche] Conversation Insights:")
+    print(f"[Binoche_Observer] Loaded {goals_loaded} user goals from coordinate.jsonl")
+    print(f"[Binoche_Observer] Conversation Insights:")
     for category, stats in keyword_corr.items():
         print(f"  - {category}: approve={stats['approve_prob']:.2f}, samples={stats['samples']}")
     
     # Phase 6d: Information theory analysis
-    print("[Binoche] Analyzing decision predictability (Information Theory)...")
+    print("[Binoche_Observer] Analyzing decision predictability (Information Theory)...")
     info_theory = analyze_information_theory(decision_patterns)
     
     decision_entropy = info_theory["decision_entropy"]
-    print(f"[Binoche] Decision Entropy: {decision_entropy['entropy']:.4f} bits")
+    print(f"[Binoche_Observer] Decision Entropy: {decision_entropy['entropy']:.4f} bits")
     print(f"  - Normalized: {decision_entropy['normalized']:.2%} of maximum")
     print(f"  - Consistency: {decision_entropy['interpretation']}")
     
     bqi_power = info_theory["bqi_predictive_power"]
-    print(f"[Binoche] BQI Predictive Power:")
+    print(f"[Binoche_Observer] BQI Predictive Power:")
     print(f"  - Mutual Info: {bqi_power['mutual_info']:.4f} bits")
     print(f"  - Reduces uncertainty by {bqi_power['reduction_percent']:.1f}%")
     print(f"  - Usefulness: {bqi_power['interpretation']}")
     
     quality_power = info_theory["quality_predictive_power"]
-    print(f"[Binoche] Quality Score Predictive Power:")
+    print(f"[Binoche_Observer] Quality Score Predictive Power:")
     print(f"  - Mutual Info: {quality_power['mutual_info']:.4f} bits")
     print(f"  - Reduces uncertainty by {quality_power['reduction_percent']:.1f}%")
     print(f"  - Usefulness: {quality_power['interpretation']}")
     
     # Phase 6j: Ensemble predictive power
     ensemble_power = info_theory["ensemble_predictive_power"]
-    print(f"[Binoche] Ensemble (BQI+Quality) Predictive Power:")
+    print(f"[Binoche_Observer] Ensemble (BQI+Quality) Predictive Power:")
     print(f"  - Mutual Info: {ensemble_power['mutual_info']:.4f} bits")
     print(f"  - Reduces uncertainty by {ensemble_power['reduction_percent']:.1f}%")
     print(f"  - Usefulness: {ensemble_power['interpretation']}")
@@ -833,22 +833,22 @@ def main():
     )[:5]
     
     if sorted_patterns:
-        print(f"[Binoche] Top BQI Patterns:")
+        print(f"[Binoche_Observer] Top BQI Patterns:")
         for pattern, stats in sorted_patterns:
             print(f"  {pattern}: approve={stats['approve_prob']:.2f}, samples={stats['sample_count']}")
     
-    print("[Binoche] Analyzing tech preferences...")
+    print("[Binoche_Observer] Analyzing tech preferences...")
     tech_preferences = analyze_tech_preferences(events)
-    print(f"[Binoche] Tech Stack:")
+    print(f"[Binoche_Observer] Tech Stack:")
     for tech, count in list(tech_preferences["tech_stack"].items())[:5]:
         print(f"  - {tech}: {count} mentions")
     
-    print("[Binoche] Analyzing work style...")
+    print("[Binoche_Observer] Analyzing work style...")
     work_style = analyze_work_style(decision_patterns, tasks)
-    print(f"[Binoche] Work Style:")
+    print(f"[Binoche_Observer] Work Style:")
     print(f"  - Quality Threshold: {work_style['quality_threshold']:.2f}")
     
-    print("[Binoche] Generating persona rules...")
+    print("[Binoche_Observer] Generating persona rules...")
     persona_rules = generate_persona_rules(
         decision_patterns,
         bqi_probabilities,
@@ -856,7 +856,7 @@ def main():
         work_style,
         conversation_insights  # Phase 6c
     )
-    print(f"[Binoche] Generated {len(persona_rules)} rules")
+    print(f"[Binoche_Observer] Generated {len(persona_rules)} rules")
     
     # Build final persona model
     persona = {
@@ -886,8 +886,8 @@ def main():
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(persona, f, indent=2, ensure_ascii=False)
     
-    print(f"[Binoche] Persona model saved to: {out_path}")
-    print(f"[Binoche] Model summary:")
+    print(f"[Binoche_Observer] Persona model saved to: {out_path}")
+    print(f"[Binoche_Observer] Model summary:")
     print(f"  - Tasks analyzed: {len(tasks)}")
     print(f"  - BQI patterns: {len(bqi_probabilities)}")
     print(f"  - Decision rules: {len(persona_rules)}")

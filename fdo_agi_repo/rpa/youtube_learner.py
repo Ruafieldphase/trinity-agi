@@ -24,7 +24,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-# Lumen Gateway 클라이언트 임포트
+# Core Gateway 클라이언트 임포트
 import sys
 from pathlib import Path
 
@@ -34,22 +34,22 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(project_root))
 
-# Optional Lumen client import (path contains hyphen; use dynamic import)
-get_lumen_client = None  # type: ignore
-lumen_client_available = False
+# Optional Core client import (path contains hyphen; use dynamic import)
+get_core_client = None  # type: ignore
+core_client_available = False
 try:
     import importlib
     # Attempt import via safe path; repository may use hyphenated folder names
     # which are not valid Python packages. We handle failure gracefully.
     mod = importlib.import_module(
-        "LLM_Unified.ion_mentoring.app.integrations.lumen_client"
+        "LLM_Unified.ion_mentoring.app.integrations.core_client"
     )
-    get_lumen_client = getattr(mod, "get_lumen_client", None)
-    lumen_client_available = get_lumen_client is not None
+    get_core_client = getattr(mod, "get_core_client", None)
+    core_client_available = get_core_client is not None
 except Exception as e:
     # Keep optional dependency disabled; unit tests that don't need it can proceed
-    lumen_client_available = False
-    print(f"[Warning] Lumen Client not available: {e}")
+    core_client_available = False
+    print(f"[Warning] Core Client not available: {e}")
 
 
 from typing import TYPE_CHECKING
@@ -558,15 +558,15 @@ class PlaylistLearner:
         )
 
         def _synthesize_knowledge(self, analyses: List[VideoAnalysis], playlist_title: str) -> str:
-            """여러 영상 분석 결과로부터 종합적인 요약 생성 (Lumen Gateway 연동)"""
+            """여러 영상 분석 결과로부터 종합적인 요약 생성 (Core Gateway 연동)"""
             if not analyses:
                 return "No videos were successfully analyzed."
     
-            # Lumen Gateway 사용 가능 시 AI 요약
-            if lumen_client_available and get_lumen_client:
-                self.logger.info("Synthesizing knowledge with Lumen Gateway...")
+            # Core Gateway 사용 가능 시 AI 요약
+            if core_client_available and get_core_client:
+                self.logger.info("Synthesizing knowledge with Core Gateway...")
                 try:
-                    client = get_lumen_client()
+                    client = get_core_client()
                     
                     # 모든 자막을 하나의 텍스트로 결합
                     full_transcript = "\n\n".join(
@@ -577,22 +577,22 @@ class PlaylistLearner:
                     if not full_transcript.strip():
                         raise ValueError("No subtitles available to summarize.")
     
-                    # Lumen에 보낼 프롬프트 생성
+                    # Core에 보낼 프롬프트 생성
                     prompt = (
                         f"'{playlist_title}'라는 제목의 YouTube 재생목록 전체 자막입니다. "
                         f"이 내용을 바탕으로, 재생목록 전체를 관통하는 핵심 주제, 주요 개념, 그리고 학습 흐름을 "
                         f"3-4 문장으로 요약해주세요.\n\n---\n\n{full_transcript[:8000]}" # 토큰 제한 고려
                     )
                     
-                    lumen_response = client.infer(message=prompt, persona_key="square") # '엘로'가 요약에 적합
+                    core_response = client.infer(message=prompt, persona_key="square") # '엘로'가 요약에 적합
                     
-                    if lumen_response.success:
-                        self.logger.info("Lumen Gateway summarization successful.")
-                        return f"[AI Summary by {lumen_response.persona.emoji}] {lumen_response.response}"
+                    if core_response.success:
+                        self.logger.info("Core Gateway summarization successful.")
+                        return f"[AI Summary by {core_response.persona.emoji}] {core_response.response}"
                     else:
-                        self.logger.warning("Lumen Gateway summarization failed, falling back to keyword summary.")
+                        self.logger.warning("Core Gateway summarization failed, falling back to keyword summary.")
                 except Exception as e:
-                    self.logger.error(f"Lumen Gateway call failed: {e}, falling back to keyword summary.")
+                    self.logger.error(f"Core Gateway call failed: {e}, falling back to keyword summary.")
     
             # Fallback: 기존 키워드 기반 요약
             self.logger.info("Falling back to keyword-based summary.")

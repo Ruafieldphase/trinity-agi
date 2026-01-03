@@ -15,7 +15,7 @@ Window: Last 24 hours
 - Resonance States: stable_dynamics
 - Trinity Lua Issues: 0
 - Trinity Elo Status: unknown
-- Trinity Lumen Recommendations: 0
+- Trinity Core Recommendations: 0
 - Self-Care States: selfcare_high_stagnation, selfcare_stagnation_spikes, selfcare_low_circulation, selfcare_queue_pressure
 
 ## Self-Care Snapshot
@@ -36,7 +36,7 @@ Window: Last 24 hours
 
 - **Lua Issues**: None
 - **Elo Status**: unknown
-- **Lumen Recommendations**: 0
+- **Core Recommendations**: 0
 
 ## Goals (Prioritized)
 

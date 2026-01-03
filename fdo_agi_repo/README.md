@@ -1,6 +1,6 @@
 # FDO‑AGI — 실제 작동 AGI 스캐폴딩 (W1)
 
-이 저장소는 루멘 설계 초안 v1을 기반으로 한 **W1 스캐폴딩**입니다.
+이 저장소는 Core 설계 초안 v1을 기반으로 한 **W1 스캐폴딩**입니다.
 - 파이프라인: SAFE_pre → META(BQI) → PLAN → Thesis/Antithesis/Synthesis → EVAL → MEMORY/Resonance → RUNE
 - 최소 툴 세트: RAG, WebSearch(더미), FileIO Sandbox, CodeExec(Python), Tabular
 - 실행 진입점: `python -m scripts.run_task --title "demo" --goal "간단 문서 초안"`

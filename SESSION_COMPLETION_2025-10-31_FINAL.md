@@ -122,7 +122,7 @@ Task Queue Server
    - 학습 결과 저장
 
 4. ✅ **BQI Phase 6**
-   - Binoche 페르소나
+   - Binoche_Observer 페르소나
    - 온라인 학습
    - 패턴 모델링
 

@@ -201,7 +201,7 @@ async def process_lua_request(request: LuaRequest) -> LuaResponse:
     try:
         result = await call_chatgpt(
             prompt=request.prompt,
-            system_prompt="You are Lumen, an AGI assistant integrated with Lua scripting."
+            system_prompt="You are Core, an AGI assistant integrated with Lua scripting."
         )
         
         response = LuaResponse(

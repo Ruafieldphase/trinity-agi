@@ -256,7 +256,7 @@ class ExecutionEngine:
 
                 # BQI Phase 6 Integration (best-effort; never fail the run)
                 try:
-                    logger.info("Step 4: Evaluating execution with Binoche...")
+                    logger.info("Step 4: Evaluating execution with Binoche_Observer...")
                     rpa_result_for_bqi = {
                         "success": execution_report.success,
                         "output_path": None,
@@ -274,10 +274,10 @@ class ExecutionEngine:
                     bqi_decision = loop.run_until_complete(
                         self.rpa_core.evaluate_and_decide(tutorial_name, rpa_result_for_bqi, bqi_coord_for_bqi)
                     )
-                    logger.info(f"Binoche decision: {bqi_decision}")
+                    logger.info(f"Binoche_Observer decision: {bqi_decision}")
                 except Exception as bqi_err:
                     # Log and continue; do not let BQI failures zero-out results
-                    logger.warning(f"Binoche evaluation skipped due to error: {bqi_err}")
+                    logger.warning(f"Binoche_Observer evaluation skipped due to error: {bqi_err}")
             else:
                 failed_count = 0
             

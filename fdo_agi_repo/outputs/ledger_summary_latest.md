@@ -1,6 +1,6 @@
 # Ledger Summary (last 24.0h)
 
-- Generated: 2025-11-14 17:43:27
+- Generated: 2026-01-02 11:11:55
 - Ledger: C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl
 - Coordinate: C:\workspace\agi\fdo_agi_repo\memory\coordinate.jsonl
 
@@ -8,16 +8,14 @@
 
 ## Counts
 
-- Events: {"context_retrieved": 10, "user_profile_injected": 10, "run_config": 10, "resonance_optimization": 10, "autopoietic_phase": 57, "meta_cognition": 10, "thesis_start": 10, "thesis_async_enabled": 10, "persona_channel_hint": 27, "persona_llm_run": 12, "thesis_cache_miss": 7, "antithesis_start": 10, "antithesis_cache_miss": 7, "synthesis_start": 10, "synthesis_cache_miss": 7, "pipeline_e2e_complete": 9, "eval": 10, "rune": 10, "binoche_enhanced_decision": 9, "binoche_decision": 9, "binoche_ab_comparison": 9, "binoche_auto_approve": 8, "resonance_policy": 9, "closed_loop_snapshot": 1, "meta_cognition_low_confidence": 1, "evidence_gate_triggered": 1, "evidence_correction": 1, "corrections_skipped": 1, "thesis_cache_hit": 3, "antithesis_cache_hit": 3, "synthesis_cache_hit": 3, "persona_local_fallback": 15}
-- Tasks started (records): 10
-- Tasks ended (records): 9
-- Distinct tasks started: 8
-- Distinct tasks ended: 7
+- Events: {}
+- Tasks started (records): 0
+- Tasks ended (records): 0
+- Distinct tasks started: 0
+- Distinct tasks ended: 0
 
 ## Metrics
 
-- avg_confidence: 0.902
-- avg_quality: 0.76
+- avg_confidence: None
+- avg_quality: None
 - second_pass_total: 0
-- completion_rate: 0.875
-- second_pass_rate_per_task: 0.0

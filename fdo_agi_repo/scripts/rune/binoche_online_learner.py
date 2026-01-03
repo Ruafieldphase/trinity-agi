@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Binoche Online Learner (Phase 6l)
+Binoche_Observer Online Learner (Phase 6l)
 
 Real-time ensemble weight adaptation based on production feedback.
 Continuously monitors performance and adjusts weights to minimize prediction error.
@@ -328,7 +328,7 @@ def generate_report(
     """Generate human-readable learning report."""
     lines = []
     lines.append("=" * 60)
-    lines.append("🧠 Binoche Online Learner (Phase 6l)")
+    lines.append("🧠 Binoche_Observer Online Learner (Phase 6l)")
     lines.append("=" * 60)
     lines.append(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     lines.append(f"Predictions analyzed: {predictions_count}")
@@ -372,7 +372,7 @@ def generate_report(
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Binoche Online Learner (Phase 6l)')
+    parser = argparse.ArgumentParser(description='Binoche_Observer Online Learner (Phase 6l)')
     parser.add_argument('--window-hours', type=int, default=24,
                        help='Time window for learning (hours)')
     parser.add_argument('--learning-rate', type=float, default=0.01,
@@ -389,7 +389,7 @@ def main():
     
     args = parser.parse_args()
     
-    print("[OnlineLearner] Starting Binoche Online Learner (Phase 6l)")
+    print("[OnlineLearner] Starting Binoche_Observer Online Learner (Phase 6l)")
     print(f"[OnlineLearner] Time window: last {args.window_hours} hours")
     print(f"[OnlineLearner] Learning rate: {args.learning_rate}")
     print()

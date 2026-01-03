@@ -418,8 +418,8 @@ def record_task_resonance(
         domain_id = "orchestrator"
         subdomain = None
         if bqi_coord:
-            # Example: map BQI binoche/intent to domain
-            binoche_val = bqi_coord.get("binoche", 0.0)
+            # Example: map BQI Binoche_Observer/intent to domain
+            binoche_val = bqi_coord.get("Binoche_Observer", 0.0)
             intent_val = bqi_coord.get("intent", 0.0)
             if binoche_val > 0.7:
                 subdomain = "binoche_high"
@@ -452,7 +452,7 @@ def record_task_resonance(
             "task_goal_snippet": task_goal[:80],
         }
         if bqi_coord:
-            tags["bqi_binoche"] = bqi_coord.get("binoche", 0.0)
+            tags["bqi_binoche"] = bqi_coord.get("Binoche_Observer", 0.0)
             tags["bqi_quality"] = bqi_coord.get("quality", 0.0)
             tags["bqi_intent"] = bqi_coord.get("intent", 0.0)
         

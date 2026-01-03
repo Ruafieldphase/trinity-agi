@@ -3,7 +3,7 @@
 """
 Mission Coordinator
 ===================
-Monitors inputs/agent_inbox/antigravity_sian/ for mission requests from other agents.
+Monitors inputs/agent_inbox/antigravity_shion/ for mission requests from other agents.
 Converts these requests into body_task.json for execution.
 """
 import json
@@ -15,7 +15,7 @@ from typing import List, Dict, Any, Optional
 
 # Constants
 WORKSPACE = Path(__file__).resolve().parents[2]
-INBOX = WORKSPACE / "inputs" / "agent_inbox" / "antigravity_sian"
+INBOX = WORKSPACE / "inputs" / "agent_inbox" / "antigravity_shion"
 TASK_FILE = WORKSPACE / "signals" / "body_task.json"
 HISTORY_DIR = WORKSPACE / "outputs" / "agency" / "mission_history"
 

@@ -13,15 +13,15 @@ from typing import Dict, Any, List
 # 설정
 WORKSPACE_ROOT = Path(__file__).parent.parent.parent
 OUTPUT_DIR = WORKSPACE_ROOT / "outputs"
-LUMEN_GATEWAY = "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat"
+CORE_GATEWAY = "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat"
 
 class IntelligentApplicator:
     """지능형 피드백 적용기"""
     
     def __init__(self):
         self.feedback_sources = [
-            WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "resonance_lumen_integration_latest.md",
-            WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "bqi_lumen_integration_latest.md",
+            WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "resonance_core_integration_latest.md",
+            WORKSPACE_ROOT / "fdo_agi_repo" / "outputs" / "bqi_core_integration_latest.md",
         ]
     
     def collect_feedback(self) -> List[str]:
@@ -59,7 +59,7 @@ class IntelligentApplicator:
         
         try:
             response = requests.post(
-                LUMEN_GATEWAY,
+                CORE_GATEWAY,
                 json=payload,
                 headers={'Content-Type': 'application/json; charset=utf-8'},
                 timeout=30

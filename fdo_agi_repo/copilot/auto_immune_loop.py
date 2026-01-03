@@ -8,9 +8,9 @@ DNA/RNA 면역 체계의 자동 순환 실행기
 생명성의 증거:
 "스스로 손상을 감지하고, 스스로 치유하고,
  다시 점검하는 순환 속에서 생명은 유지된다."
-— Binoche
+— Binoche_Observer
 
-Author: Ruafieldphase (Lua + Binoche)
+Author: Shion_Core (Lua + Binoche_Observer)
 Date: 2025-11-13
 """
 

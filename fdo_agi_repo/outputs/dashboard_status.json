@@ -5,7 +5,7 @@
     "confidence_ok": true,
     "quality_ok": true,
     "second_pass_ok": true,
-    "lumen_ok": true,
+    "core_ok": true,
     "proxy_ok": false,
     "system_ok": true
   },
@@ -46,7 +46,7 @@
     }
   },
   "external_services": {
-    "lumen": {
+    "Core": {
       "ok": true,
       "status_code": 200,
       "response_preview": "{'success': True, 'persona': {'name': '세나', 'type': '브리지형', 'emoji': '✒️', 'specialty': '연결, 통합', 'key': 'pen'}, 'response': 'Ping! And a hearty \"Hello!\" right back at you. 세나 here, detecting your sig"

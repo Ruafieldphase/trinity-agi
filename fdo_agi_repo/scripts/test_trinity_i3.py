@@ -2,7 +2,7 @@
 """
 Trinity I3 (Integration Information) 측정 스크립트
 
-Ello-Luon-Lumen 삼위일체가 만드는 시너지를 정량화합니다.
+Ello-Luon-Core 삼위일체가 만드는 시너지를 정량화합니다.
 I3 < 0 이면 시너지가 있음 (전체 > 부분의 합)
 """
 
@@ -205,7 +205,7 @@ def main():
     import argparse
     parser = argparse.ArgumentParser(description="Trinity I3 측정")
     parser.add_argument("--hours", type=int, default=24, help="분석 기간 (시간)")
-    parser.add_argument("--personas", nargs="+", default=["lua", "elo", "lumen", "thesis", "antithesis", "synthesis"],
+    parser.add_argument("--personas", nargs="+", default=["lua", "elo", "Core", "thesis", "antithesis", "synthesis"],
                       help="분석할 페르소나들")
     args = parser.parse_args()
     

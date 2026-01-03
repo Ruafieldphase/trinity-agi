@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-File lock utility for Lumen System
+File lock utility for Core System
 
 Prevents concurrent writes to critical files like:
 - ensemble_weights.json

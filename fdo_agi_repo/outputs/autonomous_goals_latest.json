@@ -3,7 +3,7 @@
   "window_hours": 24,
   "input_sources": {
     "resonance_metrics": "outputs/resonance_simulation_latest.json",
-    "trinity_report": "outputs/lumen_enhanced_synthesis_latest.md",
+    "trinity_report": "outputs/core_enhanced_synthesis_latest.md",
     "self_care_summary": "outputs/self_care_metrics_summary.json"
   },
   "resonance_states": [
@@ -12,7 +12,7 @@
   "trinity_summary": {
     "lua_issues": [],
     "elo_status": "unknown",
-    "lumen_recommendations": []
+    "core_recommendations": []
   },
   "self_care": {
     "states": [

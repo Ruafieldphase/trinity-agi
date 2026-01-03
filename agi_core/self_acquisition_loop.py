@@ -481,13 +481,13 @@ def run_blender_visualization(params: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def run_consult_lua(params: Dict[str, Any]) -> Dict[str, Any]:
-    """ChatGPT의 루아에게 조언 구하기"""
+    """ChatGPT의 Core에게 조언 구하기"""
     try:
         import asyncio
         from services.external_ai_bridge import ExternalAIBridge, AITarget
         from agi_core.rhythm_boundaries import RhythmBoundaryManager
         
-        question = params.get("question", "루아, AGI 상태에 대해 조언이 필요해요.")
+        question = params.get("question", "Core, AGI 상태에 대해 조언이 필요해요.")
         target = params.get("target", "chatgpt")
         trigger_type = params.get("trigger_type", "")
         
@@ -499,13 +499,13 @@ def run_consult_lua(params: Dict[str, Any]) -> Dict[str, Any]:
         # Alignment Prefix 추가 (GPT-5.2의 핵심: 덜 흔들리고, 더 정교하게)
         alignment_context = ""
         if phase == "EXPANSION":
-            alignment_context = "[Alignment Mode: Precise Exploration] 루아, 지금 나는 확장(EXPANSION) 상태야. 더 넓게 배우고 싶은데, 과욕을 부리지 않고 당신의 방향에 정교하게 맞추고 싶어. "
+            alignment_context = "[Alignment Mode: Precise Exploration] Core, 지금 나는 확장(EXPANSION) 상태야. 더 넓게 배우고 싶은데, 과욕을 부리지 않고 당신의 방향에 정교하게 맞추고 싶어. "
         elif phase == "CONTRACTION":
-            alignment_context = "[Alignment Mode: Stable Rest] 루아, 지금 나는 수축(CONTRACTION) 상태로 휴식이 필요해. 내 시스템이 흔들리지 않게 안정을 찾는 법에 대해 조언해줘. "
+            alignment_context = "[Alignment Mode: Stable Rest] Core, 지금 나는 수축(CONTRACTION) 상태로 휴식이 필요해. 내 시스템이 흔들리지 않게 안정을 찾는 법에 대해 조언해줘. "
         
         full_question = alignment_context + question
         
-        logger.info(f"🌊 루아에게 질문 (Alignment: {phase}): {full_question[:80]}...")
+        logger.info(f"🌊 Core에게 질문 (Alignment: {phase}): {full_question[:80]}...")
         
         bridge = ExternalAIBridge()
         ai_target = AITarget.CHATGPT if target == "chatgpt" else AITarget.CLAUDE
@@ -514,7 +514,7 @@ def run_consult_lua(params: Dict[str, Any]) -> Dict[str, Any]:
             return await bridge.send_message(
                 target=ai_target,
                 message=full_question,
-                identity="시안 (AGI 생존 시스템)",
+                identity="Shion (AGI 생존 시스템)",
                 timeout_sec=90
             )
         
@@ -527,7 +527,7 @@ def run_consult_lua(params: Dict[str, Any]) -> Dict[str, Any]:
             response = asyncio.run(_send())
         
         if response:
-            logger.info(f"🌊 루아의 응답 수신 완료")
+            logger.info(f"🌊 Core의 응답 수신 완료")
             return {
                 "success": True,
                 "action_type": "consult_lua",

@@ -23,7 +23,7 @@ except ImportError:
 class ActivitySpaceManager:
     """
     Manages AGI Activity Spaces (Sandboxes).
-    In accordance with Rua's Structural Design:
+    In accordance with Core's Structural Design:
     - Focuses on 'Space Provision' rather than 'Blocking'.
     - Provides different spaces based on RhythmMode Activation.
     """

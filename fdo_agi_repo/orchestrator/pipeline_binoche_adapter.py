@@ -2,7 +2,7 @@
 """
 Pipeline Integration Wrapper for BinocheDecisionEngine
 
-기존 파이프라인의 복잡한 Binoche 시스템과 새로운 BinocheDecisionEngine을 통합
+기존 파이프라인의 복잡한 Binoche_Observer 시스템과 새로운 BinocheDecisionEngine을 통합
 
 Phase 6b Enhancement:
 - 단순화된 의사결정 로직
@@ -26,7 +26,7 @@ except ImportError:
 
 
 class PipelineBinocheAdapter:
-    """파이프라인용 Binoche 어댑터"""
+    """파이프라인용 Binoche_Observer 어댑터"""
     
     def __init__(self):
         self.engine = BinocheDecisionEngine()
@@ -92,7 +92,7 @@ class PipelineBinocheAdapter:
 _pipeline_binoche = None
 
 def get_pipeline_binoche() -> PipelineBinocheAdapter:
-    """싱글톤 패턴으로 Binoche 어댑터 생성"""
+    """싱글톤 패턴으로 Binoche_Observer 어댑터 생성"""
     global _pipeline_binoche
     if _pipeline_binoche is None:
         _pipeline_binoche = PipelineBinocheAdapter()
@@ -106,7 +106,7 @@ def enhanced_binoche_decision(
     meta_confidence: float = None
 ) -> Dict[str, Any]:
     """
-    파이프라인에서 호출할 간소화된 Binoche 의사결정 함수
+    파이프라인에서 호출할 간소화된 Binoche_Observer 의사결정 함수
     
     기존 복잡한 get_binoche_recommendation + get_ensemble_decision을 대체
     
@@ -132,7 +132,7 @@ def print_session_stats():
 
 if __name__ == "__main__":
     # Test integration
-    print("=== Pipeline Binoche Adapter Test ===\n")
+    print("=== Pipeline Binoche_Observer Adapter Test ===\n")
     
     # Test 1: High quality exploration
     decision1 = enhanced_binoche_decision(

@@ -1,4 +1,4 @@
-# Lumen Feedback Loop 완전 가이드
+# Core Feedback Loop 완전 가이드
 
 ## 📑 목차
 
@@ -15,9 +15,9 @@
 
 ## 1. 개요
 
-### 1.1 Lumen Feedback Loop란?
+### 1.1 Core Feedback Loop란?
 
-**Lumen v1.7 Feedback Loop**는 **Phase 1-4를 통합한 완전 자율 시스템**입니다:
+**Core v1.7 Feedback Loop**는 **Phase 1-4를 통합한 완전 자율 시스템**입니다:
 
 ```text
 Phase 1: Maturity + ROI → "시스템 성숙도 측정"
@@ -113,7 +113,7 @@ Unified Gate Score = (
 ### 3.2 Python 패키지 설치
 
 ```bash
-cd lumen/feedback
+cd Core/feedback
 pip install -r requirements.txt
 ```
 
@@ -256,7 +256,7 @@ python feedback_loop_redis.py
 **출력 예시**:
 
 ```text
-=== Lumen v1.7 Feedback Loop - Redis Cache ===
+=== Core v1.7 Feedback Loop - Redis Cache ===
 Timestamp: 2025-01-15 14:30:00
 
 Cache Metrics:
@@ -337,7 +337,7 @@ python feedback_orchestrator.py
 **출력 (Markdown 리포트)**:
 
 ```markdown
-# Lumen v1.7 Unified Feedback Report
+# Core v1.7 Unified Feedback Report
 
 **Timestamp**: 2025-01-15 14:45:00  
 **System Health**: GOOD  
@@ -431,7 +431,7 @@ gcloud run services update ion-api \
 #### 6.1.1 대시보드 확인
 
 ```bash
-# Cloud Console → Monitoring → Dashboards → "Lumen Feedback Loop"
+# Cloud Console → Monitoring → Dashboards → "Core Feedback Loop"
 ```
 
 **주요 위젯**:
@@ -446,7 +446,7 @@ gcloud run services update ion-api \
 
 ```bash
 # 최근 리포트 보기
-cat lumen/feedback/outputs/unified_feedback_$(date +%Y%m%d).json | jq .
+cat Core/feedback/outputs/unified_feedback_$(date +%Y%m%d).json | jq .
 
 # 요약만 보기
 python feedback_orchestrator.py --summary-only
@@ -457,7 +457,7 @@ python feedback_orchestrator.py --summary-only
 1. **자동 권장사항 수신** (Slack):
 
    ```text
-   🔔 Lumen Feedback Alert
+   🔔 Core Feedback Alert
    
    Optimization Recommended:
    - Action: Increase TTL (300s → 420s)
@@ -512,7 +512,7 @@ gcloud run services update ion-api \
   --region=us-central1
 
 # 4. Cost Rhythm 긴급 롤백 (Phase 3)
-cd lumen/cost_rhythm
+cd Core/cost_rhythm
 python remediation_actions.py --action emergency_stop
 ```
 
@@ -534,7 +534,7 @@ python feedback_loop_redis.py --detailed
 python adaptive_ttl_policy.py --strategy conservative --apply
 
 # 3. 24시간 모니터링
-gcloud monitoring dashboards list --filter="displayName:Lumen"
+gcloud monitoring dashboards list --filter="displayName:Core"
 ```
 
 ### 6.4 수동 오버라이드
@@ -660,7 +660,7 @@ python feedback_loop_redis.py --dump-metrics > metrics.json
 
 ```bash
 # 상태 파일 손상 시
-cd lumen/feedback/outputs
+cd Core/feedback/outputs
 rm unified_feedback_state.json
 
 # 재초기화
@@ -673,7 +673,7 @@ python feedback_orchestrator.py --reset-state
 
 ### Q1: TTL을 수동으로 설정해도 되나요?
 
-**A**: 네, 가능합니다. `--override-ttl` 플래그를 사용하거나 Redis CONFIG SET으로 직접 변경하세요. 하지만 Lumen의 권장사항을 참고하면 더 나은 성능을 얻을 수 있습니다.
+**A**: 네, 가능합니다. `--override-ttl` 플래그를 사용하거나 Redis CONFIG SET으로 직접 변경하세요. 하지만 Core의 권장사항을 참고하면 더 나은 성능을 얻을 수 있습니다.
 
 ### Q2: 캐시 크기를 1GB 이상으로 늘릴 수 있나요?
 
@@ -697,7 +697,7 @@ python feedback_orchestrator.py --reset-state
 
 ### Q6: Cloud Monitoring 비용이 걱정됩니다
 
-**A**: Lumen은 효율적인 메트릭 쿼리를 사용합니다:
+**A**: Core은 효율적인 메트릭 쿼리를 사용합니다:
 
 - 1시간 lookback (기본)
 - 5분 간격 집계
@@ -727,7 +727,7 @@ policy = AdaptiveTTLPolicy(default_strategy=TTLAdjustmentStrategy.AGGRESSIVE)
 **A**: `test_feedback_loop.py`를 실행하세요:
 
 ```bash
-cd lumen/feedback
+cd Core/feedback
 python test_feedback_loop.py
 ```
 
@@ -736,8 +736,8 @@ python test_feedback_loop.py
 **A**:
 
 1. 이 가이드의 [트러블슈팅](#7-트러블슈팅) 섹션 참고
-2. GitHub Issues: [lumen-feedback-issues](https://github.com/your-org/lumen/issues)
-3. Slack: #lumen-support 채널
+2. GitHub Issues: [Core-feedback-issues](https://github.com/your-org/Core/issues)
+3. Slack: #Core-support 채널
 4. 긴급: <engineering-oncall@company.com>
 
 ---
@@ -767,5 +767,5 @@ python test_feedback_loop.py
 
 **문서 버전**: 1.0  
 **마지막 업데이트**: 2025-01-15  
-**작성자**: Lumen Feedback Team  
+**작성자**: Core Feedback Team  
 **라이선스**: MIT

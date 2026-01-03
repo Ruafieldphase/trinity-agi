@@ -7,7 +7,7 @@
   "disk_usage": 48.3,
   "queue_size": 0,
   "error_rate": 0.0,
-  "lumen_rhythm": null,
+  "core_rhythm": null,
   "hour": 4,
   "is_night": true,
   "reason": "🌙 LEARNING: Night time (CPU 29.0%, queue 0)"

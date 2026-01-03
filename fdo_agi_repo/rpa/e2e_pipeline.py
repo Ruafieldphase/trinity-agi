@@ -239,11 +239,7 @@ class E2EPipeline:
                 success, trial_results = await self.trial_error_engine.execute_with_retry(
                     task_fn=self._execute_single_step,
                     task_name=step['action'],
-<<<<<<< HEAD
                     initial_params={**step['params'], "action": step['action'], "description": step['description']},
-=======
-                    initial_params=step['params'],
->>>>>>> origin/main
                     state={"step_index": i, "description": step['description']}
                 )
                 
@@ -268,7 +264,7 @@ class E2EPipeline:
         return results
     
     async def _execute_single_step(self, **params) -> bool:
-<<<<<<< HEAD
+    async def _execute_single_step(self, **params) -> bool:
         """단일 스텝 실행 (RPACore 활용)"""
         action = params.get("action")
         value = params.get("value", "")
@@ -304,12 +300,6 @@ class E2EPipeline:
         except Exception as e:
             self.logger.error(f"Action failed: {e}")
             return False
-=======
-        """단일 스텝 실행 (예제)"""
-        # TODO: 실제 RPA 액션 실행
-        await asyncio.sleep(0.5)
-        return True
->>>>>>> origin/main
     
     async def _log_event(
         self,

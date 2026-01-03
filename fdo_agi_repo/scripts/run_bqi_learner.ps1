@@ -58,22 +58,22 @@ try {
         }
     }
 
-    # Phase 6: Run Binoche Persona Learner (learn decision patterns)
+    # Phase 6: Run Binoche_Observer Persona Learner (learn decision patterns)
     if ($Phase -ge 6) {
         $personaLearner = Join-Path $repoRoot 'scripts\rune\binoche_persona_learner.py'
         if (Test-Path $personaLearner) {
             Push-Location $repoRoot
             try {
-                if ($VerboseLog) { Write-Host "[BQI Phase 6] Running binoche persona learner via: $pythonExe $personaLearner" -ForegroundColor Cyan }
+                if ($VerboseLog) { Write-Host "[BQI Phase 6] Running Binoche_Observer persona learner via: $pythonExe $personaLearner" -ForegroundColor Cyan }
                 & $pythonExe $personaLearner
                 if ($LASTEXITCODE -ne 0) {
-                    Write-Warning "[BQI Phase 6] Binoche persona learner returned non-zero exit code: $LASTEXITCODE"
+                    Write-Warning "[BQI Phase 6] Binoche_Observer persona learner returned non-zero exit code: $LASTEXITCODE"
                 }
             }
             finally { Pop-Location }
         }
         else {
-            Write-Host "[BQI Phase 6] Binoche persona learner not found, skipping: $personaLearner" -ForegroundColor Yellow
+            Write-Host "[BQI Phase 6] Binoche_Observer persona learner not found, skipping: $personaLearner" -ForegroundColor Yellow
         }
     }
 
@@ -136,7 +136,7 @@ try {
     }
     $summary = $summary + $fbSuffix
 
-    # Append Binoche Persona summary if available (Phase 6)
+    # Append Binoche_Observer Persona summary if available (Phase 6)
     $personaModelPath = Join-Path $outDir 'binoche_persona.json'
     $personaSuffix = ""
     if (Test-Path $personaModelPath) {

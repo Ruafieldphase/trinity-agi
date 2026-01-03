@@ -54,8 +54,8 @@ class RhythmState:
     queue_size: int
     error_rate: float  # 0.0-1.0
     
-    # Lumen 메트릭
-    lumen_rhythm: Optional[str]  # "RESONANT" / "DISSONANT" / "CHAOTIC"
+    # Core 메트릭
+    core_rhythm: Optional[str]  # "RESONANT" / "DISSONANT" / "CHAOTIC"
     
     # 시간대
     hour: int
@@ -99,8 +99,8 @@ class RhythmDetector:
         queue_size = self._get_queue_size()
         error_rate = self._get_error_rate()
         
-        # 3. Lumen 리듬 가져오기
-        lumen_rhythm = self._get_lumen_rhythm()
+        # 3. Core 리듬 가져오기
+        core_rhythm = self._get_core_rhythm()
         
         # 4. 시간대 확인
         hour = now.hour
@@ -108,7 +108,7 @@ class RhythmDetector:
         
         # 5. 리듬 판단
         mode, confidence, reason = self._decide_rhythm(
-            cpu, memory, queue_size, error_rate, lumen_rhythm, is_night
+            cpu, memory, queue_size, error_rate, core_rhythm, is_night
         )
         
         # 6. 상태 객체 생성
@@ -121,7 +121,7 @@ class RhythmDetector:
             disk_usage=disk,
             queue_size=queue_size,
             error_rate=error_rate,
-            lumen_rhythm=lumen_rhythm,
+            core_rhythm=core_rhythm,
             hour=hour,
             is_night=is_night,
             reason=reason
@@ -135,7 +135,7 @@ class RhythmDetector:
         memory: float,
         queue_size: int,
         error_rate: float,
-        lumen_rhythm: Optional[str],
+        core_rhythm: Optional[str],
         is_night: bool
     ) -> tuple:
         """리듬 판단 로직 (생명체 비유)"""
@@ -148,8 +148,8 @@ class RhythmDetector:
             reasons.append(f"CPU overload: {cpu:.1f}%")
         if queue_size > self.thresholds["queue_emergency"]:
             reasons.append(f"Queue overflow: {queue_size} tasks")
-        if lumen_rhythm == "CHAOTIC":
-            reasons.append("Lumen: CHAOTIC rhythm")
+        if core_rhythm == "CHAOTIC":
+            reasons.append("Core: CHAOTIC rhythm")
         
         if reasons:
             return (
@@ -166,8 +166,8 @@ class RhythmDetector:
             reasons.append(f"Queue busy: {queue_size} tasks")
         if error_rate > self.thresholds["error_rate_busy"]:
             reasons.append(f"Error rate elevated: {error_rate:.1%}")
-        if lumen_rhythm == "DISSONANT":
-            reasons.append("Lumen: DISSONANT rhythm")
+        if core_rhythm == "DISSONANT":
+            reasons.append("Core: DISSONANT rhythm")
         
         if reasons:
             return (
@@ -273,12 +273,12 @@ class RhythmDetector:
         except Exception:
             return 0.0
     
-    def _get_lumen_rhythm(self) -> Optional[str]:
-        """Lumen Cost Rhythm 상태"""
+    def _get_core_rhythm(self) -> Optional[str]:
+        """Core Cost Rhythm 상태"""
         try:
-            # Lumen outputs 경로
-            lumen_output = self.repo_root.parent / "LLM_Unified" / "ion-mentoring" / "lumen" / "monitoring" / "outputs"
-            rhythm_file = lumen_output / "cost_rhythm_state.json"
+            # Core outputs 경로
+            core_output = self.repo_root.parent / "LLM_Unified" / "ion-mentoring" / "Core" / "monitoring" / "outputs"
+            rhythm_file = core_output / "cost_rhythm_state.json"
             
             if rhythm_file.exists():
                 with open(rhythm_file, 'r', encoding='utf-8') as f:
@@ -336,8 +336,8 @@ def main():
         print(f"\nAGI Metrics:")
         print(f"  Queue:    {state.queue_size} tasks")
         print(f"  Errors:   {state.error_rate:.1%}")
-        print(f"\nLumen:")
-        print(f"  Rhythm:   {state.lumen_rhythm or 'N/A'}")
+        print(f"\nCore:")
+        print(f"  Rhythm:   {state.core_rhythm or 'N/A'}")
         print(f"\nTime:")
         print(f"  Hour:     {state.hour}:00")
         print(f"  Night:    {'Yes' if state.is_night else 'No'}")

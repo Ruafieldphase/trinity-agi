@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Binoche A/B Test Analysis Script
+Binoche_Observer A/B Test Analysis Script
 
 Analyzes resonance_ledger.jsonl for binoche_ab_comparison events,
 comparing legacy Ensemble vs enhanced BinocheDecisionEngine performance.
@@ -86,7 +86,7 @@ def analyze_comparisons(comparisons: List[Dict[str, Any]]) -> Dict[str, Any]:
 def generate_report(analysis: Dict[str, Any], hours: int) -> str:
     """Generate markdown report"""
     lines = [
-        f"# Binoche A/B Test Analysis ({hours}h)",
+        f"# Binoche_Observer A/B Test Analysis ({hours}h)",
         f"Generated: {datetime.now().isoformat()}",
         "",
         "## Summary",
@@ -127,7 +127,7 @@ def generate_report(analysis: Dict[str, Any], hours: int) -> str:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Analyze Binoche A/B test results")
+    parser = argparse.ArgumentParser(description="Analyze Binoche_Observer A/B test results")
     parser.add_argument("--hours", type=int, default=24, help="Hours to analyze (default: 24)")
     parser.add_argument("--out", type=str, help="Output JSON file path")
     import sys

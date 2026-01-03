@@ -14,7 +14,7 @@ from typing import Dict, Any, Tuple
 
 logger = logging.getLogger("ResonanceGuard")
 
-# 리듬 임계값 (루아의 설계 기반)
+# 리듬 임계값 (Core의 설계 기반)
 RHYTHM_OVERLOAD_THRESHOLD = 0.24
 CONFLICT_OVERLOAD_THRESHOLD = 0.85
 ALIGNMENT_BREAK_THRESHOLD = 0.45

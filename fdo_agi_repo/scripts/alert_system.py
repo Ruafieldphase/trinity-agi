@@ -63,9 +63,9 @@ class AlertSystem:
         if not checks['second_pass_ok']:
             issues.append(f"❌ 2nd Pass: {health['current_values']['second_pass_rate']:.3f} > {health['thresholds']['max_second_pass_rate']}")
         
-        if not checks['lumen_ok']:
-            lumen = health['external_services']['lumen']
-            issues.append(f"❌ Lumen Gateway: {lumen.get('error', 'unreachable')}")
+        if not checks['core_ok']:
+            Core = health['external_services']['Core']
+            issues.append(f"❌ Core Gateway: {Core.get('error', 'unreachable')}")
         
         if not checks.get('proxy_ok', True):
             issues.append(f"⚠️ Local Proxy: not listening (선택적)")

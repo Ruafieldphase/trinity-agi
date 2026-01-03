@@ -1,5 +1,5 @@
 """
-Binoche Decision Configuration
+Binoche_Observer Decision Configuration
 
 Phase 6i: Adaptive thresholds for BQI-based auto-decision
 
@@ -83,7 +83,7 @@ def should_auto_approve(pattern_key: str, confidence: float, quality: float) -> 
     
     Args:
         pattern_key: BQI pattern
-        confidence: Binoche confidence (0.0-1.0)
+        confidence: Binoche_Observer confidence (0.0-1.0)
         quality: Task quality (0.0-1.0)
     
     Returns:
@@ -100,7 +100,7 @@ def should_auto_revise(pattern_key: str, confidence: float, quality: float, rhyt
     
     Args:
         pattern_key: BQI pattern
-        confidence: Binoche confidence (0.0-1.0)
+        confidence: Binoche_Observer confidence (0.0-1.0)
         quality: Task quality (0.0-1.0)
         rhythm_phase: Task rhythm (exploration/planning/etc.)
     
@@ -134,7 +134,7 @@ def get_all_patterns() -> Dict[str, Dict[str, Any]]:
 if __name__ == "__main__":
     import json
     
-    print("🎯 Binoche Adaptive Thresholds (Phase 6i)\n")
+    print("🎯 Binoche_Observer Adaptive Thresholds (Phase 6i)\n")
     
     # Test exploration pattern
     pattern = "p1_e:neutral_r:exploration"

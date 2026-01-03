@@ -1,6 +1,6 @@
 """
 Regression test: ExecutionEngine should preserve partial progress when the
-Binoche (BQI) evaluation stage raises an exception. This ensures downstream
+Binoche_Observer (BQI) evaluation stage raises an exception. This ensures downstream
 (best-effort) evaluation errors do not zero-out main execution results.
 """
 

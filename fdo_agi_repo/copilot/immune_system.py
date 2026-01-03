@@ -14,7 +14,7 @@ AGI Immune System - DNA/RNA Transcription Model
 "무한한 자기복제는 문제가 되지만,
  적절한 자기복제는 자기치유이자
  앞으로 나아가는 최소한의 두려움이다."
-— Binoche
+— Binoche_Observer
 """
 
 import json

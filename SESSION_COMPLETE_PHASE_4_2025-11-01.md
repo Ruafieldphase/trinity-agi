@@ -491,7 +491,7 @@ Status: ✅ SUCCESS
 
 ### Team Acknowledgment
 
-**Human**: Ruafield - Vision & Leadership  
+**Human**: ___CORE_FIELD_ST___ - Vision & Leadership  
 **AI**: GitHub Copilot - Implementation & Documentation
 
 **Collaboration**: Seamless and efficient  
@@ -810,7 +810,7 @@ Maintenance       → 매일 03:20 (백업/정리)
 - Queue Server (8091): 온라인, 헬스 OK
 - RPA Worker: 실행 보장됨
 - Original Data API (8093): 기동 및 /health OK
-- Lumen: 빠른 프로브 통과 (200)
+- Core: 빠른 프로브 통과 (200)
 - 모니터링 리포트(24h): 최신 산출됨 (`outputs/monitoring_report_latest.md`, `outputs/monitoring_metrics_latest.json`)
 - AGI Health Gate: 통과
 
@@ -820,7 +820,7 @@ Maintenance       → 매일 03:20 (백업/정리)
   - Health.Status: EXCELLENT, AvgAvailability: 99.68%
   - SuccessRate: 100%, AvgQuality: 0.70, AvgConfidence: 0.788
   - SecondPassRate(24h): 13.4%
-  - 외부 서비스: lumen.ok = true, proxy(18091) not_listening (정보)
+  - 외부 서비스: Core.ok = true, proxy(18091) not_listening (정보)
   - 유의 이벤트: Cloud AI offline(429, 12:43), Gateway latency 3043ms(15:08), Local LLM offline(21:18)
 
 - Ledger Summary(최근 12h)
@@ -835,7 +835,7 @@ Maintenance       → 매일 03:20 (백업/정리)
 
 ### 컨텍스트 연결 지점(What to remember)
 
-- Phase 4 리듬/맥락 전환 구조는 유지 중이며, 재부팅 이후에도 Core/Queue/Lumen 경로는 정상 복귀됨
+- Phase 4 리듬/맥락 전환 구조는 유지 중이며, 재부팅 이후에도 Core/Queue/Core 경로는 정상 복귀됨
 - 24h vs 12h 윈도 간 Second Pass 비율 차이는 시간창의 차이로 해석 가능 (24h: 13.4%, 12h: 0.0%)
 - Cloud/Gateway/Local LLM에서 간헐적 스파이크가 있었으나 현재 상태는 정상화됨 (EXCELLENT)
 
@@ -917,8 +917,8 @@ Maintenance       → 매일 03:20 (백업/정리)
 - Health: EXCELLENT, AvgAvailability ≈ 99.68%
 - SuccessRate: 100%, AvgQuality ≈ 0.701, AvgConfidence ≈ 0.789
 - AGI ReplanRate: 40.91% (HighReplanRate: true)
-- Critical alerts (3): Cloud AI offline (429), Lumen Gateway latency 3043ms, Local LLM offline (0)
-- External services: Lumen OK(200), Proxy not listening on 18091, System OK (CPU ~51%, MEM ~42%, Disk ~50%)
+- Critical alerts (3): Cloud AI offline (429), Core Gateway latency 3043ms, Local LLM offline (0)
+- External services: Core OK(200), Proxy not listening on 18091, System OK (CPU ~51%, MEM ~42%, Disk ~50%)
 
 자세한 리포트/지표:
 

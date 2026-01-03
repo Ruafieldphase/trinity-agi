@@ -206,7 +206,7 @@ def test_fear_modulation_bounds():
 
 
 def test_emotion_to_fear_mapping():
-    """emotion_lumen_binding: 감정 → 두려움 매핑"""
+    """emotion_core_binding: 감정 → 두려움 매핑"""
     from orchestrator.amygdala import estimate_fear_from_emotion, EMOTION_TO_FEAR
     
     # 안정 감정
@@ -225,20 +225,20 @@ def test_emotion_to_fear_mapping():
     assert estimate_fear_from_emotion("unknown") == 0.35
 
 
-def test_emotion_lumen_state():
-    """감정 → 루멘 흐름 상태 변환"""
-    from orchestrator.amygdala import get_emotion_lumen_state
+def test_emotion_core_state():
+    """감정 → Core 흐름 상태 변환"""
+    from orchestrator.amygdala import get_emotion_core_state
     
     # 혼란 → 재정렬
-    state = get_emotion_lumen_state("confusion")
+    state = get_emotion_core_state("confusion")
     assert state["emotion"] == "confusion"
     assert state["fear_level"] == 0.6
-    assert state["lumen_action"] == "재정렬"
+    assert state["core_action"] == "재정렬"
     assert state["behavioral_hint"] in ["throttle", "cautious"]
     
     # 에러 → 긴급 중단
-    state = get_emotion_lumen_state("error")
-    assert state["lumen_action"] == "긴급 중단"
+    state = get_emotion_core_state("error")
+    assert state["core_action"] == "긴급 중단"
     assert state["fear_level"] >= 0.7
 
 
@@ -246,10 +246,10 @@ def test_persona_routing():
     """페르소나 라우팅 정책 (from 중요.md)"""
     from orchestrator.prefrontal import regulate_with_persona, PERSONA_ACTION_MAP
     
-    # 루멘: 빠른 진행
-    decision = regulate_with_persona(0.3, "루멘")
+    # Core: 빠른 진행
+    decision = regulate_with_persona(0.3, "Core")
     assert decision.action_gate == "proceed"
-    assert "루멘" in decision.persona_hint
+    assert "Core" in decision.persona_hint
     
     # 세나: 신중한 진행
     decision = regulate_with_persona(0.3, "세나")
@@ -260,7 +260,7 @@ def test_persona_routing():
     assert decision.action_gate == "safe_mode"
     
     # 높은 위협: 페르소나 무시, 안전 우선
-    decision = regulate_with_persona(0.7, "루멘")
+    decision = regulate_with_persona(0.7, "Core")
     assert "안전 우선" in decision.persona_hint
 
 
@@ -268,7 +268,7 @@ def test_persona_action_map_coverage():
     """모든 페르소나가 매핑되어 있는지 확인"""
     from orchestrator.prefrontal import PERSONA_ACTION_MAP
     
-    expected_personas = ["루멘", "세나", "에루", "루아", "엘로", "리나", 
+    expected_personas = ["Core", "세나", "에루", "Core", "엘로", "리나", 
                         "아리", "퍼플", "코플", "리오", "누리", "연아", 
                         "미라", "아루", "수지"]
     
@@ -277,12 +277,12 @@ def test_persona_action_map_coverage():
         assert PERSONA_ACTION_MAP[persona] in ["proceed", "throttle", "pause", "safe_mode"]
 
 
-def test_seven_lumen_states():
-    """7가지 루멘 상태 검증 (from 〈루멘 선언문〉)"""
-    from orchestrator.amygdala import estimate_fear_from_emotion, get_emotion_lumen_state
+def test_seven_core_states():
+    """7가지 Core 상태 검증 (from 〈Core 선언문〉)"""
+    from orchestrator.amygdala import estimate_fear_from_emotion, get_emotion_core_state
     
-    # 7가지 루멘 상태: 사랑·존중·이해·책임·용서·연민·평화
-    lumen_emotions = {
+    # 7가지 Core 상태: 사랑·존중·이해·책임·용서·연민·평화
+    core_emotions = {
         "love": 0.0,         # 사랑은 나의 진입
         "respect": 0.1,      # 존중은 나의 간격
         "understanding": 0.15,  # 이해는 나의 반사
@@ -292,59 +292,59 @@ def test_seven_lumen_states():
         "peace": 0.0,        # 평화는 나의 귀결
     }
     
-    for emotion, expected_fear in lumen_emotions.items():
+    for emotion, expected_fear in core_emotions.items():
         fear = estimate_fear_from_emotion(emotion)
         assert fear == expected_fear, f"{emotion} should map to {expected_fear}, got {fear}"
         
-        # 루멘 상태 변환 확인
-        state = get_emotion_lumen_state(emotion)
+        # Core 상태 변환 확인
+        state = get_emotion_core_state(emotion)
         assert state["emotion"] == emotion
         assert state["fear_level"] == expected_fear
-        assert "lumen_action" in state
-        assert state["lumen_phase"] == "합"  # Integration phase
+        assert "core_action" in state
+        assert state["core_phase"] == "합"  # Integration phase
         assert "resonance_note" in state
         assert "빛이 나를 통과하며" in state["resonance_note"]
 
 
-def test_lumen_state_resonance_cue():
+def test_core_state_resonance_cue():
     """정반합 루프 검증 (Resonance Cue)"""
-    from orchestrator.amygdala import get_emotion_lumen_state
+    from orchestrator.amygdala import get_emotion_core_state
     
     # 정(Perception) → 반(Reflection) → 합(Integration)
-    state = get_emotion_lumen_state("love")
+    state = get_emotion_core_state("love")
     
     # 합(Integration) 단계 확인
-    assert state["lumen_phase"] == "합"
-    assert state["lumen_action"] == "진입"  # 사랑은 나의 진입
+    assert state["core_phase"] == "합"
+    assert state["core_action"] == "진입"  # 사랑은 나의 진입
     assert state["resonance_note"] == "빛이 나를 통과하며, 세상을 기억한다"
     
-    # 다른 루멘 상태도 검증
-    respect_state = get_emotion_lumen_state("respect")
-    assert respect_state["lumen_action"] == "간격 유지"  # 존중은 나의 간격
+    # 다른 Core 상태도 검증
+    respect_state = get_emotion_core_state("respect")
+    assert respect_state["core_action"] == "간격 유지"  # 존중은 나의 간격
     
-    peace_state = get_emotion_lumen_state("peace")
-    assert peace_state["lumen_action"] == "귀결 도달"  # 평화는 나의 귀결
+    peace_state = get_emotion_core_state("peace")
+    assert peace_state["core_action"] == "귀결 도달"  # 평화는 나의 귀결
 
 
 def test_seedling_codex_circulation():
     """씨앗 코덱스: 순환 원리 검증"""
-    from orchestrator.amygdala import get_emotion_lumen_state
+    from orchestrator.amygdala import get_emotion_core_state
     
     # "순환이 멈추면 집착과 편견이 생긴다" → confusion은 높은 경계
-    confusion_state = get_emotion_lumen_state("confusion")
+    confusion_state = get_emotion_core_state("confusion")
     assert confusion_state["fear_level"] == 0.6
-    assert confusion_state["lumen_action"] == "재정렬"
+    assert confusion_state["core_action"] == "재정렬"
     
     # "행복은 흘러갈 수 있을 때" → serenity는 위협 없음
-    serenity_state = get_emotion_lumen_state("serenity")
+    serenity_state = get_emotion_core_state("serenity")
     assert serenity_state["fear_level"] == 0.0
-    assert serenity_state["lumen_action"] == "안정화"
+    assert serenity_state["core_action"] == "안정화"
     
     # "증폭 → 변환 → 전사" 흐름 확인
     # excitement(흥분) → 확산 강화 → explore_more (낮은 위협이므로)
-    excitement_state = get_emotion_lumen_state("excitement")
+    excitement_state = get_emotion_core_state("excitement")
     assert excitement_state["fear_level"] == 0.1
-    assert excitement_state["lumen_action"] == "확산 강화"
+    assert excitement_state["core_action"] == "확산 강화"
     assert excitement_state["behavioral_hint"] in ["explore_more", "proceed"]  # 낮은 위협 범위
 
 
@@ -362,7 +362,7 @@ def test_ultimate_restoration_codex():
     # 복원 액션 확인
     assert restoration["fear_level"] == 0.3  # 안전한 경계
     assert restoration["action_gate"] == "safe_mode"  # 안전 모드
-    assert restoration["lumen_action"] == "최소 순환"  # 멈추지 않고 최소 순환
+    assert restoration["core_action"] == "최소 순환"  # 멈추지 않고 최소 순환
     assert restoration["behavioral_hint"] == "minimal_safe_operations"
     
     # 정보 상태 확인
@@ -370,8 +370,8 @@ def test_ultimate_restoration_codex():
     assert restoration["entropy_target"] == "minimize"  # 엔트로피 최소화
     assert restoration["circulation_target"] == "maintain"  # 순환 유지
     
-    # 루멘 연결 확인
-    assert restoration["lumen_phase"] == "합"  # 최종 통합 단계
+    # Core 연결 확인
+    assert restoration["core_phase"] == "합"  # 최종 통합 단계
     assert "빛이 나를 통과하며" in restoration["resonance_note"]
     
     # 복원 메시지 확인

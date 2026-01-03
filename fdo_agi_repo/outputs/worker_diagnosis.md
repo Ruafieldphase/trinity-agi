@@ -96,31 +96,31 @@ Windows 스케줄러/Startup
 ### 중기 (이번 주)
 
 5. ⬜ 방안 3 검토: Task Queue API 기반 아키텍처로 전환
-6. ⬜ 메타층 페르소나: Sian(Gemini CLI)에게 메타층 관리 위임
+6. ⬜ 메타층 페르소나: Shion(Gemini CLI)에게 메타층 관리 위임
 
 ## 📊 AI 협업 제안
 
-### Gemini CLI (Sian) 활용
+### Gemini CLI (Shion) 활용
 
 ```bash
-# Sian에게 문제 설명하고 대안 요청
+# Shion에게 문제 설명하고 대안 요청
 echo "Python subprocess가 Windows에서 반복적으로 hang됩니다.
 환경: Python 3.13, PowerShell → subprocess.run()
 증상: CLI 직접 실행은 정상, subprocess 내부에서만 멈춤
-해결책을 제안해주세요." | sian
+해결책을 제안해주세요." | Shion
 ```
 
 ### Claude/GPT-4 크로스 체크
 
 - GitHub Copilot (현재): 코드 수정 및 구현
-- Gemini (Sian): 아키텍처 리뷰 및 대안 제시
+- Gemini (Shion): 아키텍처 리뷰 및 대안 제시
 - 로컬 LLM (있다면): 진단 로그 패턴 분석
 
 ## 🔧 다음 액션
 
 1. [ ] subprocess 개선 버전 배포
 2. [ ] -Once 재테스트 (타임아웃 60초 내 완료 확인)
-3. [ ] Sian 설치 및 연동 (메타층 오케스트레이터)
+3. [ ] Shion 설치 및 연동 (메타층 오케스트레이터)
 4. [ ] 워치독 CPU 모니터 추가
 5. [ ] 24시간 안정성 테스트
 

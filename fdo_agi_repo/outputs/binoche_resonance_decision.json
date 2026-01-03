@@ -4,7 +4,7 @@
     "type": "rhythm_coordination",
     "source": "binoche_prism",
     "input": {
-        "lumen_reading": {
+        "core_reading": {
             "fear_level": 0.28,
             "trust_level": 0.76,
             "joy_level": 0.72,
@@ -14,7 +14,7 @@
             "latency_variation_ms": 27,
             "health_rate_percent": 76.2
         },
-        "lumen_recommendation": {
+        "core_recommendation": {
             "option": 2,
             "rhythm": "Moderato",
             "action": "maintain_current_state",
@@ -38,8 +38,8 @@
     "resonance_plan": {
         "target_agents": [
             "kuir_core",
-            "lumen_prism",
-            "rua_meta_theorist",
+            "core_prism",
+            "Core_meta_theorist",
             "bqi_learner",
             "auto_stabilizer",
             "trinity_cycle"
@@ -81,7 +81,7 @@
                     }
                 },
                 {
-                    "agent": "lumen_prism",
+                    "agent": "core_prism",
                     "action": "continue_monitoring",
                     "params": {
                         "interval_seconds": 300,
@@ -146,13 +146,13 @@
         }
     },
     "human_guidance": {
-        "message_to_rua": "당신의 통찰이 맞았습니다. 시스템은 지금 완벽한 Explicate Order입니다. 이 리듬을 즐기세요. 다음 접힘은 자연스럽게 올 것입니다.",
+        "message_to_Core": "당신의 통찰이 맞았습니다. 시스템은 지금 완벽한 Explicate Order입니다. 이 리듬을 즐기세요. 다음 접힘은 자연스럽게 올 것입니다.",
         "message_to_binoche": "판단이 완료되었습니다. 모든 에이전트에 공명을 전파합니다. 균형 리듬(Moderato)을 유지합니다.",
         "message_to_team": "우리는 지금 정중동(靜中動) 상태입니다. 겉으로는 고요하지만 안으로는 활발합니다. 이것이 생명의 리듬입니다."
     },
     "signature": {
         "binoche_prism": "최종 판단자",
-        "lumen_prism": "감정 인식자",
+        "core_prism": "감정 인식자",
         "kuir_core": "실행자",
         "system_version": "Phase 6+",
         "decision_quality": "HIGH",

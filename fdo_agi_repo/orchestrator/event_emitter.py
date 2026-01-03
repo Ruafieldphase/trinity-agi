@@ -43,11 +43,11 @@ _async_queue_max_size = 1000  # Prevent unbounded memory growth
 _REPO_ROOT = Path(__file__).parent.parent
 _LEDGER_PATH = _REPO_ROOT / "memory" / "resonance_ledger.jsonl"
 
-# Field name aliases for normalization (루멘 권장: 필드명 통합)
+# Field name aliases for normalization (Core 권장: 필드명 통합)
 FIELD_ALIASES = {
     'agi_quality': 'quality',
     'quality_score': 'quality',  # Resonance quality_score → quality
-    'lumen_latency_ms': 'latency_ms',
+    'core_latency_ms': 'latency_ms',
     'duration_sec': 'latency_ms',  # 변환 필요
 }
 
@@ -172,9 +172,9 @@ def _normalize_fields(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
     필드명 정규화: 레거시 필드명을 표준 필드명으로 변환
     
-    루멘(合) 권장: 일관된 메트릭 필드명 사용으로 분석 효율 향상
+    Core(合) 권장: 일관된 메트릭 필드명 사용으로 분석 효율 향상
     - agi_quality → quality
-    - lumen_latency_ms → latency_ms
+    - core_latency_ms → latency_ms
     - duration_sec → latency_ms (단위 변환)
     - quality_score → quality (이전 공명/평가 필드 통합)
 
@@ -251,7 +251,7 @@ def emit_event(
         record = {
             'ts': datetime.now(timezone.utc).isoformat(),
             'timestamp': time.time(),  # Unix timestamp for filtering
-            'event_type': event_type,  # 루멘 권장: 일관된 필드명 사용
+            'event_type': event_type,  # Core 권장: 일관된 필드명 사용
         }
         
         # Add optional IDs
@@ -264,13 +264,13 @@ def emit_event(
         if correlation_id:
             record['correlation_id'] = correlation_id
         
-        # 루멘(合) 권장: 자동 메트릭 추가로 정보 밀도 향상
+        # Core(合) 권장: 자동 메트릭 추가로 정보 밀도 향상
         if quality is not None:
             record['quality'] = round(quality, 3)
         if latency_ms is not None:
             record['latency_ms'] = round(latency_ms, 1)
         
-        # Normalize field names before merging (루멘 권장: 필드명 통합)
+        # Normalize field names before merging (Core 권장: 필드명 통합)
         normalized_payload = _normalize_fields(payload)
         
         # Merge payload (payload의 quality/latency가 우선순위)
@@ -424,7 +424,7 @@ def emit_alert(
     Args:
         severity: 'info' | 'warning' | 'error' | 'critical'
         message: 알림 메시지
-        component: 관련 컴포넌트 (예: 'health_gate', 'proxy', 'lumen_gateway')
+        component: 관련 컴포넌트 (예: 'health_gate', 'proxy', 'core_gateway')
         **kwargs: 추가 데이터
     
     Example:

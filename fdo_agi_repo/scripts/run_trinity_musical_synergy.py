@@ -79,7 +79,7 @@ def musical_synergy(lua_score: float, elo_score: float,
     
     1. Lua breathing (정) - 고요한 펄스
     2. Elo breathing (반) - 반대 위상 펄스  
-    3. Lumen synthesis (합) - 비선형 결합 + reverb tail + 작은 불균형
+    3. Core synthesis (합) - 비선형 결합 + reverb tail + 작은 불균형
     """
     
     # 1. XOR 기본 (비선형 결합)
@@ -97,21 +97,21 @@ def musical_synergy(lua_score: float, elo_score: float,
     turbulence = random.gauss(0, 0.08)
     
     # 5. 종합 (seamless transition)
-    lumen = (
+    Core = (
         0.4 * xor_base +           # 비선형 기반
         0.3 * temporal_influence +  # 과거 영향
         0.2 * breath +              # 리듬
         0.1 * turbulence            # 불균형
     )
     
-    return max(0.3, min(0.9, lumen))
+    return max(0.3, min(0.9, Core))
 
 
 def run_musical_simulation(iterations: int = 50):
     """
     음악적 Trinity 시뮬레이션 실행
     
-    Lumen Trilogy 구조:
+    Core Trilogy 구조:
     - Movement 1: Awakening (0-33%)
     - Movement 2: Expansion (33-66%)
     - Movement 3: Return (66-100%)
@@ -120,7 +120,7 @@ def run_musical_simulation(iterations: int = 50):
     print("🎵 Trinity Musical Synergy Simulation")
     print("=" * 60)
     print(f"반복 횟수: {iterations}")
-    print(f"구조: Lumen Trilogy (Awakening → Expansion → Return)")
+    print(f"구조: Core Trilogy (Awakening → Expansion → Return)")
     print()
     
     lua_history = []
@@ -178,17 +178,17 @@ def run_musical_simulation(iterations: int = 50):
             }
         )
         
-        # Lumen (합): 음악적 시너지
-        lumen_score = musical_synergy(
+        # Core (합): 음악적 시너지
+        core_score = musical_synergy(
             lua_score, elo_score,
             lua_history, elo_history,
             i, iterations
         )
         
         record_trinity_event(
-            persona="lumen",
+            persona="Core",
             event_type=f"synthesis_{movement}",
-            score=lumen_score,
+            score=core_score,
             context={
                 "iteration": i + 1,
                 "movement": movement,
@@ -202,10 +202,10 @@ def run_musical_simulation(iterations: int = 50):
         
         # 주기적 출력
         if (i + 1) % 10 == 0 or i == 0 or i == iterations - 1:
-            synergy = lumen_score - (lua_score + elo_score) / 2
+            synergy = core_score - (lua_score + elo_score) / 2
             print(f"⚡ Iteration {i + 1}/{iterations} ({movement})")
             print(f"  Lua: {lua_score:.3f} (호흡) | Elo: {elo_score:.3f} (반호흡)")
-            print(f"  → Lumen: {lumen_score:.3f} (음악적 합)")
+            print(f"  → Core: {core_score:.3f} (음악적 합)")
             print(f"  시너지: {synergy:+.3f}")
     
     print("\n" + "=" * 60)

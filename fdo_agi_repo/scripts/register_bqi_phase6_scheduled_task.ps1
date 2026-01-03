@@ -5,7 +5,7 @@
 
 .DESCRIPTION
     This script manages Windows Scheduled Task for automatic BQI Phase 6 execution.
-    Phase 6: Binoche Persona Learning (Task Mining, Decision Learning, Pattern Recognition, Rule Automation)
+    Phase 6: Binoche_Observer Persona Learning (Task Mining, Decision Learning, Pattern Recognition, Rule Automation)
 
 .PARAMETER Register
     Register the scheduled task.
@@ -121,7 +121,7 @@ $settings.Hidden = $true
         -Trigger $trigger `
         -Settings $settings `
         -Principal $principal `
-        -Description "BQI Phase 6: Binoche Persona Learning (Task Mining, Decision Learning, Pattern Recognition, Rule Automation)" `
+        -Description "BQI Phase 6: Binoche_Observer Persona Learning (Task Mining, Decision Learning, Pattern Recognition, Rule Automation)" `
     | Out-Null
 
     Write-Host "`n[OK] Scheduled task registered successfully!" -ForegroundColor Green

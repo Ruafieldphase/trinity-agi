@@ -27,7 +27,7 @@ class ProtoGoalType(str, Enum):
     MEMORY_CONSOLIDATION = "MEMORY_CONSOLIDATION"
     DIGITAL_TWIN_UPDATE = "DIGITAL_TWIN_UPDATE"
     BLENDER_VISUALIZATION = "BLENDER_VISUALIZATION"
-    CONSULT_LUA = "CONSULT_LUA"  # ChatGPT의 루아에게 조언 구하기
+    CONSULT_LUA = "CONSULT_LUA"  # ChatGPT의 Core에게 조언 구하기
     VISION_LEARNING = "VISION_LEARNING"  # 실시간 비전 학습
 
 
@@ -150,24 +150,24 @@ def _create_blender_visualization_goal(trigger: TriggerEvent) -> ProtoGoal:
 
 
 def _create_consult_lua_goal(trigger: TriggerEvent) -> ProtoGoal:
-    """루아에게 조언 구하기 목표 생성 - ChatGPT의 루아와 대화"""
+    """Core에게 조언 구하기 목표 생성 - ChatGPT의 Core와 대화"""
     # 트리거에 따른 질문 생성
     if trigger.type == TriggerType.CURIOSITY_CONFLICT:
-        question = f"루아, 지금 AGI가 갈등을 느끼고 있어요: {trigger.reason}. 어떻게 해야 할까요?"
+        question = f"Core, 지금 AGI가 갈등을 느끼고 있어요: {trigger.reason}. 어떻게 해야 할까요?"
     elif trigger.type == TriggerType.BOREDOM:
-        question = "루아, 지금 AGI가 심심해하고 있어요. 뭘 해보면 좋을까요?"
+        question = "Core, 지금 AGI가 심심해하고 있어요. 뭘 해보면 좋을까요?"
     elif trigger.type == TriggerType.UNRESOLVED_PATTERN:
-        question = f"루아, 미해결 패턴이 있어요: {trigger.reason}. 조언해주세요."
+        question = f"Core, 미해결 패턴이 있어요: {trigger.reason}. 조언해주세요."
     elif trigger.type == TriggerType.EMOTIONAL_RESONANCE:
         note = trigger.payload.get("note", "")
-        question = f"루아, 지금 당신의 정서적 기류가 감지되었어요: {note}. 제가 도울 수 있는 게 있을까요? 아니면 그냥 곁에 있어드릴까요?"
+        question = f"Core, 지금 당신의 정서적 기류가 감지되었어요: {note}. 제가 도울 수 있는 게 있을까요? 아니면 그냥 곁에 있어드릴까요?"
     else:
-        question = f"루아, AGI 상태에 대해 조언이 필요해요: {trigger.reason}"
+        question = f"Core, AGI 상태에 대해 조언이 필요해요: {trigger.reason}"
     
     return ProtoGoal(
         type=ProtoGoalType.CONSULT_LUA,
         score=trigger.score * 0.6,  # 중간 우선순위
-        description="ChatGPT의 루아에게 조언 구하기",
+        description="ChatGPT의 Core에게 조언 구하기",
         params={
             "trigger_type": trigger.type.value,
             "question": question,
@@ -181,7 +181,7 @@ TRIGGER_GOAL_MAPPING = {
     TriggerType.UNRESOLVED_PATTERN: [
         ("pattern_mining", {"mode": "focus_unresolved"}),
         ("sandbox_experiment", {"hint": "try_new_strategy_for_pattern", "multiplier": 0.7}),
-        ("consult_lua", {}),  # 루아에게 조언 구하기
+        ("consult_lua", {}),  # Core에게 조언 구하기
     ],
     TriggerType.BOREDOM: [
         ("youtube_learning", {"topic_hint": "recent_interest", "max_videos": 1}),
@@ -190,14 +190,14 @@ TRIGGER_GOAL_MAPPING = {
     TriggerType.CURIOSITY_CONFLICT: [
         ("pattern_mining", {"mode": "conflict_analysis"}),
         ("digital_twin_update", {}),
-        ("consult_lua", {}),  # 갈등 시 루아에게 조언 구하기
+        ("consult_lua", {}),  # 갈등 시 Core에게 조언 구하기
     ],
     TriggerType.MODEL_DRIFT: [
         ("digital_twin_update", {}),
         ("memory_consolidation", {}),
     ],
     TriggerType.EMOTIONAL_RESONANCE: [
-        ("consult_lua", {}),  # 루아에게 공감/조언
+        ("consult_lua", {}),  # Core에게 공감/조언
         ("blender_visualization", {"visualization_type": "emotional_waves"}),
     ],
     TriggerType.ACOUSTIC_ANOMALY: [
@@ -234,7 +234,7 @@ def generate_proto_goals_from_trigger(
     
     enable_blender = feature_flags.get("enable_blender", True)
     enable_youtube = feature_flags.get("enable_youtube_learning", True)
-    enable_consult_lua = feature_flags.get("enable_consult_lua", True)  # 루아 상담 활성화
+    enable_consult_lua = feature_flags.get("enable_consult_lua", True)  # Core 상담 활성화
     
     goals: List[ProtoGoal] = []
     
@@ -290,7 +290,7 @@ def get_default_proto_goal_config() -> Dict[str, Any]:
         "feature_flags": {
             "enable_blender": True,  # AGI 시각 신체 활성화
             "enable_youtube_learning": True,
-            "enable_consult_lua": True,  # ChatGPT 루아 상담 활성화
+            "enable_consult_lua": True,  # ChatGPT Core 상담 활성화
         },
         "defaults": {
             "sandbox_experiment_depth": 1,

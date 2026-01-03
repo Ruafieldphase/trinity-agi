@@ -93,37 +93,37 @@ def run_trinity_scenario(scenario_id: int, enable_collab_boost: bool = False):
         }
     )
     
-    # Lumen (합): 분리된 범위 0.4~0.6에서 랜덤
-    lumen_base = random.uniform(0.42, 0.58)
+    # Core (합): 분리된 범위 0.4~0.6에서 랜덤
+    core_base = random.uniform(0.42, 0.58)
     
     # 협업 boost: lua+elo 통합 시 +0.15~0.20 (균형 잡힌 다중 입력 시너지)
-    lumen_collab_boost = random.uniform(0.15, 0.20) if enable_collab_boost else 0.0
-    lumen_score = lumen_base + lumen_collab_boost  # 상한 제거 (협업 시너지는 범위를 넘을 수 있음)
+    core_collab_boost = random.uniform(0.15, 0.20) if enable_collab_boost else 0.0
+    core_score = core_base + core_collab_boost  # 상한 제거 (협업 시너지는 범위를 넘을 수 있음)
     
-    lumen_output = {
+    core_output = {
         "scenario_id": scenario_id,
         "synthesis": f"시나리오 {scenario_id}: 통합 실행 계획",
         "final_confidence": random.uniform(0.85, 0.95),
-        "quality": lumen_score,
-        "collaboration_boost": round(lumen_collab_boost, 3)
+        "quality": core_score,
+        "collaboration_boost": round(core_collab_boost, 3)
     }
     
     record_event(
-        persona="lumen",
+        persona="Core",
         event_type="synthesis_integration",
-        score=lumen_score,
+        score=core_score,
         context={
             "phase": "synthesis",
             "scenario": scenario_id,
             "inputs_from": ["lua", "elo"],
             "lua_context": lua_output,
             "elo_context": elo_output,
-            "output": lumen_output,
-            "collaboration_boost": round(lumen_collab_boost, 3)
+            "output": core_output,
+            "collaboration_boost": round(core_collab_boost, 3)
         }
     )
     
-    return lua_score, elo_score, lumen_score
+    return lua_score, elo_score, core_score
 
 
 def main():
@@ -132,7 +132,7 @@ def main():
     parser.add_argument("iterations", type=int, nargs="?", default=10,
                         help="반복 횟수 (기본값: 10)")
     parser.add_argument("--enable-collab-boost", action="store_true",
-                        help="협업 boost 활성화 (Elo +0.05~0.08, Lumen +0.10~0.15)")
+                        help="협업 boost 활성화 (Elo +0.05~0.08, Core +0.10~0.15)")
     args = parser.parse_args()
     
     iterations = args.iterations
@@ -150,7 +150,7 @@ def main():
         print(" (+0.05~0.08 협업 boost)")
     else:
         print()
-    print("  - Lumen (합): 0.4 ~ 0.6", end="")
+    print("  - Core (합): 0.4 ~ 0.6", end="")
     if enable_boost:
         print(" (+0.10~0.15 협업 boost)")
     else:
@@ -159,13 +159,13 @@ def main():
     
     lua_scores = []
     elo_scores = []
-    lumen_scores = []
+    core_scores = []
     
     for i in range(1, iterations + 1):
-        lua, elo, lumen = run_trinity_scenario(i, enable_collab_boost=enable_boost)
+        lua, elo, Core = run_trinity_scenario(i, enable_collab_boost=enable_boost)
         lua_scores.append(lua)
         elo_scores.append(elo)
-        lumen_scores.append(lumen)
+        core_scores.append(Core)
         
         if i % 5 == 0 or i == iterations:
             print(f"  ✓ 시나리오 {i}/{iterations} 완료")
@@ -178,7 +178,7 @@ def main():
     print(f"평균 resonance_score:")
     print(f"  - Lua: {sum(lua_scores)/len(lua_scores):.3f} [목표: 0.2, 범위: 0.1~0.3]")
     print(f"  - Elo: {sum(elo_scores)/len(elo_scores):.3f} [목표: 0.8, 범위: 0.7~0.9]")
-    print(f"  - Lumen: {sum(lumen_scores)/len(lumen_scores):.3f} [목표: 0.5, 범위: 0.4~0.6]")
+    print(f"  - Core: {sum(core_scores)/len(core_scores):.3f} [목표: 0.5, 범위: 0.4~0.6]")
     print()
     print("🔺 다음 단계:")
     print(f"  python scripts/test_trinity_i3_filtered.py --source trinity_real_collaboration --hours 1")

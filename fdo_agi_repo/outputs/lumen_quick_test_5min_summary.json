@@ -1,7 +1,0 @@
-{
-  "test_duration_minutes": 4.500125683333334,
-  "total_cycles": 10,
-  "total_optimizations": 4,
-  "optimization_rate": 0.4,
-  "log_file": "outputs\\lumen_quick_test_5min.jsonl"
-}

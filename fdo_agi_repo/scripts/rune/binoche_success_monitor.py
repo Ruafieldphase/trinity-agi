@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Binoche Success Rate Monitor (Phase 6k)
+Binoche_Observer Success Rate Monitor (Phase 6k)
 
 Purpose:
     Monitor ensemble prediction accuracy in production:
@@ -96,7 +96,7 @@ def extract_ensemble_predictions(events: List[Dict[str, Any]]) -> List[Dict[str,
             
             # Debug: print first few to see what's happening
             if binoche_count <= 3:
-                print(f"[DEBUG] Binoche #{binoche_count}: decision={pred['ensemble_decision']}, conf={pred['ensemble_confidence']}")
+                print(f"[DEBUG] Binoche_Observer #{binoche_count}: decision={pred['ensemble_decision']}, conf={pred['ensemble_confidence']}")
             
             # Only include if we have ensemble data
             if pred['ensemble_decision'] and pred['ensemble_confidence'] is not None:
@@ -356,7 +356,7 @@ def generate_report(
     """Generate human-readable monitoring report."""
     lines = []
     lines.append("=" * 60)
-    lines.append("🔍 Binoche Ensemble Success Rate Monitor (Phase 6k)")
+    lines.append("🔍 Binoche_Observer Ensemble Success Rate Monitor (Phase 6k)")
     lines.append("=" * 60)
     lines.append(f"Time Window: Last {hours} hours")
     lines.append(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -477,7 +477,7 @@ def save_metrics(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Monitor Binoche ensemble success rate in production (Phase 6k)"
+        description="Monitor Binoche_Observer ensemble success rate in production (Phase 6k)"
     )
     parser.add_argument(
         '--hours', 
@@ -506,7 +506,7 @@ def main():
     
     args = parser.parse_args()
     
-    print(f"[Monitor] Starting Binoche Success Rate Monitor (Phase 6k)")
+    print(f"[Monitor] Starting Binoche_Observer Success Rate Monitor (Phase 6k)")
     print(f"[Monitor] Time window: last {args.hours} hours")
     print()
     

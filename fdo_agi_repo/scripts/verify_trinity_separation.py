@@ -14,7 +14,7 @@ def load_trinity_demo_signals(hours: int = 24):
     """최근 trinity_demo 소스 신호만 로드"""
     cutoff = datetime.now(timezone.utc) - timedelta(hours=hours)
     
-    signals = {"lua": [], "elo": [], "lumen": []}
+    signals = {"lua": [], "elo": [], "Core": []}
     
     with open(LEDGER_PATH, "r", encoding="utf-8") as f:
         for line in f:
@@ -74,7 +74,7 @@ def analyze_separation(signals):
         # Expected ranges
         expected = {
             "lua": (0.1, 0.3),
-            "lumen": (0.4, 0.6),
+            "Core": (0.4, 0.6),
             "elo": (0.7, 0.9)
         }
         

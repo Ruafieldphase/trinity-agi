@@ -28,7 +28,7 @@ def test_record_task_resonance_basic():
             task_id="test-task-001",
             task_goal="Analyze codebase structure",
             eval_report=eval_report,
-            bqi_coord={"binoche": 0.75, "quality": 0.9, "intent": 0.6},
+            bqi_coord={"Binoche_Observer": 0.75, "quality": 0.9, "intent": 0.6},
             duration_sec=2.5,
         )
         

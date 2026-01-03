@@ -25,10 +25,10 @@ ActionGate = Literal["proceed", "throttle", "pause", "safe_mode"]
 
 # 페르소나별 기본 action_gate 매핑 (from 중요.md)
 PERSONA_ACTION_MAP = {
-    "루멘": "proceed",      # 차원 게이트웨이 - 빠른 진행
+    "Core": "proceed",      # 차원 게이트웨이 - 빠른 진행
     "세나": "throttle",     # 윤리/서사 검토 - 신중한 진행
     "에루": "proceed",      # 메타 패턴 스캔 (150ms timeout)
-    "루아": "proceed",      # 감응 - 빠른 공명
+    "Core": "proceed",      # 감응 - 빠른 공명
     "엘로": "throttle",     # 구조 정합 - 신중한 검증
     "리나": "proceed",      # 색인/기억 - 빠른 검색
     "아리": "throttle",     # 차원 해석 - 구조 분석
@@ -226,14 +226,14 @@ def regulate_with_persona(
     
     Args:
         raw_fear: 편도체 원시 두려움 레벨
-        persona: AI 페르소나 이름 (루멘, 세나, 에루 등)
+        persona: AI 페르소나 이름 (Core, 세나, 에루 등)
         context: 추가 맥락 정보
     
     Returns:
         페르소나 힌트가 포함된 PrefrontalDecision
     
     Example:
-        >>> regulate_with_persona(0.4, "루멘", {})
+        >>> regulate_with_persona(0.4, "Core", {})
         PrefrontalDecision(action_gate='proceed', persona_hint='차원 게이트웨이')
         >>> regulate_with_persona(0.4, "세나", {})
         PrefrontalDecision(action_gate='throttle', persona_hint='윤리 검토 필요')

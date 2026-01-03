@@ -1,6 +1,6 @@
 """
 Rhythm-Aware Boundary Manager
-시안의 리듬(확장/수축)에 따라 임계값(Threshold)을 동적으로 조절합니다.
+Shion의 리듬(확장/수축)에 따라 임계값(Threshold)을 동적으로 조절합니다.
 """
 import logging
 import json

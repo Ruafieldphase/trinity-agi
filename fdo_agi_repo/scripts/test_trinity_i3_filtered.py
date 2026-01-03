@@ -175,7 +175,7 @@ def main():
     parser = argparse.ArgumentParser(description="Trinity I3 측정 (소스 필터링)")
     parser.add_argument("--source", type=str, required=True, help="필터링할 소스명")
     parser.add_argument("--hours", type=int, default=24, help="분석 시간 범위 (시간)")
-    parser.add_argument("--personas", nargs=3, default=["lua", "elo", "lumen"], help="분석할 3개 페르소나")
+    parser.add_argument("--personas", nargs=3, default=["lua", "elo", "Core"], help="분석할 3개 페르소나")
     args = parser.parse_args()
     
     print("=" * 60)

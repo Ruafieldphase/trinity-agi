@@ -2,7 +2,7 @@
 """
 AGI Metrics Collector
 실시간으로 resonance_ledger.jsonl을 분석하여 핵심 메트릭 추출
-+ Lumen gateway, Local proxy, System 리소스 통합 모니터링
++ Core gateway, Local proxy, System 리소스 통합 모니터링
 """
 
 import json
@@ -145,13 +145,9 @@ class MetricsCollector:
         cutoff_time = datetime.now().timestamp() - (hours * 3600)
         events = []
 
-<<<<<<< HEAD
         # Ledger는 다양한 소스가 append하는 JSONL이라 인코딩이 섞일 수 있다.
         # 모니터링이 전체를 멈추지 않도록 디코드 오류는 치환 후 파서에서 스킵한다.
         with open(self.ledger_path, 'r', encoding='utf-8', errors='replace') as f:
-=======
-        with open(self.ledger_path, 'r', encoding='utf-8') as f:
->>>>>>> origin/main
             for line in f:
                 line = line.strip()
                 if not line:
@@ -592,7 +588,7 @@ class MetricsCollector:
         }
 
     def get_health_status(self) -> Dict[str, Any]:
-        """시스템 헬스 상태 평가 (AGI + Lumen + Proxy + System)"""
+        """시스템 헬스 상태 평가 (AGI + Core + Proxy + System)"""
         recent_hours = float(os.getenv('HEALTH_RECENT_HOURS', '1.0'))
         metrics = self.get_realtime_metrics(hours=recent_hours)
 
@@ -647,7 +643,7 @@ class MetricsCollector:
         with ThreadPoolExecutor(max_workers=3) as executor:
             # 3개 서비스를 동시에 체크
             futures = {
-                executor.submit(self._check_lumen_gateway): 'lumen',
+                executor.submit(self._check_core_gateway): 'Core',
                 executor.submit(self._check_local_proxy, proxy_port): 'proxy',
                 executor.submit(self._check_system_resources): 'system'
             }
@@ -665,11 +661,11 @@ class MetricsCollector:
                         'error': f'Exception: {str(e)[:100]}'
                     }
 
-        lumen_status = external_results['lumen']
+        core_status = external_results['Core']
         proxy_status = external_results['proxy']
         system_status = external_results['system']
 
-        health_checks['lumen_ok'] = lumen_status['ok']
+        health_checks['core_ok'] = core_status['ok']
         # Proxy는 옵션 서비스이므로 health 판정에서 제외
         # health_checks['proxy_ok'] = proxy_status['ok']  
         health_checks['system_ok'] = system_status['ok']
@@ -699,7 +695,7 @@ class MetricsCollector:
                 'resolved_proxy_port': proxy_port,  # Show the resolved port
             },
             'external_services': {
-                'lumen': lumen_status,
+                'Core': core_status,
                 'proxy': proxy_status,
                 'system': system_status,
             },
@@ -715,15 +711,15 @@ class MetricsCollector:
         }
 
     @ttl_cache(ttl_seconds=60.0)
-    def _check_lumen_gateway(self) -> Dict[str, Any]:
-        """Lumen gateway 헬스 체크 (HTTP ping) - 60초 캐싱"""
-        lumen_url = os.getenv('LUMEN_GATEWAY_URL', 'https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat')
-        timeout_sec = int(os.getenv('LUMEN_TIMEOUT_SEC', '20'))
+    def _check_core_gateway(self) -> Dict[str, Any]:
+        """Core gateway 헬스 체크 (HTTP ping) - 60초 캐싱"""
+        core_url = os.getenv('CORE_GATEWAY_URL', 'https://Core-gateway-x4qvsargwa-uc.a.run.app/chat')
+        timeout_sec = int(os.getenv('CORE_TIMEOUT_SEC', '20'))
 
         try:
             import requests
             response = requests.post(
-                lumen_url,
+                core_url,
                 json={'message': 'ping'},
                 timeout=timeout_sec
             )

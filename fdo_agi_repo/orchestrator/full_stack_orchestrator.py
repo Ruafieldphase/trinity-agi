@@ -309,7 +309,7 @@ class FullStackOrchestrator:
         confidence = 0.75
         
         if bqi_data and 'persona' in bqi_data:
-            # Binoche 페르소나 활용
+            # Binoche_Observer 페르소나 활용
             persona = bqi_data['persona']
             # 실제로는 복잡한 패턴 매칭
             pass

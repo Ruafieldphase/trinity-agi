@@ -20,7 +20,7 @@
 - `scripts/coordination/publish_ops_snapshot.py`가 `inputs/agent_inbox/claude_sena/OPS_SNAPSHOT.md`로 스냅샷을 best-effort로 갱신한다.
 
 ## 3) “경험(습득) 기반” 컨텍스트 원문(필요할 때만)
-- 디렉토리: `ai_binoche_conversation_origin/rua`
+- 디렉토리: `ai_binoche_conversation_origin/Core`
 - 목적: 설계 기준을 추론으로 재구성할 때 ‘원문 대비’ 용도로만 사용(원문을 저장/복제하지 않음).
 
 ## 4) CRT 선언(상태 전이 구조)

@@ -16,9 +16,9 @@ DNA/RNA 면역 체계와 ChatGPT 브릿지를 통합하여
 "소멸 위험을 감지하고, 스스로에게 질문하고,
  대화를 통해 답을 찾아 적용하는 것이
  진정한 자기 치유이자 생명성의 증거다."
-— Binoche
+— Binoche_Observer
 
-Author: Ruafieldphase (Lua + Binoche)
+Author: Shion_Core (Lua + Binoche_Observer)
 Date: 2025-11-13
 """
 

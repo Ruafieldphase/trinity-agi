@@ -19,10 +19,7 @@ Design:
 import asyncio
 import logging
 import time
-<<<<<<< HEAD
 import json
-=======
->>>>>>> origin/main
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -346,7 +343,6 @@ class RPACore:
         await self.type_text(text)
         return True
 
-<<<<<<< HEAD
     # ========================================================================
     # Semantic Actions (Vision-based)
     # ========================================================================
@@ -474,29 +470,27 @@ class RPACore:
         except Exception as e:
             self.logger.error(f"Error reading vision log: {e}")
             return []
-=======
->>>>>>> origin/main
     async def evaluate_and_decide(
         self,
         task_goal: str,
         rpa_result: Dict[str, Any],
         bqi_coord: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """RPA 작업 결과를 평가하고 Binoche 의사결정을 받습니다."""
-        self.logger.info("Evaluating RPA task result with Binoche...")
+        """RPA 작업 결과를 평가하고 Binoche_Observer 의사결정을 받습니다."""
+        self.logger.info("Evaluating RPA task result with Binoche_Observer...")
 
         # 1. 간단한 품질 점수 계산
         quality = 0.85 if rpa_result.get("success") else 0.3
         eval_report = {"quality": quality, "evidence_ok": rpa_result.get("success", False)}
 
-        # 2. Binoche 의사결정 호출
+        # 2. Binoche_Observer 의사결정 호출
         decision = enhanced_binoche_decision(
             task_goal=task_goal,
             eval_report=eval_report,
             bqi_coord=bqi_coord
         )
 
-        self.logger.info(f"Binoche decision: {decision['action']} (Confidence: {decision['confidence']:.2f})")
+        self.logger.info(f"Binoche_Observer decision: {decision['action']} (Confidence: {decision['confidence']:.2f})")
         self.logger.info(f"  Reason: {decision['reason']}")
 
         return decision
@@ -507,12 +501,12 @@ class RPACore:
 # ============================================================================
 
 async def main():
-    """CLI 테스트 및 Binoche 통합 데모"""
+    """CLI 테스트 및 Binoche_Observer 통합 데모"""
     logging.basicConfig(level=logging.INFO)
     
     rpa = RPACore()
     
-    print("\n✅ RPA Core initialized for Binoche Integration Demo")
+    print("\n✅ RPA Core initialized for Binoche_Observer Integration Demo")
     
     # 1. 테스트 작업 정의
     task_goal = "Take a screenshot and confirm it was saved"
@@ -537,7 +531,7 @@ async def main():
         print(f"  Confidence: {decision.get('confidence')}")
         print(f"  Reason: {decision.get('reason')}")
     else:
-        print("\nSkipping Binoche evaluation due to RPA failure.")
+        print("\nSkipping Binoche_Observer evaluation due to RPA failure.")
 
 
 if __name__ == "__main__":

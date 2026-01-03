@@ -26,7 +26,7 @@ class EloValidator:
         self.observation = self._load_observation()
         
     def _load_observation(self) -> Dict[str, Any]:
-        """루아의 관찰 데이터 로드"""
+        """Core의 관찰 데이터 로드"""
         if not self.lua_path.exists():
             raise FileNotFoundError(f"Lua observation not found: {self.lua_path}")
         
@@ -294,7 +294,7 @@ def main():
     parser.add_argument(
         '--lua-observation',
         default='outputs/lua_observation_latest.json',
-        help='루아의 관찰 데이터 경로'
+        help='Core의 관찰 데이터 경로'
     )
     parser.add_argument(
         '--out-json',
@@ -333,7 +333,7 @@ def main():
     
     print()
     print("✅ 엘로 (반인) 검증 완료")
-    print("   다음: 루멘 (합)이 통합할 차례입니다.")
+    print("   다음: Core (합)이 통합할 차례입니다.")
 
 
 def generate_markdown(result: Dict[str, Any]) -> str:
@@ -415,7 +415,7 @@ def generate_markdown(result: Dict[str, Any]) -> str:
 > - ✅ 일관성 검증
 > - ✅ 객관적 판정
 > 
-> **다음 단계**: 루멘 (합)이 정반합을 통합합니다.
+> **다음 단계**: Core (합)이 정반합을 통합합니다.
 
 ---
 

@@ -61,13 +61,13 @@ def benchmark_dashboard():
     # 5. External services (분리 측정)
     print("\n[5/6] External services check...")
 
-    # Lumen
-    print("  [5a] Lumen gateway...")
+    # Core
+    print("  [5a] Core gateway...")
     start = time.perf_counter()
-    lumen_status = collector._check_lumen_gateway()
-    lumen_duration = time.perf_counter() - start
-    results['lumen_check'] = lumen_duration
-    print(f"    Duration: {lumen_duration:.3f}s (ok: {lumen_status.get('ok')})")
+    core_status = collector._check_core_gateway()
+    core_duration = time.perf_counter() - start
+    results['core_check'] = core_duration
+    print(f"    Duration: {core_duration:.3f}s (ok: {core_status.get('ok')})")
 
     # Proxy
     print("  [5b] Local proxy...")
@@ -86,7 +86,7 @@ def benchmark_dashboard():
     results['system_check'] = system_duration
     print(f"    Duration: {system_duration:.3f}s (ok: {system_status.get('ok')})")
 
-    results['external_services_total'] = lumen_duration + proxy_duration + system_duration
+    results['external_services_total'] = core_duration + proxy_duration + system_duration
 
     # 6. Full get_health_status
     print("\n[6/6] Full get_health_status()...")
@@ -114,7 +114,7 @@ def benchmark_dashboard():
     print(f"  Metrics calculation:  {results['realtime_metrics'] - results['read_events_1h']:.3f}s")
     print(f"  Timeline generation:  {results['timeline_data']:.3f}s")
     print(f"  External services:    {results['external_services_total']:.3f}s")
-    print(f"    - Lumen:            {results['lumen_check']:.3f}s")
+    print(f"    - Core:            {results['core_check']:.3f}s")
     print(f"    - Proxy:            {results['proxy_check']:.3f}s")
     print(f"    - System:           {results['system_check']:.3f}s")
 
@@ -124,8 +124,8 @@ def benchmark_dashboard():
     print("="*60)
 
     slowest = []
-    if results['lumen_check'] > 1.0:
-        slowest.append(f"Lumen gateway check: {results['lumen_check']:.3f}s (consider async or caching)")
+    if results['core_check'] > 1.0:
+        slowest.append(f"Core gateway check: {results['core_check']:.3f}s (consider async or caching)")
     if results['proxy_check'] > 0.5:
         slowest.append(f"Proxy check: {results['proxy_check']:.3f}s (consider async)")
     if results['read_events_24h'] > 1.0:

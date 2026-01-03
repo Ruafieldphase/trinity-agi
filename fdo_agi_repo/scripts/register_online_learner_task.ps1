@@ -1,10 +1,10 @@
 ﻿#!/usr/bin/env powershell
 <#
 .SYNOPSIS
-    Register/Unregister Windows Scheduled Task for Binoche Online Learner (Phase 6l).
+    Register/Unregister Windows Scheduled Task for Binoche_Observer Online Learner (Phase 6l).
 
 .DESCRIPTION
-    This script creates or removes a scheduled task that runs the Binoche Online Learner
+    This script creates or removes a scheduled task that runs the Binoche_Observer Online Learner
     daily to update ensemble judge weights based on prediction accuracy.
     
     Default schedule: 03:20 AM daily (runs after Phase 6k monitoring at 03:15 AM)
@@ -65,7 +65,7 @@ if (-not (Test-Path $ScriptPath)) {
 $ExistingTask = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
 
 if ($Register) {
-    Write-Host "[CONFIG] Registering Binoche Online Learner Scheduled Task..." -ForegroundColor Cyan
+    Write-Host "[CONFIG] Registering Binoche_Observer Online Learner Scheduled Task..." -ForegroundColor Cyan
     Write-Host "   Task Name: $TaskName"
     Write-Host "   Schedule: Daily at $Time"
     Write-Host "   Window: $WindowHours hours"
@@ -121,7 +121,7 @@ $settings.Hidden = $true
         -Trigger $Trigger `
         -Settings $Settings `
         -Principal $Principal `
-        -Description "Binoche Online Learner (Phase 6l) - Updates ensemble judge weights daily based on prediction accuracy."
+        -Description "Binoche_Observer Online Learner (Phase 6l) - Updates ensemble judge weights daily based on prediction accuracy."
 
     Write-Host ""
     Write-Host "[OK] Scheduled Task registered successfully!" -ForegroundColor Green
@@ -137,7 +137,7 @@ $settings.Hidden = $true
 
 }
 elseif ($Unregister) {
-    Write-Host "🗑️ Unregistering Binoche Online Learner Scheduled Task..." -ForegroundColor Cyan
+    Write-Host "🗑️ Unregistering Binoche_Observer Online Learner Scheduled Task..." -ForegroundColor Cyan
     Write-Host "   Task Name: $TaskName"
     Write-Host ""
 
@@ -153,7 +153,7 @@ elseif ($Unregister) {
 }
 else {
     # Show status
-    Write-Host "[METRICS] Binoche Online Learner Scheduled Task Status" -ForegroundColor Cyan
+    Write-Host "[METRICS] Binoche_Observer Online Learner Scheduled Task Status" -ForegroundColor Cyan
     Write-Host "================================================" -ForegroundColor Cyan
     Write-Host ""
 

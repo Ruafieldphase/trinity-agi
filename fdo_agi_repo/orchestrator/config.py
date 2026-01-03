@@ -23,12 +23,14 @@ except ImportError:
 
 # Initialize Vertex AI using environment when available (non-fatal)
 try:
-    import vertexai
-    _vx_project = os.getenv("VERTEX_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCP_PROJECT")
-    _vx_location = os.getenv("VERTEX_LOCATION") or os.getenv("GCP_LOCATION") or os.getenv("GOOGLE_CLOUD_REGION")
-    if _vx_project and _vx_location:
-        # 일부 버전의 vertexai.init은 api_key 매개변수를 지원하지 않으므로 보수적으로 기본 시그니처만 사용
-        vertexai.init(project=_vx_project, location=_vx_location)
+    _use_vertex = os.getenv("AGI_USE_VERTEX", "").lower() in ("1", "true", "yes", "on")
+    if _use_vertex:
+        import vertexai
+        _vx_project = os.getenv("VERTEX_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT") or os.getenv("GCP_PROJECT")
+        _vx_location = os.getenv("VERTEX_LOCATION") or os.getenv("GCP_LOCATION") or os.getenv("GOOGLE_CLOUD_REGION")
+        if _vx_project and _vx_location:
+            # 일부 버전의 vertexai.init은 api_key 매개변수를 지원하지 않으므로 보수적으로 기본 시그니처만 사용
+            vertexai.init(project=_vx_project, location=_vx_location)
     # else: skip init; downstream code can handle defaults or ADC
 except Exception:
     # Library not installed or init failure; allow downstream fallbacks

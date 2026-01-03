@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Binoche Persona Integration for AGI Pipeline (Phase 6b)
+Binoche_Observer Persona Integration for AGI Pipeline (Phase 6b)
 
 자동 의사결정 시스템 - 학습된 BinochePersona 모델을 파이프라인에 통합하여
 70-80% 작업을 자동으로 승인/수정/거절 처리
@@ -75,14 +75,14 @@ class BinocheDecisionEngine:
     def _load_model(self) -> Dict[str, Any]:
         """학습된 BinochePersona 모델 로드"""
         if not self.model_path.exists():
-            print(f"[Binoche] Model not found: {self.model_path}")
+            print(f"[Binoche_Observer] Model not found: {self.model_path}")
             return self._get_default_model()
         
         with open(self.model_path, 'r', encoding='utf-8') as f:
             model = json.load(f)
         
-        print(f"[Binoche] Loaded model v{model.get('version', 'unknown')}")
-        print(f"[Binoche] Trained on {model.get('stats', {}).get('total_tasks', 0)} tasks")
+        print(f"[Binoche_Observer] Loaded model v{model.get('version', 'unknown')}")
+        print(f"[Binoche_Observer] Trained on {model.get('stats', {}).get('total_tasks', 0)} tasks")
         
         return model
     
@@ -283,7 +283,7 @@ class BinocheDecisionEngine:
     def print_stats(self):
         """통계 출력"""
         stats = self.get_stats()
-        print("\n[Binoche] Automation Statistics:")
+        print("\n[Binoche_Observer] Automation Statistics:")
         print(f"  Total decisions: {stats['total']}")
         print(f"  Automation rate: {stats['automation_percent']}")
         print(f"    - Approved: {stats['approved']}")
@@ -294,7 +294,7 @@ class BinocheDecisionEngine:
 
 def demo():
     """데모: BinocheDecisionEngine 사용 예제"""
-    print("=== Binoche Decision Engine Demo ===\n")
+    print("=== Binoche_Observer Decision Engine Demo ===\n")
     
     engine = BinocheDecisionEngine()
     
