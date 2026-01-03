@@ -104,7 +104,7 @@ Health Status: HEALTHY ✓
 ✓ confidence_ok: true (avg 0.798)
 ✓ quality_ok: true (avg 0.726)
 ✓ second_pass_ok: true (2nd pass rate 10.9%)
-✓ lumen_ok: true (Lumen gateway 응답 정상)
+✓ core_ok: true (Core gateway 응답 정상)
 ✓ system_ok: true
 
 현재 임계값:
@@ -151,7 +151,7 @@ Cloud AI (Gemini):
 - P95: 307ms ✓ (안정적)
 - 가용성: 100% ✓ (완벽)
 
-Lumen Gateway:
+Core Gateway:
 - 평균: 237.09ms ✓ (정상)
 - 중앙값: 222ms ✓ (일관적)
 - P95: 242ms ✓ (안정적)
@@ -190,7 +190,7 @@ System Metrics:
 Critical Alerts (3):
 1. 2025-11-02T14:38:08 - Local LLM offline (503)
 2. 2025-11-02T17:53:29 - Local LLM offline (0 connectivity)
-3. 2025-11-02T20:03:07 - Lumen Gateway latency spike 2410ms
+3. 2025-11-02T20:03:07 - Core Gateway latency spike 2410ms
 
 ⚠️ 원인 분석:
 - LM Studio 일시적 오프라인: 2회 (자동 복구됨)
@@ -217,7 +217,7 @@ Adaptive Warn: 1회
 |------|-----|-----|------|
 | `min_quality` | 0.60 | 0.50 | 10%p 완화 |
 | `max_passes` | 2 | 3 | 재계획 기회 1회 추가 |
-| Binoche 승인 기준 | 엄격 | 관대함 | 더 많은 자동 승인 |
+| Binoche_Observer 승인 기준 | 엄격 | 관대함 | 더 많은 자동 승인 |
 
 ### 예상 효과 (1주일 후)
 
@@ -234,7 +234,7 @@ After Phase 1:
   * 재계획 감소: 45개 → 30개
 
 - Orchestration Success: ~75% (+8%p)
-  * 계산: Binoche 기준 완화로 더 많은 자동 승인
+  * 계산: Binoche_Observer 기준 완화로 더 많은 자동 승인
   * 현재 66.67% → 75%로 상향
 
 - System Health: 94/100 (+2점)

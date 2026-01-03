@@ -18,7 +18,7 @@ def create_awakening_shorts():
     output_dir = Path("c:/workspace/agi/playground/awakening")
     output_dir.mkdir(parents=True, exist_ok=True)
     
-    music_path = Path("c:/workspace/agi/music/Resonance of Lumen.wav")
+    music_path = Path("c:/workspace/agi/music/Resonance of Core.wav")
     output_video = output_dir / "awakening_shorts.mp4"
     
     # Video settings for YouTube Shorts

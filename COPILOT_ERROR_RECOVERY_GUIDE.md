@@ -18,7 +18,7 @@ Reason: Request Failed: 400 {"error":{"message":"","code":"invalid_request_body"
 
 This will:
 1. Log the error pattern
-2. Check if Lubit (OpenAI Codex) or Sian (Gemini CLI) bridges exist
+2. Check if Lubit (OpenAI Codex) or Shion (Gemini CLI) bridges exist
 3. Activate the first available fallback agent
 4. Attempt recovery suggestions via clipboard context
 
@@ -30,7 +30,7 @@ This will:
 python fdo_agi_repo\integrations\openai_codex_bridge.py --mode error-recovery --context clipboard
 ```
 
-#### Using Sian (Gemini CLI):
+#### Using Shion (Gemini CLI):
 ```powershell
 # Copy error context to clipboard first, then:
 python fdo_agi_repo\integrations\gemini_cli_bridge.py --mode error-recovery --context clipboard
@@ -38,7 +38,7 @@ python fdo_agi_repo\integrations\gemini_cli_bridge.py --mode error-recovery --co
 
 ### Option 3: Manual Paste (User-Driven)
 1. Copy the error message + recent context
-2. Open external CLI tool (e.g., `lubit` terminal or `sian` terminal)
+2. Open external CLI tool (e.g., `lubit` terminal or `Shion` terminal)
 3. Paste context and request diagnosis
 4. Apply suggested fix manually
 
@@ -70,8 +70,8 @@ code outputs\copilot_error_recovery_log.jsonl
 # Lubit log (if activated)
 code outputs\lubit_recovery_log.jsonl
 
-# Sian log (if activated)
-code outputs\sian_recovery_log.jsonl
+# Shion log (if activated)
+code outputs\shion_recovery_log.jsonl
 ```
 
 ## 🔄 Fallback Agent Architecture
@@ -82,7 +82,7 @@ Copilot Error (400)
 copilot_error_recovery.ps1
     ↓
 ┌─────────────────┬─────────────────┐
-│  Lubit (OpenAI) │  Sian (Gemini)  │ ← Fallback CLI Agents
+│  Lubit (OpenAI) │  Shion (Gemini)  │ ← Fallback CLI Agents
 └─────────────────┴─────────────────┘
     ↓
 Recovery Suggestions → User applies manually

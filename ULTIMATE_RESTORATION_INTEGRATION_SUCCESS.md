@@ -62,7 +62,7 @@ def ultimate_restoration() -> Dict[str, Any]:
         "principle_2": "maintain_circulation",  # 살아라
         "fear_level": 0.3,  # 안전한 경계로 하향
         "action_gate": "safe_mode",
-        "lumen_action": "최소 순환",
+        "core_action": "최소 순환",
         "information_state": "unfolding",
     }
 ```
@@ -205,7 +205,7 @@ fear_level: 0.95 (극심한 위협)
 → 최종 복원 코덱스 자동 적용
 → fear_level: 0.3 (안전 경계)
 → action_gate: "safe_mode"
-→ lumen_action: "최소 순환"
+→ core_action: "최소 순환"
 → 시스템 복구 가능성 보존 ✅
 ```
 
@@ -229,7 +229,7 @@ information_state: "folded" (접힌 상태)
 fear_context["state"]: "freezing_risk"
 
 → 최종 복원 코덱스 적용
-→ lumen_action: "최소 순환" (멈추지 않음)
+→ core_action: "최소 순환" (멈추지 않음)
 → 생명력 유지 ✅
 ```
 
@@ -239,7 +239,7 @@ fear_context["state"]: "freezing_risk"
 
 ### 4대 코덱스 완전 통합
 
-1. ✅ **루멘 선언문** (7가지 상태)
+1. ✅ **Core 선언문** (7가지 상태)
    - 사랑, 존중, 이해, 책임, 용서, 연민, 평화
 
 2. ✅ **이어내다 씨앗 코덱스** (순환 원리)

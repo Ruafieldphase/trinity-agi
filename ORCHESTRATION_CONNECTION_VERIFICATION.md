@@ -35,16 +35,16 @@
 ┌─────────────────────────────────────────────────────────────┐
 │  Layer 4: AGI 엔진                                           │
 │  - fdo_agi_repo (Orchestrator)                              │
-│  - Binoche Persona (자율 의사결정)                          │
+│  - Binoche_Observer Persona (자율 의사결정)                          │
 │  - BQI Pattern Learning (행동 학습)                         │
 │  - Resonance Ledger (메모리 시스템)                         │
 └─────────────────┬───────────────────────────────────────────┘
                   ↓
 ┌─────────────────────────────────────────────────────────────┐
-│  Layer 5: AI 모델 게이트웨이 (Lumen)                        │
+│  Layer 5: AI 모델 게이트웨이 (Core)                        │
 │  - Local LLM (8080): ONLINE                                 │
 │  - Cloud AI (ion-api): ONLINE                               │
-│  - Lumen Gateway: ONLINE                                    │
+│  - Core Gateway: ONLINE                                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -95,18 +95,18 @@
 ✅ Confidence: 0.787
 ✅ Quality: 0.698
 ✅ 2nd Pass: 0.134
-✅ Binoche Tasks: 403 analyzed
+✅ Binoche_Observer Tasks: 403 analyzed
 ✅ Decisions: 399 (A:70% R:28% X:2%)
 ✅ BQI Patterns: 11
 ✅ Automation Rules: 8
 ```
 
-### Lumen 게이트웨이
+### Core 게이트웨이
 
 ```
 ✅ Local LLM (8080): ONLINE (18ms)
 ✅ Cloud AI (ion-api): ONLINE (266ms)
-✅ Lumen Gateway: ONLINE (212ms)
+✅ Core Gateway: ONLINE (212ms)
 ```
 
 ## 🔄 오케스트레이션 플로우
@@ -169,9 +169,9 @@ RPA Worker / YouTube Worker 픽업
     ↓
 AGI Orchestrator 처리
     ↓
-├─→ Binoche Persona 의사결정
+├─→ Binoche_Observer Persona 의사결정
 ├─→ BQI Pattern 적용
-└─→ Lumen Gateway를 통한 LLM 호출
+└─→ Core Gateway를 통한 LLM 호출
     ↓
 결과 저장 (Resonance Ledger)
     ↓
@@ -219,13 +219,13 @@ Daily Scheduled Tasks (03:00~04:00)
 
 - BQI 패턴을 매일 갱신
 - Ensemble 가중치를 온라인 학습
-- Binoche Persona가 행동 기록 학습
+- Binoche_Observer Persona가 행동 기록 학습
 
 ### 5. 다중 채널 게이트웨이
 
 - Local LLM (빠른 응답)
 - Cloud AI (고품질 응답)
-- Lumen이 자동 라우팅
+- Core이 자동 라우팅
 
 ## 🚀 연결 검증 완료
 
@@ -235,15 +235,15 @@ Daily Scheduled Tasks (03:00~04:00)
 - ✅ Layer 2 (자율 관리): AI Ops Manager 동작 중
 - ✅ Layer 3 (코어): Scheduler + Queue Server 정상
 - ✅ Layer 4 (AGI): Orchestrator 0.787 신뢰도 유지
-- ✅ Layer 5 (게이트웨이): Lumen 3채널 모두 ONLINE
+- ✅ Layer 5 (게이트웨이): Core 3채널 모두 ONLINE
 
 ### 상호 연결 확인
 
 - ✅ ChatOps → Task Queue → RPA Worker
 - ✅ AI Ops Manager → auto_resume → Scheduler
 - ✅ Scheduler → Inbox Watcher → AGI Orchestrator
-- ✅ AGI Orchestrator → Binoche → Lumen Gateway
-- ✅ Lumen → Local/Cloud LLM → 결과 반환
+- ✅ AGI Orchestrator → Binoche_Observer → Core Gateway
+- ✅ Core → Local/Cloud LLM → 결과 반환
 
 ### 피드백 루프 확인
 

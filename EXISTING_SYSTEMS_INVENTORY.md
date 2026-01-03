@@ -166,7 +166,7 @@
 
 **모니터링 & 리포팅**:
 - `generate_monitoring_report.ps1` - 모니터링 리포트 (24h/7d)
-- `quick_status.ps1` - 통합 대시보드 (AGI + Lumen)
+- `quick_status.ps1` - 통합 대시보드 (AGI + Core)
 - `system_health_check.ps1` - 시스템 헬스 체크
 - `check_life_continuity.ps1` - Life Continuity 체크
 
@@ -238,7 +238,7 @@
 ```powershell
 .\scripts\quick_status.ps1
 ```
-**VS Code Task**: `Monitoring: Unified Dashboard (AGI + Lumen)`
+**VS Code Task**: `Monitoring: Unified Dashboard (AGI + Core)`
 
 ### "음악 추천해줘"
 → ✅ **Music Daemon + Groove Engine** 이미 있음!

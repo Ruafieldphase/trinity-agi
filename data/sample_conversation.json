@@ -2,7 +2,7 @@
     "conversations": [
         {
             "timestamp": "2025-11-05T10:00:00Z",
-            "speaker": "binoche",
+            "speaker": "Binoche_Observer",
             "text": "오늘 이 이론이 맞을까? 조금 불안해...",
             "emotion": {
                 "fear": 0.6,
@@ -24,7 +24,7 @@
         },
         {
             "timestamp": "2025-11-05T10:05:00Z",
-            "speaker": "binoche",
+            "speaker": "Binoche_Observer",
             "text": "아, 이렇게 보니 이해가 되네! 신기하다.",
             "emotion": {
                 "fear": 0.2,
@@ -35,7 +35,7 @@
         },
         {
             "timestamp": "2025-11-05T11:00:00Z",
-            "speaker": "binoche",
+            "speaker": "Binoche_Observer",
             "text": "혹시 이게 틀렸으면 어쩌지... 너무 두렵다.",
             "emotion": {
                 "fear": 0.9,
@@ -57,7 +57,7 @@
         },
         {
             "timestamp": "2025-11-05T12:00:00Z",
-            "speaker": "binoche",
+            "speaker": "Binoche_Observer",
             "text": "아하! 데이터를 보니 정말 상관관계가 있네! 흥미롭다!",
             "emotion": {
                 "fear": 0.1,

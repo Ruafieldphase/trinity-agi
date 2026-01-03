@@ -8,17 +8,17 @@
 
 ## 🎯 완성된 시스템 (6대 통합)
 
-### 1. **Resonance Loop + 루멘 통합** ✅
+### 1. **Resonance Loop + Core 통합** ✅
 
 - **목표**: AGI 자기교정 루프의 인사이트 증폭
-- **구현**: `run_resonance_lumen_integration.ps1`
+- **구현**: `run_resonance_core_integration.ps1`
 - **페르소나**: 세나 (🌐) - 연결성 분석
 - **결과**: 이벤트 패턴을 페르소나 인사이트로 변환
 
-### 2. **BQI Phase 6 + 루멘 통합** ✅
+### 2. **BQI Phase 6 + Core 통합** ✅
 
 - **목표**: 비노슈 패턴 학습 강화
-- **구현**: `run_bqi_lumen_integration.ps1`
+- **구현**: `run_bqi_core_integration.ps1`
 - **페르소나**: 엘로 (🌟) - 창의적 분석
 - **결과**: BQI 모델에 페르소나 해석 추가
 
@@ -29,10 +29,10 @@
 - **기능**: 작업 분배, 결과 통합, 리포트 생성
 - **결과**: 5명 페르소나 자동 협업
 
-### 4. **YouTube 학습 + 루멘 강화** ✅
+### 4. **YouTube 학습 + Core 강화** ✅
 
 - **목표**: 영상 인사이트를 페르소나 관점으로 확장
-- **구현**: `run_youtube_lumen_enhancement.ps1`
+- **구현**: `run_youtube_core_enhancement.ps1`
 - **페르소나**: 누리 (🌏) - 실용적 적용
 - **결과**: 기술 영상 → 실행 가능한 인사이트
 
@@ -132,9 +132,9 @@
 .\run_all_integrations.ps1
 
 # 또는 개별 실행
-.\run_resonance_lumen_integration.ps1
-.\run_bqi_lumen_integration.ps1
-.\run_youtube_lumen_enhancement.ps1 -Url <URL>
+.\run_resonance_core_integration.ps1
+.\run_bqi_core_integration.ps1
+.\run_youtube_core_enhancement.ps1 -Url <URL>
 .\run_intelligent_feedback.ps1
 .\run_orchestration.ps1
 .\generate_daily_briefing.ps1
@@ -172,9 +172,9 @@
 
 ```
 scripts/
-├── run_resonance_lumen_integration.ps1
-├── run_bqi_lumen_integration.ps1
-├── run_youtube_lumen_enhancement.ps1
+├── run_resonance_core_integration.ps1
+├── run_bqi_core_integration.ps1
+├── run_youtube_core_enhancement.ps1
 ├── run_intelligent_feedback.ps1
 ├── run_orchestration.ps1
 ├── generate_daily_briefing.ps1
@@ -192,8 +192,8 @@ docs/
 
 ### **리포트 예시**
 
-- Resonance Loop: `resonance_lumen_integration_latest.md`
-- BQI Phase 6: `bqi_lumen_integration_latest.md`
+- Resonance Loop: `resonance_core_integration_latest.md`
+- BQI Phase 6: `bqi_core_integration_latest.md`
 - YouTube: `youtube_enhanced_YYYYMMDD_HHMMSS.md`
 - 피드백: `feedback_implementation_plan.md`
 - 오케스트레이션: `orchestration_latest.md`
@@ -210,7 +210,7 @@ docs/
 .\generate_daily_briefing.ps1 -OpenReport
 
 # 2. YouTube 영상 분석
-.\run_youtube_lumen_enhancement.ps1 `
+.\run_youtube_core_enhancement.ps1 `
     -Url "https://youtube.com/watch?v=..." `
     -OpenReport
 

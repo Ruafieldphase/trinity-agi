@@ -328,7 +328,7 @@ code c:\workspace\agi
 # 2. 자동 동기화 체인 실행 (자동)
 # - Server 확인/시작
 # - Worker 확인/시작
-# - Lumen 프로브
+# - Core 프로브
 # - 24h 리포트 생성
 
 # 3. 수동 확인 (권장)

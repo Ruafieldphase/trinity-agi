@@ -17,9 +17,9 @@ Successfully deployed a **fully autonomous real-time monitoring system** that co
 ### Current Performance (2025-11-02 10:13 UTC)
 
 ```
-Lumen Gateway:  174ms    [Stable ✅]    Primary ⚡
+Core Gateway:  174ms    [Stable ✅]    Primary ⚡
 LM Studio:     6,278ms   [Variable 📊]  Fallback 🔄
-Speed Ratio:   36.0x faster (Lumen)
+Speed Ratio:   36.0x faster (Core)
 ```
 
 ### System Health
@@ -36,7 +36,7 @@ Speed Ratio:   36.0x faster (Lumen)
 
 Every 30 minutes, the system executes this chain:
 
-1. **Benchmark** both Lumen and LM Studio (3 iterations each)
+1. **Benchmark** both Core and LM Studio (3 iterations each)
 2. **Analyze** statistical trends (24-hour lookback window)
 3. **Optimize** routing policy (auto-adjust threshold if needed)
 4. **Update** dashboards (JSON + HTML with charts)
@@ -53,7 +53,7 @@ The browser dashboard auto-refreshes every 5 minutes to always show the latest d
 
 - 🟢 System health badge (color-coded)
 - 📊 Interactive latency charts (Chart.js)
-- ⚡ Performance comparison (Lumen vs LM Studio)
+- ⚡ Performance comparison (Core vs LM Studio)
 - 🎯 Current routing policy + threshold logic
 - 🔗 Quick links to trend reports (JSON/MD)
 - 🔄 Auto-refresh countdown timer
@@ -93,7 +93,7 @@ Start-Process "C:\workspace\agi\outputs\system_dashboard_latest.html"
 
 ## 📈 Key Insights
 
-1. **Lumen is Production-Ready**
+1. **Core is Production-Ready**
    - Consistent 170-180ms latency
    - Stable performance (σ = 4.5ms)
    - 100% uptime

@@ -282,7 +282,7 @@ while ($true) {
 
 **Team**:
 
-- Ruafield (Human Lead)
+- ___CORE_FIELD_ST___ (Human Lead)
 - GitHub Copilot (AI Assistant)
 
 **Timeline**: 2025-11-01 (Single Session, ~2 hours)

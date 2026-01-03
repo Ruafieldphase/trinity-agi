@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Ethics Scorer
-Purpose: Score actions and decisions against ethical principles defined in lumen_constitution.json
+Purpose: Score actions and decisions against ethical principles defined in core_constitution.json
 Principle: "실행 시 네트워크/PII 저장 금지" (No network access or PII storage during execution)
 
 CRITICAL: This module must NEVER:
@@ -24,7 +24,7 @@ class EthicsScorer:
     Pure analysis - NO network, NO storage, NO actions.
     """
 
-    def __init__(self, constitution_path: str = "policy/lumen_constitution.json", output_dir: str = "outputs"):
+    def __init__(self, constitution_path: str = "policy/core_constitution.json", output_dir: str = "outputs"):
         self.constitution_path = Path(constitution_path)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)

@@ -66,7 +66,7 @@ python fdo_agi_repo\scripts\check_health.py
 
 ### Resonance Loop 테스트
 ```powershell
-.\scripts\run_resonance_lumen_integration.ps1
+.\scripts\run_resonance_core_integration.ps1
 ```
 
 ---
@@ -180,7 +180,7 @@ Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File
 
 ## 🎯 빠른 진단
 
-### Lumen vs LM Studio 비교
+### Core vs LM Studio 비교
 ```powershell
 .\scripts\compare_performance.ps1 -Warmup -Iterations 5
 ```

@@ -225,7 +225,7 @@ Key Improvements:
 ✅ Windows Task registration successful
 ```
 
-### Lumen Gateway Status
+### Core Gateway Status
 - Mean Latency: 219.69ms
 - P95 Latency: 229ms
 - Spike Count: 1 in 24h

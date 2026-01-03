@@ -94,7 +94,7 @@ VS Code에서 워크스페이스를 열면 **"Auto: Bring-up on VS Code Open (sa
 
 - Task Queue Server (8091) 확인/시작
 - RPA Worker 확인/시작
-- Lumen Health Probe 실행
+- Core Health Probe 실행
 - Monitoring Report (24h) 생성
 - Realtime Pipeline 빌드 → 요약 → 자동 열기
 

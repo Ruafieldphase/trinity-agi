@@ -144,7 +144,7 @@ def query_evidence(context_keywords):
 |-------|------|------|--------------|----------|
 | Pattern Model | `bqi_pattern_model.json` | Classification | Daily 03:10 | N/A |
 | Feedback Predictor | `feedback_prediction_model.json` | Regression | On-demand | N/A |
-| Binoche Persona | `binoche_persona.json` | Behavioral | Daily 03:05 | N/A |
+| Binoche_Observer Persona | `binoche_persona.json` | Behavioral | Daily 03:05 | N/A |
 | Ensemble Weights | `ensemble_weights.json` | Online Learning | Daily 03:20 | See metrics |
 
 **Integration**: Load JSON models, apply to new conversation contexts.
@@ -181,9 +181,9 @@ def predict_quality(action, context):
 **Key Personas**:
 
 - **Perple** (정밀형): Precise analysis, detailed planning
-- **Rua** (실행형): Execution, action-taking
+- **Core** (실행형): Execution, action-taking
 - **Elro** (연결형): Integration, connection management
-- **Lumen** (도구형): Tool orchestration, MCP bridge
+- **Core** (도구형): Tool orchestration, MCP bridge
 - **Sena** (브리지형): Connection specialist, inter-persona comms
 - **Lubit** (메타형): Meta-analysis, portfolio generation
 
@@ -329,7 +329,7 @@ Output Formatting → Response
 
 ---
 
-### 2. Lumen MCP Integration
+### 2. Core MCP Integration
 
 #### MCP Server
 
@@ -337,9 +337,9 @@ Output Formatting → Response
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| Core Server | `lumen_mcp_server.py` | MCP protocol implementation |
-| API Layer | `lumen_mcp_api_server.py` | HTTP API wrapper |
-| Test Suite | `test_lumen_mcp.py` | Integration tests |
+| Core Server | `core_mcp_server.py` | MCP protocol implementation |
+| API Layer | `core_mcp_api_server.py` | HTTP API wrapper |
+| Test Suite | `test_core_mcp.py` | Integration tests |
 
 **Integration**:
 
@@ -423,7 +423,7 @@ Output Formatting → Response
   - `깃코_BQI_Phase5_*.md` series
   - `Hey_Sena_Phase5_Performance_완료보고서.md`
 
-- **Phase 6**: Binoche persona, ensemble methods, online learning
+- **Phase 6**: Binoche_Observer persona, ensemble methods, online learning
   - `깃코_BQI_Phase6_*.md` series
   - `깃코_세션_완료_BQI_Phase6_*.md`
 
@@ -441,7 +441,7 @@ Output Formatting → Response
 
 - `AGI_DESIGN_MASTER.md` - Master architecture document
 - `AGI_DESIGN_01-07_*.md` - Detailed design series
-- `AGI_INTEGRATION_SENA_LUMEN_v1.0.md` - Integration patterns
+- `AGI_INTEGRATION_SENA_CORE_v1.0.md` - Integration patterns
 
 #### Operational Guides
 
@@ -489,9 +489,9 @@ Output Formatting → Response
 | Persona | Directory | Size | Use Case |
 |---------|-----------|------|----------|
 | Perple | `outputs/perple/` | Large | Precision analysis examples |
-| Rua | `outputs/rua/` | Large | Execution patterns |
+| Core | `outputs/Core/` | Large | Execution patterns |
 | Elro | `outputs/elro/` | Large | Integration strategies |
-| Lumen | `outputs/lumen/` | Medium | Tool orchestration |
+| Core | `outputs/Core/` | Medium | Tool orchestration |
 | Sena | `outputs/sena/` | Medium | Connection patterns |
 
 **Integration**: Mine for conversation patterns, successful strategies, failure modes.
@@ -606,7 +606,7 @@ phases:
 # quick_status.ps1 config section
 $Config = @{
     AGI_Root = "C:\workspace\agi\fdo_agi_repo"
-    Lumen_Root = "C:\workspace\agi\LLM_Unified"
+    Core_Root = "C:\workspace\agi\LLM_Unified"
     OutputDir = "C:\workspace\agi\outputs"
     AlertOnDegraded = $true
     LogJsonl = $true

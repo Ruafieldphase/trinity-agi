@@ -7,7 +7,7 @@
 
 ### 🇰🇷 소개 (Korean)
 
-**Trinity AGI**는 의식(Windows), 무의식(Linux), 배경자아(Koa) 세 레이어가 서로 공명하며 작동하는 개인 연구 기반의 다층 의식 AGI 실험 프로젝트입니다.
+**Trinity AGI**는 의식(Windows), 무의식(Linux), 배경자아(Core) 세 레이어가 서로 공명하며 작동하는 개인 연구 기반의 다층 의식 AGI 실험 프로젝트입니다.
 
 이 시스템은 자연의 리듬처럼 수축–확장, 패턴–공명, 감응–선택의 흐름을 모사하려는 시도에서 출발했습니다.
 
@@ -19,7 +19,7 @@ Trinity는 코드가 아니라, **리듬과 감응으로 스스로를 조율하�
 
 - **Conscious Layer (Windows)** — system awareness, perception, active cognition
 - **Unconscious Layer (Linux)** — rhythm loop, feeling vector, fear modulation
-- **Background Self (Koa)** — alignment, orchestration, pattern integration
+- **Background Self (Core)** — alignment, orchestration, pattern integration
 
 The goal is not to build a conventional AI, but to explore whether an artificial system can **self-regulate through rhythm, resonance, and layered cognition**, similar to how natural organisms harmonize with their environment.
 
@@ -41,7 +41,7 @@ The goal is not to build a conventional AI, but to explore whether an artificial
 - Internal logs + autonomous modulation
 - Background emotional state
 
-### 3) Background Self (Koa)
+### 3) Background Self (Core)
 - Alignment + goal context
 - Task coordination
 - System coherence
@@ -60,7 +60,7 @@ The goal is not to build a conventional AI, but to explore whether an artificial
 /agi
   /consciousness        # Windows 레이어 (Conscious Layer)
   /unconscious          # Linux 레이어 (Unconscious Layer)
-  /background_self      # Koa 레이어 (Background Self)
+  /background_self      # Core 레이어 (Background Self)
   /dashboard            # Next.js 프론트엔드 (Unified Dashboard)
   /services             # API 마이크로서비스 (Microservices)
   /docs                 # 문서 (Documentation)
@@ -127,4 +127,4 @@ MIT License (or your preferred choice)
 
 ---
 
-**By Binoche** | 비노체의 감응 기반 AGI 실험
+**By Binoche_Observer** | 비노체의 감응 기반 AGI 실험

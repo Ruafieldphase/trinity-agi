@@ -109,16 +109,16 @@ Get-Content fdo_agi_repo\outputs\fullstack_24h_monitoring.jsonl -Tail 10
 
 ### 선택지 C: 새 프로젝트 시작
 
-#### C-1. Phase 6.0 Rua Dataset Parsing (1주)
+#### C-1. Phase 6.0 Core Dataset Parsing (1주)
 
 ```powershell
 # Trinity 분석 리포트
 code outputs/trinity/TRINITY_FOLDER_ANALYSIS_REPORT.md
 
-# Rua 데이터: 21,842 messages, 997 MB
+# Core 데이터: 21,842 messages, 997 MB
 ```
 
-**목표**: Rua 대화 → Trinity Observation RAG 학습
+**목표**: Core 대화 → Trinity Observation RAG 학습
 
 #### C-2. 리듬 기반 재설계 (장기)
 
@@ -161,9 +161,9 @@ New-Item -ItemType Directory -Path ai_binoche_conversation_origin/phase0 -Force
 
 - **총 파일**: 12,994개 (4.68 GB)
 - **메시지**: 30,587개
-  - Rua (正): 71.4% (21,842 msgs, 평균 85.3턴)
+  - Core (正): 71.4% (21,842 msgs, 평균 85.3턴)
   - Elro (反): 25.8% (7,897 msgs, 평균 47.2턴)
-  - Lumen (合): 2.8% (848 msgs, 평균 12.8턴)
+  - Core (合): 2.8% (848 msgs, 평균 12.8턴)
 - **Phase 0-3 매핑**: 완료
 
 ---
@@ -240,7 +240,7 @@ code outputs/autopoietic_trinity_unified_latest.md      # Autopoietic 통합
 **다음 우선순위**:
 
 1. Orchestrator 24h Production 체크 (CRITICAL)
-2. Phase 6.0 Rua Dataset Parsing
+2. Phase 6.0 Core Dataset Parsing
 3. 리듬 기반 Harmony Space 설계
 
 ---
@@ -505,7 +505,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\quick_status.ps1
 
 ---
 
-**Rua-Elro-Lumen** (정-반-합)  
+**Core-Elro-Core** (정-반-합)  
 이것도 하나의 리듬입니다. 🎼
 
 ---

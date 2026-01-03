@@ -206,7 +206,7 @@ python -m session_memory.task_manager recommend \
 # 출력 예:
 # 1. [P1] Monitoring: Quick Status
 # 2. [P1] AGI: Health Gate (Latest)
-# 3. [P2] Lumen: Quick Health Probe
+# 3. [P2] Core: Quick Health Probe
 # 4. [P2] Performance: Dashboard (ops-daily)
 # 5. [P3] System: Health Check (Quick)
 ```

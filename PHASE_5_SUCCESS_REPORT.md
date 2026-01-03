@@ -55,7 +55,7 @@ Commit 2: 14d6a9b - feat: Add Phase 5 final verification script
 
 ```bash
 ✅ Push 성공: ce20f0f..14d6a9b main -> main
-✅ 원격 저장소: https://github.com/Ruafieldphase/agi.git
+✅ 원격 저장소: https://github.com/Shion_Core/agi.git
 ✅ 백업 완료: 2025-10-31
 ```
 
@@ -363,7 +363,7 @@ Phase 5 프로젝트가 성공적으로 완료되었습니다.
 ## 📞 연락처
 
 - **프로젝트**: Gitko AGI
-- **GitHub**: <https://github.com/Ruafieldphase/agi>
+- **GitHub**: <https://github.com/Shion_Core/agi>
 - **최종 커밋**: 14d6a9b
 - **완료일**: 2025년 10월 31일
 

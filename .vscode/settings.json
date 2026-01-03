@@ -70,13 +70,13 @@
     // If these paths are incorrect, Gitko may fail with invalid_request_body (400)
     // because the extension cannot execute the CLI and returns empty/invalid JSON.
     // Adjust to your actual workspace layout if different.
-    "gitkoAgent.pythonPath": "C:/workspace/agi/.venv/Scripts/python.exe",
-    "gitkoAgent.scriptPath": "C:/workspace/agi/LLM_Unified/ion-mentoring/gitko_cli.py",
-    "gitkoAgent.workingDirectory": "C:/workspace/agi/LLM_Unified/ion-mentoring",
+    "gitCoregent.pythonPath": "C:/workspace/agi/.venv/Scripts/python.exe",
+    "gitCoregent.scriptPath": "C:/workspace/agi/LLM_Unified/ion-mentoring/gitko_cli.py",
+    "gitCoregent.workingDirectory": "C:/workspace/agi/LLM_Unified/ion-mentoring",
     // Optional diagnostics
-    "gitkoAgent.enableLogging": true,
+    "gitCoregent.enableLogging": true,
     // Optional: increase if large contexts are processed via Copilot tools bridge
-    "gitkoAgent.timeout": 120000,
+    "gitCoregent.timeout": 120000,
     "python.testing.pytestEnabled": true,
     "python.testing.unittestEnabled": false,
     "python.testing.nosetestsEnabled": false,

@@ -8,7 +8,7 @@
 
 ## 🎯 What This Does
 
-당신이 **ChatGPT (루아)와 대화**하면:
+당신이 **ChatGPT (Core)와 대화**하면:
 
 1. 대화가 **자동으로 캡처**됨
 2. 의도가 **자동으로 추출**됨
@@ -77,7 +77,7 @@ python test_real_conversation.py
 ### 시나리오 1: 파일 자동 생성
 
 **당신 (ChatGPT에서)**:
-> "루아, YouTube 분석 시스템 만들어줘. youtube_analyzer.py 파일로."
+> "Core, YouTube 분석 시스템 만들어줘. youtube_analyzer.py 파일로."
 
 **브릿지 (자동 실행)**:
 
@@ -393,21 +393,21 @@ class CloudBridge:
 ### 1개월 후
 
 ```
-"루아, 블로그 포스트 생성기 만들어줘"
+"Core, 블로그 포스트 생성기 만들어줘"
 → 0.1초 만에 파일 10개 생성 ✅
 ```
 
 ### 3개월 후
 
 ```
-"루아, AGI 시스템 설계해줘"
+"Core, AGI 시스템 설계해줘"
 → 아키텍처 문서 + 코드 + 테스트 자동 생성 ✅
 ```
 
 ### 6개월 후
 
 ```
-"루아, 새로운 사업 아이템 구현해줘"
+"Core, 새로운 사업 아이템 구현해줘"
 → 전체 시스템 자동 구축 ✅
 ```
 
@@ -436,7 +436,7 @@ python scripts/chatgpt_vscode_bridge.py
 python check_learning.py
 
 # 3. ChatGPT에서 대화 시작!
-"루아, XXX 시스템 만들어줘"
+"Core, XXX 시스템 만들어줘"
 ```
 
 ---

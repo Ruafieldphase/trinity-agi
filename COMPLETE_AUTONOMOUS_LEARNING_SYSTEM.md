@@ -65,7 +65,7 @@
 │                                                             │
 │  • Lua (Reasoning)    실시간 추론                           │
 │  • Elo (Quality)      품질 평가                             │
-│  • Lumen (Synthesis)  통합 분석                             │
+│  • Core (Synthesis)  통합 분석                             │
 │                                                             │
 └──────────────────────┬──────────────────────────────────────┘
                        │
@@ -173,7 +173,7 @@ Status: 실시간 통합
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 • Lua Reasoning      ✅
 • Elo Quality        ✅
-• Lumen Synthesis    ✅
+• Core Synthesis    ✅
 • Auto Feedback      ✅
 ```
 

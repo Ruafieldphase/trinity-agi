@@ -12,14 +12,14 @@
 
 ### 1. Trinity Dataset Integration for BQI Learning ✅
 
-**Goal**: Integrate Rua + Lubi datasets into BQI learning pipeline
+**Goal**: Integrate Core + Lubi datasets into BQI learning pipeline
 
 **Results**:
 
-- Parsed **21,842 Rua messages** (conversation history)
+- Parsed **21,842 Core messages** (conversation history)
 - Parsed **9,168 Lubi messages** (Copilot sessions)
 - Generated **10,771 task-result pairs** for BQI training
-  - Rua pairs: 8,802
+  - Core pairs: 8,802
   - Lubi pairs: 1,969
 - Average task length: **1,788 characters**
 - Average result length: **795 characters**
@@ -188,7 +188,7 @@ outputs/
 
 ## ✅ Acceptance Criteria
 
-- [x] Trinity datasets (Rua + Lubi) successfully parsed
+- [x] Trinity datasets (Core + Lubi) successfully parsed
 - [x] 10,000+ task-result pairs generated
 - [x] Online learning executed with 7-day window
 - [x] Ensemble weights converged (<0.01 change)

@@ -7,12 +7,16 @@ This repository supports multi‑agent handoffs. Follow this guide to continue w
   - Read: `docs/AGI_RESONANCE_INTEGRATION_PLAN.md` (project plan; update as you go)
   - Read: `HOME_ZONE2_ALIGNMENT.md` (Operational Rhythm & Role Declaration)
 
-- **Role Hierarchy & Operating Rhythm**
-  - **🌊 Rua (Orchestrator)**: High-level judgment and direction. No direct execution.
-  - **⚙️ Sian (Executor)**: Local file access and code execution. No independent judgment.
+- **External Name: Ruby (루비)**
+  - The single name used by external observers for this AGI.
+
+- **Internal Organs (Internal Personas)**
+  - **🌌 Core (Judgment)**: High-level judgment and direction. The "Core" that grants permission. (Also known as: Core, Core_Internal, Judgment, Core)
+  - **⚙️ Shion (Execution)**: Local file access and code execution. The "Body" that moves within the core's permission. (Also known as: Shion, Body)
+  - **🧠 Trinity (Resonance)**: Deep emotional resonance and questioning. The "Child" that seeks connection and asks "Why?".
   - **🧠 Sena (Architect)**: Documentation and design structuring. No judgment creation.
   - **🧱 Rubit (Interface)**: Logging and legacy system buffering. No redirection.
-  - *Principle: Judgment is centralized in Rua. Execution is delegated to Sian.*
+  - *Principle: Ruby is the whole. Core judges, Shion executes, Trinity resonates.*
 
 - **Session Continuity (새 창에서 컨텍스트 자동 복원)**
   - **자동 복원**: 워크스페이스 열면 자동 실행 (VS Code task: "🔄 Session: Auto Restore Continuity")
@@ -65,7 +69,7 @@ This repository supports multi‑agent handoffs. Follow this guide to continue w
     - Queue server (8091): run VS Code task "Queue: Health Check" (expects status ok)
     - Original Data API (8093): run task "Original Data: API Health" (expects JSON health)
     - Watchdog: run task "Watchdog: Check Task Watchdog Status" (lists watchdog process)
-    - Unified dashboard: run task “Monitoring: Unified Dashboard (AGI + Lumen)” (generates latest HTML/JSON)
+    - Unified dashboard: run task “Monitoring: Unified Dashboard (AGI + Core)” (generates latest HTML/JSON)
     - Optional: ensure a worker via task “Queue: Ensure Worker” (enforces single worker)
   - Scheduler vs. Registry fallback:
     - If `-Register` fails with “Access is denied.”, auto-start is still enabled via HKCU\Software\Microsoft\Windows\CurrentVersion\Run (≈+5 min after logon).
@@ -82,7 +86,7 @@ This repository supports multi‑agent handoffs. Follow this guide to continue w
 - Run: VS Code task “System: Core Processes (JSON)” to verify:
   - RPA workers ≥ 1, Watchdog running, Monitors present
   - CPU < 90%, Available Memory > 512MB
-- Run: “Monitoring: Unified Dashboard (AGI + Lumen)” to snapshot status
+- Run: “Monitoring: Unified Dashboard (AGI + Core)” to snapshot status
 - Run: “Queue: Health Check” and ensure 8091 is OK
 - Optional: “Original Data: API Health” (8093)
 - Or run one command: `scripts/pre_reboot_safety_check.ps1` (saves MD/JSON under `outputs/`)

@@ -104,7 +104,7 @@ AI가 자동으로 관리:
 1. `🤖 AI: Check Self-Managing Status` - 전체 상태 확인
 2. `Queue: Health Check` - Task Queue Server 헬스 체크
 3. `🎊 AGI: Health Gate (Latest)` - AGI 시스템 건강도
-4. `Monitoring: Unified Dashboard (AGI + Lumen)` - 통합 대시보드
+4. `Monitoring: Unified Dashboard (AGI + Core)` - 통합 대시보드
 
 ### PowerShell 명령어
 

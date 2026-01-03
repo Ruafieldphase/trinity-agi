@@ -17,7 +17,7 @@
 
 - AI Scheduler, Queue Server, Ops Manager 상태
 - AGI Orchestrator 지표 (confidence, quality, 2nd pass)
-- Lumen Gateway 응답 시간 (Local/Cloud/Gateway)
+- Core Gateway 응답 시간 (Local/Cloud/Gateway)
 - 시스템 리소스 (CPU, Memory)
 
 **실행 상태**:
@@ -129,7 +129,7 @@
 ✅ Task Queue Server (8091): ONLINE
 ✅ AI Scheduler: RUNNING (PID: 10340)
 ✅ Cloud AI (ion-api): ONLINE (266ms)
-✅ Lumen Gateway: ONLINE (212ms)
+✅ Core Gateway: ONLINE (212ms)
 ```
 
 **종합**: ALL GREEN - all systems OK

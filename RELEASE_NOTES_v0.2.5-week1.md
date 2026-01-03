@@ -124,7 +124,7 @@
 
 **기능**:
 
-- Binoche Pipeline Adapter
+- Binoche_Observer Pipeline Adapter
 - Event 기반 로깅
 - Resonance Ledger 통합
 - 자동 재개 (Auto Resume)

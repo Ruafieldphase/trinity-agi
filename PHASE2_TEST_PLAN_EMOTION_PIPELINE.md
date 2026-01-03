@@ -98,7 +98,7 @@ class AutoStabilizer:
     
     def check_and_stabilize(self):
         """감정 신호 체크 → 필요 시 안정화"""
-        result = self.pipeline.lumen.process_emotion_signal()
+        result = self.pipeline.Core.process_emotion_signal()
         strategy = result['background_self']['strategy']
         
         if strategy == 'EMERGENCY':
@@ -347,7 +347,7 @@ Phase 2 성공 시 → **Phase 3: Production Integration**
 
 ### Phase 1 완료 (2025-11-03)
 
-- ✅ Lumen System 구현
+- ✅ Core System 구현
 - ✅ AGI Pipeline 통합
 - ✅ 베이스라인 수집
 - ✅ FLOW 상태 확인

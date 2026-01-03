@@ -155,7 +155,7 @@ Start-ScheduledTask -TaskName 'AGI_GoalExecutorMonitor'
 ┌─────────────────────────────────────────┐
 │  Feedback Loop (활성화)                 │
 │  - BQI 학습                             │
-│  - Binoche Persona 업데이트             │
+│  - Binoche_Observer Persona 업데이트             │
 └─────────────────────────────────────────┘
               ↓
 ┌─────────────────────────────────────────┐

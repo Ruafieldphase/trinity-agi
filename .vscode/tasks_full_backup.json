@@ -873,7 +873,7 @@
 			"dependsOn": [
 				"Queue: Ensure Server (8091)",
 				"Queue: Ensure Worker",
-				"Lumen: Quick Health Probe",
+				"Core: Quick Health Probe",
 				"Watchdog: Start Task Watchdog (Background)",
 				"Monitoring: Generate Report (24h)",
 				"Realtime: Build ??Summarize ??Open (24h)"
@@ -1719,7 +1719,7 @@
 			}
 		},
 		{
-			"label": "Monitoring: Unified Dashboard (AGI + Lumen)",
+			"label": "Monitoring: Unified Dashboard (AGI + Core)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3331,7 +3331,7 @@
 			"group": "none"
 		},
 		{
-			"label": "Lumen: Quick Health Probe",
+			"label": "Core: Quick Health Probe",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3339,7 +3339,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/lumen_quick_probe.ps1"
+				"${workspaceFolder}/scripts/core_quick_probe.ps1"
 			],
 			"group": "test",
 			"presentation": {
@@ -3351,7 +3351,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Lumen: Register Probe Monitor (10m)",
+			"label": "Core: Register Probe Monitor (10m)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3359,7 +3359,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/register_lumen_probe_task.ps1",
+				"${workspaceFolder}/scripts/register_core_probe_task.ps1",
 				"-Register",
 				"-IntervalMinutes",
 				"10",
@@ -3374,7 +3374,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Lumen: Unregister Probe Monitor",
+			"label": "Core: Unregister Probe Monitor",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3382,7 +3382,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/register_lumen_probe_task.ps1",
+				"${workspaceFolder}/scripts/register_core_probe_task.ps1",
 				"-Unregister"
 			],
 			"group": "build",
@@ -3394,7 +3394,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Lumen: Check Probe Monitor Status",
+			"label": "Core: Check Probe Monitor Status",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -3402,7 +3402,7 @@
 				"-ExecutionPolicy",
 				"Bypass",
 				"-File",
-				"${workspaceFolder}/scripts/register_lumen_probe_task.ps1",
+				"${workspaceFolder}/scripts/register_core_probe_task.ps1",
 				"-Status"
 			],
 			"group": "test",
@@ -5237,7 +5237,7 @@
 			}
 		},
 		{
-			"label": "?占쏙옙 Phase 6: Learn Binoche Persona",
+			"label": "?占쏙옙 Phase 6: Learn Binoche_Observer Persona",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -5256,7 +5256,7 @@
 			}
 		},
 		{
-			"label": "?占쏙옙 Phase 6: Open Binoche Persona Model",
+			"label": "?占쏙옙 Phase 6: Open Binoche_Observer Persona Model",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -5860,7 +5860,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?봽 Binoche: Invoke Continuation (Clipboard)",
+			"label": "?봽 Binoche_Observer: Invoke Continuation (Clipboard)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -5873,7 +5873,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?봽 Binoche: Invoke Continuation (Dry-Run)",
+			"label": "?봽 Binoche_Observer: Invoke Continuation (Dry-Run)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -5887,7 +5887,7 @@
 			"group": "test"
 		},
 		{
-			"label": "?봽 Binoche: Invoke Continuation (Task Queue)",
+			"label": "?봽 Binoche_Observer: Invoke Continuation (Task Queue)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [
@@ -6110,7 +6110,7 @@
 			"group": "build"
 		},
 		{
-			"label": "Diag: Binoche Agent (one-shot)",
+			"label": "Diag: Binoche_Observer Agent (one-shot)",
 			"type": "shell",
 			"command": "powershell",
 			"args": [

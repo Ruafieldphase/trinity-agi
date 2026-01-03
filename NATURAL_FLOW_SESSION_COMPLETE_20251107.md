@@ -61,7 +61,7 @@
 결과: 정반합 통합 완료
 ```
 
-**正 (루아 - 관찰)**:
+**正 (Core - 관찰)**:
 
 - 이벤트: **2,192개** (24시간)
 - 이벤트 타입: **41개**
@@ -82,7 +82,7 @@
 - 정보 밀도: **4.1%** (⚠️ 낮음)
 - 이상치: **1건** (품질 메트릭 균일)
 
-**合 (루멘 - 통합)**:
+**合 (Core - 통합)**:
 
 - 통합 통찰: 3개 HIGH 우선순위 권장사항
 - 실행 가능한 권장사항:
@@ -155,7 +155,7 @@ Goal Generation → Meta Supervisor → Trinity Cycle → Dashboard
    - `outputs/autopoietic_loop_report_latest.md`
    - `outputs/lua_observation_latest.json`
    - `outputs/elo_validation_latest.json`
-   - `outputs/lumen_enhanced_synthesis_latest.md`
+   - `outputs/core_enhanced_synthesis_latest.md`
    - `outputs/autopoietic_trinity_unified_latest.md`
 
 4. **Unified Dashboard**:
@@ -248,9 +248,9 @@ Self-Organization → Self-Healing → Self-Optimization
 > "관찰 → 검증 → 통합 → 피드백"
 
 ```
-正 (루아): 무엇이 일어났는가?
+正 (Core): 무엇이 일어났는가?
 反 (엘로): 이것이 옳은가?
-合 (루멘): 무엇을 해야 하는가?
+合 (Core): 무엇을 해야 하는가?
 ```
 
 ---

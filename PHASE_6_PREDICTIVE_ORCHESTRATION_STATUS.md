@@ -56,7 +56,7 @@ Overall:  96.0% (120/125 predictions)
 - 반복 패턴 학습
 - 다음 행동 예측
 
-### 2. **페르소나 학습** (Binoche Persona)
+### 2. **페르소나 학습** (Binoche_Observer Persona)
 
 - 사용자 스타일 학습
 - 선호도 패턴 추출
@@ -109,7 +109,7 @@ Rhythm Judge:  27% 가중치
 
 | 모델 | 파일 | 크기 | 마지막 업데이트 | 상태 |
 |------|------|------|----------------|------|
-| Binoche Persona | `binoche_persona.json` | 16.45 KB | 2025-11-02 12:24 | ✅ |
+| Binoche_Observer Persona | `binoche_persona.json` | 16.45 KB | 2025-11-02 12:24 | ✅ |
 | Feedback Predictor | `feedback_prediction_model.json` | 0.59 KB | 2025-11-02 12:24 | ✅ |
 | Ensemble Weights | `ensemble_weights.json` | 0.96 KB | 2025-10-29 19:27 | ✅ |
 | Success Metrics | `ensemble_success_metrics.json` | 1.23 KB | 2025-10-29 19:27 | ✅ |

@@ -36,10 +36,10 @@
    - AI Agent Scheduler 자동 시작
    - VS Code "folderOpen" 이벤트 연동 (tasks.json)
 
-5. Binoche Continuation Invoker ✅
+5. Binoche_Observer Continuation Invoker ✅
    scripts/invoke_binoche_continuation.ps1
    - 최신 handover 로드
-   - Binoche 페르소나 자동 호출
+   - Binoche_Observer 페르소나 자동 호출
    - Task Queue 또는 VS Code 통합
 
 6. Agent Handoff Documentation ✅
@@ -52,7 +52,7 @@
    docs/universal_agi/CONTINUOUS_EXECUTION_VIA_BINOCHE.md
    - Phase 1-4 완전 설계
    - 정-반-합 구조
-   - Binoche 자기 대화 프로토콜
+   - Binoche_Observer 자기 대화 프로토콜
 ```
 
 ---
@@ -114,7 +114,7 @@
 ```
 문서는 완벽:
   - CONTINUOUS_EXECUTION_VIA_BINOCHE.md
-  - AGI_INTEGRATION_SENA_LUMEN_v1.0.md
+  - AGI_INTEGRATION_SENA_CORE_v1.0.md
   - AGENT_HANDOFF.md
   
 코드는 부분 구현:
@@ -258,7 +258,7 @@ print(context["resume_prompt"])
 restore_mgr.save_on_exit(current_state)
 ```
 
-#### 2.2 Binoche Auto-Invoker 개선
+#### 2.2 Binoche_Observer Auto-Invoker 개선
 
 ```powershell
 # scripts/invoke_binoche_continuation.ps1 개선
@@ -533,7 +533,7 @@ VS Code 재시작
 ### 단기 (주말)
 
 - [ ] Context Restore Manager 구현
-- [ ] Binoche Auto-Invoker 개선
+- [ ] Binoche_Observer Auto-Invoker 개선
 - [ ] 통합 Dashboard 구축
 
 ### 중기 (필요 시)

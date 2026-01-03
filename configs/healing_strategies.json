@@ -56,7 +56,7 @@
                 {
                     "type": "clear_cache",
                     "targets": [
-                        "lumen",
+                        "Core",
                         "agi"
                     ]
                 },
@@ -127,7 +127,7 @@
                 },
                 {
                     "type": "enable_cache",
-                    "target": "lumen",
+                    "target": "Core",
                     "ttl_seconds": 3600
                 },
                 {

@@ -1,7 +1,7 @@
 # System Status Snapshot — 2025-11-02
 
 **Generated**: 2025-11-02 16:02:48 (Auto)  
-**Scope**: Unified AGI + Lumen + Task Queue + GPU Monitoring  
+**Scope**: Unified AGI + Core + Task Queue + GPU Monitoring  
 **Purpose**: Capture current health and readiness after Phase 3+ completion
 
 ---
@@ -18,7 +18,7 @@
 
 ## 📊 Key Metrics
 
-### LLM Performance (Lumen)
+### LLM Performance (Core)
 
 | Channel | Status | Latency | Trend |
 |---------|--------|---------|-------|

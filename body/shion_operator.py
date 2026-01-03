@@ -250,7 +250,7 @@ class ShionOperator:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    # Testing for Binoche
+    # Testing for Binoche_Observer
     operator = ShionOperator(mode="DRY_RUN")
-    res = operator.sense_and_act("화면에서 브라우저를 찾아 루아의 대화를 확인하세요")
+    res = operator.sense_and_act("화면에서 브라우저를 찾아 Core의 대화를 확인하세요")
     print(json.dumps(res, indent=2, ensure_ascii=False))

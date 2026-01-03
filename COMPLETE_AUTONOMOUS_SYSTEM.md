@@ -66,7 +66,7 @@ VS Code Task: 💾 Backup: Register Daily (03:30)
 - 워크스페이스 열 때 자동 체인 실행:
   1. Task Queue Server 확인/시작
   2. RPA Worker 확인/시작
-  3. Lumen 헬스 프로브
+  3. Core 헬스 프로브
   4. 24시간 모니터링 리포트 생성
   5. Realtime 대시보드 빌드 및 요약
 

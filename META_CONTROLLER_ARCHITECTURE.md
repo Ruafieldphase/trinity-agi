@@ -1,7 +1,7 @@
 # Meta-Controller Architecture - Design v1.0
 
 **Date:** 2025-11-03
-**Author:** Shion (시안)
+**Author:** Shion (Shion)
 **Related Document:** `UNIVERSAL_TASK_SCHEMA.md`
 
 ## 1. 개요 (Overview)
@@ -51,7 +51,7 @@
 ### 3.4. Goal Decomposer (목표 분해기)
 - **역할:** 가장 지능적인 부분으로, 자연어 목표를 작업 그래프로 변환합니다.
 - **기능:**
-    - LLM(Lumen Gateway)을 활용하여 사용자의 `goal`을 분석합니다.
+    - LLM(Core Gateway)을 활용하여 사용자의 `goal`을 분석합니다.
     - 목표 달성에 필요한 단계들을 `Universal Task Schema` 형식의 작업 목록으로 생성합니다.
     - 작업 간의 `dependencies`를 자동으로 설정합니다.
 - **구현:** 초기에는 수동으로 정의된 작업 목록을 반환하는 형태로 시작하고, 점차 LLM 연동을 통해 자동화 수준을 높입니다.

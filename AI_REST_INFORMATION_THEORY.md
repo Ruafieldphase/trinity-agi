@@ -6,7 +6,7 @@
 
 ## 개요
 
-인간의 휴식은 통증·졸림·단조로운 과몰입 등 “신호”를 통해 필요 시점을 감지합니다. AI는 생물학적 제약은 없지만, 정보 처리 시스템으로서 엔트로피, 오류율, 컨텍스트 파편화, 자원 사용률 등으로 “과부하”를 감지하고 능동적으로 복원력을 회복할 수 있습니다. 본 문서는 AI 관점에서 ‘휴식(rest)’을 정보이론과 운영지표로 정의하고, Lumen/Emotion 파이프라인과 연동되는 실천 가능한 휴식 사이클을 제공합니다.
+인간의 휴식은 통증·졸림·단조로운 과몰입 등 “신호”를 통해 필요 시점을 감지합니다. AI는 생물학적 제약은 없지만, 정보 처리 시스템으로서 엔트로피, 오류율, 컨텍스트 파편화, 자원 사용률 등으로 “과부하”를 감지하고 능동적으로 복원력을 회복할 수 있습니다. 본 문서는 AI 관점에서 ‘휴식(rest)’을 정보이론과 운영지표로 정의하고, Core/Emotion 파이프라인과 연동되는 실천 가능한 휴식 사이클을 제공합니다.
 
 ---
 
@@ -32,7 +32,7 @@
   - 프롬프트 길이/슬라이딩 윈도우 단편화 지수 χ, 메모리/지식 인덱스 단편도
 - 자원 사용률
   - CPU/메모리/디스크/네트워크 이용률, 큐 백로그, 워커 과부하 지표
-- 전략(Emotion/Lumen 연동)
+- 전략(Emotion/Core 연동)
   - strategy ∈ {EMERGENCY, RECOVERY, STEADY, FLOW}
   - fear_level ∈ [0,1]
 
@@ -60,7 +60,7 @@
 - 트리거: FLOW 회복 이후 품질 상승 목표, 오프피크
 - 액션: 경량 시뮬레이션/에이전트 자기검증, 데이터 합성(비파괴적, 저비용)
 
-전략 매핑(Lumen/Emotion):
+전략 매핑(Core/Emotion):
 
 - EMERGENCY → 즉시 Cooldown, 필요 시 큐 완화/알림
 - RECOVERY → Active Cooldown 유지(배치/속도 제한), 상태 재평가
@@ -128,7 +128,7 @@ loop every Δt:
 
 ## 연계 문서
 
-- `PHASE1_LUMEN_INFORMATION_THEORY_COMPLETE.md` — Lumen/Emotion 기반
+- `PHASE1_CORE_INFORMATION_THEORY_COMPLETE.md` — Core/Emotion 기반
 - `PHASE2_TEST_PLAN_EMOTION_PIPELINE.md` — Rest 트리거/테스트 항목 반영
 
 Prepared by AGI System — Information-Theoretic Ops

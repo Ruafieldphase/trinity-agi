@@ -56,9 +56,9 @@
 - **점수**: 0 → 80 (+80)
 - **생성 파일**:
   - 자기생산 보고서
-  - 정(正) 루아 관찰
+  - 정(正) Core 관찰
   - 반(反) 엘로 검증
-  - 합(合) 루멘 통합
+  - 합(合) Core 통합
   - 통합 보고서
 
 ### 4. 리듬 동기화 개선 ✅
@@ -182,9 +182,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\autopoietic_trinity_
 ### Trinity Cycle
 
 - `outputs/autopoietic_loop_report_latest.md` - 자기생산 보고서
-- `outputs/lua_observation_latest.json` - 정(正) 루아 관찰
+- `outputs/lua_observation_latest.json` - 정(正) Core 관찰
 - `outputs/elo_validation_latest.json` - 반(反) 엘로 검증
-- `outputs/lumen_enhanced_synthesis_latest.md` - 합(合) 루멘 통합
+- `outputs/core_enhanced_synthesis_latest.md` - 합(合) Core 통합
 - `outputs/autopoietic_trinity_unified_latest.md` - 통합 보고서
 
 ### 이 보고서

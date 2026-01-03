@@ -26,7 +26,7 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
-    [ValidateSet(5, 10, 25, 50, 100)]
+    [ValidateSet(5, 10, 25, 50, 75, 100)]
     [int]$Phase,
     
     [Parameter(Mandatory = $true)]
@@ -134,12 +134,12 @@ $blocks = @(
         type = "section"
         text = @{
             type = "mrkdwn"
-            text = "*진행률:*`n``````n$(Get-ProgressBar -Percentage $Phase)`n```````"
+            text = "*진행률:*`n" + ' ``` ' + "`n$(Get-ProgressBar -Percentage $Phase)`n" + ' ``` '
         }
-    }
+    },
     @{
         type = "divider"
-    }
+    },
     @{
         type = "section"
         text = @{
@@ -148,7 +148,7 @@ $blocks = @(
         }
     }
     @{
-        type = "section"
+        type   = "section"
         fields = $metricFields
     }
 )
@@ -180,7 +180,8 @@ if ($DeploymentStartTime -or $MonitoringEndTime) {
                     text = "*남은 시간:*`n$([math]::Ceiling($remaining.TotalMinutes))분"
                 }
             }
-        } catch {}
+        }
+        catch {}
     }
     
     if ($timelineFields.Count -gt 0) {
@@ -195,7 +196,7 @@ if ($DeploymentStartTime -or $MonitoringEndTime) {
             }
         }
         $blocks += @{
-            type = "section"
+            type   = "section"
             fields = $timelineFields
         }
     }
@@ -213,7 +214,8 @@ if ($Status -eq "monitoring") {
             text = "*📋 다음 단계*`n• 메트릭 모니터링 계속`n• 에러율 0.5% 미만 유지 확인`n• P95 레이턴시 10% 미만 증가 확인"
         }
     }
-} elseif ($Status -eq "completed") {
+}
+elseif ($Status -eq "completed") {
     $blocks += @{
         type = "divider"
     }
@@ -224,7 +226,8 @@ if ($Status -eq "monitoring") {
             text = "*[SUCCESS] 배포 성공!*`nCanary $Phase% 배포가 성공적으로 완료되었습니다."
         }
     }
-} elseif ($Status -eq "failed") {
+}
+elseif ($Status -eq "failed") {
     $blocks += @{
         type = "divider"
     }
@@ -239,7 +242,7 @@ if ($Status -eq "monitoring") {
 
 # 컨텍스트 푸터
 $blocks += @{
-    type = "context"
+    type     = "context"
     elements = @(
         @{
             type = "mrkdwn"
@@ -251,7 +254,7 @@ $blocks += @{
 # 메시지 전송
 $params = @{
     Message = "카나리 $Phase% - $($statusInfo.text)"
-    Blocks = $blocks
+    Blocks  = $blocks
 }
 
 if ($Channel) {
@@ -262,7 +265,8 @@ $result = Send-SlackMessage @params
 
 if ($result) {
     Write-Host "[OK] 대시보드 업데이트 성공" -ForegroundColor Green
-} else {
+}
+else {
     Write-Warning "대시보드 업데이트 실패"
     exit 1
 }

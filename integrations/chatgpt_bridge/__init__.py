@@ -9,7 +9,7 @@ Architecture:
         ↕ (OpenAI Client)
     ChatGPT Bridge (this module)
         ↕ (MCP Adapter)
-    Lumen MCP Server (existing)
+    Core MCP Server (existing)
         ↕ (Persona Orchestration)
     AGI Core System
         ↕ (Resonance Ledger)
@@ -17,7 +17,7 @@ Architecture:
 
 Components:
     - chatgpt_client.py: OpenAI API 클라이언트
-    - mcp_adapter.py: 기존 Lumen MCP 서버 연결
+    - mcp_adapter.py: 기존 Core MCP 서버 연결
     - bridge_server.py: FastAPI 게이트웨이
     
 Philosophy: Connectivity > Depth

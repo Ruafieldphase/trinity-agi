@@ -86,7 +86,7 @@ C:\workspace\agi/
 │   ├── ai_performance_agent.ps1        # Performance analysis
 │   └── rune/                  # Rune/Learning system
 │
-├── LLM_Unified/               # LUMEN GATEWAY & API INTEGRATIONS
+├── LLM_Unified/               # Core GATEWAY & API INTEGRATIONS
 │   └── ion-mentoring/         # Multi-persona API server
 │       ├── Dockerfile        # Container image for cloud deployment
 │       ├── .env              # Feature flags & configuration

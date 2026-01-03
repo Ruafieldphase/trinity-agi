@@ -242,7 +242,7 @@ scripts/
 - AI Agent Scheduler 시작
 - VS Code folderOpen 연동 (tasks.json)
 
-### 5. Binoche Continuation Invoker
+### 5. Binoche_Observer Continuation Invoker
 
 ```
 scripts/
@@ -252,7 +252,7 @@ scripts/
 **기능**:
 
 - 최신 handover 로드
-- Binoche 페르소나 자동 호출
+- Binoche_Observer 페르소나 자동 호출
 - Task Queue 통합
 
 ### 6. Documentation
@@ -262,7 +262,7 @@ docs/
   AGENT_HANDOFF.md
   universal_agi/
     CONTINUOUS_EXECUTION_VIA_BINOCHE.md
-    AGI_INTEGRATION_SENA_LUMEN_v1.0.md
+    AGI_INTEGRATION_SENA_CORE_v1.0.md
 ```
 
 ---
@@ -373,7 +373,7 @@ class ContextRestoreManager:
 
 **AI Context Summarizer**:
 
-- Binoche 자동 요약
+- Binoche_Observer 자동 요약
 - 다음 세션 프롬프트 생성
 - 핵심 정보 추출
 
@@ -392,7 +392,7 @@ class ContextRestoreManager:
 ### 단기 (주말, 선택)
 
 - [ ] Context Restore Manager 구현
-- [ ] Binoche Auto-Invoker 개선
+- [ ] Binoche_Observer Auto-Invoker 개선
 - [ ] 자동 핸드오버 생성 트리거
 
 ### 중기 (필요 시)

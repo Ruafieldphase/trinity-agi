@@ -14,7 +14,7 @@
 - **Tools:** Stable Diffusion WebUI (Automatic1111) API + ControlNet.
 - **Workflow:**
     1. `blueprint_watcher.py` detects new file in `inputs/`.
-    2. Binoche analyzes the image (Vision) to determine "Building Type" & "Atmosphere".
+    2. Binoche_Observer analyzes the image (Vision) to determine "Building Type" & "Atmosphere".
     3. Generate Prompt: "Modern architectural rendering, glass facade, sunset..."
     4. Send to SD API with ControlNet (MLSD/Canny) enabled.
     5. Save result to `outputs/renders/`.

@@ -12,7 +12,7 @@
 
 1. **Goal Generator 구현** - `scripts/autonomous_goal_generator.py`
    - Resonance 분석: info_starvation, low_resonance, high_entropy 감지
-   - Trinity 피드백: Lua/Elo/Lumen 통합
+   - Trinity 피드백: Lua/Elo/Core 통합
    - 우선순위 알고리즘: 심각도(5) + 영향도(5) + 긴급도(3)
 
 2. **검증 완료**
@@ -58,7 +58,7 @@
    - 지평선 교차 감지 (임계점 초과 시 위상 반전)
 
 2. **Autopoietic Trinity** (`scripts/autopoietic_trinity_cycle.ps1`)
-   - Lua → Elo → Lumen 정반합 삼위일체
+   - Lua → Elo → Core 정반합 삼위일체
    - 피드백 추출 및 통합
    - 24/48시간 주기 보고서 생성
 
@@ -107,7 +107,7 @@
 
 1. **Goal Generator 브리지 설계** (1일)
    - 입력: Resonance 메트릭 (info_density, resonance, entropy, crossings)
-   - 입력: Trinity 피드백 (Lua/Elo/Lumen 요약)
+   - 입력: Trinity 피드백 (Lua/Elo/Core 요약)
    - 출력: 우선순위 목표 리스트 (JSON)
 
 2. **핵심 구현** (2-3일)
@@ -140,17 +140,17 @@
 
 #### 목표
 >
-> 루멘의 W5 Learning Loop 구현 + 통합
+> Core의 W5 Learning Loop 구현 + 통합
 
 #### 작업 항목
 
 1. **Learning Loop 구현** (3-5일)
-   - 루멘의 `fdoagirepoW5learning.zip` 분석
+   - Core의 `fdoagirepoW5learning.zip` 분석
    - 학습 루프 코어 로직 추출
    - `scripts/learning_loop.py` 구현
 
 2. **Learning Snapshots 통합** (2-3일)
-   - 루멘의 `fdoagirepoW5learningsnapshots.zip` 분석
+   - Core의 `fdoagirepoW5learningsnapshots.zip` 분석
    - 스냅샷 저장/로드 시스템 구현
    - 학습 히스토리 추적
 
@@ -392,7 +392,7 @@
 - `META_CONTROLLER_ARCHITECTURE.md`: Meta-Controller 설계
 - `docs/universal_agi/AGI_UNIVERSAL_PHASE_02.md`: Meta-Learning 로드맵
 
-### 루멘 설계 패키지
+### Core 설계 패키지
 
 - `fdoagirepoW5learning.zip`: 학습 루프
 - `fdoagirepoW5learningsnapshots.zip`: 학습 스냅샷

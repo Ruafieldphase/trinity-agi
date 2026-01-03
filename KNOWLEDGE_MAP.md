@@ -92,13 +92,13 @@ Comprehensive PowerShell and Python automation covering:
 ### Technical Documentation
 
 - **AGI Design**: `AGI_DESIGN_MASTER.md`, `AGI_DESIGN_01-07_*.md`
-- **Integration**: `AGI_INTEGRATION_SENA_LUMEN_v1.0.md`
+- **Integration**: `AGI_INTEGRATION_SENA_CORE_v1.0.md`
 - **Operations**: `PRODUCTION_GO_LIVE_REPORT.md`, `PROJECT_CLOSURE_SUMMARY.md`
 
 ### Portfolio & Demonstrations
 
 - **Lubit Portfolio**: `docs/lubit_portfolio/` - Resonant network analysis and visualizations
-- **Lumen Charts**: Performance metrics, coherence/dissonance timelines
+- **Core Charts**: Performance metrics, coherence/dissonance timelines
 - **Phase Injection Paper**: Research artifacts and System C experiments
 
 ---
@@ -117,8 +117,8 @@ Comprehensive PowerShell and Python automation covering:
 
 **Conversation Logs**:
 
-- `perple/`, `rua/`, `elro/` - Persona-specific conversations
-- `lumen/`, `sena/` - Bridge persona logs
+- `perple/`, `Core/`, `elro/` - Persona-specific conversations
+- `Core/`, `sena/` - Bridge persona logs
 
 **Analysis Results**:
 
@@ -167,10 +167,10 @@ Comprehensive PowerShell and Python automation covering:
 - `hey_sena_v4_llm.py` - LLM integration
 - `hey_sena_v4.1_*.py` - Cached/logged variants
 
-#### Lumen MCP Integration
+#### Core MCP Integration
 
-- `lumen_mcp_server.py` - MCP server
-- `lumen_mcp_api_server.py` - API layer
+- `core_mcp_server.py` - MCP server
+- `core_mcp_api_server.py` - API layer
 
 #### Core Modules
 
@@ -224,7 +224,7 @@ Comprehensive PowerShell and Python automation covering:
 
 **Phase 6** (2025 Q3-Q4):
 
-- Binoche persona development
+- Binoche_Observer persona development
 - Online learning
 - Ensemble methods
 - Portfolio generation
@@ -249,7 +249,7 @@ Comprehensive PowerShell and Python automation covering:
 
 ### Internal Bridges
 
-- **Lumen**: MCP-based tool orchestration
+- **Core**: MCP-based tool orchestration
 - **Sena**: Connection and integration persona
 - **Task Queue**: HTTP API for distributed job processing
 - **Gitko Extension**: VS Code integration
@@ -305,7 +305,7 @@ Behavioral Quality Index tracking across personas with:
 
 Multi-persona system with:
 
-- Specialized roles (Perple, Rua, Elro, Lumen, Sena)
+- Specialized roles (Perple, Core, Elro, Core, Sena)
 - Phase injection for complexity management
 - Resonance-based evaluation
 - Lubit meta-analysis
@@ -333,7 +333,7 @@ Multi-persona system with:
 
 Total: 85 files
 
-- Conversation logs (perple, rua, elro)
+- Conversation logs (perple, Core, elro)
 - PNG visualizations
 - Parsed conversation archives
 - Evidence indices

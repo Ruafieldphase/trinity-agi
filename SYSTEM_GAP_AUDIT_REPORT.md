@@ -1,4 +1,4 @@
-# 시안(Sian) AGI 시스템: 기능 갭(껍데기/Shell) 종합 감사 리포트
+# Shion(Shion) AGI 시스템: 기능 갭(껍데기/Shell) 종합 감사 리포트
 
 이 문서는 “현재 워크스페이스에서 실제로 동작하지 않거나(미구현/스텁), 실행이 시뮬레이션이거나, 수동 단계로 우회되는” 요소를 기능 영역별로 정리한 사실 기반 리포트입니다.
 
@@ -51,7 +51,7 @@
     - OpenAI/Anthropic “직접 provider”는 아직 미구현(설계상 필요할 때만).
 
 - `fdo_agi_repo/orchestrator/pipeline.py` (Adaptive Feedback)
-  - 상태: `lumen` 패키지 의존 및 fallback class가 `pass`인 경우가 있어 실질적 최적화가 비활성일 수 있음.
+  - 상태: `Core` 패키지 의존 및 fallback class가 `pass`인 경우가 있어 실질적 최적화가 비활성일 수 있음.
 
 ## 3. RPA & Tool Execution (“도구/사지가 실동작으로 연결되지 않음”)
 
@@ -76,7 +76,7 @@
 - `scripts/generate_adaptive_music.py`
   - 상태: 오디오 생성이 아니라 프로젝트/설정 텍스트 생성(수동 렌더링 전제)일 수 있음.
 
-- 문서(`LUMEN_CODEX_INFORMATION_THEORY.md` 등)
+- 문서(`CORE_CODEX_INFORMATION_THEORY.md` 등)
   - 상태: Sound/Visual 쪽 “미구현” 명시가 존재.
 
 ## 6. 메타인지/자가관리 (“진단은 있는데 자동 치료가 얇음”)

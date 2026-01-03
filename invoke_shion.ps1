@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory = $false)]
-    [string]$WorkspaceRoot = $PSScriptRoot,
+    [string]$WorkspaceRoot,
 
     [Parameter(Mandatory = $false)]
     [string]$PythonwPath,
@@ -11,6 +11,15 @@ param(
     [Parameter(Mandatory = $false)]
     [int]$WaitSeconds = 1
 )
+
+if (-not $WorkspaceRoot) {
+    if ($PSScriptRoot) {
+        $WorkspaceRoot = $PSScriptRoot
+    }
+    else {
+        $WorkspaceRoot = Get-Location
+    }
+}
 
 $ErrorActionPreference = "Stop"
 
@@ -55,7 +64,7 @@ function Stop-ShionProcess {
 
 $WorkspaceRoot = (Resolve-Path -LiteralPath $WorkspaceRoot).Path
 $PythonwPath = Resolve-PythonwPath -Provided $PythonwPath
-$ShionPath = Join-Path $WorkspaceRoot "agi\shion.py"
+$ShionPath = Join-Path $WorkspaceRoot "scripts\shion.py"
 
 # Stop existing Shion process
 Stop-ShionProcess -ShionPath $ShionPath

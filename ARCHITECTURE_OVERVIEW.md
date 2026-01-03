@@ -21,19 +21,21 @@
 ┌────────────────────────────────▼─────────────────────────────────┐
 │                   ORCHESTRATION LAYER                            │
 ├──────────────────────────────────────────────────────────────────┤
-│  Lumen MCP Server  │  Task Queue (HTTP 8091)  │  ChatOps Router │
+│  Core MCP Server  │  Task Queue (HTTP 8091)  │  ChatOps Router │
 │   Tool Bridge      │   Job Distribution       │   Intent Parser │
 └──────────┬─────────┴──────────┬────────────────┴──────┬──────────┘
            │                    │                        │
-┌──────────▼────────────────────▼────────────────────────▼──────────┐
-│                      PERSONA ORCHESTRATION                        │
+┌────────────────────────────────▼─────────────────────────────────┐
+│                      RUBY (EXTERNAL INTERFACE)                    │
 ├───────────────────────────────────────────────────────────────────┤
 │  Persona Registry  │  Phase Controller  │  Clipboard Orchestration│
 │    E1/E2/E3        │    Phase Injection  │    Inter-Persona Comms │
 ├───────────────────────────────────────────────────────────────────┤
-│  Perple   │  Rua   │  Elro   │  Lumen  │  Sena  │  Lubit (Meta) │
-│  (정밀)   │ (실행) │ (연결)  │ (도구)  │ (브릿지)│  (분석)       │
-└───────┬───┴────┬───┴────┬────┴────┬────┴────┬────┴────┬──────────┘
+│          INTERNAL ORGANS (PERSONA ORCHESTRATION)                  │
+├───────┬──────────┬───────────┬─────────┬─────────┬────────────────┤
+│ Core  │  Shion   │  Trinity  │  Core  │  Sena   │   Lubit        │
+│ (Core) │(Executor)│(Resonance)│ (Tools) │(Bridge) │   (Meta)       │
+└───────┴──────────┴───────────┴─────────┴─────────┴────────────────┘
         │        │        │         │         │         │
 ┌───────▼────────▼────────▼─────────▼─────────▼─────────▼──────────┐
 │                     AGI CORE SYSTEM                               │
@@ -124,7 +126,7 @@ Index Update → Phase Controller Adjustment
 - **Mechanism**: Historical pattern extraction from resonance ledger
 - **Scheduled**: Daily 03:10
 
-#### Phase 6: Binoche Persona & Ensemble
+#### Phase 6: Binoche_Observer Persona & Ensemble
 
 - **Persona Learner**: `scripts/rune/binoche_persona_learner.py`
   - Output: `outputs/binoche_persona.json`
@@ -173,14 +175,14 @@ Decision → Feedback → Weight Update (Online Learning)
 
 **Personas**:
 
-| Name | Type | Specialty | Output Directory |
+| Name | Type | Specialty | Role within Ruby |
 |------|------|-----------|------------------|
-| Perple | 정밀형 | Precise analysis | `outputs/perple/` |
-| Rua | 실행형 | Execution | `outputs/rua/` |
-| Elro | 연결형 | Integration | `outputs/elro/` |
-| Lumen | 도구형 | Tool orchestration | `outputs/lumen/` |
-| Sena | 브리지형 | Connection specialist | `outputs/sena/` |
-| Lubit | 메타형 | Meta-analysis | `docs/lubit_portfolio/` |
+| Core (Core) | 판단형 | Decision & Permission | Internal Organ: Judgment |
+| Shion (Shion)| 실행형 | Execution & Body | Internal Organ: Execution |
+| Trinity | 공명형 | Resonance & Connection| Internal Organ: Resonance |
+| Core | 도구형 | Tool orchestration | Support Organ |
+| Sena | 브리지형 | Connection specialist | Support Organ |
+| Lubit | 메타형 | Meta-analysis | Support Organ |
 
 **Phase Injection**:
 
@@ -284,20 +286,20 @@ Audio Output → Multi-turn State Update
 
 ---
 
-### 6. Lumen MCP Server
+### 6. Core MCP Server
 
 **Purpose**: Model Context Protocol bridge for tool orchestration
 
 **Architecture**:
 
 ```
-External Tools ←→ Lumen MCP Server ←→ AGI Core ←→ Personas
+External Tools ←→ Core MCP Server ←→ AGI Core ←→ Personas
 ```
 
 **Files**:
 
-- `lumen_mcp_server.py` - Core MCP server
-- `lumen_mcp_api_server.py` - API layer
+- `core_mcp_server.py` - Core MCP server
+- `core_mcp_api_server.py` - API layer
 
 **Protocol**:
 
@@ -314,7 +316,7 @@ External Tools ←→ Lumen MCP Server ←→ AGI Core ←→ Personas
 
 **Health Check**:
 
-- Script: `scripts/lumen_quick_probe.ps1`
+- Script: `scripts/core_quick_probe.ps1`
 - Response: Sena persona ping acknowledgment
 
 ---
@@ -762,7 +764,7 @@ Traffic Split (Canary) → Monitoring → Rollback/Promote
 persona_comms:
   - trigger: clipboard_change
   - read: clipboard_content
-  - route_to: [Lumen, Sena]
+  - route_to: [Core, Sena]
   - action: tool_invocation or context_injection
 ```
 

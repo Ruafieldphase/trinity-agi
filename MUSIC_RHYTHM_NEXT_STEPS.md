@@ -77,7 +77,7 @@ VS Code Task: "🎵 Music: Weekly Analysis Report"
 
 **목표**: 사용자 선호도 학습 및 맞춤형 추천
 
-#### 2-1. Binoche Persona 학습 연동 🧠
+#### 2-1. Binoche_Observer Persona 학습 연동 🧠
 
 ```python
 # fdo_agi_repo/scripts/rune/music_preference_learner.py
@@ -226,7 +226,7 @@ def sync_lights_with_music(music_info):
 ### 주간 자동화
 
 - [ ] **주간 음악 분석 리포트** (일요일 10시)
-- [ ] **Binoche 학습 재훈련** (일요일 자정)
+- [ ] **Binoche_Observer 학습 재훈련** (일요일 자정)
 - [ ] **시스템 헬스 체크** (일요일 오전)
 
 ### 월간 자동화
@@ -254,7 +254,7 @@ def sync_lights_with_music(music_info):
 
 ### 다음 주 (11/17 - 11/23)
 
-1. **Binoche 학습 모듈 연동**
+1. **Binoche_Observer 학습 모듈 연동**
 2. **강화학습 Reward 함수 설계**
 3. **OBS Scene 동기화 프로토타입**
 

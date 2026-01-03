@@ -8,7 +8,7 @@ ChatGPT를 AGI의 페르소나 시스템에 연결하여:
 - ChatGPT의 대화 능력 활용
 - AGI의 Self-Correction Loop 학습
 - Resonance Ledger에 모든 상호작용 기록
-- Lumen MCP Server 재사용
+- Core MCP Server 재사용
 
 ## 🏗️ 아키텍처
 
@@ -19,9 +19,9 @@ chatgpt_client.py (OpenAI Client)
     ↕
 mcp_adapter.py (MCP Protocol Adapter)
     ↕
-lumen_mcp_server.py (기존 시스템 - 재사용)
+core_mcp_server.py (기존 시스템 - 재사용)
     ↕
-Persona Orchestration (Perple/Rua/Elro/Lumen/Sena)
+Persona Orchestration (Perple/Core/Elro/Core/Sena)
     ↕
 AGI Core (Self-Correction, Resonance Ledger)
 ```
@@ -69,15 +69,15 @@ class ChatGPTClient:
 ---
 
 #### `mcp_adapter.py` 생성
-**목표**: 기존 Lumen MCP Server 연결 어댑터
+**목표**: 기존 Core MCP Server 연결 어댑터
 
 **구현사항**:
 ```python
 class MCPAdapter:
     def __init__(self, workspace_root: Path):
         """
-        Lumen MCP Server 연결
-        - workspace_root/fdo_agi_repo/lumen_mcp_server.py 활용
+        Core MCP Server 연결
+        - workspace_root/fdo_agi_repo/core_mcp_server.py 활용
         """
         pass
     
@@ -96,7 +96,7 @@ class MCPAdapter:
 ```
 
 **통합 포인트**:
-- `fdo_agi_repo/lumen_mcp_server.py`
+- `fdo_agi_repo/core_mcp_server.py`
 - `memory/resonance_ledger.jsonl`
 
 ---
@@ -163,7 +163,7 @@ async def test_resonance_logging():
 - [ ] BQI Learning 연동
 
 #### Persona Orchestration 연결
-- [ ] Lumen (도구) 페르소나 활용
+- [ ] Core (도구) 페르소나 활용
 - [ ] Sena (브릿지) 페르소나 연동
 - [ ] Elro (연결) 페르소나 통합
 
@@ -228,7 +228,7 @@ python scripts/autonomous_goal_executor.py \
 
 ## 📝 Notes for AGI
 
-- 기존 `lumen_mcp_server.py` **반드시 재사용**
+- 기존 `core_mcp_server.py` **반드시 재사용**
 - 새로운 코드는 최소화 (DRY 원칙)
 - 모든 상호작용은 Resonance Ledger 기록
 - Self-Correction Loop 통해 자가 개선

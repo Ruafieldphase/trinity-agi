@@ -439,7 +439,7 @@ winget install UB-Mannheim.TesseractOCR
 ---
 
 **생성일**: 2025-10-30  
-**작성자**: GitHub Copilot + User (Binoche)  
+**작성자**: GitHub Copilot + User (Binoche_Observer)  
 **다음 업데이트**: 매일 자동 (Resonance Ledger 기반)  
 **완료 예상**: 2025-11-13
 

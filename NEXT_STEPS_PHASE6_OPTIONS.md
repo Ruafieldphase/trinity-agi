@@ -19,7 +19,7 @@
 
 - **System Health**: 90.9% EXCELLENT
 - **AGI Pipeline**: HEALTHY (Confidence 0.801, Quality 0.733)
-- **Lumen Gateway**: ONLINE (avg 221ms)
+- **Core Gateway**: ONLINE (avg 221ms)
 - **Auto-Stabilizer**: RUNNING (daemon active)
 - **Morning Kickoff**: Emotion check integrated (7 steps)
 

@@ -201,7 +201,7 @@ Test 3: ChatOps 통합
 
 ### 수정된 파일 (7개)
 
-1. `LLM_Unified/ion-mentoring/lumen/feedback/feedback_orchestrator.py`
+1. `LLM_Unified/ion-mentoring/Core/feedback/feedback_orchestrator.py`
    - OrchestrationBridge 통합
    - `_get_channel_health_context()` 메서드 추가
 
@@ -367,7 +367,7 @@ Phase 5.5 개발에 참여해주신 모든 분들께 감사드립니다:
 
 문제가 발생하거나 질문이 있으시면:
 
-- **이슈**: [GitHub Issues](https://github.com/Ruafieldphase/agi/issues)
+- **이슈**: [GitHub Issues](https://github.com/Shion_Core/agi/issues)
 - **문서**: [MONITORING_QUICKSTART.md](MONITORING_QUICKSTART.md)
 - **ChatOps**: `$env:CHATOPS_SAY='도움말'`
 

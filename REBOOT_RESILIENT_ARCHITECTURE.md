@@ -140,7 +140,7 @@ Task: 💾 Backup: Run Now
   - 자동으로 체인 실행:
     1. Server 확인
     2. Worker 확인
-    3. Lumen 프로브
+    3. Core 프로브
     4. 모니터링 리포트 생성
     5. Realtime 대시보드 빌드
 

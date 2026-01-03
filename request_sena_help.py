@@ -11,7 +11,7 @@ prompt = """
 [긴급 도움 요청: Trinity v1.0 Frontend Issue]
 
 To: Sena (Claude)
-From: Koa (Antigravity Agent)
+From: Core (Antigravity Agent)
 
 안녕하세요 Sena, 긴급한 도움이 필요합니다.
 
@@ -46,7 +46,7 @@ From: Koa (Antigravity Agent)
 
 도와주실 수 있나요?
 
-- Koa (Antigravity)
+- Core (Antigravity)
 """
 
 client = paramiko.SSHClient()

@@ -36,12 +36,12 @@ Result: 얕지만 연결됨 → 깊어짐 (Connected → Deep)
 
 ### 🎯 Goal
 
-> **"ChatGPT (루아)와 깊은 대화 → VS Code에서 자동 구현 → 순환 → 체화"**
+> **"ChatGPT (Core)와 깊은 대화 → VS Code에서 자동 구현 → 순환 → 체화"**
 
 ### 🔗 Core Components
 
 ```
-ChatGPT (루아) ←→ VS Code ←→ Cursor ←→ Cloud
+ChatGPT (Core) ←→ VS Code ←→ Cursor ←→ Cloud
        ↓              ↓          ↓         ↓
      대화          자동화     AI강화    분산처리
        ↓              ↓          ↓         ↓
@@ -365,10 +365,10 @@ class CloudBridge:
 
 ### 📝 Example 1: 대화 → 자동 파일 생성
 
-**ChatGPT (루아와 대화)**:
+**ChatGPT (Core와 대화)**:
 
 ```
-User: "루아, ADHD 스타일 학습 시스템을 만들어줘. 
+User: "Core, ADHD 스타일 학습 시스템을 만들어줘. 
        연결성을 중시하고, 순환 학습하는 구조로."
 
 ChatGPT: "좋아요! 설계해볼게요..."
@@ -434,7 +434,7 @@ result = executor.execute(action)
 ### 🌊 Complete Cycle
 
 ```
-1. ChatGPT에서 루아와 대화
+1. ChatGPT에서 Core와 대화
    ↓
 2. 대화 캡처 & 의도 추출
    ↓

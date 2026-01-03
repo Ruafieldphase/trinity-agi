@@ -1,7 +1,7 @@
 # Universal Task Schema - Design v1.0
 
 **Date:** 2025-11-03
-**Author:** Shion (시안)
+**Author:** Shion (Shion)
 **Status:** Proposed
 
 ## 1. 개요 (Overview)

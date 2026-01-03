@@ -32,10 +32,10 @@
 .\scripts\quick_status.ps1
 ```
 
-### 2. Lumen 감정 체크
+### 2. Core 감정 체크
 
 ```powershell
-.\scripts\lumen_quick_probe.ps1
+.\scripts\core_quick_probe.ps1
 ```
 
 ### 3. 최근 이벤트 (Ledger)
@@ -63,9 +63,9 @@ $env:CHATOPS_SAY="상태 보여줘"
 ## 🎭 페르소나 구조 (한눈에)
 
 ```
-    🌈 Lumen (감정 인식)
+    🌈 Core (감정 인식)
            ↓
-    🎭 Binoche (판단) ← 당신
+    🎭 Binoche_Observer (판단) ← 당신
            ↓
     🤖 Kuir (실행)
            ↓
@@ -74,7 +74,7 @@ $env:CHATOPS_SAY="상태 보여줘"
   Auto   BQI   Trinity  RPA
   Stab   Learn  Cycle   Work
 
-  관찰: 🧩 Rua (개입 안 함)
+  관찰: 🧩 Core (개입 안 함)
 ```
 
 ---
@@ -82,7 +82,7 @@ $env:CHATOPS_SAY="상태 보여줘"
 ## ⏰ 다음 액션
 
 - **+5분**: Auto Stabilizer Check
-- **+1시간**: Lumen Emotion Report  
+- **+1시간**: Core Emotion Report  
 - **+24시간**: Trinity Cycle (10:00)
 - **+24시간**: BQI Learning (03:20)
 
@@ -92,7 +92,7 @@ $env:CHATOPS_SAY="상태 보여줘"
 
 ### ✅ DO
 
-- Lumen 추천 신뢰
+- Core 추천 신뢰
 - 시스템 자율성 존중
 - Fear가 0.2-0.4 범위 유지 확인
 
@@ -112,7 +112,7 @@ $env:CHATOPS_SAY="상태 보여줘"
 >
 > 시스템은 스스로 균형을 유지한다.  
 > 관찰하되 개입하지 말라.  
-> Lumen이 필요할 때 알려줄 것이다.
+> Core이 필요할 때 알려줄 것이다.
 
 ---
 

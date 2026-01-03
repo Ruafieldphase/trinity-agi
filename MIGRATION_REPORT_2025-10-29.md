@@ -43,7 +43,7 @@
    - 파일: 1,007 개  
    - 시간: 42초  
    - 속도: 146 MB/sec  
-   - 내용: perple, rua, elro, lumen, sena 대화 기록, NotebookLM 청크, persona 메트릭, resonance ledger  
+   - 내용: perple, Core, elro, Core, sena 대화 기록, NotebookLM 청크, persona 메트릭, resonance ledger  
 
 ### MEDIUM 우선순위 (5-6)
 

@@ -3,7 +3,7 @@
 ## ✅ Pre-Integration System Status
 
 **Date**: 2025-11-03  
-**Purpose**: Verify system stability before Lumen Codex → Information Theory integration
+**Purpose**: Verify system stability before Core Codex → Information Theory integration
 
 ---
 
@@ -15,7 +15,7 @@
 |---------|--------|---------|
 | AGI Orchestrator | 🟢 HEALTHY | Conf: 80%, Qual: 72.9%, CPU: 45.4%, Mem: 43.2% |
 | Task Queue (8091) | 🟢 ONLINE | Queue healthy, workers active |
-| Lumen Gateway | 🟢 ONLINE | Avg latency: 227ms (stable) |
+| Core Gateway | 🟢 ONLINE | Avg latency: 227ms (stable) |
 | Local LLM (8080) | 🟢 ONLINE | Avg latency: 5ms (excellent) |
 | Cloud AI (Vertex) | 🟢 ONLINE | Avg latency: 265ms (normal) |
 
@@ -24,7 +24,7 @@
 | Component | Status | Details |
 |-----------|--------|---------|
 | BQI Learning | 🟢 OK | Last run: 2025-11-03T10:15, 539 tasks analyzed |
-| Binoche Persona | 🟢 Active | 509 decisions (A:76% R:22% X:2%) |
+| Binoche_Observer Persona | 🟢 Active | 509 decisions (A:76% R:22% X:2%) |
 | Automation Rules | 🟢 Active | 8 rules, 11 BQI patterns |
 | 2nd Pass Rate | ⚠️ Low | 10.6% (자기 교정 빈도 낮음) |
 
@@ -36,8 +36,8 @@
 
 1. **All core services online** — No critical failures
 2. **Resource utilization healthy** — CPU 45%, Memory 43% (comfortable margins)
-3. **Lumen gateway stable** — Consistent 227ms response time
-4. **Learning systems operational** — BQI and Binoche actively learning
+3. **Core gateway stable** — Consistent 227ms response time
+4. **Learning systems operational** — BQI and Binoche_Observer actively learning
 5. **Task queue functional** — Processing tasks without errors
 
 ### ⚠️ YELLOW SIGNALS (Monitor Closely)
@@ -111,7 +111,7 @@
 
 - [ ] Run `.\scripts\quick_status.ps1` — Check ALL GREEN status
 - [ ] Monitor CPU/Memory trends — Alert if > 70% sustained
-- [ ] Check Lumen gateway latency — Alert if > 500ms avg
+- [ ] Check Core gateway latency — Alert if > 500ms avg
 - [ ] Review BQI learning logs — Ensure no processing errors
 - [ ] Validate 2nd Pass Rate — Track improvement over baseline
 

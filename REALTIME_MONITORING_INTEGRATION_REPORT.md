@@ -26,16 +26,16 @@ Successfully deployed a **fully autonomous real-time monitoring and adaptive opt
 
 | Backend | Avg Latency | Trend | Availability | Recommendation |
 |---------|------------|-------|--------------|----------------|
-| **Lumen Gateway** | 174.33 ms | Stable ✅ | 100% | ⚡ Primary |
+| **Core Gateway** | 174.33 ms | Stable ✅ | 100% | ⚡ Primary |
 | **LM Studio** | 6,278 ms | Improving 📈 | 100% | 🔄 Fallback |
 
-**Speed Advantage:** Lumen is **36x faster** than LM Studio (6,104ms difference)
+**Speed Advantage:** Core is **36x faster** than LM Studio (6,104ms difference)
 
 ### Routing Policy
 
 ```json
 {
-  "primary_backend": "lumen",
+  "primary_backend": "Core",
   "fallback_backend": "lm_studio",
   "latency_threshold_ms": 500,
   "auto_adjust": true,
@@ -61,7 +61,7 @@ Successfully deployed a **fully autonomous real-time monitoring and adaptive opt
 [Every 30 minutes - Scheduled Task]
     ↓
 [1] Run Performance Benchmark
-    ├─ Lumen Gateway (3 iterations)
+    ├─ Core Gateway (3 iterations)
     └─ LM Studio Local (3 iterations)
     ↓
 [2] Analyze Trends (24h window)
@@ -87,7 +87,7 @@ Successfully deployed a **fully autonomous real-time monitoring and adaptive opt
 
 ### Recent Performance History (Last 7 Records)
 
-| Timestamp | Lumen (ms) | LM Studio (ms) | Speedup |
+| Timestamp | Core (ms) | LM Studio (ms) | Speedup |
 |-----------|-----------|----------------|---------|
 | 09:41:29 | 165.67 | 10,208.33 | 61.6x |
 | 09:50:38 | 172.33 | 5,060.67 | 29.4x |
@@ -98,13 +98,13 @@ Successfully deployed a **fully autonomous real-time monitoring and adaptive opt
 
 **Observations:**
 
-- Lumen: Consistently fast, stable around 170-180ms
+- Core: Consistently fast, stable around 170-180ms
 - LM Studio: High variability (3.5s - 16.7s), likely due to cold start/cache effects
 - Speedup ratio varies 20-95x depending on LM Studio state
 
 ### Statistical Summary
 
-**Lumen Gateway:**
+**Core Gateway:**
 
 - Mean: 173.5 ms
 - Median: 174.3 ms
@@ -145,7 +145,7 @@ Successfully deployed a **fully autonomous real-time monitoring and adaptive opt
 
 4. **Latency Trend Chart**
    - Interactive Chart.js line chart
-   - Sparklines for Lumen vs LM Studio
+   - Sparklines for Core vs LM Studio
    - Hover tooltips with exact values
 
 5. **Auto-Refresh System**
@@ -229,7 +229,7 @@ Get-Content "C:\workspace\agi\outputs\routing_policy.json" | ConvertFrom-Json | 
 
 ✅ **Performance Monitoring**
 
-- Lumen Gateway API
+- Core Gateway API
 - LM Studio Local API
 - Benchmark data collection
 
@@ -277,7 +277,7 @@ Get-Content "C:\workspace\agi\outputs\routing_policy.json" | ConvertFrom-Json | 
 
 ## 💡 Key Insights
 
-1. **Lumen Gateway is Production-Ready**
+1. **Core Gateway is Production-Ready**
    - Consistent sub-200ms latency
    - 100% availability
    - Predictable performance (σ = 4.5ms)

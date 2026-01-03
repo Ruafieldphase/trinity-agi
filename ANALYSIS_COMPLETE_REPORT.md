@@ -56,7 +56,7 @@ D:\nas_backup 리포지토리에 대한 **정밀 고고학적 분석**을 완료
   3. Persona Orchestration (6+ personas, Phase Injection)
   4. LLM Unified Integration (Canary Deployment, Task Queue)
   5. Voice & Multi-turn (Hey Sena v1-v4.1)
-  6. Lumen MCP Server (Tool Bridge)
+  6. Core MCP Server (Tool Bridge)
   7. Monitoring & Operations (Dashboards, Health Gates)
   8. ChatOps & Automation (Natural Language Router)
   9. Streaming & YouTube (OBS WebSocket, Live Bot)
@@ -90,7 +90,7 @@ D:\nas_backup 리포지토리에 대한 **정밀 고고학적 분석**을 완료
 **Tier 2 (수정 필요)**:
 
 - Voice Interaction (Hey Sena v3-v4.1, Multi-turn)
-- Lumen MCP Integration (MCP Server, API Layer)
+- Core MCP Integration (MCP Server, API Layer)
 - Streaming Automation (OBS + YouTube Bot)
 - Cache Management (Effectiveness Analysis, Timeline Monitor)
 
@@ -178,9 +178,9 @@ D:\nas_backup 리포지토리에 대한 **정밀 고고학적 분석**을 완료
 ```
 User Interface (VS Code, Voice, ChatOps)
       ↓
-Orchestration (Lumen MCP, Task Queue, ChatOps Router)
+Orchestration (Core MCP, Task Queue, ChatOps Router)
       ↓
-Persona Layer (Perple, Rua, Elro, Lumen, Sena, Lubit)
+Persona Layer (Perple, Core, Elro, Core, Sena, Lubit)
       ↓
 AGI Core (Self-Correction, BQI Learning, Evidence)
       ↓
@@ -204,7 +204,7 @@ Deployment & Monitoring (Cloud Run, Dashboards, Alerts)
 - **Early 2024**: 초기 AGI 아키텍처 설계, 페르소나 시스템 기반
 - **Phase 4 (2025 Q1-Q2)**: 프로덕션 배포, 카나리 롤아웃, A/B 테스트
 - **Phase 5 (2025 Q2-Q3)**: BQI 학습 구현, 피드백 예측, 성능 최적화
-- **Phase 6 (2025 Q3-Q4)**: Binoche 페르소나, 온라인 학습, 앙상블 방법
+- **Phase 6 (2025 Q3-Q4)**: Binoche_Observer 페르소나, 온라인 학습, 앙상블 방법
 - **Current (2025-10)**: NVMe SSD 마이그레이션, 지식 맵핑, 시스템 통합
 
 #### 마일스톤
@@ -227,7 +227,7 @@ Deployment & Monitoring (Cloud Run, Dashboards, Alerts)
 
 - **Pattern Learner** (Phase 5): 역사적 패턴 추출 → `bqi_pattern_model.json`
 - **Feedback Predictor** (Phase 6): 사용자 응답 품질 예측 → `feedback_prediction_model.json`
-- **Binoche Persona** (Phase 6): 페르소나별 행동 패턴 학습 → `binoche_persona.json`
+- **Binoche_Observer Persona** (Phase 6): 페르소나별 행동 패턴 학습 → `binoche_persona.json`
 - **Online Learner** (Phase 6): 적응형 가중치 조정 → `ensemble_weights.json`
 - **Ensemble Monitor**: 앙상블 성능 추적 → `ensemble_success_metrics.json`
 
@@ -258,7 +258,7 @@ Deployment & Monitoring (Cloud Run, Dashboards, Alerts)
 
 #### Monitoring Infrastructure
 
-- **Quick Status**: 2-5초 실시간 체크 (AGI + Lumen + 시스템)
+- **Quick Status**: 2-5초 실시간 체크 (AGI + Core + 시스템)
 - **Health Gates**: 5-10초 검증 (Ledger + Evidence + 리소스)
 - **24h Reports**: 30-60초 전체 집계 (메트릭 + 이벤트 + 대시보드)
 - **7d Reports**: 1-2분 역사적 분석 (트렌드 + 이상 탐지)
@@ -354,7 +354,7 @@ Deployment & Monitoring (Cloud Run, Dashboards, Alerts)
 
 - **Phase 4**: 카나리 배포, A/B 테스트, API v2 통합
 - **Phase 5**: BQI 학습, 성능 최적화
-- **Phase 6**: Binoche 페르소나, 온라인 학습, 앙상블
+- **Phase 6**: Binoche_Observer 페르소나, 온라인 학습, 앙상블
 - **Phase 7**: 고급 통합 계획
 
 **핵심 파일**:
@@ -368,7 +368,7 @@ Deployment & Monitoring (Cloud Run, Dashboards, Alerts)
 ### Technical Documentation (1,117개)
 
 - **AGI Design**: `AGI_DESIGN_MASTER.md`, `AGI_DESIGN_01-07_*.md`
-- **Integration**: `AGI_INTEGRATION_SENA_LUMEN_v1.0.md`
+- **Integration**: `AGI_INTEGRATION_SENA_CORE_v1.0.md`
 - **Operations**: `PRODUCTION_GO_LIVE_REPORT.md`, `PROJECT_CLOSURE_SUMMARY.md`
 - **Guides**: `HEY_SENA_완전가이드.md`, `COMET_실전활용_시나리오.md`
 

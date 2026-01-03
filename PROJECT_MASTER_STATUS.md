@@ -101,7 +101,7 @@ Phase 6: Predictive        🔄 준비 중 (2025-11-02 시작 예정)
 
 #### 주요 성과 — Phase 4
 
-- ✅ Binoche Persona Learner
+- ✅ Binoche_Observer Persona Learner
 - ✅ Ensemble Voting System
 - ✅ Online Learning (Weight Update)
 - ✅ Feedback Predictor
@@ -451,8 +451,8 @@ Start-Process outputs/monitoring_dashboard_latest.html
 
 ## 📞 지원 및 문의
 
-- **GitHub**: [github.com/Ruafieldphase/agi](https://github.com/Ruafieldphase/agi)
-- **Issues**: [GitHub Issues](https://github.com/Ruafieldphase/agi/issues)
+- **GitHub**: [github.com/Shion_Core/agi](https://github.com/Shion_Core/agi)
+- **Issues**: [GitHub Issues](https://github.com/Shion_Core/agi/issues)
 - **문서**: `docs/` 폴더 참조
 - **ChatOps**: `$env:CHATOPS_SAY='도움말'`
 
