@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Register Windows Scheduled Tasks for Cache Validation
@@ -24,6 +24,9 @@ param(
     [switch]$Unregister,
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # UTF-8 console bootstrap
 try { chcp 65001 > $null 2> $null } catch {}
@@ -38,7 +41,7 @@ $ErrorActionPreference = "Stop"
 
 # Configuration
 $TaskBaseName = "CacheValidation"
-$RepoRoot = "C:\workspace\agi"
+$RepoRoot = "$WorkspaceRoot"
 $ScriptPath = "$RepoRoot\scripts\auto_cache_validation.ps1"
 
 # Task definitions

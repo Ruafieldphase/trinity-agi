@@ -10,6 +10,7 @@ import re
 from pathlib import Path
 from collections import defaultdict, Counter
 from typing import Dict, List, Any
+from workspace_root import get_workspace_root
 
 def load_tasks_json(path: str = ".vscode/tasks.json") -> Dict[str, Any]:
     """tasks.json 로드"""
@@ -167,7 +168,7 @@ def main():
     """메인 함수"""
     try:
         # tasks.json 로드
-        workspace_root = Path(__file__).parent.parent
+        workspace_root = get_workspace_root()
         tasks_path = workspace_root / ".vscode" / "tasks.json"
         
         print(f"📂 분석 중: {tasks_path}")

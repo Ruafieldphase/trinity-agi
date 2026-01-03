@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 
 # 관리자 권한으로 모든 AGI 프로세스 강제 종료
 

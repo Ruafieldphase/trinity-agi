@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     GitHub Copilot용 세션 컨텍스트 요약 생성
 
@@ -70,10 +70,10 @@ if (Test-Path $statusFile) {
     try {
         $status = Get-Content $statusFile -Raw | ConvertFrom-Json
         $queueOk = $status.queue_server.status -eq "ok"
-        $lumensOk = $status.lumen_status.endpoints_checked -gt 0
+        $CoresOk = $status.core_status.endpoints_checked -gt 0
         
-        if ($queueOk -and $lumensOk) {
-            $systemHealth = "✅ 정상 (Queue + Lumen 동작)"
+        if ($queueOk -and $CoresOk) {
+            $systemHealth = "✅ 정상 (Queue + Core 동작)"
         }
         elseif ($queueOk) {
             $systemHealth = "⚠️ 부분 정상 (Queue만 동작)"

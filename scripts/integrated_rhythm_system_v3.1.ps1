@@ -1,14 +1,18 @@
-# Integrated Rhythm System v3.1 - Master Orchestrator with Self-Healing
+﻿# Integrated Rhythm System v3.1 - Master Orchestrator with Self-Healing
 # Phase 1 + Phase 2 + Phase 3 + Self-Healing Level 1 통합 시스템
 # 모든 리듬을 하나의 심장박동으로 조정하며, 자동 복구 기능 내장
 
 param(
     [int]$CheckIntervalSeconds = 5,
-    [string]$ConfigFile = "C:\workspace\agi\outputs\rhythm_config.json",
-    [string]$DashboardFile = "C:\workspace\agi\outputs\rhythm_dashboard.json",
-    [string]$EventQueueFile = "C:\workspace\agi\outputs\event_queue.json",
-    [string]$HealingLogFile = "C:\workspace\agi\outputs\rhythm_healing.log"
+    [string]$ConfigFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\rhythm_config.json",
+    [string]$DashboardFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\rhythm_dashboard.json",
+    [string]$EventQueueFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\event_queue.json",
+    [string]$HealingLogFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\rhythm_healing.log"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 
@@ -94,7 +98,7 @@ function Write-RhythmLog {
         else { "Green" }
     )
 
-    Add-Content -Path "C:\workspace\agi\outputs\rhythm_orchestrator.log" -Value $logLine
+    Add-Content -Path "$WorkspaceRoot\outputs\rhythm_orchestrator.log" -Value $logLine
 }
 
 function Write-HealingLog {
@@ -117,18 +121,18 @@ function Get-RhythmHealth {
     $cpuLoad = if ($null -ne $cpu.LoadPercentage) { [int]$cpu.LoadPercentage } else { 0 }
 
     # Phase 1 확인
-    $masterLog = if (Test-Path "C:\workspace\agi\outputs\master_scheduler.log") {
-        @(Get-Content "C:\workspace\agi\outputs\master_scheduler.log" -ErrorAction SilentlyContinue)[-1]
+    $masterLog = if (Test-Path "$WorkspaceRoot\outputs\master_scheduler.log") {
+        @(Get-Content "$WorkspaceRoot\outputs\master_scheduler.log" -ErrorAction SilentlyContinue)[-1]
     } else { $null }
 
     # Phase 2 확인
-    $adaptiveLog = if (Test-Path "C:\workspace\agi\outputs\adaptive_scheduler.log") {
-        @(Get-Content "C:\workspace\agi\outputs\adaptive_scheduler.log" -ErrorAction SilentlyContinue)[-1]
+    $adaptiveLog = if (Test-Path "$WorkspaceRoot\outputs\adaptive_scheduler.log") {
+        @(Get-Content "$WorkspaceRoot\outputs\adaptive_scheduler.log" -ErrorAction SilentlyContinue)[-1]
     } else { $null }
 
     # Phase 3 확인
-    $eventLog = if (Test-Path "C:\workspace\agi\outputs\event_detector.log") {
-        @(Get-Content "C:\workspace\agi\outputs\event_detector.log" -ErrorAction SilentlyContinue)[-1]
+    $eventLog = if (Test-Path "$WorkspaceRoot\outputs\event_detector.log") {
+        @(Get-Content "$WorkspaceRoot\outputs\event_detector.log" -ErrorAction SilentlyContinue)[-1]
     } else { $null }
 
     return @{

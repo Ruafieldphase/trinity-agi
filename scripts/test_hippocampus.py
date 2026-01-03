@@ -7,9 +7,10 @@ Self-Referential AGI의 첫 테스트!
 
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add parent to path
-repo_root = Path(__file__).parent.parent
+repo_root = get_workspace_root()
 sys.path.insert(0, str(repo_root))
 
 from fdo_agi_repo.copilot.hippocampus import CopilotHippocampus

@@ -1,9 +1,12 @@
-# Quantum Flow → Goal System 통합 실행 스크립트
+﻿# Quantum Flow → Goal System 통합 실행 스크립트
 [CmdletBinding()]
 param(
     [switch]$OpenReport,
     [switch]$VerboseLog
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

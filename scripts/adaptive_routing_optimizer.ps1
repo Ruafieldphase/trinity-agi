@@ -1,12 +1,15 @@
-# Adaptive Routing Optimizer
+﻿# Adaptive Routing Optimizer
 # Automatically adjusts routing policy based on performance trends
 
 param(
-    [string]$TrendAnalysis = "$PSScriptRoot\..\outputs\performance_trend_analysis.json",
-    [string]$PolicyFile = "$PSScriptRoot\..\outputs\routing_policy.json",
+    [string]$TrendAnalysis = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\performance_trend_analysis.json",
+    [string]$PolicyFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\routing_policy.json",
     [switch]$DryRun,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -22,7 +25,7 @@ if (-not (Test-Path $TrendAnalysis)) {
 $trends = Get-Content $TrendAnalysis | ConvertFrom-Json
 
 Write-Host "📊 Trend Data Loaded" -ForegroundColor Green
-Write-Host "   Lumen: $($trends.lumen.stats.mean)ms ($($trends.lumen.stats.trend))" -ForegroundColor DarkGray
+Write-Host "   Core: $($trends.Core.stats.mean)ms ($($trends.Core.stats.trend))" -ForegroundColor DarkGray
 Write-Host "   LM Studio: $($trends.lm_studio.stats.mean)ms ($($trends.lm_studio.stats.trend))" -ForegroundColor DarkGray
 Write-Host ""
 
@@ -40,7 +43,7 @@ else {
     Write-Host "📋 Creating New Policy" -ForegroundColor Yellow
     @{
         version              = "1.0"
-        primary_backend      = "lumen"
+        primary_backend      = "Core"
         fallback_backend     = "lm_studio"
         latency_threshold_ms = 2000
         auto_adjust          = $true
@@ -55,10 +58,10 @@ $changes = @()
 $newPolicy = $policy.PSObject.Copy()
 
 # Rule 1: Select primary based on availability and performance
-if ($trends.lumen.availability_percent -gt 90 -and $trends.lm_studio.availability_percent -gt 90) {
+if ($trends.Core.availability_percent -gt 90 -and $trends.lm_studio.availability_percent -gt 90) {
     # Both available - choose faster
-    $optimalPrimary = if ($trends.lumen.stats.mean -lt $trends.lm_studio.stats.mean) {
-        "lumen"
+    $optimalPrimary = if ($trends.Core.stats.mean -lt $trends.lm_studio.stats.mean) {
+        "Core"
     }
     else {
         "lm_studio"
@@ -70,31 +73,31 @@ if ($trends.lumen.availability_percent -gt 90 -and $trends.lm_studio.availabilit
     }
     
     # Set fallback to the other one
-    $optimalFallback = if ($optimalPrimary -eq "lumen") { "lm_studio" } else { "lumen" }
+    $optimalFallback = if ($optimalPrimary -eq "Core") { "lm_studio" } else { "Core" }
     if ($policy.fallback_backend -ne $optimalFallback) {
         $changes += "Fallback backend: $($policy.fallback_backend) → $optimalFallback"
         $newPolicy.fallback_backend = $optimalFallback
     }
     
 }
-elseif ($trends.lumen.availability_percent -gt 50) {
-    # Prefer Lumen if available
-    if ($policy.primary_backend -ne "lumen") {
-        $changes += "Primary backend: $($policy.primary_backend) → lumen (high availability)"
-        $newPolicy.primary_backend = "lumen"
+elseif ($trends.Core.availability_percent -gt 50) {
+    # Prefer Core if available
+    if ($policy.primary_backend -ne "Core") {
+        $changes += "Primary backend: $($policy.primary_backend) → Core (high availability)"
+        $newPolicy.primary_backend = "Core"
     }
 }
 elseif ($trends.lm_studio.availability_percent -gt 50) {
     # Fallback to LM Studio
     if ($policy.primary_backend -ne "lm_studio") {
-        $changes += "Primary backend: $($policy.primary_backend) → lm_studio (Lumen unavailable)"
+        $changes += "Primary backend: $($policy.primary_backend) → lm_studio (Core unavailable)"
         $newPolicy.primary_backend = "lm_studio"
     }
 }
 
 # Rule 2: Adjust threshold based on performance variance
-$primaryStats = if ($newPolicy.primary_backend -eq "lumen") {
-    $trends.lumen.stats
+$primaryStats = if ($newPolicy.primary_backend -eq "Core") {
+    $trends.Core.stats
 }
 else {
     $trends.lm_studio.stats
@@ -113,8 +116,8 @@ if ([math]::Abs($policy.latency_threshold_ms - $optimalThreshold) -gt 100) {
 
 # Rule 3: Add health warnings
 $newPolicy.health_warnings = @()
-if ($trends.lumen.stats.trend -eq "degrading") {
-    $newPolicy.health_warnings += "Lumen performance is degrading"
+if ($trends.Core.stats.trend -eq "degrading") {
+    $newPolicy.health_warnings += "Core performance is degrading"
 }
 if ($trends.lm_studio.stats.trend -eq "degrading") {
     $newPolicy.health_warnings += "LM Studio performance is degrading"

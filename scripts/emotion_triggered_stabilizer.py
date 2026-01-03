@@ -3,7 +3,7 @@
 Emotion-Triggered Stabilizer: Realtime Pipeline + Auto-Stabilizer 통합
 
 Phase 5: Auto-Stabilizer Integration
-- Realtime Pipeline에서 Lumen 감정 신호 모니터링
+- Realtime Pipeline에서 Core 감정 신호 모니터링
 - Fear 레벨별 자동 안정화 트리거
 - Resonance simulation + Emotion signals = Smart maintenance
 
@@ -21,11 +21,12 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
+from workspace_root import get_workspace_root
 
 # Constants
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 REALTIME_STATUS_JSON = WORKSPACE_ROOT / "outputs" / "realtime_pipeline_status.json"
-LUMEN_STATE_PATH = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "lumen_state.json"
+CORE_STATE_PATH = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "core_state.json"
 OUTPUT_DIR = WORKSPACE_ROOT / "outputs"
 LOG_PATH = OUTPUT_DIR / "emotion_stabilizer.log"
 STABILIZER_STATE_PATH = OUTPUT_DIR / "stabilizer_state.json"
@@ -112,12 +113,12 @@ def get_emotion_signals() -> Optional[Dict[str, Any]]:
     if not status:
         return None
     
-    lumen_state = status.get("lumen_state")
-    if not lumen_state:
-        log("No Lumen state in realtime status", "WARN")
+    core_state = status.get("core_state")
+    if not core_state:
+        log("No Core state in realtime status", "WARN")
         return None
     
-    return lumen_state
+    return core_state
 
 
 def get_stabilizer_state() -> Dict[str, Any]:

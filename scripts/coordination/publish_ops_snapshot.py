@@ -5,7 +5,7 @@ Publish Ops Snapshot (local-only, best-effort)
 
 목표:
 - 비노체 개입 없이도, "현재 AGI가 무엇을 했는지/어디까지 왔는지"를
-  외부 협업자(시안/세나)도 같은 기준으로 볼 수 있게 스냅샷을 고정한다.
+  외부 협업자(Shion/세나)도 같은 기준으로 볼 수 있게 스냅샷을 고정한다.
 
 원칙:
 - 네트워크 사용 없음
@@ -21,9 +21,15 @@ import json
 import time
 from pathlib import Path
 from typing import Any
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
-ROOT = Path(__file__).resolve().parents[2]
+
+ROOT = get_workspace_root()
 INBOX = ROOT / "inputs" / "agent_inbox"
 OUT_STATE = ROOT / "outputs" / "sync_cache" / "publish_ops_snapshot_state.json"
 
@@ -214,7 +220,7 @@ def publish() -> dict[str, Any]:
 
     targets = [
         INBOX / "claude_sena" / "OPS_SNAPSHOT.md",
-        INBOX / "antigravity_sian" / "OPS_SNAPSHOT.md",
+        INBOX / "antigravity_shion" / "OPS_SNAPSHOT.md",
     ]
     for t in targets:
         _atomic_write_text(t, content)

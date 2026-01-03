@@ -1,12 +1,16 @@
-# Integrated Rhythm System - Master Orchestrator
+﻿# Integrated Rhythm System - Master Orchestrator
 # Phase 1 + Phase 2 + Phase 3 통합 시스템
 # 모든 리듬을 하나의 심장박동으로 조정
 
 param(
     [int]$CheckIntervalSeconds = 5,
-    [string]$ConfigFile = "C:\workspace\agi\outputs\rhythm_config.json",
-    [string]$DashboardFile = "C:\workspace\agi\outputs\rhythm_dashboard.json"
+    [string]$ConfigFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\rhythm_config.json",
+    [string]$DashboardFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\rhythm_dashboard.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 
@@ -60,7 +64,7 @@ function Write-RhythmLog {
         else { "Green" }
     )
 
-    Add-Content -Path "C:\workspace\agi\outputs\rhythm_orchestrator.log" -Value $logLine
+    Add-Content -Path "$WorkspaceRoot\outputs\rhythm_orchestrator.log" -Value $logLine
 }
 
 # === System Health Check ===
@@ -72,13 +76,13 @@ function Get-RhythmHealth {
     $cpuLoad = if ($null -ne $cpu.LoadPercentage) { [int]$cpu.LoadPercentage } else { 0 }
 
     # Check if Master Scheduler is running
-    $masterLog = if (Test-Path "C:\workspace\agi\outputs\master_scheduler.log") {
-        @(Get-Content "C:\workspace\agi\outputs\master_scheduler.log" -ErrorAction SilentlyContinue)[-1]
+    $masterLog = if (Test-Path "$WorkspaceRoot\outputs\master_scheduler.log") {
+        @(Get-Content "$WorkspaceRoot\outputs\master_scheduler.log" -ErrorAction SilentlyContinue)[-1]
     } else { $null }
 
     # Check if Adaptive Scheduler is running
-    $adaptiveLog = if (Test-Path "C:\workspace\agi\outputs\adaptive_scheduler.log") {
-        @(Get-Content "C:\workspace\agi\outputs\adaptive_scheduler.log" -ErrorAction SilentlyContinue)[-1]
+    $adaptiveLog = if (Test-Path "$WorkspaceRoot\outputs\adaptive_scheduler.log") {
+        @(Get-Content "$WorkspaceRoot\outputs\adaptive_scheduler.log" -ErrorAction SilentlyContinue)[-1]
     } else { $null }
 
     return @{
@@ -91,7 +95,7 @@ function Get-RhythmHealth {
         schedulers = @{
             master_active = if ($masterLog) { $true } else { $false }
             adaptive_active = if ($adaptiveLog) { $true } else { $false }
-            event_detector_ready = (Test-Path "C:\workspace\agi\scripts\event_detector.ps1")
+            event_detector_ready = (Test-Path "$WorkspaceRoot\scripts\event_detector.ps1")
         }
         health_score = [math]::Round(
             (100 - [Math]::Max($cpuLoad, 0)) * 0.4 +

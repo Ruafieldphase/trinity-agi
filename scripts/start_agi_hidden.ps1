@@ -1,4 +1,4 @@
-# AGI 시스템 완전히 숨겨서 실행 (개선된 버전)
+﻿# AGI 시스템 완전히 숨겨서 실행 (개선된 버전)
 # CreateNoWindow = true 사용
 
 $ErrorActionPreference = "SilentlyContinue"
@@ -14,7 +14,7 @@ if (-not (Test-Path $pythonw)) {
 Write-Host "   Python: $pythonw" -ForegroundColor Gray
 
 # 작업 디렉토리
-$agiRoot = "C:\workspace\agi"
+$agiRoot = "$WorkspaceRoot"
 
 # Process Start Info를 사용하여 완전히 숨김
 function Start-HiddenProcess {
@@ -23,6 +23,9 @@ function Start-HiddenProcess {
         [string]$Arguments,
         [string]$WorkingDirectory
     )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
     $psi = New-Object System.Diagnostics.ProcessStartInfo
     $psi.FileName = $FilePath

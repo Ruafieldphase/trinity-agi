@@ -15,9 +15,10 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import Counter
 from typing import Dict, List, Any
+from workspace_root import get_workspace_root
 
 # 경로 설정
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 GOAL_TRACKER = WORKSPACE / "fdo_agi_repo" / "memory" / "goal_tracker.json"
 LEDGER = WORKSPACE / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 OUTPUT_DIR = WORKSPACE / "outputs"

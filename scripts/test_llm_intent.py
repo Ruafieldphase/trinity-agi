@@ -10,6 +10,7 @@ Usage:
 from __future__ import annotations
 import os
 import sys
+from workspace_root import get_workspace_root
 
 # Load .env if available
 try:
@@ -18,7 +19,7 @@ try:
 except ImportError:
     pass
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+sys.path.insert(0, str(get_workspace_root()))
 
 from scripts.llm_client import classify_intent
 

@@ -1,8 +1,8 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # Setup SSH Key Authentication to Linux VM
 
 param(
-    [string]$LinuxHost = "binoche@192.168.119.128",
+    [string]$LinuxHost = "Binoche_Observer@192.168.119.128",
     [string]$Password = "0000"
 )
 

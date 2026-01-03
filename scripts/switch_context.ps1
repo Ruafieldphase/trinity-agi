@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 AGI Context Switcher - 맥락 기반 시스템 활성화/비활성화
 
@@ -44,6 +44,9 @@ param(
     [Parameter(Mandatory = $false)]
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
@@ -336,8 +339,6 @@ function Switch-Context {
         Write-Host "🔬 Quick Life Check..." -ForegroundColor Cyan
         & $healthScript -OutFile (Join-Path $WorkspaceRoot "outputs\life_continuity_latest.json")
     }
-<<<<<<< HEAD
-
     # 7. Context Anchor 업데이트 (새 세션 진입점 통합)
     $anchorScript = Join-Path $WorkspaceRoot "scripts\generate_context_anchor.py"
     if (Test-Path $anchorScript) {
@@ -349,8 +350,6 @@ function Switch-Context {
             Write-Host "Warning: failed to update context anchor: $_" -ForegroundColor Yellow
         }
     }
-=======
->>>>>>> origin/main
 }
 
 # Main Logic

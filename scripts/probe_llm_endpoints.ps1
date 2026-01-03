@@ -1,9 +1,12 @@
-param(
+﻿param(
     [int]$Requests = 5,
     [string[]]$Endpoints = @("http://localhost:8080/v1/models", "http://localhost:18090/v1/models"),
-    [string]$OutJson = "${PSScriptRoot}\..\outputs\local_latency_probe_latest.json",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\local_latency_probe_latest.json",
     [int]$TimeoutSec = 10
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 

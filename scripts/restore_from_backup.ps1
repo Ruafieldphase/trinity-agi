@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Restore system state from a previously verified backup.
@@ -36,13 +36,16 @@
 #>
 
 param(
-    [string]$BackupRoot = "C:\workspace\agi\backups",
+    [string]$BackupRoot = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\backups",
     [string]$BackupName,
     [switch]$Execute,
     [string[]]$Sections,
     [switch]$Force,
-    [string]$ReportPath = "C:\workspace\agi\outputs\restore_from_backup_report_latest.md"
+    [string]$ReportPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\restore_from_backup_report_latest.md"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}

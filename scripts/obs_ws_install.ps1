@@ -1,4 +1,4 @@
-# Install obsws-python for OBS WebSocket control
+﻿# Install obsws-python for OBS WebSocket control
 # Usage: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/obs_ws_install.ps1
 
 param(

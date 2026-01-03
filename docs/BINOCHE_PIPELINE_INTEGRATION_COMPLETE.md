@@ -1,4 +1,4 @@
-# Binoche Pipeline Integration Complete
+# Binoche_Observer Pipeline Integration Complete
 
 **Date**: 2025-10-30  
 **Status**: ✅ Production Deployment Complete (A/B Testing Mode)
@@ -25,7 +25,7 @@
 ### 2. 수정된 파일
 
 - `D:\nas_backup\fdo_agi_repo\orchestrator\pipeline.py`
-  - Phase 6b: Enhanced Binoche Decision Engine 추가
+  - Phase 6b: Enhanced Binoche_Observer Decision Engine 추가
   - Phase 6k: A/B Comparison Logging 추가
   - 기존 Legacy Ensemble 시스템 유지
 
@@ -34,7 +34,7 @@
 ### 동작 방식
 
 1. **병렬 실행**: 모든 작업에 대해 두 시스템이 동시에 의사결정
-   - Legacy: 기존 복잡한 Binoche Ensemble (multi-judge)
+   - Legacy: 기존 복잡한 Binoche_Observer Ensemble (multi-judge)
    - Enhanced: 새로운 BinocheDecisionEngine (학습 기반)
 
 2. **데이터 수집**: `resonance_ledger.jsonl`에 3가지 이벤트 기록
@@ -136,7 +136,7 @@ binoche_reason = enhanced_decision["reason"]
 ### 롤백 방법
 
 1. `D:\nas_backup\fdo_agi_repo\orchestrator\pipeline.py` 백업 복원
-2. Enhanced Binoche 관련 코드 제거 (Phase 6b, 6k)
+2. Enhanced Binoche_Observer 관련 코드 제거 (Phase 6b, 6k)
 3. 기존 Legacy 시스템만 유지
 
 ### 문제 발생 시

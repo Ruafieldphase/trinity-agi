@@ -1,10 +1,13 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # Check 24h monitoring status
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 Write-Host "`n=== 24h 모니터링 상태 체크 ===" -ForegroundColor Cyan
 
 Write-Host "`n[1] Gateway 최적화 모니터링" -ForegroundColor Yellow
-$gatewayLog = "C:\workspace\agi\outputs\gateway_optimization_log.jsonl"
+$gatewayLog = "$WorkspaceRoot\outputs\gateway_optimization_log.jsonl"
 if (Test-Path $gatewayLog) {
     $lines = Get-Content $gatewayLog -Tail 1
     if ($lines) {
@@ -19,7 +22,7 @@ else {
 }
 
 Write-Host "`n[2] Orchestrator 24h Production" -ForegroundColor Yellow
-$orchLog = "C:\workspace\agi\fdo_agi_repo\outputs\fullstack_24h_monitoring.jsonl"
+$orchLog = "$WorkspaceRoot\fdo_agi_repo\outputs\fullstack_24h_monitoring.jsonl"
 if (Test-Path $orchLog) {
     $lines = Get-Content $orchLog -Tail 1
     if ($lines) {
@@ -34,7 +37,7 @@ else {
 }
 
 Write-Host "`n[3] 1h 효과 측정 결과" -ForegroundColor Yellow
-$effectLog = "C:\workspace\agi\outputs\optimization_effect_1h.json"
+$effectLog = "$WorkspaceRoot\outputs\optimization_effect_1h.json"
 if (Test-Path $effectLog) {
     $result = Get-Content $effectLog -Raw | ConvertFrom-Json
     Write-Host "  시작: $($result.start_time)" -ForegroundColor White

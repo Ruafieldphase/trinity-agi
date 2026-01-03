@@ -28,7 +28,7 @@ By default, nothing is captured unless the run is not “all green” (either Is
 The microscope runner accepts more flags directly (when calling `scripts/microscope_capture.ps1`):
 
 - `-OutDir` — output directory (default `outputs/microscope`)
-- `-SparkLabels` — optional label(s) like `"Local LLM"`, `"Cloud AI"`, `"Lumen Gateway"`
+- `-SparkLabels` — optional label(s) like `"Local LLM"`, `"Cloud AI"`, `"Core Gateway"`
 - `-Quiet` — reduce console noise from the capture process
 
 ## Forcing a test capture

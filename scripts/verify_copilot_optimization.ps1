@@ -1,13 +1,16 @@
-# Quick Copilot Optimization Verification
+﻿# Quick Copilot Optimization Verification
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 Write-Host "`n=== Copilot Optimization Verification ===" -ForegroundColor Cyan
 Write-Host ""
 
 # 1. Check .vscodeignore
 Write-Host "[1/4] Checking .vscodeignore..." -ForegroundColor Yellow
-if (Test-Path "C:\workspace\agi\.vscodeignore") {
+if (Test-Path "$WorkspaceRoot\.vscodeignore") {
     Write-Host "  ✅ .vscodeignore exists" -ForegroundColor Green
-    $lines = (Get-Content "C:\workspace\agi\.vscodeignore" | Measure-Object -Line).Lines
+    $lines = (Get-Content "$WorkspaceRoot\.vscodeignore" | Measure-Object -Line).Lines
     Write-Host "  📄 $lines exclusion rules active"
 }
 else {
@@ -16,8 +19,8 @@ else {
 
 # 2. Check settings.json
 Write-Host "`n[2/4] Checking settings.json..." -ForegroundColor Yellow
-if (Test-Path "C:\workspace\agi\.vscode\settings.json") {
-    $content = Get-Content "C:\workspace\agi\.vscode\settings.json" -Raw
+if (Test-Path "$WorkspaceRoot\.vscode\settings.json") {
+    $content = Get-Content "$WorkspaceRoot\.vscode\settings.json" -Raw
     
     if ($content -match "files.watcherExclude") {
         Write-Host "  ✅ Watcher exclusions configured" -ForegroundColor Green

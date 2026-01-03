@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Emotion Stabilizer 시나리오 테스트
@@ -26,13 +26,16 @@ param(
     [string]$Scenario = "stable",
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
-$LumenStatePath = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\lumen_state.json"
-$BackupPath = "$LumenStatePath.backup"
+$CoreStatePath = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\core_state.json"
+$BackupPath = "$CoreStatePath.backup"
 
 # Scenario configurations
 $scenarios = @{
@@ -72,9 +75,9 @@ Write-Host "   Description: $($config.description)" -ForegroundColor Gray
 Write-Host ""
 
 # Backup current state
-if (Test-Path $LumenStatePath) {
-    Write-Host "📦 Backing up current Lumen state..." -ForegroundColor Yellow
-    Copy-Item $LumenStatePath $BackupPath -Force
+if (Test-Path $CoreStatePath) {
+    Write-Host "📦 Backing up current Core state..." -ForegroundColor Yellow
+    Copy-Item $CoreStatePath $BackupPath -Force
 }
 
 # Create test state
@@ -89,8 +92,8 @@ $testState = @{
     test_scenario = $Scenario
 } | ConvertTo-Json -Depth 10
 
-Write-Host "✏️  Writing test Lumen state..." -ForegroundColor Yellow
-$testState | Out-File -FilePath $LumenStatePath -Encoding utf8 -Force
+Write-Host "✏️  Writing test Core state..." -ForegroundColor Yellow
+$testState | Out-File -FilePath $CoreStatePath -Encoding utf8 -Force
 
 # Run stabilizer
 Write-Host ""
@@ -103,8 +106,8 @@ $stabilizerScript = Join-Path $WorkspaceRoot "scripts\start_emotion_stabilizer.p
 # Restore backup
 Write-Host ""
 if (Test-Path $BackupPath) {
-    Write-Host "🔄 Restoring original Lumen state..." -ForegroundColor Yellow
-    Move-Item $BackupPath $LumenStatePath -Force
+    Write-Host "🔄 Restoring original Core state..." -ForegroundColor Yellow
+    Move-Item $BackupPath $CoreStatePath -Force
 }
 else {
     Write-Host "⚠️  No backup found to restore" -ForegroundColor Yellow

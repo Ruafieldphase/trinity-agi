@@ -14,9 +14,10 @@ import time
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 CACHE_DIR = OUTPUTS_DIR / "cache"
 

@@ -1,22 +1,25 @@
-# Enhance Metric Collection
-# 루멘(合) 권장: 모든 주요 이벤트에 quality/latency 메트릭 추가
+﻿# Enhance Metric Collection
+# Core(合) 권장: 모든 주요 이벤트에 quality/latency 메트릭 추가
 
 param(
     [switch]$AddQuality,
     [switch]$AddLatency,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
 Write-Host "`n📊 Metric Collection Enhancement`n" -ForegroundColor Cyan
-Write-Host "루멘(合)의 권장: 정보 밀도 향상을 위한 메트릭 강화`n"
+Write-Host "Core(合)의 권장: 정보 밀도 향상을 위한 메트릭 강화`n"
 
 # 1. 현재 메트릭 커버리지 분석
 Write-Host "[1/4] 현재 메트릭 커버리지 분석 중..." -ForegroundColor Yellow
 
-$ledgerPath = "$PSScriptRoot\..\fdo_agi_repo\memory\resonance_ledger.jsonl"
+$ledgerPath = "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl"
 if (-not (Test-Path $ledgerPath)) {
     Write-Host "❌ Resonance ledger not found: $ledgerPath" -ForegroundColor Red
     exit 1
@@ -64,12 +67,12 @@ Write-Host "`n[3/4] 코드베이스에서 메트릭 추가 위치 탐색..." -Fo
 $scriptsToEnhance = @()
 
 # Python 파일 검색
-$pythonFiles = Get-ChildItem "$PSScriptRoot\..\fdo_agi_repo" -Recurse -Filter "*.py" -ErrorAction SilentlyContinue |
+$pythonFiles = Get-ChildItem "$WorkspaceRoot\fdo_agi_repo" -Recurse -Filter "*.py" -ErrorAction SilentlyContinue |
 Where-Object { $_.FullName -notmatch '\\\.venv\\|\\__pycache__\\|\\.pytest' }
 
 foreach ($file in $pythonFiles | Select-Object -First 10) {
     $content = Get-Content $file.FullName -Raw -ErrorAction SilentlyContinue
-    if ($content -match 'event_type.*=.*(thesis|antithesis|synthesis|binoche|eval)') {
+    if ($content -match 'event_type.*=.*(thesis|antithesis|synthesis|Binoche_Observer|eval)') {
         $hasQuality = $content -match '"quality":\s*\d'
         $hasLatency = $content -match '"latency_ms":\s*\d'
         
@@ -122,7 +125,7 @@ $($scriptsToEnhance | Select-Object -First 5 | ForEach-Object {
 Write-Host $recommendations -ForegroundColor White
 
 # 결과 저장
-$outPath = "$PSScriptRoot\..\outputs\metric_enhancement_report.md"
+$outPath = "$WorkspaceRoot\outputs\metric_enhancement_report.md"
 $recommendations | Out-File $outPath -Encoding UTF8
 Write-Host "`n💾 리포트 저장: $outPath" -ForegroundColor Green
 

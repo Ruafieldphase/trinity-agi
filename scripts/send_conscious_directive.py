@@ -14,8 +14,9 @@ import json
 import argparse
 from datetime import datetime
 from pathlib import Path
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 def send_directive(message: str, source: str = "user"):

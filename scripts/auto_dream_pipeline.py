@@ -14,9 +14,10 @@ import sys
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Any, Tuple
+from workspace_root import get_workspace_root
 
 # Add project root to path
-project_root = Path(__file__).parent.parent
+project_root = get_workspace_root()
 sys.path.insert(0, str(project_root / "fdo_agi_repo"))
 
 from orchestrator.resonance_bridge import consolidate_to_hippocampus
@@ -30,7 +31,7 @@ class DreamPipelineAutomation:
     def __init__(self, dry_run: bool = False, verbose: bool = False):
         self.dry_run = dry_run
         self.verbose = verbose
-        self.hippocampus = CopilotHippocampus(Path(__file__).parent.parent)
+        self.hippocampus = CopilotHippocampus(get_workspace_root())
         self.glymphatic = GlymphaticSystem(delta_threshold=100_000_000)
         self.stats = {
             "start_time": datetime.now().isoformat(),
@@ -125,7 +126,7 @@ class DreamPipelineAutomation:
             # Get workspace root safely
             workspace_root = getattr(self.hippocampus, 'workspace_root', None)
             if not workspace_root:
-                workspace_root = Path(__file__).parent.parent
+                workspace_root = get_workspace_root()
                 self.log("Using fallback workspace root", "WARN")
             
             # Get dreams and clean them

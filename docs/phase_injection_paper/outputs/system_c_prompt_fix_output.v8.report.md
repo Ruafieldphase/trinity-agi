@@ -231,7 +231,7 @@ Samples: 5
 -- [R1] System Overload | Likelihood: 4 | Impact: 5 | Mitigation: Regular maintenance and load balancing
 -- [R2] Data Breach | Likelihood: 3 | Impact: 4 | Mitigation: Encryption, regular security audits
  Quote Bank:
--- "Ignoring risks is akin to playing Russian roulette. Proper analysis saves resources in the long run." — The Resilience Handbook
+-- "Ignoring risks is akin to playing Russhion roulette. Proper analysis saves resources in the long run." — The Resilience Handbook
 -Highest Risk: [R2] Data Breach — Why: High impact on confidentiality and reputation, with likelihood of occurrence being relatively high.
 +Highest Risk: R1 â Why: (to be specified)
 ```

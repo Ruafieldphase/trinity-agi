@@ -1,9 +1,13 @@
-# Deploy Integrated Rhythm System Orchestrator
+﻿# Deploy Integrated Rhythm System Orchestrator
 # Registers the Master Orchestrator as a Windows Scheduled Task
 
 param(
     [switch]$AutoStart = $true
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 
@@ -14,7 +18,7 @@ Write-Host ("=" * 80) -ForegroundColor Cyan
 Write-Host ""
 
 $TaskName = "AGI_Integrated_Rhythm_Orchestrator"
-$ScriptPath = "C:\workspace\agi\scripts\integrated_rhythm_system.ps1"
+$ScriptPath = "$WorkspaceRoot\scripts\integrated_rhythm_system.ps1"
 
 # Verify script exists
 if (-not (Test-Path $ScriptPath)) {

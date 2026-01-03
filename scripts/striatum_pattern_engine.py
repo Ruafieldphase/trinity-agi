@@ -161,7 +161,7 @@ if __name__ == "__main__":
     engine = StriatumPatternEngine(Path.cwd())
     
     # Test Context
-    ctx = {"what": "play_music", "who": "binoche", "where": "workspace"}
+    ctx = {"what": "play_music", "who": "Binoche_Observer", "where": "workspace"}
     
     # Check habit
     action = engine.get_habit(ctx)

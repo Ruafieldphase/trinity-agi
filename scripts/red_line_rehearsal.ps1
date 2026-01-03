@@ -1,4 +1,4 @@
-# Purpose: Minimal red-line rehearsal stub (non-destructive).
+﻿# Purpose: Minimal red-line rehearsal stub (non-destructive).
 # - Creates a rehearsal report without enforcing/altering the system.
 
 $ErrorActionPreference = "Stop"
@@ -33,4 +33,3 @@ Move-Item -Force $tmp $outFile
 
 Write-Host "ok: true"
 Write-Host "out: $outFile"
-

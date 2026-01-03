@@ -1,4 +1,4 @@
-# 🆕 New Chat with Context (Quick Start) - 게임 봇 모드!
+﻿# 🆕 New Chat with Context (Quick Start) - 게임 봇 모드!
 # 세션 복원 → 컨텍스트 복사 → 새 채팅 → 자동 붙여넣기
 
 param(

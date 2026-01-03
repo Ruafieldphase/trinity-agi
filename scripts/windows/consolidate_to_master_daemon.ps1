@@ -1,6 +1,9 @@
 # Master Daemon 통합 스크립트 (관리자 권한 필요)
 # 우클릭 → "관리자 권한으로 실행"
 
+
+. "$PSScriptRoot\..\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "Continue"
 
 Write-Host "`n=== AGI Master Daemon 통합 시작 ===" -ForegroundColor Cyan
@@ -8,7 +11,7 @@ Write-Host "`n=== AGI Master Daemon 통합 시작 ===" -ForegroundColor Cyan
 # 1. Master Daemon 설치
 Write-Host "`n[1/3] Master Daemon 설치 중..." -ForegroundColor Yellow
 try {
-    & "C:\workspace\agi\scripts\master_daemon.ps1" -Install
+    & "$WorkspaceRoot\scripts\master_daemon.ps1" -Install
     Write-Host "✅ Master Daemon 설치 완료" -ForegroundColor Green
 }
 catch {
@@ -49,7 +52,7 @@ catch {
 # 상태 확인
 Write-Host "`n=== 최종 상태 확인 ===" -ForegroundColor Cyan
 Start-Sleep -Seconds 2
-& "C:\workspace\agi\scripts\master_daemon.ps1" -Status
+& "$WorkspaceRoot\scripts\master_daemon.ps1" -Status
 
 Write-Host "`n=== 통합 완료 ===" -ForegroundColor Green
 Write-Host "팝업 창이 더 이상 뜨지 않습니다!" -ForegroundColor Cyan

@@ -25,9 +25,10 @@ import sys
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 추가
-workspace_root = Path(__file__).resolve().parent.parent
+workspace_root = get_workspace_root()
 sys.path.insert(0, str(workspace_root))
 
 try:

@@ -6,6 +6,7 @@ import hashlib
 from typing import List, Dict, Any, Optional
 from pathlib import Path
 import requests
+from workspace_root import get_workspace_root
 
 # LangChain components
 try:
@@ -319,20 +320,19 @@ if __name__ == "__main__":
     # Quick Test
     logging.basicConfig(level=logging.INFO)
     import sys
-    sys.path.insert(0, str(Path(__file__).parent.parent))
-    sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
-    from workspace_utils import find_workspace_root
-    root = find_workspace_root(Path(__file__).parent)
+    sys.path.insert(0, str(get_workspace_root()))
+    sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
+    root = get_workspace_root()
     engine = SemanticRAGEngine(root)
     
     if engine.vector_store:
         test_docs = [
-            {"text": "시안이는 AGI 시스템의 페르소나 중 하나입니다.", "metadata": {"category": "persona"}},
+            {"text": "Shion이는 AGI 시스템의 페르소나 중 하나입니다.", "metadata": {"category": "persona"}},
             {"text": "LangChain은 LLM 오케스트레이션 프레임워크입니다.", "metadata": {"category": "technology"}}
         ]
         engine.add_documents(test_docs)
         
-        results = engine.search("시안이가 누구야?")
-        print(f"\nSearch results for '시안이가 누구야?':")
+        results = engine.search("Shion이가 누구야?")
+        print(f"\nSearch results for 'Shion이가 누구야?':")
         for r in results:
             print(f"- {r['content']} (Score: {r['score']})")

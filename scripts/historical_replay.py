@@ -10,9 +10,10 @@ import time
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 def load_historical_data(limit: int = 50) -> List[Dict]:

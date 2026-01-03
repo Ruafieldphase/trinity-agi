@@ -198,7 +198,7 @@ if __name__ == "__main__":
 
 **옵션 C: 기존 작업물 활용** (가장 빠름)
 - 세나의 7개 AGI 설계 문서
-- 루멘의 윤리 헌장
+- Core의 윤리 헌장
 - Week 1-8 패키지 문서
 - 장점: 이미 있음, 관련성 높음
 
@@ -210,7 +210,7 @@ if __name__ == "__main__":
 
 ```jsonl
 {"id": "fdo_agi_arch", "text": "FDO-AGI (Fractal-Dialectic-Outside AGI) is a five-layer architecture...", "metadata": {"source": "design_docs", "author": "Sena"}}
-{"id": "guardianship_charter", "text": "Co-Guardianship Charter establishes dual protection: meaning (Binoche) and safety (Research Team)...", "metadata": {"source": "lumen", "type": "ethics"}}
+{"id": "guardianship_charter", "text": "Co-Guardianship Charter establishes dual protection: meaning (Binoche_Observer) and safety (Research Team)...", "metadata": {"source": "Core", "type": "ethics"}}
 {"id": "wiki_ai_safety", "text": "AI safety is an interdisciplinary field focused on preventing accidents, misuse, or unintended harmful consequences...", "metadata": {"source": "wikipedia", "url": "https://en.wikipedia.org/wiki/AI_safety"}}
 ```
 
@@ -253,7 +253,7 @@ def main():
                 })
 
     # 2. 윤리 헌장 (HTML에서 텍스트 추출)
-    charter_path = Path("ai_binoche_conversation_origin/lumen/AGI 보호 체계 설계/FDO-AGI_공동_후견_헌장_v0.1_서명본_brand.html")
+    charter_path = Path("ai_binoche_conversation_origin/Core/AGI 보호 체계 설계/FDO-AGI_공동_후견_헌장_v0.1_서명본_brand.html")
     if charter_path.exists():
         # 간단한 HTML 파싱 (실제로는 BeautifulSoup 권장)
         with open(charter_path, 'r', encoding='utf-8') as f:
@@ -264,7 +264,7 @@ def main():
         corpus.append({
             "id": "guardianship_charter",
             "text": text[:2000],
-            "metadata": {"source": "lumen", "type": "ethics"}
+            "metadata": {"source": "Core", "type": "ethics"}
         })
 
     # 3. E2_fix2 분석 문서

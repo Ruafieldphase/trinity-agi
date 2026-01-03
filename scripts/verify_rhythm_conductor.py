@@ -48,7 +48,7 @@ def check_time_dimension():
 def check_relationship_dimension():
     """Check Relationship dimension - key files exist"""
     key_files = [
-        OUTPUTS / "lumen_state.json",
+        OUTPUTS / "core_state.json",
         OUTPUTS / "thought_stream_latest.json"
     ]
     

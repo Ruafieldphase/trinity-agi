@@ -9,8 +9,9 @@ import subprocess
 import sys
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 RHYTHM_SCRIPT = WORKSPACE / "scripts" / "rhythm_think.py"
 INTERVAL = 60  # Run every 60 seconds
 
@@ -28,7 +29,8 @@ def main():
             result = subprocess.run(
                 [sys.executable, str(RHYTHM_SCRIPT)], 
                 check=True,
-                capture_output=False
+                capture_output=False,
+                creationflags=0x08000000 if sys.platform == "win32" else 0
             )
             print(f"✅ Cycle {cycle} completed successfully")
             

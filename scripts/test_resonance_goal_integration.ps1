@@ -1,10 +1,14 @@
-# Test Resonance + Goal Integration
+﻿# Test Resonance + Goal Integration
 param(
     [switch]$VerboseLog
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
-$ws = "c:\workspace\agi"
+$ws = "$WorkspaceRoot"
 
 Write-Host "🔬 Testing Resonance + Goal Integration..." -ForegroundColor Cyan
 

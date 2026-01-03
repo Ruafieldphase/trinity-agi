@@ -17,6 +17,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
+from workspace_root import get_workspace_root
 
 def analyze_token_efficiency(ledger_path: Path, hours: int = 24) -> Dict:
     """토큰 효율성 분석 (파동 압축 효과)"""
@@ -334,7 +335,7 @@ def main():
     
     args = parser.parse_args()
     
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     ledger_path = workspace / args.ledger
     
     if not ledger_path.exists():

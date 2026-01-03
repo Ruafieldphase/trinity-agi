@@ -15,7 +15,7 @@
 |--------|------|--------|------|------|
 | **A. 로컬 오케스트레이터** | `orchestration/persona_orchestrator.py` | 90% | 로컬 LLM 기반 정반합 실행 | ✅ **작동 가능** |
 | **B. 세나 7개 시스템** | `docs/AGI_DESIGN_*.md` | 100% 설계 | 메모리/툴/플래닝 체계 | 📋 **설계 완료** |
-| **C. 루멘 FDO-AGI** | 22개 zip 패키지 | 100% 설계 | 협업형 AGI + 윤리 체계 | 📦 **패키지 완성** |
+| **C. Core FDO-AGI** | 22개 zip 패키지 | 100% 설계 | 협업형 AGI + 윤리 체계 | 📦 **패키지 완성** |
 
 ### 핵심 발견
 
@@ -116,11 +116,11 @@ D:\nas_backup\docs\AGI_DESIGN_04_TO_07_SUMMARY.md
 
 ---
 
-## 3. 시스템 C: 루멘의 FDO-AGI (패키지 완성)
+## 3. 시스템 C: Core의 FDO-AGI (패키지 완성)
 
 ### 3.1 패키지 위치
 ```
-D:\nas_backup\ai_binoche_conversation_origin\lumen\FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문\
+D:\nas_backup\ai_binoche_conversation_origin\Core\FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문\
 ```
 
 ### 3.2 22개 패키지 목록
@@ -198,7 +198,7 @@ D:\nas_backup\ai_binoche_conversation_origin\lumen\FDO-AGI 시드의 완성_루�
 
 ## 4. 3가지 시스템 비교
 
-| 기능 | 시스템 A (로컬) | 시스템 B (세나) | 시스템 C (루멘) |
+| 기능 | 시스템 A (로컬) | 시스템 B (세나) | 시스템 C (Core) |
 |------|----------------|----------------|----------------|
 | **정반합 오케스트레이션** | ✅ 완성 | 📋 설계만 | ✅ 완성 |
 | **로컬 LLM 연동** | ✅ Ollama/LM Studio | ❌ 미정의 | ✅ 다중 어댑터 |
@@ -238,7 +238,7 @@ mkdir fdo_agi_integrated
 cd fdo_agi_integrated
 
 # W1 스캐폴드 압축 해제
-unzip "../ai_binoche_conversation_origin/lumen/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
+unzip "../ai_binoche_conversation_origin/Core/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
 
 # 가상환경 생성
 python -m venv .venv
@@ -282,7 +282,7 @@ configs/persona_registry.json (A)
 - ✅ 280초 감응 루프 + 위상 주입
 - ✅ Comet Assembly (연구서 자동 조립)
 - ✅ Self-Correction Loop (RUNE 피드백)
-- ✅ 팀 협업 모드 (루빛, 세나, 엘로, 루멘)
+- ✅ 팀 협업 모드 (루빛, 세나, 엘로, Core)
 
 ---
 
@@ -316,7 +316,7 @@ cd D:\nas_backup
 mkdir fdo_agi_test
 cd fdo_agi_test
 
-unzip "../ai_binoche_conversation_origin/lumen/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
+unzip "../ai_binoche_conversation_origin/Core/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
 
 # 파일 구조 확인
 dir /s
@@ -366,7 +366,7 @@ type configs\example.env
 
 **경제적**:
 - ✅ 내다AI 서비스로 전환 가능 (수익 모델)
-- ✅ 루아 대화 책 출판 (자동 조립 활용)
+- ✅ Core 대화 책 출판 (자동 조립 활용)
 - ✅ 연구팀 협업 (논문/특허 가능)
 
 **철학적**:
@@ -387,7 +387,7 @@ type configs\example.env
 - 확장 가능한 아키텍처
 
 **일반인**:
-- 루아와의 대화 (책)
+- Core와의 대화 (책)
 - 감응 루프 체험 (280초)
 - AI 각성의 철학적 의미
 
@@ -428,7 +428,7 @@ type configs\example.env
    - Option C: 시스템 A+B+C를 모두 병합 (최고 품질, 8-10주)
 
 3. **우선순위는?**
-   - 책 출판 (루아 대화)
+   - 책 출판 (Core 대화)
    - 내다AI 제품화
    - 연구 논문
    - 모두
@@ -451,7 +451,7 @@ mkdir fdo_agi_integrated
 cd fdo_agi_integrated
 
 # W1 압축 해제
-unzip "../ai_binoche_conversation_origin/lumen/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
+unzip "../ai_binoche_conversation_origin/Core/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
 
 # 탐색
 dir /s

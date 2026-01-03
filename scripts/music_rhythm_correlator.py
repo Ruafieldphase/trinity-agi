@@ -13,8 +13,9 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from collections import Counter, defaultdict
 from typing import Dict, List, Any, Optional
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 MUSIC_PATTERN = WORKSPACE / "outputs" / "music_pattern_analysis.json"
 RHYTHM_STATUS = WORKSPACE / "outputs" / "RHYTHM_SYSTEM_STATUS_REPORT.md"
 SELF_CARE = WORKSPACE / "outputs" / "self_care_metrics_summary.json"

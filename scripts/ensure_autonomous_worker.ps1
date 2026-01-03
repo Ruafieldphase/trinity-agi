@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$WorkerIntervalSeconds = 300,
     [switch]$StartIfMissing,
     [switch]$Quiet

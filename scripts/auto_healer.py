@@ -23,12 +23,13 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
+from workspace_root import get_workspace_root
 
 # ============================================================================
 # Configuration
 # ============================================================================
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 ALERT_FILE = WORKSPACE_ROOT / "outputs" / "anomaly_alert_latest.json"
 ALERTS_DIR = WORKSPACE_ROOT / "outputs" / "alerts"  # Phase 7 Task 2: Multi-alert support
 STRATEGIES_FILE = WORKSPACE_ROOT / "configs" / "healing_strategies.json"

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Reaper + 음악 분석 실행 스크립트
@@ -10,14 +10,17 @@
 
 param(
     [string]$SampleFile = "",
-    [string]$MusicDir = "C:\workspace\agi\music",
-    [string]$OutputDir = "C:\workspace\agi\outputs",
+    [string]$MusicDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\music",
+    [string]$OutputDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs",
     [switch]$SkipReaper,
     [switch]$OpenResults
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
-$ws = "C:\workspace\agi"
+$ws = "$WorkspaceRoot"
 $pyExe = "$ws\fdo_agi_repo\.venv\Scripts\python.exe"
 
 if (!(Test-Path $pyExe)) {

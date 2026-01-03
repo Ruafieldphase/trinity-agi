@@ -1,4 +1,4 @@
-# Fix all AGI scheduled tasks to run hidden
+﻿# Fix all AGI scheduled tasks to run hidden
 # This script updates all AGI-related scheduled tasks to:
 # 1. Set Hidden = $true
 # 2. Add -WindowStyle Hidden to PowerShell arguments
@@ -20,7 +20,7 @@ function Write-Err($msg) { Write-Host "[ERROR] $msg" -ForegroundColor Red }
 $agiTasks = Get-ScheduledTask | Where-Object { 
     $_.TaskName -like "AGI*" -or 
     $_.TaskName -like "Monitoring*" -or
-    $_.TaskName -like "Binoche*" -or
+    $_.TaskName -like "Binoche_Observer*" -or
     $_.TaskName -like "Bqi*" -or
     $_.TaskName -like "BQI*" -or
     $_.TaskName -like "AsyncThesis*" -or

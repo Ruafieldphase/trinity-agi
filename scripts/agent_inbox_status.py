@@ -4,7 +4,7 @@
 Agent Inbox Status (v1)
 
 목적
-- 외부 에이전트(시안/세나)가 전달한 산출물이 '도착했는지/언제 도착했는지'를
+- 외부 에이전트(Shion/세나)가 전달한 산출물이 '도착했는지/언제 도착했는지'를
   비노체가 로그/터미널 탐색 없이 확인할 수 있도록 outputs에 고정한다.
 
 특징
@@ -21,6 +21,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+from workspace_root import get_workspace_root
 
 
 def utc_iso(ts: float) -> str:
@@ -80,7 +81,7 @@ def render_text(report: Dict[str, Any]) -> str:
     lines.append(f"generated_at: {report.get('generated_at')}")
     lines.append("")
     agents = report.get("agents") if isinstance(report.get("agents"), dict) else {}
-    for name in ("antigravity_sian", "claude_sena"):
+    for name in ("antigravity_shion", "claude_sena"):
         a = agents.get(name) if isinstance(agents.get(name), dict) else {}
         lines.append(f"[{name}]")
         if not a.get("exists"):
@@ -108,7 +109,7 @@ def build_report(ws: Path) -> Dict[str, Any]:
         "note": "에이전트 인박스의 파일 메타만 기록한다(원문/PII 저장 금지).",
     }
     try:
-        report["agents"]["antigravity_sian"] = _scan_dir(ws, inbox / "antigravity_sian")
+        report["agents"]["antigravity_shion"] = _scan_dir(ws, inbox / "antigravity_shion")
         report["agents"]["claude_sena"] = _scan_dir(ws, inbox / "claude_sena")
     except Exception as e:
         report["ok"] = False
@@ -117,7 +118,7 @@ def build_report(ws: Path) -> Dict[str, Any]:
 
 
 def main() -> int:
-    ws = Path(__file__).resolve().parents[1]
+    ws = get_workspace_root()
     out_json = ws / "outputs" / "agent_inbox_status_latest.json"
     out_txt = ws / "outputs" / "agent_inbox_status_latest.txt"
     hist = ws / "outputs" / "agent_inbox_status_history.jsonl"

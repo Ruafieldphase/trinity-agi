@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-Test Binoche Integration with Resonance RAG
+Test Binoche_Observer Integration with Resonance RAG
 """
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add repo root to path
-sys.path.append("/home/bino/agi")
+sys.path.append(str(get_workspace_root()))
 
 from fdo_agi_repo.orchestrator.binoche_integration import BinocheDecisionEngine
 

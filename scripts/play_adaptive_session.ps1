@@ -1,21 +1,24 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Adaptive Music Session Player (Windowless)
     
 .DESCRIPTION
-    Scans c:\workspace\agi\music for .wav files matching current system state keywords.
+    Scans $WorkspaceRoot\music for .wav files matching current system state keywords.
     Plays them sequentially using System.Media.SoundPlayer (No GUI).
     
 .PARAMETER Keywords
-    Comma-separated keywords to filter music (default: "Resonance,Flow,Dawn,Lumen,Light")
+    Comma-separated keywords to filter music (default: "Resonance,Flow,Dawn,Core,Light")
 #>
 
 param(
-    [string]$Keywords = "Resonance,Flow,Dawn,Lumen,Light,Water"
+    [string]$Keywords = "Resonance,Flow,Dawn,Core,Light,Water"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 
-$musicDir = "c:\workspace\agi\music"
+
+$musicDir = "$WorkspaceRoot\music"
 $keywordList = $Keywords -split ","
 
 Write-Host "🎵 Starting Adaptive Music Session..." -ForegroundColor Cyan

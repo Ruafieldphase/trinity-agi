@@ -1,6 +1,6 @@
-param(
-    [string]$StatusJson = "$PSScriptRoot\..\outputs\realtime_pipeline_status.json",
-    [string]$OutMd = "$PSScriptRoot\..\outputs\realtime_pipeline_summary_latest.md",
+﻿param(
+    [string]$StatusJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\realtime_pipeline_status.json",
+    [string]$OutMd = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\realtime_pipeline_summary_latest.md",
     [string]$OutJson = "",
     [switch]$Open,
     [int]$Lookback = 12,
@@ -12,6 +12,9 @@ param(
     [string]$AsciiSet = "basic",
     [switch]$AutoScale
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'

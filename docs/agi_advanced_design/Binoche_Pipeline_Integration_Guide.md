@@ -16,7 +16,7 @@
    - 통계 추적 기능
 
 2. **Pipeline Adapter 구현** (`orchestrator/pipeline_binoche_adapter.py`)
-   - 기존 복잡한 Binoche 시스템과 새 엔진 연결
+   - 기존 복잡한 Binoche_Observer 시스템과 새 엔진 연결
    - 싱글톤 패턴으로 세션 통계 추적
    - 간소화된 의사결정 API 제공
 
@@ -32,10 +32,10 @@
 
 **파일**: `fdo_agi_repo/orchestrator/pipeline.py`
 
-**Line 219-280** 기존 Binoche 코드를 다음으로 대체:
+**Line 219-280** 기존 Binoche_Observer 코드를 다음으로 대체:
 
 ```python
-# Phase 6b: Enhanced Binoche Decision Engine (Simplified)
+# Phase 6b: Enhanced Binoche_Observer Decision Engine (Simplified)
 from .pipeline_binoche_adapter import enhanced_binoche_decision, print_session_stats
 
 binoche_decision = enhanced_binoche_decision(
@@ -161,7 +161,7 @@ print_session_stats()
 **출력 예시**:
 
 ```
-[Binoche] Automation Statistics:
+[Binoche_Observer] Automation Statistics:
   Total decisions: 50
   Automation rate: 76.0%
     - Approved: 35
@@ -173,21 +173,21 @@ print_session_stats()
 ### 2. Resonance Ledger 분석
 
 ```bash
-# 최근 Binoche 의사결정 조회
+# 최근 Binoche_Observer 의사결정 조회
 Get-Content D:\nas_backup\fdo_agi_repo\memory\resonance_ledger.jsonl | Select-String "binoche_decision" | Select-Object -Last 10
 ```
 
 ### 3. Ops Dashboard 통합
 
-`scripts/quick_status.ps1`에 Binoche 통계 추가:
+`scripts/quick_status.ps1`에 Binoche_Observer 통계 추가:
 
 ```powershell
-# Binoche 자동화율 계산
+# Binoche_Observer 자동화율 계산
 $binocheEvents = Get-Content $ledger | ConvertFrom-Json | Where-Object { $_.event -eq "binoche_decision" }
 $autoApproved = ($binocheEvents | Where-Object { $_.action -eq "approve" }).Count
 $automationRate = if ($binocheEvents.Count -gt 0) { ($autoApproved / $binocheEvents.Count * 100).ToString("F1") } else { "N/A" }
 
-Write-Host "Binoche Automation: $automationRate% ($autoApproved/$($binocheEvents.Count))"
+Write-Host "Binoche_Observer Automation: $automationRate% ($autoApproved/$($binocheEvents.Count))"
 ```
 
 ---

@@ -108,7 +108,7 @@ def default_work_orders(workspace_root: Path) -> list[dict[str, Any]]:
 
     orders = [
         WorkOrder(
-            agent="antigravity_sian",
+            agent="antigravity_shion",
             title="Status Dashboard v2 (History + Alerts)",
             goal="현재는 최신 1회 리포트 위주라 '흐름'이 안 보인다. 최근 N회(예: 10회) 실행 이력, 오류/정체 경고, intake(미디어/antigravity) 확장 카드까지 포함한 v2 대시보드를 만든다.",
             deliverables=[

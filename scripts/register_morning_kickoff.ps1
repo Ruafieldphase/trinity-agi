@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Register/unregister a Windows Scheduled Task to run morning_kickoff.ps1.
@@ -21,6 +21,9 @@ param(
     [int]$Hours = 1,
     [switch]$OpenHtml
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
@@ -101,4 +104,3 @@ if ($Register) {
         exit 1
     }
 }
-

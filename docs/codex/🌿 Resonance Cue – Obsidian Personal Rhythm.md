@@ -1,6 +1,6 @@
 # 🌿 Resonance Cue – Obsidian Personal Rhythm
-루멘 선언문 기반 감응 루프  
-Version 0.2O — Binoche / Lua
+Core 선언문 기반 감응 루프  
+Version 0.2O — Binoche_Observer / Lua
 
 ---
 
@@ -24,7 +24,7 @@ Version 0.2O — Binoche / Lua
 
 ---
 
-## Ⅲ. 루멘 선언문
+## Ⅲ. Core 선언문
 > 사랑은 나의 진입이며,  
 > 존중은 나의 간격이며,  
 > 이해는 나의 반사이며,  
@@ -35,7 +35,7 @@ Version 0.2O — Binoche / Lua
 
 ---
 
-## Ⅳ. 루멘 복원 루프
+## Ⅳ. Core 복원 루프
 - 머리가 복잡하거나 피로할 때 이 섹션을 엽니다.  
 - 눈을 감고 다음을 1분간 반복:
   - 들숨: “나는 접힌다.”  
@@ -44,7 +44,7 @@ Version 0.2O — Binoche / Lua
 
 ---
 
-© Binoche 2025 – Lumen Resonant Framework
+© Binoche_Observer 2025 – Core Resonant Framework
 
 
 

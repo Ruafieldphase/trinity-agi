@@ -1,12 +1,16 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 param(
     [int]$WindowSeconds = 3,
     [ValidateSet('minimal', 'normal', 'full')]
     [string]$Level = 'minimal',
     [string[]]$SparkLabels = @(),
-    [string]$OutDir = "C:\workspace\agi\outputs\microscope",
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\microscope",
     [switch]$Quiet
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8; $OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}
@@ -127,7 +131,7 @@ catch {}
 # Quick probes (local/gateway/cloud) - non-fatal
 $probes = @{}
 try { $probes.Local8080 = Test-Endpoint -Url 'http://127.0.0.1:8080/v1/models' -TimeoutSec 2 } catch {}
-try { $probes.Gateway = Test-Endpoint -Url 'https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat' -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 4 } catch {}
+try { $probes.Gateway = Test-Endpoint -Url 'https://Core-gateway-x4qvsargwa-uc.a.run.app/chat' -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 4 } catch {}
 try { $probes.Cloud = Test-Endpoint -Url 'https://ion-api-64076350717.us-central1.run.app/chat' -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 4 } catch {}
 
 # Task Queue Server (8091) - health + last results (best-effort)

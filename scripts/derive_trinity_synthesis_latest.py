@@ -4,12 +4,12 @@
 Trinity Synthesis Deriver (v1)
 
 목적
-- `outputs/lumen_enhanced_synthesis_latest.md`에서 사람이 읽는 권장사항을 추출해
+- `outputs/core_enhanced_synthesis_latest.md`에서 사람이 읽는 권장사항을 추출해
   `outputs/trinity_synthesis_latest.json`로 고정한다.
 
 배경
 - `scripts/load_trinity_feedback.py`는 `outputs/trinity_synthesis_latest.json`을 기대한다.
-- 기존 Trinity 사이클은 Lumen 산출물은 있으나, 위 파일이 항상 생성되지는 않았다.
+- 기존 Trinity 사이클은 Core 산출물은 있으나, 위 파일이 항상 생성되지는 않았다.
 
 제약
 - 외부 네트워크/모델 호출 없이 로컬 파일만 사용한다.
@@ -25,6 +25,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from workspace_root import get_workspace_root
 
 
 def utc_iso(ts: float) -> str:
@@ -50,7 +51,7 @@ def _strip_md(s: str) -> str:
     return s
 
 
-def _parse_lumen_md(md_text: str) -> List[Dict[str, Any]]:
+def _parse_core_md(md_text: str) -> List[Dict[str, Any]]:
     lines = md_text.splitlines()
     recs: List[Dict[str, Any]] = []
 
@@ -68,7 +69,7 @@ def _parse_lumen_md(md_text: str) -> List[Dict[str, Any]]:
                 title = _strip_md(s)
                 break
         if title:
-            recs.append({"title": title, "priority": priority, "tags": [tag], "source": "lumen_md_insight"})
+            recs.append({"title": title, "priority": priority, "tags": [tag], "source": "core_md_insight"})
 
     in_actions = False
     for ln in lines:
@@ -84,7 +85,7 @@ def _parse_lumen_md(md_text: str) -> List[Dict[str, Any]]:
         if m:
             title = _strip_md(m.group(1))
             if title:
-                recs.append({"title": title, "priority": "HIGH", "tags": ["actionable"], "source": "lumen_md_action"})
+                recs.append({"title": title, "priority": "HIGH", "tags": ["actionable"], "source": "core_md_action"})
 
     pr_rank = {"HIGH": 3, "MEDIUM": 2, "LOW": 1}
     merged: Dict[str, Dict[str, Any]] = {}
@@ -109,40 +110,40 @@ def _parse_lumen_md(md_text: str) -> List[Dict[str, Any]]:
 def build_trinity_synthesis(workspace: Path) -> Dict[str, Any]:
     now = time.time()
     out_path = workspace / "outputs" / "trinity_synthesis_latest.json"
-    src_md = workspace / "outputs" / "lumen_enhanced_synthesis_latest.md"
-    src_json = workspace / "outputs" / "lumen_enhanced_synthesis_latest.json"
+    src_md = workspace / "outputs" / "core_enhanced_synthesis_latest.md"
+    src_json = workspace / "outputs" / "core_enhanced_synthesis_latest.json"
 
     sources: Dict[str, Any] = {}
     try:
         if src_md.exists():
             st = src_md.stat()
-            sources["lumen_md"] = {"path": str(src_md), "mtime_iso": utc_iso(st.st_mtime), "size": st.st_size}
+            sources["core_md"] = {"path": str(src_md), "mtime_iso": utc_iso(st.st_mtime), "size": st.st_size}
         if src_json.exists():
             st = src_json.stat()
-            sources["lumen_json"] = {"path": str(src_json), "mtime_iso": utc_iso(st.st_mtime), "size": st.st_size}
+            sources["core_json"] = {"path": str(src_json), "mtime_iso": utc_iso(st.st_mtime), "size": st.st_size}
     except Exception:
         pass
 
     if not src_md.exists() and not src_json.exists():
         return {
             "ok": False,
-            "version": "trinity_synthesis_from_lumen_v1",
+            "version": "trinity_synthesis_from_core_v1",
             "generated_at": utc_iso(now),
             "sources": sources,
             "recommendations": [],
-            "error": "missing_lumen_enhanced_synthesis_latest.(md|json)",
+            "error": "missing_core_enhanced_synthesis_latest.(md|json)",
         }
 
     try:
         if src_md.exists():
             md_text = src_md.read_text(encoding="utf-8", errors="replace")
-            recs = _parse_lumen_md(md_text)
+            recs = _parse_core_md(md_text)
         else:
             recs = []
     except Exception as e:
         return {
             "ok": False,
-            "version": "trinity_synthesis_from_lumen_v1",
+            "version": "trinity_synthesis_from_core_v1",
             "generated_at": utc_iso(now),
             "sources": sources,
             "recommendations": [],
@@ -151,7 +152,7 @@ def build_trinity_synthesis(workspace: Path) -> Dict[str, Any]:
 
     report: Dict[str, Any] = {
         "ok": True,
-        "version": "trinity_synthesis_from_lumen_v1",
+        "version": "trinity_synthesis_from_core_v1",
         "generated_at": utc_iso(now),
         "sources": sources,
         "recommendations": sorted(
@@ -161,7 +162,7 @@ def build_trinity_synthesis(workspace: Path) -> Dict[str, Any]:
                 r.get("title", ""),
             ),
         ),
-        "note": "이 파일은 Lumen 통합 보고서에서 '권장사항'을 추출한 파생 산출물이며, load_trinity_feedback.py 소비를 위해 존재한다.",
+        "note": "이 파일은 Core 통합 보고서에서 '권장사항'을 추출한 파생 산출물이며, load_trinity_feedback.py 소비를 위해 존재한다.",
     }
 
     try:
@@ -174,7 +175,7 @@ def build_trinity_synthesis(workspace: Path) -> Dict[str, Any]:
 
 
 def main() -> int:
-    workspace = Path(__file__).resolve().parents[1]
+    workspace = get_workspace_root()
     report = build_trinity_synthesis(workspace)
     print(json.dumps({"ok": bool(report.get("ok")), "out": str(workspace / "outputs" / "trinity_synthesis_latest.json")}, ensure_ascii=False))
     return 0 if report.get("ok") else 2

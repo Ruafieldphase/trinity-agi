@@ -1,10 +1,10 @@
-# ION API Production 배포 검증 스크립트
+﻿# ION API Production 배포 검증 스크립트
 # 2025-10-23 - v1.1.1 배포 후 상태 확인
 
 param(
     [string]$ProductionUrl = "https://ion-api-64076350717.us-central1.run.app",
-    [string]$LumenGatewayUrl = "https://lumen-gateway-production-64076350717.us-central1.run.app",
-    [switch]$SkipLumen
+    [string]$CoreGatewayUrl = "https://Core-gateway-production-64076350717.us-central1.run.app",
+    [switch]$SkipCore
 )
 
 $ErrorActionPreference = "Continue"
@@ -61,40 +61,40 @@ catch {
     Write-Host "  [ERROR] Swagger UI not accessible: $($_.Exception.Message)" -ForegroundColor Red
 }
 
-# 4. Lumen Gateway Health (Optional)
-if (-not $SkipLumen) {
-    Write-Host "`n[4/6] Lumen Gateway Health 확인..." -ForegroundColor Yellow
+# 4. Core Gateway Health (Optional)
+if (-not $SkipCore) {
+    Write-Host "`n[4/6] Core Gateway Health 확인..." -ForegroundColor Yellow
     try {
-        $lumenHealth = Invoke-RestMethod -Uri "$ProductionUrl/api/lumen/health" -Method Get -ErrorAction Stop -TimeoutSec 10
-        Write-Host "  [OK] Lumen Health Status: $($lumenHealth.status)" -ForegroundColor Green
-        Write-Host "  ℹ️  Lumen Version: $($lumenHealth.version)" -ForegroundColor Cyan
+        $CoreHealth = Invoke-RestMethod -Uri "$ProductionUrl/api/Core/health" -Method Get -ErrorAction Stop -TimeoutSec 10
+        Write-Host "  [OK] Core Health Status: $($CoreHealth.status)" -ForegroundColor Green
+        Write-Host "  ℹ️  Core Version: $($CoreHealth.version)" -ForegroundColor Cyan
         
-        if ($lumenHealth.google_ai) {
-            Write-Host "  ℹ️  Google AI: $($lumenHealth.google_ai)" -ForegroundColor Cyan
+        if ($CoreHealth.google_ai) {
+            Write-Host "  ℹ️  Google AI: $($CoreHealth.google_ai)" -ForegroundColor Cyan
         }
     }
     catch {
-        Write-Host "  [WARN]  Lumen Health check failed (expected if gateway not deployed): $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "  [WARN]  Core Health check failed (expected if gateway not deployed): $($_.Exception.Message)" -ForegroundColor Yellow
     }
     
-    # 5. Lumen Personas
-    Write-Host "`n[5/6] Lumen Personas 확인..." -ForegroundColor Yellow
+    # 5. Core Personas
+    Write-Host "`n[5/6] Core Personas 확인..." -ForegroundColor Yellow
     try {
-        $personas = Invoke-RestMethod -Uri "$ProductionUrl/api/lumen/personas" -Method Get -ErrorAction Stop -TimeoutSec 10
+        $personas = Invoke-RestMethod -Uri "$ProductionUrl/api/Core/personas" -Method Get -ErrorAction Stop -TimeoutSec 10
         Write-Host "  [OK] Personas Count: $($personas.Count)" -ForegroundColor Green
         foreach ($p in $personas) {
             Write-Host "    - $($p.name): $($p.specialty)" -ForegroundColor Gray
         }
     }
     catch {
-        Write-Host "  [WARN]  Lumen Personas failed (expected if gateway not deployed): $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "  [WARN]  Core Personas failed (expected if gateway not deployed): $($_.Exception.Message)" -ForegroundColor Yellow
     }
     
-    # 6. Lumen Chat
-    Write-Host "`n[6/6] Lumen Chat 테스트..." -ForegroundColor Yellow
+    # 6. Core Chat
+    Write-Host "`n[6/6] Core Chat 테스트..." -ForegroundColor Yellow
     try {
         $chatBody = @{ message = "Hello from verification script" } | ConvertTo-Json -Compress
-        $chatResponse = Invoke-RestMethod -Uri "$ProductionUrl/api/lumen/chat" `
+        $chatResponse = Invoke-RestMethod -Uri "$ProductionUrl/api/Core/chat" `
             -Method Post `
             -ContentType "application/json" `
             -Body $chatBody `
@@ -104,16 +104,16 @@ if (-not $SkipLumen) {
         Write-Host "  [OK] Chat Response: $($chatResponse.response.Substring(0, [Math]::Min(50, $chatResponse.response.Length)))..." -ForegroundColor Green
     }
     catch {
-        Write-Host "  [WARN]  Lumen Chat failed (expected if gateway not deployed): $($_.Exception.Message)" -ForegroundColor Yellow
+        Write-Host "  [WARN]  Core Chat failed (expected if gateway not deployed): $($_.Exception.Message)" -ForegroundColor Yellow
     }
 }
 else {
-    Write-Host "`n[4-6/6] Lumen 테스트 스킵됨 (-SkipLumen 플래그)" -ForegroundColor Gray
+    Write-Host "`n[4-6/6] Core 테스트 스킵됨 (-SkipCore 플래그)" -ForegroundColor Gray
 }
 
 # Summary
 Write-Host "`n=== 검증 완료 ===" -ForegroundColor Cyan
 Write-Host "Production URL: $ProductionUrl" -ForegroundColor Gray
-Write-Host "Lumen Gateway URL: $LumenGatewayUrl" -ForegroundColor Gray
+Write-Host "Core Gateway URL: $CoreGatewayUrl" -ForegroundColor Gray
 Write-Host "`n핵심 기능(Health, Phase4)은 정상 작동 중입니다." -ForegroundColor Green
-Write-Host "Lumen 통합은 Gateway 배포 상태에 따라 달라집니다.`n" -ForegroundColor Yellow
+Write-Host "Core 통합은 Gateway 배포 상태에 따라 달라집니다.`n" -ForegroundColor Yellow

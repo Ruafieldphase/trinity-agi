@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     [int]$MaxFrames = 1,
     [double]$FrameInterval = 30.0,
@@ -6,14 +6,18 @@ param(
     [string]$LogPath,
     [switch]$SkipIfToday
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 Write-Host "[YouTubeLearner] Running..." -ForegroundColor Cyan
 
 # Ensure PYTHONPATH includes repo roots
-$env:PYTHONPATH = "C:\workspace\agi;C:\workspace\agi\fdo_agi_repo"
+$env:PYTHONPATH = "$WorkspaceRoot;$WorkspaceRoot\fdo_agi_repo"
 
-$rootDir = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$rootDir = (Resolve-Path ($WorkspaceRoot)).Path
 $outDir = Join-Path (Join-Path $rootDir 'outputs') 'youtube_learner'
 
 # Optional: skip if already ran today for the same video id
@@ -56,7 +60,7 @@ Write-Host "[YouTubeLearner] Done." -ForegroundColor Green
 # Optional: append a compact summary to a JSONL log
 if ($LogPath) {
     try {
-        $rootDir = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+        $rootDir = (Resolve-Path ($WorkspaceRoot)).Path
         $outDir = Join-Path (Join-Path $rootDir 'outputs') 'youtube_learner'
         $latest = Get-ChildItem -Path $outDir -Filter '*_analysis.json' -File -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
         if ($latest) {

@@ -21,9 +21,15 @@ import time
 import ctypes
 from pathlib import Path
 from typing import Any
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+
+WORKSPACE = get_workspace_root()
 SIGNALS = WORKSPACE / "signals"
 OUTPUTS = WORKSPACE / "outputs"
 STATE = OUTPUTS / "sync_cache" / "browser_exploration_suggest_state.json"

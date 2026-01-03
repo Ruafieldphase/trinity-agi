@@ -1,4 +1,4 @@
-# AGI 관련 스케줄 작업 확인 스크립트
+﻿# AGI 관련 스케줄 작업 확인 스크립트
 
 Write-Host "`n📅 AGI 관련 스케줄 작업 확인" -ForegroundColor Cyan
 Write-Host "=" * 60
@@ -13,7 +13,7 @@ $agiTasks = $allTasks | Where-Object {
     $_.TaskName -like '*trinity*' -or
     $_.TaskName -like '*Trinity*' -or
     $_.TaskName -like '*BQI*' -or
-    $_.TaskName -like '*Binoche*' -or
+    $_.TaskName -like '*Binoche_Observer*' -or
     $_.TaskName -like '*Cache*' -or
     $_.TaskPath -like '*agi*'
 }

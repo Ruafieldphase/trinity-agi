@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test: Binoche Ensemble Latency Optimization (Parallel vs Sequential)
+Test: Binoche_Observer Ensemble Latency Optimization (Parallel vs Sequential)
 
 이 테스트는 3-Judge System의 병렬 실행이 순차 실행보다 빠른지 검증합니다.
 
@@ -155,7 +155,7 @@ def test_performance():
 
 
 if __name__ == "__main__":
-    print("=== Binoche Ensemble Latency Optimization Test ===\n")
+    print("=== Binoche_Observer Ensemble Latency Optimization Test ===\n")
     
     # Test 1: Correctness
     correctness_pass = test_correctness()

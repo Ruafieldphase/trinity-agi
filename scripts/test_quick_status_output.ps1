@@ -1,6 +1,10 @@
-param(
+﻿param(
     [string]$OutPath = "$env:TEMP\quick_status_test.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -11,7 +15,7 @@ function Write-Result {
 }
 
 try {
-    $ws = "C:\workspace\agi"
+    $ws = "$WorkspaceRoot"
     $script = Join-Path $ws 'scripts\quick_status.ps1'
 
     if (-not (Test-Path -LiteralPath $script)) {

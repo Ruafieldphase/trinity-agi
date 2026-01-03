@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     재부팅 후 자동 재개 설정 (관리자 권한 불필요)
 
@@ -21,9 +21,11 @@
 param(
     [switch]$Remove
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
-$WorkspaceRoot = "C:\workspace\agi"
 
 Write-Host "`n╔════════════════════════════════════════════╗" -ForegroundColor Cyan
 Write-Host "║  AGI 자동 재개 설정 (재부팅 안전)        ║" -ForegroundColor Cyan

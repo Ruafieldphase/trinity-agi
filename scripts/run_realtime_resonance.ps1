@@ -1,13 +1,16 @@
-# Realtime Resonance Bridge - PowerShell Runner
+﻿# Realtime Resonance Bridge - PowerShell Runner
 # 목적: Ledger 메트릭 → Resonance 시뮬레이션 실시간 연동
 
 param(
     [int]$WindowHours = 24,
     [int]$MinEvents = 10,
-    [string]$Output = "$PSScriptRoot\..\outputs\realtime_resonance_latest.json",
+    [string]$Output = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\realtime_resonance_latest.json",
     [switch]$OpenJson,
     [switch]$Help
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 if ($Help) {
     Write-Host @"

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Register / Unregister a pre-reboot snapshot task.
 

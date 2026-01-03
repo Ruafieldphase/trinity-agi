@@ -1,4 +1,4 @@
-# auto_task_generator.ps1
+﻿# auto_task_generator.ps1
 # Phase 8: 자동 Task 생성기 (Normal Baseline 수집용)
 param(
     [int]$IntervalMinutes = 5,

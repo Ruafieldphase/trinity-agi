@@ -4,7 +4,7 @@ Resonance Ledger Backfill: 필드명 정규화 소급 적용
 
 기존 34,314개 이벤트에 정규화된 quality/latency_ms 필드 추가
 
-루멘(合) 권장: 시간 투자 대비 효과 극대화 (10분 → 10%+ 커버리지)
+Core(合) 권장: 시간 투자 대비 효과 극대화 (10분 → 10%+ 커버리지)
 
 Usage:
     python scripts/backfill_ledger_metrics.py [--dry-run] [--recent-days 7]
@@ -21,16 +21,17 @@ import shutil
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Dict, Any, List
+from workspace_root import get_workspace_root
 
 # Repo root detection
-REPO_ROOT = Path(__file__).parent.parent
+REPO_ROOT = get_workspace_root()
 LEDGER_PATH = REPO_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 
 # Field normalization rules (event_emitter.py와 동일)
 FIELD_ALIASES = {
     'agi_quality': 'quality',
-    'lumen_latency_ms': 'latency_ms',
+    'core_latency_ms': 'latency_ms',
     'duration_sec': 'latency_ms',  # 변환 필요 (초 → 밀리초)
 }
 

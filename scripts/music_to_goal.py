@@ -18,9 +18,10 @@ from pathlib import Path
 
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Ensure workspace packages can be imported
-workspace_root = Path(__file__).parent.parent
+workspace_root = get_workspace_root()
 sys.path.insert(0, str(workspace_root))
 sys.path.insert(0, str(workspace_root / 'fdo_agi_repo'))
 

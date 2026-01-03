@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Master AI Router - 사용자 메시지를 자동으로 적절한 시스템에 라우팅
 
 .DESCRIPTION
     사용자가 Master에게 메시지를 전달하면, Master가 자동으로:
-    1. 의도 파악 (Lumen/Binoche/Resonance/Master)
+    1. 의도 파악 (Core/Binoche_Observer/Resonance/Master)
     2. 적절한 시스템에 라우팅
     3. 결과 통합 및 응답
 
@@ -17,7 +17,7 @@
 
 .EXAMPLE
     .\talk_to_master.ps1 "시스템 상태를 분석해줘"
-    → Lumen으로 라우팅 → Trinity Cycle 실행
+    → Core으로 라우팅 → Trinity Cycle 실행
 
 .EXAMPLE
     .\talk_to_master.ps1 "YouTube 영상 학습해줘"
@@ -38,6 +38,9 @@ param(
     
     [switch]$Json
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $OutputEncoding = [System.Text.Encoding]::UTF8

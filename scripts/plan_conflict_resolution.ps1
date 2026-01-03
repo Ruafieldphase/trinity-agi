@@ -1,11 +1,15 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 param(
     [Parameter(Mandatory = $true)]
     [string]$ConflictsCsv,
     [string]$SourceRoot = 'D:\nas_backup',
-    [string]$TargetRoot = 'C:\workspace\agi',
+    [string]$TargetRoot = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )",
     [string]$OutPlanMd = ''
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 

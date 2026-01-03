@@ -3,9 +3,10 @@ Adaptive Glymphatic System 테스트
 """
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # 경로 추가
-repo_path = Path(__file__).parent.parent / "fdo_agi_repo"
+repo_path = get_workspace_root() / "fdo_agi_repo"
 sys.path.insert(0, str(repo_path))
 
 from orchestrator.adaptive_glymphatic_system import AdaptiveGlymphaticSystem

@@ -1,4 +1,4 @@
-# Register Dashboard Auto-Update Task
+﻿# Register Dashboard Auto-Update Task
 # Automatically regenerates enhanced dashboard every 5 minutes
 # Part of Phase 3+ Real-Time Monitoring Enhancement
 

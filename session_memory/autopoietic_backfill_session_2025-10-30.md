@@ -221,8 +221,8 @@ Goal: Update all VS Code tasks to use portable `${workspaceFolder}` variable
 
 17. ✅ "AGI: Sanitize Resonance Ledger" - Line 2911
 18. ✅ "BQI: Run Feedback Predictor (once)" - Line 3448
-19. ✅ "?�� Phase 6: Learn Binoche Persona" - Line 3508
-20. ✅ "?�� Phase 6: Open Binoche Persona Model" - Line 3527
+19. ✅ "?�� Phase 6: Learn Binoche_Observer Persona" - Line 3508
+20. ✅ "?�� Phase 6: Open Binoche_Observer Persona Model" - Line 3527
 
 ### Pattern Example
 

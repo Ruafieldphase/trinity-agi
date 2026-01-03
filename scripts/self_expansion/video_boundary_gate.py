@@ -38,9 +38,15 @@ from typing import Any, Optional
 
 import cv2  # type: ignore
 import numpy as np
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 BRIDGE = OUTPUTS / "bridge"
 SAFETY = OUTPUTS / "safety"
@@ -147,7 +153,7 @@ def _dct_phash(gray: np.ndarray) -> str:
 
 
 def _edge_hist(gray: np.ndarray, bins: int = 8) -> list[float]:
-    g = cv2.GaussianBlur(gray, (3, 3), 0)
+    g = cv2.GausShionBlur(gray, (3, 3), 0)
     gx = cv2.Sobel(g, cv2.CV_32F, 1, 0, ksize=3)
     gy = cv2.Sobel(g, cv2.CV_32F, 0, 1, ksize=3)
     mag, ang = cv2.cartToPolar(gx, gy, angleInDegrees=True)

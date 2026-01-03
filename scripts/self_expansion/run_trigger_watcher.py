@@ -1,5 +1,5 @@
 """
-루아 트리거 파일을 감지해 자율 실행하는 워처.
+코어 트리거 파일을 감지해 자율 실행하는 워처.
 
 동작:
 - 기본 트리거 위치: /home/bino/agi/signals/lua_trigger.json (리눅스)
@@ -18,7 +18,13 @@ import sys
 import time
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]  # c:/workspace/agi
+SCRIPTS_DIR = get_workspace_root()
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from workspace_root import get_workspace_root
+
+ROOT = get_workspace_root()
 sys.path.append(str(ROOT))
 
 from scripts.self_expansion import SelfExpansionEngine  # noqa: E402

@@ -34,9 +34,10 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any
+from workspace_root import get_workspace_root
 
 # Add repo root to path
-repo_root = Path(__file__).parent.parent
+repo_root = get_workspace_root()
 sys.path.insert(0, str(repo_root / "fdo_agi_repo"))
 
 from orchestrator.pipeline import run_task

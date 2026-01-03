@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
+from workspace_root import get_workspace_root
 
 class PainSignalMonitor:
     """통증 신호 모니터 (Pain Signal Detector)"""
@@ -176,7 +177,7 @@ class PainSignalMonitor:
 
 def main():
     """메인 실행"""
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     monitor = PainSignalMonitor(workspace)
     
     report = monitor.generate_pain_report()

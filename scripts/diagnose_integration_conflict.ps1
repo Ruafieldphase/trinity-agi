@@ -1,9 +1,13 @@
-# Integration Conflict & Performance Diagnosis
+﻿# Integration Conflict & Performance Diagnosis
 # 정반합 통합 충돌 및 성능 저하 원인 진단
 
 param(
-    [string]$WorkspaceRoot = "C:\workspace\agi"
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Continue'
 

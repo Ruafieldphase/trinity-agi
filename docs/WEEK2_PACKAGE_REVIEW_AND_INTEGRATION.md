@@ -138,7 +138,7 @@ ls memory/vectorstore/
 **인덱싱 대상**:
 - `docs/` 디렉토리의 Markdown 파일
 - Week 1 스캐폴드 문서
-- 기존 AGI 설계 문서 (Sena, Lumen)
+- 기존 AGI 설계 문서 (Sena, Core)
 
 ---
 
@@ -300,8 +300,8 @@ for hit in results['hits']:
 
 **예상 출력**:
 ```
-docs/AGI_INTEGRATION_SENA_LUMEN_v1.0.md: 0.85
-docs/LUBIT_LUMEN_FDO_AGI_INTEGRATION_v1.0.md: 0.78
+docs/AGI_INTEGRATION_SENA_CORE_v1.0.md: 0.85
+docs/LUBIT_CORE_FDO_AGI_INTEGRATION_v1.0.md: 0.78
 outputs/E1_HIGH_RESIDUAL_QUALITATIVE_ANALYSIS.md: 0.72
 ```
 

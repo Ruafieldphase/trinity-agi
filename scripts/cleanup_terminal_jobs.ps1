@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     VS Code에서 터미널 방해 없이 작업하는 설정
 
@@ -12,9 +12,11 @@
 
 [CmdletBinding()]
 param()
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
-$WorkspaceRoot = "C:\workspace\agi"
 
 Write-Host "`n╔═══════════════════════════════════════════╗" -ForegroundColor Cyan
 Write-Host "║  터미널 정리 및 백그라운드 전환          ║" -ForegroundColor Cyan

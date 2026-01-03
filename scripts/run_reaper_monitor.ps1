@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     🎵 Reaper 실시간 음악 모니터 (PowerShell 래퍼)

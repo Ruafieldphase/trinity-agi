@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 Contextualized I3 (Conditional Interaction Information) Calculator
-루멘의 시선: Context로 조건화된 상호정보 계산
+Core의 시선: Context로 조건화된 상호정보 계산
 
-목표: I(Elo; Lumen | Context) ≈ 0 (독립성 달성)
+목표: I(Elo; Core | Context) ≈ 0 (독립성 달성)
 """
 
 import json
@@ -13,8 +13,9 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 from collections import defaultdict
 from datetime import datetime, timedelta
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 CONTEXT_PATH = WORKSPACE / "outputs" / "context_samples.jsonl"
 OUTPUT_PATH = WORKSPACE / "outputs" / "ci3_optimization_report.json"
 
@@ -41,16 +42,16 @@ def load_contexts(window_hours: int = 24) -> List[Dict]:
 
 def extract_signals(contexts: List[Dict]) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    Context에서 Lua, Elo, Lumen 신호 추출
+    Context에서 Lua, Elo, Core 신호 추출
     
     - Lua (에너지): duration_sec, event 빈도
     - Elo (품질): quality, confidence
-    - Lumen (관찰): health_check 빈도, latency
+    - Core (관찰): health_check 빈도, latency
     """
     n = len(contexts)
     lua_signal = np.zeros(n)
     elo_signal = np.zeros(n)
-    lumen_signal = np.zeros(n)
+    core_signal = np.zeros(n)
     
     for i, ctx in enumerate(contexts):
         meta = ctx.get('meta', {})
@@ -72,15 +73,15 @@ def extract_signals(contexts: List[Dict]) -> Tuple[np.ndarray, np.ndarray, np.nd
         elif 'error_present' in meta:
             elo_signal[i] = 0.0
         
-        # Lumen: 관찰/모니터링 빈도
+        # Core: 관찰/모니터링 빈도
         if event == 'health_check':
-            lumen_signal[i] = 1.0
+            core_signal[i] = 1.0
         elif event == 'system_startup':
-            lumen_signal[i] = 0.8
-        elif 'lumen_latency_ms' in meta:
-            lumen_signal[i] = meta['lumen_latency_ms'] / 1000.0
+            core_signal[i] = 0.8
+        elif 'core_latency_ms' in meta:
+            core_signal[i] = meta['core_latency_ms'] / 1000.0
     
-    return lua_signal, elo_signal, lumen_signal
+    return lua_signal, elo_signal, core_signal
 
 
 def discretize_signal(signal: np.ndarray, bins: int = 5) -> np.ndarray:
@@ -163,16 +164,16 @@ def calculate_conditional_mutual_information(
 def calculate_interaction_information(
     lua: np.ndarray,
     elo: np.ndarray,
-    lumen: np.ndarray
+    Core: np.ndarray
 ) -> float:
     """
-    상호작용 정보 I3(Lua; Elo; Lumen) 계산
-    I3 = I(Lua; Elo) - I(Lua; Elo | Lumen)
+    상호작용 정보 I3(Lua; Elo; Core) 계산
+    I3 = I(Lua; Elo) - I(Lua; Elo | Core)
     """
     i_lua_elo = calculate_mutual_information(lua, elo)
-    i_lua_elo_given_lumen = calculate_conditional_mutual_information(lua, elo, lumen)
+    i_lua_elo_given_core = calculate_conditional_mutual_information(lua, elo, Core)
     
-    return i_lua_elo - i_lua_elo_given_lumen
+    return i_lua_elo - i_lua_elo_given_core
 
 
 def create_context_features(contexts: List[Dict]) -> np.ndarray:
@@ -212,40 +213,40 @@ def create_context_features(contexts: List[Dict]) -> np.ndarray:
 
 
 def main():
-    print("🔮 [Lumen] Contextualized I3 Calculator")
+    print("🔮 [Core] Contextualized I3 Calculator")
     print("=" * 60)
     
     if not CONTEXT_PATH.exists():
-        print(f"❌ [Lumen] Context file not found: {CONTEXT_PATH}")
+        print(f"❌ [Core] Context file not found: {CONTEXT_PATH}")
         print(f"   Run: python scripts/extract_resonance_context.py")
         return 1
     
     # Load contexts
     window_hours = 24
-    print(f"\n📖 [Lumen] Loading contexts (last {window_hours}h)...")
+    print(f"\n📖 [Core] Loading contexts (last {window_hours}h)...")
     contexts = load_contexts(window_hours)
-    print(f"✅ [Lumen] Loaded {len(contexts):,} contexts")
+    print(f"✅ [Core] Loaded {len(contexts):,} contexts")
     
     if len(contexts) < 100:
-        print(f"⚠️  [Lumen] Too few contexts for reliable I3 calculation")
+        print(f"⚠️  [Core] Too few contexts for reliable I3 calculation")
         return 1
     
     # Extract signals
-    print(f"\n🎵 [Lumen] Extracting Trinity signals...")
-    lua_raw, elo_raw, lumen_raw = extract_signals(contexts)
+    print(f"\n🎵 [Core] Extracting Trinity signals...")
+    lua_raw, elo_raw, core_raw = extract_signals(contexts)
     
     print(f"   Lua (energy):  mean={lua_raw.mean():.3f}, std={lua_raw.std():.3f}")
     print(f"   Elo (quality): mean={elo_raw.mean():.3f}, std={elo_raw.std():.3f}")
-    print(f"   Lumen (obs):   mean={lumen_raw.mean():.3f}, std={lumen_raw.std():.3f}")
+    print(f"   Core (obs):   mean={core_raw.mean():.3f}, std={core_raw.std():.3f}")
     
     # Discretize
-    print(f"\n🔢 [Lumen] Discretizing signals...")
+    print(f"\n🔢 [Core] Discretizing signals...")
     lua = discretize_signal(lua_raw, bins=5)
     elo = discretize_signal(elo_raw, bins=5)
-    lumen = discretize_signal(lumen_raw, bins=5)
+    Core = discretize_signal(core_raw, bins=5)
     
     # Context features
-    print(f"\n🧩 [Lumen] Creating context features...")
+    print(f"\n🧩 [Core] Creating context features...")
     context_features = create_context_features(contexts)
     
     # Combine context features into single dimension
@@ -253,49 +254,49 @@ def main():
     context_discrete = discretize_signal(context_combined, bins=10)
     
     # Calculate metrics
-    print(f"\n📊 [Lumen] Calculating information metrics...")
+    print(f"\n📊 [Core] Calculating information metrics...")
     
     # Unconditional
     i_lua_elo = calculate_mutual_information(lua, elo)
-    i_lua_lumen = calculate_mutual_information(lua, lumen)
-    i_elo_lumen = calculate_mutual_information(elo, lumen)
+    i_lua_core = calculate_mutual_information(lua, Core)
+    i_elo_core = calculate_mutual_information(elo, Core)
     
     print(f"\n   Unconditional Mutual Information:")
     print(f"      I(Lua; Elo)   = {i_lua_elo:.4f} bits")
-    print(f"      I(Lua; Lumen) = {i_lua_lumen:.4f} bits")
-    print(f"      I(Elo; Lumen) = {i_elo_lumen:.4f} bits")
+    print(f"      I(Lua; Core) = {i_lua_core:.4f} bits")
+    print(f"      I(Elo; Core) = {i_elo_core:.4f} bits")
     
     # Conditional (given Context)
-    i_elo_lumen_given_context = calculate_conditional_mutual_information(elo, lumen, context_discrete)
+    i_elo_core_given_context = calculate_conditional_mutual_information(elo, Core, context_discrete)
     
     print(f"\n   Conditional Mutual Information (given Context):")
-    print(f"      I(Elo; Lumen | Context) = {i_elo_lumen_given_context:.4f} bits")
+    print(f"      I(Elo; Core | Context) = {i_elo_core_given_context:.4f} bits")
     
     # Interaction Information
-    i3 = calculate_interaction_information(lua, elo, lumen)
+    i3 = calculate_interaction_information(lua, elo, Core)
     
     print(f"\n   Interaction Information:")
-    print(f"      I3(Lua; Elo; Lumen) = {i3:.4f} bits")
+    print(f"      I3(Lua; Elo; Core) = {i3:.4f} bits")
     
     # Improvement
-    improvement = i_elo_lumen - i_elo_lumen_given_context
-    improvement_pct = 100 * improvement / (i_elo_lumen + 1e-10)
+    improvement = i_elo_core - i_elo_core_given_context
+    improvement_pct = 100 * improvement / (i_elo_core + 1e-10)
     
-    print(f"\n✨ [Lumen] Context Conditioning Effect:")
-    print(f"   Before: I(Elo; Lumen) = {i_elo_lumen:.4f} bits")
-    print(f"   After:  I(Elo; Lumen | Context) = {i_elo_lumen_given_context:.4f} bits")
+    print(f"\n✨ [Core] Context Conditioning Effect:")
+    print(f"   Before: I(Elo; Core) = {i_elo_core:.4f} bits")
+    print(f"   After:  I(Elo; Core | Context) = {i_elo_core_given_context:.4f} bits")
     print(f"   Improvement: {improvement:.4f} bits ({improvement_pct:.1f}%)")
     
     # Goal check
     goal = 0.05
-    if i_elo_lumen_given_context <= goal:
-        print(f"\n🎯 [Lumen] GOAL ACHIEVED! ✅")
-        print(f"   I(Elo; Lumen | Context) ≤ {goal} bits")
+    if i_elo_core_given_context <= goal:
+        print(f"\n🎯 [Core] GOAL ACHIEVED! ✅")
+        print(f"   I(Elo; Core | Context) ≤ {goal} bits")
     else:
-        remaining = i_elo_lumen_given_context - goal
-        print(f"\n🎯 [Lumen] Goal Progress:")
+        remaining = i_elo_core_given_context - goal
+        print(f"\n🎯 [Core] Goal Progress:")
         print(f"   Target: ≤ {goal} bits")
-        print(f"   Current: {i_elo_lumen_given_context:.4f} bits")
+        print(f"   Current: {i_elo_core_given_context:.4f} bits")
         print(f"   Remaining: {remaining:.4f} bits")
     
     # Save report
@@ -305,14 +306,14 @@ def main():
         "n_contexts": int(len(contexts)),
         "unconditional": {
             "I_lua_elo": float(i_lua_elo),
-            "I_lua_lumen": float(i_lua_lumen),
-            "I_elo_lumen": float(i_elo_lumen)
+            "I_lua_core": float(i_lua_core),
+            "I_elo_core": float(i_elo_core)
         },
         "conditional": {
-            "I_elo_lumen_given_context": float(i_elo_lumen_given_context)
+            "I_elo_core_given_context": float(i_elo_core_given_context)
         },
         "interaction": {
-            "I3_lua_elo_lumen": float(i3)
+            "I3_lua_elo_core": float(i3)
         },
         "improvement": {
             "absolute": float(improvement),
@@ -320,8 +321,8 @@ def main():
         },
         "goal": {
             "target": float(goal),
-            "achieved": bool(i_elo_lumen_given_context <= goal),
-            "remaining": float(max(0, i_elo_lumen_given_context - goal))
+            "achieved": bool(i_elo_core_given_context <= goal),
+            "remaining": float(max(0, i_elo_core_given_context - goal))
         }
     }
     
@@ -329,8 +330,8 @@ def main():
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
     
-    print(f"\n💾 [Lumen] Report saved: {OUTPUT_PATH}")
-    print(f"\n✅ [Lumen] CI3 optimization complete!")
+    print(f"\n💾 [Core] Report saved: {OUTPUT_PATH}")
+    print(f"\n✅ [Core] CI3 optimization complete!")
     
     return 0
 

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $false)][string]$Url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     [Parameter(Mandatory = $false)][string]$Server = "http://127.0.0.1:8092",
     [Parameter(Mandatory = $false)][int]$ClipSeconds = 10,

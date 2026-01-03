@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Open
 )
 
@@ -21,4 +21,3 @@ if (Test-Path $indexPath) {
 } else {
     Write-Warning "[YouTubeIndex] INDEX.md not found."
 }
-

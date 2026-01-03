@@ -5,8 +5,11 @@ from pathlib import Path
 from typing import List, Dict
 import sys
 
+from workspace_root import get_workspace_root
+
+WORKSPACE_ROOT = get_workspace_root()
 # Add workspace root to path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(str(WORKSPACE_ROOT))
 
 try:
     from scripts.vision_cortex import VisionCortex
@@ -14,8 +17,8 @@ except ImportError:
     print("Error: Could not import VisionCortex.")
     sys.exit(1)
 
-CONVERSATION_ROOT = Path(r"C:\workspace\agi\ai_binoche_conversation_origin")
-OUTPUT_FILE = Path(r"c:\workspace\agi\memory\conversation_history_invariants.json")
+CONVERSATION_ROOT = WORKSPACE_ROOT / "ai_binoche_conversation_origin"
+OUTPUT_FILE = WORKSPACE_ROOT / "memory" / "conversation_history_invariants.json"
 
 def learn_from_history():
     """
@@ -53,7 +56,7 @@ def learn_from_history():
                 
                 # Prompt for Information Theory Compression
                 prompt = (
-                    f"Analyze this conversation log between User (Binoche) and AI.\n"
+                    f"Analyze this conversation log between User (Binoche_Observer) and AI.\n"
                     f"Task: Compress this dialogue into 'Information Theory Invariants' for the AGI system 'Vertex Ion'.\n"
                     f"Extract:\n"
                     f"1. Core Axioms (Philosophical Truths held by the user).\n"

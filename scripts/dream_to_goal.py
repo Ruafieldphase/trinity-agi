@@ -14,6 +14,7 @@ import subprocess
 import shlex
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def run_cmd(cmd):
@@ -58,7 +59,7 @@ def start_goal(goal_id):
 
 
 def make_note(title, description):
-    path = Path(__file__).parent.parent / 'outputs' / 'dream_to_goal_note.md'
+    path = get_workspace_root() / 'outputs' / 'dream_to_goal_note.md'
     path.parent.mkdir(exist_ok=True)
     with open(path, 'a', encoding='utf-8') as f:
         f.write(f"- {title}  \n  {description}\n  - added at: {__import__('datetime').datetime.utcnow().isoformat()}Z\n\n")

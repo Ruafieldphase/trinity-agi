@@ -1,4 +1,4 @@
-# Identify what each Python process is running
+﻿# Identify what each Python process is running
 Write-Host "=== Identifying Python Processes ===" -ForegroundColor Cyan
 
 Get-Process -Name "python*" -ErrorAction SilentlyContinue | ForEach-Object {

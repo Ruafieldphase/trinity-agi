@@ -7,6 +7,7 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 def normalize_event(event: dict) -> dict:
     """Normalize field names to standard quality/latency_ms"""
@@ -14,15 +15,15 @@ def normalize_event(event: dict) -> dict:
     if 'quality' not in event or event['quality'] is None:
         if 'agi_quality' in event and event['agi_quality'] is not None:
             event['quality'] = event['agi_quality']
-        elif 'lumen_quality' in event and event['lumen_quality'] is not None:
-            event['quality'] = event['lumen_quality']
+        elif 'core_quality' in event and event['core_quality'] is not None:
+            event['quality'] = event['core_quality']
         elif 'score' in event and event['score'] is not None:
             event['quality'] = event['score']
     
     # Normalize latency_ms
     if 'latency_ms' not in event or event['latency_ms'] is None:
-        if 'lumen_latency_ms' in event and event['lumen_latency_ms'] is not None:
-            event['latency_ms'] = event['lumen_latency_ms']
+        if 'core_latency_ms' in event and event['core_latency_ms'] is not None:
+            event['latency_ms'] = event['core_latency_ms']
         elif 'agi_latency_ms' in event and event['agi_latency_ms'] is not None:
             event['latency_ms'] = event['agi_latency_ms']
         elif 'duration_sec' in event and event['duration_sec'] is not None:
@@ -101,7 +102,7 @@ def backfill_ledger(ledger_path: Path, dry_run: bool = False):
 
 
 if __name__ == '__main__':
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     ledger_path = workspace_root / 'fdo_agi_repo' / 'memory' / 'resonance_ledger.jsonl'
     
     dry_run = '--dry-run' in sys.argv

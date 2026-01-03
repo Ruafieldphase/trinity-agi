@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     자기생산 루프 + 정반합 삼위일체 통합 실행
 
@@ -7,7 +7,7 @@
     
     실행 순서:
     1. 자기생산 보고서 생성 (시스템 이벤트 분석)
-    2. 정반합 사이클 실행 (루아 관찰 → 엘로 검증 → 루멘 통합)
+    2. 정반합 사이클 실행 (코어 관찰 → 엘로 검증 → Core 통합)
     3. HIGH 우선순위 권장사항 추출 (다음 사이클 피드백)
     4. 통합 보고서 생성 (자기생산 + 정반합)
     5. 개선도 측정 (Before/After 비교)
@@ -138,29 +138,29 @@ Write-Host ""
 Write-Host "🎯 [3/5] 피드백 권장사항 추출 중..." -ForegroundColor Cyan
 Write-Host "   역할: HIGH 우선순위 권장사항을 다음 사이클에 피드백" -ForegroundColor Gray
 
-$lumenJsonPath = "$workspaceRoot\outputs\lumen_enhanced_synthesis_latest.json"
+$CoreJsonPath = "$workspaceRoot\outputs\core_enhanced_synthesis_latest.json"
 $feedbackPath = "$workspaceRoot\outputs\trinity_feedback_for_autopoietic.json"
 
 try {
-    if (Test-Path $lumenJsonPath) {
-        $lumenData = Get-Content $lumenJsonPath -Raw | ConvertFrom-Json
+    if (Test-Path $CoreJsonPath) {
+        $CoreData = Get-Content $CoreJsonPath -Raw | ConvertFrom-Json
         
         # HIGH 우선순위 권장사항만 추출
         # insights 배열에서 high priority만 추출
-        $highPriorityRecs = $lumenData.synthesis.insights | Where-Object { $_.priority -eq "high" -and $_.actionable -eq $true }
+        $highPriorityRecs = $CoreData.synthesis.insights | Where-Object { $_.priority -eq "high" -and $_.actionable -eq $true }
         
         # 피드백 구조 생성
         $feedback = @{
             timestamp             = Get-Date -Format "o"
-            source                = "Trinity Dialectics (Lua-Elo-Lumen)"
+            source                = "Trinity Dialectics (Lua-Elo-Core)"
             target                = "Autopoietic Loop"
             analysis_window_hours = $Hours
             high_priority_count   = @($highPriorityRecs).Count
             recommendations       = @($highPriorityRecs)
             metadata              = @{
-                shannon_entropy  = $lumenData.synthesis.elo_summary.entropy
-                info_density     = $lumenData.synthesis.elo_summary.information_density
-                quality_coverage = ($lumenData.synthesis.lua_summary.quality_count / $lumenData.synthesis.lua_summary.total_events * 100)
+                shannon_entropy  = $CoreData.synthesis.elo_summary.entropy
+                info_density     = $CoreData.synthesis.elo_summary.information_density
+                quality_coverage = ($CoreData.synthesis.lua_summary.quality_count / $CoreData.synthesis.lua_summary.total_events * 100)
             }
         }
         
@@ -178,7 +178,7 @@ try {
         }
     }
     else {
-        Write-Host "   ⚠️  루멘 데이터 없음. 피드백 생성 불가." -ForegroundColor Yellow
+        Write-Host "   ⚠️  Core 데이터 없음. 피드백 생성 불가." -ForegroundColor Yellow
     }
 }
 catch {
@@ -195,21 +195,21 @@ Write-Host "📄 [4/5] 통합 보고서 생성 중..." -ForegroundColor Cyan
 Write-Host "   역할: 자기생산 + 정반합 결과를 하나의 보고서로 통합" -ForegroundColor Gray
 
 $autopoieticMdPath = "$workspaceRoot\outputs\autopoietic_loop_report_latest.md"
-$lumenMdPath = "$workspaceRoot\outputs\lumen_enhanced_synthesis_latest.md"
+$CoreMdPath = "$workspaceRoot\outputs\core_enhanced_synthesis_latest.md"
 $unifiedMdPath = "$workspaceRoot\outputs\autopoietic_trinity_unified_latest.md"
 
 try {
     # 보고서 구성요소 로드
     $autopoieticContent = ""
-    $lumenContent = ""
+    $CoreContent = ""
     $feedbackContent = ""
     
     if (Test-Path $autopoieticMdPath) {
         $autopoieticContent = Get-Content $autopoieticMdPath -Raw
     }
     
-    if (Test-Path $lumenMdPath) {
-        $lumenContent = Get-Content $lumenMdPath -Raw
+    if (Test-Path $CoreMdPath) {
+        $CoreContent = Get-Content $CoreMdPath -Raw
     }
     
     if (Test-Path $feedbackPath) {
@@ -258,11 +258,11 @@ $autopoieticContent
 
 ## 🔄 Part 2: 정반합 삼위일체 분석 (Trinity Dialectics)
 
-> **정(正) - 루아**: 무엇이 일어났는가?  
+> **정(正) - 코어**: 무엇이 일어났는가?  
 > **반(反) - 엘로**: 이것이 옳은가?  
-> **합(合) - 루멘**: 무엇을 해야 하는가?
+> **합(合) - Core**: 무엇을 해야 하는가?
 
-$lumenContent
+$CoreContent
 
 ---
 
@@ -295,7 +295,7 @@ $feedbackContent
 ## 📁 생성된 파일들
 
 - 자기생산 보고서: `outputs/autopoietic_loop_report_latest.md`
-- 정반합 분석: `outputs/lumen_enhanced_synthesis_latest.md`
+- 정반합 분석: `outputs/core_enhanced_synthesis_latest.md`
 - 피드백 JSON: `outputs/trinity_feedback_for_autopoietic.json`
 - 통합 보고서: `outputs/autopoietic_trinity_unified_latest.md` (이 파일)
 
@@ -325,11 +325,11 @@ Write-Host "📈 [5/5] 개선도 측정 중..." -ForegroundColor Green
 Write-Host "   역할: 이전 사이클 대비 개선도 계산" -ForegroundColor Gray
 
 try {
-    if (Test-Path $lumenJsonPath) {
-        $current = Get-Content $lumenJsonPath -Raw | ConvertFrom-Json
+    if (Test-Path $CoreJsonPath) {
+        $current = Get-Content $CoreJsonPath -Raw | ConvertFrom-Json
         
         # 이전 데이터 찾기 (이전 실행 결과)
-        $previousFiles = Get-ChildItem "$workspaceRoot\outputs" -Filter "lumen_enhanced_synthesis_*.json" | 
+        $previousFiles = Get-ChildItem "$workspaceRoot\outputs" -Filter "core_enhanced_synthesis_*.json" | 
         Sort-Object LastWriteTime -Descending | 
         Select-Object -Skip 1 -First 1
         
@@ -393,9 +393,9 @@ Write-Host "   • 통합 보고서: outputs\autopoietic_trinity_unified_latest.
 Write-Host ""
 Write-Host "📁 생성된 파일:" -ForegroundColor Cyan
 Write-Host "   1. 자기생산 보고서: outputs\autopoietic_loop_report_latest.md" -ForegroundColor Gray
-Write-Host "   2. 정(正) 루아: outputs\lua_observation_latest.json" -ForegroundColor Gray
+Write-Host "   2. 정(正) 코어: outputs\lua_observation_latest.json" -ForegroundColor Gray
 Write-Host "   3. 반(反) 엘로: outputs\elo_validation_latest.json" -ForegroundColor Gray
-Write-Host "   4. 합(合) 루멘: outputs\lumen_enhanced_synthesis_latest.md" -ForegroundColor Gray
+Write-Host "   4. 합(合) Core: outputs\core_enhanced_synthesis_latest.md" -ForegroundColor Gray
 Write-Host "   5. 피드백: outputs\trinity_feedback_for_autopoietic.json" -ForegroundColor Gray
 Write-Host "   6. 통합 보고서: outputs\autopoietic_trinity_unified_latest.md" -ForegroundColor Gray
 Write-Host ""

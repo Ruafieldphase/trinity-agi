@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-AGI Message Reporter (AGI -> Binoche, file-based)
+AGI Message Reporter (AGI -> Binoche_Observer, file-based)
 
 목표
 - "AGI가 나에게 말을 걸 수 있는가?"에 대한 최소 구현:
@@ -25,8 +25,9 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from workspace_root import get_workspace_root
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = get_workspace_root()
 OUTPUTS = ROOT / "outputs"
 BRIDGE = OUTPUTS / "bridge"
 SYNC = OUTPUTS / "sync_cache"
@@ -140,7 +141,7 @@ def _summarize() -> tuple[list[str], dict[str, Any]]:
     rest_status = str((rg.get("status") or "")).upper().strip()
 
     learning = ops.get("learning_signals") if isinstance(ops.get("learning_signals"), dict) else {}
-    rua_mode = str(learning.get("rua_boundary_mode") or "")
+    core_mode = str(learning.get("core_boundary_mode") or "")
     active_rules = bind.get("active_rules_count") if isinstance(bind.get("active_rules_count"), int) else None
     delta = bind.get("delta") if isinstance(bind.get("delta"), dict) else None
 
@@ -193,7 +194,7 @@ def _summarize() -> tuple[list[str], dict[str, Any]]:
         "last": {"action": last_action, "reason": last_reason},
         "life_state": {"state": life_state, "reason": life.get("reason") if isinstance(life, dict) else None},
         "signals": {
-            "rua_boundary_mode": rua_mode,
+            "core_boundary_mode": core_mode,
             "active_rules_count": active_rules,
             "delta": delta,
             "one_line_wish": one_line_wish,

@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Windows Scheduled Task 등록 - Master Orchestrator를 로그온 시 자동 실행
@@ -13,6 +13,9 @@ param(
     [switch]$Status,
     [string]$TaskName = "AGI_Master_Orchestrator"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

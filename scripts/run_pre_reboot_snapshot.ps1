@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
 Pre-reboot snapshot aggregator (safe to run manually or via scheduled task)

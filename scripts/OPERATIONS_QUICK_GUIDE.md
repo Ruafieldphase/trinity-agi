@@ -94,25 +94,25 @@ This guide lists common runbooks and one‑liners. All commands are ASCII‑safe
 
 See also: `MONITORING_QUICKSTART.md`, `OPERATIONS_GUIDE.md`, `CURRENT_SYSTEM_STATUS.md`, and `docs/PERFORMANCE_DASHBOARD_QUICK_REF.md`.
 
-## Lumen Gateway Probe
+## Core Gateway Probe
 
 - Run probe (writes JSONL + latest digest):
-  - `scripts/run_lumen_probe.ps1 -Attempts 3 -BackoffMs 300 -TimeoutSec 8 -Tag "manual"`
+  - `scripts/run_core_probe.ps1 -Attempts 3 -BackoffMs 300 -TimeoutSec 8 -Tag "manual"`
 - Open latest digest after run:
-  - `scripts/run_lumen_probe.ps1 -OpenLatest`
+  - `scripts/run_core_probe.ps1 -OpenLatest`
 - Scheduled (existing):
-  - `scripts/register_lumen_probe_task.ps1 -Register -Time "09:00"`
+  - `scripts/register_core_probe_task.ps1 -Register -Time "09:00"`
 - Latest artifacts:
-  - `outputs/lumen_probe_log.jsonl` (append‑only)
-  - `outputs/lumen_probe_latest.md`, `outputs/lumen_probe_latest.json`
+  - `outputs/core_probe_log.jsonl` (append‑only)
+  - `outputs/core_probe_latest.md`, `outputs/core_probe_latest.json`
 
-## Lumen Probe Summary
+## Core Probe Summary
 
 - Summarize last 24h and open:
-  - `scripts/generate_lumen_probe_summary.ps1 -Hours 24 -OpenMd`
+  - `scripts/generate_core_probe_summary.ps1 -Hours 24 -OpenMd`
 - Outputs:
-  - `outputs/lumen_probe_summary_latest.md`
-  - `outputs/lumen_probe_summary_latest.json`
+  - `outputs/core_probe_summary_latest.md`
+  - `outputs/core_probe_summary_latest.json`
 
 ## VS Code Tasks
 
@@ -121,6 +121,6 @@ See also: `MONITORING_QUICKSTART.md`, `OPERATIONS_GUIDE.md`, `CURRENT_SYSTEM_STA
 - Monitoring: Open Latest Report (MD)
 - Monitoring: Open Dashboard (HTML)
 - Performance: Ops Daily / Ops Focus / Validate Dashboard
-- Lumen: Probe Now / Summary / Register / Unregister
+- Core: Probe Now / Summary / Register / Unregister
 
 Open with Ctrl+Shift+P, then run: `Tasks: Run Task`.

@@ -6,17 +6,17 @@ from pathlib import Path
 # Add workspace root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from scripts.koa_router import KoaRouter
+from scripts.core_router import CoreRouter
 from scripts.internal_bus import bus
 
 def test_internal_routing():
     print(f"DEBUG: sys.path: {sys.path}")
-    import scripts.koa_router
-    print(f"DEBUG: KoaRouter file: {scripts.koa_router.__file__}")
+    import scripts.core_router
+    print(f"DEBUG: CoreRouter file: {scripts.core_router.__file__}")
 
     print("🧪 Testing Internal Bus Routing...")
     
-    router = KoaRouter()
+    router = CoreRouter()
     
     # Test Internal Routing
     print("\n1. Testing Ion -> Gitko (Internal Bus)")

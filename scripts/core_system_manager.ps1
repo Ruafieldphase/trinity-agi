@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 AGI Core System Manager - 중추신경계 (생명 유지)
 
@@ -15,6 +15,9 @@ param(
     [ValidateSet('start', 'stop', 'status', 'health')]
     [string]$Command = 'status'
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path $PSScriptRoot -Parent

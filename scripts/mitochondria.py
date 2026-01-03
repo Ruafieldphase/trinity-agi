@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any
+from workspace_root import get_workspace_root
 
 class Mitochondria:
     def __init__(self, workspace_root: Path):
@@ -132,6 +133,6 @@ class Mitochondria:
 
 if __name__ == "__main__":
     # Test
-    mito = Mitochondria(Path(__file__).parent.parent)
+    mito = Mitochondria(get_workspace_root())
     state = {"fear_level": 0.4, "body_signals": {"cpu_usage": 30}}
     mito.metabolize(state, resonance_score=0.8)

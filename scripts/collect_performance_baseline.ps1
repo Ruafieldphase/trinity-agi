@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     VS Code 성능 baseline을 수집하여 대시보드에 사용합니다.

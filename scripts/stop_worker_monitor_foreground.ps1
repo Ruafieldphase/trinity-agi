@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 try {
     $procs = Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -and $_.CommandLine -like '*worker_monitor_foreground.ps1*' }
     if (-not $procs) { Write-Host 'No foreground monitor process found.' -ForegroundColor Yellow; exit 0 }

@@ -5,7 +5,7 @@ $signals = Join-Path (Get-Location) "signals"
 New-Item -ItemType Directory -Force -Path $signals | Out-Null
 
 $stopPath = Join-Path $signals "body_stop.json"
-@{ stop_at = [DateTimeOffset]::UtcNow.ToString("o"); origin = "binoche" } | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 -Path $stopPath
+@{ stop_at = [DateTimeOffset]::UtcNow.ToString("o"); origin = "Binoche_Observer" } | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 -Path $stopPath
 
 # best-effort: also clear arm (so it won't restart)
 $armPath = Join-Path $signals "body_arm.json"

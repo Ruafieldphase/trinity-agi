@@ -8,9 +8,10 @@ Checks if the environment is ready for Vertex AI integration.
 import os
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add workspace root to path
-workspace_root = Path(__file__).parent.parent
+workspace_root = get_workspace_root()
 sys.path.append(str(workspace_root))
 
 def verify_vertex():

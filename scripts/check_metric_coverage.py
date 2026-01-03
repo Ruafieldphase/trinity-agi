@@ -3,8 +3,9 @@
 import json
 from pathlib import Path
 from collections import Counter
+from workspace_root import get_workspace_root
 
-ledger_path = Path(__file__).parent.parent / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
+ledger_path = get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 total = 0
 has_quality = 0

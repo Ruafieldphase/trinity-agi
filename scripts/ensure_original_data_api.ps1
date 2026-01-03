@@ -1,13 +1,17 @@
-param(
+﻿param(
     [switch]$CheckOnly,
     [switch]$StartIfStopped,
     [switch]$Register,
     [switch]$Unregister,
     [int]$Port = 8093,
     [int]$IntervalMinutes = 5,
-    [string]$TaskName = "OriginalDataApiEnsure",
-    [string]$WorkspaceRoot = "C:\workspace\agi"
+    [string]$WorkspaceRootParam = "",
+    [string]$TaskName = "OriginalDataApiEnsure"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = if ($WorkspaceRootParam) { $WorkspaceRootParam } else { Get-WorkspaceRoot }
+
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -21,6 +25,7 @@ function Get-PythonPath {
     $candidates = @(
         (Join-Path $Root 'LLM_Unified\.venv\Scripts\python.exe'),
         (Join-Path $Root 'fdo_agi_repo\.venv\Scripts\python.exe'),
+        (Join-Path $Root '.venv\Scripts\python.exe'),
         'python'
     )
     foreach ($p in $candidates) {
@@ -141,4 +146,3 @@ if ($StartIfStopped) {
         exit 3
     }
 }
-

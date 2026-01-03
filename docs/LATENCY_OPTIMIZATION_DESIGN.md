@@ -2,7 +2,7 @@
 
 ## 🎯 목표
 
-**Binoche 3-Judge System의 순차 실행을 병렬화하여 응답 속도 3배 개선**
+**Binoche_Observer 3-Judge System의 순차 실행을 병렬화하여 응답 속도 3배 개선**
 
 ---
 
@@ -116,7 +116,7 @@ def get_ensemble_decision(
    - 순차 vs 병렬 결과 동일성 검증
    - 성능 벤치마크 (before/after)
 2. 통합 테스트
-   - Binoche recommender 통합
+   - Binoche_Observer recommender 통합
    - End-to-end 시나리오
 
 ### Phase 3: 프로덕션 배포 (15분)

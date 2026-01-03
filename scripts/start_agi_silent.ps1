@@ -1,6 +1,9 @@
-# AGI 시스템 조용히 백그라운드 실행
+﻿# AGI 시스템 조용히 백그라운드 실행
 # 윈도우 팝업 없이 실행됩니다
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "SilentlyContinue"
 
 Write-Host "🔇 AGI 시스템을 백그라운드로 시작합니다..." -ForegroundColor Cyan
@@ -14,7 +17,7 @@ if (-not $pythonw) {
 Write-Host "   Python: $pythonw" -ForegroundColor Gray
 
 # 작업 디렉토리
-$agiRoot = "C:\workspace\agi"
+$agiRoot = "$WorkspaceRoot"
 Set-Location $agiRoot
 
 # 1. Rhythm Guardian 시작 (단일 심장)

@@ -7,9 +7,10 @@ Program Learning Agent 테스트 스크립트
 
 import sys
 import os
+from workspace_root import get_workspace_root
 
 # 경로 추가
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'fdo_agi_repo'))
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 
 from program_learning_agent import ProgramLearningAgent
 import json

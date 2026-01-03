@@ -1,7 +1,10 @@
+﻿. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Setup Lubit (OpenAI) and Sian (Gemini) CLI bridges for Copilot error recovery.
+    Setup Lubit (OpenAI) and Shion (Gemini) CLI bridges for Copilot error recovery.
 
 .DESCRIPTION
     Installs dependencies and configures API keys for fallback AI agents.
@@ -9,8 +12,8 @@
 .PARAMETER LubitOnly
     Only set up Lubit (OpenAI Codex) bridge.
 
-.PARAMETER SianOnly
-    Only set up Sian (Gemini) bridge.
+.PARAMETER ShionOnly
+    Only set up Shion (Gemini) bridge.
 
 .PARAMETER SkipInstall
     Skip package installation (only configure keys).
@@ -52,7 +55,7 @@ param(
     if (!$SkipInstall) {
         Write-Host "📦 Installing dependencies..." -ForegroundColor Cyan
     
-        if (!$SianOnly) {
+        if (!$ShionOnly) {
             Write-Host "   Installing openai..." -ForegroundColor Gray
             & $VenvPython -m pip install --quiet --upgrade openai
             if ($LASTEXITCODE -ne 0) {
@@ -78,7 +81,7 @@ param(
     Write-Host "🔑 Configuring API keys" -ForegroundColor Cyan
     Write-Host ""
 
-    if (!$SianOnly) {
+    if (!$ShionOnly) {
         $openaiKey = [System.Environment]::GetEnvironmentVariable("OPENAI_API_KEY", "User")
     
         if ([string]::IsNullOrEmpty($openaiKey)) {
@@ -120,7 +123,7 @@ param(
                 Write-Host "   ✅ GEMINI_API_KEY set (restart VS Code to apply)" -ForegroundColor Green
             }
             else {
-                Write-Host "   ⚠️  Sian will require GEMINI_API_KEY at runtime" -ForegroundColor Yellow
+                Write-Host "   ⚠️  Shion will require GEMINI_API_KEY at runtime" -ForegroundColor Yellow
             }
         }
         else {
@@ -131,7 +134,7 @@ param(
     Write-Host ""
     Write-Host "🧪 Testing bridges..." -ForegroundColor Cyan
 
-    if (!$SianOnly) {
+    if (!$ShionOnly) {
         Write-Host "   Testing Lubit (OpenAI)..." -ForegroundColor Gray
         $lubitBridge = Join-Path $WorkspaceRoot "fdo_agi_repo\integrations\openai_codex_bridge.py"
     
@@ -139,20 +142,20 @@ param(
         if ($LASTEXITCODE -eq 0) {
             <#!
             create_fallback_bridges.ps1
-            Purpose: Ensure local fallback bridges (Lubit / Sian) are provisioned for Copilot request rerouting.
+            Purpose: Ensure local fallback bridges (Lubit / Shion) are provisioned for Copilot request rerouting.
             This script normalizes directory layout, seeds a .env with required secrets, and outputs a machine-readable status JSON.
             Upgrades vs previous version:
              - Clean parameter block ordering
              - Robust .env creation + reload
              - Structured logging with level filtering
-             - Optional selective enable (LubitOnly / SianOnly)
+             - Optional selective enable (LubitOnly / ShionOnly)
              - Returns status JSON (writes outputs/fallback_bridges_status.json)
              - Idempotent: safe to re-run
             !>
 
             param(
                 [switch]$LubitOnly,
-                [switch]$SianOnly,
+                [switch]$ShionOnly,
                 [switch]$SkipInstall,
                 [switch]$ForceNonInteractive,
                 [switch]$Silent
@@ -186,7 +189,7 @@ param(
             OPENAI_API_KEY=__REPLACE__
             GEMINI_API_KEY=__REPLACE__
             LUBIT_HMAC_SECRET=__REPLACE__
-            SIAN_HMAC_SECRET=__REPLACE__
+            SHION_HMAC_SECRET=__REPLACE__
             # Optional routing preferences
             FALLBACK_PREF=LUBIT_FIRST
             "@ | Set-Content -Path $EnvFile -Encoding UTF8
@@ -236,7 +239,7 @@ param(
             }
 
             $LubitDir = Ensure-BridgeLayout -Name 'lubit'
-            $SianDir  = Ensure-BridgeLayout -Name 'sian'
+            $ShionDir  = Ensure-BridgeLayout -Name 'Shion'
 
             if (-not $SkipInstall) {
                 Write-Log "Verifying Python packages (requests, jsonschema)" 'INFO'
@@ -251,14 +254,14 @@ param(
                 env_file       = $EnvFile
                 python_exec    = $PythonExec
                 lubit_dir      = $LubitDir
-                sian_dir       = $SianDir
+                shion_dir       = $ShionDir
                 lubit_enabled  = $true
-                sian_enabled   = $true
+                shion_enabled   = $true
                 fallback_pref  = ($env:FALLBACK_PREF | ForEach-Object { $_ })
                 timestamp      = (Get-Date).ToString('o')
             }
-            if ($LubitOnly) { $Status.sian_enabled = $false }
-            if ($SianOnly)  { $Status.lubit_enabled = $false }
+            if ($LubitOnly) { $Status.shion_enabled = $false }
+            if ($ShionOnly)  { $Status.lubit_enabled = $false }
 
             $Json = $Status | ConvertTo-Json -Depth 6
             $OutPath = Join-Path $OutputsDir 'fallback_bridges_status.json'

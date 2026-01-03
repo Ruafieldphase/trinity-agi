@@ -167,10 +167,10 @@ if ($energy -lt 40) {
 
 #### D. Resonance Tracker (공명 추적)
 
-**위치**: `LLM_Unified/ion-mentoring/docs/lumen_design/`
+**위치**: `LLM_Unified/ion-mentoring/docs/core_design/`
 
 ```python
-# Lumen v1.x: 리듬 좌표계
+# Core v1.x: 리듬 좌표계
 resonance_state = {
     "symmetry": 0.85,      # 대칭 (안정성)
     "continuity": 0.92,    # 연속성 (예측 가능성)
@@ -403,7 +403,7 @@ AI: Affect = 시스템의 신호
 1. **Affect Amplitude**: `fdo_agi_repo/orchestrator/phase_controller.py`
 2. **Contextual Rhythm**: `scripts/detect_rhythm_contextual.ps1`
 3. **Memory Emotion**: `docs/AGI_DESIGN_01_MEMORY_SCHEMA.md`
-4. **Resonance Tracker**: `LLM_Unified/ion-mentoring/docs/lumen_design/`
+4. **Resonance Tracker**: `LLM_Unified/ion-mentoring/docs/core_design/`
 
 ### 이론적 배경
 

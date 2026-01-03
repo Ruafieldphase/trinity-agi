@@ -121,7 +121,7 @@ Samples: 5
 -- [R1] Incomplete data or misinterpretation of input can introduce bias | Likelihood:3 | Impact:4 | Mitigation: enhance data validation and integration processes.
 -- [R2] Syntax inconsistencies may lead to syntactic errors | Likelihood:4 | Impact:3 | Mitigation: implement automated syntax checking.
  Quote Bank:
--- "We prefer flexibility at content level, rigidity at form." — Source:Lumen Design Review
+-- "We prefer flexibility at content level, rigidity at form." — Source:Core Design Review
 -Highest Risk: [R1]—Why: High risk of false positives or negatives in LLM assessment due to flawed data interpretation and insufficient validation.
 +Highest Risk: R1 â Why: (to be specified)
 ```
@@ -176,7 +176,7 @@ Samples: 5
 -- [R1] Neglecting Context's text categorization risks structural asymmetry | Likelihood: 3 | Impact: 5 | Mitigation: Implement a header loss detector.
 -- [R2] Inadvertently exposing forbidden tokens can lead to syntactical ambiguity | Likelihood: 4 | Impact: 4 | Mitigation: Increase vigilance in token filtering.
  Quote Bank:
--- "The best validator is structural minimalism." — Source:Lumen
+-- "The best validator is structural minimalism." — Source:Core
 -Highest Risk: R2 — Why: Syntactical ambiguity leads to validation inconsistencies, causing breakdowns in the system's reliability.
 +Highest Risk: R1 â Why: (to be specified)
 ```

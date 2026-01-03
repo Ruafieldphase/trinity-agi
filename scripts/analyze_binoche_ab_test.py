@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Analyze Binoche A/B Test (stub v1)
+Analyze Binoche_Observer A/B Test (stub v1)
 """
 
 from __future__ import annotations
@@ -11,6 +11,7 @@ import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def utc_iso(ts: float) -> str:
@@ -25,7 +26,7 @@ def _atomic_write_json(path: Path, obj: dict) -> None:
 
 
 def main() -> int:
-    ws = Path(__file__).resolve().parents[1]
+    ws = get_workspace_root()
     out = ws / "outputs" / "binoche_ab_test_analysis_latest.json"
     now = time.time()
     report = {"ok": False, "version": "binoche_ab_test_stub_v1", "generated_at": utc_iso(now), "reason": "stub_only"}

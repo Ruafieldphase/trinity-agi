@@ -1,7 +1,8 @@
 import sys
 import json
 import os
-from koa_slack_adapter import KoaSlackAdapter
+from core_slack_adapter import CoreSlackAdapter
+from workspace_root import get_workspace_root
 
 def propose_task(proposal_data):
     """
@@ -14,7 +15,7 @@ def propose_task(proposal_data):
         "observation": "..."
     }
     """
-    slack = KoaSlackAdapter()
+    slack = CoreSlackAdapter()
     
     file_path = proposal_data.get("file", "Unknown")
     task_type = proposal_data.get("type", "TASK")
@@ -30,7 +31,7 @@ def propose_task(proposal_data):
     emoji = emoji_map.get(task_type, "💡")
     
     # Save to proposals.json
-    proposals_file = os.path.join(os.path.dirname(__file__), "..", "outputs", "proposals.json")
+    proposals_file = get_workspace_root() / "outputs" / "proposals.json"
     proposals = []
     if os.path.exists(proposals_file):
         try:

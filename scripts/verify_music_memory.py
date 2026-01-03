@@ -2,9 +2,10 @@
 import asyncio
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add workspace root to sys.path
-workspace_root = Path(__file__).parent.parent
+workspace_root = get_workspace_root()
 sys.path.append(str(workspace_root))
 
 from fdo_agi_repo.rpa.trial_error_engine import TrialErrorEngine

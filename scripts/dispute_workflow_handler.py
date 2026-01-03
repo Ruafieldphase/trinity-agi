@@ -14,6 +14,7 @@ import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def utc_iso(ts: float) -> str:
@@ -28,7 +29,7 @@ def _atomic_write_json(path: Path, obj: dict) -> None:
 
 
 def main() -> int:
-    ws = Path(__file__).resolve().parents[1]
+    ws = get_workspace_root()
     out = ws / "outputs" / "dispute_workflow_latest.json"
     now = time.time()
     report = {

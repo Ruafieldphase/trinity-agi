@@ -1,4 +1,4 @@
-# PowerShell을 생성하는 부모 프로세스 찾기
+﻿# PowerShell을 생성하는 부모 프로세스 찾기
 
 Write-Host "`n🔍 PowerShell 부모 프로세스 추적" -ForegroundColor Cyan
 Write-Host "=" * 60

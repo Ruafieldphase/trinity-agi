@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Contextual Rhythm Detector - 맥락 기반 리듬 감지
@@ -19,11 +19,14 @@ param(
     [switch]$Json,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-$workspaceRoot = "C:\workspace\agi"
+$workspaceRoot = "$WorkspaceRoot"
 
 # ========================================
 # 1. 맥락 데이터 수집
@@ -270,10 +273,10 @@ $rhythmTasks = @{
     )
     
     RECOVERY  = @(
-        "Monitoring: Unified Dashboard (AGI + Lumen)",
+        "Monitoring: Unified Dashboard (AGI + Core)",
         "Queue: Latest Results (Success 5)",
         "System: Health Check (Quick)",
-        "Lumen: Quick Health Probe"
+        "Core: Quick Health Probe"
     )
     
     PEAK      = @(
@@ -291,7 +294,7 @@ $rhythmTasks = @{
     )
     
     STEADY    = @(
-        "Monitoring: Unified Dashboard (AGI + Lumen)",
+        "Monitoring: Unified Dashboard (AGI + Core)",
         "Queue: Health Check",
         "Autopoietic: Generate Loop Report (24h)",
         "Original Data: Build Index (open)"

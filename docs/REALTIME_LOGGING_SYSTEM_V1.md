@@ -423,7 +423,7 @@ tail -f fdo_agi_repo/memory/resonance_ledger.jsonl | grep "test-001"
 ## 👥 Authors
 
 - Gitko (깃코) - Design & Implementation
-- Ruafield - Architecture Review
+- ___CORE_FIELD_ST___ - Architecture Review
 
 ---
 

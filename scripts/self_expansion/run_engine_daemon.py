@@ -10,8 +10,13 @@ import argparse
 import sys
 import time
 from pathlib import Path
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
-ROOT = Path(__file__).resolve().parents[2]  # c:/workspace/agi
+
+ROOT = get_workspace_root()  # c:/workspace/agi
 sys.path.append(str(ROOT))
 
 from scripts.self_expansion import SelfExpansionEngine  # noqa: E402

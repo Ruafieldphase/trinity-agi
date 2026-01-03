@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # -*- coding: utf-8 -*-
 <#
 .SYNOPSIS
@@ -48,6 +48,9 @@ param(
     [switch]$Watch,
     [string]$OutJson = ""
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

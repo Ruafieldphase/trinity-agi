@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     24시간 Gateway 최적화 모니터링 실행
 

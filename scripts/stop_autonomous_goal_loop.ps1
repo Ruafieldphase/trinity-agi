@@ -1,4 +1,4 @@
-# Stop Autonomous Goal Loop
+﻿# Stop Autonomous Goal Loop
 # Sets stop flag to gracefully terminate the running daemon
 
 param(
@@ -6,9 +6,13 @@ param(
     [switch]$Status,
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 
-$StopFlag = "C:\workspace\agi\outputs\stop_autonomous_goal_loop.flag"
-$StatusFile = "C:\workspace\agi\outputs\autonomous_goal_loop_status.json"
+
+
+$StopFlag = "$WorkspaceRoot\outputs\stop_autonomous_goal_loop.flag"
+$StatusFile = "$WorkspaceRoot\outputs\autonomous_goal_loop_status.json"
 
 if ($Status) {
     # Show current status

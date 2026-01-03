@@ -1,4 +1,4 @@
-<#
+﻿<#
 Post-reboot consolidated verification script for Trinity (AGI + Monitoring + Queue + Watchdog).
 
 Usage examples:

@@ -1,10 +1,10 @@
-<#
+﻿<#
 .SYNOPSIS
     24h Production을 백그라운드 PowerShell Job으로 시작 (재시작 안전)
 
 .DESCRIPTION
     다음 Production을 백그라운드 Job으로 시작합니다:
-    1. Lumen 24h Feedback System
+    1. Core 24h Feedback System
     2. Trinity Autopoietic Cycle
     3. Unified Real-Time Dashboard
     
@@ -24,12 +24,14 @@
 param(
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
-$WorkspaceRoot = "C:\workspace\agi"
 $JobNames = @(
-    "AGI_Lumen_24h"
+    "AGI_Core_24h"
     "AGI_Trinity_24h"
     "AGI_Dashboard_24h"
 )
@@ -47,8 +49,8 @@ function Stop-ExistingJobs {
     }
 }
 
-function Start-LumenJob {
-    Write-Host "1️⃣  Lumen 24h Production 시작..." -ForegroundColor Yellow
+function Start-CoreJob {
+    Write-Host "1️⃣  Core 24h Production 시작..." -ForegroundColor Yellow
     
     $job = Start-Job -Name $JobNames[0] -ScriptBlock {
         param($Root)
@@ -141,7 +143,7 @@ if ($existingJobs -and -not $Force) {
 }
 
 # Job 시작
-Start-LumenJob
+Start-CoreJob
 Start-Sleep -Seconds 2
 
 Start-TrinityJob

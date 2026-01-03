@@ -11,6 +11,9 @@ param(
     [switch]$DryRun,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
@@ -27,7 +30,7 @@ $GitkoPath = "C:\Users\kuirv\AppData\Roaming\Code\User\workspaceStorage"
 $SenaPath = "C:\Users\kuirv\.claude\projects"
 $LubitPath = "C:\Users\kuirv\.codex\sessions"
 $LedgerPath = "C:\\workspace\\agi\fdo_agi_repo\memory\resonance_ledger.jsonl"
-$OutputDir = "C:\workspace\agi\outputs\session_harvests"
+$OutputDir = "$WorkspaceRoot\outputs\session_harvests"
 
 # 출력 디렉토리 생성
 if (-not (Test-Path $OutputDir)) {

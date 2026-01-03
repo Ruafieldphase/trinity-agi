@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Verify all AGI scheduled tasks registration status
 
@@ -15,7 +15,7 @@ Write-Host "╚═════════════════════�
 # Get all AGI-related tasks
 $tasks = Get-ScheduledTask | Where-Object { 
     $_.TaskPath -like "*\" -and 
-    ($_.TaskName -match "AGI|Ion|BQI|Monitor|Cache|Trinity|Backup|Context|Lumen|Meta|Async|Evening|MidDay|Morning|Sleep|WakeUp|YouTube|Inbox")
+    ($_.TaskName -match "AGI|Ion|BQI|Monitor|Cache|Trinity|Backup|Context|Core|Meta|Async|Evening|MidDay|Morning|Sleep|WakeUp|YouTube|Inbox")
 } | Sort-Object TaskName
 
 $registered = 0

@@ -15,6 +15,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
 import hashlib
+from workspace_root import get_workspace_root
 
 class DNAStructure:
     """압축된 시스템 DNA - 핵심 설정이 접혀있음"""
@@ -260,7 +261,7 @@ class ImmuneSystem:
 
 def main():
     """면역 시스템 테스트"""
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     immune = ImmuneSystem(workspace)
     
     # 1. 현재 시스템 상태 예시

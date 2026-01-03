@@ -12,9 +12,10 @@ import time
 import json
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 추가
-project_root = Path(__file__).parent.parent
+project_root = get_workspace_root()
 sys.path.insert(0, str(project_root))
 
 try:

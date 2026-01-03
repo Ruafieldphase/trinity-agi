@@ -1,8 +1,8 @@
-# Check_scheduled_tasks.ps1
-# List all scheduled tasks related to Ion, Lumen, Monitor, Canary
+﻿# Check_scheduled_tasks.ps1
+# List all scheduled tasks related to Ion, Core, Monitor, Canary
 
 $tasks = Get-ScheduledTask | Where-Object { 
-    $_.TaskName -match 'Ion|Lumen|Monitor|Canary|Inbox|Watcher' 
+    $_.TaskName -match 'Ion|Core|Monitor|Canary|Inbox|Watcher' 
 }
 
 if ($tasks) {

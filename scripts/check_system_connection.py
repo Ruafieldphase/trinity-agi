@@ -8,6 +8,7 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -16,7 +17,7 @@ from credentials_manager import get_linux_vm_credentials
 import paramiko
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 
 def check_consciousness_layer():

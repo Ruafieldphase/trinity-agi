@@ -1,9 +1,12 @@
+﻿
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 ﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [string]$TaskName = "AutopoieticLoopDailyReport",
     [string]$Time = "03:25",
-    [string]$WorkspaceRoot = "C:\workspace\agi",
+    [string]$WorkspaceRoot = "$WorkspaceRoot",
     [int]$Hours = 24,
     [switch]$OpenMd
 )

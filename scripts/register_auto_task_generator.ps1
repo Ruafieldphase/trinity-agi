@@ -1,4 +1,4 @@
-# Auto Task Generator Scheduler
+﻿# Auto Task Generator Scheduler
 # Purpose: 정기적으로 학습/테스트 작업을 자동 생성
 # Usage: .\register_auto_task_generator.ps1 -Register|-Unregister|-Status
 
@@ -9,11 +9,15 @@ param(
     [string]$TaskName = "AGI_AutoTaskGenerator",
     [string]$IntervalMinutes = "30"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
-$scriptPath = "C:\workspace\agi\scripts\idle_task_generator.ps1"
-$wsFolder = "C:\workspace\agi"
+$scriptPath = "$WorkspaceRoot\scripts\idle_task_generator.ps1"
+$wsFolder = "$WorkspaceRoot"
 
 # Status check
 if ($Status -or (-not $Register -and -not $Unregister)) {

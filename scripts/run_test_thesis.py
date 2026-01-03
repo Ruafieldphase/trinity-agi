@@ -6,9 +6,10 @@
 import sys
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(get_workspace_root()))
 
 try:
     from fdo_agi_repo.orchestrator.contracts import TaskSpec

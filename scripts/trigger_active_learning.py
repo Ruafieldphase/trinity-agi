@@ -6,10 +6,11 @@ Active Learning 트리거 스크립트
 from pathlib import Path
 from reward_tracker import RewardTracker
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 def trigger_system_maintenance_rewards():
     """시스템 유지보수 작업에 대한 보상 신호 생성"""
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     tracker = RewardTracker(workspace_root)
     
     # 1. Meta Supervisor 실행 보상

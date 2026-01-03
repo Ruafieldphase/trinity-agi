@@ -26,9 +26,10 @@ from typing import Dict, List, Optional
 import numpy as np
 import psutil
 from sklearn.ensemble import IsolationForest
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 경로
-WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 
 
 class AnomalyDetector:
@@ -82,11 +83,11 @@ class AnomalyDetector:
                     monitoring = json.load(f)
                     
                 agi_metrics = monitoring.get("agi_metrics", {})
-                lumen_metrics = monitoring.get("lumen_metrics", {})
+                core_metrics = monitoring.get("core_metrics", {})
                 queue_metrics = monitoring.get("queue_metrics", {})
                 
                 success_rate = agi_metrics.get("success_rate", 0)
-                avg_latency_ms = lumen_metrics.get("avg_latency_ms", 0)
+                avg_latency_ms = core_metrics.get("avg_latency_ms", 0)
                 queue_size = queue_metrics.get("pending", 0)
             else:
                 success_rate = 0

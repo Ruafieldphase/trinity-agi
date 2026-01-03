@@ -10,9 +10,10 @@ import sys
 import unittest
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
+from workspace_root import get_workspace_root
 
 # Add project root to path
-project_root = Path(__file__).parent.parent
+project_root = get_workspace_root()
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "scripts"))
 

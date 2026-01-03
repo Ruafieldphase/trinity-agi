@@ -1,10 +1,13 @@
-# Music → Rhythm → Goal 전체 플로우 테스트
+﻿# Music → Rhythm → Goal 전체 플로우 테스트
 # 실제 음악 재생 없이 시뮬레이션으로 검증
 
 param(
     [switch]$Verbose,
-    [string]$OutJson = "$PSScriptRoot\..\outputs\music_goal_flow_test_latest.json"
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\music_goal_flow_test_latest.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $Results = @{
@@ -33,7 +36,7 @@ function Add-Step {
 try {
     # Step 1: 리듬 리포트 확인
     Add-Step "Check Rhythm Report" "running" $null
-    $rhythmReport = "$PSScriptRoot\..\outputs\RHYTHM_SYSTEM_STATUS_REPORT.md"
+    $rhythmReport = "$WorkspaceRoot\outputs\RHYTHM_SYSTEM_STATUS_REPORT.md"
     if (Test-Path $rhythmReport) {
         $content = Get-Content $rhythmReport -Raw
         $hasRest = $content -match '휴식 페이즈|REST_PHASE'
@@ -46,7 +49,7 @@ try {
 
     # Step 2: Goal Tracker 읽기
     Add-Step "Read Goal Tracker" "running" $null
-    $trackerPath = "$PSScriptRoot\..\fdo_agi_repo\memory\goal_tracker.json"
+    $trackerPath = "$WorkspaceRoot\fdo_agi_repo\memory\goal_tracker.json"
     if (Test-Path $trackerPath) {
         $tracker = Get-Content $trackerPath -Raw | ConvertFrom-Json
         $goalCount = $tracker.goals.Count
@@ -58,7 +61,7 @@ try {
 
     # Step 3: Music-Goal 이벤트 로그 확인
     Add-Step "Check Music-Goal Events" "running" $null
-    $eventsPath = "$PSScriptRoot\..\outputs\music_goal_events.jsonl"
+    $eventsPath = "$WorkspaceRoot\outputs\music_goal_events.jsonl"
     if (Test-Path $eventsPath) {
         $eventCount = (Get-Content $eventsPath | Measure-Object).Count
         Add-Step "Check Music-Goal Events" "success" "Found $eventCount events"

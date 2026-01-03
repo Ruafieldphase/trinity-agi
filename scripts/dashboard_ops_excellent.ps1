@@ -1,4 +1,4 @@
-# Quick Performance Dashboard - Excellence Showcase
+﻿# Quick Performance Dashboard - Excellence Showcase
 # Shows only Excellent systems for celebrating wins
 
 param(

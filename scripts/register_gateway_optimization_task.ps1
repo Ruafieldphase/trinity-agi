@@ -30,6 +30,9 @@ param(
     [int]$IntervalMinutes = 30,
     [string]$TaskName = "AGI_GatewayOptimization"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 

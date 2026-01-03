@@ -59,8 +59,8 @@ class AGITutor:
         return {
             "fractal_structure": {
                 "dimensions": ["Hippocampus", "Amygdala", "Rhythm", "Resonance"],
-                "prisms": ["Action", "Memory", "Binoche"],
-                "adapters": ["Lua", "ChatGPT", "Lumen", "Task Queue"]
+                "prisms": ["Action", "Memory", "Binoche_Observer"],
+                "adapters": ["Lua", "ChatGPT", "Core", "Task Queue"]
             },
             "core_loop": "Rhythm Engine → Dimensions → Prisms → Actions"
         }

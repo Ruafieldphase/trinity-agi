@@ -1,4 +1,4 @@
-# Test LM Studio proxy latency after optimization
+﻿# Test LM Studio proxy latency after optimization
 $times = @()
 Write-Host "Testing LM Studio proxy latency (5 requests)..." -ForegroundColor Cyan
 

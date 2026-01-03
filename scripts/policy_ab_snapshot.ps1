@@ -1,4 +1,4 @@
-Param(
+﻿Param(
     [int]$Lines = 50000,
     [switch]$OpenMd
 )

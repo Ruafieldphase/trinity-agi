@@ -1,4 +1,4 @@
-# AGI Dashboard Auto-Updater
+﻿# AGI Dashboard Auto-Updater
 # ===========================
 # 
 # Automatically regenerate performance dashboard at specified intervals

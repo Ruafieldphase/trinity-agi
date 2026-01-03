@@ -7,6 +7,12 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 # Canonical emotion keyword buckets (English + Hangul)
 _EMOTION_KEYWORDS: Dict[str, list[str]] = {
@@ -136,8 +142,8 @@ _MODEL_CACHE: Optional[Dict[str, Any]] = None
 def _candidate_model_paths() -> list[Path]:
     here = Path(__file__).resolve()
     roots = [
-        here.parents[2] / "fdo_agi_repo" / "outputs" / "bqi_pattern_model.json",
-        here.parents[2] / "outputs" / "bqi_pattern_model.json",
+        get_workspace_root() / "fdo_agi_repo" / "outputs" / "bqi_pattern_model.json",
+        get_workspace_root() / "outputs" / "bqi_pattern_model.json",
     ]
     uniq: list[Path] = []
     seen: set[str] = set()

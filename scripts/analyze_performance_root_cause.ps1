@@ -1,10 +1,14 @@
-# Performance Root Cause Analysis
+﻿# Performance Root Cause Analysis
 # Schema 통합만으로는 해결되지 않는 근본 원인 분석
 
 param(
     [int]$TaskCount = 3,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Continue'
 
@@ -18,7 +22,7 @@ for ($i = 1; $i -le $TaskCount; $i++) {
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     
     $result = & {
-        cd C:\workspace\agi\fdo_agi_repo
+        cd $WorkspaceRoot\fdo_agi_repo
         if (Test-Path .venv\Scripts\python.exe) {
             .venv\Scripts\python.exe -m scripts.run_task --title "perf_test_$i" --goal "quick test" 2>&1
         }
@@ -46,7 +50,7 @@ Write-Host "`n  Average duration: $($avgDuration.ToString('F2'))s"
 # Check for blocking operations
 Write-Host "`n[2/5] Analyzing blocking operations..." -ForegroundColor Yellow
 
-$ledger = "C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl"
+$ledger = "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl"
 if (Test-Path $ledger) {
     $ledgerSize = (Get-Item $ledger).Length / 1MB
     $lineCount = (Get-Content $ledger -Raw).Split("`n").Count
@@ -68,7 +72,7 @@ if (Test-Path $ledger) {
 # Check vector store
 Write-Host "`n[3/5] Checking vector store size..." -ForegroundColor Yellow
 
-$vectorStore = "C:\workspace\agi\fdo_agi_repo\memory\rag_vector_store"
+$vectorStore = "$WorkspaceRoot\fdo_agi_repo\memory\rag_vector_store"
 if (Test-Path $vectorStore) {
     $vectorSize = (Get-ChildItem $vectorStore -Recurse -File | Measure-Object -Property Length -Sum).Sum / 1MB
     $fileCount = (Get-ChildItem $vectorStore -Recurse -File).Count
@@ -106,7 +110,7 @@ else:
 "@
 
 $importResult = & {
-    cd C:\workspace\agi\fdo_agi_repo
+    cd $WorkspaceRoot\fdo_agi_repo
     if (Test-Path .venv\Scripts\python.exe) {
         echo $importTest | .venv\Scripts\python.exe
     }

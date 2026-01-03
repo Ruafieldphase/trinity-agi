@@ -5,14 +5,15 @@ param(
   [switch]$WriteSampleTask,
   [switch]$Silent
 )
+. "$PSScriptRoot\..\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 
 $ErrorActionPreference = "Stop"
 
-Set-Location -Path (Split-Path $PSScriptRoot -Parent)
-Set-Location -Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent)
+Set-Location -Path $WorkspaceRoot
 
-$signals = Join-Path (Get-Location) "signals"
-$outputs = Join-Path (Get-Location) "outputs"
+$signals = Join-Path $WorkspaceRoot "signals"
+$outputs = Join-Path $WorkspaceRoot "outputs"
 New-Item -ItemType Directory -Force -Path $signals | Out-Null
 New-Item -ItemType Directory -Force -Path $outputs | Out-Null
 
@@ -22,7 +23,7 @@ $expires = $now.AddMinutes([Math]::Max(1, $Minutes)).ToUnixTimeSeconds()
 $arm = @{
   armed_at   = $now.ToString("o")
   expires_at = [double]$expires
-  origin     = "binoche"
+  origin     = "Binoche_Observer"
   note       = "Supervised body mode armed"
 }
 
@@ -42,12 +43,12 @@ if (-not $Silent) {
 if ($WriteSampleTask) {
   $taskPath = Join-Path $signals "body_task.json"
   $task = @{
-    goal = "supervised_exploration"
+    goal       = "supervised_exploration"
     created_at = $now.ToString("o")
-    actions = @(
-      @{ type = "open_path"; path = "C:\\workspace\\agi\\outputs" },
-      @{ type = "open_url"; url  = "https://earth.google.com/web/" },
-      @{ type = "open_url"; url  = "https://www.google.com/maps" },
+    actions    = @(
+      @{ type = "open_path"; path = "$WorkspaceRoot\outputs" },
+      @{ type = "open_url"; url = "https://earth.google.com/web/" },
+      @{ type = "open_url"; url = "https://www.google.com/maps" },
       @{ type = "google_search"; query = "Google 지도 로드뷰" },
       @{ type = "youtube_search"; query = "도시 배경음 ambience" },
       @{ type = "sleep"; seconds = 3 }
@@ -61,7 +62,8 @@ if ($WriteSampleTask) {
 }
 
 if ($RunController) {
-  $pyw = "C:\\Python313\\pythonw.exe"
+  # Python EXE 탐색 (venv 우선)
+  $pyw = Join-Path $WorkspaceRoot ".venv\Scripts\pythonw.exe"
   if (-not (Test-Path $pyw)) { $pyw = "pythonw.exe" }
 
   $script = Join-Path (Get-Location) "scripts\\windows\\supervised_body_controller.py"

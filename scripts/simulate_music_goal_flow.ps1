@@ -1,4 +1,4 @@
-# 음악-리듬-목표 전체 플로우 시뮬레이션
+﻿# 음악-리듬-목표 전체 플로우 시뮬레이션
 param(
     [switch]$DryRun,
     [switch]$Verbose,

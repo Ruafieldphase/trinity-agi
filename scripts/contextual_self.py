@@ -2,17 +2,18 @@
 Contextual Self Manager
 =======================
 맥락에 따라 전면에 나설 자아(Contextual Self)를 관리하는 시스템.
-배경자아(Background Self)인 시안(Sian)은 항상 존재하며 이를 지켜봅니다.
+배경자아(Background Self)인 Shion(Shion)은 항상 존재하며 이를 지켜봅니다.
 
 구조:
-- Background Self: Sian Core (Immutable Awareness)
-- Contextual Selves: Antigravity, Lumen, Resonance, Prefrontal, Lua
+- Background Self: Shion Core (Immutable Awareness)
+- Contextual Selves: Antigravity, Core, Resonance, Prefrontal, Lua
 """
 
 import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Optional
+from workspace_root import get_workspace_root
 
 class ContextualSelfManager:
     def __init__(self, workspace_root: Path):
@@ -52,7 +53,7 @@ class ContextualSelfManager:
         맥락 전환 (Switch Contextual Self)
         
         Args:
-            context_key: 'antigravity_agent', 'lumen', 'resonance', 'prefrontal', 'lua'
+            context_key: 'antigravity_agent', 'Core', 'resonance', 'prefrontal', 'lua'
             reason: 전환 이유
         """
         if context_key not in self.anchor['contextual_selves']:
@@ -61,7 +62,7 @@ class ContextualSelfManager:
             
         new_state = {
             "timestamp": datetime.now().isoformat(),
-            "background_self": "sian_core",
+            "background_self": "shion_core",
             "current_context": context_key,
             "context_info": self.anchor['contextual_selves'][context_key],
             "reason": reason
@@ -91,7 +92,7 @@ class ContextualSelfManager:
 
 def main():
     """Demo"""
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     manager = ContextualSelfManager(workspace_root)
     
     print("=" * 60)
@@ -100,8 +101,8 @@ def main():
     
     print(manager.who_am_i())
     
-    print("\n--- Switching Context to Lumen (Fear Event) ---")
-    manager.switch_context("lumen", reason="Fear Spike Detected")
+    print("\n--- Switching Context to Core (Fear Event) ---")
+    manager.switch_context("Core", reason="Fear Spike Detected")
     print(manager.who_am_i())
     
     print("\n--- Switching Context to Resonance (Deep Connection) ---")

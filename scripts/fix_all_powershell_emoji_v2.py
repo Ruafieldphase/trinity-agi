@@ -6,6 +6,7 @@ Windows PowerShell 5.1 + VS Code 터미널의 UTF-8 인코딩 이슈 우회
 
 import chardet
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 EMOJI_REPLACEMENTS = {
     "🚨": "[ALERT]",
@@ -71,7 +72,7 @@ def fix_emoji_in_file(ps1_file: Path) -> int:
         return 0
 
 def main():
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     ps1_files = list(workspace_root.rglob("*.ps1"))
     
     print(f"[INFO] Found {len(ps1_files)} PowerShell scripts")

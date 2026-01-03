@@ -33,8 +33,9 @@ import sys
 import time
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Tuple
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+WORKSPACE_ROOT = str(get_workspace_root())
 OUTPUTS_DIR = os.path.join(WORKSPACE_ROOT, "outputs")
 DEFAULT_SQLITE_PATH = os.path.join(OUTPUTS_DIR, "timeseries_metrics.db")
 DEFAULT_TABLE = "metrics"

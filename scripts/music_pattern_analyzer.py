@@ -9,6 +9,7 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 import hashlib
+from workspace_root import get_workspace_root
 
 def load_music_index(workspace_root):
     """Load music index from outputs"""
@@ -114,9 +115,8 @@ def main():
     parser.add_argument('--reaper-check', action='store_true', help="Check for Reaper project files")
     args = parser.parse_args()
     
-    # Determine workspace root
-    script_dir = Path(__file__).parent
-    workspace_root = script_dir.parent
+    # Determine workspace root (SSOT)
+    workspace_root = get_workspace_root()
     
     print("🎵 Music Pattern Analyzer")
     print("=" * 60)

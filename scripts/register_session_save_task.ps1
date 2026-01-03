@@ -1,4 +1,4 @@
-# Register automatic session save on system shutdown/logout
+﻿# Register automatic session save on system shutdown/logout
 # Simplified approach using heartbeat integration instead of Task Scheduler
 
 param(

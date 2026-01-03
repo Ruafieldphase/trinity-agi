@@ -16,6 +16,7 @@ import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any
+from workspace_root import get_workspace_root
 
 # Setup logging
 logging.basicConfig(
@@ -24,7 +25,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 
 

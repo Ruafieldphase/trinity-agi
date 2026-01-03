@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # Test Music → Rhythm → Goal 파이프라인
 # Music Daemon의 자동 목표 생성 플로우 E2E 테스트
 
@@ -8,6 +8,9 @@ param(
     [int]$TestDuration = 60,  # 테스트 기간 (초)
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

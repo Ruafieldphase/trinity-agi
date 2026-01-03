@@ -7,9 +7,10 @@ Tests cache hit/miss behavior without full pipeline
 import sys
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add project root to path
-_root = Path(__file__).parent.parent
+_root = get_workspace_root()
 sys.path.insert(0, str(_root))
 sys.path.insert(0, str(_root / "fdo_agi_repo"))
 

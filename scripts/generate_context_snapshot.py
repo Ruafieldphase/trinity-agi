@@ -21,8 +21,9 @@ import time
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Dict, Any, Tuple
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).resolve().parents[1]
+WORKSPACE = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE / "outputs"
 
 EXCLUDE_DIR_NAMES = {".venv", "node_modules", ".pytest_tmp", "__pycache__", ".git"}

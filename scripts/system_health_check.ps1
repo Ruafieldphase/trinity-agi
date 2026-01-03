@@ -1,5 +1,5 @@
-# System Health Check Script
-# Checks all ION/Lumen systems in one command
+﻿# System Health Check Script
+# Checks all ION/Core systems in one command
 
 param(
     [switch]$Detailed,
@@ -7,6 +7,10 @@ param(
     [string]$OutputMarkdown,
     [object]$FastHealthGate
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Continue'
 
@@ -120,28 +124,28 @@ catch {
     Write-CheckResult "LM Studio" "WARNING" "Check skipped or failed: $_"
 }
 
-Write-CheckHeader "2/7 - Lumen Gateway Status"
+Write-CheckHeader "2/7 - Core Gateway Status"
 
 try {
-    $lumenUri = "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat"
-    $lumenBody = @{ message = "test" } | ConvertTo-Json
+    $CoreUri = "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat"
+    $CoreBody = @{ message = "test" } | ConvertTo-Json
     
     $start = Get-Date
-    $lumenResponse = Invoke-RestMethod -Uri $lumenUri -Method Post -Body $lumenBody -ContentType "application/json" -TimeoutSec 10 -ErrorAction Stop
+    $CoreResponse = Invoke-RestMethod -Uri $CoreUri -Method Post -Body $CoreBody -ContentType "application/json" -TimeoutSec 10 -ErrorAction Stop
     $latency = [int]((Get-Date) - $start).TotalMilliseconds
     
     if ($latency -lt 500) {
-        Write-CheckResult "Lumen Gateway" "OK" "Response in ${latency}ms"
+        Write-CheckResult "Core Gateway" "OK" "Response in ${latency}ms"
     }
     elseif ($latency -lt 1000) {
-        Write-CheckResult "Lumen Gateway" "WARNING" "Elevated latency: ${latency}ms"
+        Write-CheckResult "Core Gateway" "WARNING" "Elevated latency: ${latency}ms"
     }
     else {
-        Write-CheckResult "Lumen Gateway" "WARNING" "High latency: ${latency}ms"
+        Write-CheckResult "Core Gateway" "WARNING" "High latency: ${latency}ms"
     }
 }
 catch {
-    Write-CheckResult "Lumen Gateway" "ERROR" "Failed: $_"
+    Write-CheckResult "Core Gateway" "ERROR" "Failed: $_"
 }
 
 Write-CheckHeader "3/7 - Cloud AI API Status"
@@ -169,7 +173,7 @@ Write-CheckHeader "4/7 - AGI Pipeline Test"
 
 try {
     $originalLocation = Get-Location
-    Set-Location "C:\workspace\agi"
+    Set-Location "$WorkspaceRoot"
     
     if (-not (Test-Path "fdo_agi_repo\.venv\Scripts\python.exe")) {
         Write-CheckResult "AGI Pipeline" "ERROR" "Virtual environment not found"
@@ -329,7 +333,7 @@ catch {
 Write-CheckHeader "6/7 - Scheduler Tasks"
 
 try {
-    $ionTasks = Get-ScheduledTask | Where-Object { $_.TaskName -match 'Ion|Lumen|Monitor' } -ErrorAction SilentlyContinue
+    $ionTasks = Get-ScheduledTask | Where-Object { $_.TaskName -match 'Ion|Core|Monitor' } -ErrorAction SilentlyContinue
     
     if (-not $ionTasks) {
         Write-CheckResult "Scheduler Tasks" "WARNING" "No ION tasks found"
@@ -385,7 +389,7 @@ try {
         $fileSizeKB = [math]::Round($fileInfo.Length / 1KB, 1)
         
         # Run Python JSON validation
-        $validatorScript = "C:\workspace\agi\scripts\validate_settings_json.py"
+        $validatorScript = "$WorkspaceRoot\scripts\validate_settings_json.py"
         
         if (-not (Test-Path $validatorScript)) {
             # Create validator on-the-fly if missing
@@ -420,8 +424,8 @@ except Exception as e:
         
         # Run validation
         $pythonExe = "python"
-        if (Test-Path "C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe") {
-            $pythonExe = "C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe"
+        if (Test-Path "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe") {
+            $pythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
         }
         
         $validationOutput = & $pythonExe $validatorScript 2>&1 | Out-String
@@ -442,7 +446,7 @@ except Exception as e:
             Copy-Item $settingsPath $backupPath -Force
             Write-Host "  Backup created: $backupPath" -ForegroundColor Cyan
             
-            $fixScript = "C:\workspace\agi\scripts\fix_settings_duplicates.py"
+            $fixScript = "$WorkspaceRoot\scripts\fix_settings_duplicates.py"
             if (Test-Path $fixScript) {
                 & $pythonExe $fixScript
                 
@@ -565,7 +569,7 @@ if ($Detailed) {
     }
     
     Write-Host ""
-    Write-Host "Executing Lumen vs LM Studio comparison..." -ForegroundColor Yellow
+    Write-Host "Executing Core vs LM Studio comparison..." -ForegroundColor Yellow
     & "$PSScriptRoot\compare_performance.ps1" -Warmup -Iterations 5 -MaxTokens 64
 }
 

@@ -25,12 +25,15 @@
 #>
 
 param(
-    [string]$Config = "C:\workspace\agi\configs\rpa_worker.json",
+    [string]$Config = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\configs\rpa_worker.json",
     [switch]$ForceRestart,
     [switch]$Stop,
     [switch]$Status,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}

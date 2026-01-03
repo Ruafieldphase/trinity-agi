@@ -1,10 +1,13 @@
-[CmdletBinding(SupportsShouldProcess = $true)]
+﻿[CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [switch]$Enable,
     [switch]$Disable,
     [switch]$DryRun,
     [string[]]$Targets
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # Purpose:
 #   Toggle ReadOnly attribute on critical code directories to guard against accidental writes.
@@ -18,7 +21,7 @@ param(
 #   # Dry-run (log only)
 #   .\protect_code_dirs.ps1 -Enable -DryRun
 #   # Custom targets
-#   .\protect_code_dirs.ps1 -Enable -Targets "C:\workspace\agi\fdo_agi_repo\orchestrator","C:\workspace\agi\LLM_Unified\ion-mentoring"
+#   .\protect_code_dirs.ps1 -Enable -Targets "$WorkspaceRoot\fdo_agi_repo\orchestrator","$WorkspaceRoot\LLM_Unified\ion-mentoring"
 
 $ErrorActionPreference = 'Stop'
 
@@ -27,7 +30,7 @@ if (-not $Enable -and -not $Disable) {
     exit 1
 }
 
-$base = "C:\workspace\agi"
+$base = "$WorkspaceRoot"
 if (-not $Targets -or $Targets.Count -eq 0) {
     $Targets = @(
         Join-Path $base 'fdo_agi_repo\orchestrator'

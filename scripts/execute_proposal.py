@@ -2,11 +2,11 @@ import json
 import os
 import sys
 import time
-<<<<<<< HEAD
 from pathlib import Path
 import subprocess
 import warnings
 import ctypes
+from workspace_root import get_workspace_root
 
 # 🧬 Rhythm-Aware Boundary
 try:
@@ -14,7 +14,7 @@ try:
     from fdo_agi_repo.orchestrator.llm_client import LLMClient
 except ImportError:
     # Local scripts might need sys.path adjustment
-    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    sys.path.append(str(get_workspace_root()))
     from agi_core.rhythm_boundaries import RhythmBoundaryManager, RhythmMode
     from fdo_agi_repo.orchestrator.llm_client import LLMClient
 
@@ -27,17 +27,12 @@ except Exception as exc:
     RPACore = None  # type: ignore[assignment]
     RPACoreConfig = None  # type: ignore[assignment]
     _RPACORE_ERROR = str(exc)
-=======
-import google.generativeai as genai
-from pathlib import Path
->>>>>>> origin/main
 
 # Configuration
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-WORKSPACE_ROOT = os.path.dirname(SCRIPT_DIR)
+WORKSPACE_ROOT = str(get_workspace_root())
 PROPOSALS_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "proposals.json")
 LOG_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "execution.log")
-<<<<<<< HEAD
 AURA_PIXEL_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "aura_pixel_state.json")
 VISION_LOG_FILE = os.path.join(WORKSPACE_ROOT, "memory", "vision_events.jsonl")
 RED_LINE_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "safety", "red_line_monitor_latest.json")
@@ -45,42 +40,16 @@ CHILD_DATA_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "child_data_protector_
 REST_GATE_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "safety", "rest_gate_latest.json")
 SANDBOX_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "safety", "sandbox_latest.json")
 NATURAL_CLOCK_FILE = os.path.join(WORKSPACE_ROOT, "outputs", "natural_rhythm_clock_latest.json")
-=======
-
-# Configure Gemini
-def load_api_key():
-    try:
-        from dotenv import load_dotenv
-        # Try loading from WORKSPACE_ROOT/.env
-        load_dotenv(os.path.join(WORKSPACE_ROOT, ".env"))
-        # Try loading from WORKSPACE_ROOT/fdo_agi_repo/.env
-        load_dotenv(os.path.join(WORKSPACE_ROOT, "fdo_agi_repo", ".env"))
-    except ImportError:
-        pass
-
-    return os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
-
-API_KEY = load_api_key()
-
-if API_KEY:
-    genai.configure(api_key=API_KEY)
-else:
-    print("Warning: No API_KEY found (checked GOOGLE_API_KEY and GEMINI_API_KEY)")
->>>>>>> origin/main
 
 def log(message):
     timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(f"[{timestamp}] {message}\n")
-<<<<<<< HEAD
     # 콘솔 출력은 최소화(운영 로그 노이즈 방지)
     try:
         print(f"[{timestamp}] {message}")
     except Exception:
         pass
-=======
-    print(f"[{timestamp}] {message}")
->>>>>>> origin/main
 
 def load_proposals():
     if os.path.exists(PROPOSALS_FILE):
@@ -95,7 +64,68 @@ def save_proposals(proposals):
     with open(PROPOSALS_FILE, "w", encoding="utf-8") as f:
         json.dump(proposals, f, indent=2, ensure_ascii=False)
 
-<<<<<<< HEAD
+def execute_refactor(file_path, instruction):
+    if not os.path.exists(file_path):
+        return False, f"File not found: {file_path}"
+
+    # 안전 경계: 클라우드로 코드 원문을 보내는 refactor는 기본적으로 꺼둔다.
+    if str(os.getenv("AGI_ALLOW_CLOUD_REFACTOR", "")).strip().lower() not in ("1", "true", "yes", "on"):
+        return False, "blocked: AGI_ALLOW_CLOUD_REFACTOR not enabled"
+
+    ok, why = _is_safe_refactor_target(file_path)
+    if not ok:
+        return False, why
+    
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        # Prefer the workspace ModelSelector to choose an available Gemini model,
+        # but fall back to direct GenAI if not available.
+        client = LLMClient(provider="auto", model=os.getenv("GEMINI_TOP_TIER_MODEL") or "gemini-2.5-flash")
+        prompt = f"""
+        You are an expert AI software engineer.
+        Your task is to REFACTOR the following code based on the instruction.
+        
+        **Instruction:** {instruction}
+        
+        **File Path:** {file_path}
+        
+        **Code Content:**
+        ```
+        {content}
+        ```
+        
+        Return ONLY the full, modified code. Do not include markdown code blocks (```) if possible, or I will strip them.
+        Do not add conversational text.
+        """
+        # LLMClient returns text or None.
+        new_content = (client.generate(system_prompt="", user_prompt=prompt) or "").strip()
+        if not new_content:
+            return False, "refactor failed: empty LLM response"
+        
+        # Clean up markdown
+        if new_content.startswith("```"):
+            lines = new_content.splitlines()
+            if lines[0].startswith("```"):
+                lines = lines[1:]
+            if lines[-1].startswith("```"):
+                lines = lines[:-1]
+            new_content = "\n".join(lines)
+            
+        # Backup original
+        backup_path = f"{file_path}.bak.{int(time.time())}"
+        with open(backup_path, "w", encoding="utf-8") as f:
+            f.write(content)
+            
+        # Write new content
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(new_content)
+            
+        return True, f"Refactored successfully. Backup saved to {backup_path}"
+        
+    except Exception as e:
+        return False, str(e)
+
 def _load_json_best_effort(path: str) -> dict:
     try:
         if not os.path.exists(path):
@@ -142,185 +172,6 @@ def _rhythm_notice() -> str:
     melatonin = float(bio.get("melatonin_level", 0.0))
     sleep_pressure = float(bio.get("sleep_pressure", 0.0))
     return f"phase={rec or 'UNKNOWN'} melatonin={melatonin:.2f} sleep={sleep_pressure:.2f}"
-
-def _is_safe_refactor_target(abs_path: str) -> tuple[bool, str]:
-    try:
-        root = os.path.abspath(WORKSPACE_ROOT)
-        p = os.path.abspath(abs_path)
-        if not p.startswith(root):
-            return False, "blocked: outside workspace"
-        low = p.lower().replace("/", "\\")
-        blocked_parts = [
-            "\\.git\\",
-            "\\.venv\\",
-            "\\outputs\\",
-            "\\signals\\",
-            "\\logs\\",
-            "\\.env",
-            "\\.env_credentials",
-        ]
-        if any(bp in low for bp in blocked_parts) or low.endswith(".env"):
-            return False, "blocked: sensitive path"
-        return True, "ok"
-    except Exception:
-        return False, "blocked: path check failed"
-
-def _merge_action_params(target_proposal: dict) -> tuple[dict, dict]:
-    action_info = target_proposal.get("action") if isinstance(target_proposal.get("action"), dict) else {}
-    params: dict = {}
-    if isinstance(action_info.get("params"), dict):
-        params.update(action_info["params"])
-    if isinstance(target_proposal.get("params"), dict):
-        params.update(target_proposal["params"])
-    return action_info, params
-
-def _normalize_action_type(target_proposal: dict, action_info: dict, params: dict) -> tuple[str, str | None]:
-    proposal_type = (
-        target_proposal.get("type")
-        or action_info.get("type")
-        or params.get("type")
-        or (target_proposal.get("action") if isinstance(target_proposal.get("action"), str) else None)
-        or "unknown"
-    )
-    action_type_l = str(proposal_type).strip().lower()
-    gui_action = None
-    if action_type_l in ("gui_action", "click", "type", "drag", "scroll", "hotkey", "scroll_up", "scroll_down"):
-        gui_action = (
-            params.get("action")
-            or action_info.get("action")
-            or (proposal_type if action_type_l != "gui_action" else None)
-        )
-        gui_action = str(gui_action or "").strip().lower() or None
-        action_type_l = "gui_action"
-    return action_type_l, gui_action
-
-def _normalize_gui_action_name(action: str | None) -> str:
-    action_l = str(action or "").strip().lower()
-    aliases = {
-        "tap": "click",
-        "press": "click",
-        "input": "type",
-        "enter_text": "type",
-    }
-    return aliases.get(action_l, action_l)
-
-def _extract_xy(params: dict) -> tuple[int, int] | None:
-    try:
-        x = params.get("x")
-        y = params.get("y")
-        if x is None or y is None:
-            return None
-        return int(x), int(y)
-    except Exception:
-        return None
-
-def _extract_point(params: dict, key: str) -> tuple[int, int] | None:
-    try:
-        point = params.get(key)
-        if isinstance(point, dict):
-            x = point.get("x") if point.get("x") is not None else point.get("left")
-            y = point.get("y") if point.get("y") is not None else point.get("top")
-            if x is not None and y is not None:
-                return int(x), int(y)
-        x = params.get(f"{key}_x")
-        y = params.get(f"{key}_y")
-        if x is not None and y is not None:
-            return int(x), int(y)
-    except Exception:
-        return None
-    return None
-
-def _parse_hotkey(params: dict) -> list[str]:
-    keys = params.get("keys") or params.get("combo") or params.get("hotkey")
-    if isinstance(keys, list):
-        return [str(k).strip() for k in keys if str(k).strip()]
-    if isinstance(keys, str):
-        parts = [p.strip() for p in keys.replace(",", "+").split("+")]
-        return [p for p in parts if p]
-    return []
-
-
-def execute_refactor(file_path, instruction):
-    if not os.path.exists(file_path):
-        return False, f"File not found: {file_path}"
-
-    # 안전 경계: 클라우드로 코드 원문을 보내는 refactor는 기본적으로 꺼둔다.
-    if str(os.getenv("AGI_ALLOW_CLOUD_REFACTOR", "")).strip().lower() not in ("1", "true", "yes", "on"):
-        return False, "blocked: AGI_ALLOW_CLOUD_REFACTOR not enabled"
-
-    ok, why = _is_safe_refactor_target(file_path)
-    if not ok:
-        return False, why
-=======
-def execute_refactor(file_path, instruction):
-    if not os.path.exists(file_path):
-        return False, f"File not found: {file_path}"
->>>>>>> origin/main
-    
-    try:
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-<<<<<<< HEAD
-
-        # Prefer the workspace ModelSelector to choose an available Gemini model,
-        # but fall back to direct GenAI if not available.
-        client = LLMClient(provider="auto", model=os.getenv("GEMINI_TOP_TIER_MODEL") or "gemini-2.5-flash")
-=======
-            
-        model = genai.GenerativeModel('gemini-2.5-pro-preview-03-25')
->>>>>>> origin/main
-        prompt = f"""
-        You are an expert AI software engineer.
-        Your task is to REFACTOR the following code based on the instruction.
-        
-        **Instruction:** {instruction}
-        
-        **File Path:** {file_path}
-        
-        **Code Content:**
-        ```
-        {content}
-        ```
-        
-        Return ONLY the full, modified code. Do not include markdown code blocks (```) if possible, or I will strip them.
-        Do not add conversational text.
-        """
-<<<<<<< HEAD
-
-        # LLMClient returns text or None.
-        new_content = (client.generate(system_prompt="", user_prompt=prompt) or "").strip()
-        if not new_content:
-            return False, "refactor failed: empty LLM response"
-=======
-        
-        response = model.generate_content(prompt)
-        new_content = response.text.strip()
->>>>>>> origin/main
-        
-        # Clean up markdown
-        if new_content.startswith("```"):
-            lines = new_content.splitlines()
-            if lines[0].startswith("```"):
-                lines = lines[1:]
-            if lines[-1].startswith("```"):
-                lines = lines[:-1]
-            new_content = "\n".join(lines)
-            
-        # Backup original
-        backup_path = f"{file_path}.bak.{int(time.time())}"
-        with open(backup_path, "w", encoding="utf-8") as f:
-            f.write(content)
-            
-        # Write new content
-        with open(file_path, "w", encoding="utf-8") as f:
-            f.write(new_content)
-            
-        return True, f"Refactored successfully. Backup saved to {backup_path}"
-        
-    except Exception as e:
-        return False, str(e)
-
-<<<<<<< HEAD
 
 def check_safety_interlock() -> tuple[bool, str]:
     """Check Aura Pixel state and System Health (Sena's tool) before physical action."""
@@ -549,10 +400,6 @@ def _run_script_best_effort(rel_path: str, timeout_s: int = 30) -> tuple[bool, s
         return True, f"rc={proc.returncode}"
     except Exception as e:
         return False, f"error:{e.__class__.__name__}"
-
-
-=======
->>>>>>> origin/main
 def main():
     if len(sys.argv) < 2:
         print("Usage: python execute_proposal.py <proposal_id>")
@@ -572,7 +419,6 @@ def main():
         return
 
     # Get proposal type/action safely
-<<<<<<< HEAD
     action_info, params = _merge_action_params(target_proposal)
     proposal_type = target_proposal.get("type") or action_info.get("type") or "unknown"
     action_type_l, gui_action = _normalize_action_type(target_proposal, action_info, params)
@@ -584,10 +430,6 @@ def main():
         or target_proposal.get("title")
         or "N/A"
     )
-=======
-    proposal_type = target_proposal.get("type") or target_proposal.get("action", {}).get("type", "unknown")
-    target_info = target_proposal.get('file', target_proposal.get('title', 'N/A'))
->>>>>>> origin/main
     
     log(f"Executing proposal {proposal_id}: {proposal_type} - {target_info}")
     
@@ -598,7 +440,6 @@ def main():
     success = False
     message = ""
     
-<<<<<<< HEAD
     # 🧬 Rhythm-Aware Execution Strategy
     boundary_manager = RhythmBoundaryManager(Path(WORKSPACE_ROOT))
     rhythm_state = boundary_manager.get_rhythm_state()
@@ -612,20 +453,12 @@ def main():
         log(f"Rhythm mismatch: deepen_current is expansion, but phase={phase}")
 
     if action_type_l == "refactor":
-=======
-    # Get action info
-    action_info = target_proposal.get("action", {})
-    action_type = action_info.get("type", target_proposal.get("type"))
-    
-    if action_type == "REFACTOR":
->>>>>>> origin/main
         file_path = target_proposal.get("file").replace("\\", "/")
         if not os.path.isabs(file_path):
             file_path = os.path.join(WORKSPACE_ROOT, file_path)
         instruction = target_proposal.get("observation")
         success, message = execute_refactor(file_path, instruction)
         
-<<<<<<< HEAD
     elif action_type_l == "deepen_current":
         # Amplify: Deepen current positive pattern using LLM
         context = str(params.get("context_message") or "No context provided")
@@ -634,7 +467,7 @@ def main():
         try:
             # Use model selector bridge (GenAI/Vertex) if possible.
             client = LLMClient(provider="auto", model=os.getenv("GEMINI_BALANCED_MODEL") or "gemini-2.5-flash")
-            system_prompt = "You are Sian's 'Deepen Engine'. Analyze the given context and provide 3 deep insights or follow-up questions to expand the current thought flow."
+            system_prompt = "You are Shion's 'Deepen Engine'. Analyze the given context and provide 3 deep insights or follow-up questions to expand the current thought flow."
             user_prompt = f"Current Context: {context}\nRhythm Phase: {phase}"
             
             result = client.generate(system_prompt, user_prompt)
@@ -698,45 +531,11 @@ def main():
             message = f"Cleanup failed: {e}"
         
     elif action_type_l == "monitor":
-=======
-    elif action_type == "deepen_current":
-        # Amplify: Deepen current positive pattern
-        context = action_info.get("params", {}).get("context_message", "")
-        log(f"Deepening current flow: {context[:100]}")
-        # TODO: Implement deeper analysis of current topic
-        success = True
-        message = "현재 흐름 심화 작업 완료 (패턴 분석 및 기록)"
-        
-    elif action_type == "search_knowledge":
-        # Explore: Search for new knowledge
-        feeling = action_info.get("params", {}).get("feeling", "unknown")
-        log(f"Exploring new knowledge area: feeling={feeling}")
-        # TODO: Trigger YouTube search or web search
-        success = True
-        message = "새로운 지식 탐색 시작 (검색 큐에 추가됨)"
-        
-    elif action_type == "optimize_system":
-        # Stabilize: Run system optimization
-        log("Running system optimization...")
-        # TODO: Trigger auto_stabilizer or glymphatic cleanup
-        success = True
-        message = "시스템 최적화 실행 (메모리 정리, 큐 재정렬)"
-        
-    elif action_type == "cleanup":
-        # Rest: Run cleanup tasks
-        log("Starting cleanup tasks...")
-        # TODO: Trigger glymphatic cleanup
-        success = True
-        message = "정리 작업 완료 (오래된 데이터 아카이빙)"
-        
-    elif action_type == "monitor":
->>>>>>> origin/main
         # Observe: Just monitor, no action needed
         log("Entering observation mode...")
         success = True
         message = "관찰 모드 유지 (추가 행동 없음)"
         
-<<<<<<< HEAD
     elif action_type_l == "analyze_change":
         # Pivot: Analyze what's changing
         log("Analyzing detected changes...")
@@ -796,7 +595,7 @@ def main():
                         else:
                             success = asyncio.run(rpa.click_by_description(desc))
                     elif action == "type":
-                        value = params.get("value") or params.get("text") or params.get("input") or "Hello Sian"
+                        value = params.get("value") or params.get("text") or params.get("input") or "Hello Shion"
                         rpa = RPACore()
                         coords = _extract_xy(params)
                         if coords:
@@ -892,18 +691,6 @@ def main():
     else:
         success = False
         message = f"NOT_IMPLEMENTED: {action_type}"
-=======
-    elif action_type == "analyze_change":
-        # Pivot: Analyze what's changing
-        log("Analyzing detected changes...")
-        # TODO: Compare recent patterns with historical data
-        success = True
-        message = "변화 패턴 분석 완료 (리포트 생성됨)"
-        
-    else:
-        success = True
-        message = f"Simulated execution for type {action_type}"
->>>>>>> origin/main
         
     # Update final status
     target_proposal["status"] = "completed" if success else "failed"
@@ -912,13 +699,9 @@ def main():
     
     # [FEEDBACK LOOP] Record execution result to Resonance Ledger
     try:
-<<<<<<< HEAD
         ledger_v2 = os.path.join(WORKSPACE_ROOT, "fdo_agi_repo", "memory", "resonance_ledger_v2.jsonl")
         ledger_v1 = os.path.join(WORKSPACE_ROOT, "fdo_agi_repo", "memory", "resonance_ledger.jsonl")
         ledger_path = ledger_v2 if os.path.exists(ledger_v2) else ledger_v1
-=======
-        ledger_path = os.path.join(WORKSPACE_ROOT, "fdo_agi_repo", "memory", "resonance_ledger.jsonl")
->>>>>>> origin/main
         feedback_entry = {
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S"),
             "type": "action_result",

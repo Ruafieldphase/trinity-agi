@@ -1,9 +1,12 @@
-param(
+﻿param(
     [string]$Server = 'http://127.0.0.1:8091',
     [int]$IntervalSeconds = 5,
-    [string]$LogFile = (Join-Path (Join-Path $PSScriptRoot '..') 'outputs\worker_monitor.log'),
+    [string]$LogFile = (Join-Path $( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) \"outputs\worker_monitor.log\"),
     [int]$MaxWorkers = 2
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'SilentlyContinue'
 
@@ -14,7 +17,7 @@ function MLog([string]$Msg, [string]$Level = 'INFO') {
     try { Add-Content -LiteralPath $LogFile -Value $line -Encoding UTF8 } catch {}
 }
 
-$repoRoot = Join-Path $PSScriptRoot '..'
+$repoRoot = $WorkspaceRoot
 $ensureWorkerScript = Join-Path $repoRoot 'scripts\ensure_rpa_worker.ps1'
 if (-not (Test-Path -LiteralPath $ensureWorkerScript)) { MLog "ensure script missing: $ensureWorkerScript" 'ERROR'; exit 1 }
 

@@ -21,6 +21,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
+from workspace_root import get_workspace_root
 
 
 def load_json(path: Path) -> Dict[str, Any]:
@@ -69,7 +70,7 @@ def build_summary(existing: Dict[str, Any], hours: int, quantum_flow: Dict[str, 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", type=str, default=str(Path(__file__).resolve().parents[1]))
+    ap.add_argument("--workspace", type=str, default=str(get_workspace_root()))
     ap.add_argument("--hours", type=int, default=24)
     ap.add_argument("--out", type=str, default=str(Path("outputs") / "selfcare_summary_latest.json"))
     args = ap.parse_args()

@@ -1,9 +1,10 @@
 import sys
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add project root to path
-ROOT_DIR = Path(__file__).parent.parent
+ROOT_DIR = get_workspace_root()
 sys.path.append(str(ROOT_DIR))
 
 # Import modules via absolute path to avoid relative import errors

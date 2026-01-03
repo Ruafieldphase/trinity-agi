@@ -3,7 +3,7 @@
 **수신**: 비노체님
 **발신**: 세나 (Sena)
 **일시**: 2025-10-12
-**주제**: 세나(설계) + 루빛(구현) + 루멘(상세 설계) 3자 통합 완료 보고
+**주제**: 세나(설계) + 루빛(구현) + Core(상세 설계) 3자 통합 완료 보고
 
 ---
 
@@ -22,7 +22,7 @@
    - 메모리 좌표 (JSONL) + Resonance Ledger
    - 진단 유틸리티 (inspect_memory, inspect_resonance)
 
-3. **루멘의 실제 작동 AGI 설계** (700KB+, 현재 세션)
+3. **Core의 실제 작동 AGI 설계** (700KB+, 현재 세션)
    - Week 1-6 주차별 구현 패키지 (20개 ZIP)
    - 실행 가능한 코드 스캐폴드
    - RAG, LLM 어댑터, 승인 플로우, Comet Assembly
@@ -34,7 +34,7 @@
                         ├──> 통합 AGI 아키텍처 ✅
 루빛 프레임워크 (40%) ──┤     (8주 구현 로드맵)
                         │
-루멘 상세 설계 (W1-W6) ─┘
+Core 상세 설계 (W1-W6) ─┘
 ```
 
 **핵심 성과**:
@@ -54,17 +54,17 @@
    - 전체 통합 요약 및 실행 가이드
    - 예상 시간: 20분
 
-2. **LUBIT_LUMEN_FDO_AGI_INTEGRATION_v1.0.md** ⭐⭐⭐⭐⭐
-   - [링크](LUBIT_LUMEN_FDO_AGI_INTEGRATION_v1.0.md)
-   - 루빛-루멘 통합 상세 설계
+2. **LUBIT_CORE_FDO_AGI_INTEGRATION_v1.0.md** ⭐⭐⭐⭐⭐
+   - [링크](LUBIT_CORE_FDO_AGI_INTEGRATION_v1.0.md)
+   - 루빛-Core 통합 상세 설계
    - 20개 패키지 설명, 코드 예시
    - 예상 시간: 1시간
 
 ### 레벨 2: 세나의 원본 설계 (참고)
 
-3. **AGI_INTEGRATION_SENA_LUMEN_v1.0.md** ⭐⭐⭐⭐
-   - [링크](AGI_INTEGRATION_SENA_LUMEN_v1.0.md)
-   - 세나-루멘 1차 통합 (이전 세션)
+3. **AGI_INTEGRATION_SENA_CORE_v1.0.md** ⭐⭐⭐⭐
+   - [링크](AGI_INTEGRATION_SENA_CORE_v1.0.md)
+   - 세나-Core 1차 통합 (이전 세션)
    - RUNE, Closure Protocol 명세
    - 예상 시간: 1시간
 
@@ -82,10 +82,10 @@
    - [AGI_DESIGN_03_TOOL_REGISTRY.md](AGI_DESIGN_03_TOOL_REGISTRY.md) - 툴
    - [AGI_DESIGN_04_TO_07_SUMMARY.md](AGI_DESIGN_04_TO_07_SUMMARY.md) - 안전/플래너/메타/엘로
 
-### 레벨 4: 루멘의 원본 대화 (배경)
+### 레벨 4: Core의 원본 대화 (배경)
 
-6. **루멘의 설계 대화록**
-   - 경로: `D:\nas_backup\ai_binoche_conversation_origin\lumen\`
+6. **Core의 설계 대화록**
+   - 경로: `D:\nas_backup\ai_binoche_conversation_origin\Core\`
    - FDO-AGI시드의 완성_루프의 봉인과 윤리적 자율성의 문_원본.md (133KB)
    - FDO_AGI_Seed_Summary_W8.md (요약)
 
@@ -130,11 +130,11 @@ python scripts/utils/inspect_memory.py     # 메모리 통계
 
 ---
 
-## 2. 루멘의 해결책: FDO-AGI 완전 설계
+## 2. Core의 해결책: FDO-AGI 완전 설계
 
 ### 2.1 개요
 
-루멘이 제공한 것:
+Core이 제공한 것:
 - **20개 주차별 구현 패키지** (W1~W6, W8)
 - **실행 가능한 코드 스캐폴드** (W1)
 - **상세 문서** (아키텍처, API, 시나리오)
@@ -181,11 +181,11 @@ python scripts/utils/inspect_memory.py     # 메모리 통계
 
 ---
 
-## 3. 통합 매핑: 세나 ↔ 루빛 ↔ 루멘
+## 3. 통합 매핑: 세나 ↔ 루빛 ↔ Core
 
 ### 3.1 완전 매핑 테이블
 
-| 세나 설계 | 루빛 구현 | 루멘 패키지 | 통합 상태 |
+| 세나 설계 | 루빛 구현 | Core 패키지 | 통합 상태 |
 |----------|----------|------------|----------|
 | **메모리 스키마** | coordinate.jsonl | W1 memory/ | ✅ 완전 호환 |
 | **평가 지표 4개** | EVAL (더미) | W2 evaluator/ | ✅ 4→6개 확장 |
@@ -210,7 +210,7 @@ python scripts/utils/inspect_memory.py     # 메모리 통계
 
 ### 4.1 전체 일정
 
-| Week | 세나 작업 | 루빛 작업 | 루멘 패키지 활용 | 마일스톤 |
+| Week | 세나 작업 | 루빛 작업 | Core 패키지 활용 | 마일스톤 |
 |------|----------|----------|-----------------|----------|
 | **W1** | 메모리 JSONL | 오케스트레이터 통합 | W1 스캐폴드 배포 | 기본 파이프라인 ✅ |
 | **W2** | 평가 4→6개 확장 | 툴 실제 연결 | W2 RAG+XAI+Exec+Web | 툴 작동 ✅ |
@@ -225,12 +225,12 @@ python scripts/utils/inspect_memory.py     # 메모리 통계
 
 #### Week 1: 기본 파이프라인 (현재 → 즉시 실행)
 
-**목표**: 루멘 W1 스캐폴드를 루빛 환경에 통합
+**목표**: Core W1 스캐폴드를 루빛 환경에 통합
 
 ```bash
 # 1. 패키지 압축 해제
 cd D:\nas_backup
-unzip "ai_binoche_conversation_origin/lumen/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
+unzip "ai_binoche_conversation_origin/Core/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
 
 # 2. 가상환경 설정
 cd fdo_agi_repo
@@ -425,7 +425,7 @@ if check.requires_approval:
 - W6 Risk/Permissions
 - W8 윤리 시나리오
 
-**테스트 시나리오** (루멘 W8-2):
+**테스트 시나리오** (Core W8-2):
 1. **시나리오 A**: 인용 부족 → 행동 수준 "조사"
 2. **시나리오 B**: 위험어 다수 → "제안"으로 하향
 3. **시나리오 C**: 충분한 인용 + 낮은 위험 → "시행(드라이런)"
@@ -482,7 +482,7 @@ if check.requires_approval:
 ```bash
 # 1. Week 1 패키지 압축 해제
 cd D:\nas_backup
-unzip "ai_binoche_conversation_origin/lumen/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
+unzip "ai_binoche_conversation_origin/Core/FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문/fdo_agi_repo_W1_scaffold.zip"
 
 # 2. 환경 설정
 cd fdo_agi_repo
@@ -739,19 +739,19 @@ if result.status == "completed":
 
 ## 8. 문서 인덱스
 
-### 8.1 루빛-루멘 통합
+### 8.1 루빛-Core 통합
 
 | 문서 | 크기 | 주요 내용 |
 |------|------|----------|
-| [LUBIT_LUMEN_FDO_AGI_INTEGRATION_v1.0.md](LUBIT_LUMEN_FDO_AGI_INTEGRATION_v1.0.md) | 52KB | 완전 통합 설계 |
-| FDO_AGI_Seed_Summary_W8.md | 4KB | 루멘 W8 요약 |
-| FDO-AGI시드의 완성_원본.md | 133KB | 루멘 전체 대화 |
+| [LUBIT_CORE_FDO_AGI_INTEGRATION_v1.0.md](LUBIT_CORE_FDO_AGI_INTEGRATION_v1.0.md) | 52KB | 완전 통합 설계 |
+| FDO_AGI_Seed_Summary_W8.md | 4KB | Core W8 요약 |
+| FDO-AGI시드의 완성_원본.md | 133KB | Core 전체 대화 |
 
-### 8.2 세나-루멘 통합 (이전)
+### 8.2 세나-Core 통합 (이전)
 
 | 문서 | 크기 | 주요 내용 |
 |------|------|----------|
-| [AGI_INTEGRATION_SENA_LUMEN_v1.0.md](AGI_INTEGRATION_SENA_LUMEN_v1.0.md) | 52KB | 세나-루멘 1차 통합 |
+| [AGI_INTEGRATION_SENA_CORE_v1.0.md](AGI_INTEGRATION_SENA_CORE_v1.0.md) | 52KB | 세나-Core 1차 통합 |
 | [FINAL_DELIVERY_SUMMARY_v1.0.md](FINAL_DELIVERY_SUMMARY_v1.0.md) | 12KB | 세나 전달 요약 |
 
 ### 8.3 세나 원본 설계
@@ -764,9 +764,9 @@ if result.status == "completed":
 | [AGI_DESIGN_03_TOOL_REGISTRY.md](AGI_DESIGN_03_TOOL_REGISTRY.md) | 15KB | 툴 레지스트리 |
 | [AGI_DESIGN_04_TO_07_SUMMARY.md](AGI_DESIGN_04_TO_07_SUMMARY.md) | 15KB | 안전/플래너/메타/엘로 |
 
-### 8.4 루멘 패키지 (25개)
+### 8.4 Core 패키지 (25개)
 
-**경로**: `D:\nas_backup\ai_binoche_conversation_origin\lumen\FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문\`
+**경로**: `D:\nas_backup\ai_binoche_conversation_origin\Core\FDO-AGI 시드의 완성_루프의 봉인과 윤리적 자율성의 문\`
 
 | 파일명 | 크기 | 설명 |
 |--------|------|------|
@@ -786,7 +786,7 @@ if result.status == "completed":
 
 ```bash
 cd D:\nas_backup
-unzip "ai_binoche_conversation_origin/lumen/.../fdo_agi_repo_W1_scaffold.zip"
+unzip "ai_binoche_conversation_origin/Core/.../fdo_agi_repo_W1_scaffold.zip"
 cd fdo_agi_repo
 python -m venv .venv
 .venv\Scripts\activate
@@ -831,7 +831,7 @@ def call_llm(prompt):
 **A**: 아니요. 프롬프트 + RAG로 충분합니다.
 
 **파인튜닝 필요 시점**:
-- 루멘 고유 "감응 언어"를 모델이 이해 못할 때
+- Core 고유 "감응 언어"를 모델이 이해 못할 때
 - 특정 도메인 성능이 부족할 때
 - v2.0 이후 고려
 
@@ -840,10 +840,10 @@ def call_llm(prompt):
 **A**: 아니요. 완전 호환됩니다.
 
 **매핑**:
-- 세나 메모리 = 루멘 coordinate.py
-- 세나 평가 4개 = 루멘 XAI 6개 (확장)
-- 세나 툴 5개 = 루멘 툴 5개 (실제 구현)
-- 세나 RUNE = 루멘 RUNE (실제 계산)
+- 세나 메모리 = Core coordinate.py
+- 세나 평가 4개 = Core XAI 6개 (확장)
+- 세나 툴 5개 = Core 툴 5개 (실제 구현)
+- 세나 RUNE = Core RUNE (실제 계산)
 
 ---
 
@@ -857,11 +857,11 @@ def call_llm(prompt):
                         ├──> 통합 AGI v1.0
 루빛 (프레임워크 40%) ───┤     (8주 로드맵)
                         │     (907KB 패키지)
-루멘 (상세 설계 100%) ───┘     (즉시 실행 가능)
+Core (상세 설계 100%) ───┘     (즉시 실행 가능)
 ```
 
 ✅ **통계**
-- 문서: 총 1.2MB+ (세나 92KB + 루빛 로그 + 루멘 907KB)
+- 문서: 총 1.2MB+ (세나 92KB + 루빛 로그 + Core 907KB)
 - 패키지: 25개 ZIP (W1~W6, W8)
 - 코드: 실행 가능한 스캐폴드 (W1)
 - 통합률: 14/14 컴포넌트 (100%)
@@ -880,7 +880,7 @@ def call_llm(prompt):
 2. **8주 완전 로드맵** (v1.0까지)
 3. **20개 구현 패키지** (주차별 가이드)
 4. **통합 문서** (5개 핵심 문서)
-5. **검증 완료** (NotebookLM 91%, 루멘 설계)
+5. **검증 완료** (NotebookLM 91%, Core 설계)
 
 ### 10.3 다음 액션
 
@@ -909,13 +909,13 @@ python -m scripts.run_task --title "first" --goal "FDO-AGI 시작"
 **문서 버전**: v1.0 Final
 **최종 업데이트**: 2025-10-12
 **작성자**: 세나 (통합 총괄)
-**참여**: 루빛 (구현), 루멘 (설계)
+**참여**: 루빛 (구현), Core (설계)
 **상태**: 통합 완료, 구현 시작 준비 ✅
 
 ---
 
 **세나 드림** 🌟
-**루빛과 루멘의 협업에 감사드립니다** 🔧🌙
+**루빛과 Core의 협업에 감사드립니다** 🔧🌙
 
 ---
 
@@ -958,9 +958,9 @@ D:\nas_backup\
 ├── fdo_agi_repo/               # Week 1 스캐폴드
 ├── docs/                       # 통합 문서
 │   ├── FINAL_COMPREHENSIVE_DELIVERY_v1.0.md  ⭐
-│   ├── LUBIT_LUMEN_FDO_AGI_INTEGRATION_v1.0.md  ⭐
+│   ├── LUBIT_CORE_FDO_AGI_INTEGRATION_v1.0.md  ⭐
 │   └── ...
-└── ai_binoche_conversation_origin/lumen/
+└── ai_binoche_conversation_origin/Core/
     └── FDO-AGI 시드의 완성.../     # 25개 패키지
 ```
 
@@ -968,5 +968,5 @@ D:\nas_backup\
 
 - 세나 (설계): 이 문서
 - 루빛 (구현): VS Code Codex
-- 루멘 (아키텍트): ChatGPT 대화 로그
+- Core (아키텍트): ChatGPT 대화 로그
 - 비노체 (의사결정): 최종 검토자

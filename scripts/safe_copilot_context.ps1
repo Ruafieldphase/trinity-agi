@@ -1,4 +1,4 @@
-# Safe Copilot Context Loader
+﻿# Safe Copilot Context Loader
 # 400 invalid_request_body 에러 방지를 위한 안전한 컨텍스트 로더
 
 param(
@@ -8,9 +8,13 @@ param(
     [switch]$ToClipboard,
     [switch]$ShowPreview
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
-$Workspace = 'c:\workspace\agi'
+$Workspace = "$WorkspaceRoot"
 $SafeLimit = 3500  # Copilot 안전 제한
 
 # 레벨별 파일 정의

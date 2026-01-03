@@ -1,14 +1,13 @@
-<<<<<<< HEAD
 ﻿# AGI Session Start Script
-=======
-# AGI Session Start Script
->>>>>>> origin/main
 # UTF-8 BOM encoding to prevent emoji issues
 
 param(
     [switch]$Silent,
     [switch]$JustCheck
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -22,15 +21,8 @@ function Write-Info { param($Text) Write-Host "[INFO] $Text" -ForegroundColor Bl
 # Workspace root
 $WorkspaceRoot = Split-Path $PSScriptRoot -Parent
 $FdoAgiRepo = Join-Path $WorkspaceRoot "fdo_agi_repo"
-<<<<<<< HEAD
-$MasterPlan = Join-Path $WorkspaceRoot "깃코_AGI_구축_마스?�플??2025-10-25.md"
-$QuickStart = Join-Path $WorkspaceRoot "깃코_AGI_빠른?�작_2025-10-25.md"
-
-
-=======
-$MasterPlan = Join-Path $WorkspaceRoot "깃코_AGI_구축_마스?�플??2025-10-25.md"
-$QuickStart = Join-Path $WorkspaceRoot "깃코_AGI_빠른?�작_2025-10-25.md"
->>>>>>> origin/main
+$MasterPlan = Join-Path $WorkspaceRoot "깃코_AGI_구축_마스터플랜_2025-10-25.md"
+$QuickStart = Join-Path $WorkspaceRoot "깃코_AGI_빠른시작_2025-10-25.md"
 
 # Get current phase
 function Get-CurrentPhase {
@@ -66,19 +58,16 @@ function Save-WorkState {
 try {
     if (-not $Silent) {
         Clear-Host
-<<<<<<< HEAD
-# Restore Codex Session
-Write-Header "Checking Codex Session..."
-$LastSessionId = python (Join-Path $PSScriptRoot "get_last_codex_session.py")
-if ($LASTEXITCODE -eq 0 -and $LastSessionId) {
-    $env:CODEX_SESSION_ID = $LastSessionId.Trim()
-    Write-Success "Restored Codex Session: $env:CODEX_SESSION_ID"
-}
-else {
-    Write-Warning "No active Codex session found. A new one will be created."
-}
-=======
->>>>>>> origin/main
+        # Restore Codex Session
+        Write-Header "Checking Codex Session..."
+        $LastSessionId = python (Join-Path $PSScriptRoot "get_last_codex_session.py")
+        if ($LASTEXITCODE -eq 0 -and $LastSessionId) {
+            $env:CODEX_SESSION_ID = $LastSessionId.Trim()
+            Write-Success "Restored Codex Session: $env:CODEX_SESSION_ID"
+        }
+        else {
+            Write-Warning "No active Codex session found. A new one will be created."
+        }
         Write-Host @"
 ================================================================
                 AGI Construction Session Start
@@ -126,7 +115,7 @@ else {
   Phase 1: fdo_agi_repo Execute Test
   
   Command:
-    cd C:\workspace\agi\fdo_agi_repo
+    cd $WorkspaceRoot\fdo_agi_repo
     python -m scripts.run_task --title "demo" --goal "AGI self-correction loop explanation"
   
   Expected:
@@ -141,9 +130,9 @@ else {
   Phase 2: LLM Backend Connection
   
   Files to edit:
-    - C:\workspace\agi\fdo_agi_repo\personas\thesis.py
-    - C:\workspace\agi\fdo_agi_repo\personas\antithesis.py
-    - C:\workspace\agi\fdo_agi_repo\personas\synthesis.py
+    - $WorkspaceRoot\fdo_agi_repo\personas\thesis.py
+    - $WorkspaceRoot\fdo_agi_repo\personas\antithesis.py
+    - $WorkspaceRoot\fdo_agi_repo\personas\synthesis.py
   
   Task:
     - Add Gemini 1.5 Pro API call
@@ -232,8 +221,3 @@ catch {
     Write-Host $_.ScriptStackTrace -ForegroundColor Red
     exit 1
 }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/main

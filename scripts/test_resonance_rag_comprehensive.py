@@ -5,11 +5,12 @@ Final Test: Multiple Queries on Resonance RAG v3
 
 import subprocess
 import sys
+from workspace_root import get_workspace_root
 
 test_queries = [
     ("배경자아의 역할", "Should match: 배경자아의 역할 설명"),
-    ("What is Resonance?", "Should match: Axioms of Rua or Resonance content"),
-    ("리듬의 공리", "Should match: Axioms of Rua or Rhythm content"),
+    ("What is Resonance?", "Should match: Axioms of Core or Resonance content"),
+    ("리듬의 공리", "Should match: Axioms of Core or Rhythm content"),
     ("무의식 관찰자", "Should match: Background Self or Observer content"),
 ]
 
@@ -24,8 +25,8 @@ for query, expected in test_queries:
     print(f"{'='*90}\n")
     
     result = subprocess.run(
-        ["python3", "scripts/resonance_rag_ollama_v3.py", query],
-        cwd="/home/bino/agi",
+        [sys.executable, "scripts/resonance_rag_ollama_v3.py", query],
+        cwd=str(get_workspace_root()),
         capture_output=True,
         text=True
     )

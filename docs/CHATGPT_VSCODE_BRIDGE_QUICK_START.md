@@ -25,7 +25,7 @@ cd C:\workspace\agi\scripts
 local utils = require("agi_lua_utils")
 local response = utils.send_to_chatgpt({
     action = "run_task",
-    task_label = "Lumen: Quick Health Probe",
+    task_label = "Core: Quick Health Probe",
     context = "시스템 상태 확인 필요"
 })
 
@@ -205,7 +205,7 @@ end
 while true do
     local health = utils.send_to_chatgpt({
         action = "run_task",
-        task_label = "Lumen: Quick Health Probe"
+        task_label = "Core: Quick Health Probe"
     })
     if not health.success then
         print("[ALERT] Health check failed!")

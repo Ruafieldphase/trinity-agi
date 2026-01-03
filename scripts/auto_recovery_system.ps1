@@ -1,4 +1,4 @@
-# Auto Recovery System for 6 Integrated Systems
+﻿# Auto Recovery System for 6 Integrated Systems
 # Monitors system health and auto-recovers on failures
 
 param(
@@ -86,15 +86,15 @@ function Send-AlertNotification {
 $systems = @(
     @{
         Name           = "Resonance Loop"
-        FilePath       = Join-Path $scriptDir "..\fdo_agi_repo\outputs\resonance_lumen_integration_latest.md"
+        FilePath       = Join-Path $scriptDir "..\fdo_agi_repo\outputs\resonance_core_integration_latest.md"
         MaxAgeHours    = 48
-        RecoveryScript = Join-Path $scriptDir "run_resonance_lumen_integration.ps1"
+        RecoveryScript = Join-Path $scriptDir "run_resonance_core_integration.ps1"
     },
     @{
         Name           = "BQI Phase 6"
-        FilePath       = Join-Path $scriptDir "..\fdo_agi_repo\outputs\bqi_lumen_integration_latest.md"
+        FilePath       = Join-Path $scriptDir "..\fdo_agi_repo\outputs\bqi_core_integration_latest.md"
         MaxAgeHours    = 48
-        RecoveryScript = Join-Path $scriptDir "run_bqi_lumen_integration.ps1"
+        RecoveryScript = Join-Path $scriptDir "run_bqi_core_integration.ps1"
     },
     @{
         Name           = "Intelligent Feedback"

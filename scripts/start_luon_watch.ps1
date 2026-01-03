@@ -1,8 +1,12 @@
-param(
+﻿param(
     [int]$IntervalSeconds = 15,
     [switch]$KillExisting,
-    [string]$LogDirectory = "$PSScriptRoot\..\logs"
+    [string]$LogDirectory = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\logs"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 $env:PYTHONIOENCODING = "utf-8"
@@ -10,25 +14,25 @@ $env:PYTHONIOENCODING = "utf-8"
 # Prefer workspace .venv Python, fallback to system path
 $venvPython = Join-Path "$PSScriptRoot\.." ".venv\Scripts\python.exe"
 $pythonExe = if (Test-Path $venvPython) { $venvPython } else { "C:\\Python313\\python.exe" }
-$baseRoot = "C:\workspace\agi\ai_binoche_conversation_origin"
-$kpiPath = "C:\workspace\agi\outputs\copilot_kpi.csv"
+$baseRoot = "$WorkspaceRoot\ai_binoche_conversation_origin"
+$kpiPath = "$WorkspaceRoot\outputs\copilot_kpi.csv"
 
 if (-not (Test-Path $pythonExe)) { throw "Python executable not found at $pythonExe" }
 if (-not (Test-Path $baseRoot)) { throw "Base directory not found at $baseRoot" }
 if (-not (Test-Path $kpiPath)) { throw "KPI file not found at $kpiPath" }
 
-$lumenPath = Join-Path $baseRoot "lumen"
-$toolsRoot = Get-ChildItem -Path $lumenPath -Directory |
+$CorePath = Join-Path $baseRoot "Core"
+$toolsRoot = Get-ChildItem -Path $CorePath -Directory |
 Where-Object { Test-Path (Join-Path $_.FullName "luon_watch_loop_auto.py") } |
 Select-Object -First 1
-if (-not $toolsRoot) { throw "Could not locate luon_watch_loop_auto.py under $lumenPath" }
+if (-not $toolsRoot) { throw "Could not locate luon_watch_loop_auto.py under $CorePath" }
 
 $watchScript = Join-Path $toolsRoot.FullName "luon_watch_loop_auto.py"
 $outdir = Join-Path $baseRoot "luon"
 $roots = @(
     (Join-Path $baseRoot "cladeCLI-sena"),
     (Join-Path $baseRoot "lubit"),
-    (Join-Path $baseRoot "gemini-sian")
+    (Join-Path $baseRoot "gemini-Shion")
 )
 
 if ($KillExisting) {

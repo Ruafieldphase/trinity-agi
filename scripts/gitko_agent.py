@@ -18,7 +18,7 @@ if not API_KEY:
 if API_KEY:
     genai.configure(api_key=API_KEY)
 
-class GitkoAgent:
+class GitCoregent:
     """
     Gitko Agent: The Actor (Action & Realization)
     Handles Git operations and code execution requests.
@@ -101,7 +101,7 @@ class GitkoAgent:
         return self.generate_response(message, output)
 
 if __name__ == "__main__":
-    agent = GitkoAgent()
+    agent = GitCoregent()
     if len(sys.argv) > 1:
         message = " ".join(sys.argv[1:])
         print(agent.handle_intent(message))

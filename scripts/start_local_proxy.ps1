@@ -1,26 +1,29 @@
-<#
+﻿<#
 .SYNOPSIS
   Start Local LLM Proxy on an available port and record status
 
 .DESCRIPTION
   - Finds a free port in the range [8090..8100] unless -Port specified
-  - Starts scripts/local_llm_proxy.py with PROXY_PORT and LUMEN_GATEWAY_URL
+  - Starts scripts/local_llm_proxy.py with PROXY_PORT and CORE_GATEWAY_URL
   - Writes proxy info to fdo_agi_repo/outputs/proxy_info.json
 
 .PARAMETER Port
   Preferred port. If busy, will search next ports in range.
 
 .PARAMETER GatewayUrl
-  Lumen Gateway URL to forward to.
+  Core Gateway URL to forward to.
 
 .PARAMETER Background
   Start in background (default: true)
 #>
 param(
     [int]$Port = 18090,
-    [string]$GatewayUrl = $env:LUMEN_GATEWAY_URL,
+    [string]$GatewayUrl = $env:CORE_GATEWAY_URL,
     [switch]$NoBackground
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -38,7 +41,7 @@ if (-not (Test-Path $proxyPy)) {
     exit 1
 }
 
-if (-not $GatewayUrl) { $GatewayUrl = 'https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat' }
+if (-not $GatewayUrl) { $GatewayUrl = 'https://Core-gateway-x4qvsargwa-uc.a.run.app/chat' }
 
 function Test-PortFree([int]$p) {
     $net = netstat -ano | Select-String ":$p"
@@ -57,9 +60,9 @@ if (-not $chosen) {
 
 # Choose Python
 $pyCandidates = @(
-    'C:\workspace\agi\LLM_Unified\.venv\Scripts\python.exe',
-    'C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe',
-    'C:\workspace\agi\.venv\Scripts\python.exe',
+    "$WorkspaceRoot\LLM_Unified\.venv\Scripts\python.exe",
+    "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe",
+    "$WorkspaceRoot\.venv\Scripts\python.exe",
     'python'
 )
 $python = $null
@@ -72,10 +75,10 @@ foreach ($c in $pyCandidates) {
 if (-not $python) { Write-Host '[ERROR] No python with Flask found' -ForegroundColor Red; exit 1 }
 
 $env:PROXY_PORT = $chosen
-$env:LUMEN_GATEWAY_URL = $GatewayUrl
+$env:CORE_GATEWAY_URL = $GatewayUrl
 
 Write-Host "[START] Starting Local LLM Proxy on port $chosen" -ForegroundColor Cyan
-Write-Host "?�️  Forwarding to: $GatewayUrl" -ForegroundColor Cyan
+Write-Host "?️  Forwarding to: $GatewayUrl" -ForegroundColor Cyan
 
 if ($NoBackground) {
     & $python $proxyPy

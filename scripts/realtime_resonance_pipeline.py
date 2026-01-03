@@ -18,8 +18,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 # Local imports (existing repo scripts)
 import sys
-from pathlib import Path as _PathPatch
-_ROOT = _PathPatch(__file__).resolve().parent.parent
+from workspace_root import get_workspace_root
+
+_ROOT = get_workspace_root()
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
@@ -88,19 +89,19 @@ def seed_from_metrics(metrics: Dict[str, Any]) -> Dict[str, float]:
     }
 
 
-def read_lumen_state(workspace: Path) -> Optional[Dict[str, Any]]:
-    """Read Lumen emotion signals from lumen_state.json.
+def read_core_state(workspace: Path) -> Optional[Dict[str, Any]]:
+    """Read Core emotion signals from core_state.json.
     
     Returns: {"fear": float, "joy": float, "trust": float, "timestamp": str}
     """
-    lumen_path = workspace / "fdo_agi_repo/memory/lumen_state.json"
+    core_path = workspace / "fdo_agi_repo/memory/core_state.json"
     
-    if not lumen_path.exists():
+    if not core_path.exists():
         return None
     
     try:
         # Use utf-8-sig to handle BOM
-        with lumen_path.open("r", encoding="utf-8-sig") as f:
+        with core_path.open("r", encoding="utf-8-sig") as f:
             data = json.load(f)
             # Handle both flat and nested emotion structures
             emotion = data.get("emotion", {})
@@ -120,7 +121,7 @@ def read_lumen_state(workspace: Path) -> Optional[Dict[str, Any]]:
                 }
             return result
     except Exception as e:
-        print(f"[Warning] Could not read Lumen state: {e}")
+        print(f"[Warning] Could not read Core state: {e}")
         return None
 
 
@@ -251,19 +252,19 @@ def write_md(path: Path, data: Dict[str, Any]) -> None:
     seasonality = data.get("seasonality", [])
     sim = data.get("simulation", {})
     next_runs = data.get("next_runs", {})
-    lumen = data.get("lumen_state")
+    Core = data.get("core_state")
     feedback = data.get("feedback_loop", {})
 
     lines: List[str] = []
     lines.append("# Real-time Resonance Pipeline\n")
     lines.append(f"Generated: {datetime.now().isoformat()}\n")
 
-    # Lumen Emotion Signals
-    if lumen:
-        lines.append("\n## 🎭 Lumen Emotion Signals\n")
-        fear = lumen.get("fear", 0.0)
-        joy = lumen.get("joy", 0.5)
-        trust = lumen.get("trust", 0.5)
+    # Core Emotion Signals
+    if Core:
+        lines.append("\n## 🎭 Core Emotion Signals\n")
+        fear = Core.get("fear", 0.0)
+        joy = Core.get("joy", 0.5)
+        trust = Core.get("trust", 0.5)
         
         # Status indicators
         fear_status = "🔴 HIGH" if fear >= 0.7 else ("🟡 ELEVATED" if fear >= 0.5 else "🟢 NORMAL")
@@ -273,7 +274,7 @@ def write_md(path: Path, data: Dict[str, Any]) -> None:
         lines.append(f"- **Fear**: {fear:.3f} {fear_status}\n")
         lines.append(f"- **Joy**: {joy:.3f} {joy_status}\n")
         lines.append(f"- **Trust**: {trust:.3f} {trust_status}\n")
-        lines.append(f"- Last Updated: {lumen.get('timestamp', 'N/A')}\n")
+        lines.append(f"- Last Updated: {Core.get('timestamp', 'N/A')}\n")
         
         # Recommendations based on fear level
         if fear >= 0.9:
@@ -283,7 +284,7 @@ def write_md(path: Path, data: Dict[str, Any]) -> None:
         elif fear >= 0.5:
             lines.append("\n💡 **Info**: Fear moderate - Micro-Reset available\n")
     else:
-        lines.append("\n## 🎭 Lumen Emotion Signals\n")
+        lines.append("\n## 🎭 Core Emotion Signals\n")
         lines.append("- No emotion state data available\n")
 
     # Feedback Loop Statistics
@@ -349,9 +350,9 @@ def main():
     metrics_path = Path(args.metrics).resolve()
     metrics = _read_json(metrics_path) or {}
     
-    # Read Lumen emotion state (use absolute path)
+    # Read Core emotion state (use absolute path)
     workspace = metrics_path.parent.parent  # outputs/ -> workspace/
-    lumen_state = read_lumen_state(workspace)
+    core_state = read_core_state(workspace)
     feedback_stats = read_feedback_loop_stats(workspace)
 
     seeds = seed_from_metrics(metrics)
@@ -363,7 +364,7 @@ def main():
         "generated_at": datetime.now().isoformat(),
         "metrics_path": str(metrics_path),
         "window_hours": args.hours,
-        "lumen_state": lumen_state,
+        "core_state": core_state,
         "feedback_loop": feedback_stats,
         "seeds": seeds,
         "seasonality": seasonality,

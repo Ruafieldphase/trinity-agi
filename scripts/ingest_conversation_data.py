@@ -24,7 +24,7 @@ def parse_conversation(input_path: Path) -> List[Dict]:
       "conversations": [
         {
           "timestamp": "2025-11-05T14:30:00Z",
-          "speaker": "binoche",
+          "speaker": "Binoche_Observer",
           "text": "이게 정말 맞을까?",
           "emotion": {"fear": 0.7, "anxiety": 0.6}
         }

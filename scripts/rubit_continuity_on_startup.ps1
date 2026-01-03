@@ -1,4 +1,4 @@
-<#
+﻿<#
 Rubit Continuity On Startup
 
 목표:
@@ -17,6 +17,9 @@ Rubit Continuity On Startup
 #>
 
 param([switch]$Silent)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 try {
     $ErrorActionPreference = 'Continue'
@@ -95,7 +98,7 @@ try {
         & $copilot | Out-Null
     }
 
-    # 3) 협업 브리프(시안/세나 공유용) 생성
+    # 3) 협업 브리프(Shion/세나 공유용) 생성
     $brief = Join-Path $WorkspaceRoot 'scripts\coordination\generate_agent_brief.py'
     if (Test-Path $brief) {
         try {
@@ -131,7 +134,7 @@ try {
         & $ensureAura -Silent | Out-Null
     }
 
-    # 5) 루아(트리거 생성) ↔ 루빛(실행) 자동 루프(Windows): 관리자 권한 없이 가능한 스케줄러 기반으로 유지
+    # 5) 코어(트리거 생성) ↔ 루빛(실행) 자동 루프(Windows): 관리자 권한 없이 가능한 스케줄러 기반으로 유지
     $registerTriggers = Join-Path $WorkspaceRoot 'scripts\register_trigger_automation.ps1'
     if (Test-Path $registerTriggers) {
         & $registerTriggers -Silent | Out-Null

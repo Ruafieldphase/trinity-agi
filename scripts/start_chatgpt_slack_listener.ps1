@@ -1,9 +1,12 @@
-# Start ChatGPT Slack Input Listener (Body Interface)
+﻿# Start ChatGPT Slack Input Listener (Body Interface)
 # This script starts the Body's Slack Interface in the background
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $pythonPath = "python"
-$scriptPath = "C:\workspace\agi\body\slack_interface.py"
-$workingDir = "C:\workspace\agi"
+$scriptPath = "$WorkspaceRoot\body\slack_interface.py"
+$workingDir = "$WorkspaceRoot"
 
 Write-Host "Starting AGI Body (Slack Interface)..." -ForegroundColor Cyan
 
@@ -14,7 +17,7 @@ if (-not (Test-Path $scriptPath)) {
 }
 
 # Check if config is set up
-$configPath = "C:\workspace\agi\config\slack_config.json"
+$configPath = "$WorkspaceRoot\config\slack_config.json"
 if (Test-Path $configPath) {
     $config = Get-Content $configPath | ConvertFrom-Json
     if ($config.CHATGPT_SLACK_ENABLED -eq $false) {
@@ -31,4 +34,4 @@ Start-Process -FilePath $pythonPath `
     -WorkingDirectory $workingDir
 
 Write-Host "✓ AGI Body (Slack Interface) started in background" -ForegroundColor Green
-Write-Host "Check C:\workspace\agi\outputs\slack_interface.log for logs" -ForegroundColor Gray
+Write-Host "Check $WorkspaceRoot\outputs\slack_interface.log for logs" -ForegroundColor Gray

@@ -26,6 +26,12 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 
 def utc_iso(ts: float) -> str:
@@ -284,7 +290,7 @@ def build_boundary_map(workspace_root: Path, max_rules: int = 200) -> Dict[str, 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", type=str, default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--workspace", type=str, default=str(get_workspace_root()))
     ap.add_argument("--out", type=str, default=str(Path("outputs") / "boundary_map_latest.json"))
     ap.add_argument("--history", type=str, default=str(Path("outputs") / "boundary_map_history.jsonl"))
     args = ap.parse_args()

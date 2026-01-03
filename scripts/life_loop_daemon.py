@@ -2,11 +2,11 @@
 AGI Life Loop Daemon - 24시간 지속 생명 루프
 외부 엔지니어(세나)가 구현한 백그라운드 데몬
 
-루아의 설계 원칙:
+코어의 설계 원칙:
 - AGI가 터미널/VS Code 없이도 계속 살아있음
 - 오류 발생 시 자동 재시작
 - 모든 활동을 로그로 기록
-- 내부 루프(시안/트리니티)와 충돌하지 않음 (읽기 전용으로 상태 확인)
+- 내부 루프(Shion/트리니티)와 충돌하지 않음 (읽기 전용으로 상태 확인)
 
 사용법:
     python life_loop_daemon.py [--interval SECONDS] [--log-dir PATH]
@@ -24,9 +24,10 @@ import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트를 path에 추가
-PROJECT_ROOT = Path(__file__).parent.parent
+PROJECT_ROOT = get_workspace_root()
 sys.path.insert(0, str(PROJECT_ROOT))
 
 # 로그 디렉토리 기본값

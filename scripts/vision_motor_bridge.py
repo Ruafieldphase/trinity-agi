@@ -4,7 +4,18 @@ import json
 import pyautogui
 import vertexai
 from pathlib import Path
-from vertexai.generative_models import GenerativeModel, Part, Image
+try:
+    from vertexai.generative_models import GenerativeModel, Part, Image
+    VERTEX_AVAILABLE = True
+except ImportError:
+    VERTEX_AVAILABLE = False
+
+try:
+    import google.generativeai as genai
+    GENAI_AVAILABLE = True
+except ImportError:
+    GENAI_AVAILABLE = False
+
 from motor_cortex import MotorCortex
 
 # Configuration
@@ -16,10 +27,36 @@ TEMP_SCREENSHOT = Path("temp_vision_bridge.png")
 class VisionMotorBridge:
     def __init__(self):
         print("👁️✋ Initializing Vision-Motor Bridge...")
-        vertexai.init(project=PROJECT_ID, location=LOCATION)
-        self.model = GenerativeModel(MODEL_NAME)
+        
+        self.backend = "none"
+        self.model = None
         self.motor = MotorCortex()
-        print("✅ Bridge Ready.")
+
+        # 1. Try Free-Tier AI Studio first
+        api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+        if GENAI_AVAILABLE and api_key:
+            try:
+                genai.configure(api_key=api_key)
+                self.model = genai.GenerativeModel(MODEL_NAME)
+                self.backend = "genai"
+                # print("✅ Bridge Ready (AI Studio - FREE TIER)")
+                return
+            except Exception as e:
+                print(f"⚠️ GenAI init failed: {e}")
+
+        # 2. Fallback to Paid-Tier Vertex AI
+        if VERTEX_AVAILABLE:
+            try:
+                vertexai.init(project=PROJECT_ID, location=LOCATION)
+                from vertexai.generative_models import GenerativeModel as VertexModel
+                self.model = VertexModel(MODEL_NAME)
+                self.backend = "vertex"
+                print(f"⚠️ [COST_WARNING] Bridge Ready (Vertex AI - PAID TIER)")
+                return
+            except Exception as e:
+                print(f"❌ Vertex init failed: {e}")
+
+        raise RuntimeError("No usable AI backend found for VisionMotorBridge.")
 
     def execute_intent(self, intent: str):
         """
@@ -71,10 +108,17 @@ class VisionMotorBridge:
         try:
             with open(TEMP_SCREENSHOT, "rb") as f:
                 image_data = f.read()
-                
-            image = Part.from_data(data=image_data, mime_type="image/png")
             
-            response = self.model.generate_content([image, prompt])
+            if self.backend == "genai":
+                # AI Studio Part format
+                image_part = {"mime_type": "image/png", "data": image_data}
+                response = self.model.generate_content([prompt, image_part])
+            else:
+                # Vertex AI Part format
+                from vertexai.generative_models import Part as VertexPart
+                image_part = VertexPart.from_data(data=image_data, mime_type="image/png")
+                response = self.model.generate_content([image_part, prompt])
+
             text = response.text.replace("```json", "").replace("```", "").strip()
             
             data = json.loads(text)

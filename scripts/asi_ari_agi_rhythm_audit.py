@@ -26,8 +26,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from workspace_root import get_workspace_root
 
-ROOT = Path(__file__).resolve().parents[1]
+
+ROOT = get_workspace_root()
 OUTPUTS = ROOT / "outputs"
 BRIDGE = OUTPUTS / "bridge"
 
@@ -284,7 +286,7 @@ def main() -> int:
         "ARI": {
             "code": {
                 "services/ari_engine.py": _file_obs(ROOT / "services" / "ari_engine.py"),
-                "services/rua_bridge_client.py": _file_obs(ROOT / "services" / "rua_bridge_client.py"),
+                "services/Core_bridge_client.py": _file_obs(ROOT / "services" / "Core_bridge_client.py"),
             },
             "signals": {
                 "memory/ari_learning_buffer.json": _file_obs(ROOT / "memory" / "ari_learning_buffer.json"),
@@ -356,7 +358,7 @@ def main() -> int:
     if running_named:
         for it in sorted(running_named, key=lambda x: int(x.get("pid") or 0)):
             cmd = str(it.get("cmd") or "")
-            cmd_short = cmd.replace(str(ROOT), "C:/workspace/agi").strip()
+            cmd_short = cmd.replace(str(ROOT), "<workspace_root>").strip()
             lines.append(f"- pid={it.get('pid')} {it.get('name')}: {cmd_short}")
     else:
         lines.append("- (AGI 관련 python 프로세스 없음)")

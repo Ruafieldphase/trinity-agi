@@ -1,8 +1,11 @@
-<#
+﻿<#
 .SYNOPSIS
     실패한 작업들을 백그라운드로 수정 (관리자 권한 필요)
 #>
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = 'Stop'
 
 Write-Host "`n🔧 실패한 작업 수동 수정..." -ForegroundColor Yellow
@@ -10,9 +13,9 @@ Write-Host ""
 
 # WorkingDirectory가 빈 작업들
 $tasksToFix = @(
-    @{Name = "AgiWatchdog"; WorkDir = "C:\workspace\agi" },
-    @{Name = "AGI_Adaptive_Master_Scheduler"; WorkDir = "C:\workspace\agi" },
-    @{Name = "MonitoringSnapshotRotationDaily"; WorkDir = "C:\workspace\agi" }
+    @{Name = "AgiWatchdog"; WorkDir = "$WorkspaceRoot" },
+    @{Name = "AGI_Adaptive_Master_Scheduler"; WorkDir = "$WorkspaceRoot" },
+    @{Name = "MonitoringSnapshotRotationDaily"; WorkDir = "$WorkspaceRoot" }
 )
 
 foreach ($taskInfo in $tasksToFix) {

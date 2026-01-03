@@ -1,15 +1,16 @@
 ﻿from wsgiref.simple_server import make_server
 import threading, json, time, sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 import importlib.util
 
 # ensure project root on sys.path
-root = r"C:\workspace\agi"
+root = str(get_workspace_root())
 if root not in sys.path:
     sys.path.append(root)
 
 # load module
-p = r"C:\workspace\agi\scripts\auto_orchestration.py"
+p = str(Path(root) / "scripts" / "auto_orchestration.py")
 spec = importlib.util.spec_from_file_location('auto_orchestration', p)
 mod = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(mod)
@@ -29,7 +30,7 @@ th = threading.Thread(target=httpd.serve_forever, daemon=True)
 th.start()
 
 # point gateway to stub
-mod.LUMEN_GATEWAY = f'http://127.0.0.1:{port}/chat'
+mod.CORE_GATEWAY = f'http://127.0.0.1:{port}/chat'
 
 # run orchestration quickly
 results = mod.orchestrate_analysis('로컬 스모크 테스트')

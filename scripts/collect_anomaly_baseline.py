@@ -19,9 +19,10 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 경로
-WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 
 
 def load_monitoring_metrics(days: int = 7) -> pd.DataFrame:
@@ -63,7 +64,7 @@ def load_monitoring_metrics(days: int = 7) -> pd.DataFrame:
                 "cpu_percent": data.get("system_metrics", {}).get("cpu_percent", 0),
                 "memory_percent": data.get("system_metrics", {}).get("memory_percent", 0),
                 "success_rate": data.get("agi_metrics", {}).get("success_rate", 0),
-                "avg_latency_ms": data.get("lumen_metrics", {}).get("avg_latency_ms", 0),
+                "avg_latency_ms": data.get("core_metrics", {}).get("avg_latency_ms", 0),
                 "queue_size": data.get("queue_metrics", {}).get("pending", 0),
             }
             metrics_list.append(metrics)

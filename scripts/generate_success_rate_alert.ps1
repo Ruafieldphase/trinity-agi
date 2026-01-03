@@ -1,4 +1,4 @@
-# PowerShell 5.1+ Compatible
+﻿# PowerShell 5.1+ Compatible
 <#
 .SYNOPSIS
     Generate success rate alerts for Auto-healer
@@ -15,8 +15,11 @@ param(
     [int]$TimeWindowHours = 24,
     [double]$LowerThreshold = 50.0,
     [double]$UpperThreshold = 85.0,
-    [string]$OutputPath = "$PSScriptRoot\..\outputs\alerts\success_rate_alert.json"
+    [string]$OutputPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\alerts\success_rate_alert.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 # Set-StrictMode -Version Latest  # Disabled for PowerShell 5 compatibility
@@ -32,7 +35,7 @@ Write-Host "   Time Window: Last $TimeWindowHours hours" -ForegroundColor Gray
 Write-Host "   Thresholds: $LowerThreshold% < Success Rate < $UpperThreshold%" -ForegroundColor Gray
 
 # === 1. Load AGI Resonance Ledger ===
-$ledgerPath = Join-Path $PSScriptRoot '..\fdo_agi_repo\memory\resonance_ledger.jsonl'
+$ledgerPath = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\resonance_ledger.jsonl"
 if (!(Test-Path -LiteralPath $ledgerPath)) {
     Write-Host "❌ Resonance Ledger not found: $ledgerPath" -ForegroundColor Red
     exit 1

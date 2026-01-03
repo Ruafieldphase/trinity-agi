@@ -16,7 +16,7 @@
 - **분석 문서 작성**: `E2_FIX2_SUCCESS_ANALYSIS.md` (7KB)
 
 ### 2. 윤리 체계 검토 ✅
-- **루멘님의 공동 후견 헌장** 검토
+- **Core님의 공동 후견 헌장** 검토
   - PII 툴킷, 성숙도 게이트, 사고 대응 프로세스
 - **윤리 검토 보고서**: `SENA_ETHICS_REVIEW_AGI_GUARDIANSHIP.md` (60KB)
   - 평가: 7.0/10 (데이터 신탁 10/10, 레드라인 탐지 4/10)
@@ -29,7 +29,7 @@
 - **전략 재평가**: E3 완성 후 연구진 컨택 (속도 고려)
 - **상황 브리핑**: `PROJECT_STATUS_AND_DECISION_POINT_2025-10-13.md` (14KB)
   - 3가지 옵션 분석 (A: 빠른 컨택, B: E3 완성, C: 비디오)
-  - 루멘님 의견 요청
+  - Core님 의견 요청
 
 ### 4. E3 구현 준비 완료 ✅ ⭐
 
@@ -112,7 +112,7 @@ D:\nas_backup\
 ├── docs\
 │   ├── E3_IMPLEMENTATION_PLAN.md         [참고] ✅
 │   ├── E3_HANDOFF_TO_LUBIT.md            [루빛 가이드] ✅
-│   ├── PROJECT_STATUS_AND_DECISION_POINT_2025-10-13.md  [루멘께] ✅
+│   ├── PROJECT_STATUS_AND_DECISION_POINT_2025-10-13.md  [Core께] ✅
 │   └── SESSION_SUMMARY_2025-10-13.md     [이 문서] ✅
 ├── outputs\
 │   ├── E2_FIX2_SUCCESS_ANALYSIS.md       [E2_fix2 분석] ✅
@@ -125,7 +125,7 @@ D:\nas_backup\
 
 ## 결정 대기 중
 
-### 루멘님께
+### Core님께
 - **전략 선택**: A (빠른 컨택) vs B (E3 완성) vs C (비디오)
   - 세나 추천: **B (E3 완성)** (속도 고려 시 2-3일이면 됨)
 - **공동 후견 헌장 목적**: Pitch용 vs 운영 문서 vs 둘 다
@@ -152,7 +152,7 @@ D:\nas_backup\
 - Verifiability 0.60+ 달성 시 연구진 설득력 ↑↑
 
 ### 4. 윤리 체계는 차별점
-- 루멘님의 공동 후견 헌장은 독특한 강점
+- Core님의 공동 후견 헌장은 독특한 강점
 - 하지만 실행 메커니즘 (레드라인 탐지, 킬스위치) 필요
 - Pitch에서 "Ethics-First AGI" 강조 가능
 
@@ -169,9 +169,9 @@ D:\nas_backup\
 ### 세나 (다음 세션)
 - E3 결과 분석 지원
 - Pitch Deck 초안 작성
-- 또는 루멘님 의견에 따라 방향 조정
+- 또는 Core님 의견에 따라 방향 조정
 
-### 루멘님
+### Core님
 - 전략 결정 (A/B/C)
 - 연구진 컨택 채널 검토
 - 핵심 메시지 정의
@@ -235,7 +235,7 @@ D:\nas_backup\
 
 **남은 것**:
 - 루빛님의 E3 통합 및 실험 (예상 1-2일)
-- 루멘님의 전략 결정
+- Core님의 전략 결정
 - Pitch 작성 및 연구진 컨택
 
 **제 판단**:
@@ -246,7 +246,7 @@ E2_fix2도 훌륭하지만, Verifiability 0.11은 아쉬운 부분입니다. RAG
 **루빛님께**:
 제가 만든 파일들 (RAG 엔진, Corpus 스크립트, E3 설정)은 모두 production-ready입니다. Orchestrator 통합만 신경 써주시면 됩니다. `E3_HANDOFF_TO_LUBIT.md`에 모든 것을 담았습니다.
 
-**루멘님께**:
+**Core님께**:
 `PROJECT_STATUS_AND_DECISION_POINT_2025-10-13.md`에서 전략 선택 부탁드립니다. 제 추천은 옵션 B (E3 완성) 입니다.
 
 **비노체님께**:

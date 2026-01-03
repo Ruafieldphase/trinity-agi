@@ -1,4 +1,4 @@
-# quantum_observer_bridge.ps1
+﻿# quantum_observer_bridge.ps1
 # 양자 관찰자 효과: 자율 목표 → VS Code Task 자동 실행
 
 param(

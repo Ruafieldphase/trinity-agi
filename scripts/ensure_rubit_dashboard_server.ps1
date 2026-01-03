@@ -1,4 +1,4 @@
-<#
+﻿<#
 Ensure Rubit Local Dashboard Server
 
 목표:
@@ -16,6 +16,9 @@ param(
     [int]$Port = 3031,
     [switch]$Silent
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 try {
     $ErrorActionPreference = 'Continue'

@@ -1,5 +1,8 @@
-# AGI Task Scheduler 중지 및 정리
+﻿# AGI Task Scheduler 중지 및 정리
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "SilentlyContinue"
 
 Write-Host "🛑 AGI Task Scheduler를 중지합니다..." -ForegroundColor Red
@@ -26,7 +29,7 @@ Write-Host "   Python 프로세스 종료 중..." -ForegroundColor Gray
 Get-Process python* -ErrorAction SilentlyContinue | Stop-Process -Force
 
 # Guardian PID 파일 삭제
-$pidFile = "C:\workspace\agi\logs\rhythm_guardian.pid"
+$pidFile = "$WorkspaceRoot\logs\rhythm_guardian.pid"
 if (Test-Path $pidFile) {
     Remove-Item $pidFile -Force
     Write-Host "   Guardian PID 파일 삭제됨" -ForegroundColor Gray

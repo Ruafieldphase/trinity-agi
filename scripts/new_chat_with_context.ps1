@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     새 Copilot 채팅을 열고 컨텍스트를 클립보드에 복사합니다.
@@ -41,6 +41,9 @@ param(
     [Parameter()]
     [switch]$AutoPaste
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

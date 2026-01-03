@@ -1,7 +1,10 @@
-# Guardian Quick Status
+﻿# Guardian Quick Status
 # 빠른 상태 확인
 
-$StateFile = "C:\workspace\agi\outputs\guardian_state.json"
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+$StateFile = "$WorkspaceRoot\outputs\guardian_state.json"
 
 if (Test-Path $StateFile) {
     $state = Get-Content $StateFile | ConvertFrom-Json

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [switch]$Status,
@@ -7,6 +7,9 @@ param(
     [int]$IntervalMinutes = 30,
     [string]$TaskName = "AGI_QuietHours_AlertCheck"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -70,7 +73,7 @@ try {
         # Compatibility-first: register a simple daily trigger at the start time (no repetition)
         $trigger = New-ScheduledTaskTrigger -Daily -At $startDt
 
-        $scriptPath = Join-Path $PSScriptRoot "..\fdo_agi_repo\scripts\alert_system.ps1"
+        $scriptPath = Join-Path $WorkspaceRoot "fdo_agi_repo\scripts\alert_system.ps1"
         if (-not (Test-Path -LiteralPath $scriptPath)) { throw "alert_system.ps1 not found at $scriptPath" }
         $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`" -NoAlert"
 

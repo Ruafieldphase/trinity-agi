@@ -43,12 +43,14 @@ param(
     [switch]$RunNow,
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
 # 설정
 $TaskName = "AGI_AutonomousGoalExecutor"
-$WorkspaceRoot = "C:\workspace\agi"
 $PythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 $ScriptPath = "$WorkspaceRoot\scripts\autonomous_goal_executor.py"
 $LogDir = "$WorkspaceRoot\outputs\logs"

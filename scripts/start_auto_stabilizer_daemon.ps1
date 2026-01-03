@@ -1,10 +1,10 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Start Auto-Stabilizer as a background daemon
 .DESCRIPTION
     Starts the Auto-Stabilizer Python script as a background process
-    to continuously monitor Lumen emotional signals and trigger
+    to continuously monitor Core emotional signals and trigger
     automatic recovery actions.
 .PARAMETER IntervalSeconds
     Check interval in seconds (default: 600 = 10 minutes)
@@ -23,6 +23,9 @@ param(
     [switch]$AutoExecute,
     [switch]$KillExisting
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest

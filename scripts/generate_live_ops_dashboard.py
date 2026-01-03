@@ -2,6 +2,7 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def _read_snippet(path: Path, limit: int = 1200) -> str:
@@ -22,7 +23,7 @@ def _read_snippet(path: Path, limit: int = 1200) -> str:
 
 
 def main() -> int:
-    workspace_root = Path(__file__).resolve().parents[1]
+    workspace_root = get_workspace_root()
     outputs = workspace_root / "outputs"
     bridge = outputs / "bridge"
     out_path = bridge / "live_ops_dashboard.html"

@@ -11,7 +11,7 @@ Orchestration Bridge v1.0
   5. 오케스트레이터에게 실시간 컨텍스트 제공
 
 연동 대상:
-  - LLM_Unified/ion-mentoring/lumen/feedback/feedback_orchestrator.py
+  - LLM_Unified/ion-mentoring/Core/feedback/feedback_orchestrator.py
   - LLM_Unified/ion-mentoring/orchestrator/intent_router.py
   - fdo_agi_repo/scripts/auto_recover.py
   - scripts/quick_status.ps1 (via JSON)
@@ -26,6 +26,7 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional
+from workspace_root import get_workspace_root
 
 # Suppress logging to stderr when running as CLI (only output JSON to stdout)
 if __name__ == "__main__":
@@ -127,7 +128,7 @@ class OrchestrationBridge:
         """
         if workspace_root is None:
             # 스크립트 위치에서 워크스페이스 루트 찾기
-            workspace_root_path = Path(__file__).parent.parent
+            workspace_root_path = get_workspace_root()
         else:
             workspace_root_path = Path(workspace_root)
         

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Merge multiple augmented ledger files into a unified ledger
@@ -10,15 +10,15 @@
 param(
     # Unified output JSONL path
     [Alias('OutFile')]
-    [string]$OutputPath = "$PSScriptRoot\..\fdo_agi_repo\memory\resonance_ledger_augmented.jsonl",
+    [string]$OutputPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\memory\resonance_ledger_augmented.jsonl",
 
     # Optional override for summary JSON path
-    [string]$SummaryPath = "$PSScriptRoot\..\outputs\augmented_ledger_merge_summary.json",
+    [string]$SummaryPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\augmented_ledger_merge_summary.json",
 
     # Input paths (defaults to youtube+rpa augmented ledgers)
     [string[]]$InputPaths = @(
-        "$PSScriptRoot\..\fdo_agi_repo\outputs\resonance_ledger_youtube_augmented.jsonl",
-        "$PSScriptRoot\..\fdo_agi_repo\outputs\resonance_ledger_rpa_augmented.jsonl"
+        "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\outputs\resonance_ledger_youtube_augmented.jsonl",
+        "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\outputs\resonance_ledger_rpa_augmented.jsonl"
     ),
 
     # Dry-run prints what would happen without writing files
@@ -26,6 +26,9 @@ param(
 
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest

@@ -1,9 +1,13 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # Phase 2.6 Streaming Thesis 검증 스크립트
 
 param(
     [string]$Mode = "streaming"  # "streaming" or "baseline"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 Write-Host "🎵 Phase 2.6: Streaming Thesis 검증" -ForegroundColor Cyan
@@ -19,7 +23,7 @@ else {
 }
 
 # Thesis 실행
-$venvPython = "c:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe"
+$venvPython = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 if (-not (Test-Path $venvPython)) {
     $venvPython = "python"
 }
@@ -28,7 +32,7 @@ Write-Host "🔍 Thesis 실행..." -ForegroundColor Green
 
 & $venvPython -c @"
 import sys
-sys.path.insert(0, 'c:/workspace/agi/fdo_agi_repo')
+sys.path.insert(0, "$WorkspaceRoot/fdo_agi_repo")
 from orchestrator.contracts import TaskSpec
 from personas.thesis import run_thesis
 
@@ -52,7 +56,7 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host ""
 Write-Host "📊 Ledger 분석..." -ForegroundColor Green
 
-$ledgerLines = Get-Content "c:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl" -Tail 1
+$ledgerLines = Get-Content "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl" -Tail 1
 
 if ($ledgerLines) {
     $entry = $ledgerLines | ConvertFrom-Json

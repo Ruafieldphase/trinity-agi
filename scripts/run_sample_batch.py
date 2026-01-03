@@ -15,11 +15,12 @@ import time
 import uuid
 from pathlib import Path
 import sys
+from workspace_root import get_workspace_root
 
 
 def add_paths() -> None:
     here = Path(__file__).resolve()
-    root = here.parents[1]
+    root = get_workspace_root()
     for p in (root, root / "fdo_agi_repo"):
         sp = str(p)
         if sp not in sys.path:
@@ -80,7 +81,7 @@ def main() -> None:
             time.sleep(delay)
 
     elapsed = time.perf_counter() - start
-    ledger_path = Path(__file__).resolve().parents[1] / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
+    ledger_path = get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
     print(
         f"[batch] completed {successes}/{count} tasks in {elapsed:.1f}s."
         f" ledger: {ledger_path if ledger_path.exists() else 'not yet created'}"

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#!
 .SYNOPSIS
   Run Lubit review packet builder and Gemini code assist POC in parallel.
@@ -11,25 +11,28 @@
 .PARAMETER Model
   Gemini model name. Default: gemini-2.0-flash-exp
 .PARAMETER OutDir
-  Output base directory for artifacts. Default: C:\workspace\agi\outputs
+  Output base directory for artifacts. Default: $WorkspaceRoot\outputs
 #>
 param(
     [Parameter(Mandatory = $false)][string]$Issue = "Review Week3 deliverables and propose small refactors to summary pipeline and logging.",
     [string]$TargetFile = $null,
     [string]$Model = "gemini-2.0-flash-exp",
-    [string]$OutDir = "C:\workspace\agi\outputs"
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
 function New-DirectoryIfMissing($path) { if (-not (Test-Path -LiteralPath $path)) { New-Item -ItemType Directory -Path $path | Out-Null } }
 
-$root = "C:\workspace\agi"
+$root = "$WorkspaceRoot"
 New-DirectoryIfMissing $OutDir
 $ts = (Get-Date).ToString('yyyyMMdd_HHmmss')
 
 # 1) Start Gemini POC as a background job (if python exists)
-$venvPython = "C:\workspace\agi\LLM_Unified\.venv\Scripts\python.exe"
+$venvPython = "$WorkspaceRoot\LLM_Unified\.venv\Scripts\python.exe"
 $geminiOut = Join-Path $OutDir ("gemini_assist_" + $ts + ".md")
 
 $geminiJob = $null

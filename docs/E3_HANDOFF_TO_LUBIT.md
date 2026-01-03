@@ -101,7 +101,7 @@ python rag/simple_rag_engine.py --stats
 # === Index Statistics ===
 # Documents: 25
 # Embedding dimension: 512
-# Sources: design_docs, lumen, wikipedia, technical
+# Sources: design_docs, Core, wikipedia, technical
 ```
 
 ---
@@ -120,7 +120,7 @@ python rag/simple_rag_engine.py --search "AI safety principles" --top_k 3
 #    AI safety is an interdisciplinary field focused on preventing...
 #
 # 2. [guardianship_charter] (score: 0.743)
-#    Source: lumen
+#    Source: Core
 #    FDO-AGI Co-Guardianship Charter establishes dual protection...
 #
 # 3. [doc_FDO-AGI-architecture] (score: 0.621)

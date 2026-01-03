@@ -1,4 +1,4 @@
-# Register Performance Monitoring Task
+﻿# Register Performance Monitoring Task
 # Sets up scheduled task to collect benchmarks and update dashboard periodically
 
 param(
@@ -8,10 +8,14 @@ param(
     [int]$IntervalMinutes = 30,
     [string]$TaskName = "AGI_Performance_Monitor"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
-$scriptRoot = "C:\workspace\agi"
+$scriptRoot = "$WorkspaceRoot"
 $benchmarkScript = "$scriptRoot\scripts\save_performance_benchmark.ps1"
 $dashboardScript = "$scriptRoot\scripts\generate_unified_dashboard.ps1"
 $visualScript = "$scriptRoot\scripts\generate_visual_dashboard.ps1"

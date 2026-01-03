@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
+from workspace_root import get_workspace_root
 
-ledger_path = Path(__file__).parent.parent / "fdo_agi_repo/memory/resonance_ledger.jsonl"
+ledger_path = get_workspace_root() / "fdo_agi_repo/memory/resonance_ledger.jsonl"
 
 with open(ledger_path, 'r', encoding='utf-8') as f:
     lines = f.readlines()

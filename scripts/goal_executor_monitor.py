@@ -12,9 +12,10 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, Optional, Tuple
 import logging
+from workspace_root import get_workspace_root
 
 # Setup
-workspace = Path(__file__).parent.parent
+workspace = get_workspace_root()
 sys.path.insert(0, str(workspace / "fdo_agi_repo"))
 
 logging.basicConfig(

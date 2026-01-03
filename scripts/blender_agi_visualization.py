@@ -5,9 +5,10 @@ AGI State Visualization for Blender
 import bpy
 import json
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Paths
-ROOT = Path("C:/workspace/agi")
+ROOT = get_workspace_root()
 TWIN_FILE = ROOT / "outputs/sync_cache/digital_twin_state.json"
 
 # Default AGI State (values from 0.0 to 1.0)
@@ -207,7 +208,7 @@ bg.inputs['Color'].default_value = (0.02, 0.02, 0.05, 1.0)  # Dark blue backgrou
 # =====================================
 # 8. Save Scene
 # =====================================
-output_path = "C:/workspace/agi/outputs/agi_state_visualization.blend"
+output_path = str(ROOT / "outputs" / "agi_state_visualization.blend")
 bpy.ops.wm.save_as_mainfile(filepath=output_path)
 
 print("=" * 50)

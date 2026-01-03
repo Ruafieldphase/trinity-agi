@@ -108,7 +108,7 @@ def run_pipeline(turn_csv: Path, somatic_json: Path) -> pd.DataFrame:
 
 if __name__ == "__main__":
     base = ROOT_DIR
-    turn_path = base / "outputs" / "notebooklm" / "rua_turns.csv"
+    turn_path = base / "outputs" / "notebooklm" / "Core_turns.csv"
     somatic_path = base / "outputs" / "somatic_cycles.json"
     result = run_pipeline(turn_path, somatic_path)
     print(result.head())

@@ -1,4 +1,4 @@
-# Lumen Hybrid System Dashboard (ASCII-safe)
+﻿# Core Hybrid System Dashboard (ASCII-safe)
 param(
     [switch]$Watch,
     [int]$RefreshSeconds = 5,
@@ -77,7 +77,7 @@ function Show-Dashboard {
     
     Write-Host ""
     Write-ColorLine "============================================================" "Cyan"
-    Write-ColorLine " Lumen Hybrid System Dashboard" "Cyan"
+    Write-ColorLine " Core Hybrid System Dashboard" "Cyan"
     Write-ColorLine "============================================================" "Cyan"
     Write-Host ""
     $scanTime = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
@@ -92,7 +92,7 @@ function Show-Dashboard {
     Write-Host ""
     
     # 1. 로컬 LLM 프록시
-    Write-ColorLine "[Channel 1] Local LLM Proxy" "White"
+    Write-ColorLine "[Channel 1] ARI Engine (Local LLM)" "White"
     Write-ColorLine "   Endpoint: http://localhost:8080/v1/chat/completions" "DarkGray"
     
     if ($proxyRunning) {
@@ -145,20 +145,20 @@ function Show-Dashboard {
     Write-ColorLine "------------------------------------------------------------" "DarkGray"
     Write-Host ""
     
-    # 3. Lumen Gateway
-    Write-ColorLine "[Channel 3] Lumen Gateway" "White"
-    Write-ColorLine "   Endpoint: https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" "DarkGray"
+    # 3. Core Gateway
+    Write-ColorLine "[Channel 3] Core Gateway" "White"
+    Write-ColorLine "   Endpoint: https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" "DarkGray"
     
-    $lumenStatus = Get-ChannelStatus -Name "Lumen Gateway" -Url "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Body @{
+    $CoreStatus = Get-ChannelStatus -Name "Core Gateway" -Url "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Body @{
         message = "ping"
     }
     
     Write-Host "   Status: " -NoNewline
-    Write-ColorLine "$($lumenStatus.Symbol) $($lumenStatus.Status)" $lumenStatus.Color
-    Write-ColorLine "   Response time: $($lumenStatus.ResponseTime) ms" "DarkGray"
+    Write-ColorLine "$($CoreStatus.Symbol) $($CoreStatus.Status)" $CoreStatus.Color
+    Write-ColorLine "   Response time: $($CoreStatus.ResponseTime) ms" "DarkGray"
     
-    if ($lumenStatus.StatusCode -ne 200) {
-        Write-ColorLine "   Error: $($lumenStatus.ErrorMessage)" "Red"
+    if ($CoreStatus.StatusCode -ne 200) {
+        Write-ColorLine "   Error: $($CoreStatus.ErrorMessage)" "Red"
     }
     
     Write-Host ""
@@ -192,9 +192,9 @@ function Show-Dashboard {
     elseif ($cloudStatus.ResponseTime -gt $AlertMs) { $issues += "ALERT: Cloud AI latency $($cloudStatus.ResponseTime)ms" }
     elseif ($cloudStatus.ResponseTime -gt $WarnMs) { $warnings += "WARN: Cloud AI latency $($cloudStatus.ResponseTime)ms" }
 
-    if ($lumenStatus.Status -ne "Online") { $issues += "Lumen Gateway offline ($($lumenStatus.StatusCode))" }
-    elseif ($lumenStatus.ResponseTime -gt $AlertMs) { $issues += "ALERT: Lumen Gateway latency $($lumenStatus.ResponseTime)ms" }
-    elseif ($lumenStatus.ResponseTime -gt $WarnMs) { $warnings += "WARN: Lumen Gateway latency $($lumenStatus.ResponseTime)ms" }
+    if ($CoreStatus.Status -ne "Online") { $issues += "Core Gateway offline ($($CoreStatus.StatusCode))" }
+    elseif ($CoreStatus.ResponseTime -gt $AlertMs) { $issues += "ALERT: Core Gateway latency $($CoreStatus.ResponseTime)ms" }
+    elseif ($CoreStatus.ResponseTime -gt $WarnMs) { $warnings += "WARN: Core Gateway latency $($CoreStatus.ResponseTime)ms" }
 
     $hasAlerts = ($issues | Where-Object { $_ -like 'ALERT*' -or $_ -like '*offline*' }).Count -gt 0
     $hasWarns = $warnings.Count -gt 0
@@ -233,7 +233,7 @@ function Show-Dashboard {
     Write-ColorLine "   [1] Start proxy:    .\scripts\quick_diagnose.ps1 -StartProxy" "White"
     Write-ColorLine "   [2] Stop proxy:     .\scripts\quick_diagnose.ps1 -StopProxy" "White"
     Write-ColorLine "   [3] Full diagnose:  .\scripts\quick_diagnose.ps1" "White"
-    Write-ColorLine "   [4] Python test:    .\.venv\Scripts\python.exe .\test_lumen_connection.py" "White"
+    Write-ColorLine "   [4] Python test:    .\.venv\Scripts\python.exe .\test_core_connection.py" "White"
     
     Write-Host ""
     
@@ -241,10 +241,10 @@ function Show-Dashboard {
         Write-ColorLine "Refresh in $RefreshSeconds sec... (Ctrl+C to exit)" "DarkYellow"
     }
     $channels = @{
-        LocalHealth  = $localStatus
-        LocalChat    = $chatTest
-        CloudAI      = $cloudStatus
-        LumenGateway = $lumenStatus
+        LocalHealth = $localStatus
+        LocalChat   = $chatTest
+        CloudAI     = $cloudStatus
+        CoreGateway = $CoreStatus
     }
 
     return @{
@@ -274,7 +274,7 @@ else {
         $webhook = $env:SLACK_WEBHOOK_URL
         if ($null -ne $webhook -and $webhook.Trim().Length -gt 0) {
             try {
-                $title = if ($result.IsDegraded) { "Lumen 대시보드 경고 (Degraded)" } else { "Lumen 대시보드 경고 (Latency)" }
+                $title = if ($result.IsDegraded) { "Core 대시보드 경고 (Degraded)" } else { "Core 대시보드 경고 (Latency)" }
                 $msgLines = @()
                 foreach ($i in $result.Issues) { $msgLines += "- $i" }
                 foreach ($w in $result.Warnings) { $msgLines += "- $w" }
@@ -282,7 +282,7 @@ else {
 
                 $payload = @{
                     text       = "*$title*`n$message"
-                    username   = "Lumen Dashboard"
+                    username   = "Core Dashboard"
                     icon_emoji = ":rotating_light:"
                 }
                 if ($SlackChannel -or $env:SLACK_ALERT_CHANNEL -or $env:SLACK_FALLBACK_CHANNEL) {
@@ -335,7 +335,7 @@ else {
     if ($OutMarkdown -and $OutMarkdown.Trim().Length -gt 0) {
         try {
             $lines = @()
-            $lines += "# Lumen Dashboard Report"
+            $lines += "# Core Dashboard Report"
             $lines += ""
             $lines += "Scanned: $($result.Timestamp)"
             $lines += "Thresholds: Warn=$($result.Thresholds.WarnMs) ms, Alert=$($result.Thresholds.AlertMs) ms"
@@ -347,7 +347,7 @@ else {
             $lines += "- HasWarns: $($result.HasWarns)"
             $lines += ""
             $lines += "## Channels"
-            foreach ($k in 'LocalHealth', 'LocalChat', 'CloudAI', 'LumenGateway') {
+            foreach ($k in 'LocalHealth', 'LocalChat', 'CloudAI', 'CoreGateway') {
                 $c = $result.Channels[$k]
                 if ($null -ne $c) {
                     $lines += ('- {0}: Status={1}, Code={2}, Time={3} ms' -f $k, $c.Status, $c.StatusCode, $c.ResponseTime)

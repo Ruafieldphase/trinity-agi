@@ -17,9 +17,10 @@ import subprocess
 import argparse
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # --- Configuration ---
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LOGS_DIR = WORKSPACE_ROOT / "logs"
 PID_FILE = LOGS_DIR / "shion.pid"
 VITALS_CHECK_INTERVAL = 10 
@@ -84,7 +85,7 @@ def scan_organs():
             key = "unknown"
             if "heartbeat_loop.py" in cmd: key = "heartbeat"
             elif "rhythm_think.py" in cmd: key = "brain"
-            elif "aura_controller.py" in cmd: key = "aura"
+            elif "rubit_aura_pixel.py" in cmd: key = "aura"
             elif "shion.py" in cmd: continue 
             
             if key != "unknown":
@@ -108,7 +109,7 @@ def ensure_vitality(organs):
     vitals = {
         "heartbeat": "agi_core/heartbeat_loop.py",
         "brain": "scripts/rhythm_think.py",
-        "aura": "scripts/aura_controller.py"
+        "aura": "scripts/rubit_aura_pixel.py"
     }
     
     pythonw = get_pythonw()

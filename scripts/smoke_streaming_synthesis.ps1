@@ -1,10 +1,13 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # smoke_streaming_synthesis.ps1
 # Phase 2.8: Synthesis Streaming Smoke Test
 
 param(
     [string]$Mode = "streaming"  # "streaming" or "baseline"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

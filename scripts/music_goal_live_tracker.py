@@ -9,8 +9,9 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
+from workspace_root import get_workspace_root
 
-workspace_root = Path(__file__).parent.parent
+workspace_root = get_workspace_root()
 sys.path.insert(0, str(workspace_root / "fdo_agi_repo"))
 
 from utils.goal_tracker import GoalTracker

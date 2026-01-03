@@ -1,13 +1,16 @@
 # Fix Master Daemon Scheduled Task (관리자 권한 필요)
 # 우클릭 → "관리자 권한으로 실행"
 
+
+. "$PSScriptRoot\..\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "Stop"
 
 Write-Host "`n=== Master Daemon Scheduled Task 수정 ===" -ForegroundColor Cyan
 
 $taskName = "AGI_Master_Daemon"
-$scriptPath = "C:\workspace\agi\scripts\master_daemon.ps1"
-$configPath = "C:\workspace\agi\config\master_daemon_config.json"
+$scriptPath = "$WorkspaceRoot\scripts\master_daemon.ps1"
+$configPath = "$WorkspaceRoot\config\master_daemon_config.json"
 
 try {
     # 기존 작업 제거
@@ -19,7 +22,7 @@ try {
     
     # Action: 올바른 경로로 실행
     $arguments = "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$scriptPath`" -Start -ConfigPath `"$configPath`""
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $arguments -WorkingDirectory "C:\workspace\agi"
+    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $arguments -WorkingDirectory "$WorkspaceRoot"
     
     # Settings
     $settings = New-ScheduledTaskSettingsSet `
@@ -36,7 +39,7 @@ try {
     Write-Host "`n작업 상세:" -ForegroundColor Cyan
     Write-Host "  Execute: powershell.exe" -ForegroundColor Gray
     Write-Host "  Script: $scriptPath" -ForegroundColor Gray
-    Write-Host "  Working Dir: C:\workspace\agi" -ForegroundColor Gray
+    Write-Host "  Working Dir: $WorkspaceRoot" -ForegroundColor Gray
     
     # 즉시 실행
     Write-Host "`nMaster Daemon 시작 중..." -ForegroundColor Yellow

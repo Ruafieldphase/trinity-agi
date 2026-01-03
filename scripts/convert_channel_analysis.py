@@ -8,9 +8,10 @@ import sys
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any
+from workspace_root import get_workspace_root
 
 # Add workspace root to path
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.insert(0, str(WORKSPACE_ROOT))
 
 # Configuration

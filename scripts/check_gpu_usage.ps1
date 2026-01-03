@@ -1,4 +1,4 @@
-# Check what's running and using GPU
+﻿# Check what's running and using GPU
 Write-Host "=== Checking AI Model Processes ===" -ForegroundColor Cyan
 Write-Host ""
 

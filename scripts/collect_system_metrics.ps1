@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     시스템 메트릭을 수집하여 시계열 데이터로 저장
@@ -6,7 +6,7 @@
 .DESCRIPTION
     - AI Scheduler, Queue Server, Ops Manager 상태
     - AGI 오케스트레이터 지표 (confidence, quality, 2nd pass)
-    - Lumen 게이트웨이 응답 시간
+    - Core 게이트웨이 응답 시간
     - 시스템 리소스 (CPU, Memory)
     - JSON Lines 형식으로 추가 저장
 
@@ -19,8 +19,11 @@
 #>
 
 param(
-    [string]$OutJsonl = "$PSScriptRoot\..\outputs\system_metrics.jsonl"
+    [string]$OutJsonl = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\system_metrics.jsonl"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $OutputEncoding = [System.Text.Encoding]::UTF8
@@ -56,7 +59,7 @@ try {
     # 3. Ops Manager 상태
     $opsManagerRunning = $false
     $opsManagerLoops = 0
-    $opsManagerStatusPath = "$PSScriptRoot\..\outputs\ai_ops_manager_status.json"
+    $opsManagerStatusPath = "$WorkspaceRoot\outputs\ai_ops_manager_status.json"
     if (Test-Path $opsManagerStatusPath) {
         try {
             $opsStatus = Get-Content $opsManagerStatusPath -Raw | ConvertFrom-Json
@@ -72,7 +75,7 @@ try {
     $agiConfidence = $null
     $agiQuality = $null
     $agi2ndPass = $null
-    $agiStatePath = "$PSScriptRoot\..\..\fdo_agi_repo\outputs\orchestrator_state_latest.json"
+    $agiStatePath = "$WorkspaceRoot\..\fdo_agi_repo\outputs\orchestrator_state_latest.json"
     if (Test-Path $agiStatePath) {
         try {
             $agiState = Get-Content $agiStatePath -Raw | ConvertFrom-Json
@@ -83,16 +86,16 @@ try {
         catch {}
     }
 
-    # 5. Lumen Gateway 응답 시간
-    $lumenLocalMs = $null
-    $lumenCloudMs = $null
-    $lumenGatewayMs = $null
+    # 5. Core Gateway 응답 시간
+    $CoreLocalMs = $null
+    $CoreCloudMs = $null
+    $CoreGatewayMs = $null
     
     try {
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $null = Invoke-WebRequest -Uri "http://127.0.0.1:8080/health" -UseBasicParsing -TimeoutSec 2 -ErrorAction SilentlyContinue
         $sw.Stop()
-        $lumenLocalMs = [math]::Round($sw.ElapsedMilliseconds, 1)
+        $CoreLocalMs = [math]::Round($sw.ElapsedMilliseconds, 1)
     }
     catch {}
 
@@ -100,15 +103,15 @@ try {
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
         $null = Invoke-WebRequest -Uri "https://ion-api-64076350717.us-central1.run.app/api/health" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue
         $sw.Stop()
-        $lumenCloudMs = [math]::Round($sw.ElapsedMilliseconds, 1)
+        $CoreCloudMs = [math]::Round($sw.ElapsedMilliseconds, 1)
     }
     catch {}
 
     try {
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
-        $null = Invoke-WebRequest -Uri "https://lumen-gateway-64076350717.us-central1.run.app/health" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue
+        $null = Invoke-WebRequest -Uri "https://Core-gateway-64076350717.us-central1.run.app/health" -UseBasicParsing -TimeoutSec 5 -ErrorAction SilentlyContinue
         $sw.Stop()
-        $lumenGatewayMs = [math]::Round($sw.ElapsedMilliseconds, 1)
+        $CoreGatewayMs = [math]::Round($sw.ElapsedMilliseconds, 1)
     }
     catch {}
 
@@ -140,10 +143,10 @@ try {
             quality        = $agiQuality
             secondPassRate = $agi2ndPass
         }
-        lumen      = @{
-            localMs   = $lumenLocalMs
-            cloudMs   = $lumenCloudMs
-            gatewayMs = $lumenGatewayMs
+        Core      = @{
+            localMs   = $CoreLocalMs
+            cloudMs   = $CoreCloudMs
+            gatewayMs = $CoreGatewayMs
         }
         system     = @{
             cpuPercent    = $cpuPercent

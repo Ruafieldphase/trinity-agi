@@ -1,4 +1,4 @@
-# Start Trinity Resonance Orchestrator as background daemon
+﻿# Start Trinity Resonance Orchestrator as background daemon
 param(
     [int]$IntervalSeconds = 5,
     [int]$DurationSeconds = $null,

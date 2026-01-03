@@ -1,4 +1,4 @@
-# Weekly Performance Report Generator
+﻿# Weekly Performance Report Generator
 # ====================================
 # 
 # Generates comprehensive weekly report from AGI performance data

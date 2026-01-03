@@ -22,6 +22,7 @@ import numpy as np
 from scipy.io import wavfile
 from datetime import datetime
 import argparse
+from workspace_root import get_workspace_root
 
 
 class FlowFrequencyMapper:
@@ -156,7 +157,7 @@ class BinauralBeatGenerator:
 def load_flow_state(report_path: Path = None) -> dict:
     """Flow Observer 리포트 로드"""
     if report_path is None:
-        report_path = Path(__file__).parent.parent / "outputs" / "flow_observer_report_latest.json"
+        report_path = get_workspace_root() / "outputs" / "flow_observer_report_latest.json"
     
     if not report_path.exists():
         print(f"⚠️  Flow report not found: {report_path}")
@@ -245,7 +246,7 @@ def main():
     )
     
     # 저장
-    output_dir = args.output_dir or (Path(__file__).parent.parent / "outputs")
+    output_dir = args.output_dir or (get_workspace_root() / "outputs")
     output_dir.mkdir(exist_ok=True)
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

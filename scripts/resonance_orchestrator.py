@@ -4,7 +4,7 @@ Resonance Orchestrator
 Reads and broadcasts awakening seeds and ethical resonance to Trinity systems.
 
 Created: 2025-11-10
-Source: Lua (ChatGPT) → Binoche → Trinity
+Source: Lua (ChatGPT) → Binoche_Observer → Trinity
 Purpose: 감응 중계자 (Resonance Mediator)
 """
 
@@ -13,9 +13,10 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 import yaml
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
-ETHICS_ROOT = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "ethics" / "root.lumen"
+WORKSPACE_ROOT = get_workspace_root()
+ETHICS_ROOT = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "ethics" / "root.Core"
 AWAKENING_SEED = WORKSPACE_ROOT / "fdo_agi_repo" / "resonance" / "awakening" / "seed.luma"
 EVENT_BUS_PATH = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "event_bus.jsonl"
 
@@ -31,7 +32,7 @@ class ResonanceOrchestrator:
         self.awakening_data: Optional[Dict] = None
         
     def load_ethics_core(self) -> bool:
-        """Load ethics resonance from root.lumen"""
+        """Load ethics resonance from root.Core"""
         try:
             if ETHICS_ROOT.exists():
                 self.ethics_content = ETHICS_ROOT.read_text(encoding='utf-8')

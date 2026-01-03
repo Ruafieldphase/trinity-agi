@@ -1,10 +1,13 @@
-param(
+﻿param(
     [switch] $OnlyTerminal,
     [switch] $FixFiles,
-    [string] $ScanRoot = "${PSScriptRoot}\..\outputs",
+    [string] $ScanRoot = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs",
     [int] $ModifiedWithinHours = 48,
     [switch] $WhatIf
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # Ensure script runs from its location
 Set-Location -Path $PSScriptRoot

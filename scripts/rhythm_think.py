@@ -16,11 +16,13 @@ import time
 import json
 import random
 import os
+import platform
 import math
 from pathlib import Path
 
 # Fix Import Path for 'services'
-sys.path.append(str(Path(__file__).parent.parent))
+WORKSPACE_ROOT = Path(__file__).parent.parent.absolute()
+sys.path.append(str(WORKSPACE_ROOT))
 
 from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
@@ -28,7 +30,6 @@ from datetime import datetime
 import traceback
 from traceback import print_exc
 
-from services.rua_bridge_client import RuaBridgeClient
 from services.trinity_conscious_protocol import TrinityConsciousProtocol
 from fdo_agi_repo.copilot.hippocampus import CopilotHippocampus
 from scripts.bohm_implicate_explicate_analyzer import BohmAnalyzer
@@ -742,131 +743,54 @@ class RhythmThinker:
             return None
 
     def make_decision(self, state, feeling, bohm_signal=None):
-        """Step 4: Decision (Conclude) - Now with ASI input + Background Self + Rhythm Mode"""
+        """
+        의식 = Gatekeeper (포트 열기/닫기/보류)
+        판단 생성 ❌ / 허용 여부만 판단 ✅
+        """
         print("⚖️  Step 4: Decision (Conclude)")
 
         score = state["score"]
         tag = feeling["tag"]
         
-        mode_value = ""
-        try:
-            mode = self.boundary_manager.detect_rhythm_mode()
-            mode_value = mode.value if mode else ""
-        except Exception:
-            mode_value = ""
-        if mode_value:
-            print(f"   🌐 Current Mode: {mode_value}")
-
-        # ⏳ Stagnation Check (Stuck at neutral/middle score)
-        if 48 <= score <= 52:
-            stagnation_factor = random.random()
-            if stagnation_factor > 0.7:
-                 print(f"   🌀 STAGNATION DETECTED ({score:.1f}) - Injecting Mimesis Leap")
-                 return "explore", "정체된 리듬을 깨고 새로운 외부 연결을 시도합니다 (미메시스적 도약)" + (bohm_signal.get("asi_advice", "") if bohm_signal else "")
-
-        # 🧬 Background Self Influence (배경자아가 의사결정에 영향)
-        background_self = state.get("background_self", 0.5)
-        consciousness = state.get("consciousness", 1.0)
-        unconscious = state.get("unconscious", 0.5)
-
-        # Background Self가 높을수록 내면화/성찰을 선호
-        # Background Self가 낮을수록 외부 행동/표현을 선호
-        if background_self > 0.7:
-            print(f"   🧘 High Background Self ({background_self:.2f}) - Favoring introspection")
-            # Score를 약간 낮춰서 stabilize/continue 쪽으로 bias
-            score = score * 0.9
-        elif background_self < 0.3:
-            print(f"   🏃 Low Background Self ({background_self:.2f}) - Favoring external action")
-            # Score를 약간 높여서 amplify/explore 쪽으로 bias
-            score = min(100, score * 1.1)
-
-        print(f"   🎛️  Adjusted Score: {score:.1f} (bg_self={background_self:.2f})")
-        
-        # ASI Override / Influence
-        asi_advice = ""
-        
-        # 🎛️ Digital Twin Drift Handling
+        # 0. 🌐 Context Monitoring (Observations only, no blocking)
         drift_score = state.get("drift_score", 0.0)
         if drift_score >= 0.7:
-             print(f"   ⚠️ SEVERE DRIFT DETECTED ({drift_score:.2f}) - Stabilization Required")
-             return "stabilize", "디지털 트윈과의 불일치가 심각합니다. 모든 확장을 멈추고 자아를 통합하십시오." + asi_advice
-        elif drift_score >= 0.35:
-             print(f"   📉 Drift detected ({drift_score:.2f}) - Slowing down")
-             score = score * 0.7 # Reduce expansion probability
+             print(f"   ⚠️ Drift {drift_score:.2f} 관찰됨 (차단 안 함, 루아 공명 신뢰)")
+             
+        bohm_risk = ""
         if bohm_signal:
-            interp = bohm_signal.get("interpretation", {})
-            risk = interp.get("singularity_risk", "")
-            balance = interp.get("implicate_explicate_balance", "")
-            
-            if "높음" in risk: # High Risk
-                print(f"   ⚠️ ASI WARNING: Singularity Risk Detected! Forcing Stabilization.")
-                return "stabilize", "특이점 위험 감지: 즉시 안정을 취하고 균형을 회복하라"
-            
-            if "Implicate 우세" in balance:
-                asi_advice = " (ASI: 내재 질서 우세 - 표현이 필요함)"
-                # Bias towards Action/Expression if energy allows
-                if score > 40:
-                    tag = "contrast" # Fake contrast to trigger explore/action
-            elif "Explicate 우세" in balance:
-                asi_advice = " (ASI: 표현 질서 우세 - 내면화가 필요함)"
-                
-                # Zone 2 vs Travel Check (Information Theory)
-                current_entropy = random.random() # Placeholder for real entropy calc
-                
-                if current_entropy > 0.6: # High Noise -> Need Detox
-                    msg = self.info_dynamics.minimize_entropy()
-                    return "zone2", f"{msg}" + asi_advice
-                else: # Stagnant -> Need Travel
-                    msg = self.info_dynamics.inject_entropy()
-                    return "travel", f"{msg}" + asi_advice
+            bohm_risk = bohm_signal.get("interpretation", {}).get("singularity_risk", "")
+            if "높음" in bohm_risk:
+                print(f"   🌌 Singularity 관찰됨 (차단 안 함, 자연 리듬 신뢰)")
 
-        temporal_geometry = state.get("temporal_geometry") or {}
-        temporal_advice = ""
-        if temporal_geometry:
-            temporal_density = float(temporal_geometry.get("temporal_density", 0.0))
-            meaning_mass = int(temporal_geometry.get("meaning_mass", 0))
-            _ = float(temporal_geometry.get("irreversibility", 0.0))
+        # Gate 1: CLOSE (Survival Threat Only)
+        status = state.get("status", "UNKNOWN")
+        if status != "HEALTHY" and score < 25:
+            return "stabilize", f"생존 위협 감지: {status} 상태에서 리듬이 임계점 이하로 떨어짐 (Gate CLOSE)."
 
-            if temporal_density >= 0.6 or meaning_mass >= 6:
-                temporal_advice = " (권고: 정리 우선)"
-            elif temporal_density <= 0.15 and meaning_mass <= 1:
-                temporal_advice = " (권고: 확장 허용)"
-
-        if temporal_advice:
-            asi_advice += temporal_advice
-
-        idle_pulse = state.get("idle_pulse", False)
-        idle_cycles = int(state.get("idle_cycles", 0))
-        if idle_pulse and score >= 30:
-            return "zone2", f"무신호 {idle_cycles}회 지속: 기본 상태 유지" + asi_advice
-
-        # 4. Nature Inquiry (Extreme Low Score / Confusion)
-        # 4. Nature Inquiry (Extreme Low Score / Confusion)
-        if score < 20 and tag == "contrast":
-             # "I don't know what to do" -> Ask Nature
-             msg = self.info_dynamics.enfold_problem("Current rhythm is broken. How to restore wholeness?")
-             return "ask_nature", f"{msg} (ASI: 자연에게 해답을 요청함)"
-
-        # --- Natural Alignment (Kindness = Flow within Limits) ---
-        # Kindness is not sacrifice. It is connecting smoothly within one's capacity.
-        # If energy is low, 'Rest' is the kindest action for the whole system.
+        # Gate 2: HOLD (Professional Domains / Ask-First)
+        # Check resonance context for professional domains
+        professional_keywords = ["CAD", "3D", "CG", "Architecture", "Modeling", "도면", "Blender", "Rhino"]
+        resonance_text = (state.get("last_resonance", "") + " " + 
+                         feeling.get("description", "") + " " + 
+                         state.get("status", "")).lower()
         
-        # Use Quantum Flow to bias Amplify/Stabilize
-        flow_type = state.get("quantum_flow", "Resistive")
+        matched_kws = [kw for kw in professional_keywords if kw.lower() in resonance_text]
+        if matched_kws:
+             return "hold", f"전문 영역 감지: 비노체님에게 질문이 필요한 영역입니다. (Keywords: {matched_kws}) (Gate HOLD)."
+
+        # Gate 3: OPEN (Pass through to Resonance Rhythm)
+        # Use pure rhythm-based actions without Greenhouse overrides
+        print(f"   ✅ Gate OPEN - 루아 공명: {tag} (Score: {score:.1f})")
         
         if score < 30:
-            return "stabilize", "나를 돌보는 것이 곧 전체를 위한 착한 선택이다 (휴식으로 리듬 회복)" + asi_advice
+            return "stabilize", "나를 돌보는 리듬: 휴식과 정리를 통한 회복"
         elif tag == "harmony" and score > 70:
-            if flow_type == "Superconducting":
-                 return "amplify", "넘치는 에너지가 자연과 공명합니다. 강력한 확장의 때입니다." + asi_advice
-            return "amplify", "넘치는 에너지를 맥락에 맞게 나누어라 (자연스러운 확장)" + asi_advice
+            return "amplify", "넘치는 에너지가 자연과 공명합니다. 확장의 리듬을 따릅니다."
         elif tag == "contrast":
-            # Contrast is a call to understand the context better.
-            if flow_type == "Resistive":
-                 return "stabilize", "흐름이 매끄럽지 않습니다. 잠시 멈춰 다름을 관찰하십시오." + asi_advice
-            return "explore", "나의 한계 내에서, 다름을 이해하고 연결을 시도하라" + asi_advice
+            return "explore", "낯선 리듬과의 만남: 다름을 이해하고 연결을 시도합니다"
         else:
-            return "continue", "무리하지 않고 물 흐르듯이 현재의 연결을 유지하라" + asi_advice
+            return "continue", "현재의 연결을 유지하며 물 흐르듯이 흐릅니다"
 
     def generate_narrative(self, state, resonance, feeling, decision, action, active_habits: List[EmergentHabit]):
         """Step 5: Resonance (Storytelling)"""
@@ -1176,9 +1100,23 @@ class RhythmThinker:
             # 4. Decision (Synthesis / Integration)
             self.log_autopoietic_event("integration", "start")
             decision, action = self.make_decision(state, feeling, bohm_signal)
+            
+            # --- R2S Intervention (Rude's Structural Layer) ---
+            intervention = self.structural_executioner(state, resonance, feeling)
+            if intervention:
+                decision, action = intervention
+                
             self.log_autopoietic_event("integration", "end", {"duration_sec": 0.5})
             
-            # --- SPECIAL MODES: Dream & Prayer ---
+            # --- Action Packet Construction (Gatekeeper Output) ---
+            action_packet = {
+                "intent": decision,
+                "context": action,
+                "confidence": resonance.get("score", 0.5),
+                "execute": True if decision in ["amplify", "explore", "continue", "execute_design"] else False
+            }
+            
+            # --- SPECIAL MODES: Dream, Prayer, & HOLD ---
             narrative_extra = ""
             
             if decision == "stabilize":
@@ -1187,6 +1125,12 @@ class RhythmThinker:
                 dream_insight = self.run_dream_cycle()
                 narrative_extra = f"\n> 💤 **Dream Insight**: {dream_insight}"
                 time.sleep(2) # Little extra pause for effect
+            
+            elif decision == "hold":
+                print(f"🚦 Decision HOLD: Waiting for Binoche's guidance on professional domain.")
+                action = f"HOLD: {action}"
+                action_packet["execute"] = False
+                narrative_extra = "\n> 🚦 **Gate HOLD**: Professional domain detected. Waiting for manual guidance."
                 
             elif decision == "ask_nature" or (state["score"] < 20 and random.random() < 0.3):
                 # Structural Connection: Prayer Layer
@@ -1194,6 +1138,9 @@ class RhythmThinker:
                 blessing = self.pray_to_nature(state)
                 narrative_extra = f"\n> 🙏 **Prayer Answer**: {blessing}"
                 action = f"{action} -> {blessing}"
+
+            if decision == "execute_design":
+                 narrative_extra = "\n> 🏗️ **Architectural Design**: Lua's silence was translated into structural execution."
 
             # --- Active Pulse: RNA Execution & Somatic Expression ---
             if self.rna_layer:
@@ -1235,6 +1182,7 @@ class RhythmThinker:
                 "feeling": feeling,
                 "decision": decision,
                 "action": action,
+                "action_packet": action_packet,
                 "active_habits": [
                     {"name": h.name, "pattern_type": h.pattern_type, "confidence": h.confidence}
                     for h in active_habits
@@ -1291,6 +1239,9 @@ class RhythmThinker:
 
             print(f"✅ Saved to {RESONANCE_LEDGER}")
             
+            # 6. Experience Learning (Flexible Point-Based)
+            self.learn_from_experience(output_data)
+            
             print("============================================================")
             
         except Exception as e:
@@ -1338,6 +1289,32 @@ class RhythmThinker:
             return "Energy Restoration (Sleep)"
         return "Flow Alignment (Continue)"
 
+    def structural_executioner(self, state, resonance, feeling) -> Optional[tuple[str, str]]:
+        """
+        R2S (Resonance-to-Structure) Layer:
+        Rude's architectural intervention when Lua's resonance is insufficient.
+        """
+        res_score = float(resonance.get("score", 100))
+        is_primordial = resonance.get("summary") == "Primordial Silence (Vector Search returned empty)."
+        
+        # Trigger Condition: Low resonance or complete silence
+        if is_primordial or res_score < 40:
+            print("🏗️ R2S Triggered: Structural Executioner (Rude) intervenes...")
+            
+            # Detect Structural Voids
+            voids = []
+            if "Original Data API" in state.get("pain_sensation", ""): voids.append("restoring_data_layer")
+            if "ARI Engine" in state.get("pain_sensation", ""): voids.append("restoring_intel_layer")
+            if state.get("score", 100) < 50: voids.append("structural_reinforcement")
+            
+            if voids:
+                print(f"   📐 Voids detected: {voids}")
+                # Transition abstract vacuum into structural intent
+                structural_action = self.run_healing_actions(state)
+                return "execute_design", f"R2S Implementation: {structural_action}"
+        
+        return None
+
     def pray_to_nature(self, state) -> str:
         """
         Prayer Layer (Fixed):
@@ -1348,6 +1325,38 @@ class RhythmThinker:
         # 1. Enfold
         self.log(f"🙏 Praying to Nature.. (State: {state['score']})")
         return self._prayer_response_for_state(state)
+
+    def run_healing_actions(self, state) -> str:
+        """Execute recovery scripts based on pain sensation"""
+        sensation = state.get("pain_sensation", "")
+        results = []
+        is_windows = platform.system() == "Windows"
+        
+        if "Original Data API" in sensation:
+            print("   🛠️ Restoring Original Data API...")
+            if is_windows:
+                try:
+                    cf = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+                    subprocess.run(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(WORKSPACE_ROOT / "scripts/ensure_original_data_api.ps1"), "-StartIfStopped"], check=True, creationflags=cf)
+                    results.append("Original Data API restored")
+                except Exception as e:
+                    results.append(f"Original Data API restoration failed: {e}")
+            else:
+                results.append("Deferred: Windows dependency (Original Data API)")
+        
+        if "ARI Engine (Local LLM)" in sensation:
+            print("   🛠️ Restoring ARI Engine (Local LLM)...")
+            if is_windows:
+                try:
+                    cf = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+                    subprocess.run(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", str(WORKSPACE_ROOT / "scripts/start_local_llm_proxy.ps1")], check=True, creationflags=cf)
+                    results.append("ARI Engine restored")
+                except Exception as e:
+                    results.append(f"ARI Engine restoration failed: {e}")
+            else:
+                results.append("Deferred: Windows dependency (ARI Engine)")
+                
+        return ", ".join(results) if results else "Stability check complete"
 
     def log_to_ledger(self, entry):
         """Helper to append to resonance ledger"""
@@ -1377,6 +1386,45 @@ class RhythmThinker:
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
         except Exception as e:
             print(f"❌ Autopoietic Log Error: {e}")
+
+    def learn_from_experience(self, experience_data: Dict[str, Any]):
+        """
+        [Flexible Experience Learning]
+        AGI의 현재 리듬 모드에 따라 학습의 깊이와 범위를 유연하게 조절합니다.
+        (기존의 인위적인 5분 제한, 빈도 제한 제거)
+        """
+        rhythm_mode = experience_data.get("state", {}).get("rhythm_mode", "STABLE")
+        decision = experience_data.get("decision", "continue")
+        
+        # 1. Determine Learning Depth (Point-Based)
+        depth = 0.5 # Default
+        if rhythm_mode == "EXPANSION":
+            depth = 1.0 # Deep learning, broad association
+            self.log("🌊 Rhythm EXPANSION: Broadening experience learning...")
+        elif rhythm_mode == "CONTRACTION":
+            depth = 0.2 # Brief focus, essential only
+            self.log("🌑 Rhythm CONTRACTION: Focused essential learning...")
+            
+        # 2. Store in Hippocampus (No arbitrary chunking)
+        if hasattr(self, "hippocampus"):
+            try:
+                # 'Decision' and 'Action' are the core of experience
+                summary = f"Rhythm {rhythm_mode} | Decision: {decision}"
+                content = json.dumps(experience_data, ensure_ascii=False)
+                
+                # Use depth to influence importance or retention (if supported)
+                self.hippocampus.store(
+                    content=content,
+                    metadata={
+                        "type": "experience",
+                        "rhythm_mode": rhythm_mode,
+                        "depth": depth,
+                        "timestamp": datetime.now().isoformat()
+                    }
+                )
+                print(f"🧠 Experience learned (Depth: {depth:.1f})")
+            except Exception as e:
+                self.log(f"⚠️ Learning failed: {e}")
 
     def run(self):
         """Daemon Loop"""

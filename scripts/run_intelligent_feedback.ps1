@@ -1,9 +1,12 @@
-# 지능형 피드백 적용 시스템 실행 스크립트
+﻿# 지능형 피드백 적용 시스템 실행 스크립트
 # 페르소나 피드백을 분석하여 구현 가능한 개선 계획을 생성합니다
 
 param(
     [switch]$OpenReport
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -11,8 +14,8 @@ Write-Host "`n🧠 지능형 피드백 적용 시스템`n" -ForegroundColor Cyan
 Write-Host "════════════════════════════════════════════════════════════`n" -ForegroundColor Gray
 
 # Python 스크립트 실행
-$pythonExe = "$PSScriptRoot\..\fdo_agi_repo\.venv\Scripts\python.exe"
-$scriptPath = "$PSScriptRoot\..\fdo_agi_repo\scripts\intelligent_feedback_applicator.py"
+$pythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
+$scriptPath = "$WorkspaceRoot\fdo_agi_repo\scripts\intelligent_feedback_applicator.py"
 
 if (-not (Test-Path $pythonExe)) {
     $pythonExe = "python"
@@ -30,7 +33,7 @@ Write-Host "✅ 구현 계획 생성 완료!`n" -ForegroundColor Green
 
 # 리포트 열기
 if ($OpenReport) {
-    $reportFile = "$PSScriptRoot\..\outputs\feedback_implementation_plan.md"
+    $reportFile = "$WorkspaceRoot\outputs\feedback_implementation_plan.md"
     
     if (Test-Path $reportFile) {
         Write-Host "📖 리포트 열기...`n" -ForegroundColor Cyan

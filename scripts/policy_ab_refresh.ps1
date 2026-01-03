@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$Count = 6,
     [double]$Delay = 1.0,
     [int]$Lines = 50000,

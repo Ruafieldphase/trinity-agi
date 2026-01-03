@@ -46,7 +46,7 @@
 
 | Process | Work Interval | Rest Interval |
 |---------|--------------|---------------|
-| Lumen Probe | 10분 | 30분 |
+| Core Probe | 10분 | 30분 |
 | Monitoring Report | 1시간 | 6시간 |
 | Cache Validation | 12시간 | 24시간 |
 | Autopoietic Report | 매일 03:25 | 변경 없음 |
@@ -74,7 +74,7 @@
 - Monitoring Collector (5min)
 
 # Increase Frequency
-- Lumen Probe: 10min
+- Core Probe: 10min
 - Cache Validation: 12h
 ```
 
@@ -87,7 +87,7 @@
 - Music Daemon (선택적)
 
 # Decrease Frequency
-- Lumen Probe: 30min
+- Core Probe: 30min
 - Monitoring Report: 6h
 - Cache Validation: 24h
 ```

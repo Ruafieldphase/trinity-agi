@@ -1,4 +1,4 @@
-# Real-time Event Emitter for PowerShell Scripts
+﻿# Real-time Event Emitter for PowerShell Scripts
 # Python event_emitter.py의 PowerShell 래퍼
 
 param(

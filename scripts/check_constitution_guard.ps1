@@ -1,13 +1,16 @@
-param(
-    [string]$PolicyFile = "${PSScriptRoot}\..\policy\lumen_constitution.json",
+﻿param(
+    [string]$PolicyFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\policy\core_constitution.json",
     [switch]$Quiet
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 function Say($msg, $color = 'Gray') { if (-not $Quiet) { Write-Host $msg -ForegroundColor $color } }
 
 if (-not (Test-Path -LiteralPath $PolicyFile)) {
-    Write-Host "[LumenGuard] 정책 파일을 찾을 수 없습니다: $PolicyFile" -ForegroundColor Red
+    Write-Host "[CoreGuard] 정책 파일을 찾을 수 없습니다: $PolicyFile" -ForegroundColor Red
     exit 2
 }
 
@@ -15,11 +18,11 @@ try {
     $json = Get-Content -Raw -LiteralPath $PolicyFile | ConvertFrom-Json -ErrorAction Stop
 }
 catch {
-    Write-Host "[LumenGuard] 정책 JSON 파싱 실패: $($_.Exception.Message)" -ForegroundColor Red
+    Write-Host "[CoreGuard] 정책 JSON 파싱 실패: $($_.Exception.Message)" -ForegroundColor Red
     exit 3
 }
 
-Say "`n[LumenGuard] 루멘 최소 헌법 점검 (dry-run)" 'Cyan'
+Say "`n[CoreGuard] Core 최소 헌법 점검 (dry-run)" 'Cyan'
 Say " version: $($json.version)" 'DarkGray'
 
 $prohibitions = $json.prohibitions

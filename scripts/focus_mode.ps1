@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 param(
     [switch]$Enable,
     [switch]$Disable,
@@ -194,4 +194,3 @@ elseif ($Status) {
     Show-Status
     exit 0
 }
-

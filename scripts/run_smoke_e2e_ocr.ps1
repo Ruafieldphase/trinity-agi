@@ -1,6 +1,9 @@
-param(
-    [string]$WorkspaceFolder = (Resolve-Path "$PSScriptRoot\..\").Path
+﻿param(
+    [string]$WorkspaceFolder = (Resolve-Path "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\").Path
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 

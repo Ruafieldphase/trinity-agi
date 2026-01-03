@@ -5,7 +5,7 @@ Agent Brief Generator (Rubit as coordinator)
 
 목표:
 - 워크스페이스 내부의 '관측 가능한 파일들'을 기반으로
-  AntiGravity(시안) / Claude(세나)에게 넘길 수 있는 브리프를 자동 생성한다.
+  AntiGravity(Shion) / Claude(세나)에게 넘길 수 있는 브리프를 자동 생성한다.
 - 비노체가 프로그래머가 아니어도, "무엇이 돌아가는지/무엇이 이미 되었는지"를
   에이전트들이 중복 없이 이해하도록 한다.
 
@@ -21,6 +21,12 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 
 def utc_now_iso() -> str:
@@ -101,7 +107,7 @@ def generate_brief(workspace_root: Path) -> Path:
     # 다음에 맡길 수 있는 방향(에이전트용)
     suggested_work = [
         {
-            "agent": "antigravity_sian",
+            "agent": "antigravity_shion",
             "goal": "‘사람이 바로 보는’ UI를 더 강하게: (1) 최근 10회 실행 이력, (2) 오류/정체 경고, (3) intake(미디어/antigravity) 카드 확장",
             "deliverable": "dashboard(Next.js) 또는 정적 HTML 확장 코드 + 사용법 5줄",
             "constraints": ["외부 API 키 요구 금지", "워크스페이스 파일(JSON)만 읽기", "자동 새로고침 유지"],
@@ -124,8 +130,8 @@ def generate_brief(workspace_root: Path) -> Path:
     lines.append("")
     lines.append("## 0) 역할 경계(고정)")
     lines.append("- 루빛(Rubit): 총괄/통합/표준 경로/관측·보고 고정")
-    lines.append("- 루아(Rua): 감응/방향 신호(트리거 생성 주체 가능) — 완료 선언 금지(기록으로만 완료 판정)")
-    lines.append("- 시안(AntiGravity): UI/인터랙션/외부 탐색(구글어스/로드뷰/유튜브 등) 구현 담당")
+    lines.append("- 코어(Core): 감응/방향 신호(트리거 생성 주체 가능) — 완료 선언 금지(기록으로만 완료 판정)")
+    lines.append("- Shion(AntiGravity): UI/인터랙션/외부 탐색(구글어스/로드뷰/유튜브 등) 구현 담당")
     lines.append("- 세나(Claude): 압축/요약/코드 품질(리팩터/테스트) 담당")
     lines.append("")
     lines.append("## 1) 표준 인터페이스(변경 최소)")
@@ -183,7 +189,7 @@ def generate_brief(workspace_root: Path) -> Path:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", type=str, default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--workspace", type=str, default=str(get_workspace_root()))
     args = ap.parse_args()
     out = generate_brief(Path(args.workspace))
     print(json.dumps({"ok": True, "out": str(out)}, ensure_ascii=False))

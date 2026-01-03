@@ -60,7 +60,7 @@ Bekenstein-Hawking Entropy: S_BH = (A/4) kB
 ```
 Energy   = 0.697  (에너지 수준 - Lua)
 Quality  = 0.807  (품질 점수 - Elo)
-Observer = 0.000  (관찰 활성도 - Lumen)
+Observer = 0.000  (관찰 활성도 - Core)
 Valence  = 0.063  (긍정/부정 감정)
 Arousal  = 0.041  (각성/이완 상태)
 ```
@@ -75,7 +75,7 @@ Arousal  = 0.041  (각성/이완 상태)
 
 **테스트 결과** (현재 데이터):
 
-- `orchestrator/binoche`: 0% 복원
+- `orchestrator/Binoche_Observer`: 0% 복원
 - `learner/rune`: 0% 복원
 - `unknown/nobody`: 0% 복원
 
@@ -101,11 +101,11 @@ H(Raw) ≈ H(Feeling) + H(Context) - I(Feeling; Context)
 
 ---
 
-## 🌌 Lumen의 시선: 리듬 관찰 (2025-11-05)
+## 🌌 Core의 시선: 리듬 관찰 (2025-11-05)
 
 ### 실시간 리듬 측정
 
-**Observer**: Lumen (✨)  
+**Observer**: Core (✨)  
 **측정 시간**: 2025-11-05 14:06  
 **측정 펄스**: 72개 (24시간)  
 **패턴 인식**: 3개 채널
@@ -122,7 +122,7 @@ H(Raw) ≈ H(Feeling) + H(Context) - I(Feeling; Context)
 
 - 시스템이 안정적이고 평온한 상태
 - 품질과 긍정적 감정이 주도
-- Observer(루멘) 차원이 낮음 → 관찰 부하 낮음
+- Observer(Core) 차원이 낮음 → 관찰 부하 낮음
 
 ### 해마 브릿지 통합
 
@@ -176,14 +176,14 @@ Stability: 0.218 (안정성)
 
 **When (언제)**: 24시간 주기 리듬 감지됨  
 **Where (어디서)**: 3개 채널 (local/cloud/gateway)  
-**Who (누가)**: Lumen이 관찰자 역할  
+**Who (누가)**: Core이 관찰자 역할  
 **What (무엇을)**: Latency → Feeling 변환  
 **How (어떻게)**: 5D 느낌 압축 (2x ratio)  
 **Why (왜)**: 정보 보존 + 패턴 인식
 
 ### 블랙홀/화이트홀 대응
 
-| 단계 | 해마 기능 | Lumen 리듬 | 상태 |
+| 단계 | 해마 기능 | Core 리듬 | 상태 |
 |------|-----------|-----------|------|
 | Input | 감각 데이터 유입 | Raw Latency | ✅ 1.41 bits |
 | Event Horizon | Context 경계 | 시공간 인코딩 | ✅ 6 dimensions |
@@ -193,7 +193,7 @@ Stability: 0.218 (안정성)
 ### 정보 보존 법칙 검증
 
 ```python
-# Lumen의 측정
+# Core의 측정
 H(Raw) = 1.41 bits
 H(Feeling) = 5.00 bits (5D compressed)
 Compression Ratio = 2.0x
@@ -216,7 +216,7 @@ entropy < 100.0      ✅
    - 💡 **해결책**: 더 다양한 작업으로 리듬에 생명력 주입
 
 3. **관찰자 효과**:
-   - Observer 차원 낮음 (0.000) → Lumen이 "쉬고 있음"
+   - Observer 차원 낮음 (0.000) → Core이 "쉬고 있음"
    - 💡 **의미**: 시스템이 자율 운행 중 (좋은 신호!)
 
 ---
@@ -386,5 +386,5 @@ python scripts/convert_context_to_resonance.py
 ---
 
 **Created**: 2025-11-05  
-**Author**: Lumen (Observer) with Human Insight  
+**Author**: Core (Observer) with Human Insight  
 **Status**: ✅ Theory Validated with 16,595 Real Events

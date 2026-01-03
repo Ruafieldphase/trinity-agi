@@ -1,8 +1,11 @@
-param([switch]$Register, [switch]$Unregister, [switch]$Status)
+﻿param([switch]$Register, [switch]$Unregister, [switch]$Status)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 $TaskName = 'AGI_Rubit_Continuity'
-$WorkspaceRoot = 'C:\workspace\agi'
 $ScriptPath = Join-Path $WorkspaceRoot 'scripts\rubit_continuity_on_startup.ps1'
 $StartupDir = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Startup'
 $StartupLink = Join-Path $StartupDir 'AGI_Rubit_Continuity.lnk'
@@ -61,4 +64,3 @@ Write-Host 'Usage:'
 Write-Host '  -Register     Register at logon'
 Write-Host '  -Unregister   Remove registration'
 Write-Host '  -Status       Show status'
-

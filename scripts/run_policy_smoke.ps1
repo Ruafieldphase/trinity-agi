@@ -1,4 +1,4 @@
-Param(
+﻿Param(
     [ValidateSet("disabled","observe","enforce")]
     [string]$Mode = "observe",
     [string]$Policy,

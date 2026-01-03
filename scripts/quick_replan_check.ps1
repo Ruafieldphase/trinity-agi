@@ -1,10 +1,14 @@
-# Quick Replan Rate Check Script
+﻿# Quick Replan Rate Check Script
 # 최근 N개 task의 실시간 ReplanRate 측정
 
 param(
     [int]$LastTasks = 10,
-    [string]$WorkspaceRoot = "C:\workspace\agi"
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 $ledger = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\resonance_ledger.jsonl"

@@ -48,7 +48,7 @@ Ledger 추가
   "timestamp": "2025-11-05T14:30:00Z",
   "event_type": "video_frame",
   "where": "home/living_room",
-  "who": "binoche",
+  "who": "Binoche_Observer",
   "emotion": {
     "fear": 0.65,
     "angry": 0.1,
@@ -142,7 +142,7 @@ def process_video(video_path, output_ledger):
             'timestamp': get_frame_timestamp(video_path, frame_num),
             'event_type': 'video_frame',
             'where': detect_location(frame),  # 장면 인식
-            'who': 'binoche',
+            'who': 'Binoche_Observer',
             'emotion': emotion,
             'gaze': gaze
         }

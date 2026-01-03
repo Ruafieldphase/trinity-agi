@@ -23,6 +23,7 @@ from scipy.io import wavfile
 from datetime import datetime, timedelta
 import argparse
 from typing import List, Tuple
+from workspace_root import get_workspace_root
 
 
 class RhythmAudioMapper:
@@ -186,7 +187,7 @@ def main():
     audio = generator.generate_signature(states, duration_per_state=1.0)
     
     # 저장
-    output_dir = args.output_dir or (Path(__file__).parent.parent / "outputs")
+    output_dir = args.output_dir or (get_workspace_root() / "outputs")
     output_dir.mkdir(exist_ok=True)
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

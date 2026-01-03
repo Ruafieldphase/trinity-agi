@@ -9,8 +9,9 @@ import time
 from pathlib import Path
 from datetime import datetime, timedelta
 import sys
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 RHYTHM_DIR = WORKSPACE / "outputs"
 GOAL_TRACKER = WORKSPACE / "fdo_agi_repo" / "memory" / "goal_tracker.json"
 MUSIC_EVENT_LOG = WORKSPACE / "outputs" / "music_goal_events.jsonl"

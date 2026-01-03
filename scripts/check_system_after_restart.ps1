@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     시스템 점검 - 재부팅/재실행 후 모든 변경사항이 잘 적용되었는지 확인
@@ -13,10 +13,13 @@
 #>
 
 param(
-    [string]$WorkspaceRoot = "$PSScriptRoot\..",
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$PSScriptRoot\..",
     [switch]$AutoFix,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 

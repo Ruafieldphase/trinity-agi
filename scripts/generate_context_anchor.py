@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from workspace_root import get_workspace_root
 
 
 @dataclass
@@ -26,9 +27,8 @@ class Paths:
 
 def _discover_paths() -> Paths:
     """Infer workspace / agi / outputs paths from this script location."""
-    script_path = Path(__file__).resolve()
-    agi_root = script_path.parent.parent
-    workspace_root = agi_root.parent
+    agi_root = get_workspace_root()
+    workspace_root = agi_root
     outputs = agi_root / "outputs"
     docs = agi_root / "docs"
     outputs.mkdir(parents=True, exist_ok=True)
@@ -126,7 +126,7 @@ def generate_anchor() -> Path:
     agent_handoff_path = paths.outputs / "agent_handoff.json"
 
     lines: List[str] = []
-    lines.append("# AGI Context Anchor (루빛 · Trinity · Koa)")
+    lines.append("# AGI Context Anchor (루빛 · Trinity · Core)")
     lines.append("")
     lines.append(f"**생성 시각**: {now}")
     lines.append("")
@@ -170,7 +170,7 @@ def generate_anchor() -> Path:
     lines.append("")
     # Paths are shown workspace-relative for humans/agents.
     lines.append("- `agi/docs/AGI_CONTEXT_MAP.md`  (맥락 시스템 정의)")
-    lines.append("- `PROJECT_MAP_LUBIT.md`         (C:\\workspace 전체 지형도)")
+    lines.append("- `PROJECT_MAP_LUBIT.md`         (워크스페이스 전체 지형도)")
     lines.append("- `agi/docs/AGENT_HANDOFF.md`    (최근 변경 내역과 다음 우선순위)")
     lines.append("- `agi/docs/AGENT_HANDOFF_SUMMARY.md` (요약 핸드오프)")
     lines.append("")

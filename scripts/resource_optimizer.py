@@ -14,8 +14,9 @@ import json
 import argparse
 from pathlib import Path
 from typing import Any, Dict, List
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 CONFIG_PATH = WORKSPACE_ROOT / "configs" / "resource_budget.json"
 METRICS_PATH = WORKSPACE_ROOT / "outputs" / "performance_metrics_latest.json"
 SUMMARY_PATH = WORKSPACE_ROOT / "outputs" / "resource_optimizer_summary.md"

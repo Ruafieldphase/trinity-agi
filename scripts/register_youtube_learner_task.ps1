@@ -1,3 +1,6 @@
+﻿
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 ﻿param(
     [switch]$Register,
     [switch]$Unregister,
@@ -5,7 +8,7 @@
     [string]$Time = "04:10",
     [switch]$OnStartup,
     [switch]$OnLogon,
-    [string]$WorkspaceRoot = "C:\workspace\agi",
+    [string]$WorkspaceRoot = "$WorkspaceRoot",
     [string]$Url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     [int]$MaxFrames = 1,
     [double]$FrameInterval = 30.0,

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     관리자 권한으로 스크립트 실행
 .DESCRIPTION

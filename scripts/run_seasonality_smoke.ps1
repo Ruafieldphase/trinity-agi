@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 try {
     $env:PYTHONIOENCODING = 'utf-8'
     $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path

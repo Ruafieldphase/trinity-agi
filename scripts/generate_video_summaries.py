@@ -8,9 +8,11 @@ import subprocess
 import json
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
-INPUT_DIR = Path("/home/bino/agi/input/obs_recode")
-OUTPUT_DIR = Path("/home/bino/agi/outputs/video_summaries")
+WORKSPACE_ROOT = get_workspace_root()
+INPUT_DIR = WORKSPACE_ROOT / "input" / "obs_recode"
+OUTPUT_DIR = WORKSPACE_ROOT / "outputs" / "video_summaries"
 
 def get_duration(file_path):
     """Get video duration in seconds using ffprobe."""

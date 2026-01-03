@@ -1,4 +1,4 @@
-# execute_goal_via_task.ps1
+﻿# execute_goal_via_task.ps1
 # 자율 목표 → VS Code Task 직접 실행
 
 param(

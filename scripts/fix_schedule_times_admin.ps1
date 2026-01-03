@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 <#
 .SYNOPSIS
     Fix schedule times for remaining 03:xx tasks that need admin privileges.
@@ -7,6 +7,9 @@
 #>
 
 param()
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Continue'
 
@@ -40,7 +43,7 @@ try {
         Write-Host "  ✓ Unregistered" -ForegroundColor Green
     }
     
-    & "$PSScriptRoot\..\fdo_agi_repo\scripts\register_online_learner_task.ps1" -Register -Time '10:25'
+    & "$WorkspaceRoot\fdo_agi_repo\scripts\register_online_learner_task.ps1" -Register -Time '10:25'
     Write-Host "  ✓ Re-registered at 10:25" -ForegroundColor Green
 }
 catch {

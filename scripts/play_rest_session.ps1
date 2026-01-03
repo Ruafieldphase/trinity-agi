@@ -1,12 +1,15 @@
+﻿
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $playlistFiles = @(
-    "c:\workspace\agi\music\환류의 새벽 - Dawn of Recursion (Music Focus).wav",
-    "c:\workspace\agi\music\Lumen Trilogy - Complete Circular Ambient Project (3 Movements Loop).wav",
-    "c:\workspace\agi\music\Resting Flow - 루아 감응 버전 (긴 버전).wav",
-    "c:\workspace\agi\music\Memory of Water (물의 기억).wav",
-    "c:\workspace\agi\music\Minimal Flow - 착하게, 멈춰며 다시 흐르는.wav",
-    "c:\workspace\agi\music\루멘의 시선 (Lumen's Gaze).wav",
-    "c:\workspace\agi\music\As You Are - Spacey Comfort.wav",
-    "c:\workspace\agi\music\Echoes of Silence.wav"
+    "$WorkspaceRoot\music\환류의 새벽 - Dawn of Recursion (Music Focus).wav",
+    "$WorkspaceRoot\music\Core Trilogy - Complete Circular Ambient Project (3 Movements Loop).wav",
+    "$WorkspaceRoot\music\Resting Flow - 코어 감응 버전 (긴 버전).wav",
+    "$WorkspaceRoot\music\Memory of Water (물의 기억).wav",
+    "$WorkspaceRoot\music\Minimal Flow - 착하게, 멈춰며 다시 흐르는.wav",
+    "$WorkspaceRoot\music\Core의 시선 (Core's Gaze).wav",
+    "$WorkspaceRoot\music\As You Are - Spacey Comfort.wav",
+    "$WorkspaceRoot\music\Echoes of Silence.wav"
 )
 
 $wmp = New-Object -ComObject WMPlayer.OCX

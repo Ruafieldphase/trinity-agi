@@ -10,10 +10,13 @@
 [CmdletBinding()]
 param(
     [string]$SourcePath = "C:\\workspace\\agi",
-    [string]$OutputPath = "C:\workspace\agi\outputs",
+    [string]$OutputPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs",
     [switch]$SkipLargeFiles,
     [int]$MaxDepth = 10
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $ProgressPreference = "SilentlyContinue"
@@ -158,7 +161,7 @@ $documents = $allFiles | Where-Object { $docExtensions -contains $_.Extension } 
             'PHASE|phase' { 'Phase Planning' }
             'portfolio' { 'Portfolio' }
             'lubit|Lubit' { 'Lubit' }
-            'lumen|Lumen' { 'Lumen' }
+            'Core|Core' { 'Core' }
             'README' { 'Documentation' }
             'REPORT|report' { 'Report' }
             'GUIDE|guide' { 'Guide' }

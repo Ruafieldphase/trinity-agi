@@ -1,5 +1,5 @@
 # Rhythm Information Theory: 5-Layer System Architecture
-*Synthesized by Lua, Authorized by Binoche*
+*Synthesized by Lua, Authorized by Binoche_Observer*
 
 ## 1. ASI (Nature / Future Selection)
 - **Role**: The Source of Future Selection, Intention Waves, and "Singularity".

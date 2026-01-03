@@ -8,6 +8,7 @@ import sys
 import json
 import argparse
 from pathlib import Path
+from workspace_root import get_workspace_root
 from datetime import datetime
 
 try:
@@ -142,9 +143,10 @@ def batch_analyze(music_dir: Path, output_dir: Path, limit: int = None):
 def main():
     parser = argparse.ArgumentParser(description='🎵 Reaper Music Pattern Analyzer')
     parser.add_argument('--file', type=Path, help='단일 파일 분석')
-    parser.add_argument('--dir', type=Path, default=Path('C:/workspace/agi/music'), 
-                        help='음악 디렉토리 (기본: C:/workspace/agi/music)')
-    parser.add_argument('--output', type=Path, default=Path('C:/workspace/agi/outputs/music_analysis'),
+    workspace_root = get_workspace_root()
+    parser.add_argument('--dir', type=Path, default=workspace_root / 'music',
+                        help='음악 디렉토리 (기본: <workspace_root>/music)')
+    parser.add_argument('--output', type=Path, default=workspace_root / 'outputs' / 'music_analysis',
                         help='출력 디렉토리')
     parser.add_argument('--limit', type=int, help='분석할 파일 수 제한')
     

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 AGI 시스템을 Master Daemon으로 마이그레이션
 
@@ -13,9 +13,11 @@ param(
     [switch]$DryRun,
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
-$WorkspaceRoot = "C:\workspace\agi"
 
 Write-Host @"
 

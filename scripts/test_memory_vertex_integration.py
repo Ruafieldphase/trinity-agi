@@ -1,10 +1,11 @@
 import sys
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add paths
 sys.path.append(str(Path(__file__).parent))
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(get_workspace_root()))
 
 from unified_memory_system import UnifiedMemorySystem
 from vertex_ai_smart_router import VertexAISmartRouter

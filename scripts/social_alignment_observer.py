@@ -3,7 +3,7 @@
 """
 Social Alignment Observer
 =========================
-Evaluates the 'social appropriateness' and coordination quality of Sian's autonomous actions.
+Evaluates the 'social appropriateness' and coordination quality of Shion's autonomous actions.
 Checks if actions were triggered by users vs agents, and if they followed coordination protocols.
 """
 import json
@@ -11,9 +11,10 @@ import logging
 import time
 from pathlib import Path
 from typing import Dict, Any, List
+from workspace_root import get_workspace_root
 
 # Paths
-WORKSPACE = Path(__file__).resolve().parents[1]
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 HISTORY = OUTPUTS / "body_supervised_history.jsonl"
 MISSION_HISTORY = OUTPUTS / "agency" / "mission_history"

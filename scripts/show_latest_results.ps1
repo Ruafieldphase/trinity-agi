@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Server = 'http://127.0.0.1:8091',
     [int]$Count = 5,
     [switch]$SuccessOnly,

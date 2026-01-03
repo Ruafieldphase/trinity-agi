@@ -209,7 +209,7 @@ Grace Cooldown: Active (2 min remaining)
 
 **Morning Kickoff Steps**:
 
-1. ✅ System health check (AGI + Lumen)
+1. ✅ System health check (AGI + Core)
 2. ✅ Auto-Stabilizer daemon verification
 3. ✅ **Emotion-Triggered Stabilizer check** 🎭
 4. ✅ Task queue server (8091)
@@ -308,7 +308,7 @@ cat outputs\emotion_signals_latest.json | ConvertFrom-Json | Format-List
 
 1. **Unified Status** (`quick_status.ps1`)
    - AGI Pipeline health
-   - Lumen Gateway status
+   - Core Gateway status
    - CPU/Memory usage
    - BQI Learning status
 
@@ -611,7 +611,7 @@ Press `Ctrl+Shift+P` → "Run Task" → Search:
 
 - `Morning: Kickoff (1h, open)`
 - `Emotion Stabilizer: Start Daemon (5min)`
-- `Monitoring: Unified Dashboard (AGI + Lumen)`
+- `Monitoring: Unified Dashboard (AGI + Core)`
 - `Performance: Dashboard (with emotion)`
 
 ---

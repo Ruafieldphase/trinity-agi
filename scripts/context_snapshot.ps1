@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$Hours = 24,
     [switch]$Open
 )

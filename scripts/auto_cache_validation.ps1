@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Automatic Cache Validation - Runs analysis and generates report
@@ -20,6 +20,9 @@ param(
     [int]$Interval = 1,
     [switch]$SendNotification
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # UTF-8 console bootstrap
 try { chcp 65001 > $null 2> $null } catch {}
@@ -31,7 +34,7 @@ try {
 catch {}
 
 $ErrorActionPreference = "Continue"
-$RepoRoot = "C:\workspace\agi"
+$RepoRoot = "$WorkspaceRoot"
 $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 
 # Log file

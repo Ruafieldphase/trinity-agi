@@ -1,10 +1,14 @@
-# AI 시스템 성능 테스트 및 벤치마크
+﻿# AI 시스템 성능 테스트 및 벤치마크
 # 목적: 최적화 전후 성능 비교, 베이스라인 설정
 
 param(
     [string]$TestMode = "full",  # quick, full, continuous
     [int]$Duration = 300         # 테스트 지속시간 (초)
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 # 색상 정의
 $colors = @{
@@ -276,7 +280,7 @@ switch ($TestMode.ToLower()) {
 
 # 결과 저장
 $totalTime = ((Get-Date) - $testStartTime).TotalSeconds
-$reportPath = "C:\workspace\agi\outputs\performance_test_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
+$reportPath = "$WorkspaceRoot\outputs\performance_test_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
 
 $report = @{
     Timestamp = Get-Date

@@ -20,10 +20,11 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Tuple
 from scipy.stats import entropy
 from collections import Counter
+from workspace_root import get_workspace_root
 
 def load_resonance_ledger(hours: int = 24) -> List[Dict]:
     """Resonance Ledger에서 이벤트 로드 (블랙홀 입력)"""
-    ledger_path = Path(__file__).parent.parent / "fdo_agi_repo/memory/resonance_ledger.jsonl"
+    ledger_path = get_workspace_root() / "fdo_agi_repo/memory/resonance_ledger.jsonl"
     
     if not ledger_path.exists():
         print(f"⚠️  Ledger not found: {ledger_path}")
@@ -68,7 +69,7 @@ def extract_feeling_vector(events: List[Dict]) -> Tuple[np.ndarray, float]:
     feeling_dims = {
         'energy': [],      # Lua
         'quality': [],     # Elo
-        'observer': [],    # Lumen
+        'observer': [],    # Core
         'valence': [],     # 긍정/부정
         'arousal': []      # 각성/이완
     }
@@ -226,10 +227,10 @@ def main(hours: int = 24, verbose: bool = True):
     
     # 테스트 쿼리 (실제 데이터 기반)
     test_contexts = [
-        {'where': 'chat', 'who': 'rua'},  # 루아 대화
-        {'where': 'home/desk', 'who': 'binoche'},
+        {'where': 'chat', 'who': 'Core'},  # 코어 대화
+        {'where': 'home/desk', 'who': 'Binoche_Observer'},
         {'where': 'conversation', 'who': 'ai_assistant'},
-        {'where': 'orchestrator', 'who': 'binoche'},  # 레거시
+        {'where': 'orchestrator', 'who': 'Binoche_Observer'},  # 레거시
     ]
     
     for ctx in test_contexts:
@@ -299,7 +300,7 @@ def main(hours: int = 24, verbose: bool = True):
         }
     }
     
-    output_path = Path(__file__).parent.parent / "outputs/hippocampus_black_white_hole_analysis.json"
+    output_path = get_workspace_root() / "outputs/hippocampus_black_white_hole_analysis.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
     # numpy 타입을 Python 네이티브 타입으로 변환
@@ -323,7 +324,7 @@ def main(hours: int = 24, verbose: bool = True):
         json.dump(output, f, indent=2, ensure_ascii=False)
     
     # Resonance Ledger에도 기록 (Bohm 분석용)
-    ledger_path = Path(__file__).parent.parent / "fdo_agi_repo/memory/resonance_ledger.jsonl"
+    ledger_path = get_workspace_root() / "fdo_agi_repo/memory/resonance_ledger.jsonl"
     ledger_event = {
         'timestamp': datetime.now().isoformat(),
         'event_type': 'hippocampus_analysis',

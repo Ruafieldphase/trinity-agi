@@ -1,13 +1,16 @@
-param(
+﻿param(
     [ValidateSet('disabled','observe','enforce')]
     [string]$Mode = 'observe',
     [string]$Policy
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8; $OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}
 
-$cfgDir = Join-Path $PSScriptRoot '..' | Resolve-Path
+$cfgDir = $WorkspaceRoot | Resolve-Path
 $cfgDir = Join-Path $cfgDir 'configs'
 $cfgPath = Join-Path $cfgDir 'resonance_config.json'
 $examplePath = Join-Path $cfgDir 'resonance_config.example.json'

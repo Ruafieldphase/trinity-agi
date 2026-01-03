@@ -1,4 +1,4 @@
-# 파이썬 프로세스 생성 실시간 모니터링
+﻿# 파이썬 프로세스 생성 실시간 모니터링
 
 Write-Host "`n👁️  파이썬 프로세스 생성 모니터링 (15초)" -ForegroundColor Cyan
 Write-Host "=" * 60

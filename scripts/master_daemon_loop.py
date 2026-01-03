@@ -1,18 +1,33 @@
-import json
+import os
+import sys
+from pathlib import Path
+from workspace_root import get_workspace_root
+
+# 부트스트래핑 및 워크스페이스 루트 탐지
+current_path = Path(__file__).resolve()
+for parent in current_path.parents:
+    if (parent / "agi_core").exists() or parent.name == "agi":
+        root = parent if parent.name == "agi" else parent
+        if str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+        break
+
+from agi_core.utils.paths import get_workspace_root, add_to_sys_path
+WORKSPACE = add_to_sys_path()
+
 import logging
 import subprocess
-import sys
 import time
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 
 # Config (base bounds; actual sleep is rhythm-adaptive)
-WORKSPACE = Path(__file__).resolve().parents[1]
 SUPERVISOR_SCRIPT = WORKSPACE / "scripts" / "meta_supervisor.py"
 LOG_FILE = WORKSPACE / "logs" / "master_daemon.log"
 LOCK_FILE = WORKSPACE / "outputs" / "sync_cache" / "master_daemon.instance.lock"
+IDENTITY_CHECK = WORKSPACE / "scripts" / "identity_check.py"
+PATH_CHECK = WORKSPACE / "scripts" / "path_integrity_check.py"
 
 TWIN = WORKSPACE / "outputs" / "sync_cache" / "digital_twin_state.json"
 REST_GATE = WORKSPACE / "outputs" / "safety" / "rest_gate_latest.json"
@@ -178,6 +193,33 @@ def _compute_sleep_seconds() -> tuple[int, str]:
     return sleep_s, f"urgency={urgency:.2f} mismatch={mismatch:.2f} pain={pain_level:.2f}"
 
 
+def _perform_integrity_check() -> bool:
+    """
+    Run identity and path integrity checks.
+    """
+    all_pass = True
+    for script in [IDENTITY_CHECK, PATH_CHECK]:
+        if not script.exists():
+            continue
+        try:
+            res = subprocess.run(
+                [sys.executable, str(script)],
+                check=False,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                creationflags=subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0,
+            )
+            if res.returncode != 0:
+                all_pass = False
+                logging.error(f"Integrity failure in {script.name}:\n{res.stdout}\n{res.stderr}")
+        except Exception as e:
+            all_pass = False
+            logging.error(f"Failed to run {script.name}: {e}")
+    
+    return all_pass
+
+
 def _run_supervisor_once() -> tuple[int, str, str]:
     if not SUPERVISOR_SCRIPT.exists():
         return 0, "", "meta_supervisor.py not found"
@@ -210,8 +252,24 @@ def main() -> None:
 
     logging.info("Starting Master Supervisor Loop (rhythm-adaptive)")
 
+    # Integrity check on startup
+    safe_mode = False
+    if not _perform_integrity_check():
+        safe_mode = True
+        logging.error("\n" + "!" * 60 + "\n[!!! RED WARNING !!!] IDENTITY OR PATH INTEGRITY FAILED!\n" + 
+                      "System is entering SAFE_MODE. Aggressive features disabled.\n" + "!" * 60 + "\n")
+
     while True:
         try:
+            if safe_mode:
+                logging.info("[SAFE_MODE] Skipping meta_supervisor to prevent risky actions.")
+                time.sleep(300) # Longer sleep in safe mode
+                # Re-check integrity to see if fixed
+                if _perform_integrity_check():
+                    safe_mode = False
+                    logging.info("[SAFE_MODE] Integrity restored. Resuming normal operations.")
+                continue
+
             sleep_s, reason = _compute_sleep_seconds()
             logging.info(f"wake: {_utc_iso_now()} reason={reason}")
 

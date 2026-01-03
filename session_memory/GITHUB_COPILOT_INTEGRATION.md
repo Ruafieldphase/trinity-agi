@@ -88,7 +88,7 @@ UnifiedOrchestrator (자동 실행)
 │                  UnifiedOrchestrator v2.0                   │
 │  (모든 시스템을 조율 + Copilot 지원)                         │
 └─────────────────────────────────────────────────────────────┘
-    ├─ LUMEN Workflow (11 nodes)
+    ├─ Core Workflow (11 nodes)
     ├─ LUON Persona Router
     ├─ BackgroundMonitor + ConcurrentScheduler
     ├─ AGI Pipeline (정보이론 + Intent + Ethics)
@@ -149,7 +149,7 @@ suggested_architecture:
   unified_orchestrator:
     layers:
       - presentation: "CLI/API Interface"
-      - orchestration: "LUMEN workflow engine"
+      - orchestration: "Core workflow engine"
       - collaboration: "GitHub Copilot assistance"
       - storage: "COLLABORATION_STATE.jsonl"
       - analytics: "AGI pipeline"
@@ -251,17 +251,17 @@ def test_unified_orchestrator_workflow():
 
 ## 🔗 **GitHub Copilot → UnifiedOrchestrator 통합 포인트**
 
-### 통합 1: LUMEN 노드별 코드 생성
+### 통합 1: Core 노드별 코드 생성
 ```python
 class WorkflowNodeCodeGenerator:
-    """각 LUMEN 노드를 위한 Copilot 지원 코드 생성"""
+    """각 Core 노드를 위한 Copilot 지원 코드 생성"""
 
     def generate_node_executor(self, node: WorkflowNode):
         """
         Copilot과 협업하여 노드 실행 로직 생성
         """
         prompt = f"""
-        Generate executor for LUMEN node:
+        Generate executor for Core node:
         - Node ID: {node.node_id}
         - Node Type: {node.node_type.value}
         - Required Persona: {node.required_persona}
@@ -432,7 +432,7 @@ ethics_framework:
 - [ ] 파일럿 프로젝트 시작
 
 ### Phase 2: 실행 (1주)
-- [ ] LUMEN 노드 코드 생성 자동화
+- [ ] Core 노드 코드 생성 자동화
 - [ ] COLLABORATION_STATE 분석 구현
 - [ ] AGI 파이프라인 강화
 - [ ] 테스트 커버리지 확대
@@ -516,7 +516,7 @@ ethics_framework:
 ├────────────────────────────────────────────────────────────────┤
 │                                                                │
 │  ┌─────────────────┐  ┌──────────────┐  ┌────────────────┐   │
-│  │  LUMEN         │  │  LUON        │  │  BackGround   │   │
+│  │  Core         │  │  LUON        │  │  BackGround   │   │
 │  │  Workflow      │  │  Persona     │  │  Monitor +    │   │
 │  │  (11 nodes)    │  │  Router      │  │  Concurrent   │   │
 │  └─────────────────┘  └──────────────┘  └────────────────┘   │

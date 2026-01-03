@@ -12,6 +12,7 @@ from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
 from datetime import datetime
 import statistics
+from workspace_root import get_workspace_root
 
 
 @dataclass
@@ -31,7 +32,7 @@ class TaskResult:
 def setup_paths():
     """경로 설정"""
     here = Path(__file__).resolve()
-    root = here.parents[1]
+    root = get_workspace_root()
     fdo = root / "fdo_agi_repo"
     
     for p in [str(root), str(fdo)]:

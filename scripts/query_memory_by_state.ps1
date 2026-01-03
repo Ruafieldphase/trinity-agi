@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$MinResonance = -1,
     [int]$MaxFear = 10,
     [string]$Tag,
@@ -6,6 +6,9 @@ param(
     [switch]$LongTermOnly,
     [int]$Top = 20
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $OutputEncoding = [System.Text.Encoding]::UTF8

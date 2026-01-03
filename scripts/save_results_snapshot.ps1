@@ -1,11 +1,14 @@
-param(
+﻿param(
     [string]$Server = 'http://127.0.0.1:8091',
     [int]$Count = 20,
     [switch]$SuccessOnly
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ts = Get-Date -Format "yyyyMMdd_HHmmss"
-$out = Join-Path -Path (Join-Path $PSScriptRoot "..\outputs") -ChildPath ("results_snapshot_{0}.json" -f $ts)
+$out = Join-Path -Path (Join-Path $WorkspaceRoot "outputs") -ChildPath ("results_snapshot_{0}.json" -f $ts)
 
 $ErrorActionPreference = 'Stop'
 try {

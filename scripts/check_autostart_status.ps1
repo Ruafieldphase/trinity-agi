@@ -1,4 +1,4 @@
-# AGI 자동 시작 상태 확인 스크립트
+﻿# AGI 자동 시작 상태 확인 스크립트
 
 Write-Host "`n📊 AGI 자동 시작 상태" -ForegroundColor Cyan
 Write-Host "=" * 80

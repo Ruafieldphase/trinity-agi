@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Register/Unregister Task Queue Server as a Windows Scheduled Task (At Logon)
 
@@ -34,6 +34,9 @@ param(
     
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # UTF-8 Bootstrap
 chcp 65001 | Out-Null
@@ -44,7 +47,7 @@ $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Stop'
 
 # Paths
-$serverScript = Join-Path $PSScriptRoot "..\LLM_Unified\ion-mentoring\task_queue_server.py"
+$serverScript = Join-Path $WorkspaceRoot "LLM_Unified\ion-mentoring\task_queue_server.py"
 $serverScript = Resolve-Path $serverScript -ErrorAction Stop
 
 # Check Python availability

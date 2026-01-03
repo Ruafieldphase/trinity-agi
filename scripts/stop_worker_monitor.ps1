@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 try {
     $jobs = Get-Job -Name 'RPA_Worker_Monitor' -ErrorAction SilentlyContinue
     if (-not $jobs) { Write-Host 'No worker monitor job found.' -ForegroundColor Yellow; exit 0 }

@@ -1,4 +1,4 @@
-# Performance Metrics Dashboard Generator
+﻿# Performance Metrics Dashboard Generator
 # Tracks execution time, success rate, and resource usage
 #
 # QUICK USAGE:
@@ -840,4 +840,3 @@ Write-Host "                  .\\scripts\\dashboard_quick_full.ps1 -Open" -Foreg
 Write-Host "  Test suite:   .\\scripts\\test_performance_dashboard_integration.ps1" -ForegroundColor DarkGray
 Write-Host "  Validate:     .\\scripts\\validate_performance_dashboard.ps1 -VerboseOutput" -ForegroundColor DarkGray
 Write-Host "`n"
-

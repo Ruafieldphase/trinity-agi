@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     자율 목표 시스템 대시보드 생성 및 오픈
@@ -28,6 +28,9 @@ param(
     [switch]$Watch,
     [int]$WatchInterval = 30
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path $PSScriptRoot -Parent

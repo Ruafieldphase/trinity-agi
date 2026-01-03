@@ -14,8 +14,9 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 
 
 def run_command(cmd: list[str]) -> tuple[int, str]:

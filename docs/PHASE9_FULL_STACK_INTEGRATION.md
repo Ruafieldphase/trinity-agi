@@ -42,7 +42,7 @@ Phase 9는 AGI 시스템의 모든 컴포넌트를 하나의 통합된 자율 �
 **주요 기능**:
 
 - 패턴 인식 (bqi_pattern_model.json)
-- Binoche 페르소나 학습 (binoche_persona.json)
+- Binoche_Observer 페르소나 학습 (binoche_persona.json)
 - 온라인 학습 (ensemble_weights.json)
 - 피드백 예측 (feedback_prediction_model.json)
 
@@ -100,7 +100,7 @@ Phase 9는 AGI 시스템의 모든 컴포넌트를 하나의 통합된 자율 �
 │  Policy Engine   │  │  Learning    │  │  Optimizer       │
 │                  │  │              │  │                  │
 │  • ops-safety    │  │  • Patterns  │  │  • Adaptive      │
-│  • quality-first │  │  • Binoche   │  │  • Phase Sync    │
+│  • quality-first │  │  • Binoche_Observer   │  │  • Phase Sync    │
 │  • latency-first │  │  • Feedback  │  │  • Prefetch      │
 └──────────────────┘  └──────────────┘  └──────────────────┘
          │                    │                    │

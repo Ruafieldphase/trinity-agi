@@ -7,7 +7,7 @@ This document explains how the pipeline is instrumented to trace the Autopoietic
 - Folding → Thesis (context folding and initial reasoning)
 - Unfolding → Antithesis (counter reasoning)
 - Integration → Synthesis (integration and final draft)
-- Symmetry → Decision + Correction (Binoche decision, Evidence Gate, Self-Correction)
+- Symmetry → Decision + Correction (Binoche_Observer decision, Evidence Gate, Self-Correction)
 
 ## Ledger Events
 

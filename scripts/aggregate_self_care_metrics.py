@@ -18,9 +18,10 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
+from workspace_root import get_workspace_root
 
 # Quantum Flow Monitor 임포트
-sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 try:
     from copilot.quantum_flow_monitor import QuantumFlowMonitor
     QUANTUM_FLOW_AVAILABLE = True
@@ -245,7 +246,7 @@ def main() -> None:
     parser.add_argument(
         "--workspace-root",
         type=Path,
-        default=Path(__file__).parent.parent,
+        default=get_workspace_root(),
         help="워크스페이스 루트 경로",
     )
     args = parser.parse_args()

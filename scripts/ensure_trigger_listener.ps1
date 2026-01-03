@@ -1,4 +1,4 @@
-<# 
+﻿<# 
 Ensure Trigger Listener (Windowless, single instance)
 
 목적:

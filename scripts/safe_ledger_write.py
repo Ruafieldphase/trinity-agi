@@ -4,6 +4,7 @@ import os
 import time
 from datetime import datetime
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 def acquire_lock(lock_path, timeout=5.0):
     """Simple file-based lock acquisition with timeout"""
@@ -30,11 +31,10 @@ def release_lock(lock_path):
     except Exception as e:
         print(f"Unlock error: {e}")
 
-def safe_write(message, target='koa', context='autonomous_collaboration'):
+def safe_write(message, target='Core', context='autonomous_collaboration'):
     """Safely append a message to the ledger"""
-    # Find workspace root
-    current_dir = Path(__file__).parent.resolve()
-    workspace_root = current_dir.parent
+    # Find workspace root (SSOT)
+    workspace_root = get_workspace_root()
     
     ledger_path = workspace_root / "fdo_agi_repo/memory/resonance_ledger.jsonl"
     lock_path = workspace_root / "fdo_agi_repo/memory/resonance_ledger.lock"
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     
     parser = argparse.ArgumentParser(description="Safely write to resonance ledger")
     parser.add_argument("message", help="Message content")
-    parser.add_argument("--target", default="koa", help="Target agent (koa/shion)")
+    parser.add_argument("--target", default="Core", help="Target agent (Core/shion)")
     parser.add_argument("--context", default="autonomous_collaboration", help="Context tag")
     
     args = parser.parse_args()

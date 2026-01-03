@@ -14,8 +14,8 @@ CATEGORY_COUNTS_CSV = OUTPUT_DIR / "metacognitive_category_counts.csv"
 
 CATEGORY_PATTERNS: Dict[str, Iterable[str]] = {
     "cross_persona": [
-        "루멘",
-        "루아",
+        "Core",
+        "코어",
         "엘로",
         "세나",
         "루빛",

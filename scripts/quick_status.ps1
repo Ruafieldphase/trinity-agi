@@ -1,4 +1,4 @@
-# Quick Status: Unified AGI + Lumen monitoring dashboard
+﻿# Quick Status: Unified AGI + Core monitoring dashboard
 #
 # QUICK USAGE:
 #   quick_status.ps1                          # console output
@@ -17,7 +17,7 @@ param(
     [switch]$LogJsonl,
     [switch]$Perf,
     [switch]$EnrichSnapshot,  # when set: extend enrichment to JSONL log lines (Perf/Goals) in addition to default OutJson behavior
-    [string]$LogPath = "C:\workspace\agi\outputs\status_snapshots.jsonl",
+    [string]$LogPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\status_snapshots.jsonl",
     [int]$WarnLocalMs = 1800,
     [int]$AlertLocalMs = 2500,
     [int]$WarnCloudMs = 700,
@@ -40,6 +40,10 @@ param(
     [string]$MicroscopeLevel = 'minimal',
     [int]$MicroscopeCooldownSec = 120
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 try {
@@ -64,7 +68,7 @@ catch {}
 
 function Write-Header {
     Write-Host "`n================================================================" -ForegroundColor Cyan
-    Write-Host "  UNIFIED MONITORING DASHBOARD - AGI + Lumen" -ForegroundColor Cyan
+    Write-Host "  UNIFIED MONITORING DASHBOARD - AGI + Core" -ForegroundColor Cyan
     Write-Host "================================================================`n" -ForegroundColor Cyan
 }
 
@@ -267,7 +271,7 @@ function Send-AlertIfNeeded {
     $need = $Force -or (-not $Summary.AllGreen)
     if (-not $need) { return }
     # basic rate limiting (5 minutes)
-    $coolFile = "C:\workspace\agi\outputs\last_alert.txt"
+    $coolFile = "$WorkspaceRoot\outputs\last_alert.txt"
     try {
         if (-not $Force -and (Test-Path $coolFile)) {
             $last = Get-Content -LiteralPath $coolFile -ErrorAction SilentlyContinue | Select-Object -First 1
@@ -346,7 +350,7 @@ $agiMetrics = @{ confidence = $null; quality = $null; second_pass_rate = $null }
 Write-Host "[1] AGI Orchestrator (fdo_agi_repo)" -ForegroundColor Yellow
 Write-Host "    Status Check..." -NoNewline
 
-$agiRoot = "C:\workspace\agi\fdo_agi_repo"
+$agiRoot = "$WorkspaceRoot\fdo_agi_repo"
 $pythonExe = if (Test-Path "$agiRoot\.venv\Scripts\python.exe") { "$agiRoot\.venv\Scripts\python.exe" } else { "python" }
 
 $agiSummaryText = $null
@@ -431,13 +435,13 @@ try {
             catch { }
         }
 
-        # Phase 6: Binoche Persona metrics
+        # Phase 6: Binoche_Observer Persona metrics
         $personaJsonPath = Join-Path $agiRoot "outputs\binoche_persona.json"
         if (Test-Path $personaJsonPath) {
             try {
                 $persona = Get-Content -LiteralPath $personaJsonPath -Raw | ConvertFrom-Json
                 Write-Host ""
-                Write-Host "  Binoche Persona (Phase 6):" -ForegroundColor Cyan
+                Write-Host "  Binoche_Observer Persona (Phase 6):" -ForegroundColor Cyan
                 Write-Host ("    Tasks Analyzed: {0}" -f $persona.stats.total_tasks) -ForegroundColor White
                 Write-Host ("    Decisions: {0} (A:{1:P0} R:{2:P0} X:{3:P0})" -f `
                         $persona.stats.total_decisions, `
@@ -483,7 +487,7 @@ try {
             }
             catch {
                 Write-Host ""
-                Write-Host "  Binoche Persona: (error reading model)" -ForegroundColor DarkGray
+                Write-Host "  Binoche_Observer Persona: (error reading model)" -ForegroundColor DarkGray
             }
         }
 
@@ -563,8 +567,8 @@ print(json.dumps({
 
         Write-Host ""
 
-        # ===== Lumen ?�스??=====
-        Write-Host "[2] Lumen Multi-Channel Gateway" -ForegroundColor Yellow
+        # ===== Core ?�스??=====
+        Write-Host "[2] Core Multi-Channel Gateway" -ForegroundColor Yellow
 
         $prev = if ($LogJsonl) { Read-LastSnapshot -Path $LogPath } else { $null }
         $prevLocalMs = $null; $prevCloudMs = $null; $prevGatewayMs = $null
@@ -581,7 +585,7 @@ print(json.dumps({
         # Local LLM (secondary - 18090, optional; surface as non-blocking; allow hiding)
         $localProbe2 = $null
         if (-not $HideOptional) {
-            $localProbeJson = "C:\workspace\agi\outputs\local_latency_probe_latest.json"
+            $localProbeJson = "$WorkspaceRoot\outputs\local_latency_probe_latest.json"
             if (Test-Path $localProbeJson) {
                 try {
                     $probeData = Get-Content -LiteralPath $localProbeJson -Raw | ConvertFrom-Json
@@ -610,9 +614,9 @@ print(json.dumps({
         $cloudProbe = Test-Endpoint -Url "https://ion-api-64076350717.us-central1.run.app/chat" -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 5
         Show-LatencyLine -Label "Cloud AI (ion-api)" -Probe $cloudProbe -WarnMs $WarnCloudMs -AlertMs $AlertCloudMs -PrevMs $prevCloudMs
 
-        # Lumen Gateway
-        $gwProbe = Test-Endpoint -Url "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 5
-        Show-LatencyLine -Label "Lumen Gateway" -Probe $gwProbe -WarnMs $WarnGatewayMs -AlertMs $AlertGatewayMs -PrevMs $prevGatewayMs
+        # Core Gateway
+        $gwProbe = Test-Endpoint -Url "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -BodyJson '{"message":"ping"}' -TimeoutSec 5
+        Show-LatencyLine -Label "Core Gateway" -Probe $gwProbe -WarnMs $WarnGatewayMs -AlertMs $AlertGatewayMs -PrevMs $prevGatewayMs
 
         # ===== Trend Analytics =====
         $recent = Read-RecentSnapshots -Path $LogPath -MaxCount $TrendWindow
@@ -743,9 +747,9 @@ print(json.dumps({
         elseif ($cloudProbe.Ms -ge $AlertCloudMs) { $issues += "ALERT: Cloud AI latency $($cloudProbe.Ms)ms" }
         elseif ($cloudProbe.Ms -ge $WarnCloudMs) { $warnings += "WARN: Cloud AI latency $($cloudProbe.Ms)ms" }
 
-        if (-not $gwProbe.Online) { $issues += "Lumen Gateway offline ($($gwProbe.Code))" }
-        elseif ($gwProbe.Ms -ge $AlertGatewayMs) { $issues += "ALERT: Lumen Gateway latency $($gwProbe.Ms)ms" }
-        elseif ($gwProbe.Ms -ge $WarnGatewayMs) { $warnings += "WARN: Lumen Gateway latency $($gwProbe.Ms)ms" }
+        if (-not $gwProbe.Online) { $issues += "Core Gateway offline ($($gwProbe.Code))" }
+        elseif ($gwProbe.Ms -ge $AlertGatewayMs) { $issues += "ALERT: Core Gateway latency $($gwProbe.Ms)ms" }
+        elseif ($gwProbe.Ms -ge $WarnGatewayMs) { $warnings += "WARN: Core Gateway latency $($gwProbe.Ms)ms" }
 
         # Baseline detection using long-term mean (sustained high latency)
         function Add-BaselineMsg {
@@ -771,7 +775,7 @@ print(json.dumps({
 
         Add-BaselineMsg -name 'Local LLM' -longMean $statLocalLong.Mean -longCount $(if ($statLocalLong) { $statLocalLong.Count } else { 0 }) -warnMs $WarnLocalMs -alertMs $AlertLocalMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
         Add-BaselineMsg -name 'Cloud AI' -longMean $statCloudLong.Mean -longCount $(if ($statCloudLong) { $statCloudLong.Count } else { 0 }) -warnMs $WarnCloudMs -alertMs $AlertCloudMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
-        Add-BaselineMsg -name 'Lumen Gateway' -longMean $statGatewayLong.Mean -longCount $(if ($statGatewayLong) { $statGatewayLong.Count } else { 0 }) -warnMs $WarnGatewayMs -alertMs $AlertGatewayMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
+        Add-BaselineMsg -name 'Core Gateway' -longMean $statGatewayLong.Mean -longCount $(if ($statGatewayLong) { $statGatewayLong.Count } else { 0 }) -warnMs $WarnGatewayMs -alertMs $AlertGatewayMs -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings) -existingMsgs $issues
 
         # Spike detection vs moving average (if enough history and current online)
         if ($statLocal -and $statLocal.Count -ge [Math]::Max(5, [int]$TrendWindow / 2) -and $localProbe.Online -and $localProbe.Ms -gt 0 -and $statLocal.Std -gt 0) {
@@ -812,7 +816,7 @@ print(json.dumps({
 
         Add-AdaptiveAlerts -name 'Local LLM' -currentMs $localProbe.Ms -online $localProbe.Online -stat $statLocal -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
         Add-AdaptiveAlerts -name 'Cloud AI' -currentMs $cloudProbe.Ms -online $cloudProbe.Online -stat $statCloud -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
-        Add-AdaptiveAlerts -name 'Lumen Gateway' -currentMs $gwProbe.Ms -online $gwProbe.Online -stat $statGateway -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
+        Add-AdaptiveAlerts -name 'Core Gateway' -currentMs $gwProbe.Ms -online $gwProbe.Online -stat $statGateway -issuesRef ([ref]$issues) -warningsRef ([ref]$warnings)
 
         $hasAlerts = @(if ($issues) { $issues | Where-Object { $_ -like 'ALERT*' -or $_ -like '*offline*' } } else { @() }).Count -gt 0
         $hasWarns = @(if ($warnings) { $warnings } else { @() }).Count -gt 0
@@ -885,7 +889,7 @@ print(json.dumps({
                 $sparkLabels = @()
                 if ( ($issues + $warnings) | Where-Object { $_ -like '*Local LLM*' } ) { $sparkLabels += 'Local LLM' }
                 if ( ($issues + $warnings) | Where-Object { $_ -like '*Cloud AI*' } ) { $sparkLabels += 'Cloud AI' }
-                if ( ($issues + $warnings) | Where-Object { $_ -like '*Gateway*' } ) { $sparkLabels += 'Lumen Gateway' }
+                if ( ($issues + $warnings) | Where-Object { $_ -like '*Gateway*' } ) { $sparkLabels += 'Core Gateway' }
                 if ($sparkLabels.Count -eq 0) { $sparkLabels = @('Unknown') }
 
                 $agiRoot = Split-Path -Parent $PSScriptRoot
@@ -936,7 +940,7 @@ print(json.dumps({
                     agi_confidence   = $agiMetrics.confidence
                     agi_quality      = $agiMetrics.quality
                     agi_second_pass  = $agiMetrics.second_pass_rate
-                    lumen_latency_ms = $gwProbe.Ms
+                    core_latency_ms = $gwProbe.Ms
                     timestamp        = (Get-Date).ToUniversalTime().ToString("o")
                 } -PersonaId "monitoring"
             }

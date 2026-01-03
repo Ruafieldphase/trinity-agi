@@ -1,6 +1,6 @@
 # AI Rest (Information-Theoretic Guide)
 
-본 문서는 Lumen/감정 신호와 운영 지표를 정보이론 관점으로 통합하여, “쉬어야 할 때(REST)”를 데이터 기반으로 식별·시작·종료하는 기준을 정의합니다. 목적은 과부하·품질 저하·안전 리스크를 미연에 방지하고, 동적 평형을 유지하는 것입니다.
+본 문서는 Core/감정 신호와 운영 지표를 정보이론 관점으로 통합하여, “쉬어야 할 때(REST)”를 데이터 기반으로 식별·시작·종료하는 기준을 정의합니다. 목적은 과부하·품질 저하·안전 리스크를 미연에 방지하고, 동적 평형을 유지하는 것입니다.
 
 ## 핵심 원칙
 
@@ -50,7 +50,7 @@ $$
 - 모니터링 샘플링율 증가, 원인·영향 범위 수집(진단 모드)
 - 인간-알림(필요 시), 감사 로그 강화(meta.governance.override_policy.require_audit_log)
 
-## 정책 JSON 매핑(policy/lumen_constitution.json)
+## 정책 JSON 매핑(policy/core_constitution.json)
 
 - meta.principles.{hypothesis_not_doctrine,dynamic_equilibrium,anti_dogma}: 원칙 플래그
 - thresholds: θ_fear, θ_p95, θ_err, θ_q, θ_dH, θ_kl, θ_R, 각 low 경계 포함
@@ -91,7 +91,7 @@ if in_rest:
 - AB/리플레이 실험으로 가중치·임계치 보정(meta.governance.experiment_policy)
 - 옵트아웃 채널 제공(사람 보호)
 - 위험 등급 "low" 범위에서만 자동 실험 허용
-- 변경 시 `scripts/bump_lumen_constitution.ps1`로 버전·검토 갱신 및 changelog 기록
+- 변경 시 `scripts/bump_core_constitution.ps1`로 버전·검토 갱신 및 changelog 기록
 
 ## 윤리·돌봄 피드백 루프
 

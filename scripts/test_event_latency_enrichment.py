@@ -14,9 +14,10 @@ import os
 import sys
 import time
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Ensure repo root in sys.path for import
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = get_workspace_root()
 FDO_ROOT = REPO_ROOT / 'fdo_agi_repo'
 if str(FDO_ROOT) not in sys.path:
     sys.path.insert(0, str(FDO_ROOT))

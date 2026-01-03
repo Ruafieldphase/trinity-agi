@@ -1,15 +1,19 @@
-param(
+﻿param(
     [int]$TimeoutSec = 10,
     [switch]$Fast,
     [switch]$JsonOnly,
     [double]$MaxDuration = 8
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
+# Workspace root (SSOT)
+
 # Resolve python
-$repoRoot = Split-Path -Parent $PSScriptRoot
-$agiRepo = Join-Path $repoRoot 'fdo_agi_repo'
+$agiRepo = Join-Path $WorkspaceRoot 'fdo_agi_repo'
 $venvPy = Join-Path $agiRepo '.venv\Scripts\python.exe'
 $py = if (Test-Path $venvPy) { $venvPy } else { 'python' }
 

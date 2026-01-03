@@ -150,13 +150,13 @@ git push -u origin main
 
 ### 4. 전략별 감응 변화량 (Strategy Comparison)
 **막대 그래프**
-- X축: 전략 (question_loop, lumen_frame)
+- X축: 전략 (question_loop, core_frame)
 - Y축: 평균 Δ Affect
 - 색상: 양수(녹색) / 음수(빨강)
 
 **결과**:
 - Question Loop: +0.09
-- Lumen Frame: +0.04
+- Core Frame: +0.04
 
 ### 5. Publication-ready Graphics
 **정적 이미지 3개**

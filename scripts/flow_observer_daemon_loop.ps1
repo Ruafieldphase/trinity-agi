@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Flow Observer 데몬 내부 루프
 

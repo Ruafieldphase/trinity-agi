@@ -10,6 +10,7 @@ import time
 import sys
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # 안전 설정: 마우스를 화면 모서리로 이동하면 중단
 pyautogui.FAILSAFE = True
@@ -20,7 +21,7 @@ pyautogui.PAUSE = 0.3
 def load_context_from_file(context_file: str = None) -> str:
     """컨텍스트 파일 로드"""
     if context_file is None:
-        workspace_root = Path(__file__).parent.parent
+        workspace_root = get_workspace_root()
         context_file = workspace_root / "outputs" / ".copilot_context_summary.md"
     
     context_path = Path(context_file)

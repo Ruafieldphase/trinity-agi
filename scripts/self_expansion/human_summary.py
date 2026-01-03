@@ -15,6 +15,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timezone
+from workspace_root import get_workspace_root
 
 
 @dataclass
@@ -332,7 +333,7 @@ class HumanSummaryGenerator:
 
 def main():
     """CLI Entry point"""
-    workspace = Path(__file__).parent.parent.parent
+    workspace = get_workspace_root().parent
     generator = HumanSummaryGenerator(workspace)
     summary = generator.run()
 

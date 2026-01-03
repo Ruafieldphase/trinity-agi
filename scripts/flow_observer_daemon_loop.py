@@ -11,9 +11,10 @@ import subprocess
 import json
 from datetime import datetime
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Configuration
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = get_workspace_root()
 LOG_PATH = BASE_DIR / "outputs" / "flow_observer_daemon.log"
 OBSERVER_SCRIPT = BASE_DIR / "fdo_agi_repo" / "copilot" / "flow_observer_integration.py"
 TELEMETRY_SCRIPT = BASE_DIR / "scripts" / "linux_telemetry_collector.py"

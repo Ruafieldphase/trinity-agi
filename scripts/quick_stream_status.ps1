@@ -1,4 +1,4 @@
-# Quick Stream Status (safe)
+﻿# Quick Stream Status (safe)
 # Summarize OBS WebSocket ping/status and YouTube bot preflight without failing the task
 # Always exits with code 0
 

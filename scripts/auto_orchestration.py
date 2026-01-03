@@ -1,6 +1,7 @@
 ﻿#!/usr/bin/env python3
 import os, sys
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+from workspace_root import get_workspace_root
+sys.path.insert(0, str(get_workspace_root()))
 """
 자동화된 오케스트레이션 스크립트
 페르소나 협업을 자동으로 실행하고 통합 솔루션을 도출합니다.
@@ -8,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import requests
 from utils.request_guard import post_json
-from utils.validator import lumen_chat_schema
+from utils.validator import core_chat_schema
 from utils.atomic_write import atomic_write
 
 
@@ -18,8 +19,8 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 # 설정
-LUMEN_GATEWAY = "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat"
-OUTPUT_DIR = Path(__file__).parent.parent / "outputs"
+CORE_GATEWAY = "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat"
+OUTPUT_DIR = get_workspace_root() / "outputs"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 def query_persona(persona_name: str, question: str) -> str:
@@ -28,7 +29,7 @@ def query_persona(persona_name: str, question: str) -> str:
     payload = {"message": prompt}
     
     try:
-        response = post_json(LUMEN_GATEWAY, payload, schema=lumen_chat_schema, headers={'Content-Type': 'application/json; charset=utf-8'}, timeout=30)
+        response = post_json(CORE_GATEWAY, payload, schema=core_chat_schema, headers={'Content-Type': 'application/json; charset=utf-8'}, timeout=30)
         response.raise_for_status()
         result = response.json()
         return result.get('response', 'No response')
@@ -70,7 +71,7 @@ def orchestrate_analysis(topic: str) -> Dict[str, Any]:
     이 두 관점을 통합하여 최종 권장안을 제시해주세요.
     """
     binoche_response = query_persona("비노슈", binoche_prompt)
-    results["personas"]["binoche"] = binoche_response
+    results["personas"]["Binoche_Observer"] = binoche_response
     print(f"   응답: {binoche_response[:100]}...")
     
     return results
@@ -106,7 +107,7 @@ def save_orchestration_result(results: Dict[str, Any]):
 
 ## 3️⃣ 비노슈 (🔮) - 최종 통합 권장안
 
-{results['personas'].get('binoche', 'N/A')}
+{results['personas'].get('Binoche_Observer', 'N/A')}
 
 ---
 
@@ -126,7 +127,7 @@ def main():
         print("\n사용법: python auto_orchestration.py '<주제>'")
         print("\n예시:")
         print("  python auto_orchestration.py 'AGI 시스템 최적화 방법'")
-        print("  python auto_orchestration.py '루멘 통합 다음 단계'")
+        print("  python auto_orchestration.py 'Core 통합 다음 단계'")
         return
     
     topic = " ".join(sys.argv[1:])

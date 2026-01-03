@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Background Cache Validation Monitor (No Admin Required)
@@ -19,6 +19,9 @@ param(
     [DateTime]$RegisterTime = (Get-Date),
     [switch]$KillExisting
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # UTF-8 console bootstrap
 try { chcp 65001 > $null 2> $null } catch {}
@@ -30,7 +33,7 @@ try {
 catch {}
 
 $ErrorActionPreference = "Continue"
-$RepoRoot = "C:\workspace\agi"
+$RepoRoot = "$WorkspaceRoot"
 $MonitorScript = "$RepoRoot\scripts\cache_validation_monitor_daemon.ps1"
 
 # Kill existing monitors if requested

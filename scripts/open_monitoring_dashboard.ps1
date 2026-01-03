@@ -1,4 +1,4 @@
-# Open Unified Monitoring Dashboard
+﻿# Open Unified Monitoring Dashboard
 # Quick access to all monitoring dashboards and reports
 
 param(
@@ -8,9 +8,12 @@ param(
     [switch]$Refresh,  # Refresh before opening
     [switch]$Browser   # Open in default browser instead of VS Code
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
-$outputDir = "$PSScriptRoot\..\outputs"
+$outputDir = "$WorkspaceRoot\outputs"
 
 Write-Host "`n" -NoNewline
 Write-Host ("=" * 70) -ForegroundColor Cyan

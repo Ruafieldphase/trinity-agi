@@ -1,4 +1,4 @@
-# Install YouTube OAuth client secret into credentials folder or set as user env var
+﻿# Install YouTube OAuth client secret into credentials folder or set as user env var
 # Usage examples:
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_youtube_client_secret.ps1 -SourceFile "C:\path\client_secret.json"
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install_youtube_client_secret.ps1 -SourceFile "C:\path\client_secret.json" -AsEnv

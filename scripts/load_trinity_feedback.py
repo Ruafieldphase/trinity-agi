@@ -2,12 +2,13 @@
 Trinity 피드백 로더 - 정반합 권장사항을 다른 시스템에 제공
 
 목적:
-- Trinity Cycle (Lua → Elo → Lumen) 결과를 읽음
+- Trinity Cycle (Lua → Elo → Core) 결과를 읽음
 - HIGH 우선순위 권장사항 추출
 - Autonomous Goal Generator, Adaptive Rhythm 등에 제공
 
 사용:
     from load_trinity_feedback import load_trinity_high_priority
+from workspace_root import get_workspace_root
     
     high_priority_items = load_trinity_high_priority()
     # ["Refactor Core Components", "Improve Documentation", ...]
@@ -36,7 +37,7 @@ def load_trinity_high_priority(
     Returns:
         HIGH 우선순위 권장사항 제목 리스트
     """
-    trinity_file = Path(__file__).parent.parent / "outputs" / "trinity_synthesis_latest.json"
+    trinity_file = get_workspace_root() / "outputs" / "trinity_synthesis_latest.json"
     
     if not trinity_file.exists():
         logger.warning(f"Trinity synthesis file not found: {trinity_file}")
@@ -87,7 +88,7 @@ def load_trinity_full_feedback(max_age_hours: int = 48) -> Dict[str, Any]:
     Returns:
         Trinity 피드백 전체 딕셔너리
     """
-    trinity_file = Path(__file__).parent.parent / "outputs" / "trinity_synthesis_latest.json"
+    trinity_file = get_workspace_root() / "outputs" / "trinity_synthesis_latest.json"
     
     if not trinity_file.exists():
         logger.warning(f"Trinity synthesis file not found: {trinity_file}")
@@ -174,7 +175,7 @@ def get_session_resonance(max_age_hours: int = 24) -> Optional[float]:
     Returns:
         Resonance Score (0.0 ~ 1.0) 또는 None
     """
-    session_dir = Path(__file__).parent.parent / "outputs" / "session_memory"
+    session_dir = get_workspace_root() / "outputs" / "session_memory"
     
     if not session_dir.exists():
         logger.warning(f"Session memory directory not found: {session_dir}")

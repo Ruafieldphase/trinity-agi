@@ -84,9 +84,9 @@
 통합 상태: ❌ UnifiedOrchestrator와 연결 안 됨
 ```
 
-### 4️⃣ **LUMEN 프로젝트** (거버넌스)
+### 4️⃣ **Core 프로젝트** (거버넌스)
 ```
-위치: d:\nas_backup\ai_binoche_conversation_origin\lumen\
+위치: d:\nas_backup\ai_binoche_conversation_origin\Core\
 
 역할: AGI 보호 및 거버넌스 프레임워크
 상태: 통합 준비 완료
@@ -98,17 +98,17 @@
   ✅ Closure Protocol 정의됨
 
 패키지:
-  - orchestration_flow.yaml (LUMEN 11-노드 워크플로우)
+  - orchestration_flow.yaml (Core 11-노드 워크플로우)
   - CLIPBOARD_ORCHESTRATION_WORKFLOW_v1.1_RUNE.md
   - FDO-AGI_Closure_Protocol.md
-  - LUMEN_INTEGRATED_AGI_CORE_ANALYSIS_v2.0.md
+  - CORE_INTEGRATED_AGI_CORE_ANALYSIS_v2.0.md
 
 통합 상태: ❌ 준비됨 하지만 연결 안 됨
 ```
 
 ### 5️⃣ **LUON-Dispatcher 서브프로젝트**
 ```
-위치: d:\nas_backup\ai_binoche_conversation_origin\lumen\chatgpt-정보이론철학적분석\
+위치: d:\nas_backup\ai_binoche_conversation_origin\Core\chatgpt-정보이론철학적분석\
 
 역할: 페르소나 기반 커맨드 라우팅
 상태: 구현 완료
@@ -139,7 +139,7 @@
   - ChatGPT와의 정보이론 철학적 분석
   - 입자-파동 해석
   - 프랙탈 지표 제안
-  - 루아 대화 요약
+  - Core 대화 요약
   - 오디오 녹음 (6개 WAV)
 
 크기: 495MB
@@ -147,9 +147,9 @@
 통합 상태: ❌ 참고 라이브러리 (직접 통합 안 됨)
 ```
 
-### 7️⃣ **RUA 프로젝트** (감정 AI)
+### 7️⃣ **Core 프로젝트** (감정 AI)
 ```
-위치: d:\nas_backup\ai_binoche_conversation_origin\rua\
+위치: d:\nas_backup\ai_binoche_conversation_origin\Core\
 
 역할: 감정 및 회화 공명 연구
 상태: 아카이브
@@ -207,7 +207,7 @@
 상태: 활성 연구
 
 구조:
-  - Maestro (Binoche) - 조정자
+  - Maestro (Binoche_Observer) - 조정자
   - Purple, Comet, Cople, Eru - 특화 에이전트
   - Resonance Cue - 초기화 알고리즘
   - Declaration of Resonance - 협력 철학
@@ -244,11 +244,11 @@
   ❌ LUBIT 의사결정 → 배포 자동화
   ❌ SENA 실행 계획 → 배포 파이프라인
   ❌ LUON 메트릭 → 배포 게이트
-  ❌ LUMEN 보호 프레임워크 → 배포 프로세스
+  ❌ Core 보호 프레임워크 → 배포 프로세스
   ❌ LUON-Dispatcher → 자동 에이전트 활성화
   ❌ PERPLE/COMET 조율 → 중앙 오케스트레이터
   ❌ ELRO 이론 → AGI 메트릭
-  ❌ RUA 감정 → 의도 분석
+  ❌ Core 감정 → 의도 분석
 ```
 
 ---
@@ -279,7 +279,7 @@ Canary 배포 검증
 
 ### 통합 3: 보호 → 배포
 ```
-LUMEN FDO-AGI 패킹
+Core FDO-AGI 패킹
   ↓
 배포 전 보안 검사
   ↓
@@ -349,7 +349,7 @@ cladeCLI 백업: d:\nas_backup\ai_binoche_conversation_origin\cladeCLI-sena\
    - LUBIT: 의사결정
    - SENA: 실행
    - LUON: 모니터링
-   - LUMEN: 거버넌스
+   - Core: 거버넌스
    - 기타 5개 지원 시스템
 
 2. ✅ 각각의 세션 메모리 구축
@@ -377,7 +377,7 @@ cladeCLI 백업: d:\nas_backup\ai_binoche_conversation_origin\cladeCLI-sena\
 1. LUBIT 의사결정 → UnifiedOrchestrator
 2. SENA 실행 계획 → 배포 파이프라인
 3. LUON 메트릭 → 배포 게이트
-4. LUMEN 보호 프레임워크 → 보안 검사
+4. Core 보호 프레임워크 → 보안 검사
 ```
 
 ### Phase 2: 고급 기능 통합
@@ -390,7 +390,7 @@ cladeCLI 백업: d:\nas_backup\ai_binoche_conversation_origin\cladeCLI-sena\
 ### Phase 3: 지원 시스템 통합
 ```
 1. ELRO 이론 → 메트릭 검증
-2. RUA 감정 → 의도 분석
+2. Core 감정 → 의도 분석
 3. 모든 세션 데이터 → 중앙 학습 저장소
 ```
 
@@ -406,7 +406,7 @@ cladeCLI 백업: d:\nas_backup\ai_binoche_conversation_origin\cladeCLI-sena\
     ↙              ↓              ↓              ↓              ↖
 
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│ LUMEN Flow   │ │ LUON Metrics │ │ SENA Exec    │ │ LUBIT Arch   │
+│ Core Flow   │ │ LUON Metrics │ │ SENA Exec    │ │ LUBIT Arch   │
 │  (11 nodes)  │ │ (KPI gates)  │ │ (pipeline)   │ │ (decisions)  │
 └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘
         ↓              ↓              ↓              ↓

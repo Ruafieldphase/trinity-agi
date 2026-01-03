@@ -17,6 +17,10 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from workspace_root import get_workspace_root
+
+WORKSPACE_ROOT = get_workspace_root()
+
 # 통증 임계값
 PAIN_THRESHOLDS = {
     "gateway_latency_ms": {
@@ -116,7 +120,7 @@ PAIN_TYPES = {
 
 def load_latest_status() -> Optional[Dict]:
     """최신 시스템 상태 로드"""
-    status_file = Path("C:/workspace/agi/outputs/quick_status_latest.json")
+    status_file = WORKSPACE_ROOT / "outputs" / "quick_status_latest.json"
     if not status_file.exists():
         return None
     
@@ -126,7 +130,7 @@ def load_latest_status() -> Optional[Dict]:
 
 def load_goal_tracker() -> Optional[Dict]:
     """목표 트래커 로드"""
-    tracker_file = Path("C:/workspace/agi/fdo_agi_repo/memory/goal_tracker.json")
+    tracker_file = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "goal_tracker.json"
     if not tracker_file.exists():
         return None
     
@@ -136,8 +140,8 @@ def load_goal_tracker() -> Optional[Dict]:
 
 def analyze_gateway_pain(status: Dict) -> Optional[Dict]:
     """Gateway (장) 통증 분석"""
-    lumen = status.get("lumen", {})
-    latency = lumen.get("response_time_ms", 0)
+    Core = status.get("Core", {})
+    latency = Core.get("response_time_ms", 0)
     
     if latency == 0:
         return None
@@ -298,7 +302,7 @@ def generate_pain_report(pains: List[Dict]) -> str:
 
 def save_pain_report(report: str, pains: List[Dict]):
     """통증 리포트 저장"""
-    output_dir = Path("C:/workspace/agi/outputs/pain_analysis")
+    output_dir = WORKSPACE_ROOT / "outputs" / "pain_analysis"
     output_dir.mkdir(parents=True, exist_ok=True)
     
     # Markdown 리포트

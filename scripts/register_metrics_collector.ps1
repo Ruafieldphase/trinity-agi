@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     시스템 메트릭 수집을 자동 스케줄 태스크로 등록

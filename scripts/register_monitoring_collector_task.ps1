@@ -1,12 +1,16 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [string]$TaskName = "MonitoringCollector",
     [int]$IntervalMinutes = 5,
-    [string]$WorkspaceRoot = "C:\workspace\agi",
-    [string]$CollectorScript = "C:\workspace\agi\scripts\collect_monitoring_samples.ps1",
-    [string]$LogDir = "C:\workspace\agi\outputs"
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )",
+    [string]$CollectorScript = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\scripts\collect_monitoring_samples.ps1",
+    [string]$LogDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

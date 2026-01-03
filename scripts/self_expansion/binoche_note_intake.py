@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Binoche Note Intake (AGI Inbox) v1
+Binoche_Observer Note Intake (AGI Inbox) v1
 
 목표
 - 사용자가 남긴 "짧은 메모"를 시스템이 받아서(질문 없이)
@@ -14,7 +14,7 @@ Binoche Note Intake (AGI Inbox) v1
   {
     "text": "...",          # 사용자 입력(최대 길이 제한 + redaction 적용)
     "timestamp":  ...,
-    "origin": "binoche"
+    "origin": "Binoche_Observer"
   }
 
 출력
@@ -36,8 +36,14 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+
+WORKSPACE = get_workspace_root()
 SIGNALS = WORKSPACE / "signals"
 OUTPUTS = WORKSPACE / "outputs"
 BRIDGE = OUTPUTS / "bridge"
@@ -165,7 +171,7 @@ def _write_session(now: float, text_redacted: str) -> Path:
     boundary_keywords = _detect_boundary_keywords(text_redacted)
 
     # 기본 태그 + 감지된 경계 키워드
-    tags = ["binoche", "message", "boundary_seed"]
+    tags = ["Binoche_Observer", "message", "boundary_seed"]
     tags.extend(boundary_keywords)
 
     payload: dict[str, Any] = {
@@ -175,7 +181,7 @@ def _write_session(now: float, text_redacted: str) -> Path:
         "notes": _cap(text_redacted, 240),
         "timestamp": float(now),
         "where": {"platform": "windows", "layer": "binoche_note_intake"},
-        "who": {"role": "human", "origin": "binoche"},
+        "who": {"role": "human", "origin": "Binoche_Observer"},
         "boundaries": [
             {"polarity": "deny", "text": "개인정보/계정/비밀번호/토큰/키 추출·저장 금지"},
             {"polarity": "deny", "text": "대용량 원문 저장 금지(메타/요약만)"},

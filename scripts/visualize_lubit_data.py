@@ -211,7 +211,7 @@ def plot_strategy_effect(events: List[Dict[str, Any]], output: Path) -> None:
     strategies = [e["strategy"] for e in strategy_events]
     affects = [e["affect"] for e in strategy_events]
     words = [e["words"] for e in strategy_events]
-    strategy_names = ['Question Loop' if 'question' in s else 'Lumen Frame' for s in strategies]
+    strategy_names = ['Question Loop' if 'question' in s else 'Core Frame' for s in strategies]
 
     # Plot 1: Affect comparison
     if len(strategy_events) >= 2:
@@ -258,7 +258,7 @@ def plot_strategy_effect(events: List[Dict[str, Any]], output: Path) -> None:
             marker = '^'
             size = 200
             color = COLORS['boundary']
-        elif e.get('strategy') == 'lumen_frame':
+        elif e.get('strategy') == 'core_frame':
             marker = 'v'
             size = 200
             color = COLORS['recovering']
@@ -276,7 +276,7 @@ def plot_strategy_effect(events: List[Dict[str, Any]], output: Path) -> None:
     ax3.scatter([], [], s=200, marker='^', color=COLORS['boundary'],
                edgecolor='white', linewidth=1.5, label='Question Loop')
     ax3.scatter([], [], s=200, marker='v', color=COLORS['recovering'],
-               edgecolor='white', linewidth=1.5, label='Lumen Frame')
+               edgecolor='white', linewidth=1.5, label='Core Frame')
     ax3.legend(loc='upper left', framealpha=0.9)
 
     # Plot 4: Recovery effectiveness

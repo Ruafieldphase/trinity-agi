@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Micro-Reset: 경량 컨텍스트 재정렬 (Fear ≥ 0.5 트리거)
@@ -33,7 +33,7 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 # 설정
-$StatePath = "fdo_agi_repo/memory/lumen_state.json"
+$StatePath = "fdo_agi_repo/memory/core_state.json"
 $LogPath = "outputs/micro_reset.log"
 $FearThreshold = 0.5
 $TargetFear = 0.4
@@ -111,7 +111,7 @@ function Rotate-LogIfNeeded {
 # Fear 신호 읽기
 function Get-FearSignal {
     if (!(Test-Path $StatePath)) {
-        Write-Log "Lumen state 파일 없음: $StatePath" "ERROR"
+        Write-Log "Core state 파일 없음: $StatePath" "ERROR"
         return $null
     }
     

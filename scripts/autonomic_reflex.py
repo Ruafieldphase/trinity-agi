@@ -4,9 +4,10 @@ import sys
 import os
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(r"C:\workspace\agi")
+WORKSPACE_ROOT = get_workspace_root()
 EXPRESS_SCRIPT = WORKSPACE_ROOT / "scripts" / "express_resonance.py"
 LOG_FILE = WORKSPACE_ROOT / "outputs" / "autonomic_reflex.log"
 
@@ -64,8 +65,8 @@ def execute_reflex(intuition, urgency, monologue):
     """
     Executes the action corresponding to the intuition.
     """
-    from koa_slack_adapter import KoaSlackAdapter
-    slack = KoaSlackAdapter()
+    from core_slack_adapter import CoreSlackAdapter
+    slack = CoreSlackAdapter()
 
     if intuition == "NONE":
         return

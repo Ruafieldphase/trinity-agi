@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     시계열 메트릭 데이터 분석 및 트렌드 리포트 생성
@@ -6,9 +6,12 @@
 
 param(
     [int]$Hours = 24,
-    [string]$OutMd = "$PSScriptRoot\..\outputs\metrics_trend_latest.md",
-    [string]$OutJson = "$PSScriptRoot\..\outputs\metrics_trend_latest.json"
+    [string]$OutMd = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\metrics_trend_latest.md",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\metrics_trend_latest.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -31,7 +34,7 @@ function Get-Stats {
 }
 
 try {
-    $metricsPath = "$PSScriptRoot\..\outputs\system_metrics.jsonl"
+    $metricsPath = "$WorkspaceRoot\outputs\system_metrics.jsonl"
     
     if (-not (Test-Path $metricsPath)) {
         Write-Host "No metrics found. Run collect_system_metrics.ps1 first." -ForegroundColor Yellow
@@ -66,9 +69,9 @@ try {
     $agiQuality = Get-Stats ($metrics | ForEach-Object { $_.agi.quality })
     $agi2ndPass = Get-Stats ($metrics | ForEach-Object { $_.agi.secondPassRate })
     
-    $lumenLocal = Get-Stats ($metrics | ForEach-Object { $_.lumen.localMs })
-    $lumenCloud = Get-Stats ($metrics | ForEach-Object { $_.lumen.cloudMs })
-    $lumenGateway = Get-Stats ($metrics | ForEach-Object { $_.lumen.gatewayMs })
+    $CoreLocal = Get-Stats ($metrics | ForEach-Object { $_.Core.localMs })
+    $CoreCloud = Get-Stats ($metrics | ForEach-Object { $_.Core.cloudMs })
+    $CoreGateway = Get-Stats ($metrics | ForEach-Object { $_.Core.gatewayMs })
     
     $cpuStats = Get-Stats ($metrics | ForEach-Object { $_.system.cpuPercent })
     $memoryStats = Get-Stats ($metrics | ForEach-Object { $_.system.memoryPercent })
@@ -91,10 +94,10 @@ try {
             agiQuality     = $agiQuality
             agi2ndPassRate = $agi2ndPass
         }
-        lumen       = @{
-            localMs   = $lumenLocal
-            cloudMs   = $lumenCloud
-            gatewayMs = $lumenGateway
+        Core       = @{
+            localMs   = $CoreLocal
+            cloudMs   = $CoreCloud
+            gatewayMs = $CoreGateway
         }
         system      = @{
             cpuPercent    = $cpuStats

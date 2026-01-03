@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 세션 활동 추적 래퍼 - 명령 실행 시 자동으로 세션 메타데이터 업데이트
 
@@ -20,8 +20,11 @@ param(
     [string]$ScriptPath,
     
     [string]$Arguments = "",
-    [string]$WorkspaceFolder = "C:\workspace\agi"
+    [string]$WorkspaceFolder = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $sessionMetaPath = Join-Path $WorkspaceFolder "outputs\session_memory\current_session_meta.json"
 

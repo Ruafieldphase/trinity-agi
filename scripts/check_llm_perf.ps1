@@ -1,4 +1,4 @@
-# check_llm_perf.ps1 - Local LLM Performance Diagnostics (Simplified)
+﻿# check_llm_perf.ps1 - Local LLM Performance Diagnostics (Simplified)
 param(
     [switch]$Benchmark
 )

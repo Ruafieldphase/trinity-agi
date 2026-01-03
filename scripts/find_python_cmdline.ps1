@@ -1,4 +1,4 @@
-# 파이썬 프로세스의 명령행 확인
+﻿# 파이썬 프로세스의 명령행 확인
 
 Write-Host "`n🐍 파이썬 프로세스 상세 정보" -ForegroundColor Cyan
 Write-Host "=" * 80

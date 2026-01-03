@@ -13,22 +13,23 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 LEDGER_PATH = WORKSPACE / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 OUTPUT_PATH = WORKSPACE / "outputs" / "backfill_normalized_ledger.jsonl"
 
 # Field mappings (from → to)
 FIELD_MAPPINGS = {
     'agi_quality': 'quality',
-    'lumen_quality': 'quality',
+    'core_quality': 'quality',
     'binoche_quality': 'quality',
-    'lumen_latency_ms': 'latency_ms',
+    'core_latency_ms': 'latency_ms',
     'agi_latency_ms': 'latency_ms',
     'processing_time_ms': 'latency_ms',
     'duration_sec': 'latency_ms',  # Convert to ms
     'agi_citations': 'citations',
-    'lumen_citations': 'citations'
+    'core_citations': 'citations'
 }
 
 def normalize_event(event: Dict[str, Any]) -> Dict[str, Any]:

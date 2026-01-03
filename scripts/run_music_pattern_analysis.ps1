@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Run Reaper Music Pattern Analysis
 
@@ -6,7 +6,7 @@
     Analyzes music library and extracts patterns for AGI rhythm system
 
 .PARAMETER MusicDir
-    Directory containing WAV files (default: C:\workspace\agi\music)
+    Directory containing WAV files (default: $WorkspaceRoot\music)
 
 .PARAMETER OutputJson
     Output JSON file path (default: outputs/music_pattern_analysis.json)
@@ -16,18 +16,21 @@
 #>
 
 param(
-    [string]$MusicDir = "C:\workspace\agi\music",
-    [string]$OutputJson = "$PSScriptRoot\..\outputs\music_pattern_analysis.json",
+    [string]$MusicDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\music",
+    [string]$OutputJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\music_pattern_analysis.json",
     [switch]$OpenResults
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 
 # Find Python
 $pythonExe = $null
 $venvPaths = @(
-    "$PSScriptRoot\..\fdo_agi_repo\.venv\Scripts\python.exe",
-    "$PSScriptRoot\..\LLM_Unified\.venv\Scripts\python.exe"
+    "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe",
+    "$WorkspaceRoot\LLM_Unified\.venv\Scripts\python.exe"
 )
 
 foreach ($path in $venvPaths) {

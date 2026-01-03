@@ -1,4 +1,4 @@
-# 🎵 Music-Goal Pipeline E2E Test
+﻿# 🎵 Music-Goal Pipeline E2E Test
 # Full integration test: Music → Rhythm → Goal generation → Tracker
 
 param(
@@ -6,9 +6,13 @@ param(
     [switch]$Verbose,
     [int]$WaitSeconds = 5
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
-$ws = "C:\workspace\agi"
+$ws = "$WorkspaceRoot"
 $venvPy = "$ws\fdo_agi_repo\.venv\Scripts\python.exe"
 if (!(Test-Path $venvPy)) { $venvPy = "python" }
 

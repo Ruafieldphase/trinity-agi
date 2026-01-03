@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     End-to-End Monitoring Test - Task Queue Server + Worker + Monitoring Daemon
@@ -25,6 +25,9 @@ param(
     [int]$Port = 8091,
     [double]$Duration = 0.5
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

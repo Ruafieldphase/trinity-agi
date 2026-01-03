@@ -1,4 +1,4 @@
-# AGI 시스템 자동 시작 비활성화 스크립트
+﻿# AGI 시스템 자동 시작 비활성화 스크립트
 # ===============================================
 # 모든 자동 시작 항목을 안전하게 비활성화합니다.
 
@@ -6,6 +6,10 @@ param(
     [switch]$DryRun,  # 실제로 변경하지 않고 미리보기만
     [switch]$Force    # 확인 없이 즉시 실행
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 Write-Host "`n🛑 AGI 시스템 자동 시작 비활성화" -ForegroundColor Red
 Write-Host "=" * 80
@@ -88,7 +92,7 @@ foreach ($taskName in $tasksToDisable) {
 
 # 3. 백업 생성
 Write-Host "`n[3/4] 백업 생성..." -ForegroundColor Cyan
-$backupDir = "C:\workspace\agi\outputs\sena\backups"
+$backupDir = "$WorkspaceRoot\outputs\sena\backups"
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $backupFile = "$backupDir\autostart_backup_$timestamp.json"
 

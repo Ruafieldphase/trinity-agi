@@ -163,7 +163,7 @@ Memory = f(Time, Space, Agent, Emotion, Content)
     "emotion": {"affect": 0.68, "keywords": ["clarity", "risk"]},
     "rhythm_phase": "integration"
   },
-  "impact_score": 0.74,                      // 루멘 패키지 확장 지표
+  "impact_score": 0.74,                      // Core 패키지 확장 지표
   "transparency": 0.9,
   "reproducibility": 0.85,
   "verifiability": 0.8,
@@ -624,7 +624,7 @@ assert len(remaining_sessions) <= 3
 
 ---
 
-## 10. 미결정 사항 (루멘과 논의 필요)
+## 10. 미결정 사항 (Core과 논의 필요)
 
 ### 10.1 스토리지 선택
 - **JSON/JSONL**: 구현 간단, 디버깅 쉬움, 성능 제한적
@@ -657,7 +657,7 @@ assert len(remaining_sessions) <= 3
 ## 11. 다음 단계
 
 1. ✅ 설계 문서 작성 완료 (현재 문서)
-2. ⏳ 루멘과 설계 리뷰 및 미결정 사항 합의
+2. ⏳ Core과 설계 리뷰 및 미결정 사항 합의
 3. ⏳ `scripts/memory/schema.py` 구현
 4. ⏳ `scripts/memory/store.py` 구현
 5. ⏳ `tests/test_memory_system.py` 작성
@@ -670,7 +670,7 @@ assert len(remaining_sessions) <= 3
 
 - 기존 구현: [orchestration/persona_orchestrator.py](../orchestration/persona_orchestrator.py)
 - PhaseController 구조: [naeda_langgraph_demo.py](../naeda_langgraph_demo.py)
-- 루빛·루멘 대화 기록: NotebookLM 참조
+- 루빛·Core 대화 기록: NotebookLM 참조
 
 ---
 

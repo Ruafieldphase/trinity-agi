@@ -1,9 +1,11 @@
-# 자동 시스템 건강 체크 스케줄러 등록
+﻿# 자동 시스템 건강 체크 스케줄러 등록
 # 매 시간마다 실행하여 시스템을 자동으로 관리합니다.
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $TaskName = "AGI_Auto_Health_Check"
 $Description = "자동 시스템 건강 체크 및 복구 - 매 시간마다 실행"
-$WorkspaceRoot = "C:\workspace\agi"
 $Python = "python"
 $Script = "$WorkspaceRoot\scripts\auto_system_health_check.py"
 

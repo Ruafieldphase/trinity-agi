@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     AGI System Startup Manager - "불멸의 시스템 (Immortal System)"
     

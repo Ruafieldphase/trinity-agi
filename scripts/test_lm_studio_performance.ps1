@@ -1,4 +1,4 @@
-# LM Studio Performance Test Script
+﻿# LM Studio Performance Test Script
 param(
     [int]$Iterations = 5,
     [int]$MaxTokens = 100,

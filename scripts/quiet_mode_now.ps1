@@ -1,4 +1,4 @@
-# Quiet Mode (비노체용)
+﻿# Quiet Mode (비노체용)
 # - 창 팝업/중복 실행을 즉시 정리
 # - 오라 픽셀만 남김
 
@@ -29,4 +29,3 @@ $ensureAura = Join-Path $ws "scripts\\ensure_rubit_aura_pixel.ps1"
 if (Test-Path $ensureAura) {
     & $ensureAura -Silent | Out-Null
 }
-

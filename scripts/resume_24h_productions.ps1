@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     VS Code 재시작 시 24h Production 상태 확인 및 복구
 
@@ -22,10 +22,12 @@
 param(
     [switch]$Silent
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'SilentlyContinue'
 
-$WorkspaceRoot = "C:\workspace\agi"
 
 function Write-Info {
     param([string]$Message, [string]$Color = "White")
@@ -36,7 +38,7 @@ function Write-Info {
 
 function Get-ProductionStatus {
     $status = @{
-        Lumen     = $false
+        Core     = $false
         Trinity   = $false
         Dashboard = $false
     }
@@ -45,8 +47,8 @@ function Get-ProductionStatus {
     $jobs = Get-Job | Where-Object { $_.Name -like 'AGI_*' }
     
     foreach ($job in $jobs) {
-        if ($job.Name -eq 'AGI_Lumen_24h' -and $job.State -eq 'Running') {
-            $status.Lumen = $true
+        if ($job.Name -eq 'AGI_Core_24h' -and $job.State -eq 'Running') {
+            $status.Core = $true
         }
         if ($job.Name -eq 'AGI_Trinity_24h' -and $job.State -eq 'Running') {
             $status.Trinity = $true
@@ -57,14 +59,14 @@ function Get-ProductionStatus {
     }
     
     # 로그 파일로도 확인 (Job이 없을 때)
-    if (-not $status.Lumen) {
-        $lumenLog = "$WorkspaceRoot\fdo_agi_repo\outputs\lumen_production_24h_stable.jsonl"
-        if (Test-Path $lumenLog) {
-            $lastMod = (Get-Item $lumenLog).LastWriteTime
+    if (-not $status.Core) {
+        $CoreLog = "$WorkspaceRoot\fdo_agi_repo\outputs\core_production_24h_stable.jsonl"
+        if (Test-Path $CoreLog) {
+            $lastMod = (Get-Item $CoreLog).LastWriteTime
             $elapsed = ((Get-Date) - $lastMod).TotalMinutes
             if ($elapsed -lt 10) {
                 # 10분 이내 업데이트
-                $status.Lumen = $true
+                $status.Core = $true
             }
         }
     }
@@ -72,14 +74,14 @@ function Get-ProductionStatus {
     return $status
 }
 
-function Resume-Lumen {
-    Write-Info "🌟 Lumen 24h Production 재시작..." "Yellow"
+function Resume-Core {
+    Write-Info "🌟 Core 24h Production 재시작..." "Yellow"
     
     # Job으로 시작
-    $job = Start-Job -Name 'AGI_Lumen_24h' -ScriptBlock {
+    $job = Start-Job -Name 'AGI_Core_24h' -ScriptBlock {
         param($Root)
         Set-Location $Root
-        & "$Root\scripts\start_lumen_24h_stable.ps1"
+        & "$Root\scripts\start_core_24h_stable.ps1"
     } -ArgumentList $WorkspaceRoot
     
     Write-Info "   ✅ Job ID: $($job.Id)" "Green"
@@ -124,19 +126,19 @@ Write-Info "╚═════════════════════�
 $status = Get-ProductionStatus
 
 Write-Info "현재 상태:" "White"
-Write-Info "   Lumen:     $(if ($status.Lumen) { '🟢 Running' } else { '⚠️  Stopped' })" "White"
+Write-Info "   Core:     $(if ($status.Core) { '🟢 Running' } else { '⚠️  Stopped' })" "White"
 Write-Info "   Trinity:   $(if ($status.Trinity) { '🟢 Running' } else { '⚠️  Stopped' })" "White"
 Write-Info "   Dashboard: $(if ($status.Dashboard) { '🟢 Running' } else { '⚠️  Stopped' })" "White"
 Write-Info ""
 
 # 복구 필요한 경우
-$needRecovery = -not ($status.Lumen -and $status.Trinity -and $status.Dashboard)
+$needRecovery = -not ($status.Core -and $status.Trinity -and $status.Dashboard)
 
 if ($needRecovery) {
     Write-Info "🔧 복구 필요 - 자동 재시작 중...`n" "Yellow"
     
-    if (-not $status.Lumen) {
-        Resume-Lumen
+    if (-not $status.Core) {
+        Resume-Core
     }
     
     if (-not $status.Trinity) {

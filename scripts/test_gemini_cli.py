@@ -14,11 +14,7 @@ try:
         print("❌ GOOGLE_API_KEY 환경 변수가 설정되지 않았습니다.")
         sys.exit(1)
     
-<<<<<<< HEAD
     print("✓ GOOGLE_API_KEY 설정됨")
-=======
-    print(f"✓ API 키 발견: {api_key[:10]}...")
->>>>>>> origin/main
     
     # API 설정
     genai.configure(api_key=api_key)

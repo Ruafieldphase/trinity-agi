@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import json
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Import existing memory managers
 sys.path.append(str(Path(__file__).parent))
@@ -43,7 +44,7 @@ except ImportError:
 class UnifiedMemorySystem:
     def __init__(self, workspace_root: Path = None):
         if workspace_root is None:
-            workspace_root = Path(__file__).parent.parent
+            workspace_root = get_workspace_root()
             
         self.workspace_root = workspace_root
         

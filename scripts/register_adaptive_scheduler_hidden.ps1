@@ -1,14 +1,18 @@
-# Register Adaptive Scheduler with Hidden Window
+﻿# Register Adaptive Scheduler with Hidden Window
 # Run this script with Administrator privileges
 
 param(
     [switch]$Unregister
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
 $TaskName = "AGI_Adaptive_Master_Scheduler"
-$ScriptPath = "C:\workspace\agi\scripts\adaptive_master_scheduler.ps1"
+$ScriptPath = "$WorkspaceRoot\scripts\adaptive_master_scheduler.ps1"
 
 # Check if running as Administrator
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())

@@ -1,13 +1,16 @@
-# Quick System Check Alias
+﻿# Quick System Check Alias
 # Usage: Just run "check" or "system-check" from anywhere
 
-$scriptPath = "C:\workspace\agi\scripts\system_health_check.ps1"
+$scriptPath = "$WorkspaceRoot\scripts\system_health_check.ps1"
 
 function Invoke-SystemHealthCheck {
     param(
         [switch]$Detailed,
         [string]$OutputJson
     )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
     
     $params = @{}
     if ($Detailed) { $params['Detailed'] = $true }

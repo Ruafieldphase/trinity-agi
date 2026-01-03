@@ -13,9 +13,10 @@ from pathlib import Path
 import sys
 import json
 from typing import Dict, List, Any
+from workspace_root import get_workspace_root
 
 # Hippocampus 불러오기
-sys.path.append(str(Path(__file__).parent.parent / "fdo_agi_repo"))
+sys.path.append(str(get_workspace_root() / "fdo_agi_repo"))
 from copilot.hippocampus import CopilotHippocampus
 
 
@@ -196,7 +197,7 @@ class AutoHippocampusRecall:
 
 def main():
     """테스트 실행"""
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     auto_recall = AutoHippocampusRecall(workspace)
     
     # 1. 세션 시작 시 자동 회상

@@ -1,4 +1,4 @@
-# 루멘 ?�록???�동복구 ?�스???�위??param(
+﻿# Core ?록???동복구 ?스???위??param(
     [switch]$TestPortConflict,
     [switch]$TestProcessKill,
     [switch]$TestVenvMissing,
@@ -11,10 +11,13 @@ $ErrorActionPreference = "Continue"
 
 function Write-TestHeader {
     param([string]$Title)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
     Write-Host ""
-    Write-Host "?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?? -ForegroundColor Cyan
+    Write-Host "?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?? -ForegroundColor Cyan
     Write-Host "  TEST: $Title" -ForegroundColor Yellow
-    Write-Host "?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?? -ForegroundColor Cyan
+    Write-Host "?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?? -ForegroundColor Cyan
     Write-Host ""
 }
 
@@ -30,7 +33,7 @@ function Write-TestResult {
     
     Write-Host "$symbol $TestName" -ForegroundColor $color
     if ($Message) {
-        Write-Host "  ?��? $Message" -ForegroundColor DarkGray
+        Write-Host "  ?? $Message" -ForegroundColor DarkGray
     }
 }
 
@@ -80,9 +83,9 @@ function Stop-ProxyProcess {
     }
 }
 
-# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??# TEST 1: ?�로?�스 강제 종료 ???�동 ?�시??# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??
+# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??# TEST 1: ?로?스 강제 종료 ???동 ?시??# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??
 function Test-ProcessKillRecovery {
-    Write-TestHeader "?�로?�스 강제 종료 ???�동 ?�시??
+    Write-TestHeader "?로?스 강제 종료 ???동 ?시??
     
     $results = @{
         InitialStart      = $false
@@ -92,60 +95,60 @@ function Test-ProcessKillRecovery {
         HealthCheckAfter  = $false
     }
     
-    # 1. 초기 ?�록???�작
-    Write-Host "[1/5] ?�록??초기 ?�작..." -ForegroundColor DarkGray
+    # 1. 초기 ?록???작
+    Write-Host "[1/5] ?록??초기 ?작..." -ForegroundColor DarkGray
     & "$PSScriptRoot\quick_diagnose.ps1" -StartProxy *>$null
     Start-Sleep -Seconds 3
     
     $status = Get-ProxyStatus
     $results.InitialStart = $status.IsRunning
-    Write-TestResult "?�록??초기 ?�작" $results.InitialStart "PID: $($status.PID)"
+    Write-TestResult "?록??초기 ?작" $results.InitialStart "PID: $($status.PID)"
     
     if (-not $results.InitialStart) {
         return $results
     }
     
-    # 2. ?�스체크 (종료 ??
-    Write-Host "[2/5] ?�스체크 (종료 ??..." -ForegroundColor DarkGray
+    # 2. ?스체크 (종료 ??
+    Write-Host "[2/5] ?스체크 (종료 ??..." -ForegroundColor DarkGray
     $results.HealthCheckBefore = Test-ProxyHealth
-    Write-TestResult "?�스체크 (종료 ??" $results.HealthCheckBefore
+    Write-TestResult "?스체크 (종료 ??" $results.HealthCheckBefore
     
-    # 3. ?�로?�스 강제 종료
-    Write-Host "[3/5] ?�로?�스 강제 종료..." -ForegroundColor DarkGray
+    # 3. ?로?스 강제 종료
+    Write-Host "[3/5] ?로?스 강제 종료..." -ForegroundColor DarkGray
     $beforePID = $status.PID
     $results.ProcessKill = Stop-ProxyProcess -TimeoutSeconds 10
-    Write-TestResult "?�로?�스 강제 종료" $results.ProcessKill "?�전 PID: $beforePID"
+    Write-TestResult "?로?스 강제 종료" $results.ProcessKill "?전 PID: $beforePID"
     
     Start-Sleep -Seconds 2
     
-    # 4. ?�동 ?�시??(quick_diagnose ?�행)
-    Write-Host "[4/5] ?�동 ?�시???�도..." -ForegroundColor DarkGray
+    # 4. ?동 ?시??(quick_diagnose ?행)
+    Write-Host "[4/5] ?동 ?시???도..." -ForegroundColor DarkGray
     & "$PSScriptRoot\quick_diagnose.ps1" *>$null
     Start-Sleep -Seconds 3
     
     $newStatus = Get-ProxyStatus
     $results.AutoRestart = $newStatus.IsRunning
-    Write-TestResult "?�동 ?�시?? $results.AutoRestart "??PID: $($newStatus.PID)"
+    Write-TestResult "?동 ?시?? $results.AutoRestart "??PID: $($newStatus.PID)"
     
-    # 5. ?�스체크 (?�시????
-    Write-Host "[5/5] ?�스체크 (?�시????..." -ForegroundColor DarkGray
+    # 5. ?스체크 (?시????
+    Write-Host "[5/5] ?스체크 (?시????..." -ForegroundColor DarkGray
     $results.HealthCheckAfter = Test-ProxyHealth
-    Write-TestResult "?�스체크 (?�시????" $results.HealthCheckAfter
+    Write-TestResult "?스체크 (?시????" $results.HealthCheckAfter
     
     # 종합 결과
     Write-Host ""
     $allPassed = $results.Values | ForEach-Object { $_ } | Where-Object { $_ -eq $false } | Measure-Object | Select-Object -ExpandProperty Count
     $overallPass = $allPassed -eq 0
     
-    Write-TestResult "TEST 1 종합" $overallPass "$(5 - $allPassed)/5 ?�계 ?�공"
+    Write-TestResult "TEST 1 종합" $overallPass "$(5 - $allPassed)/5 ?계 ?공"
     
     return $results
 }
 
-# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??# TEST 2: ?�트 충돌 감�? �?처리
-# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??
+# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??# TEST 2: ?트 충돌 감? ?처리
+# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??
 function Test-PortConflictHandling {
-    Write-TestHeader "?�트 충돌 감�? �?처리"
+    Write-TestHeader "?트 충돌 감? ?처리"
     
     $results = @{
         CreateDummyServer = $false
@@ -154,8 +157,8 @@ function Test-PortConflictHandling {
         NormalStart       = $false
     }
     
-    # 1. ?��? ?�버�??�트 ?�유
-    Write-Host "[1/4] ?��? ?�버�??�트 8080 ?�유..." -ForegroundColor DarkGray
+    # 1. ?? ?버??트 ?유
+    Write-Host "[1/4] ?? ?버??트 8080 ?유..." -ForegroundColor DarkGray
     
     # Stop existing proxy first
     Stop-ProxyProcess *>$null
@@ -172,18 +175,18 @@ function Test-PortConflictHandling {
     Start-Sleep -Seconds 2
     $portOccupied = Get-NetTCPConnection -LocalPort 8080 -ErrorAction SilentlyContinue
     $results.CreateDummyServer = $null -ne $portOccupied
-    Write-TestResult "?��? ?�버 ?�작" $results.CreateDummyServer "PID: $($portOccupied.OwningProcess)"
+    Write-TestResult "?? ?버 ?작" $results.CreateDummyServer "PID: $($portOccupied.OwningProcess)"
     
-    # 2. 충돌 감�? ?�도
-    Write-Host "[2/4] ?�록???�작 ?�도 (충돌 ?�상)..." -ForegroundColor DarkGray
+    # 2. 충돌 감? ?도
+    Write-Host "[2/4] ?록???작 ?도 (충돌 ?상)..." -ForegroundColor DarkGray
     
     $startOutput = & "$PSScriptRoot\start_local_llm_proxy.ps1" 2>&1
     $conflictDetected = $startOutput -match "already in use|OSError|Address already in use"
     $results.ConflictDetection = $conflictDetected
-    Write-TestResult "충돌 감�?" $results.ConflictDetection
+    Write-TestResult "충돌 감?" $results.ConflictDetection
     
-    # 3. ?��? ?�버 ?�리
-    Write-Host "[3/4] ?��? ?�버 ?�리..." -ForegroundColor DarkGray
+    # 3. ?? ?버 ?리
+    Write-Host "[3/4] ?? ?버 ?리..." -ForegroundColor DarkGray
     Stop-Job -Job $dummyJob -ErrorAction SilentlyContinue
     Remove-Job -Job $dummyJob -Force -ErrorAction SilentlyContinue
     
@@ -194,30 +197,30 @@ function Test-PortConflictHandling {
     Start-Sleep -Seconds 2
     $portCleared = $null -eq (Get-NetTCPConnection -LocalPort 8080 -ErrorAction SilentlyContinue)
     $results.CleanupDummy = $portCleared
-    Write-TestResult "?��? ?�버 ?�리" $results.CleanupDummy
+    Write-TestResult "?? ?버 ?리" $results.CleanupDummy
     
-    # 4. ?�상 ?�작 ?�인
-    Write-Host "[4/4] ?�록???�상 ?�작 ?�인..." -ForegroundColor DarkGray
+    # 4. ?상 ?작 ?인
+    Write-Host "[4/4] ?록???상 ?작 ?인..." -ForegroundColor DarkGray
     & "$PSScriptRoot\quick_diagnose.ps1" -StartProxy *>$null
     Start-Sleep -Seconds 3
     
     $status = Get-ProxyStatus
     $results.NormalStart = $status.IsRunning -and (Test-ProxyHealth)
-    Write-TestResult "?�상 ?�작" $results.NormalStart
+    Write-TestResult "?상 ?작" $results.NormalStart
     
     # 종합 결과
     Write-Host ""
     $allPassed = $results.Values | ForEach-Object { $_ } | Where-Object { $_ -eq $false } | Measure-Object | Select-Object -ExpandProperty Count
     $overallPass = $allPassed -eq 0
     
-    Write-TestResult "TEST 2 종합" $overallPass "$(4 - $allPassed)/4 ?�계 ?�공"
+    Write-TestResult "TEST 2 종합" $overallPass "$(4 - $allPassed)/4 ?계 ?공"
     
     return $results
 }
 
-# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??# TEST 3: venv 경로 검�?# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??
+# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??# TEST 3: venv 경로 검?# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??
 function Test-VenvValidation {
-    Write-TestHeader "venv 경로 검�?
+    Write-TestHeader "venv 경로 검?
     
     $results = @{
         VenvExists        = $false
@@ -226,48 +229,48 @@ function Test-VenvValidation {
         RequestsInstalled = $false
     }
     
-    $venvPath = "C:\workspace\agi\LLM_Unified\.venv"
+    $venvPath = "$WorkspaceRoot\LLM_Unified\.venv"
     $pythonExe = "$venvPath\Scripts\python.exe"
     
-    # 1. venv ?�렉?�리 존재 ?�인
-    Write-Host "[1/4] venv ?�렉?�리 ?�인..." -ForegroundColor DarkGray
+    # 1. venv ?렉?리 존재 ?인
+    Write-Host "[1/4] venv ?렉?리 ?인..." -ForegroundColor DarkGray
     $results.VenvExists = Test-Path $venvPath
-    Write-TestResult "venv ?�렉?�리" $results.VenvExists $venvPath
+    Write-TestResult "venv ?렉?리" $results.VenvExists $venvPath
     
-    # 2. Python ?�행 ?�일 ?�인
-    Write-Host "[2/4] Python ?�행 ?�일 ?�인..." -ForegroundColor DarkGray
+    # 2. Python ?행 ?일 ?인
+    Write-Host "[2/4] Python ?행 ?일 ?인..." -ForegroundColor DarkGray
     $results.PythonExists = Test-Path $pythonExe
-    Write-TestResult "Python ?�행 ?�일" $results.PythonExists $pythonExe
+    Write-TestResult "Python ?행 ?일" $results.PythonExists $pythonExe
     
     if (-not $results.PythonExists) {
         return $results
     }
     
-    # 3. Flask ?�치 ?�인
-    Write-Host "[3/4] Flask ?�치 ?�인..." -ForegroundColor DarkGray
+    # 3. Flask ?치 ?인
+    Write-Host "[3/4] Flask ?치 ?인..." -ForegroundColor DarkGray
     $flaskCheck = & $pythonExe -c "import flask; print(flask.__version__)" 2>$null
     $results.FlaskInstalled = $LASTEXITCODE -eq 0
-    Write-TestResult "Flask ?�치" $results.FlaskInstalled "버전: $flaskCheck"
+    Write-TestResult "Flask ?치" $results.FlaskInstalled "버전: $flaskCheck"
     
-    # 4. requests ?�치 ?�인
-    Write-Host "[4/4] requests ?�치 ?�인..." -ForegroundColor DarkGray
+    # 4. requests ?치 ?인
+    Write-Host "[4/4] requests ?치 ?인..." -ForegroundColor DarkGray
     $requestsCheck = & $pythonExe -c "import requests; print(requests.__version__)" 2>$null
     $results.RequestsInstalled = $LASTEXITCODE -eq 0
-    Write-TestResult "requests ?�치" $results.RequestsInstalled "버전: $requestsCheck"
+    Write-TestResult "requests ?치" $results.RequestsInstalled "버전: $requestsCheck"
     
     # 종합 결과
     Write-Host ""
     $allPassed = $results.Values | ForEach-Object { $_ } | Where-Object { $_ -eq $false } | Measure-Object | Select-Object -ExpandProperty Count
     $overallPass = $allPassed -eq 0
     
-    Write-TestResult "TEST 3 종합" $overallPass "$(4 - $allPassed)/4 ?�계 ?�공"
+    Write-TestResult "TEST 3 종합" $overallPass "$(4 - $allPassed)/4 ?계 ?공"
     
     return $results
 }
 
-# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??# TEST 4: ?�록??기능 ?�합 ?�스??# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??
+# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??# TEST 4: ?록??기능 ?합 ?스??# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??
 function Test-ProxyFunctionality {
-    Write-TestHeader "?�록??기능 ?�합 ?�스??
+    Write-TestHeader "?록??기능 ?합 ?스??
     
     $results = @{
         HealthEndpoint = $false
@@ -276,28 +279,28 @@ function Test-ProxyFunctionality {
         ResponseTime   = $false
     }
     
-    # ?�록???�행 ?�인
+    # ?록???행 ?인
     $status = Get-ProxyStatus
     if (-not $status.IsRunning) {
-        Write-Host "[WARN]  ?�록?��? ?�행 중이지 ?�습?�다. ?�작 �?.." -ForegroundColor Yellow
+        Write-Host "[WARN]  ?록?? ?행 중이지 ?습?다. ?작 ?.." -ForegroundColor Yellow
         & "$PSScriptRoot\quick_diagnose.ps1" -StartProxy *>$null
         Start-Sleep -Seconds 3
     }
     
-    # 1. /health ?�드?�인??    Write-Host "[1/4] /health ?�드?�인???�스??.." -ForegroundColor DarkGray
+    # 1. /health ?드?인??    Write-Host "[1/4] /health ?드?인???스??.." -ForegroundColor DarkGray
     try {
         $healthResponse = Invoke-RestMethod -Uri 'http://localhost:8080/health' -Method GET -TimeoutSec 5
         $results.HealthEndpoint = $healthResponse.status -eq "ok"
-        Write-TestResult "/health ?�드?�인?? $results.HealthEndpoint "Status: $($healthResponse.status)"
+        Write-TestResult "/health ?드?인?? $results.HealthEndpoint "Status: $($healthResponse.status)"
     }
     catch {
-        Write-TestResult "/health ?�드?�인?? $false $_.Exception.Message
+        Write-TestResult "/health ?드?인?? $false $_.Exception.Message
     }
     
-    # 2. /v1/chat/completions ?�드?�인??    Write-Host "[2/4] /v1/chat/completions ?�드?�인???�스??.." -ForegroundColor DarkGray
+    # 2. /v1/chat/completions ?드?인??    Write-Host "[2/4] /v1/chat/completions ?드?인???스??.." -ForegroundColor DarkGray
     try {
         $chatBody = @{
-            model      = "lumen-gateway"
+            model      = "Core-gateway"
             messages   = @(
                 @{role = "user"; content = "ping" }
             )
@@ -314,25 +317,25 @@ function Test-ProxyFunctionality {
         
         $results.ChatEndpoint = $chatResponse.choices.Count -gt 0
         $responseTime = [math]::Round($stopwatch.Elapsed.TotalMilliseconds)
-        Write-TestResult "/v1/chat/completions ?�드?�인?? $results.ChatEndpoint "?�답?�간: ${responseTime}ms"
+        Write-TestResult "/v1/chat/completions ?드?인?? $results.ChatEndpoint "?답?간: ${responseTime}ms"
         
-        # 3. OpenAI ?�맷 검�?        Write-Host "[3/4] OpenAI ?�답 ?�맷 검�?.." -ForegroundColor DarkGray
+        # 3. OpenAI ?맷 검?        Write-Host "[3/4] OpenAI ?답 ?맷 검?.." -ForegroundColor DarkGray
         $hasId = $null -ne $chatResponse.id
         $hasChoices = $null -ne $chatResponse.choices
         $hasUsage = $null -ne $chatResponse.usage
         $results.OpenAIFormat = $hasId -and $hasChoices -and $hasUsage
-        Write-TestResult "OpenAI ?�맷" $results.OpenAIFormat "id: $hasId, choices: $hasChoices, usage: $hasUsage"
+        Write-TestResult "OpenAI ?맷" $results.OpenAIFormat "id: $hasId, choices: $hasChoices, usage: $hasUsage"
         
-        # 4. ?�답 ?�간 검�?(< 10�?
-        Write-Host "[4/4] ?�답 ?�간 검�?.." -ForegroundColor DarkGray
+        # 4. ?답 ?간 검?(< 10?
+        Write-Host "[4/4] ?답 ?간 검?.." -ForegroundColor DarkGray
         $results.ResponseTime = $responseTime -lt 10000
-        Write-TestResult "?�답 ?�간 (< 10s)" $results.ResponseTime "${responseTime}ms"
+        Write-TestResult "?답 ?간 (< 10s)" $results.ResponseTime "${responseTime}ms"
         
     }
     catch {
-        Write-TestResult "/v1/chat/completions ?�드?�인?? $false $_.Exception.Message
-        Write-TestResult "OpenAI ?�맷" $false "?�전 ?�계 ?�패"
-        Write-TestResult "?�답 ?�간" $false "?�전 ?�계 ?�패"
+        Write-TestResult "/v1/chat/completions ?드?인?? $false $_.Exception.Message
+        Write-TestResult "OpenAI ?맷" $false "?전 ?계 ?패"
+        Write-TestResult "?답 ?간" $false "?전 ?계 ?패"
     }
     
     # 종합 결과
@@ -340,19 +343,19 @@ function Test-ProxyFunctionality {
     $allPassed = $results.Values | ForEach-Object { $_ } | Where-Object { $_ -eq $false } | Measure-Object | Select-Object -ExpandProperty Count
     $overallPass = $allPassed -eq 0
     
-    Write-TestResult "TEST 4 종합" $overallPass "$(4 - $allPassed)/4 ?�계 ?�공"
+    Write-TestResult "TEST 4 종합" $overallPass "$(4 - $allPassed)/4 ?계 ?공"
     
     return $results
 }
 
-# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??# 메인 ?�행
-# ?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═??
+# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??# 메인 ?행
+# ?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═??
 Write-Host ""
-Write-Host "?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�╗" -ForegroundColor Cyan
-Write-Host "??  루멘 ?�록???�동복구 ?�스???�위??                      ?? -ForegroundColor Cyan
-Write-Host "?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�╝" -ForegroundColor Cyan
+Write-Host "?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?╗" -ForegroundColor Cyan
+Write-Host "??  Core ?록???동복구 ?스???위??                      ?? -ForegroundColor Cyan
+Write-Host "?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?╝" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "?�작 ?�각: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Yellow
+Write-Host "?작 ?각: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Yellow
 Write-Host ""
 
 $allResults = @{}
@@ -375,25 +378,25 @@ if ($TestAllScenarios) {
 
 # No tests selected
 if ($allResults.Count -eq 0) {
-    Write-Host "[WARN]  ?�스?��? ?�택?��? ?�았?�니??" -ForegroundColor Yellow
+    Write-Host "[WARN]  ?스?? ?택?? ?았?니??" -ForegroundColor Yellow
     Write-Host ""
-    Write-Host "?�용 가?�한 ?�션:" -ForegroundColor Cyan
-    Write-Host "  -TestProcessKill     : ?�로?�스 강제 종료 복구 ?�스?? -ForegroundColor White
-    Write-Host "  -TestPortConflict    : ?�트 충돌 처리 ?�스?? -ForegroundColor White
-    Write-Host "  -TestVenvMissing     : venv 경로 검�??�스?? -ForegroundColor White
-    Write-Host "  -TestAllScenarios    : 모든 ?�스???�행" -ForegroundColor White
+    Write-Host "?용 가?한 ?션:" -ForegroundColor Cyan
+    Write-Host "  -TestProcessKill     : ?로?스 강제 종료 복구 ?스?? -ForegroundColor White
+    Write-Host "  -TestPortConflict    : ?트 충돌 처리 ?스?? -ForegroundColor White
+    Write-Host "  -TestVenvMissing     : venv 경로 검??스?? -ForegroundColor White
+    Write-Host "  -TestAllScenarios    : 모든 ?스???행" -ForegroundColor White
     Write-Host ""
-    Write-Host "?�시:" -ForegroundColor Cyan
+    Write-Host "?시:" -ForegroundColor Cyan
     Write-Host "  .\scripts\test_proxy_recovery.ps1 -TestAllScenarios" -ForegroundColor DarkGray
     Write-Host ""
     exit 0
 }
 
-# 최종 ?�약
+# 최종 ?약
 Write-Host ""
-Write-Host "?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?? -ForegroundColor Cyan
-Write-Host "  최종 ?�약" -ForegroundColor Yellow
-Write-Host "?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?�═?? -ForegroundColor Cyan
+Write-Host "?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?? -ForegroundColor Cyan
+Write-Host "  최종 ?약" -ForegroundColor Yellow
+Write-Host "?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?═?? -ForegroundColor Cyan
 Write-Host ""
 
 $totalTests = 0
@@ -416,10 +419,10 @@ foreach ($testName in $allResults.Keys) {
 
 Write-Host ""
 $overallPercentage = [math]::Round(($passedTests / $totalTests) * 100)
-Write-Host "?�체: $passedTests/$totalTests ($overallPercentage%)" -ForegroundColor $(if ($passedTests -eq $totalTests) { "Green" } else { "Yellow" })
+Write-Host "?체: $passedTests/$totalTests ($overallPercentage%)" -ForegroundColor $(if ($passedTests -eq $totalTests) { "Green" } else { "Yellow" })
 
 Write-Host ""
-Write-Host "?�료 ?�각: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Yellow
+Write-Host "?료 ?각: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -ForegroundColor Yellow
 Write-Host ""
 
 # Exit code

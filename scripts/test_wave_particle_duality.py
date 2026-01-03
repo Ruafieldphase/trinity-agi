@@ -7,9 +7,10 @@ GitHub Copilot의 파동-입자 이중성 통합 테스트
 
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 
 from copilot.hippocampus import CopilotHippocampus
 from copilot.wave_particle_unifier import WaveParticleUnifier
@@ -20,7 +21,7 @@ def test_wave_particle_duality():
     
     # 1. Hippocampus 초기화
     print("1️⃣ Initializing hippocampus...")
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     hippo = CopilotHippocampus(workspace_root=workspace_root)
     print("   ✅ Hippocampus initialized\n")
     

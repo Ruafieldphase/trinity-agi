@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     AGI Self-Aware Context Manager (게임 봇처럼 상태 인식)
@@ -48,6 +48,9 @@ param(
     [switch]$CreateGuide,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # VS Code Workspace 시작 시 자동 실행 스크립트
 # ============================================================
 # 목적: VS Code가 열리면 자동으로 Phase 2.5 작업 재개
@@ -8,6 +8,9 @@
 param(
     [switch]$Silent
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $WorkspaceRoot = $PSScriptRoot | Split-Path -Parent

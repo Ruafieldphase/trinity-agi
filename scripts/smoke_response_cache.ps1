@@ -1,4 +1,7 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 # smoke_response_cache.ps1
 # Response Cache smoke test (same task 3x = expect 2 cache hits)
 
@@ -20,8 +23,8 @@ for ($i = 1; $i -le 3; $i++) {
     Write-Host "[$i/3] Running task..." -ForegroundColor Cyan
     
     $start = Get-Date
-    & "$PSScriptRoot\..\fdo_agi_repo\.venv\Scripts\python.exe" `
-        "$PSScriptRoot\..\fdo_agi_repo\scripts\run_task.py" `
+    & "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe" `
+        "$WorkspaceRoot\fdo_agi_repo\scripts\run_task.py" `
         --title "smoke_cache_$i" `
         --goal $taskGoal 2>&1 | Out-Null
     $end = Get-Date

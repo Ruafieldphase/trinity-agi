@@ -1,11 +1,15 @@
-# Self-Healing Level 1 - 기본 자가 치유 시스템
+﻿# Self-Healing Level 1 - 기본 자가 치유 시스템
 # 이벤트 감지기가 발견한 문제들에 자동으로 대응
 
 param(
     [int]$CheckIntervalSeconds = 30,
-    [string]$EventQueueFile = "C:\workspace\agi\outputs\event_queue.json",
-    [string]$LogFile = "C:\workspace\agi\outputs\self_healing_level1.log"
+    [string]$EventQueueFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\event_queue.json",
+    [string]$LogFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\self_healing_level1.log"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 

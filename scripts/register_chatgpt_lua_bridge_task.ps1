@@ -1,4 +1,4 @@
-# Purpose: Stub for ChatGPT Lua Bridge task registration (docs reference).
+﻿# Purpose: Stub for ChatGPT Lua Bridge task registration (docs reference).
 # Note: Real scheduled task setup is not implemented here.
 
 $ErrorActionPreference = "Stop"
@@ -23,4 +23,3 @@ Move-Item -Force $tmp $outFile
 
 Write-Host "ok: false (stub)"
 Write-Host "out: $outFile"
-

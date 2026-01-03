@@ -230,24 +230,24 @@ function Show-ObsStatus {
     return 0
 }
 
-function Open-LumenGate {
+function Open-CoreGate {
     try {
-        # Run quick health probe for Lumen Gateway
+        # Run quick health probe for Core Gateway
         & powershell -NoProfile -ExecutionPolicy Bypass `
-            -File (Join-Path $workspace 'scripts/lumen_quick_probe.ps1')
+            -File (Join-Path $workspace 'scripts/core_quick_probe.ps1')
         $code = $LASTEXITCODE
         if ($code -ne 0) {
-            Warn "Lumen probe failed. Check network or LUMEN_GATEWAY_URL."
+            Warn "Core probe failed. Check network or CORE_GATEWAY_URL."
         }
         return 0
     }
     catch {
-        Warn "Lumen gate open failed: $_"
+        Warn "Core gate open failed: $_"
         return 2
     }
 }
 
-function Open-LumenDashboard {
+function Open-CoreDashboard {
     param([int]$Hours = 24)
     try {
         # Generate monitoring dashboard with hard timeout and open HTML if available
@@ -268,7 +268,7 @@ function Open-LumenDashboard {
         return 0
     }
     catch {
-        Warn "Lumen dashboard generation failed: $_"
+        Warn "Core dashboard generation failed: $_"
         $global:LASTEXITCODE = 0
         return 0
     }
@@ -608,13 +608,13 @@ function Show-OpsDashboard {
         & powershell -NoProfile -ExecutionPolicy Bypass `
             -File (Join-Path $workspace 'fdo_agi_repo/scripts/ops_dashboard.ps1')
         
-        # 2. Lumen Gateway Status
-        Write-Host "`n[Lumen Gateway]" -ForegroundColor Cyan
+        # 2. Core Gateway Status
+        Write-Host "`n[Core Gateway]" -ForegroundColor Cyan
         try {
-            $lumenProbeLog = Join-Path $workspace 'outputs/lumen_probe_log.jsonl'
-            if (Test-Path $lumenProbeLog) {
+            $CoreProbeLog = Join-Path $workspace 'outputs/core_probe_log.jsonl'
+            if (Test-Path $CoreProbeLog) {
                 # Read all lines and find the last valid JSON
-                $lines = Get-Content $lumenProbeLog -Encoding UTF8
+                $lines = Get-Content $CoreProbeLog -Encoding UTF8
                 $lastProbe = $null
                 for ($i = $lines.Count - 1; $i -ge 0; $i--) {
                     try {
@@ -644,7 +644,7 @@ function Show-OpsDashboard {
                 }
             }
             else {
-                Write-Host "  [WARN]  No probe data (run 'Lumen: Quick Health Probe')" -ForegroundColor Yellow
+                Write-Host "  [WARN]  No probe data (run 'Core: Quick Health Probe')" -ForegroundColor Yellow
             }
         }
         catch {
@@ -673,14 +673,14 @@ function Show-OpsDashboard {
         
         Info "`n[INFO] View detailed HTML dashboard: monitoring_dashboard_latest.html"
 
-        # Try to open dashboard; if missing, generate then open (hard timeout path inside Open-LumenDashboard)
+        # Try to open dashboard; if missing, generate then open (hard timeout path inside Open-CoreDashboard)
         $html = Join-Path $workspace 'outputs/monitoring_dashboard_latest.html'
         if (Test-Path $html) {
             try { Start-Process $html | Out-Null } catch { Warn "Failed to open dashboard: $_" }
         }
         else {
             Info "Dashboard not found. Generating 24h dashboard and opening..."
-            Open-LumenDashboard -Hours 24 | Out-Null
+            Open-CoreDashboard -Hours 24 | Out-Null
         }
         $global:LASTEXITCODE = 0
         return 0
@@ -1283,13 +1283,13 @@ switch -Regex ($action) {
         Info '[Action] OBS stream status'
         exit (Run-And-Report { Show-ObsStatus })
     }
-    '^lumen_dashboard$' {
-        Info '[Action] Lumen 24h dashboard (HTML)'
-        exit (Run-And-Report { Open-LumenDashboard -Hours 24 })
+    '^core_dashboard$' {
+        Info '[Action] Core 24h dashboard (HTML)'
+        exit (Run-And-Report { Open-CoreDashboard -Hours 24 })
     }
-    '^lumen_open$' {
-        Info '[Action] Lumen gateway probe (open gate)'
-        exit (Run-And-Report { Open-LumenGate })
+    '^core_open$' {
+        Info '[Action] Core gateway probe (open gate)'
+        exit (Run-And-Report { Open-CoreGate })
     }
     '^bot_start$' {
         Info '[Action] Start YouTube auto-reply bot'

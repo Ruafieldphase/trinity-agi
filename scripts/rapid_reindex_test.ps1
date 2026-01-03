@@ -1,10 +1,14 @@
-# Rapid Reindex Test Suite
+﻿# Rapid Reindex Test Suite
 # 재색인 후 5개 간단한 task를 빠르게 실행하여 즉시 효과 측정
 
 param(
     [int]$TaskCount = 5,
-    [string]$WorkspaceRoot = "C:\workspace\agi"
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Continue'  # Allow warnings but continue
 $repoDir = "$WorkspaceRoot\fdo_agi_repo"

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$DryRun,
     [string]$OutJson,
     [string]$HistoryJsonl,
@@ -64,27 +64,27 @@ else {
     }
 }
 
-# 4) Lumen quick health probe (optional)
-$lumenProbe = Join-Path $root 'scripts/lumen_quick_probe.ps1'
-$lumenOk = $null
-$lumenLatencyMs = $null
-$lumenError = $null
-if (Test-Path -LiteralPath $lumenProbe) {
+# 4) Core quick health probe (optional)
+$CoreProbe = Join-Path $root 'scripts/core_quick_probe.ps1'
+$CoreOk = $null
+$CoreLatencyMs = $null
+$CoreError = $null
+if (Test-Path -LiteralPath $CoreProbe) {
     if ($DryRun) {
-        Write-Host "[DryRun] Would run: $lumenProbe" -ForegroundColor Yellow
-        $lumenOk = $true
+        Write-Host "[DryRun] Would run: $CoreProbe" -ForegroundColor Yellow
+        $CoreOk = $true
     }
     else {
         try {
             $sw = [System.Diagnostics.Stopwatch]::StartNew()
-            & $lumenProbe
+            & $CoreProbe
             $sw.Stop()
-            $lumenLatencyMs = [int64]$sw.Elapsed.TotalMilliseconds
-            if ($LASTEXITCODE -ne $null -and $LASTEXITCODE -ne 0) { throw "Lumen probe exit $LASTEXITCODE" }
-            $lumenOk = $true
+            $CoreLatencyMs = [int64]$sw.Elapsed.TotalMilliseconds
+            if ($LASTEXITCODE -ne $null -and $LASTEXITCODE -ne 0) { throw "Core probe exit $LASTEXITCODE" }
+            $CoreOk = $true
             # Critical latency hook
-            if (-not $DryRun -and $LatencyCriticalMs -and $lumenLatencyMs -ge [int64]$LatencyCriticalMs) {
-                Write-Host ("Lumen latency {0} ms ≥ critical threshold {1} ms" -f $lumenLatencyMs, $LatencyCriticalMs) -ForegroundColor Red
+            if (-not $DryRun -and $LatencyCriticalMs -and $CoreLatencyMs -ge [int64]$LatencyCriticalMs) {
+                Write-Host ("Core latency {0} ms ≥ critical threshold {1} ms" -f $CoreLatencyMs, $LatencyCriticalMs) -ForegroundColor Red
                 $quickStatus = Join-Path $root 'scripts/quick_status.ps1'
                 if (Test-Path -LiteralPath $quickStatus) {
                     try {
@@ -97,9 +97,9 @@ if (Test-Path -LiteralPath $lumenProbe) {
             }
         }
         catch {
-            $lumenOk = $false
-            Write-Host "Lumen probe failed: $_" -ForegroundColor Red
-            $lumenError = ($_ | Out-String)
+            $CoreOk = $false
+            Write-Host "Core probe failed: $_" -ForegroundColor Red
+            $CoreError = ($_ | Out-String)
             # On failure, emit a quick degraded alert/log snapshot (best-effort)
             $quickStatus = Join-Path $root 'scripts/quick_status.ps1'
             if (Test-Path -LiteralPath $quickStatus) {
@@ -114,24 +114,24 @@ if (Test-Path -LiteralPath $lumenProbe) {
     }
 }
 else {
-    Write-Host "Skip: lumen_quick_probe.ps1 not found" -ForegroundColor DarkGray
+    Write-Host "Skip: core_quick_probe.ps1 not found" -ForegroundColor DarkGray
 }
 
 $summary = [pscustomobject]@{
     mode       = 'sleep-exit'
     dryRun     = [bool]$DryRun
-    lumenProbe = $(
-        if ($lumenOk -ne $null) {
-            $obj = @{ ok = [bool]$lumenOk }
-            if ($lumenLatencyMs -ne $null) { $obj.latencyMs = [int64]$lumenLatencyMs }
-            if (-not $DryRun -and $lumenOk -eq $true -and $lumenLatencyMs -ne $null -and $LatencyWarnMs) {
-                $obj.warn = [bool]([int64]$lumenLatencyMs -ge [int64]$LatencyWarnMs)
+    CoreProbe = $(
+        if ($CoreOk -ne $null) {
+            $obj = @{ ok = [bool]$CoreOk }
+            if ($CoreLatencyMs -ne $null) { $obj.latencyMs = [int64]$CoreLatencyMs }
+            if (-not $DryRun -and $CoreOk -eq $true -and $CoreLatencyMs -ne $null -and $LatencyWarnMs) {
+                $obj.warn = [bool]([int64]$CoreLatencyMs -ge [int64]$LatencyWarnMs)
             }
-            if (-not $DryRun -and $lumenOk -eq $true -and $lumenLatencyMs -ne $null -and $LatencyCriticalMs) {
-                $obj.critical = [bool]([int64]$lumenLatencyMs -ge [int64]$LatencyCriticalMs)
+            if (-not $DryRun -and $CoreOk -eq $true -and $CoreLatencyMs -ne $null -and $LatencyCriticalMs) {
+                $obj.critical = [bool]([int64]$CoreLatencyMs -ge [int64]$LatencyCriticalMs)
             }
-            if ($lumenError) {
-                $trunc = $lumenError.Trim()
+            if ($CoreError) {
+                $trunc = $CoreError.Trim()
                 if ($trunc.Length -gt 400) { $trunc = $trunc.Substring(0, 400) + '...' }
                 $obj.error = $trunc
             }
@@ -144,9 +144,9 @@ $summary = [pscustomobject]@{
 $summary | ConvertTo-Json -Depth 6 | Write-Output
 
 # Optional latency warning message (non-dry-run)
-if (-not $DryRun -and $lumenOk -eq $true -and $lumenLatencyMs -ne $null -and $LatencyWarnMs) {
-    if ([int64]$lumenLatencyMs -ge [int64]$LatencyWarnMs) {
-        Write-Host ("Lumen latency {0} ms ≥ warn threshold {1} ms" -f $lumenLatencyMs, $LatencyWarnMs) -ForegroundColor Yellow
+if (-not $DryRun -and $CoreOk -eq $true -and $CoreLatencyMs -ne $null -and $LatencyWarnMs) {
+    if ([int64]$CoreLatencyMs -ge [int64]$LatencyWarnMs) {
+        Write-Host ("Core latency {0} ms ≥ warn threshold {1} ms" -f $CoreLatencyMs, $LatencyWarnMs) -ForegroundColor Yellow
     }
 }
 
@@ -173,10 +173,10 @@ if (-not $DryRun -and $HistoryJsonl -and $HistoryJsonl.Trim() -ne '') {
         }
         $record = [pscustomobject]@{
             timestamp = (Get-Date).ToString('o')
-            ok        = $(if ($lumenOk -eq $true) { $true } else { $false })
-            latencyMs = $(if ($lumenLatencyMs -ne $null) { [int64]$lumenLatencyMs } else { $null })
-            warn      = $(if ($LatencyWarnMs -and $lumenLatencyMs -ne $null -and $lumenOk -eq $true) { [bool]([int64]$lumenLatencyMs -ge [int64]$LatencyWarnMs) } else { $false })
-            critical  = $(if ($LatencyCriticalMs -and $lumenLatencyMs -ne $null -and $lumenOk -eq $true) { [bool]([int64]$lumenLatencyMs -ge [int64]$LatencyCriticalMs) } else { $false })
+            ok        = $(if ($CoreOk -eq $true) { $true } else { $false })
+            latencyMs = $(if ($CoreLatencyMs -ne $null) { [int64]$CoreLatencyMs } else { $null })
+            warn      = $(if ($LatencyWarnMs -and $CoreLatencyMs -ne $null -and $CoreOk -eq $true) { [bool]([int64]$CoreLatencyMs -ge [int64]$LatencyWarnMs) } else { $false })
+            critical  = $(if ($LatencyCriticalMs -and $CoreLatencyMs -ne $null -and $CoreOk -eq $true) { [bool]([int64]$CoreLatencyMs -ge [int64]$LatencyCriticalMs) } else { $false })
         }
         # Use -Compress to output single-line JSON for proper JSONL format
         # Use UTF8NoBOM encoding (PowerShell 6+) or UTF8 with manual BOM removal

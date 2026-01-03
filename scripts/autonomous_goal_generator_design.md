@@ -64,7 +64,7 @@ Source: `outputs/autopoietic_loop_report_latest.md`
    - 검증 결과 (Pass/Fail)
    - 실패 이유 요약
 
-3. **Lumen 관점 (통합)**:
+3. **Core 관점 (통합)**:
    - 통합 결론 (예: "Need optimization")
    - 권장 액션 (예: "Refactor memory management")
 
@@ -74,7 +74,7 @@ Source: `outputs/autopoietic_loop_report_latest.md`
 {
   "lua_issues": ["Performance degradation", "Memory leak"],
   "elo_verification": "Failed: 3 tests",
-  "lumen_recommendation": "Refactor memory management"
+  "core_recommendation": "Refactor memory management"
 }
 ```
 
@@ -128,7 +128,7 @@ def extract_trinity_feedback(report_path: str) -> dict:
         {
             "lua_issues": list[str],
             "elo_status": str,
-            "lumen_recommendation": str
+            "core_recommendation": str
         }
     """
     # Markdown 파일 파싱
@@ -138,12 +138,12 @@ def extract_trinity_feedback(report_path: str) -> dict:
     # 정규표현식으로 섹션 추출
     lua_section = re.search(r'## Lua.*?(?=##)', content, re.DOTALL)
     elo_section = re.search(r'## Elo.*?(?=##)', content, re.DOTALL)
-    lumen_section = re.search(r'## Lumen.*?(?=##)', content, re.DOTALL)
+    core_section = re.search(r'## Core.*?(?=##)', content, re.DOTALL)
     
     return {
         "lua_issues": extract_issues(lua_section),
         "elo_status": extract_status(elo_section),
-        "lumen_recommendation": extract_recommendation(lumen_section)
+        "core_recommendation": extract_recommendation(core_section)
     }
 ```
 
@@ -187,10 +187,10 @@ def generate_goals(resonance_states: list[str], trinity_feedback: dict) -> list[
             goals.append(goal)
     
     # Add Trinity-derived goals
-    if trinity_feedback["lumen_recommendation"]:
+    if trinity_feedback["core_recommendation"]:
         goals.append({
             "title": "Address Trinity Recommendation",
-            "description": trinity_feedback["lumen_recommendation"],
+            "description": trinity_feedback["core_recommendation"],
             "base_priority": 8,
             "source": "trinity"
         })
@@ -251,7 +251,7 @@ Output File: `outputs/autonomous_goals_latest.json`
   "trinity_summary": {
     "lua_issues": ["Performance degradation"],
     "elo_status": "Failed: 3 tests",
-    "lumen_recommendation": "Refactor memory management"
+    "core_recommendation": "Refactor memory management"
   },
   "goals": [
     {
@@ -326,7 +326,7 @@ Window: Last 24 hours
 
 - **Lua**: Performance degradation detected
 - **Elo**: Failed: 3 tests
-- **Lumen**: Refactor memory management
+- **Core**: Refactor memory management
 
 ## Goals (Prioritized)
 
@@ -347,7 +347,7 @@ Window: Last 24 hours
 ### 2. Address Trinity Recommendation (Priority: 11)
 
 **Description**: Refactor memory management  
-**Source**: Trinity Feedback (Lumen)  
+**Source**: Trinity Feedback (Core)  
 **Effort**: 1 day  
 **Dependencies**: None
 

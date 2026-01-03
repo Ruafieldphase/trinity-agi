@@ -25,7 +25,7 @@ def analyze_coverage():
     print(f"품질 메트릭: {with_quality} ({with_quality/total*100:.1f}%)")
     print(f"레이턴시: {with_latency} ({with_latency/total*100:.1f}%)")
     print(f"둘 다: {with_both} ({with_both/total*100:.1f}%)")
-    print(f"\n루멘 목표: 80%+ (현재: {max(with_quality, with_latency)/total*100:.1f}%)")
+    print(f"\nCore 목표: 80%+ (현재: {max(with_quality, with_latency)/total*100:.1f}%)")
     
     # 메트릭 누락 이벤트 분석
     no_metrics = [e for e in events if 'quality' not in e and 'latency_ms' not in e]

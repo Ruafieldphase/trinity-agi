@@ -2,8 +2,9 @@
 import json
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
-p = Path(__file__).parent.parent / 'fdo_agi_repo' / 'memory' / 'goal_tracker.json'
+p = get_workspace_root() / 'fdo_agi_repo' / 'memory' / 'goal_tracker.json'
 if not p.exists():
     raise FileNotFoundError(f"Goal tracker not found: {p}")
 with p.open('r', encoding='utf-8') as f:

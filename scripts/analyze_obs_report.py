@@ -2,6 +2,7 @@ import os
 import sys
 import re
 from pathlib import Path
+from workspace_root import get_workspace_root
 from datetime import datetime
 import vertexai
 from vertexai.generative_models import GenerativeModel
@@ -11,8 +12,9 @@ PROJECT_ID = "naeda-genesis"
 LOCATION = "us-central1"
 MODEL_NAME = "gemini-2.0-flash-exp"
 
-INPUT_REPORT = Path(r"C:\workspace\agi\outputs\obs_learning\obs_learning_report.md")
-OUTPUT_INSIGHTS = Path(r"C:\workspace\agi\outputs\obs_learning\obs_insights.md")
+WORKSPACE_ROOT = get_workspace_root()
+INPUT_REPORT = WORKSPACE_ROOT / "outputs" / "obs_learning" / "obs_learning_report.md"
+OUTPUT_INSIGHTS = WORKSPACE_ROOT / "outputs" / "obs_learning" / "obs_insights.md"
 
 def init_vertex():
     vertexai.init(project=PROJECT_ID, location=LOCATION)

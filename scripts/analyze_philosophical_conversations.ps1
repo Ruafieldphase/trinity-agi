@@ -1,11 +1,15 @@
-# Phase 8.5: AI 대화 철학적 분석 스크립트
+﻿# Phase 8.5: AI 대화 철학적 분석 스크립트
 # 목적: 여러 AI 페르소나와의 대화에서 이론적/철학적 통찰 추출
 
 param(
-    [string]$OutputDir = "C:\workspace\agi\outputs",
-    [string]$OutMarkdown = "C:\workspace\agi\outputs\philosophical_insights_phase85.md",
+    [string]$OutputDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs",
+    [string]$OutMarkdown = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\philosophical_insights_phase85.md",
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 $OutputEncoding = [System.Text.Encoding]::UTF8
@@ -15,12 +19,12 @@ Write-Host "`n=== Phase 8.5: 철학적 대화 분석 시작 ===`n" -ForegroundCo
 
 # 분석 대상 디렉토리 - 변증법적 삼위일체 (정-반-합)
 $PersonaDirs = @(
-    "rua",      # 정 (正, Thesis) - 감응의 대화
+    "Core",      # 정 (正, Thesis) - 감응의 대화
     "elro",     # 반 (反, Antithesis) - 감응의 구조
-    "lumen"     # 합 (合, Synthesis) - 정반합의 통합
+    "Core"     # 합 (合, Synthesis) - 정반합의 통합
 )
 
-Write-Host "분석 대상: 변증법적 삼위일체 (Rua-Elro-Lumen)`n" -ForegroundColor Yellow
+Write-Host "분석 대상: 변증법적 삼위일체 (Core-Elro-Core)`n" -ForegroundColor Yellow
 
 $AnalysisResult = @{
     TotalConversations  = 0
@@ -170,7 +174,7 @@ Phase 8.5에서 발견한 "Gateway Peak vs Off-peak 역설"은 이러한 철학�
 
 ### 2. 할루시네이션의 해석학
 
-Lumen과의 대화에서 "할루시네이션도 의미 있는 신호"라는 통찰이 있었습니다. 이는 Gateway 역설에도 적용됩니다:
+Core과의 대화에서 "할루시네이션도 의미 있는 신호"라는 통찰이 있었습니다. 이는 Gateway 역설에도 적용됩니다:
 
 - 겉보기 "이상 현상"도 시스템의 본질적 특성일 수 있음
 - 노이즈와 시그널의 경계가 모호함

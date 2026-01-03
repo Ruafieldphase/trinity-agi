@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Register/unregister mid-day milestone check task
@@ -18,6 +18,9 @@ param(
     [switch]$Status,
     [switch]$NoAdmin
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $taskName = "AGI_MidDay_Milestone_Check"
@@ -63,7 +66,7 @@ if ($existing) {
 }
 
 # 작업 생성
-$scriptPath = "C:\workspace\agi\scripts\midday_milestone_check.ps1"
+$scriptPath = "$WorkspaceRoot\scripts\midday_milestone_check.ps1"
 $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument @"
 -NoProfile -ExecutionPolicy Bypass -File "$scriptPath"
 "@

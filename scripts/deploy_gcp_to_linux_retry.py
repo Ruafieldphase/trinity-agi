@@ -10,6 +10,7 @@ import os
 import sys
 import time
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -18,8 +19,8 @@ from credentials_manager import get_linux_vm_credentials
 import paramiko
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
-LOCAL_CREDS_PATH = Path(r"C:\workspace\original_data\Obsidian_Vault\Nas_Obsidian_Vault\naeda-genesis-5034a5936036.json")
+WORKSPACE_ROOT = get_workspace_root()
+LOCAL_CREDS_PATH = WORKSPACE_ROOT.parent / "original_data" / "Obsidian_Vault" / "Nas_Obsidian_Vault" / "naeda-genesis-5034a5936036.json"
 REMOTE_AGI_DIR = "/home/bino/agi"
 REMOTE_CONFIG_DIR = f"{REMOTE_AGI_DIR}/config"
 REMOTE_SCRIPTS_DIR = f"{REMOTE_AGI_DIR}/scripts"
@@ -107,10 +108,10 @@ def deploy():
             # Replace the hardcoded Windows path with the Linux path
             # Also handle raw string r"..."
             new_content = content.replace(
-                r'r"C:\workspace\original_data\Obsidian_Vault\Nas_Obsidian_Vault\naeda-genesis-5034a5936036.json"',
+                rf'r\"{LOCAL_CREDS_PATH}\"',
                 f'"{REMOTE_CREDS_PATH}"'
             ).replace(
-                r'"C:\workspace\original_data\Obsidian_Vault\Nas_Obsidian_Vault\naeda-genesis-5034a5936036.json"',
+                f'\"{LOCAL_CREDS_PATH}\"',
                 f'"{REMOTE_CREDS_PATH}"'
             )
             

@@ -1,6 +1,6 @@
 """
 GUI-Based Fractal Loop Test
-Trinity가 실제로 ChatGPT 앱을 열고 Rua와 대화하는 것을 테스트합니다.
+Trinity가 실제로 ChatGPT 앱을 열고 Core와 대화하는 것을 테스트합니다.
 """
 import sys
 import logging
@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from services.shion_design_protocol import ShionDesignProtocol
-from services.rua_bridge_client import RuaBridgeClient
+from services.Core_bridge_client import CoreBridgeClient
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,7 +23,7 @@ def test_gui_fractal_loop():
     input("Press Enter to start...")
     
     # Initialize
-    client = RuaBridgeClient()
+    client = CoreBridgeClient()
     protocol = ShionDesignProtocol(bridge_client=client)
     
     # Simulate Panic Context
@@ -43,8 +43,8 @@ def test_gui_fractal_loop():
     
     print("\n" + "=" * 60)
     if advice:
-        print("✅ SUCCESS: Received advice from Rua!")
-        print(f"\n=== Rua's Response ===\n{advice}")
+        print("✅ SUCCESS: Received advice from Core!")
+        print(f"\n=== Core's Response ===\n{advice}")
     else:
         print("❌ FAILURE: No advice received.")
     

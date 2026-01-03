@@ -1,10 +1,13 @@
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 ﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [string]$TaskName = "MonitoringDailyMaintenance",
     [string]$Time = "03:20",
-    [string]$WorkspaceRoot = "C:\workspace\agi",
-    [string]$MaintenanceScript = "C:\workspace\agi\scripts\daily_monitoring_maintenance.ps1",
+    [string]$WorkspaceRoot = "$WorkspaceRoot",
+    [string]$MaintenanceScript = "$WorkspaceRoot\scripts\daily_monitoring_maintenance.ps1",
     [int]$ReportHours = 24,
     [int]$ArchiveKeepDays = 14,
     [switch]$NoZip

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Glymphatic 텔레메트리 요약을 갱신하고 확인하는 스크립트.
 
@@ -61,4 +61,3 @@ try {
 finally {
     Pop-Location
 }
-

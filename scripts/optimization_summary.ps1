@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     VS Code 최적화 전후 비교 요약을 생성합니다.
@@ -87,7 +87,7 @@ Write-Host "✅ VS Code 재시작 시 자동:" -ForegroundColor Green
 Write-Host "   1. Task Queue Server 확인/시작" -ForegroundColor White
 Write-Host "   2. RPA Worker 확인/시작 (중복 제거)" -ForegroundColor White
 Write-Host "   3. Task Watchdog 확인/시작 (중복 제거)" -ForegroundColor White
-Write-Host "   4. Lumen Health 자동 점검" -ForegroundColor White
+Write-Host "   4. Core Health 자동 점검" -ForegroundColor White
 Write-Host "   5. 모든 작업 조용히 실행 (Silent)" -ForegroundColor White
 Write-Host ""
 

@@ -27,8 +27,9 @@ from dataclasses import dataclass, asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional, List
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUT_DIR = WORKSPACE_ROOT / "outputs"
 
 

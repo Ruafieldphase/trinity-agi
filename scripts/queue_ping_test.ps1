@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$BaseUrl = 'http://127.0.0.1:8091/api',
     [int]$WaitSeconds = 2
 )

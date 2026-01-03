@@ -1,12 +1,15 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
     Quick fix for StreamObserverTelemetry - re-register with updated script
 #>
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $taskName = 'StreamObserverTelemetry'
-$workspaceRoot = 'C:\workspace\agi'
+$workspaceRoot = "$WorkspaceRoot"
 $registerScript = Join-Path $workspaceRoot 'scripts\register_observer_telemetry_task.ps1'
 
 Write-Host "🔧 Re-registering $taskName..." -ForegroundColor Cyan

@@ -1,4 +1,4 @@
-<#
+﻿<#
     Rhythm Mode Manager - Adaptive System Load Control
     리듬 기반 시스템 부하 조절 관리자
 
@@ -26,6 +26,9 @@ param(
     [Parameter(Mandatory = $false)]
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -35,12 +38,12 @@ function Write-Warn([string]$msg) { Write-Host "[WARN] $msg" -ForegroundColor Ye
 function Write-Err([string]$msg) { Write-Host "[ERR]  $msg" -ForegroundColor Red }
 
 function Get-WorkspaceRoot {
-    if ($PSScriptRoot) { return (Resolve-Path (Join-Path $PSScriptRoot '..')).Path }
+    if ($PSScriptRoot) { return (Resolve-Path ($WorkspaceRoot)).Path }
     return (Resolve-Path '.').Path
 }
 
 function Get-PythonPath {
-    param([string]$WorkspaceRoot)
+    param([string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ))
     $candidates = @(
         (Join-Path $WorkspaceRoot 'fdo_agi_repo\.venv\Scripts\python.exe'),
         (Join-Path $WorkspaceRoot 'LLM_Unified\.venv\Scripts\python.exe'),
@@ -89,7 +92,7 @@ function Stop-MusicDaemon {
 }
 
 function Start-MusicDaemon {
-    param([string]$WorkspaceRoot, [switch]$DryRun, [switch]$Force)
+    param([string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ), [switch]$DryRun, [switch]$Force)
 
     $python = Get-PythonPath -WorkspaceRoot $WorkspaceRoot
     $script = Join-Path $WorkspaceRoot 'scripts\music_daemon.py'
@@ -195,7 +198,7 @@ function Get-MusicDaemon {
 
 function Start-MusicDaemon {
     param(
-        [string]$WorkspaceRoot,
+        [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ),
         [switch]$DryRunLocal
     )
     $python = Get-PythonPath -WorkspaceRoot $WorkspaceRoot

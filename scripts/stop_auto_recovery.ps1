@@ -1,4 +1,4 @@
-# Stop Auto Recovery System
+﻿# Stop Auto Recovery System
 Write-Host "`n" -NoNewline
 Write-Host ("=" * 60) -ForegroundColor Cyan
 Write-Host "`n  Stopping Auto Recovery System`n" -ForegroundColor Yellow

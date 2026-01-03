@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     백그라운드 작업 모니터링 - PowerShell 창 팝업 감지
@@ -10,8 +10,11 @@
 param(
     [int]$DurationMinutes = 10,
     [int]$CheckIntervalSeconds = 30,
-    [string]$OutFile = "$PSScriptRoot\..\outputs\background_task_monitor_latest.json"
+    [string]$OutFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\background_task_monitor_latest.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $startTime = Get-Date

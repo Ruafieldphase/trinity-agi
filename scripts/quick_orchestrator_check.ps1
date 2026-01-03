@@ -1,7 +1,11 @@
-# Quick Orchestrator Status Check
+﻿# Quick Orchestrator Status Check
 param(
     [switch]$Detailed
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Continue'
 
@@ -33,7 +37,7 @@ else {
 
 # 2. State File
 Write-Host "2. State:" -ForegroundColor White
-$stateFile = "C:\workspace\agi\outputs\full_stack_orchestrator_state.json"
+$stateFile = "$WorkspaceRoot\outputs\full_stack_orchestrator_state.json"
 if (Test-Path $stateFile) {
     $state = Get-Content $stateFile | ConvertFrom-Json
     Write-Host "  Learning cycles: $($state.state.learning_cycles)" -ForegroundColor Cyan
@@ -47,8 +51,8 @@ else {
 
 # 3. Log Files
 Write-Host "`n3. Recent Logs:" -ForegroundColor White
-$stdout = "C:\workspace\agi\outputs\fullstack_24h_stdout.log"
-$stderr = "C:\workspace\agi\outputs\fullstack_24h_stderr.log"
+$stdout = "$WorkspaceRoot\outputs\fullstack_24h_stdout.log"
+$stderr = "$WorkspaceRoot\outputs\fullstack_24h_stderr.log"
 
 if (Test-Path $stdout) {
     $lines = (Get-Content $stdout -Tail 5 | Measure-Object -Line).Lines

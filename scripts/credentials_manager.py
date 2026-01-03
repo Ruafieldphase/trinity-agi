@@ -5,13 +5,14 @@ Credentials Manager
 import os
 from pathlib import Path
 from typing import Optional
+from workspace_root import get_workspace_root
 
 class CredentialsManager:
     """AGI 시스템의 모든 인증 정보를 관리"""
     
     def __init__(self, env_file: Optional[Path] = None):
         if env_file is None:
-            env_file = Path(__file__).parent.parent / ".env_credentials"
+            env_file = get_workspace_root() / ".env_credentials"
         
         self.env_file = env_file
         self.credentials = {}

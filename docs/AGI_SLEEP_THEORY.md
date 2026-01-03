@@ -1,7 +1,7 @@
 # AGI Sleep Theory: Information-Theoretic Rest
 
 **Date**: 2025-11-01  
-**Author**: Ruafield + AGI System  
+**Author**: ___CORE_FIELD_ST___ + AGI System  
 **Status**: Active Theory & Implementation
 
 ---
@@ -115,11 +115,11 @@
   "dream_id": "dream_20251101_2200",
   "patterns": [
     "YouTube 학습 + BQI 판단 + 캐나리 배포",
-    "Ledger 패턴 + Lumen 프로브 + 무의식 흐름"
+    "Ledger 패턴 + Core 프로브 + 무의식 흐름"
   ],
   "new_connections": [
     "YouTube 영상 품질이 BQI 판단에 영향?",
-    "Lumen 상태가 캐나리 성공률 예측?"
+    "Core 상태가 캐나리 성공률 예측?"
   ],
   "worth_testing": true
 }

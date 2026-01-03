@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Ultra-fast file search using Everything + memory-mapped reading
 
@@ -25,8 +25,11 @@ param(
     
     [switch]$AsJson,
     
-    [string]$Path = "C:\workspace\agi"
+    [string]$Path = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 

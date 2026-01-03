@@ -1,4 +1,4 @@
-# =============================================================================
+﻿# =============================================================================
 # run_music_audio_analysis.ps1
 # =============================================================================
 # 음악 오디오 특징 추출 실행 스크립트
@@ -10,14 +10,17 @@ param(
     [switch]$AllFiles,
     [switch]$OpenReport
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
 $scriptName = "🎵 Music Audio Analysis"
-$pythonScript = "$PSScriptRoot\..\fdo_agi_repo\copilot\music_audio_analyzer.py"
-$musicDir = "$PSScriptRoot\..\music"
-$outputMd = "$PSScriptRoot\..\outputs\music_audio_features_latest.md"
-$outputJson = "$PSScriptRoot\..\outputs\music_audio_features_latest.json"
+$pythonScript = "$WorkspaceRoot\fdo_agi_repo\copilot\music_audio_analyzer.py"
+$musicDir = "$WorkspaceRoot\music"
+$outputMd = "$WorkspaceRoot\outputs\music_audio_features_latest.md"
+$outputJson = "$WorkspaceRoot\outputs\music_audio_features_latest.json"
 
 Write-Host ""
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
@@ -26,7 +29,7 @@ Write-Host "━━━━━━━━━━━━━━━━━━━━━━�
 Write-Host ""
 
 # Python 경로 결정
-$pythonExe = "$PSScriptRoot\..\fdo_agi_repo\.venv\Scripts\python.exe"
+$pythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 if (!(Test-Path -LiteralPath $pythonExe)) {
     $pythonExe = "python"
 }

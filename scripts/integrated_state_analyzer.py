@@ -27,9 +27,10 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Optional
+from workspace_root import get_workspace_root
 
 # Import existing modules
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(get_workspace_root()))
 
 try:
     from fdo_agi_repo.copilot.flow_observer_integration import FlowObserver

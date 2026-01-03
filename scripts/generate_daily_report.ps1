@@ -1,4 +1,4 @@
-# Daily Performance Report Generator
+﻿# Daily Performance Report Generator
 # Automatically generates and emails daily performance summaries
 
 param(

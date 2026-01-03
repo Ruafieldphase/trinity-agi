@@ -6,9 +6,10 @@
 import sys
 import os
 import time
+from workspace_root import get_workspace_root
 
 # Path setup
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "fdo_agi_repo"))
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 
 from orchestrator.contracts import TaskSpec
 from orchestrator.streaming_pipeline import run_wave_pipeline
@@ -19,7 +20,7 @@ def main():
     print("🌊 Testing Wave Pipeline...\n")
     
     # Sandbox 경로 설정 (절대 경로)
-    sandbox_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "fdo_agi_repo", "sandbox"))
+    sandbox_root = get_workspace_root() / "fdo_agi_repo" / "sandbox"
     os.makedirs(sandbox_root, exist_ok=True)
     os.makedirs(os.path.join(sandbox_root, "docs"), exist_ok=True)
     

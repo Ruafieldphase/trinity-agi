@@ -1,10 +1,13 @@
-# Fix all register_*_task.ps1 scripts to use Hidden mode by default
+﻿# Fix all register_*_task.ps1 scripts to use Hidden mode by default
 # This ensures future task registrations will automatically use Hidden=$true and -WindowStyle Hidden
 
 param(
     [switch]$DryRun,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 function Write-Info($msg) { Write-Host "[INFO] $msg" -ForegroundColor Cyan }
 function Write-Success($msg) { Write-Host "[SUCCESS] $msg" -ForegroundColor Green }
@@ -14,8 +17,8 @@ function Write-Err($msg) { Write-Host "[ERROR] $msg" -ForegroundColor Red }
 # Find all register_*_task.ps1 files
 $registerScripts = @(
     Get-ChildItem -Path "$PSScriptRoot" -Filter "register_*_task.ps1" -File
-    Get-ChildItem -Path "$PSScriptRoot\..\fdo_agi_repo\scripts" -Filter "register_*_task.ps1" -File -ErrorAction SilentlyContinue
-    Get-ChildItem -Path "$PSScriptRoot\..\LLM_Unified\ion-mentoring\scripts" -Filter "register_*_task.ps1" -File -ErrorAction SilentlyContinue
+    Get-ChildItem -Path "$WorkspaceRoot\fdo_agi_repo\scripts" -Filter "register_*_task.ps1" -File -ErrorAction SilentlyContinue
+    Get-ChildItem -Path "$WorkspaceRoot\LLM_Unified\ion-mentoring\scripts" -Filter "register_*_task.ps1" -File -ErrorAction SilentlyContinue
 )
 
 Write-Info "Found $($registerScripts.Count) register scripts"

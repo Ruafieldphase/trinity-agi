@@ -87,7 +87,7 @@ ChatOps Test: Dry-Run            # 테스트 모드
 ChatOps Test: Status             # 상태 확인 (안전)
 ChatOps Test: Preflight          # 의존성 점검
 ChatOps: Natural Command         # 자유 입력 (대화형)
-Lumen: Quick Health Probe        # Lumen 게이트(관문) 빠른 점검
+Core: Quick Health Probe        # Core 게이트(관문) 빠른 점검
 Monitoring: Generate Dashboard (24h HTML)  # 통합 대시보드 생성/열기
 ```
 
@@ -152,11 +152,11 @@ chatops_router.ps1 -Say "온보딩 도와줘"
 | "상태 보여줘" | 안전 상태 요약 |
 | "퀵 상태" | 빠른 확인 |
 | "obs 상태" | OBS 상세 정보 |
-| "루멘 관문을 열자" | Lumen 게이트 헬스 프로브 실행 |
-| "루멘 상태 확인" | Lumen 게이트 헬스 프로브 실행 |
-| "lumen health check" | Lumen 게이트 헬스 프로브 실행 |
-| "루멘 대시보드" | Lumen 24시간 대시보드(HTML) 생성/열기 |
-| "lumen dashboard" | Lumen 24시간 대시보드(HTML) 생성/열기 |
+| "Core 관문을 열자" | Core 게이트 헬스 프로브 실행 |
+| "Core 상태 확인" | Core 게이트 헬스 프로브 실행 |
+| "Core health check" | Core 게이트 헬스 프로브 실행 |
+| "Core 대시보드" | Core 24시간 대시보드(HTML) 생성/열기 |
+| "Core dashboard" | Core 24시간 대시보드(HTML) 생성/열기 |
 
 ### 봇 제어
 
@@ -226,23 +226,23 @@ A:
 **Q: 상태 조회가 실패해도 괜찮나요?**
 A: 네! 모든 상태 조회는 "Zero-Fail"로 설계되어 환경 문제가 있어도 exit 0을 반환합니다.
 
-## � 옵션: Lumen 프로브 모니터
+## � 옵션: Core 프로브 모니터
 
-운영 중 상시로 Lumen 게이트 상태를 샘플링하고 싶다면 예약 작업을 등록하세요.
+운영 중 상시로 Core 게이트 상태를 샘플링하고 싶다면 예약 작업을 등록하세요.
 관리자 권한이 필요할 수 있습니다.
 
 ```powershell
 # 10분 주기로 수집, 즉시 1회 실행
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_lumen_probe_task.ps1 -Register -IntervalMinutes 10 -RunNow
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_core_probe_task.ps1 -Register -IntervalMinutes 10 -RunNow
 
 # 상태 확인
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_lumen_probe_task.ps1 -Status
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_core_probe_task.ps1 -Status
 
 # 해제
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_lumen_probe_task.ps1 -Unregister
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/register_core_probe_task.ps1 -Unregister
 ```
 
-수집된 로그는 `outputs/lumen_probe_log.jsonl`에 JSONL 포맷으로 누적됩니다.
+수집된 로그는 `outputs/core_probe_log.jsonl`에 JSONL 포맷으로 누적됩니다.
 
 ## �📚 더 알아보기
 

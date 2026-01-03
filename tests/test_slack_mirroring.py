@@ -6,13 +6,13 @@ from unittest.mock import MagicMock, patch
 # Add workspace root to sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from scripts.koa_router import KoaRouter
+from scripts.core_router import CoreRouter
 
 class TestSlackMirroring(unittest.TestCase):
     def setUp(self):
-        self.router = KoaRouter()
+        self.router = CoreRouter()
 
-    @patch('scripts.koa_slack_adapter.KoaSlackAdapter')
+    @patch('scripts.core_slack_adapter.CoreSlackAdapter')
     @patch('scripts.internal_bus.bus')
     def test_normal_message_not_mirrored(self, mock_bus, MockAdapter):
         # Setup mocks
@@ -33,7 +33,7 @@ class TestSlackMirroring(unittest.TestCase):
         # We can't easily check the return value here since we mocked the class, 
         # but we can check that it was called with the right data.
         
-    @patch('scripts.koa_slack_adapter.KoaSlackAdapter')
+    @patch('scripts.core_slack_adapter.CoreSlackAdapter')
     @patch('scripts.internal_bus.bus')
     def test_urgent_message_mirrored(self, mock_bus, MockAdapter):
         # Setup mocks

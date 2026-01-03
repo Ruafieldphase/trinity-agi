@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 from datetime import datetime
 import statistics
+from workspace_root import get_workspace_root
 
 
 def load_ledger(ledger_path: Path) -> List[Dict[str, Any]]:
@@ -185,7 +186,7 @@ def generate_report(tasks: List[Dict[str, Any]], analysis: Dict[str, Any], outpu
 
 def main(argv: List[str]) -> int:
     here = Path(__file__).resolve()
-    root = here.parents[1]
+    root = get_workspace_root()
     ledger_path = root / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
     
     if not ledger_path.exists():

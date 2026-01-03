@@ -13,6 +13,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
 from collections import defaultdict
+from workspace_root import get_workspace_root
 
 
 def load_ledger(ledger_path: Path, hours: int = 24) -> List[Dict[str, Any]]:
@@ -284,7 +285,7 @@ def main(argv: List[str]) -> int:
     
     # 경로 설정
     here = Path(__file__).resolve()
-    root = here.parents[1]
+    root = get_workspace_root()
     ledger_path = root / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
     output_md = root / "outputs" / "async_thesis_health_latest.md"
     

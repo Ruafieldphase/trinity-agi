@@ -59,13 +59,13 @@
         },
         {
           "time": "2025-10-09T11:59:40Z",
-          "event": "Lumen frame call",
+          "event": "Core frame call",
           "affect": 0.35,
           "response_complexity": {
             "words": 127,
             "sentences": 6
           },
-          "strategy": "lumen_frame",
+          "strategy": "core_frame",
           "stability": "recovering"
         }
       ]

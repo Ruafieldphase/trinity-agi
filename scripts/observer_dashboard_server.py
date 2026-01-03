@@ -6,8 +6,9 @@ import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse
+from workspace_root import get_workspace_root
 
-WS_ROOT = Path(__file__).resolve().parent.parent
+WS_ROOT = get_workspace_root()
 OUTPUTS = WS_ROOT / "outputs"
 DEFAULT_DASH = OUTPUTS / "monitoring_dashboard_latest.html"
 DEFAULT_METRICS = OUTPUTS / "monitoring_metrics_latest.json"

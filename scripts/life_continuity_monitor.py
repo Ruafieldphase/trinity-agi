@@ -18,8 +18,9 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).resolve().parents[1]
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 
 
@@ -182,7 +183,7 @@ class LifeContinuityMonitor:
             OUTPUTS / "performance_dashboard_latest.md",
             OUTPUTS / "monitoring_report_latest.md",
             OUTPUTS / "ledger_summary_latest.md",
-            OUTPUTS / "lumen_probe_latest.md",
+            OUTPUTS / "core_probe_latest.md",
         ]
 
         preserved_count = sum(1 for f in latest_files if f.exists())

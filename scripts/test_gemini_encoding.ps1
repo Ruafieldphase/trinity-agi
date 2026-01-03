@@ -1,4 +1,4 @@
-# Test script for Gemini CLI encoding on Windows
+﻿# Test script for Gemini CLI encoding on Windows
 # This script tests the gemini_chat_simple.py wrapper with various Unicode inputs
 
 Write-Host "=== Gemini CLI Encoding Test ===" -ForegroundColor Cyan

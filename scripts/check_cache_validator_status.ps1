@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Check status of Cache Validation Monitor (ASCII-only output)
@@ -8,6 +8,9 @@
 #>
 
 # UTF-8 console bootstrap
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 try { chcp 65001 > $null 2> $null } catch {}
 try {
     [Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)
@@ -17,7 +20,7 @@ try {
 catch {}
 
 $ErrorActionPreference = 'Continue'
-$RepoRoot = "C:\workspace\agi"
+$RepoRoot = "$WorkspaceRoot"
 $LogFile = Join-Path $RepoRoot 'outputs/cache_validation_monitor.log'
 
 Write-Host '>> Checking cache validator monitor status...' -ForegroundColor Cyan

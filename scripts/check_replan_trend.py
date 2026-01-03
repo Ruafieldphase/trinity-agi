@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 import sys
 from statistics import mean
+from workspace_root import get_workspace_root
 
 
 def load_json(p: Path):
@@ -18,7 +19,7 @@ def now_iso() -> str:
 
 
 def main():
-    ws = Path(__file__).resolve().parents[1]
+    ws = get_workspace_root()
     metrics_path = ws / "outputs" / "monitoring_metrics_latest.json"
     history_path = ws / "outputs" / "replan_rate_history.jsonl"
 

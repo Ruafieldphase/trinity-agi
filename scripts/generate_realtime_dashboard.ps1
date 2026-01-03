@@ -1,4 +1,4 @@
-# Generate Realtime Dashboard (Original Data Phase 4 Complete)
+﻿# Generate Realtime Dashboard (Original Data Phase 4 Complete)
 # 목적: Ledger + Resonance + 통합 상태 대시보드 생성
 
 param(
@@ -6,6 +6,9 @@ param(
     [switch]$OpenDashboard,
     [switch]$Help
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 if ($Help) {
     Write-Host @"

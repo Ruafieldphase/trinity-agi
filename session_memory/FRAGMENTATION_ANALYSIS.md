@@ -8,9 +8,9 @@
 
 ## 🔴 **현재 문제점: 파편화된 시스템들**
 
-### 시스템 1: LUMEN Graph-Based Orchestration
+### 시스템 1: Core Graph-Based Orchestration
 ```
-위치: d:\nas_backup\ai_binoche_conversation_origin\lumen\
+위치: d:\nas_backup\ai_binoche_conversation_origin\Core\
 파일: orchestration_flow.yaml, CLIPBOARD_ORCHESTRATION_WORKFLOW_v1.1_RUNE.md
 
 상태:
@@ -28,7 +28,7 @@
 
 ### 시스템 2: LUON Dispatch-Based Orchestration
 ```
-위치: d:\nas_backup\ai_binoche_conversation_origin\lumen\chatgpt-정보이론철학적분석\
+위치: d:\nas_backup\ai_binoche_conversation_origin\Core\chatgpt-정보이론철학적분석\
 파일: luon_dispatch_rules.yaml, luon_bridge_dispatcher_v3.py, dispatcher_exec.py
 
 상태:
@@ -36,10 +36,10 @@
   ✅ 구현: 부분적 (Python 코드 있음)
   ✅ 실행: 수동 (사용자가 python dispatcher_exec.py 실행)
   ❌ 자동화: 못함 (누가 언제 호출하는가?)
-  ❌ 통합: 안됨 (LUMEN과 연결 없음)
+  ❌ 통합: 안됨 (CORE과 연결 없음)
 
 문제:
-  - LUMEN과 별개로 존재
+  - CORE과 별개로 존재
   - 자동 호출 메커니즘 없음
   - 수동으로 실행해야 함
 ```
@@ -54,7 +54,7 @@
   ✅ 구현: 완료 (파일 기반 상태)
   ✅ 실행: 수동 (사용자가 각 에이전트 호출)
   ❌ 자동화: 못함 (누가 협력을 조율하는가?)
-  ❌ 통합: 안됨 (LUMEN, LUON과 연결 없음)
+  ❌ 통합: 안됨 (Core, LUON과 연결 없음)
 
 문제:
   - Sena/Lubit/GitCode가 알아서 읽지 않음
@@ -76,7 +76,7 @@
 
 문제:
   - 독립적으로 작동
-  - LUMEN 워크플로우를 모름
+  - Core 워크플로우를 모름
   - LUON 디스패치를 모름
   - COLLABORATION_STATE만 감시
 ```
@@ -105,7 +105,7 @@
 
 ```
 ┌──────────────────────┐
-│  LUMEN Workflow      │
+│  Core Workflow      │
 │  (설계만 있음)        │
 └──────────────────────┘
          │
@@ -153,7 +153,7 @@
 
 ### 문제 1: 누가 무엇을 언제 실행하는가? 불명확
 ```
-LUMEN이 "Tool Selection 노드"에 도달했을 때:
+CORE이 "Tool Selection 노드"에 도달했을 때:
   → Sena를 어떻게 호출하는가?
   → Sena가 준비되었는가?
   → 결과를 누가 받는가?
@@ -166,7 +166,7 @@ LUMEN이 "Tool Selection 노드"에 도달했을 때:
 ```
 luon_bridge_dispatcher_v3.py는:
   - 수동으로 python 명령어로 실행해야 함
-  - LUMEN과 연결 안됨
+  - CORE과 연결 안됨
   - COLLABORATION_STATE를 모름
   - 자동 활성화 불가능
 ```
@@ -181,11 +181,11 @@ Sena가 작업을 마친 후:
 답: 사용자가 수동으로 각 에이전트를 호출해야 함
 ```
 
-### 문제 4: BackgroundMonitor와 LUMEN 워크플로우의 괴리
+### 문제 4: BackgroundMonitor와 Core 워크플로우의 괴리
 ```
 BackgroundMonitor는:
   - COLLABORATION_STATE만 감시
-  - LUMEN의 현재 노드를 모름
+  - CORE의 현재 노드를 모름
   - "지금 어느 단계인가?"를 모름
   - 올바른 다음 에이전트를 자동 결정할 수 없음
 ```
@@ -209,13 +209,13 @@ BackgroundMonitor는:
 1. ✅ "누가 무엇을 언제 실행하는가?"
    → Unified Orchestrator가 결정
 
-2. ✅ "LUMEN과 LUON의 괴리"
+2. ✅ "CORE과 LUON의 괴리"
    → 통합되어 자동으로 연계
 
 3. ✅ "COLLABORATION_STATE의 자동 업데이트"
    → BackgroundMonitor가 자동 감지
 
-4. ✅ "BackgroundMonitor와 LUMEN의 연결"
+4. ✅ "BackgroundMonitor와 CORE의 연결"
    → Orchestrator가 현재 노드 파악
 
 5. ✅ "AGI 데이터 생성 파이프라인"
@@ -244,7 +244,7 @@ BackgroundMonitor는:
         ↙            ↓            ↓            ↓            ↖
 
 ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐
-│ LUMEN Nodes  │  │ LUON Routing │  │ Agent Tasks  │  │ AGI Pipeline │
+│ Core Nodes  │  │ LUON Routing │  │ Agent Tasks  │  │ AGI Pipeline │
 │              │  │              │  │              │  │              │
 │ (워크플로우)  │  │ (페르소나)    │  │ (병렬 실행)  │  │ (학습 데이터) │
 │              │  │              │  │              │  │              │
@@ -275,7 +275,7 @@ BackgroundMonitor는:
 ### Phase 1: Unified Orchestrator 핵심 구현
 ```
 UnifiedOrchestrator 클래스 생성:
-  1. LUMEN 워크플로우 로드
+  1. Core 워크플로우 로드
   2. 현재 노드 상태 유지
   3. 다음 노드 결정
   4. 필요한 에이전트/페르소나 결정 (LUON)
@@ -286,7 +286,7 @@ UnifiedOrchestrator 클래스 생성:
 ### Phase 2: 자동 작업 흐름
 ```
 Loop:
-  1. 현재 LUMEN 노드 확인
+  1. 현재 Core 노드 확인
   2. LUON 규칙에서 필요한 페르소나 찾기
   3. 에이전트 활성화 명령 생성
   4. ConcurrentScheduler에 태스크 추가
@@ -313,7 +313,7 @@ Loop:
 User Input
   ↓
 UnifiedOrchestrator
-  ├─ LUMEN에서 워크플로우 로드
+  ├─ CORE에서 워크플로우 로드
   ├─ 현재 노드: "Tool Selection"
   ├─ LUON에서 필요한 페르소나 찾음: "Sena"
   ├─ BackgroundMonitor 시작

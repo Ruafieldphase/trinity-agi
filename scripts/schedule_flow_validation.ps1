@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 # Flow Observer Validation Scheduler
 # 30분 후 자동으로 Flow Observer를 실행하여 실제 데이터 검증
 #
@@ -9,6 +9,9 @@ param(
     [int]$DelayMinutes = 30,
     [switch]$OpenReport
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

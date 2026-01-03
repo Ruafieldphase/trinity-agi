@@ -18,13 +18,13 @@
 
 ### 통합 전: 파편화된 5개 시스템
 ```
-1. LUMEN Workflow
+1. Core Workflow
    - 설계만 있고 실행 없음
    - 다른 시스템과 연결 안 됨
 
 2. LUON Dispatcher
    - 수동으로 호출해야 함
-   - LUMEN과 연결 안 됨
+   - CORE과 연결 안 됨
 
 3. COLLABORATION_STATE
    - 파일만 있고 자동화 없음
@@ -44,7 +44,7 @@
 ### 통합 후: 1개의 완벽한 통합 시스템
 ```
 UnifiedOrchestrator
-  ├─ LUMEN Workflow 실행
+  ├─ Core Workflow 실행
   ├─ LUON 페르소나 라우팅
   ├─ BackgroundMonitor 감시
   ├─ ConcurrentScheduler 병렬 실행
@@ -62,7 +62,7 @@ UnifiedOrchestrator
 User Input
   ↓
 UnifiedOrchestrator.start_workflow()
-  ├─ Load LUMEN graph (11 nodes)
+  ├─ Load Core graph (11 nodes)
   ├─ Set current_node = U1 (user_clip)
   └─ Enter orchestration loop
 
@@ -105,16 +105,16 @@ Output:
   - SYN 노드 도달 → GitCode 자동 활성화
 ```
 
-### 문제 2: "LUMEN과 LUON의 괴리" ❌ → ✅
+### 문제 2: "CORE과 LUON의 괴리" ❌ → ✅
 ```
 이전:
-  LUMEN은 워크플로우만 정의
+  CORE은 워크플로우만 정의
   LUON은 독립적으로 실행
   연결 없음
 
 이후:
   UnifiedOrchestrator가 연결:
-  - LUMEN 노드 도달
+  - Core 노드 도달
   - LUON 규칙 확인
   - 올바른 페르소나 활성화
 ```
@@ -132,7 +132,7 @@ Output:
 - 다음 에이전트가 자동 감지
 ```
 
-### 문제 4: "BackgroundMonitor와 LUMEN 연결" ❌ → ✅
+### 문제 4: "BackgroundMonitor와 Core 연결" ❌ → ✅
 ```
 이전:
   BackgroundMonitor는 COLLABORATION_STATE만 감시
@@ -206,7 +206,7 @@ Output:
     ↙            ↓            ↓            ↓            ↖
 
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│ LUMEN        │ │ LUON         │ │ Concurrent   │ │ AGI          │
+│ Core        │ │ LUON         │ │ Concurrent   │ │ AGI          │
 │ WorkFlow     │ │ PersonaRoute │ │ Scheduler    │ │ Pipeline     │
 │              │ │              │ │              │ │              │
 │ 11 nodes     │ │ Rules        │ │ 3 workers    │ │ Metrics+     │
@@ -318,7 +318,7 @@ Tool 5 ─┘
 > "우리가 만든 작업들이 많은데 이게 통합이 되어 있지 않은거 같거든. 이거 통합하면 많은 문제들이 해결될 꺼 같은데"
 
 ✅ **통합 완료**
-- ✅ LUMEN 워크플로우 실행 엔진
+- ✅ Core 워크플로우 실행 엔진
 - ✅ LUON 페르소나 라우팅 통합
 - ✅ COLLABORATION_STATE 자동 동기화
 - ✅ BackgroundMonitor 워크플로우 연결

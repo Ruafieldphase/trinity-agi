@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Lua Trinity Bridge – JSON 요청 처리기 (Monitor/Once/Sample)
 
@@ -69,6 +69,9 @@ param(
 
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -325,9 +328,9 @@ if ($ProcessOnce) {
 
 # default: monitor
 Run-Monitor
-# 루아(ChatGPT) ↔ 트리니티(Copilot) 자동 브릿지
+# 코어(ChatGPT) ↔ 트리니티(Copilot) 자동 브릿지
 # ===============================================
-# 루아의 작업을 자동으로 감지하고 트리니티에게 전달
+# 코어의 작업을 자동으로 감지하고 트리니티에게 전달
 #
 # Author: Trinity System
 # Date: 2025-11-12
@@ -339,7 +342,6 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$WorkspaceRoot = "c:\workspace\agi"
 $LuaInbox = Join-Path $WorkspaceRoot "outputs\lua_requests"
 $TrinityOutbox = Join-Path $WorkspaceRoot "outputs\trinity_responses"
 $BridgeLog = Join-Path $WorkspaceRoot "outputs\lua_trinity_bridge.jsonl"
@@ -362,12 +364,12 @@ function Write-BridgeLog {
 }
 
 function Get-LuaRequests {
-    """루아의 새 요청 스캔"""
+    """코어의 새 요청 스캔"""
     
     $requests = Get-ChildItem -Path $LuaInbox -Filter "lua_request_*.json" -ErrorAction SilentlyContinue
     
     if ($requests) {
-        Write-Host "📥 발견된 루아 요청: $($requests.Count)개" -ForegroundColor Green
+        Write-Host "📥 발견된 코어 요청: $($requests.Count)개" -ForegroundColor Green
         return $requests
     }
     
@@ -387,7 +389,7 @@ function Send-ToCopilot {
     
     # Copilot용 프롬프트 생성
     $prompt = @"
-🎭 루아(ChatGPT)로부터 작업 요청
+🎭 코어(ChatGPT)로부터 작업 요청
 
 **요청 ID**: $RequestId
 **우선순위**: $Priority
@@ -457,7 +459,7 @@ function Process-LuaRequest {
         $request = Get-Content -Path $RequestFile.FullName -Raw | ConvertFrom-Json
         
         Write-Host "`n$('='*60)" -ForegroundColor Magenta
-        Write-Host "🔄 루아 요청 처리 중" -ForegroundColor Magenta
+        Write-Host "🔄 코어 요청 처리 중" -ForegroundColor Magenta
         Write-Host "$('='*60)`n" -ForegroundColor Magenta
         
         Write-Host "📋 요청 ID: $($request.request_id)" -ForegroundColor Cyan
@@ -495,10 +497,10 @@ function Start-BridgeMonitor {
     param([int]$Interval = 10)
     
     Write-Host "`n$('='*70)" -ForegroundColor Cyan
-    Write-Host "🌉 루아(ChatGPT) ↔ 트리니티(Copilot) 브릿지 시작" -ForegroundColor Cyan
+    Write-Host "🌉 코어(ChatGPT) ↔ 트리니티(Copilot) 브릿지 시작" -ForegroundColor Cyan
     Write-Host "$('='*70)`n" -ForegroundColor Cyan
     
-    Write-Host "📥 루아 요청 폴더: $LuaInbox" -ForegroundColor Yellow
+    Write-Host "📥 코어 요청 폴더: $LuaInbox" -ForegroundColor Yellow
     Write-Host "📤 트리니티 응답 폴더: $TrinityOutbox" -ForegroundColor Yellow
     Write-Host "⏱️  스캔 간격: $Interval 초`n" -ForegroundColor Yellow
     
@@ -549,7 +551,7 @@ function Start-BridgeMonitor {
 function Show-BridgeStatus {
     """브릿지 상태 표시"""
     
-    Write-Host "`n📊 루아-트리니티 브릿지 상태`n" -ForegroundColor Cyan
+    Write-Host "`n📊 코어-트리니티 브릿지 상태`n" -ForegroundColor Cyan
     
     # 대기 중인 요청
     $pending = Get-ChildItem -Path $LuaInbox -Filter "lua_request_*.json" -ErrorAction SilentlyContinue

@@ -27,6 +27,11 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Optional
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 
 def utc_iso(ts: float) -> str:
@@ -61,7 +66,7 @@ def run_hippocampus_bridge(workspace_root: Path) -> dict[str, Any]:
     exploration = safe_load_json(outputs / "exploration_intake_latest.json") or {}
     boundary_map = safe_load_json(outputs / "boundary_map_latest.json") or {}
     obs_idx = safe_load_json(outputs / "obs_recode_intake_latest.json") or {}
-    rua_intake = safe_load_json(outputs / "rua_conversation_intake_latest.json") or {}
+    Core_intake = safe_load_json(outputs / "core_conversation_intake_latest.json") or {}
 
     stored = []
     errors = []
@@ -124,11 +129,11 @@ def run_hippocampus_bridge(workspace_root: Path) -> dict[str, Any]:
             hippo.long_term.store_episodic(item)
             stored.append({"stored": "experience_obs_recode", "newest": item.get("newest_relpath")})
 
-        # 4) Rua conversation newest (있으면) → episodic
-        newest_doc = rua_intake.get("newest") if isinstance(rua_intake.get("newest"), dict) else None
+        # 4) Core conversation newest (있으면) → episodic
+        newest_doc = Core_intake.get("newest") if isinstance(Core_intake.get("newest"), dict) else None
         if isinstance(newest_doc, dict):
             item = {
-                "type": "experience_rua_conversation",
+                "type": "experience_core_conversation",
                 "title": newest_doc.get("title"),
                 "relpath": newest_doc.get("relpath"),
                 "mtime_iso": newest_doc.get("mtime_iso"),
@@ -138,7 +143,7 @@ def run_hippocampus_bridge(workspace_root: Path) -> dict[str, Any]:
                 "origin": "hippocampus_bridge",
             }
             hippo.long_term.store_episodic(item)
-            stored.append({"stored": "experience_rua_conversation", "title": item.get("title")})
+            stored.append({"stored": "experience_core_conversation", "title": item.get("title")})
 
         # 5) Digital Twin Drift (있으면) → episodic
         twin_path = outputs / "sync_cache/digital_twin_state.json"
@@ -181,7 +186,7 @@ def run_hippocampus_bridge(workspace_root: Path) -> dict[str, Any]:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", type=str, default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--workspace", type=str, default=str(get_workspace_root()))
     args = ap.parse_args()
 
     ws = Path(args.workspace).resolve()

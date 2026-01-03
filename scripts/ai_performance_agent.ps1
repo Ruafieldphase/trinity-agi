@@ -1,4 +1,4 @@
-# AI Performance Agent - Autonomous Performance Management
+﻿# AI Performance Agent - Autonomous Performance Management
 # AI agent that monitors, analyzes, and takes action on performance metrics
 
 param(

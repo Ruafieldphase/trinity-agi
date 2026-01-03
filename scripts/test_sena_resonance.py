@@ -9,9 +9,10 @@ Verifies that YouTube knowledge and Axiom 7 are correctly retrieved and used.
 import sys
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add workspace root to path
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.insert(0, str(WORKSPACE_ROOT))
 
 from fdo_agi_repo.memory.resonance_rag import ResonanceRAG

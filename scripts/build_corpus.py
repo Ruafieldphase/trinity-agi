@@ -136,7 +136,7 @@ def main():
 
     # 2. Ethics Charter
     print("\n2. Extracting ethics charter...")
-    charter_path = Path("ai_binoche_conversation_origin/lumen/AGI 보호 체계 설계/FDO-AGI_공동_후견_헌장_v0.1_서명본_brand.html")
+    charter_path = Path("ai_binoche_conversation_origin/Core/AGI 보호 체계 설계/FDO-AGI_공동_후견_헌장_v0.1_서명본_brand.html")
     if charter_path.exists():
         try:
             text = extract_from_html(charter_path)
@@ -145,7 +145,7 @@ def main():
                 "id": "guardianship_charter",
                 "text": doc_text,
                 "metadata": {
-                    "source": "lumen",
+                    "source": "Core",
                     "type": "ethics",
                     "file": str(charter_path)
                 }

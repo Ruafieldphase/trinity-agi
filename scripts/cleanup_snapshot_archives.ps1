@@ -1,8 +1,12 @@
-param(
-    [string]$ArchiveDir = "C:\workspace\agi\outputs\archive",
+﻿param(
+    [string]$ArchiveDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\archive",
     [int]$KeepDays = 14,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

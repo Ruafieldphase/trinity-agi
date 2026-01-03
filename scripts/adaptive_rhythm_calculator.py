@@ -15,8 +15,9 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 TRACKER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "goal_tracker.json"
 RHYTHM_STATE_FILE = WORKSPACE_ROOT / "outputs" / "rhythm_state.json"
 

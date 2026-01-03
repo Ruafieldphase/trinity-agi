@@ -10,6 +10,7 @@ import os
 import sys
 import re
 from pathlib import Path
+from workspace_root import get_workspace_root
 from typing import Dict, List, Tuple
 
 # ?�모지 ??ASCII 매핑
@@ -77,7 +78,9 @@ def convert_emojis_in_file(file_path: Path, dry_run: bool = True) -> Tuple[int, 
         return 0, []
 
 
-def main(target_dir: str = r"C:\workspace\agi\scripts", dry_run: bool = True):
+def main(target_dir: str = None, dry_run: bool = True):
+    if not target_dir:
+        target_dir = str(get_workspace_root() / "scripts")
     """메인 ?�행 ?�수"""
     
     print("\n" + "="*50)
@@ -128,7 +131,7 @@ def main(target_dir: str = r"C:\workspace\agi\scripts", dry_run: bool = True):
 
 if __name__ == "__main__":
     dry_run = "--execute" not in sys.argv
-    target = r"C:\workspace\agi\scripts"
+    target = str(get_workspace_root() / "scripts")
     
     if len(sys.argv) > 1 and sys.argv[1].startswith("--dir="):
         target = sys.argv[1].split("=", 1)[1]

@@ -1,4 +1,4 @@
-# AGI 시스템 자동 시작 복원 스크립트
+﻿# AGI 시스템 자동 시작 복원 스크립트
 # ===============================================
 # 백업된 자동 시작 설정을 복원합니다.
 
@@ -7,13 +7,17 @@ param(
     [string]$BackupFile,
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 Write-Host "`n🔄 AGI 시스템 자동 시작 복원" -ForegroundColor Cyan
 Write-Host "=" * 80
 
 # 백업 파일 찾기
 if (-not $BackupFile) {
-    $backupDir = "C:\workspace\agi\outputs\sena\backups"
+    $backupDir = "$WorkspaceRoot\outputs\sena\backups"
 
     if (Test-Path $backupDir) {
         $backups = Get-ChildItem -Path $backupDir -Filter "autostart_backup_*.json" | Sort-Object LastWriteTime -Descending

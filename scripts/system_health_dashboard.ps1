@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <parameter name="content">#Requires -Version 5.1
 <#
 .SYNOPSIS
@@ -13,6 +13,9 @@ param(
     [switch]$Quiet,
     [int]$ServerPort = 8091
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $checks = @()
@@ -118,12 +121,12 @@ Add-Check -Name "Daily Auto-Backup" -Pass $backupTaskOk -Details $(if ($backupTa
 }
 
 # Check 7: Python venv
-$venvPython = "C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe"
+$venvPython = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 $venvExists = Test-Path $venvPython
 Add-Check -Name "Python Virtual Env" -Pass $venvExists -Details $(if ($venvExists) { "Ready" } else { "Missing" })
 
 # Check 8: Recent outputs
-$outputDir = "C:\workspace\agi\outputs"
+$outputDir = "$WorkspaceRoot\outputs"
 $recentOutput = $false
 if (Test-Path $outputDir) {
     $latestFiles = Get-ChildItem -Path $outputDir -Filter "*latest*" -File -ErrorAction SilentlyContinue |
@@ -201,13 +204,13 @@ if ($AutoFix -and -not $allPass) {
                 $check.details = $(if ($isOk) { 'Scheduled' } else { 'Not configured' })
             }
             'Python Virtual Env' {
-                $venvPython = 'C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe'
+                $venvPython = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
                 $isOk = Test-Path $venvPython
                 $check.pass = $isOk
                 $check.details = $(if ($isOk) { 'Ready' } else { 'Missing' })
             }
             'Recent Output Files (24h)' {
-                $outputDir = 'C:\workspace\agi\outputs'
+                $outputDir = "$WorkspaceRoot\outputs"
                 $isOk = $false
                 $count = 0
                 if (Test-Path $outputDir) {

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Register Autonomous Goal Executor as Windows Scheduled Task (schtasks version)
@@ -39,12 +39,14 @@ param(
     [string]$Time = "03:30",
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
 # 설정
 $TaskName = "AGI_AutonomousGoalExecutor"
-$WorkspaceRoot = "C:\workspace\agi"
 $PythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 $ScriptPath = "$WorkspaceRoot\scripts\autonomous_goal_executor.py"
 $LogDir = "$WorkspaceRoot\outputs\logs"

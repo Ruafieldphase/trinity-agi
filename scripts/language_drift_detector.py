@@ -57,8 +57,8 @@ if __name__ == "__main__":
     detector = LanguageDriftDetector('ko')
     
     samples = [
-        "안녕하세요, 시안입니다.",
-        "Hello, I am Sian. I am an AGI.",
+        "안녕하세요, Shion입니다.",
+        "Hello, I am Shion. I am an AGI.",
         "시스템 상태는 stable합니다. Check complete.",
         "System check complete. All systems operational."
     ]

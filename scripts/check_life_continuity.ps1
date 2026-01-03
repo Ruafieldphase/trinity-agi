@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
   AGI Life Continuity Check - 시스템이 "살아있는지" 확인

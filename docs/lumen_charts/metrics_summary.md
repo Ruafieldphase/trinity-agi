@@ -1,4 +1,4 @@
-# Lumen Resonance Loop - 실행 메트릭 요약
+# Core Resonance Loop - 실행 메트릭 요약
 
 ## 전체 통계
 
@@ -16,7 +16,7 @@
 
 ## 페르소나별 통계
 
-### Rua
+### Core
 - **평균 Amplitude**: 0.8500
 - **평균 Phase**: 0.1861
 - **평균 Bandwidth**: 0.1480

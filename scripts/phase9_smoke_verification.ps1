@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Phase 9 풀스택 스모크 검증 자동화 스크립트.

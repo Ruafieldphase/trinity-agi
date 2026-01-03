@@ -19,8 +19,8 @@ COOCCURRENCE_CSV = OUTPUT_DIR / "concept_cooccurrence.csv"
 CONCEPT_KEYWORDS: Dict[str, Iterable[str]] = {
     "감응": ["감응", "공명", "감각", "울림"],
     "리듬": ["리듬", "패턴", "주파수"],
-    "루멘": ["루멘", "lumen"],
-    "루아": ["루아", "lua"],
+    "Core": ["Core", "Core"],
+    "코어": ["코어", "lua"],
     "엘로": ["엘로", "ello"],
     "조율": ["조율", "alignment", "정렬"],
     "관문": ["관문", "portal", "게이트"],

@@ -1,29 +1,33 @@
-# AI 개발+방송 ?�합 ?�크?�로???�처 (VS Code + OBS + 모니?�링)
-# ?�용 ?�시:
+﻿# AI 개발+방송 ?합 ?크?로???처 (VS Code + OBS + 모니?링)
+# ?용 ?시:
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start_ai_dev_stream.ps1 -OBSProfile "Default" -Scene "VS Code Stream" -OpenYouTubeStudio
-#   (체크 ?�용) powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start_ai_dev_stream.ps1 -CheckOnly
+#   (체크 ?용) powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start_ai_dev_stream.ps1 -CheckOnly
 
 param(
-    [switch]$CheckOnly,                 # ?�제 ?�행 ?�이 ?��?�??�행
-    [switch]$AutoStartStreaming,        # OBS ?�행 ???�동 방송 ?�작 (OBS???�트�????�요)
-    [switch]$OpenVSCode,                # VS Code ?�동 ?�행 (기본: true)
-    [switch]$RunQuickStatus,            # ?�?�보???�태 ?�냅???�행 (기본: true)
-    [switch]$OpenYouTubeStudio,         # YouTube Studio ?�이지 ?�기
-    [string]$WorkspacePath = "C:\workspace\agi",  # VS Code ?�업 ?�더
-    [string]$OBSProfile = "Default",   # OBS ?�로???�름
-    [string]$Scene = "VS Code Stream"  # OBS ???�름
+    [switch]$CheckOnly,                 # ?제 ?행 ?이 ????행
+    [switch]$AutoStartStreaming,        # OBS ?행 ???동 방송 ?작 (OBS???트????요)
+    [switch]$OpenVSCode,                # VS Code ?동 ?행 (기본: true)
+    [switch]$RunQuickStatus,            # ??보???태 ?냅???행 (기본: true)
+    [switch]$OpenYouTubeStudio,         # YouTube Studio ?이지 ?기
+    [string]$WorkspacePath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )",  # VS Code ?업 ?더
+    [string]$OBSProfile = "Default",   # OBS ?로???름
+    [string]$Scene = "VS Code Stream"  # OBS ???름
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
 Write-Host "=== AI Dev + Streaming Orchestrator ===" -ForegroundColor Cyan
 Write-Host ("Time: {0}" -f (Get-Date).ToString("s")) -ForegroundColor DarkGray
 
-# ?�위�?기본�??�정 (명시?��? ?�으�?true�?간주)
+# ?위?기본??정 (명시?? ?으?true?간주)
 if (-not $PSBoundParameters.ContainsKey('OpenVSCode')) { $OpenVSCode = $true }
 if (-not $PSBoundParameters.ContainsKey('RunQuickStatus')) { $RunQuickStatus = $true }
 
-# 1) VS Code ?�행
+# 1) VS Code ?행
 if ($OpenVSCode) {
     try {
         $vsProc = Get-Process -Name "Code" -ErrorAction SilentlyContinue
@@ -38,7 +42,7 @@ if ($OpenVSCode) {
     }
 }
 
-# 2) 모니?�링 ?�냅???�행 (?�택)
+# 2) 모니?링 ?냅???행 (?택)
 if ($RunQuickStatus) {
     try {
         $quickStatus = Join-Path $WorkspacePath "scripts/quick_status.ps1"
@@ -55,13 +59,13 @@ if ($RunQuickStatus) {
     }
 }
 
-# 체크 ?�용 모드�??�기??종료
+# 체크 ?용 모드??기??종료
 if ($CheckOnly) {
     Write-Host "[OK] Check-only completed. Skipping OBS launch." -ForegroundColor Green
     exit 0
 }
 
-# 3) OBS ?�작 (?�요 ???�동 방송 ?�작)
+# 3) OBS ?작 (?요 ???동 방송 ?작)
 try {
     $obsScript = Join-Path $WorkspacePath "scripts/obs_quick_setup.ps1"
     if (-not (Test-Path $obsScript)) {
@@ -78,7 +82,7 @@ try {
     Write-Host "[Error] OBS start failed: $_" -ForegroundColor Red
 }
 
-# 4) YouTube Studio ?�기 (?�택)
+# 4) YouTube Studio ?기 (?택)
 if ($OpenYouTubeStudio) {
     try {
     Write-Host "[Start] Open YouTube Studio" -ForegroundColor Cyan

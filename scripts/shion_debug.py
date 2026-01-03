@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 import os
+from workspace_root import get_workspace_root
 
 # Mock genai for debug
 class MockGenAI:
@@ -24,7 +25,7 @@ class AutonomousCollaborationMode:
     def __init__(self, workspace_root: Path):
         self.workspace_root = workspace_root
         self.ledger_path = workspace_root / "memory" / "resonance_ledger.jsonl" # Fixed path
-        self.lumen_path = workspace_root / "outputs" / "lumen_state.json"
+        self.core_path = workspace_root / "outputs" / "core_state.json"
         self.last_check_file = workspace_root / "outputs" / "sena" / ".last_auto_response"
         self.enabled = True
         self.max_fear_threshold = 0.7
@@ -68,8 +69,8 @@ class AutonomousCollaborationMode:
                         continue
                     
                     message_text = entry.get('question', entry.get('message', ''))
-                    if 'rua' in message_text.lower() or '루아' in message_text:
-                        print("  -> Skipped: Contains 'rua'")
+                    if 'Core' in message_text.lower() or '코어' in message_text:
+                        print("  -> Skipped: Contains 'Core'")
                         continue
                     
                     print("  -> MATCHED! Adding to questions.")
@@ -95,7 +96,7 @@ class AutonomousCollaborationMode:
         print(f"📬 {len(questions)} new question(s) from Sena")
 
 def main():
-    workspace_root = Path("/home/bino/agi") # Hardcoded for Linux VM
+    workspace_root = get_workspace_root()
     mode = AutonomousCollaborationMode(workspace_root)
     mode.run_once()
 

@@ -1,4 +1,4 @@
-Add-Type -AssemblyName Microsoft.VisualBasic | Out-Null
+﻿Add-Type -AssemblyName Microsoft.VisualBasic | Out-Null
 $wshell = New-Object -ComObject WScript.Shell
 
 function Try-Activate {

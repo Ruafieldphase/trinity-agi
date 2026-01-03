@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List
+from workspace_root import get_workspace_root
 
 
 def load_batch_results(outputs_dir: Path) -> List[Dict]:
@@ -31,7 +32,7 @@ def load_batch_results(outputs_dir: Path) -> List[Dict]:
 
 def analyze_complexity_spectrum() -> Dict:
     """Analyze performance across complexity levels."""
-    outputs_dir = Path(__file__).parent.parent / "outputs"
+    outputs_dir = get_workspace_root() / "outputs"
     results = load_batch_results(outputs_dir)
     
     if not results:
@@ -156,7 +157,7 @@ def main():
     print_report(spectrum)
     
     # Save to JSON
-    output_path = Path(__file__).parent.parent / "outputs" / "complexity_spectrum_latest.json"
+    output_path = get_workspace_root() / "outputs" / "complexity_spectrum_latest.json"
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(spectrum, f, indent=2, ensure_ascii=False)
     

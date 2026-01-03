@@ -16,8 +16,9 @@ import time
 from pathlib import Path
 from datetime import datetime, timedelta
 import sys
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_PATH = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 if not LEDGER_PATH.exists():
     # Try alternative path

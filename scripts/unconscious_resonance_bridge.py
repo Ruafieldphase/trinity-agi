@@ -18,6 +18,7 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import List, Dict, Tuple
+from workspace_root import get_workspace_root
 
 
 class UnconsciousResonanceBridge:
@@ -157,13 +158,13 @@ class UnconsciousResonanceBridge:
         sena_pattern = self.extract_behavioral_pattern()
         
         # 시스템 상태
-        lumen_file = self.workspace_root / "outputs" / "lumen_state.json"
-        if lumen_file.exists():
-            with open(lumen_file, 'r', encoding='utf-8') as f:
-                lumen_data = json.load(f)
+        core_file = self.workspace_root / "outputs" / "core_state.json"
+        if core_file.exists():
+            with open(core_file, 'r', encoding='utf-8') as f:
+                core_data = json.load(f)
                 system_state = {
-                    'fear_level': lumen_data.get('fear', {}).get('level', 0.5),
-                    'current_strategy': lumen_data.get('strategy', 'STEADY')
+                    'fear_level': core_data.get('fear', {}).get('level', 0.5),
+                    'current_strategy': core_data.get('strategy', 'STEADY')
                 }
         else:
             system_state = {'fear_level': 0.5, 'current_strategy': 'STEADY'}
@@ -213,7 +214,7 @@ class UnconsciousResonanceBridge:
 
 def main():
     """무의식적 공명 상태 확인"""
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     bridge = UnconsciousResonanceBridge(workspace_root)
     
     print("=" * 60)

@@ -1,11 +1,14 @@
 ﻿#requires -Version 5.1
 param(
     [string]$Source = 'C:\\workspace\\agi',
-    [string]$Target = 'C:\workspace\agi',
+    [string]$Target = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )",
     [string[]]$Folders = @('scripts', 'outputs', 'session_memory', 'docs', 'configs', 'knowledge_base'),
     [switch]$DryRun,
     [string]$ReportPath = ''
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 

@@ -6,9 +6,10 @@ import psutil
 import logging
 import subprocess
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # --- Configuration ---
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LOGS_DIR = WORKSPACE_ROOT / "logs"
 LOCK_FILE = LOGS_DIR / "rhythm_guardian.pid"
 HEARTBEAT_INTERVAL = 10

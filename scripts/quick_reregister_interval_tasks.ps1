@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
     Quick fix: Re-register 3 main interval tasks (5min, 30sec)
@@ -6,6 +6,9 @@
     Re-registers only the main interval tasks that show windows every 5 minutes
 #>
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -16,10 +19,10 @@ if (!$isAdmin) {
     Write-Host "`n⚠️  Administrator rights required for task registration" -ForegroundColor Yellow
     Write-Host "`n💡 Quick solution:" -ForegroundColor Cyan
     Write-Host "   Right-click PowerShell → Run as Administrator" -ForegroundColor Gray
-    Write-Host "   Then run: cd C:\workspace\agi; .\scripts\quick_reregister_interval_tasks.ps1`n" -ForegroundColor Gray
+    Write-Host "   Then run: cd $WorkspaceRoot; .\scripts\quick_reregister_interval_tasks.ps1`n" -ForegroundColor Gray
     
     # Open admin prompt with the command
-    $command = "cd C:\workspace\agi; .\scripts\quick_reregister_interval_tasks.ps1; pause"
+    $command = "cd $WorkspaceRoot; .\scripts\quick_reregister_interval_tasks.ps1; pause"
     Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"$command`""
     
     Write-Host "   🚀 Admin PowerShell opened. Check that window!`n" -ForegroundColor Green

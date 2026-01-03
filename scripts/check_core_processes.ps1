@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 Param(
     [switch]$SummaryOnly,
     [string]$OutJson,

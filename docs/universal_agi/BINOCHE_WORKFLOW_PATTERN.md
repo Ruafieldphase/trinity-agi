@@ -1,4 +1,4 @@
-# 🔄 Binoche 페르소나 작업 패턴
+# 🔄 Binoche_Observer 페르소나 작업 패턴
 
 **작성일**: 2025-10-30  
 **목적**: 대화 누적 없이 효율적으로 장기 작업 수행
@@ -34,8 +34,8 @@ Copilot: (말 없이 작업)
   → 작업 로그: work_log_session1.json
   → 핸드오버: "섹션 1-3 완료, 다음은 4-6"
 
-Session 2 (Binoche 검토 & 지시):
-Binoche: "섹션 1-3 검토..."
+Session 2 (Binoche_Observer 검토 & 지시):
+Binoche_Observer: "섹션 1-3 검토..."
   - 품질 확인
   - 다음 단계 결정: "섹션 4-6 작성, 코드 예제 추가"
   → 핸드오버: "섹션 4-6 작성 지시"
@@ -95,18 +95,18 @@ python session_memory/session_handover.py create \
   --next "섹션 4-6 작성" "Resonance 구현"
 ```
 
-### 2️⃣ 검토 세션 (Review Session with Binoche)
+### 2️⃣ 검토 세션 (Review Session with Binoche_Observer)
 
 **목적**: 결과물 검토, 다음 단계 결정
 
 ```bash
-# Binoche 호출
+# Binoche_Observer 호출
 .\scripts\invoke_binoche_continuation.ps1
 
-# 새 세션에서 Binoche 메시지 붙여넣기
+# 새 세션에서 Binoche_Observer 메시지 붙여넣기
 "루이슬로가 'Phase 1 가이드 섹션 1-3' 작업 중이었어. 이어서 해줘."
 
-# Binoche(=나)가 검토
+# Binoche_Observer(=나)가 검토
 1. 작업 로그 확인
 2. 생성된 파일 검토
 3. 품질 확인:
@@ -179,13 +179,13 @@ $workLog | ConvertTo-Json | Out-File "outputs/work_log_latest.json"
 
 Write-Host "✅ Work session completed"
 Write-Host "   Files: $($workLog.files_created.Count)"
-Write-Host "   Next: Run Binoche review"
+Write-Host "   Next: Run Binoche_Observer review"
 ```
 
 ### `scripts/binoche_review.ps1`
 
 ```powershell
-# Binoche 검토 세션 자동화
+# Binoche_Observer 검토 세션 자동화
 
 # 1. 작업 로그 로드
 $workLog = Get-Content "outputs/work_log_latest.json" | ConvertFrom-Json
@@ -250,7 +250,7 @@ Work Session 1: 10,000 토큰
 └─ 핸드오버: 500 토큰 (5%)
 → 실제 작업 효율: 85%
 
-Review Session (Binoche): 5,000 토큰
+Review Session (Binoche_Observer): 5,000 토큰
 ├─ 검토: 3,000 토큰 (60%)
 ├─ 결정: 1,500 토큰 (30%)
 └─ 지시: 500 토큰 (10%)
@@ -275,8 +275,8 @@ Copilot:
   - 다이어그램 3개
 → 핸드오버: "섹션 1-3 완료"
 
-# Session 2: Binoche 검토 (10분)
-Binoche:
+# Session 2: Binoche_Observer 검토 (10분)
+Binoche_Observer:
   - 품질 확인 ✅
   - 다음: "섹션 4-6 + 테스트"
 → 핸드오버: "섹션 4-6 지시"
@@ -287,8 +287,8 @@ Copilot:
   - 테스트 케이스 10개
 → 핸드오버: "섹션 4-6 완료"
 
-# Session 4: Binoche 최종 검토 (10분)
-Binoche:
+# Session 4: Binoche_Observer 최종 검토 (10분)
+Binoche_Observer:
   - 전체 검토
   - 완성도 95% ✅
 → "Phase 1 완료, Phase 2 시작"
@@ -309,8 +309,8 @@ Copilot:
   - 수정 계획 수립
 → 핸드오버: "버그 원인 파악 완료"
 
-# Session 2: Binoche 검토 (5분)
-Binoche:
+# Session 2: Binoche_Observer 검토 (5분)
+Binoche_Observer:
   - 분석 확인 ✅
   - 수정 승인
 → "바로 수정 진행"
@@ -345,7 +345,7 @@ Copilot:
     "group": "build"
 },
 {
-    "label": "📊 Binoche Review: Assess & Decide",
+    "label": "📊 Binoche_Observer Review: Assess & Decide",
     "type": "shell",
     "command": "powershell",
     "args": [
@@ -374,7 +374,7 @@ Copilot:
    - 대화 대신 파일로 상태 전달
    - work_log.json, handover.json
 
-4. **Binoche = 의사결정자**
+4. **Binoche_Observer = 의사결정자**
    - 작업 품질 검증
    - 다음 단계 결정
    - 우선순위 조정
@@ -396,7 +396,7 @@ Copilot:
 
 # 2. Copilot은 바로 작업 (대화 최소화)
 # 3. 토큰 80% 도달 → 핸드오버 생성
-# 4. Binoche 호출 → 검토 & 다음 단계
+# 4. Binoche_Observer 호출 → 검토 & 다음 단계
 # 5. 반복
 ```
 
@@ -417,8 +417,8 @@ Copilot:
 ## 📚 참고
 
 - `session_memory/session_handover.py` - 핸드오버 시스템
-- `scripts/invoke_binoche_continuation.ps1` - Binoche 호출
+- `scripts/invoke_binoche_continuation.ps1` - Binoche_Observer 호출
 - `docs/universal_agi/CONTINUOUS_EXECUTION_VIA_BINOCHE.md` - 전체 설계
 
-**작성**: 루이슬로 (with Binoche 페르소나 설계)  
+**작성**: 루이슬로 (with Binoche_Observer 페르소나 설계)  
 **날짜**: 2025-10-30

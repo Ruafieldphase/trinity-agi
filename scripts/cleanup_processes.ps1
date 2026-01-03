@@ -1,4 +1,4 @@
-# Clean Up Orphaned and Duplicate Processes
+﻿# Clean Up Orphaned and Duplicate Processes
 # Removes zombie processes and consolidates duplicate work
 
 param(

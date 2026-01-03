@@ -1,8 +1,11 @@
 # Real-time Popup Window Monitor
 # 팝업 창이 뜨면 즉시 감지하고 로그에 기록합니다
 
+
+. "$PSScriptRoot\..\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "Continue"
-$logPath = "C:\workspace\agi\outputs\popup_monitor.log"
+$logPath = "$WorkspaceRoot\outputs\popup_monitor.log"
 
 Write-Host "=== Popup Window Monitor ===" -ForegroundColor Cyan
 Write-Host "Monitoring for visible PowerShell/Python windows..." -ForegroundColor Yellow

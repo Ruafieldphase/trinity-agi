@@ -1,12 +1,14 @@
 ﻿import re
 from pathlib import Path
-p = Path(r"C:\workspace\agi\scripts\auto_orchestration.py")
+from workspace_root import get_workspace_root
+WORKSPACE_ROOT = get_workspace_root()
+p = WORKSPACE_ROOT / "scripts" / "auto_orchestration.py"
 src = p.read_text(encoding='utf-8')
 
 # ensure atomic_write import
 imp_line = "\nfrom utils.atomic_write import atomic_write\n"
 if 'from utils.atomic_write import atomic_write' not in src:
-    m = re.search(r"^from utils\.validator import lumen_chat_schema.*$", src, re.M)
+    m = re.search(r"^from utils\.validator import core_chat_schema.*$", src, re.M)
     if m:
         idx = m.end()
         src = src[:idx] + imp_line + src[idx:]

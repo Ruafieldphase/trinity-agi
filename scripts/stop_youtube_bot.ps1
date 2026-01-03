@@ -1,4 +1,4 @@
-# Stop YouTube Live bot (best-effort)
+﻿# Stop YouTube Live bot (best-effort)
 $ErrorActionPreference = "SilentlyContinue"
 Get-Process -Name python, py, python3 | Where-Object { $_.Path -ne $null } | ForEach-Object {
     try {

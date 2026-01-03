@@ -1,60 +1,64 @@
-param(
+ï»¿param(
   [string[]]$Dirs = @(
-    'C:\workspace\agi\ai_binoche_conversation_origin\perple_comet_cople_eru',
-    'C:\workspace\agi\ai_binoche_conversation_origin\sena',
-    'C:\workspace\agi\ai_binoche_conversation_origin\rio',
-    'C:\workspace\agi\ai_binoche_conversation_origin\ari'
+    "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\perple_comet_cople_eru",
+    "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\sena",
+    "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\rio",
+    "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\ari"
   ),
-  [string]$OutMd = 'C:\workspace\agi\outputs\other_ai_index.md',
+  [string]$OutMd = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\other_ai_index.md",
   [int]$MaxFiles = 60,
   [int]$PreviewLines = 40
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 function SanitizeText([string]$text) {
   $t = $text
   # User
-  $t = $t -replace 'ºñ³ëÃ¼','[User A]'
-  $t = $t -replace 'ºñ³ë','[User A]'
-  $t = $t -replace '\\bBinoche\\b','[User A]'
-  $t = $t -replace '??•Ÿ??','[User A]'
-  $t = $t -replace '???u','[User A]'
+  $t = $t -replace 'Ã¼', '[User A]'
+  $t = $t -replace '', '[User A]'
+  $t = $t -replace '\\bBinoche\\b', '[User A]'
+  $t = $t -replace '????', '[User A]'
+  $t = $t -replace '???u', '[User A]'
   # Sena
-  $t = $t -replace '¼¼³ª','[Agent S]'
-  $t = $t -replace '\\bSena\\b','[Agent S]'
-  $t = $t -replace '????','[Agent S]'
+  $t = $t -replace '', '[Agent S]'
+  $t = $t -replace '\\bSena\\b', '[Agent S]'
+  $t = $t -replace '????', '[Agent S]'
   # Analyst L
-  $t = $t -replace '·çºû','[Analyst L]'
-  $t = $t -replace '·çºø','[Analyst L]'
-  $t = $t -replace '\\bLubit\\b','[Analyst L]'
-  $t = $t -replace '???','[Analyst L]'
-  # Lumen
-  $t = $t -replace '·ç¸à','[Agent Lumen]'
-  $t = $t -replace '\\bLumen\\b','[Agent Lumen]'
-  $t = $t -replace '???','[Agent Lumen]'
+  $t = $t -replace '', '[Analyst L]'
+  $t = $t -replace '', '[Analyst L]'
+  $t = $t -replace '\\bLubit\\b', '[Analyst L]'
+  $t = $t -replace '???', '[Analyst L]'
+  # Core
+  $t = $t -replace '', '[Agent Core]'
+  $t = $t -replace '\\bCore\\b', '[Agent Core]'
+  $t = $t -replace '???', '[Agent Core]'
   # Perple
-  $t = $t -replace 'ÆÛÇÃ(?!·º½ÃÆ¼)','[Agent P]'
-  $t = $t -replace 'Perple(?!x)','[Agent P]'
-  $t = $t -replace '????','[Agent P]'
+  $t = $t -replace '(?!Æ¼)', '[Agent P]'
+  $t = $t -replace 'Perple(?!x)', '[Agent P]'
+  $t = $t -replace '????', '[Agent P]'
   # Comet
-  $t = $t -replace 'ÄÚ¸ä','[Agent C]'
-  $t = $t -replace '\\bComet\\b','[Agent C]'
-  $t = $t -replace '???','[Agent C]'
+  $t = $t -replace 'Ú¸', '[Agent C]'
+  $t = $t -replace '\\bComet\\b', '[Agent C]'
+  $t = $t -replace '???', '[Agent C]'
   # Cople
-  $t = $t -replace 'ÄÚÇÃ','[Agent CP]'
-  $t = $t -replace '\\bCople\\b','[Agent CP]'
-  $t = $t -replace '????','[Agent CP]'
+  $t = $t -replace '', '[Agent CP]'
+  $t = $t -replace '\\bCople\\b', '[Agent CP]'
+  $t = $t -replace '????', '[Agent CP]'
   # Eru
-  $t = $t -replace '¿¡·ç','[Agent E]'
-  $t = $t -replace '\\bEru\\b','[Agent E]'
-  $t = $t -replace '????','[Agent E]'
+  $t = $t -replace '', '[Agent E]'
+  $t = $t -replace '\\bEru\\b', '[Agent E]'
+  $t = $t -replace '????', '[Agent E]'
   # Rio
-  $t = $t -replace '¸®¿À','[Agent R]'
-  $t = $t -replace '\\bRio\\b','[Agent R]'
-  $t = $t -replace '????','[Agent R]'
+  $t = $t -replace '', '[Agent R]'
+  $t = $t -replace '\\bRio\\b', '[Agent R]'
+  $t = $t -replace '????', '[Agent R]'
   # Ari
-  $t = $t -replace '¾Æ¸®','[Agent Ari]'
-  $t = $t -replace '\\bAri\\b','[Agent Ari]'
-  $t = $t -replace '???','[Agent Ari]'
+  $t = $t -replace 'Æ¸', '[Agent Ari]'
+  $t = $t -replace '\\bAri\\b', '[Agent Ari]'
+  $t = $t -replace '???', '[Agent Ari]'
   return $t
 }
 
@@ -93,7 +97,7 @@ foreach ($f in $selected) {
   }
   if (-not $title) {
     $firstHeader = ($rawSan -split "\r?\n") | Where-Object { $_ -match '^#\s+' } | Select-Object -First 1
-    if ($firstHeader) { $title = $firstHeader -replace '^#\s+','' } else { $title = $f.Name }
+    if ($firstHeader) { $title = $firstHeader -replace '^#\s+', '' } else { $title = $f.Name }
   }
   $preview = ($rawSan -split "\r?\n") | Select-Object -First $PreviewLines | Out-String
   $preview = $preview.TrimEnd()

@@ -28,7 +28,7 @@ def verify():
         
         if channel:
             try:
-                client.chat_postMessage(channel=channel, text="🤖 Koa System Verification: Slack Connection Active.")
+                client.chat_postMessage(channel=channel, text="🤖 Core System Verification: Slack Connection Active.")
                 print(f"✅ Successfully sent test message to {channel}")
             except SlackApiError as e:
                 print(f"❌ Failed to send message: {e.response['error']}")

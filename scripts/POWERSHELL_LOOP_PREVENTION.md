@@ -5,7 +5,7 @@
 PowerShell 창이 계속해서 새로 생성되는 문제가 발생했습니다.
 
 ### 원인
-- `start_agi_system.ps1`과 `start_lumen_24h_new_window.ps1` 등의 스크립트가 `Start-Process powershell -NoExit`를 사용
+- `start_agi_system.ps1`과 `start_core_24h_new_window.ps1` 등의 스크립트가 `Start-Process powershell -NoExit`를 사용
 - 자동 재시작 로직이나 무한 루프가 있는 스크립트들이 동시에 실행됨
 - 각 스크립트가 새 PowerShell 창을 계속 생성
 
@@ -114,7 +114,7 @@ Get-Process powershell* | Select-Object Id, ProcessName, StartTime, CPU
 다음 스크립트들은 새 창을 생성하므로 주의 필요:
 
 1. `start_agi_system.ps1` - 대시보드 실행 시 새 창 생성
-2. `start_lumen_24h_new_window.ps1` - 24시간 실행을 위한 새 창 생성
+2. `start_core_24h_new_window.ps1` - 24시간 실행을 위한 새 창 생성
 
 무한 루프가 있는 스크립트:
 - `start_rhythm_sync_daemon.ps1`
@@ -157,7 +157,7 @@ while ($true) {
 문제가 계속되면:
 1. 이 문서의 "즉시 조치" 섹션 실행
 2. 컴퓨터 재시작
-3. Rua/Binoche에게 연락
+3. Core/Binoche에게 연락
 
 ---
 

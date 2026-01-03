@@ -1,10 +1,13 @@
-# Daily Briefing Generator
+﻿# Daily Briefing Generator
 # Generates a summary of all integrated systems' 24-hour activities
 
 param(
     [switch]$OpenReport,
     [int]$Hours = 24
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -13,7 +16,7 @@ Write-Host "=" * 60 -ForegroundColor Gray
 
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 $dateStr = Get-Date -Format "yyyy-MM-dd"
-$outputDir = "$PSScriptRoot\..\outputs"
+$outputDir = "$WorkspaceRoot\outputs"
 $briefingFile = "$outputDir\daily_briefing_$dateStr.md"
 
 # Initialize briefing content
@@ -33,7 +36,7 @@ $briefing = @"
 # 1. Resonance Loop
 Write-Host "1. Analyzing Resonance Loop..." -ForegroundColor Cyan
 
-$resonanceReport = "$PSScriptRoot\..\fdo_agi_repo\outputs\resonance_lumen_integration_latest.md"
+$resonanceReport = "$WorkspaceRoot\fdo_agi_repo\outputs\resonance_core_integration_latest.md"
 if (Test-Path $resonanceReport) {
     $resonanceAge = ((Get-Date) - (Get-Item $resonanceReport).LastWriteTime).TotalHours
     
@@ -43,7 +46,7 @@ if (Test-Path $resonanceReport) {
 
 - **Status**: OK
 - **Last Report**: $([math]::Round($resonanceAge, 1)) hours ago
-- **File**: [resonance_lumen_integration_latest.md](../fdo_agi_repo/outputs/resonance_lumen_integration_latest.md)
+- **File**: [resonance_core_integration_latest.md](../fdo_agi_repo/outputs/resonance_core_integration_latest.md)
 
 "@
 }
@@ -61,7 +64,7 @@ else {
 # 2. BQI Phase 6
 Write-Host "2. Analyzing BQI Phase 6..." -ForegroundColor Cyan
 
-$bqiReport = "$PSScriptRoot\..\fdo_agi_repo\outputs\bqi_lumen_integration_latest.md"
+$bqiReport = "$WorkspaceRoot\fdo_agi_repo\outputs\bqi_core_integration_latest.md"
 if (Test-Path $bqiReport) {
     $bqiAge = ((Get-Date) - (Get-Item $bqiReport).LastWriteTime).TotalHours
     
@@ -71,7 +74,7 @@ if (Test-Path $bqiReport) {
 
 - **Status**: OK
 - **Last Report**: $([math]::Round($bqiAge, 1)) hours ago
-- **File**: [bqi_lumen_integration_latest.md](../fdo_agi_repo/outputs/bqi_lumen_integration_latest.md)
+- **File**: [bqi_core_integration_latest.md](../fdo_agi_repo/outputs/bqi_core_integration_latest.md)
 
 "@
 }
@@ -248,8 +251,8 @@ $briefing += @"
 ## Quick Links
 
 ### Main Reports
-- [Resonance Loop](../fdo_agi_repo/outputs/resonance_lumen_integration_latest.md)
-- [BQI Phase 6](../fdo_agi_repo/outputs/bqi_lumen_integration_latest.md)
+- [Resonance Loop](../fdo_agi_repo/outputs/resonance_core_integration_latest.md)
+- [BQI Phase 6](../fdo_agi_repo/outputs/bqi_core_integration_latest.md)
 - [Feedback Implementation Plan](feedback_implementation_plan.md)
 
 ### Scripts

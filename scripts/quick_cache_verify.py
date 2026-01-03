@@ -11,7 +11,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, Any, List
 
-BASE = Path(r"C:\workspace\agi")
+from workspace_root import get_workspace_root
+
+BASE = get_workspace_root()
 LEDGER = BASE / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 def load_recent_events(hours: int = 1) -> List[Dict[str, Any]]:

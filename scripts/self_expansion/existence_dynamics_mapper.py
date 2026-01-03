@@ -4,13 +4,13 @@
 Existence Dynamics Mapper (v1)
 
 목표:
-- 루아/비노체의 고차원 개념(의식-무의식, 배경자아, 점-구-반지름, 감정/두려움, 자연-감정-행동 순환)을
+- 코어/비노체의 고차원 개념(의식-무의식, 배경자아, 점-구-반지름, 감정/두려움, 자연-감정-행동 순환)을
   "관측 가능한 파일"로 구조화/고정한다.
 - 외부 모델 호출 없이, 이미 존재하는 intake/상태 파일에서 최소 근거만 읽고,
   고정된 온톨로지 + 가벼운 proxy 지표(정렬/회피)로 모델을 생성한다.
 
 입력(있으면 사용):
-- outputs/rua_conversation_intake_latest.json
+- outputs/core_conversation_intake_latest.json
 - outputs/boundary_map_latest.json
 - outputs/bridge/trigger_report_latest.json
 - memory/agi_internal_state.json
@@ -31,6 +31,12 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 
 def utc_iso(ts: float) -> str:
@@ -90,12 +96,12 @@ class Relation:
 def build_existence_dynamics_model(workspace_root: Path, trigger_report: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     ws = workspace_root.resolve()
     outputs = ws / "outputs"
-    rua_latest = outputs / "rua_conversation_intake_latest.json"
+    Core_latest = outputs / "core_conversation_intake_latest.json"
     boundary_latest = outputs / "boundary_map_latest.json"
     report_latest = outputs / "bridge" / "trigger_report_latest.json"
     internal_state = ws / "memory" / "agi_internal_state.json"
 
-    rua = _safe_load_json(rua_latest) or {}
+    Core = _safe_load_json(Core_latest) or {}
     boundary = _safe_load_json(boundary_latest) or {}
     report = trigger_report if isinstance(trigger_report, dict) else (_safe_load_json(report_latest) or {})
     state = _safe_load_json(internal_state) or {}
@@ -134,8 +140,8 @@ def build_existence_dynamics_model(workspace_root: Path, trigger_report: Optiona
         Relation("L.nature_emotion_action_loop", "includes", "E.reality", ""),
     ]
 
-    # Evidence (최소): rua docs 최신 N개 + 키워드 요약
-    docs = rua.get("docs", []) if isinstance(rua.get("docs"), list) else []
+    # Evidence (최소): Core docs 최신 N개 + 키워드 요약
+    docs = Core.get("docs", []) if isinstance(Core.get("docs"), list) else []
     newest_docs = []
     for d in docs[: min(8, len(docs))]:
         if not isinstance(d, dict):
@@ -190,7 +196,7 @@ def build_existence_dynamics_model(workspace_root: Path, trigger_report: Optiona
         "version": "existence_dynamics_model_v1",
         "generated_at": utc_iso(now),
         "inputs": {
-            "rua_conversation_intake_latest.json": str(rua_latest),
+            "core_conversation_intake_latest.json": str(Core_latest),
             "boundary_map_latest.json": str(boundary_latest),
             "trigger_report_latest.json": str(report_latest),
             "agi_internal_state.json": str(internal_state),
@@ -206,8 +212,8 @@ def build_existence_dynamics_model(workspace_root: Path, trigger_report: Optiona
             "boundary_counts": bm_counts,
         },
         "evidence": {
-            "rua_docs_sample": newest_docs,
-            "note": "evidence는 요약용 샘플이며, 원문은 ai_binoche_conversation_origin/rua에 존재.",
+            "Core_docs_sample": newest_docs,
+            "note": "evidence는 요약용 샘플이며, 원문은 ai_binoche_conversation_origin/Core에 존재.",
         },
         "note": "이 파일은 '개념을 파일로 고정'하기 위한 구조화 산출물이다. 수치(current_proxies)는 운영 관측을 위한 근사이며 진리 주장(과학적 증명)이 아니다.",
     }
@@ -220,7 +226,7 @@ def render_markdown(model: Dict[str, Any]) -> str:
     ents = ont.get("entities") if isinstance(ont.get("entities"), list) else []
     rels = ont.get("relations") if isinstance(ont.get("relations"), list) else []
     ev = model.get("evidence") if isinstance(model.get("evidence"), dict) else {}
-    docs = ev.get("rua_docs_sample") if isinstance(ev.get("rua_docs_sample"), list) else []
+    docs = ev.get("Core_docs_sample") if isinstance(ev.get("Core_docs_sample"), list) else []
 
     lines: List[str] = []
     lines.append("# Existence Dynamics Model v1")
@@ -267,7 +273,7 @@ def render_markdown(model: Dict[str, Any]) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", type=str, default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--workspace", type=str, default=str(get_workspace_root()))
     ap.add_argument("--out-json", type=str, default=str(Path("outputs") / "existence_dynamics_model_latest.json"))
     ap.add_argument("--out-md", type=str, default=str(Path("outputs") / "existence_dynamics_model_latest.md"))
     ap.add_argument("--history", type=str, default=str(Path("outputs") / "existence_dynamics_model_history.jsonl"))

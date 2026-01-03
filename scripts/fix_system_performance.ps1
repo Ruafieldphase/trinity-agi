@@ -1,4 +1,4 @@
-# Fix System Performance - Integrated Solution
+﻿# Fix System Performance - Integrated Solution
 # Stops duplicate processes, consolidates automation, and stabilizes system
 
 $ErrorActionPreference = "Continue"

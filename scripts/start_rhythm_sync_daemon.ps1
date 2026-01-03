@@ -1,4 +1,4 @@
-# Rhythm Sync Daemon - Runs continuously in background
+﻿# Rhythm Sync Daemon - Runs continuously in background
 # Syncs Brain state from Linux to Windows every 5 seconds
 
 $ErrorActionPreference = "SilentlyContinue"

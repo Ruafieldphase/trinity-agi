@@ -7,8 +7,9 @@ from pathlib import Path
 import json
 import time
 import sys
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.append(str(WORKSPACE_ROOT))
 
 from scripts.rhythm_think import RhythmThinker
@@ -54,7 +55,7 @@ def main() -> int:
         "results": results,
     }
 
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     out_path = workspace / "outputs" / "prayer_layer_check_latest.json"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")

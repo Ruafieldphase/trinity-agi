@@ -6,9 +6,11 @@ param(
     [switch]$Unregister,
     [switch]$Status
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $TaskName = "AGI_MetaLayerObserver"
-$WorkspaceRoot = "C:\workspace\agi"
 $ScriptPath = "$WorkspaceRoot\scripts\meta_observer_daemon.ps1"
 
 # Status check

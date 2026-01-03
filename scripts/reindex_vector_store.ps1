@@ -1,4 +1,4 @@
-# Reindex Vector Store for Hybrid RAG
+﻿# Reindex Vector Store for Hybrid RAG
 # Usage: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/reindex_vector_store.ps1 [-RootDir <path>]
 
 param(

@@ -19,6 +19,7 @@ from typing import Dict, Optional
 # Add scripts to path
 sys.path.insert(0, str(Path(__file__).parent))
 
+from workspace_root import get_workspace_root
 from decision_engine import DecisionEngine, Decision
 from context_bridge import ContextBridge, Context
 
@@ -51,7 +52,7 @@ class AutonomousAgent:
         self.running = False
         
         # Paths (must be set first)
-        self.base_dir = Path.home() / "agi"
+        self.base_dir = get_workspace_root()
         self.state_file = self.base_dir / "outputs" / "autonomous_agent_state.json"
         self.kill_switch_file = self.base_dir / "KILL_SWITCH"
         self.rhythm_tempo_file = self.base_dir / "outputs" / "rhythm_tempo.json"
@@ -345,7 +346,7 @@ class AutonomousAgent:
             
             decision = self.decision_engine.decide(
                 input_text=event_text,
-                layer="sian"
+                layer="Shion"
             )
             
             result = self.execute_decision(decision)

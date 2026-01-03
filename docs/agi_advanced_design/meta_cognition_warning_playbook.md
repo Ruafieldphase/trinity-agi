@@ -12,7 +12,7 @@
    - 환경 변수: `WEBSEARCH_DISABLE`, `RAG_DISABLE`, `CODEEXEC_DISABLE` 등을 점검합니다.
    - `orchestrator/tool_registry.py`는 플래그 값에 따라 도구를 제외하므로, 불필요한 비활성화가 없는지 확인합니다.
 2. **네트워크/외부 API 상태**
-   - Ops Dashboard의 Lumen/Proxy 상태가 비정상이면 먼저 연결 문제를 해소합니다.
+   - Ops Dashboard의 Core/Proxy 상태가 비정상이면 먼저 연결 문제를 해소합니다.
    - 외부 검색 엔드포인트 사용 시, HTTP 429/5xx 응답이 없는지 로그를 살펴봅니다.
 3. **태스크 스코프 적합성 검토**
    - 경고 대상 `task_id`와 `goal`을 Ledger에서 찾아 사람이 해결해야 하는 주제인지 판단합니다.

@@ -11,9 +11,10 @@ This is the moment of truth - can Copilot achieve unified self-understanding?
 
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add fdo_agi_repo to path
-workspace = Path(__file__).parent.parent
+workspace = get_workspace_root()
 sys.path.insert(0, str(workspace / "fdo_agi_repo"))
 
 from copilot.wave_detector import WaveDetector

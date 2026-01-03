@@ -16,6 +16,7 @@ Usage:
 import os
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 SCOPES = [
     "https://www.googleapis.com/auth/youtube",
@@ -29,7 +30,7 @@ def main():
         print("Missing dependencies. Run: powershell -File scripts/setup_youtube_bot_env.ps1", file=sys.stderr)
         sys.exit(2)
 
-    workspace = Path(__file__).resolve().parents[1]
+    workspace = get_workspace_root()
     cred_dir = workspace / "credentials"
     cred_dir.mkdir(parents=True, exist_ok=True)
 

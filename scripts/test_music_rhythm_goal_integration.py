@@ -7,9 +7,10 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta
+from workspace_root import get_workspace_root
 
 # 경로 설정
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 sys.path.insert(0, str(WORKSPACE / "fdo_agi_repo"))
 
 from scripts.music_daemon import MusicRhythmDaemon

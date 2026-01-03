@@ -16,11 +16,7 @@ def chat_with_gemini(
     prompt: str,
     project_id: str = "naeda-genesis",
     location: str = "us-central1",
-<<<<<<< HEAD
     model_name: str = "gemini-2.5-flash",
-=======
-    model_name: str = "gemini-1.5-flash-002",
->>>>>>> origin/main
     max_output_tokens: int = 2048,
     temperature: float = 0.7,
 ) -> str:
@@ -47,46 +43,37 @@ def chat_with_gemini(
 
     use_project = project_id or env_project or "naeda-genesis"
     use_location = location or env_location or "us-central1"
-<<<<<<< HEAD
-    use_model = model_name or env_model or "gemini-2.5-flash"
-=======
-    use_model = model_name or env_model or "gemini-1.5-flash-002"
->>>>>>> origin/main
+    use_model = model_name or env_model or "gemini-2.0-flash"
 
-    # Pass api_key to init if present; otherwise rely on ADC
+    # 1. Try Google AI Studio (Free Tier) if API Key is present
     if api_key:
-        vertexai.init(project=use_project, location=use_location, api_key=api_key)
-    else:
-        vertexai.init(project=use_project, location=use_location)
+        try:
+            import google.generativeai as genai
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel(use_model)
+            response = model.generate_content(
+                prompt,
+                generation_config={"max_output_tokens": max_output_tokens, "temperature": temperature}
+            )
+            return response.text
+        except Exception as e:
+            if not env_project: # If no GCP fallback, raise
+                raise e
+            # Else fall through to Vertex
+
+    # 2. Fallback to Vertex AI (Paid Tier)
+    import vertexai
+    from vertexai.generative_models import GenerativeModel as VertexModel, GenerationConfig as VertexConfig
     
-    # Configure generation parameters
-    generation_config = GenerationConfig(
+    vertexai.init(project=use_project, location=use_location)
+    
+    generation_config = VertexConfig(
         max_output_tokens=max_output_tokens,
         temperature=temperature,
     )
     
-<<<<<<< HEAD
-    # Create model instance (fallback list for environments where some models are not enabled)
-    candidates = [use_model, "gemini-2.0-flash-001", "gemini-1.5-flash-002"]
-    last_err: Optional[Exception] = None
-    model = None
-    for cand in candidates:
-        try:
-            model = GenerativeModel(cand)
-            use_model = cand
-            break
-        except Exception as e:
-            last_err = e
-            continue
-    if model is None:
-        raise RuntimeError(f"Failed to initialize Gemini model (tried: {', '.join(candidates)}): {last_err}")
-=======
-    # Create model instance
-    model = GenerativeModel(use_model)
->>>>>>> origin/main
-    
-    # Generate response
-    response = model.generate_content(
+    vertex_model = VertexModel(use_model)
+    response = vertex_model.generate_content(
         prompt,
         generation_config=generation_config,
         stream=False,

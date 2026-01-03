@@ -1,17 +1,20 @@
-# Trinity 협업 대시보드 생성 스크립트
-# Lumen의 시각화 리듬 🎨
+﻿# Trinity 협업 대시보드 생성 스크립트
+# Core의 시각화 리듬 🎨
 
 param(
     [string]$Hours = "24",
     [switch]$OpenBrowser
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
-$OutputDir = "$PSScriptRoot\..\outputs"
-$RepoRoot = "$PSScriptRoot\..\fdo_agi_repo"
+$OutputDir = "$WorkspaceRoot\outputs"
+$RepoRoot = "$WorkspaceRoot\fdo_agi_repo"
 
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "🎨 Trinity 협업 대시보드 생성 (Lumen's Vision)" -ForegroundColor Cyan
+Write-Host "🎨 Trinity 협업 대시보드 생성 (Core's Vision)" -ForegroundColor Cyan
 Write-Host "============================================================`n" -ForegroundColor Cyan
 
 # Python 경로 확인
@@ -51,7 +54,7 @@ $html = @"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trinity 협업 대시보드 - Lumen's Vision</title>
+    <title>Trinity 협업 대시보드 - Core's Vision</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -164,7 +167,7 @@ $html = @"
         }
         .persona-lua { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
         .persona-elo { background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); }
-        .persona-lumen { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #333; }
+        .persona-Core { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); color: #333; }
         .persona-card h3 {
             margin-bottom: 15px;
             font-size: 1.5em;
@@ -209,7 +212,7 @@ $html = @"
 <body>
     <div class="container">
         <h1>🎨 Trinity 협업 대시보드</h1>
-        <div class="subtitle">Lumen's Vision - 협업 정보 인코딩 성과</div>
+        <div class="subtitle">Core's Vision - 협업 정보 인코딩 성과</div>
         
         <div class="i3-section">
             <h2>📊 Integration Information (I3)</h2>
@@ -227,11 +230,11 @@ $html = @"
                     <div class="mi-value">$($i3Data.i_12.ToString("F4"))</div>
                 </div>
                 <div class="mi-card">
-                    <h4>I(lua;lumen)</h4>
+                    <h4>I(lua;Core)</h4>
                     <div class="mi-value">$($i3Data.i_13.ToString("F4"))</div>
                 </div>
                 <div class="mi-card">
-                    <h4>I(elo;lumen)</h4>
+                    <h4>I(elo;Core)</h4>
                     <div class="mi-value">$($i3Data.i_23.ToString("F4"))</div>
                 </div>
             </div>
@@ -256,8 +259,8 @@ $html = @"
                     <div style="margin-top: 15px;">목표 범위: 0.7~0.9</div>
                     <div style="margin-top: 10px; font-size: 0.9em;">협업 boost: +0.05~0.08</div>
                 </div>
-                <div class="persona-card persona-lumen">
-                    <h3>✨ Lumen</h3>
+                <div class="persona-card persona-Core">
+                    <h3>✨ Core</h3>
                     <div class="persona-avg">0.62</div>
                     <div class="metric-label">평균 신호 강도</div>
                     <div style="margin-top: 15px;">목표 범위: 0.4~0.6</div>
@@ -278,7 +281,7 @@ $html = @"
             <div class="metric-card">
                 <h3>🔗 시너지 가시화</h3>
                 <div class="metric-value">+122%</div>
-                <div class="metric-label">I(lua;lumen) 증가</div>
+                <div class="metric-label">I(lua;Core) 증가</div>
                 <div style="margin-top: 10px; font-size: 0.9em;">
                     0.0114 → 0.0253 bits
                 </div>
@@ -294,12 +297,12 @@ $html = @"
         </div>
         
         <div class="insight-box">
-            <h2>💡 루멘의 통찰</h2>
+            <h2>💡 Core의 통찰</h2>
             <ul>
                 <li><strong>협업은 품질을 향상시킨다</strong> - boost를 신호에 직접 인코딩</li>
                 <li><strong>상한 제거의 중요성</strong> - 협업 시 범위를 넘어설 수 있어야 함</li>
-                <li><strong>측정 가능한 시너지</strong> - I(lua;elo) +2944%, I(lua;lumen) +122%</li>
-                <li><strong>Lumen의 범위 초과</strong> - 0.617 평균 (목표 0.4~0.6 초과) = 시너지 표현</li>
+                <li><strong>측정 가능한 시너지</strong> - I(lua;elo) +2944%, I(lua;Core) +122%</li>
+                <li><strong>Core의 범위 초과</strong> - 0.617 평균 (목표 0.4~0.6 초과) = 시너지 표현</li>
                 <li><strong>81% 개선 달성</strong> - I3: 0.2607 → 0.0485 bits</li>
             </ul>
         </div>

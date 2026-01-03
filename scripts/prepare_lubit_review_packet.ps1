@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#!
 .SYNOPSIS
   Prepare a compressed review packet for Lubit (reviewer).
@@ -6,11 +6,14 @@
   Collects key Week 3 deliverables and assembles a versioned ZIP under outputs/.
   Also generates a short README_REVIEW.txt with a one-page summary.
 .PARAMETER OutDir
-  Optional. Output base directory. Default: C:\workspace\agi\outputs
+  Optional. Output base directory. Default: $WorkspaceRoot\outputs
 #>
 param(
-    [string]$OutDir = "C:\workspace\agi\outputs"
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -24,7 +27,7 @@ function Ensure-Dir($path) {
     }
 }
 
-$root = "C:\workspace\agi"
+$root = "$WorkspaceRoot"
 $ts = New-Timestamp
 $sessionDir = Join-Path $OutDir "review_packet_$ts"
 Ensure-Dir $OutDir
@@ -32,12 +35,12 @@ Ensure-Dir $sessionDir
 
 # Candidate files (best-effort; skip missing)
 $files = @(
-    "Phase1_Week3_최종?�수?�계_2025-10-22.md",
-    "Phase1_Week3_?�료보고??2025-10-22.md",
-    "Phase1_Week3_TODO_?�료.md",
-    "깃코_Phase1_Week3_최종?�료?�약_2025-10-22.md",
-    "?�약_모델_벤치마크_결과_2025-10-22.md",
-    "?�?�요???�도개선_?�안_2025-10-22.md"
+    "Phase1_Week3_최종?수?계_2025-10-22.md",
+    "Phase1_Week3_?료보고??2025-10-22.md",
+    "Phase1_Week3_TODO_?료.md",
+    "깃코_Phase1_Week3_최종?료?약_2025-10-22.md",
+    "?약_모델_벤치마크_결과_2025-10-22.md",
+    "??요???도개선_?안_2025-10-22.md"
 )
 
 $collected = @()
@@ -70,7 +73,7 @@ $summary += "  - Summary_light mode; running summary; L1 cache; monitoring integ
 $summary += "  - Benchmark: current pipeline >> Gemini for latency/stability/cost"
 $summary += ""
 $summary += "How to verify quickly:"
-$summary += "  1) Open Phase1_Week3_최종?�수?�계_2025-10-22.md for operations handover"
+$summary += "  1) Open Phase1_Week3_최종?수?계_2025-10-22.md for operations handover"
 $summary += "  2) Run tests listed in the doc (integration + unit)"
 $summary += "  3) Generate daily report: scripts/generate_daily_report.ps1"
 $summary += ""

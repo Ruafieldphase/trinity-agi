@@ -1,6 +1,9 @@
-param(
+﻿param(
     [string]$Workspace = "${PSScriptRoot}\.."
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -41,7 +44,7 @@ catch {
     }
     catch {
         # Best-effort logging
-        $logDir = Join-Path $PSScriptRoot '..\outputs'
+        $logDir = Join-Path $WorkspaceRoot "outputs"
         if (-not (Test-Path -LiteralPath $logDir)) { New-Item -ItemType Directory -Path $logDir -Force | Out-Null }
         $log = Join-Path $logDir 'vscode_autostart_error.log'
         "$(Get-Date -Format o) Failed to launch VS Code. Error: $($_.Exception.Message)" | Out-File -FilePath $log -Append -Encoding UTF8

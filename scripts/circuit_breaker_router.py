@@ -2,7 +2,7 @@
 """
 Circuit Breaker Pattern for AGI LLM Routing
 
-Provides intelligent fallback between Lumen Gateway and Local LLM
+Provides intelligent fallback between Core Gateway and Local LLM
 with failure tracking and automatic recovery.
 
 Features:
@@ -20,6 +20,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from typing import Dict, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
+from workspace_root import get_workspace_root
 
 
 class CircuitState(Enum):
@@ -60,8 +61,8 @@ class CircuitBreakerRouter:
 
         # Backend configurations
         self.backends = {
-            "lumen": {
-                "url": "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat",
+            "Core": {
+                "url": "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat",
                 "timeout": self.config.timeout_ms / 1000,
                 "priority": 1  # Higher priority
             },
@@ -74,7 +75,7 @@ class CircuitBreakerRouter:
 
         # Health tracking
         self.health = {
-            "lumen": BackendHealth(name="lumen"),
+            "Core": BackendHealth(name="Core"),
             "local": BackendHealth(name="local")
         }
 
@@ -83,7 +84,7 @@ class CircuitBreakerRouter:
         self.state_changed_at = time.time()
 
         # State file
-        workspace = Path(__file__).resolve().parents[1]
+        workspace = get_workspace_root()
         self.state_file = workspace / "outputs" / "circuit_breaker_state.json"
         self.log_file = workspace / "outputs" / "circuit_breaker_log.jsonl"
 
@@ -151,8 +152,8 @@ class CircuitBreakerRouter:
         try:
             start = time.time()
 
-            if backend_name == "lumen":
-                # Lumen Gateway format
+            if backend_name == "Core":
+                # Core Gateway format
                 payload = {
                     "message": message,
                     "persona_key": kwargs.get("persona_key", "pen"),
@@ -184,11 +185,11 @@ class CircuitBreakerRouter:
             # Parse response
             data = response.json()
 
-            if backend_name == "lumen":
+            if backend_name == "Core":
                 if data.get("success"):
                     result = data.get("response", "")
                 else:
-                    raise Exception(f"Lumen error: {data.get('error', 'Unknown')}")
+                    raise Exception(f"Core error: {data.get('error', 'Unknown')}")
             else:
                 # OpenAI format
                 choices = data.get("choices", [])
@@ -219,10 +220,10 @@ class CircuitBreakerRouter:
 
     def _update_circuit_state(self, backend_name: str, success: bool):
         """Update circuit state based on backend health"""
-        if backend_name != "lumen":
+        if backend_name != "Core":
             return  # Only track primary backend
 
-        health = self.health["lumen"]
+        health = self.health["Core"]
 
         if self.circuit_state == CircuitState.CLOSED:
             # Normal operation
@@ -230,9 +231,9 @@ class CircuitBreakerRouter:
                 # Open circuit - too many failures
                 self.circuit_state = CircuitState.OPEN
                 self.state_changed_at = time.time()
-                self._log_event("circuit_opened", "lumen",
+                self._log_event("circuit_opened", "Core",
                                reason=f"{health.consecutive_failures} consecutive failures")
-                print(f"⚠️  Circuit OPENED: Lumen Gateway unreliable, using Local LLM")
+                print(f"⚠️  Circuit OPENED: Core Gateway unreliable, using Local LLM")
 
         elif self.circuit_state == CircuitState.OPEN:
             # Using fallback
@@ -242,9 +243,9 @@ class CircuitBreakerRouter:
                 # Try half-open - test if primary recovered
                 self.circuit_state = CircuitState.HALF_OPEN
                 self.state_changed_at = time.time()
-                self._log_event("circuit_half_open", "lumen",
+                self._log_event("circuit_half_open", "Core",
                                reason="Reset timeout elapsed")
-                print(f"🔄 Circuit HALF-OPEN: Testing Lumen Gateway recovery")
+                print(f"🔄 Circuit HALF-OPEN: Testing Core Gateway recovery")
 
         elif self.circuit_state == CircuitState.HALF_OPEN:
             # Testing recovery
@@ -252,17 +253,17 @@ class CircuitBreakerRouter:
                 # Recovered - close circuit
                 self.circuit_state = CircuitState.CLOSED
                 self.state_changed_at = time.time()
-                self._log_event("circuit_closed", "lumen",
+                self._log_event("circuit_closed", "Core",
                                reason=f"{health.consecutive_successes} consecutive successes")
-                print(f"✅ Circuit CLOSED: Lumen Gateway recovered")
+                print(f"✅ Circuit CLOSED: Core Gateway recovered")
 
             elif not success:
                 # Still failing - reopen
                 self.circuit_state = CircuitState.OPEN
                 self.state_changed_at = time.time()
-                self._log_event("circuit_reopened", "lumen",
+                self._log_event("circuit_reopened", "Core",
                                reason="Still failing during half-open test")
-                print(f"❌ Circuit RE-OPENED: Lumen Gateway still failing")
+                print(f"❌ Circuit RE-OPENED: Core Gateway still failing")
 
         self._save_state()
 
@@ -283,9 +284,9 @@ class CircuitBreakerRouter:
 
         # Determine primary backend based on circuit state
         if self.circuit_state == CircuitState.CLOSED:
-            primary = "lumen"
+            primary = "Core"
         elif self.circuit_state == CircuitState.HALF_OPEN:
-            primary = "lumen"  # Test if recovered
+            primary = "Core"  # Test if recovered
         else:  # OPEN
             primary = "local"
             fallback_used = True
@@ -293,12 +294,12 @@ class CircuitBreakerRouter:
         # Try primary
         success, response, latency = self._call_backend(primary, message, **kwargs)
 
-        if primary == "lumen":
-            self._update_circuit_state("lumen", success)
+        if primary == "Core":
+            self._update_circuit_state("Core", success)
 
-        # If primary failed and it was Lumen, try fallback
-        if not success and primary == "lumen":
-            print(f"⚠️  Lumen failed, falling back to Local LLM")
+        # If primary failed and it was Core, try fallback
+        if not success and primary == "Core":
+            print(f"⚠️  Core failed, falling back to Local LLM")
             fallback_used = True
             success, response, latency = self._call_backend("local", message, **kwargs)
 

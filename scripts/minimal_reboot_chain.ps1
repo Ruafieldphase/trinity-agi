@@ -551,7 +551,7 @@ $postChecklist = @(
   '1) Log back in and open this workspace in VS Code',
   '2) Run task: ?? Master: Check Status (or script register_master_orchestrator.ps1 -Status)',
   '3) Run task: Queue: Health Check (ensure server healthy)',
-  '4) Run task: Monitoring: Unified Dashboard (AGI + Lumen)',
+  '4) Run task: Monitoring: Unified Dashboard (AGI + Core)',
   '5) Optional: Monitoring: Generate Report (24h) + Open',
   '6) If degraded: Watchdog: Start Task Watchdog (Background) and Queue: Ensure Worker'
 )

@@ -1,4 +1,4 @@
-# Adaptive Master Scheduler - Dynamic Rhythm Orchestration
+﻿# Adaptive Master Scheduler - Dynamic Rhythm Orchestration
 # Phase 2: Dynamic interval adjustment based on system load
 # Implements machine learning-based optimization
 
@@ -8,14 +8,18 @@ param(
     [int]$CheckIntervalSeconds = 60,
     [switch]$EnableAdaptive = $true
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 
 # === Configuration ===
-$MasterLogFile = "C:\workspace\agi\outputs\adaptive_scheduler.log"
-$StateFile = "C:\workspace\agi\outputs\adaptive_scheduler_state.json"
-$MetricsFile = "C:\workspace\agi\outputs\scheduler_metrics.json"
-$ScriptsDir = "C:\workspace\agi\scripts"
+$MasterLogFile = "$WorkspaceRoot\outputs\adaptive_scheduler.log"
+$StateFile = "$WorkspaceRoot\outputs\adaptive_scheduler_state.json"
+$MetricsFile = "$WorkspaceRoot\outputs\scheduler_metrics.json"
+$ScriptsDir = "$WorkspaceRoot\scripts"
 
 # === Performance Thresholds ===
 $AdaptiveConfig = @{

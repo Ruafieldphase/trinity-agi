@@ -1,4 +1,4 @@
-Start-Sleep -Seconds 5
+﻿Start-Sleep -Seconds 5
 Write-Host "`n프로세스 확인 중..." -ForegroundColor Cyan
 $ps = Get-Process powershell* -ErrorAction SilentlyContinue | Where-Object {$_.Id -ne $PID}
 if ($ps) {

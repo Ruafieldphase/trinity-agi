@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Rhythm Detector - 현재 시스템 리듬 감지
@@ -9,6 +9,9 @@
 param(
     [switch]$Json
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -108,7 +111,7 @@ $rhythmRecommendations = @{
             "Morning: Kickoff (1h, open)",
             "System: Health Check (Quick)",
             "AGI: Quick Health Check (fast)",
-            "Lumen: Quick Health Probe",
+            "Core: Quick Health Probe",
             "Queue: Ensure Server (8091)",
             "Watchdog: Start Task Watchdog (Background)"
         )
@@ -127,7 +130,7 @@ $rhythmRecommendations = @{
     DAYTIME_FLOW  = @{
         Description = "🌊 낮 (흐름): 분석 & 모니터링"
         Tasks       = @(
-            "Monitoring: Unified Dashboard (AGI + Lumen)",
+            "Monitoring: Unified Dashboard (AGI + Core)",
             "Realtime: Summarize + Open",
             "YouTube: Build Index (open)",
             "Autopoietic: Generate Loop Report (24h)"
@@ -224,7 +227,7 @@ Write-Host $philosophy -ForegroundColor Gray
 Write-Host ""
 
 # 메타데이터 저장
-$outputPath = "C:\workspace\agi\outputs\current_rhythm.json"
+$outputPath = "$WorkspaceRoot\outputs\current_rhythm.json"
 $rhythm | ConvertTo-Json -Depth 5 | Out-File -FilePath $outputPath -Encoding UTF8 -Force
 
 Write-Host "💾 Rhythm saved to: $outputPath" -ForegroundColor Gray

@@ -8,6 +8,7 @@ from pathlib import Path
 from dataclasses import dataclass, asdict
 from typing import Dict, Optional
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 @dataclass
 class BiauralBeatParams:
@@ -106,7 +107,7 @@ def analyze_flow_report(report_path: Path) -> Optional[FlowFrequency]:
 
 def main():
     """Flow → Music Frequency 변환 실행"""
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     flow_report = workspace / "outputs" / "flow_observer_report_latest.json"
     
     print("🎵 Flow Frequency Encoder")

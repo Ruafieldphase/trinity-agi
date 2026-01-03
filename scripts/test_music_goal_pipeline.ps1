@@ -1,10 +1,14 @@
-# Music → Rhythm → Goal 파이프라인 E2E 테스트
+﻿# Music → Rhythm → Goal 파이프라인 E2E 테스트
 # 전체 플로우를 시뮬레이션하고 검증합니다
 
 param(
     [switch]$Verbose,
     [switch]$OpenDashboard
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
@@ -23,17 +27,17 @@ if ($musicProc) {
 }
 else {
     Write-Host "⚠️ Music Daemon not running. Starting..." -ForegroundColor Yellow
-    $py = 'c:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe'
+    $py = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
     if (!(Test-Path -LiteralPath $py)) { $py = 'python' }
     
-    Start-Process -FilePath $py -ArgumentList 'c:\workspace\agi\scripts\music_daemon.py', '--auto-goal', '--interval', '60', '--threshold', '0.3' -WindowStyle Hidden -PassThru | Out-Null
+    Start-Process -FilePath $py -ArgumentList "$WorkspaceRoot\scripts\music_daemon.py", '--auto-goal', '--interval', '60', '--threshold', '0.3' -WindowStyle Hidden -PassThru | Out-Null
     Start-Sleep 3
     Write-Host "✅ Music Daemon started with auto-goal mode" -ForegroundColor Green
 }
 
 # 2. 리듬 상태 파일 확인
 Write-Host "`n2️⃣ Checking rhythm state..." -ForegroundColor Yellow
-$rhythmFiles = Get-ChildItem 'c:\workspace\agi\outputs' -Filter 'RHYTHM_*.md' -ErrorAction SilentlyContinue | 
+$rhythmFiles = Get-ChildItem "$WorkspaceRoot\outputs" -Filter 'RHYTHM_*.md' -ErrorAction SilentlyContinue | 
 Sort-Object LastWriteTime -Descending | Select-Object -First 1
 
 if ($rhythmFiles) {
@@ -46,7 +50,7 @@ else {
 
 # 3. Goal Tracker 상태 확인
 Write-Host "`n3️⃣ Checking Goal Tracker..." -ForegroundColor Yellow
-$trackerPath = 'c:\workspace\agi\fdo_agi_repo\memory\goal_tracker.json'
+$trackerPath = "$WorkspaceRoot\fdo_agi_repo\memory\goal_tracker.json"
 if (Test-Path $trackerPath) {
     $tracker = Get-Content $trackerPath -Raw -Encoding utf8 | ConvertFrom-Json
     
@@ -74,7 +78,7 @@ else {
 
 # 4. Music-Goal Events 로그 확인
 Write-Host "`n4️⃣ Checking Music-Goal event log..." -ForegroundColor Yellow
-$eventLog = 'c:\workspace\agi\outputs\music_goal_events.jsonl'
+$eventLog = "$WorkspaceRoot\outputs\music_goal_events.jsonl"
 if (Test-Path $eventLog) {
     $events = Get-Content $eventLog -Encoding utf8 | ForEach-Object { 
         if ($_.Trim()) { $_ | ConvertFrom-Json } 
@@ -101,14 +105,14 @@ else {
 
 # 5. 최근 24시간 음악 분석
 Write-Host "`n5️⃣ Analyzing recent music activity..." -ForegroundColor Yellow
-$py = 'c:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe'
+$py = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 if (!(Test-Path -LiteralPath $py)) { $py = 'python' }
 
-$analysisScript = 'c:\workspace\agi\scripts\generate_groove_profile.py'
+$analysisScript = "$WorkspaceRoot\scripts\generate_groove_profile.py"
 if (Test-Path $analysisScript) {
     & $py $analysisScript --hours 24 2>&1 | Out-Null
     
-    $grooveProfile = 'c:\workspace\agi\outputs\groove_profile_latest.json'
+    $grooveProfile = "$WorkspaceRoot\outputs\groove_profile_latest.json"
     if (Test-Path $grooveProfile) {
         $profile = Get-Content $grooveProfile -Raw -Encoding utf8 | ConvertFrom-Json
         Write-Host "✅ Groove profile generated" -ForegroundColor Green
@@ -155,7 +159,7 @@ else {
 # 7. Dashboard 열기 (옵션)
 if ($OpenDashboard) {
     Write-Host "`n📊 Opening dashboard..." -ForegroundColor Yellow
-    & 'c:\workspace\agi\scripts\generate_autonomous_goal_dashboard.ps1' -OpenBrowser
+    & "$WorkspaceRoot\scripts\generate_autonomous_goal_dashboard.ps1" -OpenBrowser
 }
 
 Write-Host "`n✨ Test complete!" -ForegroundColor Green

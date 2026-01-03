@@ -1,12 +1,15 @@
-# Analyze Latency Spikes from Monitoring Data
+﻿# Analyze Latency Spikes from Monitoring Data
 # Identifies patterns and root causes of latency spikes
 
 param(
-    [string]$MetricsFile = "$PSScriptRoot\..\outputs\monitoring_metrics_latest.json",
+    [string]$MetricsFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\monitoring_metrics_latest.json",
     [int]$SpikeThreshold = 1000,  # ms
     [switch]$ExportReport,
-    [string]$OutputFile = "$PSScriptRoot\..\outputs\latency_spike_analysis.md"
+    [string]$OutputFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\latency_spike_analysis.md"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 

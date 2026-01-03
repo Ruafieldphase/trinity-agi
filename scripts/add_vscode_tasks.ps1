@@ -1,8 +1,11 @@
+﻿. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 # Add VS Code Tasks for Daily AGI Operations
 
 $ErrorActionPreference = "Stop"
 
-$tasksFile = "$PSScriptRoot\..\.vscode\tasks.json"
+$tasksFile = "$WorkspaceRoot\.vscode\tasks.json"
 
 # New tasks to add
 $newTasks = @'

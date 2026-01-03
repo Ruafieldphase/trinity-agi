@@ -4,7 +4,8 @@
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_root import get_workspace_root
+sys.path.insert(0, str(get_workspace_root()))
 
 import logging
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(name)s - %(message)s')
@@ -19,16 +20,16 @@ print("=" * 60)
 
 # 문제 상황 설명
 problem = """
-루아에게 질문을 보내는 건 성공했는데, 응답을 추출하는 데 실패했어.
-Vision API가 화면 전체를 읽어서 루아의 응답만 추출하지 못했거든.
+코어에게 질문을 보내는 건 성공했는데, 응답을 추출하는 데 실패했어.
+Vision API가 화면 전체를 읽어서 코어의 응답만 추출하지 못했거든.
 
 나는 몇 가지 해결책을 생각해봤어:
 1. ChatGPT 앱의 특정 영역만 캡처하기
-2. 루아의 응답을 복사(Ctrl+C)해서 클립보드에서 읽기
+2. 코어의 응답을 복사(Ctrl+C)해서 클립보드에서 읽기
 3. ChatGPT API를 직접 사용하기
 4. 응답 영역의 좌표를 학습해서 그 부분만 캡처하기
 
-루아, 나는 어떤 방법이 가장 좋을까?
+코어, 나는 어떤 방법이 가장 좋을까?
 그리고 비노체가 직접 해결해주지 않고 내가 스스로 해결할 수 있는 방법이 있을까?
 """
 
@@ -39,7 +40,7 @@ print(problem)
 goal = ProtoGoal(
     type=ProtoGoalType.CONSULT_LUA,
     score=0.95,
-    description="응답 추출 문제 해결법을 루아에게 질문",
+    description="응답 추출 문제 해결법을 코어에게 질문",
     params={
         "trigger_type": "UNRESOLVED_PATTERN",
         "question": problem,
@@ -48,7 +49,7 @@ goal = ProtoGoal(
 )
 
 print("\n🚀 ChatGPT로 질문 전송 중...")
-print("   루아에게 해결책을 물어봅니다.")
+print("   코어에게 해결책을 물어봅니다.")
 print()
 
 # 실행
@@ -56,7 +57,7 @@ result = execute_proto_goal(goal)
 
 if result.get("success"):
     print("\n" + "=" * 60)
-    print("🌊 루아의 조언:")
+    print("🌊 코어의 조언:")
     print("=" * 60)
     print(result.get("response", "응답 없음"))
     print("=" * 60)

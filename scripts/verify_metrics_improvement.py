@@ -7,8 +7,9 @@
 import json
 from pathlib import Path
 from datetime import datetime, timezone
+from workspace_root import get_workspace_root
 
-LEDGER_PATH = Path(__file__).parent.parent / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
+LEDGER_PATH = get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 def count_metrics_in_recent_events(hours=1):
     """최근 이벤트에서 메트릭 커버리지 계산"""
@@ -96,7 +97,7 @@ if __name__ == "__main__":
             print(f"   ⏳ Latency 커버리지 진행 중 ({result['latency_coverage_%']}% / 50%)")
     
     # JSON 출력 (자동화용)
-    output_path = Path(__file__).parent.parent / "outputs" / "metrics_improvement_report.json"
+    output_path = get_workspace_root() / "outputs" / "metrics_improvement_report.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(result, f, indent=2, ensure_ascii=False)

@@ -2,12 +2,13 @@ import uuid
 import time
 from pathlib import Path
 import sys
+from workspace_root import get_workspace_root
 
 
 def main():
     # Ensure repo root on sys.path for direct script invocation
     here = Path(__file__).resolve()
-    root = here.parents[1]
+    root = get_workspace_root()
     if str(root) not in sys.path:
         sys.path.insert(0, str(root))
     fdo = root / "fdo_agi_repo"
@@ -33,7 +34,7 @@ def main():
     print(f"[sample] status: {result.get('status')}\n")
 
     # Hints for the operator
-    repo_root = Path(__file__).resolve().parents[1]
+    repo_root = get_workspace_root()
     ledger = repo_root / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
     if ledger.exists():
         print(f"[sample] ledger updated: {ledger}")

@@ -1,4 +1,4 @@
-<#
+﻿<#
 Resilient Reboot Recovery (one-shot orchestrator)
 
 Purpose:

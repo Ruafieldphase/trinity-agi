@@ -29,7 +29,7 @@ Phase Injection, Human-AI Creativity, Resonance Loop, Free-Will Noise, Affective
 
 3. **Methodology**
    - Experimental setup (hardware, models, prompt cycle).
-   - Phase injection strategy (question loop, lumen frame).
+   - Phase injection strategy (question loop, Core frame).
    - Data collection (JSON schema, affect metrics).
 
 4. **Results**

@@ -13,9 +13,10 @@ import sys
 import logging
 from pathlib import Path
 from typing import Dict, Any, Optional, List
+from workspace_root import get_workspace_root
 
 # Import base executor
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(get_workspace_root()))
 from scripts.autonomous_goal_executor import GoalExecutor
 from scripts.quantum_goal_executor import QuantumGoalExecutor
 

@@ -5,10 +5,11 @@ import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, Optional
+from workspace_root import get_workspace_root
 
 
 def _repo_root() -> Path:
-    return Path(__file__).resolve().parent.parent
+    return get_workspace_root()
 
 
 def _add_repo_to_path():

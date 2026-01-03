@@ -1,6 +1,9 @@
-# AGI 시스템 조용히 중지
+﻿# AGI 시스템 조용히 중지
 # 모든 AGI 관련 Python 프로세스를 종료합니다
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "SilentlyContinue"
 
 Write-Host "🛑 AGI 시스템을 중지합니다..." -ForegroundColor Red
@@ -35,7 +38,7 @@ if ($agiProcesses) {
 }
 
 # Guardian PID 파일 삭제
-$pidFile = "C:\workspace\agi\logs\rhythm_guardian.pid"
+$pidFile = "$WorkspaceRoot\logs\rhythm_guardian.pid"
 if (Test-Path $pidFile) {
     Remove-Item $pidFile -Force
     Write-Host "   Guardian PID 파일 삭제됨" -ForegroundColor Gray

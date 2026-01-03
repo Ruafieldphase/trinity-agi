@@ -11,6 +11,12 @@ import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 
 def utc_iso(ts: float) -> str:
@@ -25,7 +31,7 @@ def _atomic_write_json(path: Path, obj: dict) -> None:
 
 
 def main() -> int:
-    ws = Path(__file__).resolve().parents[2]
+    ws = get_workspace_root()
     out = ws / "outputs" / "rune" / "ethical_verifier_latest.json"
     now = time.time()
     report = {"ok": False, "version": "rune_ethical_verifier_stub_v1", "generated_at": utc_iso(now), "reason": "stub_only"}

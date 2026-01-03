@@ -4,6 +4,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
+from workspace_root import get_workspace_root
 
 
 def _load_json(path: Path) -> Dict[str, Any]:
@@ -16,7 +17,7 @@ def _load_json(path: Path) -> Dict[str, Any]:
 
 
 def main() -> int:
-    workspace_root = Path(__file__).resolve().parents[1]
+    workspace_root = get_workspace_root()
     outputs = workspace_root / "outputs"
     state_path = outputs / "sync_cache" / "exploration_hint_state.json"
     out_path = outputs / "bridge" / "exploration_hint_latest.json"

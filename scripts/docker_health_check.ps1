@@ -1,10 +1,14 @@
-# Docker 백엔드 상태 모니터링 및 최적화 스크립트
+﻿# Docker 백엔드 상태 모니터링 및 최적화 스크립트
 # 목적: 컨테이너 상태 확인, 리소스 사용량 추적, 비정상 서비스 자동 재시작
 
 param(
     [string]$Action = "check",  # check, restart, prune, health
     [int]$MonitoringInterval = 60  # 모니터링 간격 (초)
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 # 색상 정의
 $colors = @{
@@ -202,7 +206,7 @@ function Cleanup-Docker {
 function Monitor-Docker {
     Write-Log "Docker 모니터링 시작 (간격: ${MonitoringInterval}초)" "Info"
 
-    $logFile = "C:\workspace\agi\outputs\docker_monitoring.log"
+    $logFile = "$WorkspaceRoot\outputs\docker_monitoring.log"
 
     while ($true) {
         $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"

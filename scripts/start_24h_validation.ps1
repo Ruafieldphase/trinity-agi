@@ -1,12 +1,15 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # 24시간 자율 시스템 검증 루프
 # Self-Care + Feedback Trinity 통합 검증
 
 param(
     [switch]$AutoReport,
     [int]$IntervalMinutes = 30,
-    [string]$OutDir = "$PSScriptRoot\..\outputs\validation_24h"
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\validation_24h"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $StartTime = Get-Date
@@ -96,7 +99,7 @@ function Test-GoalExecution {
     Write-Host "`n🎯 Testing Autonomous Goal Execution..." -ForegroundColor Cyan
     
     try {
-        $goalTracker = Join-Path $PSScriptRoot "..\fdo_agi_repo\memory\goal_tracker.json"
+        $goalTracker = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\goal_tracker.json"
         
         if (!(Test-Path $goalTracker)) {
             Write-ValidationEntry "warning" "Goal tracker not found"
@@ -175,7 +178,7 @@ function Test-MetricsCollection {
         $recentCount = 0
         
         foreach ($file in $metricsFiles) {
-            $fullPath = Join-Path $PSScriptRoot "..\$file"
+            $fullPath = Join-Path $WorkspaceRoot "$file"
             if (Test-Path $fullPath) {
                 $foundCount++
                 $lastWrite = (Get-Item $fullPath).LastWriteTime

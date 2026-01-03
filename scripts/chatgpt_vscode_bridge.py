@@ -3,7 +3,7 @@
 ChatGPT ↔ VS Code Bridge
 ADHD Meta-System: 대화 → 자동 구현
 
-Author: Ruafieldphase (Lua + Binoche)
+Author: Shion_Core (Lua + Binoche_Observer)
 Date: 2025-11-06
 Philosophy: Connectivity > Depth
 """

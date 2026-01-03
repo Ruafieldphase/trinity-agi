@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 리듬 기반 스냅샷 시스템 - 해마 학습 시뮬레이션
 
@@ -57,6 +57,9 @@ param(
     # 추가 태그(예: john2, music, walk, resonance, calm 등)
     [string[]]$Tags
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $OutputEncoding = [System.Text.Encoding]::UTF8

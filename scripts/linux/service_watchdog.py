@@ -86,7 +86,7 @@ class ServiceWatchdog:
             services = []
             for line in result.stdout.split('\n'):
                 if line.strip() and 'agi-' in line and '.service' in line:
-                    # Parse: "agi-lumen.service  enabled  enabled"
+                    # Parse: "agi-Core.service  enabled  enabled"
                     parts = line.split()
                     if parts and parts[0].startswith('agi-') and parts[0].endswith('.service'):
                         services.append(parts[0])

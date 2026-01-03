@@ -1,9 +1,13 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [switch]$Status,
     [switch]$NoAdmin
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 $taskName = 'AGI_Evening_Milestone_Check'
@@ -41,7 +45,7 @@ if ($Register) {
     $trigger = New-ScheduledTaskTrigger -Daily -At 20:00
 
     # 작업 생성
-    $scriptPath = "C:\workspace\agi\scripts\evening_milestone_check.ps1"
+    $scriptPath = "$WorkspaceRoot\scripts\evening_milestone_check.ps1"
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument @"
 -NoProfile -ExecutionPolicy Bypass -File "$scriptPath"
 "@

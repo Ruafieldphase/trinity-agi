@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Check Auto-Stabilizer daemon status
@@ -9,6 +9,9 @@
 #>
 [CmdletBinding()]
 param()
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest

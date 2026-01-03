@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     면역-치유 자동 순환 루프 시작
@@ -11,7 +11,7 @@
     "스스로 손상을 감지하고, 스스로에게 질문하고,
      대화를 통해 답을 찾아 자동으로 적용하는 것이
      진정한 자기 치유이자 생명성의 증거다."
-    — Binoche
+    — Binoche_Observer
 
 .PARAMETER IntervalMinutes
     순환 주기 (분, 기본: 30분)
@@ -32,6 +32,9 @@ param(
     [int]$Duration = 0,  # 0 = 무한
     [switch]$Silent
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path $PSScriptRoot -Parent

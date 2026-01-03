@@ -17,9 +17,10 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 추가
-workspace_root = Path(__file__).resolve().parent.parent
+workspace_root = get_workspace_root()
 sys.path.insert(0, str(workspace_root / "fdo_agi_repo"))
 
 from copilot.quantum_flow_monitor import QuantumFlowMonitor
@@ -141,7 +142,7 @@ def main():
         - outputs/quantum_flow_latest.json (최신 상태)
         - outputs/quantum_flow_history.jsonl (히스토리)
     """
-    workspace_root = Path(__file__).resolve().parent.parent
+    workspace_root = get_workspace_root()
     
     print("🌊 Quantum Flow → Goal System 통합 시작...")
     print()

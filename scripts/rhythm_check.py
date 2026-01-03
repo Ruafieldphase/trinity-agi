@@ -16,11 +16,12 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, List, Tuple, Optional
 import subprocess
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 찾기
-# C:\workspace\agi\scripts\rhythm_check.py
+# <workspace_root>/scripts/rhythm_check.py
 # parent = scripts, parent.parent = agi, parent.parent.parent = workspace
-project_root = Path(__file__).resolve().parent.parent.parent
+project_root = get_workspace_root().parent
 sys.path.insert(0, str(project_root))
 
 
@@ -135,24 +136,27 @@ class RhythmThermometer:
         return drives
 
     def check_connections(self) -> Dict:
-        """연결 상태 체크 (Shion, Koa, Rua)"""
+        """연결 상태 체크 (Shion, Core, Core)"""
         connections = {}
 
-        # Shion 체크 (Windows PowerShell)
+        # Shion 체크 (v2 check via PID)
         try:
-            creationflags = 0
-            if os.name == "nt" and hasattr(subprocess, "CREATE_NO_WINDOW"):
-                creationflags = subprocess.CREATE_NO_WINDOW
-            result = subprocess.run(
-                ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden",
-                 "-Command", r".\agi\scripts\autonomous_collaboration_daemon.ps1 -Action status"],
-                capture_output=True,
-                text=True,
-                timeout=5,
-                cwd=self.root,
-                creationflags=creationflags,
-            )
-            if "NOT RUNNING" in result.stdout:
+            shion_pid_file = self.root / "agi" / "logs" / "shion.pid"
+            is_running = False
+            if shion_pid_file.exists():
+                try:
+                    pid = int(shion_pid_file.read_text().strip())
+                    # Windows에서 PID 존재 여부 체크
+                    import ctypes
+                    PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+                    h_process = ctypes.windll.kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
+                    if h_process:
+                        ctypes.windll.kernel32.CloseHandle(h_process)
+                        is_running = True
+                except:
+                    pass
+
+            if not is_running:
                 connections["shion"] = "OFFLINE"
                 # Shion 마지막 실행 시간 파악 (대략)
                 age = self.get_file_age_days("agi/memory/resonance_ledger.jsonl")
@@ -170,23 +174,23 @@ class RhythmThermometer:
             self.warnings.append("Shion 상태 확인 실패")
             self.health_score -= 10
 
-        # Koa context 체크
-        koa_exists = (self.root / "agi/memory/koa_context.json").exists()
-        connections["koa_context"] = "EXISTS" if koa_exists else "MISSING"
-        if not koa_exists:
-            self.warnings.append("Koa context 파일 없음 - 영구 기억 부재")
+        # Core context 체크
+        core_exists = (self.root / "agi/memory/core_context.json").exists()
+        connections["core_context"] = "EXISTS" if core_exists else "MISSING"
+        if not core_exists:
+            self.warnings.append("Core context 파일 없음 - 영구 기억 부재")
             self.health_score -= 10
         else:
-            self.oks.append("Koa context 존재")
+            self.oks.append("Core context 존재")
 
-        # Rua context 체크
-        rua_exists = (self.root / "agi/memory/rua_context.json").exists()
-        connections["rua_context"] = "EXISTS" if rua_exists else "MISSING"
-        if not rua_exists:
-            self.warnings.append("Rua context 파일 없음 - 영구 기억 부재")
+        # Core context 체크
+        Core_exists = (self.root / "agi/memory/core_context.json").exists()
+        connections["core_context"] = "EXISTS" if Core_exists else "MISSING"
+        if not Core_exists:
+            self.warnings.append("Core context 파일 없음 - 영구 기억 부재")
             self.health_score -= 10
         else:
-            self.oks.append("Rua context 존재")
+            self.oks.append("Core context 존재")
 
         return connections
 
@@ -194,19 +198,19 @@ class RhythmThermometer:
         """시스템 파일 갱신 상태"""
         freshness = {}
 
-        # Lumen State 체크
-        lumen_age = self.get_file_age_days("agi/outputs/lumen_state.json")
-        if lumen_age is not None:
-            freshness["lumen_state_age_days"] = lumen_age
-            if lumen_age > 7:
-                self.warnings.append(f"Lumen State {lumen_age:.0f}일째 미갱신 - Fear 시스템 동결")
+        # Core State 체크
+        core_age = self.get_file_age_days("agi/outputs/core_state.json")
+        if core_age is not None:
+            freshness["core_state_age_days"] = core_age
+            if core_age > 7:
+                self.warnings.append(f"Core State {core_age:.0f}일째 미갱신 - Fear 시스템 동결")
                 self.health_score -= 10
-            elif lumen_age > 1:
-                self.warnings.append(f"Lumen State {lumen_age:.1f}일째 미갱신")
+            elif core_age > 1:
+                self.warnings.append(f"Core State {core_age:.1f}일째 미갱신")
                 self.health_score -= 5
         else:
-            freshness["lumen_state_age_days"] = None
-            self.warnings.append("Lumen State 파일 없음")
+            freshness["core_state_age_days"] = None
+            self.warnings.append("Core State 파일 없음")
             self.health_score -= 10
 
         # Thought Stream 체크
@@ -352,11 +356,11 @@ class RhythmThermometer:
             else:
                 print(f"  Shion: ⚠️ UNKNOWN")
 
-            koa = connections.get("koa_context", "MISSING")
-            print(f"  Koa Context: {'✅' if koa == 'EXISTS' else '⚠️'} {koa}")
+            Core = connections.get("core_context", "MISSING")
+            print(f"  Core Context: {'✅' if Core == 'EXISTS' else '⚠️'} {Core}")
 
-            rua = connections.get("rua_context", "MISSING")
-            print(f"  Rua Context: {'✅' if rua == 'EXISTS' else '⚠️'} {rua}")
+            Core = connections.get("core_context", "MISSING")
+            print(f"  Core Context: {'✅' if Core == 'EXISTS' else '⚠️'} {Core}")
             print()
 
         # 경고

@@ -38,7 +38,8 @@ def tail_audit(path: Path, tail: int) -> List[Dict[str, Any]]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Show autonomous goal gate status")
-    parser.add_argument("--workspace", type=str, default="C:/workspace/agi", help="Workspace root")
+    from workspace_root import get_workspace_root
+    parser.add_argument("--workspace", type=str, default=str(get_workspace_root()), help="Workspace root")
     parser.add_argument("--tail", type=int, default=5, help="Audit tail count")
     args = parser.parse_args()
 

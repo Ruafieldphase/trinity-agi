@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidateSet('24h','7d','30d')]
     [string]$Window = '24h',
     [int]$Hours = 0,

@@ -1,4 +1,4 @@
-param()
+﻿param()
 $ErrorActionPreference = 'SilentlyContinue'
 $pattern = 'ensure_autonomous_worker_daemon.ps1'
 try {

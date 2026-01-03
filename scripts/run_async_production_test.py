@@ -6,12 +6,13 @@ import sys
 import time
 import uuid
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def run_single_task(task_num: int) -> dict:
     """단일 태스크 실행"""
     here = Path(__file__).resolve()
-    root = here.parents[1]
+    root = get_workspace_root()
     
     # Path setup
     if str(root) not in sys.path:

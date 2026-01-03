@@ -1,10 +1,10 @@
-<#
+﻿<#
 .SYNOPSIS
     24h Production을 Windows Scheduled Task로 등록 (재부팅 안전)
 
 .DESCRIPTION
     다음 Production을 Scheduled Task로 등록합니다:
-    1. Lumen 24h Feedback System
+    1. Core 24h Feedback System
     2. Trinity Autopoietic Cycle
     3. Unified Real-Time Dashboard
     
@@ -35,12 +35,14 @@ param(
     [switch]$Unregister,
     [switch]$Status
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
-$WorkspaceRoot = "C:\workspace\agi"
 $TaskNames = @(
-    "AGI_Lumen_24h_Production"
+    "AGI_Core_24h_Production"
     "AGI_Trinity_24h_Cycle"
     "AGI_Unified_Dashboard"
 )
@@ -71,11 +73,11 @@ function Show-Status {
 function Register-Tasks {
     Write-Host "`n🔧 24h Production Scheduled Task 등록 중...`n" -ForegroundColor Cyan
     
-    # 1. Lumen 24h Production
-    Write-Host "1️⃣  Lumen 24h Production 등록..." -ForegroundColor Yellow
+    # 1. Core 24h Production
+    Write-Host "1️⃣  Core 24h Production 등록..." -ForegroundColor Yellow
     $action1 = New-ScheduledTaskAction `
         -Execute "powershell.exe" `
-        -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$WorkspaceRoot\scripts\start_lumen_24h_stable.ps1`""
+        -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$WorkspaceRoot\scripts\start_core_24h_stable.ps1`""
     
     $trigger1 = New-ScheduledTaskTrigger -AtStartup
     $trigger1.Delay = "PT5M"  # 부팅 후 5분 대기
@@ -92,7 +94,7 @@ function Register-Tasks {
         -Action $action1 `
         -Trigger $trigger1 `
         -Settings $settings1 `
-        -Description "AGI Lumen 24h Feedback System - Auto restart on boot" `
+        -Description "AGI Core 24h Feedback System - Auto restart on boot" `
         -Force | Out-Null
     
     Write-Host "   ✅ 등록 완료" -ForegroundColor Green
@@ -104,7 +106,7 @@ function Register-Tasks {
         -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$WorkspaceRoot\scripts\autopoietic_trinity_cycle.ps1`" -Hours 24"
     
     $trigger2 = New-ScheduledTaskTrigger -AtStartup
-    $trigger2.Delay = "PT6M"  # 부팅 후 6분 대기 (Lumen 이후)
+    $trigger2.Delay = "PT6M"  # 부팅 후 6분 대기 (Core 이후)
     
     $settings2 = New-ScheduledTaskSettingsSet `
         -AllowStartIfOnBatteries `
@@ -147,7 +149,7 @@ function Register-Tasks {
     
     Write-Host "`n✨ 모든 Scheduled Task 등록 완료!" -ForegroundColor Green
     Write-Host "`n재부팅 시 자동으로 다음 순서로 시작됩니다:" -ForegroundColor Yellow
-    Write-Host "   부팅 + 5분 → Lumen 24h Production" -ForegroundColor White
+    Write-Host "   부팅 + 5분 → Core 24h Production" -ForegroundColor White
     Write-Host "   부팅 + 6분 → Trinity Autopoietic Cycle" -ForegroundColor White
     Write-Host "   부팅 + 7분 → Unified Dashboard" -ForegroundColor White
     Write-Host ""

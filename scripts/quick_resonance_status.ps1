@@ -1,4 +1,4 @@
-Param(
+﻿Param(
     [switch]$ShowLedger
 )
 
@@ -84,4 +84,3 @@ if ($ShowLedger) {
 }
 
 Write-Host "[resonance-status] Done." -ForegroundColor Green
-

@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Adaptive Music Player - 상황에 맞는 음악 자동 재생

@@ -8,8 +8,9 @@ import os
 import sys
 import subprocess
 from pathlib import Path
+from workspace_root import get_workspace_root
 
-BASE = Path(r"C:\workspace\agi")
+BASE = get_workspace_root()
 OUTPUTS = BASE / "outputs"
 
 # Report files to open

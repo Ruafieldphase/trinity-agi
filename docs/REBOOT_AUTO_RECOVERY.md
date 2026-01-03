@@ -41,7 +41,7 @@
 
 - VS Code 내 손쉬운 확인(태스크)
   - "Queue: Health Check"
-  - "Monitoring: Unified Dashboard (AGI + Lumen)"
+  - "Monitoring: Unified Dashboard (AGI + Core)"
   - "Watchdog: Check Task Watchdog Status"
 
 ## 신규: Resilient Reboot Recovery (one-shot)

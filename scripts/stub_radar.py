@@ -30,9 +30,10 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
+from workspace_root import get_workspace_root
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = get_workspace_root()
 OUTPUTS = ROOT / "outputs"
 BRIDGE = OUTPUTS / "bridge"
 

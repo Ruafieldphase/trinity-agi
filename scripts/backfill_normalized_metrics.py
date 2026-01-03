@@ -8,22 +8,26 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
+from workspace_root import get_workspace_root
+
+WORKSPACE_ROOT = get_workspace_root()
+
 def normalize_metrics(event: dict) -> dict:
     """Normalize metrics field names for existing event."""
     # Quality normalization
     if 'quality' not in event or event['quality'] is None:
         if 'agi_quality' in event and event['agi_quality'] is not None:
             event['quality'] = float(event['agi_quality'])
-        elif 'lumen_quality' in event and event['lumen_quality'] is not None:
-            event['quality'] = float(event['lumen_quality'])
+        elif 'core_quality' in event and event['core_quality'] is not None:
+            event['quality'] = float(event['core_quality'])
         elif 'assessment' in event and isinstance(event['assessment'], dict):
             if 'quality_score' in event['assessment']:
                 event['quality'] = float(event['assessment']['quality_score'])
     
     # Latency normalization
     if 'latency_ms' not in event or event['latency_ms'] is None:
-        if 'lumen_latency_ms' in event and event['lumen_latency_ms'] is not None:
-            event['latency_ms'] = float(event['lumen_latency_ms'])
+        if 'core_latency_ms' in event and event['core_latency_ms'] is not None:
+            event['latency_ms'] = float(event['core_latency_ms'])
         elif 'agi_latency_ms' in event and event['agi_latency_ms'] is not None:
             event['latency_ms'] = float(event['agi_latency_ms'])
         elif 'duration_sec' in event and event['duration_sec'] is not None:
@@ -135,7 +139,7 @@ def backfill_ledger(ledger_path: Path, dry_run: bool = False) -> dict:
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Backfill normalized metrics")
-    parser.add_argument('--ledger', default=r'C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl')
+    parser.add_argument('--ledger', default=str(WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"))
     parser.add_argument('--dry-run', action='store_true', help='Report only, do not modify')
     args = parser.parse_args()
     
@@ -157,7 +161,7 @@ def main():
         print("\n📋 Dry-run mode: No changes made")
     
     # Save JSON report
-    output_path = Path(r'C:\workspace\agi\outputs\metric_backfill_report_latest.json')
+    output_path = WORKSPACE_ROOT / "outputs" / "metric_backfill_report_latest.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         json.dump(stats, f, indent=2, ensure_ascii=False)

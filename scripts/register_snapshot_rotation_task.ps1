@@ -4,7 +4,7 @@
     [switch]$Status,
     [string]$TaskName = "MonitoringSnapshotRotationDaily",
     [string]$Time = "03:15",
-    [string]$WorkspaceRoot = "D:\\nas_backup",
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "D:\\nas_backup",
     [string]$RotateScript = "D:\\nas_backup\\scripts\\rotate_status_snapshots.ps1",
     [string]$FilePath = "D:\\nas_backup\\outputs\\status_snapshots.jsonl",
     [string]$ArchiveDir = "D:\\nas_backup\\outputs\\archive",
@@ -23,6 +23,9 @@
     [string]$TaskPassword,
     [string]$TaskFolder
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

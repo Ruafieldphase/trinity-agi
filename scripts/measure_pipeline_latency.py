@@ -9,11 +9,12 @@ import json
 from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
+from workspace_root import get_workspace_root
 
 
 def analyze_pipeline_latency(hours: int = 1):
     """최근 N시간 동안의 Pipeline 레이턴시 분석"""
-    ledger_path = Path(__file__).parent.parent / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
+    ledger_path = get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
     
     if not ledger_path.exists():
         print(f"❌ Ledger not found: {ledger_path}")

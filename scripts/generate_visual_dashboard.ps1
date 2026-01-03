@@ -1,12 +1,15 @@
-# Generate Visual HTML Dashboard
+﻿# Generate Visual HTML Dashboard
 # Creates interactive HTML dashboard with charts and real-time metrics
 
 param(
-    [string]$JsonSource = "$PSScriptRoot\..\outputs\unified_dashboard_latest.json",
-    [string]$BenchmarkLog = "$PSScriptRoot\..\outputs\performance_benchmark_log.jsonl",
-    [string]$OutHtml = "$PSScriptRoot\..\outputs\system_dashboard_latest.html",
+    [string]$JsonSource = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\unified_dashboard_latest.json",
+    [string]$BenchmarkLog = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\performance_benchmark_log.jsonl",
+    [string]$OutHtml = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\system_dashboard_latest.html",
     [switch]$OpenBrowser
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -29,7 +32,7 @@ if (Test-Path $BenchmarkLog) {
 }
 
 # Generate sparkline data
-$lumenSparkline = ($benchHistory | ForEach-Object { $_.lumen.avg_ms }) -join ","
+$CoreSparkline = ($benchHistory | ForEach-Object { $_.Core.avg_ms }) -join ","
 $lmStudioSparkline = ($benchHistory | ForEach-Object { $_.lm_studio.avg_ms }) -join ","
 $timestamps = ($benchHistory | ForEach-Object { 
         try { [DateTime]::Parse($_.timestamp).ToString("HH:mm") } catch { "" }
@@ -243,7 +246,7 @@ $html = @"
                     <span class="metric-value">$($data.system_status.routing_policy.last_updated)</span>
                 </div>
                 <div class="recommendation" style="margin-top:16px;">
-                    임계값 로직: LM Studio > 임계값이면 Lumen으로 라우팅, 그 외는 Primary 우선(옵션에 따라 Local 선호).
+                    임계값 로직: LM Studio > 임계값이면 Core으로 라우팅, 그 외는 Primary 우선(옵션에 따라 Local 선호).
                 </div>
                 <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
                     <a href="./performance_trend_analysis.json" style="text-decoration:none; background:#111827; color:#fff; padding:8px 12px; border-radius:6px;">View Trend JSON</a>
@@ -258,8 +261,8 @@ $html = @"
                     Performance Metrics
                 </div>
                 <div class="metric">
-                    <span class="metric-label">Lumen Gateway</span>
-                    <span class="metric-value" style="color: #10b981;">$([math]::Round($data.performance.lumen.avg_latency_ms, 0))ms</span>
+                    <span class="metric-label">Core Gateway</span>
+                    <span class="metric-value" style="color: #10b981;">$([math]::Round($data.performance.Core.avg_latency_ms, 0))ms</span>
                 </div>
                 <div class="metric">
                     <span class="metric-label">LM Studio Local</span>
@@ -317,7 +320,7 @@ $html = @"
     <script>
         // Trend Chart
         const ctx = document.getElementById('trendChart').getContext('2d');
-    const lumenData = [$lumenSparkline];
+    const CoreData = [$CoreSparkline];
     const lmStudioData = [$lmStudioSparkline];
     const labels = '$timestamps'.split(',');
 
@@ -327,8 +330,8 @@ $html = @"
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Lumen Gateway',
-                        data: lumenData,
+                        label: 'Core Gateway',
+                        data: CoreData,
                         borderColor: '#10b981',
                         backgroundColor: 'rgba(16, 185, 129, 0.1)',
                         tension: 0.4,

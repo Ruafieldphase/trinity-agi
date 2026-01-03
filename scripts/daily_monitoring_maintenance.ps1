@@ -1,9 +1,13 @@
-param(
+﻿param(
     [int]$ReportHours = 24,
     [int]$ArchiveKeepDays = 14,
     [switch]$NoZip,
     [switch]$Silent
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -12,7 +16,7 @@ function Write-Info($msg) { if (-not $Silent) { Write-Host "[INFO] $msg" } }
 function Write-Warn($msg) { if (-not $Silent) { Write-Host "[WARN] $msg" -ForegroundColor Yellow } }
 function Write-Err($msg) { Write-Host "[ERROR] $msg" -ForegroundColor Red }
 
-$root = "C:\workspace\agi"
+$root = "$WorkspaceRoot"
 $rotate = Join-Path $root 'scripts/rotate_status_snapshots.ps1'
 $report = Join-Path $root 'scripts/generate_monitoring_report.ps1'
 $cleanup = Join-Path $root 'scripts/cleanup_snapshot_archives.ps1'

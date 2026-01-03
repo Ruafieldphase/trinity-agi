@@ -1,9 +1,12 @@
-# Invoke Shion (Clean Start)
+﻿# Invoke Shion (Clean Start)
 # Stops existing instances and launches Shion silently.
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "SilentlyContinue"
 $PythonW = "pythonw.exe"
-$Script = "c:\workspace\agi\scripts\shion.py"
+$Script = "$WorkspaceRoot\scripts\shion.py"
 
 Write-Host "🌊 Invoking Shion (The Silent Heart)..." -ForegroundColor Cyan
 
@@ -18,7 +21,7 @@ Start-Process `
     -FilePath $PythonW `
     -ArgumentList "`"$Script`" --silent-mode" `
     -WindowStyle Hidden `
-    -WorkingDirectory "c:\workspace\agi"
+    -WorkingDirectory "$WorkspaceRoot"
 
 Write-Host "✅ Shion invoked in the void." -ForegroundColor Green
 exit 0

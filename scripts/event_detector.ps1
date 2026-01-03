@@ -1,11 +1,15 @@
-# Event Detector - Real-time System Event Detection
+﻿# Event Detector - Real-time System Event Detection
 # Phase 3 Foundation: Detects anomalies and triggers intelligent responses
 
 param(
     [int]$CheckIntervalSeconds = 10,
-    [string]$LogFile = "C:\workspace\agi\outputs\event_detector.log",
-    [string]$EventQueueFile = "C:\workspace\agi\outputs\event_queue.json"
+    [string]$LogFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\event_detector.log",
+    [string]$EventQueueFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\event_queue.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 

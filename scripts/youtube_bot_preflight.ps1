@@ -1,4 +1,4 @@
-# YouTube Bot Preflight Check
+﻿# YouTube Bot Preflight Check
 # Verifies deps, credentials folder, client secret and token presence. Optionally launches OAuth.
 # Usage:
 #   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/youtube_bot_preflight.ps1 [-Interactive]

@@ -1,4 +1,4 @@
-# 긴급 전체 서비스 중지 스크립트
+﻿# 긴급 전체 서비스 중지 스크립트
 # =====================================
 # 모든 AGI 관련 프로세스를 중지합니다
 
@@ -35,8 +35,8 @@ $agiPatterns = @(
     "*lua_flow_collector.py*",
     "*lymphatic_system.py*",
     "*slack_interface.py*",
-    "*koa_conscious.py*",
-    "*lumen_mcp_server.py*",
+    "*core_conscious.py*",
+    "*core_mcp_server.py*",
     "*rhythm_think.py*",
     "*monitoring_daemon.py*",
     "*meta_supervisor.py*",

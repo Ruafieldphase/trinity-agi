@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     세션 저장 - 대화 내용 + 모든 시스템/구조 변경사항 적용
@@ -13,9 +13,12 @@
 
 param(
     [string]$SessionNote = "",
-    [string]$WorkspaceRoot = "$PSScriptRoot\..",
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$PSScriptRoot\..",
     [switch]$SkipGitCommit
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $timestamp = Get-Date -Format "yyyy-MM-dd_HHmmss"

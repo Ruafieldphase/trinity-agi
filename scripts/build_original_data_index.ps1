@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$Root = "C:\\workspace\\original_data",
     [string]$OutDir = "$PSScriptRoot/../outputs",
     [int]$MaxFiles = 10000,

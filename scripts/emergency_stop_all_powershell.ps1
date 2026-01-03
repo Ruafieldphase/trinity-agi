@@ -1,4 +1,4 @@
-# 긴급 PowerShell 프로세스 전체 중지 스크립트
+﻿# 긴급 PowerShell 프로세스 전체 중지 스크립트
 # ============================================
 # 사용법: .\agi\scripts\emergency_stop_all_powershell.ps1
 

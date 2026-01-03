@@ -25,9 +25,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 import sys
+from workspace_root import get_workspace_root
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = get_workspace_root()
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 OUTPUTS = ROOT / "outputs"
@@ -50,7 +51,7 @@ DIGITAL_TWIN = OUTPUTS / "sync_cache" / "digital_twin_state.json"
 QDIGITAL_TWIN = OUTPUTS / "sync_cache" / "quantum_digital_twin_state.json"
 
 OBS_RECODE = OUTPUTS / "obs_recode_intake_latest.json"
-RUA_CONV = OUTPUTS / "rua_conversation_intake_latest.json"
+Core_CONV = OUTPUTS / "core_conversation_intake_latest.json"
 EXPLORATION_INTAKE = OUTPUTS / "exploration_intake_latest.json"
 EXPLORATION_EVENT = OUTPUTS / "exploration_session_event_latest.json"
 BODY_LATEST = OUTPUTS / "body_supervised_latest.json"
@@ -139,7 +140,7 @@ def main() -> int:
     policy = _load_json(AUTO_POLICY_STATE) or {}
     life = _load_json(LIFE_STATE) or {}
     internal_state = _load_json(INTERNAL_STATE) or {}
-    rua_conv = _load_json(RUA_CONV) or {}
+    Core_conv = _load_json(Core_CONV) or {}
     arm = _load_json(BODY_ARM) or {}
     allow = _load_json(BODY_ALLOW) or {}
     nclock = _load_json(NATURAL_CLOCK) or {}
@@ -207,7 +208,7 @@ def main() -> int:
 
     ages = {
         "obs_recode": _file_age_seconds(OBS_RECODE),
-        "rua_conversation": _file_age_seconds(RUA_CONV),
+        "core_conversation": _file_age_seconds(Core_CONV),
         "exploration_intake": _file_age_seconds(EXPLORATION_INTAKE),
         "exploration_event": _file_age_seconds(EXPLORATION_EVENT),
         "body_latest": _file_age_seconds(BODY_LATEST),
@@ -235,12 +236,12 @@ def main() -> int:
         body_pid = None
         body_running = False
 
-    rua_boundary_mode = ""
+    core_boundary_mode = ""
     try:
-        newest = rua_conv.get("newest") if isinstance(rua_conv.get("newest"), dict) else {}
+        newest = Core_conv.get("newest") if isinstance(Core_conv.get("newest"), dict) else {}
         dyn = newest.get("boundary_dynamics") if isinstance(newest.get("boundary_dynamics"), dict) else {}
-        rua_boundary_mode = str(dyn.get("dominant_mode") or "")
-        if not rua_boundary_mode:
+        core_boundary_mode = str(dyn.get("dominant_mode") or "")
+        if not core_boundary_mode:
             # Fallback for older schema: infer from keyword_counts only (no 원문, 메타만).
             kw = newest.get("keyword_counts") if isinstance(newest.get("keyword_counts"), dict) else {}
 
@@ -252,26 +253,26 @@ def main() -> int:
             contraction = c("수축") + c("압축") + c("접힘") + c("닫힘")
             mix = c("혼합") + c("믹스") + c("비빔밥") + c("정반합") + c("통합")
             if mix >= max(expansion, contraction) and mix >= 3:
-                rua_boundary_mode = "mix"
+                core_boundary_mode = "mix"
             elif (expansion - contraction) >= 3:
-                rua_boundary_mode = "expand"
+                core_boundary_mode = "expand"
             elif (contraction - expansion) >= 3:
-                rua_boundary_mode = "contract"
+                core_boundary_mode = "contract"
             elif expansion or contraction or mix:
-                rua_boundary_mode = "balanced"
+                core_boundary_mode = "balanced"
     except Exception:
-        rua_boundary_mode = ""
+        core_boundary_mode = ""
 
     stop_file_present = bool(BODY_STOP.exists())
 
     # a-b-c 시간 동역학 링크(관측용)
-    # a: memory/경험(rua_conversation, obs_recode)
+    # a: memory/경험(core_conversation, obs_recode)
     # b: 현재 실행 상태(heartbeat/life_state)
     # c: 미래 스캔(탐색 이벤트/탐색 인테이크)
     abc = {
         "a": {
             "obs_recode_age_s": ages["obs_recode"],
-            "rua_conversation_age_s": ages["rua_conversation"],
+            "core_conversation_age_s": ages["core_conversation"],
         },
         "b": {
             "life_state_age_s": _file_age_seconds(LIFE_STATE),
@@ -340,8 +341,8 @@ def main() -> int:
         },
         "learning_signals": {
             "obs_recode_age_s": ages["obs_recode"],
-            "rua_conversation_age_s": ages["rua_conversation"],
-            "rua_boundary_mode": rua_boundary_mode,
+            "core_conversation_age_s": ages["core_conversation"],
+            "core_boundary_mode": core_boundary_mode,
             "exploration_intake_age_s": ages["exploration_intake"],
             "exploration_event_age_s": ages["exploration_event"],
             "supervised_body_latest_age_s": ages["body_latest"],
@@ -464,8 +465,8 @@ def main() -> int:
         "",
         "4) 학습 신호(최근 갱신)",
         f"- obs_recode: {_fmt_age(ages['obs_recode'])}",
-        f"- rua 대화: {_fmt_age(ages['rua_conversation'])}",
-        f"- rua 경계 모드: {rua_boundary_mode or '없음'}",
+        f"- Core 대화: {_fmt_age(ages['core_conversation'])}",
+        f"- Core 경계 모드: {core_boundary_mode or '없음'}",
         f"- 탐색 intake: {_fmt_age(ages['exploration_intake'])}",
         f"- 탐색 이벤트: {_fmt_age(ages['exploration_event'])}",
         f"- 비디오 경계 게이트: {_fmt_age(ages['video_boundary_gate'])}",
@@ -529,7 +530,7 @@ def main() -> int:
         f"- Vertex 프로젝트 설정: {'예' if bool(cloud_backend.get('vertex_project_set')) else '아니오'}",
         "",
         "9) a-b-c 링크(관측)",
-        f"- a(과거/경험): obs_recode {_fmt_age(ages['obs_recode'])}, rua {_fmt_age(ages['rua_conversation'])}",
+        f"- a(과거/경험): obs_recode {_fmt_age(ages['obs_recode'])}, Core {_fmt_age(ages['core_conversation'])}",
         f"- b(현재/생존): life_state {_fmt_age(_file_age_seconds(LIFE_STATE))}",
         f"- c(미래/탐색): event {_fmt_age(ages['exploration_event'])}, intake {_fmt_age(ages['exploration_intake'])}",
     ]

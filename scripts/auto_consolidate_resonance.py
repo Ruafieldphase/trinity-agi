@@ -7,9 +7,10 @@ import sys
 import json
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Add workspace to path
-workspace = Path(__file__).parent.parent
+workspace = get_workspace_root()
 sys.path.insert(0, str(workspace))
 
 from fdo_agi_repo.orchestrator.resonance_bridge import (

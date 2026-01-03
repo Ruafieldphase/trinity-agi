@@ -26,10 +26,10 @@
 
 ### 이미 존재하는 "관찰자" 시스템들
 
-#### 1. **Lumen Cost Rhythm Loop** (리듬 감지)
+#### 1. **Core Cost Rhythm Loop** (리듬 감지)
 
 ```python
-# LLM_Unified/ion-mentoring/lumen/monitoring/cost_rhythm_loop.py
+# LLM_Unified/ion-mentoring/Core/monitoring/cost_rhythm_loop.py
 
 class RhythmStatus(Enum):
     RESONANT = "RESONANT"      # 리듬 안정 → 정상 모드
@@ -114,7 +114,7 @@ def get_active_policy_name() -> str:
 │        현재: 분리된 관찰자들                   │
 ├─────────────────────────────────────────────┤
 │                                             │
-│  Lumen Rhythm   Resonance    BQI Learner   │
+│  Core Rhythm   Resonance    BQI Learner   │
 │      │              │             │         │
 │      ▼              ▼             ▼         │
 │   비용 감지      정책 제어      학습 조정     │
@@ -127,7 +127,7 @@ def get_active_policy_name() -> str:
 
 **현재 동작**:
 
-1. **Lumen**: 비용이 높으면 SCALE_DOWN
+1. **Core**: 비용이 높으면 SCALE_DOWN
 2. **Resonance**: 항상 같은 정책 사용
 3. **BQI**: 정해진 시간에 학습
 4. **AGI Pipeline**: 항상 모든 레이어 실행
@@ -150,7 +150,7 @@ def get_active_policy_name() -> str:
 │  ├─ CPU/메모리 (시스템 부하)                                   │
 │  ├─ 큐 길이 (작업 대기량)                                      │
 │  ├─ 에러율 (시스템 안정성)                                     │
-│  ├─ Lumen Rhythm (비용 리듬)                                  │
+│  ├─ Core Rhythm (비용 리듬)                                  │
 │  └─ 시간대 (오전/오후/새벽)                                    │
 │                                                               │
 │  🎭 리듬 판단 (생명체 비유)                                    │
@@ -167,7 +167,7 @@ def get_active_policy_name() -> str:
 └───────────────────────────────────────────────────────────────┘
          │                  │                  │
          ▼                  ▼                  ▼
-    AGI Pipeline      Lumen System       BQI Learner
+    AGI Pipeline      Core System       BQI Learner
 ```
 
 ### 모드별 자원 분배 전략
@@ -179,7 +179,7 @@ def get_active_policy_name() -> str:
   - CPU < 50%
   - 큐 < 10개
   - 에러율 < 5%
-  - Lumen: RESONANT
+  - Core: RESONANT
 
 자원 분배:
   AGI Pipeline:
@@ -199,7 +199,7 @@ def get_active_policy_name() -> str:
   - CPU 50-80%
   - 큐 10-50개
   - 에러율 5-10%
-  - Lumen: DISSONANT
+  - Core: DISSONANT
 
 자원 분배:
   AGI Pipeline:
@@ -220,7 +220,7 @@ def get_active_policy_name() -> str:
   - CPU > 80%
   - 큐 > 50개
   - 에러율 > 10%
-  - Lumen: CHAOTIC
+  - Core: CHAOTIC
 
 자원 분배:
   AGI Pipeline:
@@ -244,7 +244,7 @@ def get_active_policy_name() -> str:
   - CPU < 30%
   - 큐 < 5개
   - 새벽 시간대 (03:00-06:00)
-  - Lumen: RESONANT
+  - Core: RESONANT
 
 자원 분배:
   AGI Pipeline:
@@ -288,7 +288,7 @@ class RhythmState:
     memory_usage: float
     queue_size: int
     error_rate: float
-    lumen_rhythm: str
+    core_rhythm: str
     confidence: float
 
 class RhythmDetector:
@@ -299,18 +299,18 @@ class RhythmDetector:
         queue_size = self._get_queue_size()
         error_rate = self._get_error_rate()
         
-        # 2. Lumen Rhythm 가져오기
-        lumen_rhythm = self._get_lumen_rhythm()
+        # 2. Core Rhythm 가져오기
+        core_rhythm = self._get_core_rhythm()
         
         # 3. 시간대 고려
         hour = datetime.now().hour
         is_night = 3 <= hour < 6
         
         # 4. 리듬 판단
-        if error_rate > 0.1 or cpu > 80 or lumen_rhythm == "CHAOTIC":
+        if error_rate > 0.1 or cpu > 80 or core_rhythm == "CHAOTIC":
             mode = SystemRhythm.EMERGENCY
             confidence = 0.95
-        elif cpu > 50 or queue_size > 10 or lumen_rhythm == "DISSONANT":
+        elif cpu > 50 or queue_size > 10 or core_rhythm == "DISSONANT":
             mode = SystemRhythm.BUSY
             confidence = 0.85
         elif is_night and cpu < 30 and queue_size < 5:
@@ -326,7 +326,7 @@ class RhythmDetector:
             memory_usage=memory,
             queue_size=queue_size,
             error_rate=error_rate,
-            lumen_rhythm=lumen_rhythm,
+            core_rhythm=core_rhythm,
             confidence=confidence
         )
 ```
@@ -471,7 +471,7 @@ class AdaptiveOrchestrator:
 
 1. ✅ **Rhythm Detector 구현** (1일)
    - 시스템 메트릭 수집
-   - Lumen Rhythm 연동
+   - Core Rhythm 연동
    - 4가지 모드 판단 로직
 
 2. ✅ **Resource Budget 정의** (1일)
@@ -517,7 +517,7 @@ class AdaptiveOrchestrator:
 
 **정보 이론 관점**:
 
-- **엔트로피**: 시스템 불확실성 (Lumen에서 측정 중)
+- **엔트로피**: 시스템 불확실성 (Core에서 측정 중)
 - **상호정보량**: 입력-출력 관계성
 - **에너지 예산**: 각 레이어의 "비용" (CPU, 시간, 돈)
 - **적응**: 엔트로피 최소화 + 에너지 효율 최대화
@@ -837,7 +837,7 @@ Reason: Moderate energy (60%)
 
 1. **Rhythm Detector 프로토타입** (오늘)
 2. **EMERGENCY 모드 테스트** (내일)
-3. **Lumen 연동 검증** (이번 주)
+3. **Core 연동 검증** (이번 주)
 4. **전체 통합 & 벤치마크** (다음 주)
 
 **목표**:

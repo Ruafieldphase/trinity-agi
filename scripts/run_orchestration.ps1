@@ -1,4 +1,4 @@
-# 자동화된 오케스트레이션 실행 스크립트
+﻿# 자동화된 오케스트레이션 실행 스크립트
 # 페르소나 협업을 자동으로 실행합니다
 
 param(
@@ -7,6 +7,9 @@ param(
     
     [switch]$OpenReport
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -33,7 +36,7 @@ Write-Host "`n══════════════════════
 Write-Host "✅ 오케스트레이션 완료!`n" -ForegroundColor Green
 
 # 리포트 열기
-$reportPath = "$PSScriptRoot\..\outputs\orchestration_latest.md"
+$reportPath = "$WorkspaceRoot\outputs\orchestration_latest.md"
 
 if ($OpenReport -and (Test-Path $reportPath)) {
     Write-Host "📖 리포트 열기...`n" -ForegroundColor Cyan

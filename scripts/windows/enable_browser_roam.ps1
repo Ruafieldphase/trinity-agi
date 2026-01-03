@@ -28,7 +28,7 @@ if ($Days -gt 0) {
 $payload = @{
   allow = $true
   enabled_at = $now.ToString("o")
-  origin = "binoche"
+  origin = "Binoche_Observer"
   note = "browser roam allowed (read-only, allowlist)"
   max_tasks_per_hour = [int]$MaxTasksPerHour
   min_cooldown_sec = [int]$MinCooldownSec

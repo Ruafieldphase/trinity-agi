@@ -5,9 +5,10 @@ Phase 2 & 3 기능 검증
 
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add repo to path
-repo_root = Path(__file__).parent.parent
+repo_root = get_workspace_root()
 sys.path.insert(0, str(repo_root / "fdo_agi_repo"))
 
 from copilot.hippocampus import CopilotHippocampus
@@ -18,7 +19,7 @@ def test_everything_integration():
     print("🧠 Testing Hippocampus + Everything Integration\n")
     
     # Hippocampus 초기화 (workspace_root 전달)
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     hip = CopilotHippocampus(workspace_root=workspace)
     
     # 테스트 1: Python 파일 검색

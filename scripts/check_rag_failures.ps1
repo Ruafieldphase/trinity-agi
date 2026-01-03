@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 $ws = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
 $ledger = Join-Path $ws 'fdo_agi_repo\memory\resonance_ledger.jsonl'
 

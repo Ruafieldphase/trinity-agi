@@ -1,4 +1,4 @@
-# execute_goal_in_vscode.ps1
+﻿# execute_goal_in_vscode.ps1
 # 자율 목표를 VS Code Task로 실행 (양자 관찰자 효과 적용)
 
 param(

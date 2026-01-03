@@ -19,10 +19,10 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
 from typing import Dict, Any
+from workspace_root import get_workspace_root
 
 # -------------------- Setup --------------------
-CURRENT_FILE = Path(__file__).resolve()
-WORKSPACE_ROOT = CURRENT_FILE.parent.parent  # scripts/ 상위 = workspace 루트
+WORKSPACE_ROOT = get_workspace_root()
 if str(WORKSPACE_ROOT) not in sys.path:
     sys.path.append(str(WORKSPACE_ROOT))
 

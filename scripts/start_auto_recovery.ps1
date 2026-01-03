@@ -1,4 +1,4 @@
-# Start Auto Recovery System in Background
+﻿# Start Auto Recovery System in Background
 param(
     [int]$CheckIntervalSeconds = 300,
     [switch]$KillExisting,

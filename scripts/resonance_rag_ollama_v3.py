@@ -23,9 +23,10 @@ from typing import Dict, List, Optional, Tuple
 from collections import defaultdict
 import math
 import re
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "llama3.2"
@@ -302,7 +303,7 @@ def main():
         print(f"   Resonance: {memory['resonance_score']:.4f}")
         
         if use_ollama:
-            system_prompt = f"""You are tuned to Binoche & Rua's philosophy.
+            system_prompt = f"""You are tuned to Binoche_Observer & Core's philosophy.
 Resonate with this memory:
 
 {memory['summary']}

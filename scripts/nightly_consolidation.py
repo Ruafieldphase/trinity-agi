@@ -14,6 +14,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 import logging
+from workspace_root import get_workspace_root
 
 # 로깅 설정
 logging.basicConfig(
@@ -23,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # 프로젝트 루트 추가
-project_root = Path(__file__).resolve().parent.parent
+project_root = get_workspace_root()
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(project_root / "fdo_agi_repo"))
 

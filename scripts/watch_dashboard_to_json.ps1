@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$IntervalSeconds = 30,
     [int]$DurationMinutes = 10,
     [int]$WarnMs = 1200,
@@ -6,8 +6,11 @@ param(
     [switch]$SlackOnFailure,
     [switch]$FailOnDegraded,
     [int]$KeepDays = 1,
-    [string]$OutDir = "${PSScriptRoot}\..\outputs"
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # ASCII-safe console lines for PS 5.1
 function Write-Line {
@@ -18,9 +21,9 @@ function Write-Line {
 $ErrorActionPreference = 'Stop'
 
 # Resolve paths
-$script:DashboardPath = Join-Path $PSScriptRoot 'lumen_dashboard.ps1'
+$script:DashboardPath = Join-Path $PSScriptRoot 'core_dashboard.ps1'
 if (-not (Test-Path $script:DashboardPath)) {
-    Write-Line "ERROR: lumen_dashboard.ps1 not found at $script:DashboardPath"
+    Write-Line "ERROR: core_dashboard.ps1 not found at $script:DashboardPath"
     exit 1
 }
 
@@ -38,7 +41,7 @@ Write-Line ("IntervalSeconds={0} DurationMinutes={1} WarnMs={2} AlertMs={3} Keep
 if ($DurationMinutes -le 0) {
     # Single-shot mode when duration is zero or negative
     $ts = Get-Date -Format 'yyyyMMdd_HHmmss'
-    $outFile = Join-Path $OutDir ("lumen_dashboard_{0}.json" -f $ts)
+    $outFile = Join-Path $OutDir ("core_dashboard_{0}.json" -f $ts)
 
     # Build named parameter splat for reliability on PS 5.1
     $paramSplat = @{ WarnMs = $WarnMs; AlertMs = $AlertMs; OutJson = $outFile }
@@ -67,7 +70,7 @@ if ($DurationMinutes -le 0) {
 else {
     while ([DateTime]::UtcNow -lt $deadline.ToUniversalTime()) {
         $ts = Get-Date -Format 'yyyyMMdd_HHmmss'
-        $outFile = Join-Path $OutDir ("lumen_dashboard_{0}.json" -f $ts)
+        $outFile = Join-Path $OutDir ("core_dashboard_{0}.json" -f $ts)
 
         # Build named parameter splat for reliability on PS 5.1
         $paramSplat = @{ WarnMs = $WarnMs; AlertMs = $AlertMs; OutJson = $outFile }
@@ -98,7 +101,7 @@ else {
 # Retention: delete old snapshots older than KeepDays
 try {
     $cutoff = (Get-Date).AddDays(-$KeepDays)
-    Get-ChildItem -Path $OutDir -Filter 'lumen_dashboard_*.json' -File -ErrorAction SilentlyContinue |
+    Get-ChildItem -Path $OutDir -Filter 'core_dashboard_*.json' -File -ErrorAction SilentlyContinue |
     Where-Object { $_.LastWriteTime -lt $cutoff } |
     ForEach-Object {
         Write-Line ("Prune old snapshot: {0}" -f $_.FullName)

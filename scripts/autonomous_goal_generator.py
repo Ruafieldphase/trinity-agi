@@ -8,7 +8,7 @@ Resonance Simulator + Autopoietic Trinity → 우선순위 목표 생성
 입력:
 - outputs/resonance_simulation_latest.json (Resonance 메트릭)
 - outputs/trinity_synthesis_latest.json (Trinity 피드백) ⭐ NEW!
-- outputs/lumen_enhanced_synthesis_latest.md (Legacy Trinity)
+- outputs/core_enhanced_synthesis_latest.md (Legacy Trinity)
 - fdo_agi_repo/memory/goal_tracker.json (완료된 목표 추적)
 
 출력:
@@ -33,6 +33,7 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Set
+from workspace_root import get_workspace_root
 
 # 로거 설정
 logging.basicConfig(
@@ -58,7 +59,7 @@ except ImportError:
 # 🧠 Hippocampus 임포트 (장기 기억 시스템)
 HIPPOCAMPUS_AVAILABLE = False
 try:
-    sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+    sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
     from copilot.hippocampus import CopilotHippocampus
     HIPPOCAMPUS_AVAILABLE = True
     logger.info("✅ Hippocampus module loaded")
@@ -140,7 +141,7 @@ def load_trinity_report(path: str) -> str:
     Trinity 보고서를 로드한다.
     
     Args:
-        path: lumen_enhanced_synthesis_latest.md 경로
+        path: core_enhanced_synthesis_latest.md 경로
         
     Returns:
         Markdown 텍스트
@@ -391,13 +392,13 @@ def extract_trinity_feedback(report_content: str) -> Dict[str, Any]:
         {
             "lua_issues": list[str],
             "elo_status": str,
-            "lumen_recommendations": list[dict]
+            "core_recommendations": list[dict]
         }
     """
     feedback = {
         "lua_issues": [],
         "elo_status": "unknown",
-        "lumen_recommendations": []
+        "core_recommendations": []
     }
     
     if not report_content:
@@ -406,7 +407,7 @@ def extract_trinity_feedback(report_content: str) -> Dict[str, Any]:
     
     # Lua 관찰 추출 (정/正)
     lua_section = re.search(
-        r'## 📊 정\(正\) - 루아의 관찰 요약(.*?)(?=##|$)',
+        r'## 📊 정\(正\) - 코어의 관찰 요약(.*?)(?=##|$)',
         report_content,
         re.DOTALL
     )
@@ -431,24 +432,24 @@ def extract_trinity_feedback(report_content: str) -> Dict[str, Any]:
         if judgment_match:
             feedback["elo_status"] = judgment_match.group(1).strip()
     
-    # Lumen 통합 권장사항 추출 (합/合)
-    lumen_section = re.search(
+    # Core 통합 권장사항 추출 (합/合)
+    core_section = re.search(
         r'## 💡 합\(合\) - 통합 통찰(.*?)(?=##|$)',
         report_content,
         re.DOTALL
     )
-    if lumen_section:
-        lumen_text = lumen_section.group(1)
+    if core_section:
+        core_text = core_section.group(1)
         
         # HIGH/MEDIUM/INFO 권장사항 추출
         recommendations = re.findall(
             r'### (🔴|🟡|✅) (\w+) - (\w+)\s+\*\*(.+?)\*\*',
-            lumen_text
+            core_text
         )
         
         for emoji, priority, category, description in recommendations:
             priority_map = {"🔴": "HIGH", "🟡": "MEDIUM", "✅": "INFO"}
-            feedback["lumen_recommendations"].append({
+            feedback["core_recommendations"].append({
                 "priority": priority_map.get(emoji, "UNKNOWN"),
                 "category": category,
                 "description": description
@@ -457,7 +458,7 @@ def extract_trinity_feedback(report_content: str) -> Dict[str, Any]:
     logger.info(f"Extracted trinity feedback:")
     logger.info(f"  lua_issues: {len(feedback['lua_issues'])} issues")
     logger.info(f"  elo_status: {feedback['elo_status']}")
-    logger.info(f"  lumen_recommendations: {len(feedback['lumen_recommendations'])} items")
+    logger.info(f"  core_recommendations: {len(feedback['core_recommendations'])} items")
     
     return feedback
 
@@ -498,7 +499,7 @@ def generate_goals(
     hippocampus_boost = {}
     if HIPPOCAMPUS_AVAILABLE:
         try:
-            workspace_root = Path(__file__).parent.parent
+            workspace_root = get_workspace_root()
             hippocampus = CopilotHippocampus(workspace_root)
             
             # 과거 성공한 Goal 패턴 회상
@@ -791,7 +792,7 @@ def generate_goals(
             logger.info(f"Generated goal from state ({state}): {goal['title']}")
     
     # Trinity 피드백 기반 목표 생성
-    for rec in trinity_feedback.get("lumen_recommendations", []):
+    for rec in trinity_feedback.get("core_recommendations", []):
         if rec["priority"] == "HIGH":
             title = f"Address: {rec['category']}"
             title_normalized = title.lower().strip()
@@ -1010,7 +1011,7 @@ def prioritize_goals(
     hippocampus_boost = hippocampus_boost or {}
     
     # 🧠 보상 추적기 초기화
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     reward_tracker = None
     try:
         reward_tracker = RewardTracker(workspace_root)
@@ -1116,7 +1117,7 @@ def generate_json_output(
         "trinity_summary": {
             "lua_issues": trinity_feedback.get("lua_issues", []),
             "elo_status": trinity_feedback.get("elo_status", "unknown"),
-            "lumen_recommendations": trinity_feedback.get("lumen_recommendations", [])
+            "core_recommendations": trinity_feedback.get("core_recommendations", [])
         },
         "self_care": {
             "states": self_care_states,
@@ -1173,7 +1174,7 @@ def generate_markdown_output(
     lines.append(f"- Resonance States: {', '.join(resonance_states) if resonance_states else 'None'}")
     lines.append(f"- Trinity Lua Issues: {len(trinity_feedback.get('lua_issues', []))}")
     lines.append(f"- Trinity Elo Status: {trinity_feedback.get('elo_status', 'unknown')}")
-    lines.append(f"- Trinity Lumen Recommendations: {len(trinity_feedback.get('lumen_recommendations', []))}")
+    lines.append(f"- Trinity Core Recommendations: {len(trinity_feedback.get('core_recommendations', []))}")
     lines.append(f"- Self-Care States: {', '.join(self_care_states) if self_care_states else 'None'}")
     lines.append("")
     
@@ -1206,7 +1207,7 @@ def generate_markdown_output(
     lua_issues = trinity_feedback.get("lua_issues", [])
     lines.append(f"- **Lua Issues**: {', '.join(lua_issues) if lua_issues else 'None'}")
     lines.append(f"- **Elo Status**: {trinity_feedback.get('elo_status', 'Unknown')}")
-    lines.append(f"- **Lumen Recommendations**: {len(trinity_feedback.get('lumen_recommendations', []))}")
+    lines.append(f"- **Core Recommendations**: {len(trinity_feedback.get('core_recommendations', []))}")
     lines.append("")
     
     # 목표 리스트
@@ -1269,7 +1270,7 @@ def main():
     parser.add_argument(
         "--trinity-path",
         type=str,
-        default="outputs/lumen_enhanced_synthesis_latest.md",
+        default="outputs/core_enhanced_synthesis_latest.md",
         help="Path to trinity report Markdown"
     )
     parser.add_argument(

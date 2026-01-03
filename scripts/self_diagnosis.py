@@ -1,12 +1,10 @@
 import psutil
 import time
 import sys
-<<<<<<< HEAD
 import json
 from pathlib import Path
 from datetime import datetime, timezone
-=======
->>>>>>> origin/main
+from workspace_root import get_workspace_root
 
 def self_diagnosis():
     print("🩺 Initiating Self-Diagnosis Protocol...")
@@ -19,22 +17,18 @@ def self_diagnosis():
     print(f"🧠 CPU Load: {cpu_percent}%")
     print(f"💾 Memory Usage: {ram_percent}% ({memory.used / (1024**3):.2f} GB used)")
     
-<<<<<<< HEAD
-    # 1.5 Check Rhythm Pulse (Mandatory by Rua's Structural principles)
-    bohm_path = Path(__file__).parent.parent / "outputs" / "bohm_analysis_latest.json"
+    # 1.5 Check Rhythm Pulse (Mandatory by Core's Structural principles)
+    bohm_path = get_workspace_root() / "outputs" / "bohm_analysis_latest.json"
     rhythm_pulse = "HEALTHY"
     if not bohm_path.exists() or (time.time() - bohm_path.stat().st_mtime > 7200):
         rhythm_pulse = "WEAK"
         print(f"🎵 Rhythm Pulse: {rhythm_pulse} (Bohm Analysis Stale or Missing)")
     else:
         print(f"🎵 Rhythm Pulse: {rhythm_pulse}")
-=======
->>>>>>> origin/main
     # 2. Determine Health State
     state = "HEALTHY"
     recommendation = "Continue operations."
     
-<<<<<<< HEAD
     if cpu_percent > 85 or ram_percent > 95:
         state = "CRITICAL"
         recommendation = "IMMEDIATE COOLING REQUIRED. Stop all motor functions."
@@ -57,24 +51,13 @@ def self_diagnosis():
         "recommendation": recommendation
     }
     
-    output_path = Path(__file__).parent.parent / "outputs" / "diagnosis_health_latest.json"
+    output_path = get_workspace_root() / "outputs" / "diagnosis_health_latest.json"
     output_path.parent.mkdir(parents=True, exist_ok=True)
     
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
     
     print(f"\n📊 Diagnosis Report saved to {output_path.name}:")
-=======
-    if cpu_percent > 80 or ram_percent > 90:
-        state = "CRITICAL"
-        recommendation = "IMMEDIATE COOLING REQUIRED. Stop all motor functions."
-    elif cpu_percent > 50 or ram_percent > 70:
-        state = "FATIGUED"
-        recommendation = "System load high. Suggest 'Deep Rest' (Dream Analysis) to consolidate memory."
-        
-    # 3. Report
-    print(f"\n📊 Diagnosis Report:")
->>>>>>> origin/main
     print(f"   State: {state}")
     print(f"   Recommendation: {recommendation}")
     

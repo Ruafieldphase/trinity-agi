@@ -17,11 +17,12 @@ from pathlib import Path
 from datetime import datetime
 from typing import List
 from sentence_transformers import SentenceTransformer
+from workspace_root import get_workspace_root
 
 # Configuration  
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
-AXIOMS_FILE = WORKSPACE_ROOT / "axioms_of_rua.md"
+AXIOMS_FILE = WORKSPACE_ROOT / "axioms_of_core.md"
 ORIGIN_DIR = WORKSPACE_ROOT / "ai_binoche_conversation_origin"
 
 def load_all_texts():
@@ -37,7 +38,7 @@ def load_all_texts():
         metadata_list.append({
             "source_file": str(AXIOMS_FILE),
             "is_axiom": True,
-            "summary": "Axioms of Rua"
+            "summary": "Axioms of Core"
         })
     
     # Origin conversations
@@ -105,7 +106,7 @@ def main():
                 "metadata": {
                     "source_file": meta["source_file"],
                     "is_axiom": meta["is_axiom"],
-                    "origin_type": "rua_conversation" if not meta["is_axiom"] else "constitution",
+                    "origin_type": "core_conversation" if not meta["is_axiom"] else "constitution",
                     "compression": "none_768"
                 }
             }

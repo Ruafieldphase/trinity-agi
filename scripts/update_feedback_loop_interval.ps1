@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Update AGI_FeedbackLoop scheduled task with adaptive interval
@@ -10,6 +10,9 @@
 param(
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
@@ -27,19 +30,19 @@ function Write-Log {
 }
 
 $taskName = "AGI_FeedbackLoop"
-$recommendationPath = "$PSScriptRoot\..\fdo_agi_repo\outputs\adaptive_feedback_interval.json"
+$recommendationPath = "$WorkspaceRoot\fdo_agi_repo\outputs\adaptive_feedback_interval.json"
 
 # Check if recommendation exists
 if (-not (Test-Path $recommendationPath)) {
     Write-Log "No recommendation found at: $recommendationPath" "WARN"
     Write-Log "Running adaptive scheduler..." "INFO"
     
-    $py = "$PSScriptRoot\..\fdo_agi_repo\.venv\Scripts\python.exe"
+    $py = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
     if (-not (Test-Path $py)) {
         $py = "python"
     }
     
-    & $py "$PSScriptRoot\..\fdo_agi_repo\scripts\rune\adaptive_feedback_scheduler.py"
+    & $py "$WorkspaceRoot\fdo_agi_repo\scripts\rune\adaptive_feedback_scheduler.py"
     
     if (-not (Test-Path $recommendationPath)) {
         Write-Log "Failed to generate recommendation" "ERROR"

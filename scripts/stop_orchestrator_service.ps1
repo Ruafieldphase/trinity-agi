@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Stop the background Full-Stack Orchestrator service started via start_orchestrator_service.ps1.

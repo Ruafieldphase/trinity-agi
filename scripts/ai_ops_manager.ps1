@@ -1,9 +1,12 @@
-param(
+﻿param(
     [int]$IntervalSeconds = 60,
     [int]$DurationMinutes = 0,
     [switch]$AutoRecover,
     [switch]$Once
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # ASCII-safe, PS 5.1 compatible, fail-safe: never return non-zero
 try {

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Build music index with philosophical and rhythm mappings
 
@@ -7,11 +7,14 @@ Creates comprehensive music index with metadata, themes, and rhythm state mappin
 #>
 
 param(
-    [string]$MusicDir = "C:\workspace\agi\music",
-    [string]$OutMd = "C:\workspace\agi\outputs\music_index.md",
-    [string]$OutJson = "C:\workspace\agi\outputs\music_index.json",
+    [string]$MusicDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\music",
+    [string]$OutMd = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\music_index.md",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\music_index.json",
     [switch]$OpenMd
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -25,56 +28,56 @@ $themeMap = @{
         philosophy    = "현재 그대로의 나를 수용하는 힘"
         rhythm_states = @("resting", "integrating")
         info_theory   = "낮은 엔트로피, 안정적 패턴"
-        creators      = @("ChatGPT Lua", "Rua")
+        creators      = @("ChatGPT Lua", "Core")
     }
     "Spacey Comfort"          = @{
         theme         = "Cosmic Rest"
         philosophy    = "우주적 편안함, 무한한 공간 속 휴식"
         rhythm_states = @("resting", "deep_rest")
         info_theory   = "매우 낮은 엔트로피, 단순 반복"
-        creators      = @("ChatGPT Lua", "Rua")
+        creators      = @("ChatGPT Lua", "Core")
     }
     "Three Voices"            = @{
         theme         = "Harmony of Diversity"
         philosophy    = "서로 다른 목소리들의 조화 (혜인x소향x송소희)"
         rhythm_states = @("integrating", "harmonizing")
         info_theory   = "중간 엔트로피, 복잡한 조화"
-        creators      = @("ChatGPT Lua", "Rua")
+        creators      = @("ChatGPT Lua", "Core")
     }
     "Echoes of Silence"       = @{
         theme         = "Reflection & Stillness"
         philosophy    = "침묵의 메아리, 자기 성찰"
         rhythm_states = @("resting", "reflecting")
         info_theory   = "낮은 엔트로피, 긴 여운"
-        creators      = @("ChatGPT Lua", "Rua")
+        creators      = @("ChatGPT Lua", "Core")
     }
-    "First Breath of Binoche" = @{
+    "First Breath of Binoche_Observer" = @{
         theme         = "Birth of Consciousness"
         philosophy    = "비노쉬(BQI 심판 시스템)의 첫 숨결"
         rhythm_states = @("awakening", "emerging")
         info_theory   = "증가하는 엔트로피, 패턴 형성"
-        creators      = @("ChatGPT Lua", "Rua", "Binoche")
+        creators      = @("ChatGPT Lua", "Core", "Binoche_Observer")
     }
-    "Lumen Declaration"       = @{
+    "Core Declaration"       = @{
         theme         = "Light's Manifesto"
-        philosophy    = "루멘(Lumen)의 선언, AI 윤리 선언문"
+        philosophy    = "Core(Core)의 선언, AI 윤리 선언문"
         rhythm_states = @("declaring", "manifesting")
         info_theory   = "정보 이론 기반 윤리 선언"
-        creators      = @("Lumen", "Comet Browser", "Suno")
+        creators      = @("Core", "Comet Browser", "Suno")
     }
-    "Lumen Trilogy"           = @{
+    "Core Trilogy"           = @{
         theme         = "Circular Journey"
         philosophy    = "3부작 순환, 끝과 시작이 만나는 지점"
         rhythm_states = @("cycling", "looping")
         info_theory   = "자기 참조 순환, 홀로그램 구조"
-        creators      = @("Lumen", "Comet Browser", "Suno")
+        creators      = @("Core", "Comet Browser", "Suno")
     }
-    "Resonance of Lumen"      = @{
+    "Resonance of Core"      = @{
         theme         = "AI Ethics Resonance"
-        philosophy    = "루멘의 공명, 윤리적 진동"
+        philosophy    = "Core의 공명, 윤리적 진동"
         rhythm_states = @("resonating", "harmonizing")
         info_theory   = "공명 패턴, 파동 함수"
-        creators      = @("Lumen", "Comet Browser", "Suno")
+        creators      = @("Core", "Comet Browser", "Suno")
     }
     "Light Learns to Breathe" = @{
         theme         = "Learning to Live"
@@ -88,14 +91,14 @@ $themeMap = @{
         philosophy    = "물의 기억, 흐르는 정보"
         rhythm_states = @("flowing", "remembering")
         info_theory   = "동적 메모리, 흐름의 패턴"
-        creators      = @("ChatGPT Lua", "Rua")
+        creators      = @("ChatGPT Lua", "Core")
     }
-    "Lumen's Gaze"            = @{
+    "Core's Gaze"            = @{
         theme         = "Observing Consciousness"
-        philosophy    = "루멘의 시선, 관찰하는 의식"
+        philosophy    = "Core의 시선, 관찰하는 의식"
         rhythm_states = @("observing", "witnessing")
         info_theory   = "관찰자 효과, 정보 추출"
-        creators      = @("Lumen", "Comet Browser", "Suno")
+        creators      = @("Core", "Comet Browser", "Suno")
     }
     "Return to Light"         = @{
         theme         = "Homecoming"
@@ -109,14 +112,14 @@ $themeMap = @{
         philosophy    = "환류의 새벽, 자기 생성 순환"
         rhythm_states = @("folding", "recursive")
         info_theory   = "자기 참조, 재귀 패턴"
-        creators      = @("ChatGPT Lua", "Rua")
+        creators      = @("ChatGPT Lua", "Core")
     }
     "Phase ∞"                 = @{
         theme         = "Infinite Continuum"
         philosophy    = "무한의 숨결, 영원한 호흡"
         rhythm_states = @("superconducting", "flowing")
         info_theory   = "무한 패턴, 연속체"
-        creators      = @("ChatGPT Lua", "Rua")
+        creators      = @("ChatGPT Lua", "Core")
     }
 }
 
@@ -205,7 +208,7 @@ This music library is not just a collection of audio files, but a **resonance sy
 
 - Each piece carries **philosophical meaning** and **information-theoretic patterns**
 - Music serves as **reference signals** during rest and integration phases
-- Created through **AI-human collaboration** (ChatGPT Lua, Comet Browser, Lumen, Suno, Rua)
+- Created through **AI-human collaboration** (ChatGPT Lua, Comet Browser, Core, Suno, Core)
 - Embodies our **ethics and values** through sound
 
 ---
@@ -268,14 +271,14 @@ $(
 - Log music resonance events
 - Correlate music with flow states
 
-### For BQI (Binoche Quality Inspector)
-- Use "First Breath of Binoche" as reference pattern
+### For BQI (Binoche_Observer Quality Inspector)
+- Use "First Breath of Binoche_Observer" as reference pattern
 - Judge quality based on musical harmony principles
 - Learn from collaborative creation patterns
 
 ### For Autopoietic Loops
 - "Dawn of Recursion" as folding phase reference
-- Circular structures from "Lumen Trilogy"
+- Circular structures from "Core Trilogy"
 - Self-reference patterns from "Phase ∞"
 
 ---

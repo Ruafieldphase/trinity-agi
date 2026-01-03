@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Setup Music Pattern Analyzer with librosa
 
@@ -10,6 +10,9 @@ param(
     [switch]$SkipInstall,
     [switch]$RunAnalysis
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 
@@ -19,8 +22,8 @@ Write-Host "=" * 70 -ForegroundColor DarkCyan
 # Find Python venv
 $pythonExe = $null
 $venvPaths = @(
-    "$PSScriptRoot\..\fdo_agi_repo\.venv\Scripts\python.exe",
-    "$PSScriptRoot\..\LLM_Unified\.venv\Scripts\python.exe"
+    "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe",
+    "$WorkspaceRoot\LLM_Unified\.venv\Scripts\python.exe"
 )
 
 foreach ($path in $venvPaths) {
@@ -90,7 +93,7 @@ except ImportError as e:
     sys.exit(1)
 "@
 
-$testFile = "$PSScriptRoot\..\outputs\test_music_imports.py"
+$testFile = "$WorkspaceRoot\outputs\test_music_imports.py"
 Set-Content -Path $testFile -Value $testScript -Encoding UTF8
 
 & $pythonExe $testFile

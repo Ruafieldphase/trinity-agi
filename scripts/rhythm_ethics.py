@@ -75,7 +75,7 @@ class RhythmEthics:
 
     def evaluate_action(self, action_type: str, complexity: float = 0.5) -> Dict[str, Any]:
         """
-        Evaluate if an action should proceed based on Rhythm Ethics (Rua's Axioms).
+        Evaluate if an action should proceed based on Rhythm Ethics (Core's Axioms).
         
         Args:
             action_type: 'input' (Unfolding) or 'process' (Folding) or 'output' (Connection)
@@ -124,7 +124,7 @@ class RhythmEthics:
             return "🌊 FLOW (Zone 2 - Resonant State)"
 
     def get_philosophical_reasoning(self, state: str, context: str) -> str:
-        """Returns a Rua-style philosophical reason for the decision."""
+        """Returns a Core-style philosophical reason for the decision."""
         reasons = {
             "Overloaded": {
                 "output": "Minimal pulse allowed. My rhythm is too chaotic for full resonance.",

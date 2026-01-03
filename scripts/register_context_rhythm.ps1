@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Register scheduled tasks for automatic context switching (daily rhythm).
@@ -24,6 +24,9 @@ param(
     [switch]$Unregister,
     [switch]$Status
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 

@@ -4,9 +4,10 @@ Add Orchestration Section to Monitoring Dashboard
 """
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Import orchestration bridge
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.insert(0, str(WORKSPACE_ROOT / "scripts"))
 
 from orchestration_bridge import OrchestrationBridge

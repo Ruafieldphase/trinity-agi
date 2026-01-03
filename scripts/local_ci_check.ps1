@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # Local CI validation script - Run before pushing
 # Usage: .\scripts\local_ci_check.ps1 [-Fast]
 

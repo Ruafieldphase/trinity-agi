@@ -4,7 +4,8 @@ AGI가 스스로 호흡하며 자율 행동을 합니다.
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_root import get_workspace_root
+sys.path.insert(0, str(get_workspace_root()))
 
 import time
 from agi_core.self_acquisition_loop import run_self_acquisition_cycle, SelfAcquisitionConfig

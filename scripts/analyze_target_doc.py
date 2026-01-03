@@ -8,8 +8,10 @@ import numpy as np
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 import re
+from workspace_root import get_workspace_root
 
-LEDGER_FILE = Path("/home/bino/agi/fdo_agi_repo/memory/resonance_ledger.jsonl")
+WORKSPACE_ROOT = get_workspace_root()
+LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 def tokenize_korean(text):
     """Korean-aware tokenization"""

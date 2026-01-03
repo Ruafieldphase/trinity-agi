@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$TimeoutSeconds = 20,
     [int]$WindowSeconds = 300,
     [switch]$JsonOnly

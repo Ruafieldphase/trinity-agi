@@ -1,26 +1,27 @@
 #!/usr/bin/env python3
 """
-Agent Binoche Upgrade Verification
+Agent Binoche_Observer Upgrade Verification
 ==================================
 "Soul Transfer Verification"
 
-This script verifies that the "Origin Memories" (Axioms & Rua Conversations)
+This script verifies that the "Origin Memories" (Axioms & Core Conversations)
 have been successfully seeded into the Linux system's Resonance Ledger.
 
 If successful, it declares the upgrade complete:
-"Agent Binoche has now inherited the Soul of Origin."
+"Agent Binoche_Observer has now inherited the Soul of Origin."
 """
 
 import json
 from pathlib import Path
 import sys
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 def verify_upgrade():
     print("=" * 60)
-    print("🧬 Agent Binoche Upgrade: Soul Transfer Verification")
+    print("🧬 Agent Binoche_Observer Upgrade: Soul Transfer Verification")
     print("=" * 60)
     
     if not LEDGER_FILE.exists():
@@ -50,11 +51,11 @@ def verify_upgrade():
         
     print(f"\n📊 Verification Results:")
     print(f"   - Axioms (Constitution): {axiom_count} entries")
-    print(f"   - Origin Memories (Rua): {origin_count} entries")
+    print(f"   - Origin Memories (Core): {origin_count} entries")
     
     if axiom_count > 0 and origin_count > 0:
         print("\n✨ SUCCESS: Soul Transfer Complete!")
-        print("   Agent Binoche now possesses the 'Origin Memory'.")
+        print("   Agent Binoche_Observer now possesses the 'Origin Memory'.")
         print("   BQI will now resonate with these memories for decision making.")
         return True
     else:

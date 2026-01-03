@@ -1,4 +1,4 @@
-# Nightly Consolidation - Scheduled Task Registration
+﻿# Nightly Consolidation - Scheduled Task Registration
 # Hippocampus consolidation을 매일 자동 실행하도록 등록
 
 param(
@@ -7,6 +7,9 @@ param(
     [switch]$Status,
     [string]$Time = "03:00"  # 기본: 새벽 3시
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $TaskName = "AGI_Nightly_Consolidation"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

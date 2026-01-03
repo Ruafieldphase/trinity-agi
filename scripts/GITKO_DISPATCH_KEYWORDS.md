@@ -18,7 +18,7 @@ Korean → English
 - 보고서 → report
 - 인수인계 → handoff
 
-## Sian (Code Assist & Improvement)
+## Shion (Code Assist & Improvement)
 
 Korean → English
 
@@ -40,7 +40,7 @@ Korean → English
 - 분산 → distributed
 - 전체 작업 → comprehensive
 - 종합 → comprehensive
-- 루빛과 시안 → both review and improve
+- 루빛과 Shion → both review and improve
 
 ## Gitko (Direct Implementation)
 
@@ -63,6 +63,6 @@ When making requests in Korean, the system will match based on context.
 For best results, include action verbs that clearly indicate the work type:
 
 - "검토해줘" → Lubit
-- "개선 제안" → Sian
+- "개선 제안" → Shion
 - "리뷰하고 개선" → Parallel
 - "구현해줘" → Gitko

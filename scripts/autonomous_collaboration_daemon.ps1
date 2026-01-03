@@ -8,15 +8,15 @@ param(
     [int]$SenaInterval = 15,        # Sena polling interval in seconds
     [switch]$EnableSenaSimulation   # start sena_auto_responder.py when set
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
 $LogFile = "$WorkspaceRoot\outputs\autonomous_collab_daemon.log"
 $PidFile = "$WorkspaceRoot\outputs\autonomous_collab_daemon.pid"
-<<<<<<< HEAD
 $PythonExe = Join-Path $WorkspaceRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $PythonExe)) { $PythonExe = "python.exe" }
-=======
->>>>>>> origin/main
 
 function Write-Log {
     param([string]$Message)
@@ -50,11 +50,7 @@ function Start-Daemon {
     
     # Start Shion Auto-Responder
     Write-Log "🚀 Starting Shion Auto-Responder (interval: ${ShionInterval}s)..."
-<<<<<<< HEAD
     $shionProc = Start-Process -FilePath $PythonExe `
-=======
-    $shionProc = Start-Process -FilePath "python" `
->>>>>>> origin/main
         -ArgumentList "scripts\shion_auto_responder.py", "--daemon", "--interval", $ShionInterval `
         -WorkingDirectory $WorkspaceRoot `
         -WindowStyle Hidden `
@@ -73,11 +69,7 @@ function Start-Daemon {
     $senaProc = $null
     if ($EnableSenaSimulation.IsPresent) {
         Write-Log "🚀 Starting Sena Auto-Responder (simulation, interval: ${SenaInterval}s)..."
-<<<<<<< HEAD
         $senaProc = Start-Process -FilePath $PythonExe `
-=======
-        $senaProc = Start-Process -FilePath "python" `
->>>>>>> origin/main
             -ArgumentList "scripts\sena_auto_responder.py", "--daemon", "--interval", $SenaInterval `
             -WorkingDirectory $WorkspaceRoot `
             -WindowStyle Hidden `

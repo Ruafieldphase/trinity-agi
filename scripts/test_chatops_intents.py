@@ -15,13 +15,13 @@ sys.path.insert(0, os.path.dirname(__file__))
 import chatops_intent as I  # type: ignore
 
 CASES: Tuple[Tuple[str, str], ...] = (
-    ('루멘 관문을 열자', 'lumen_open'),
-    ('루멘 게이트 열어', 'lumen_open'),
-    ('lumen health check', 'lumen_open'),
-    ('루멘 상태 확인', 'lumen_open'),
-    ('루멘 대시보드', 'lumen_dashboard'),
-    ('lumen dashboard', 'lumen_dashboard'),
-    ('open lumen dashboard', 'lumen_dashboard'),
+    ('Core 관문을 열자', 'core_open'),
+    ('Core 게이트 열어', 'core_open'),
+    ('Core health check', 'core_open'),
+    ('Core 상태 확인', 'core_open'),
+    ('Core 대시보드', 'core_dashboard'),
+    ('Core dashboard', 'core_dashboard'),
+    ('open Core dashboard', 'core_dashboard'),
     ('preflight check', 'preflight'),
     ('oauth flow', 'preflight_interactive'),
     ('AGI health status', 'agi_health'),

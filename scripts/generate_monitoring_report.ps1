@@ -1,4 +1,4 @@
-# Generate Monitoring Report: Comprehensive AGI + Lumen analytics
+﻿# Generate Monitoring Report: Comprehensive AGI + Core analytics
 #
 # QUICK USAGE:
 #   generate_monitoring_report.ps1 -Hours 24        # last 24h
@@ -8,26 +8,30 @@
 #   - Parameters (line 1-20)
 #   - Threshold Config (line 25-80)
 #   - AGI Ledger Parsing (line 85-500)
-#   - Lumen Analysis (line 500-1000)
+#   - Core Analysis (line 500-1000)
 #   - Report Generation (line 1000-2000)
 #   - HTML Dashboard (line 2000+)
 
 param(
     [int]$Hours = 24,
-    [string]$LogPath = "C:\workspace\agi\outputs\status_snapshots.jsonl",
-    [string]$OutMarkdown = "C:\workspace\agi\outputs\monitoring_report_latest.md",
-    [string]$OutJson = "C:\workspace\agi\outputs\monitoring_metrics_latest.json",
-    [string]$OutCsv = "C:\workspace\agi\outputs\monitoring_timeseries_latest.csv",
+    [string]$LogPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\status_snapshots.jsonl",
+    [string]$OutMarkdown = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\monitoring_report_latest.md",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\monitoring_metrics_latest.json",
+    [string]$OutCsv = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\monitoring_timeseries_latest.csv",
     [switch]$SkipCsv,
-    [string]$OutEventsCsv = "C:\workspace\agi\outputs\monitoring_events_latest.csv",
+    [string]$OutEventsCsv = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\monitoring_events_latest.csv",
     [switch]$SkipEvents,
-    [string]$OutHtml = "C:\workspace\agi\outputs\monitoring_dashboard_latest.html",
+    [string]$OutHtml = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\monitoring_dashboard_latest.html",
     [switch]$SkipHtml,
-    [string]$ThresholdConfigPath = "C:\workspace\agi\config\monitoring_thresholds.json",
+    [string]$ThresholdConfigPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\config\monitoring_thresholds.json",
     [int]$PeakStart = 9,
     [int]$PeakEnd = 18,
     [int]$SparklineLen = 30
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8; $OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}
@@ -81,7 +85,7 @@ function Load-ThresholdConfig {
 }
 function Parse-AGILedger {
     param(
-        [string]$Path = "C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl",
+        [string]$Path = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\memory\resonance_ledger.jsonl",
         [datetime]$Since
     )
     
@@ -463,8 +467,8 @@ function Get-SessionSummaryMetrics {
 function Get-AGIMetricsFromPython {
     param(
         [double]$Hours = 1.0,
-        [string]$PythonExe = "C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe",
-        [string]$DashboardScript = "C:\workspace\agi\fdo_agi_repo\scripts\ops_dashboard.py"
+        [string]$PythonExe = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\.venv\Scripts\python.exe",
+        [string]$DashboardScript = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\scripts\ops_dashboard.py"
     )
     
     try {
@@ -832,22 +836,22 @@ function Count-AdvancedByChannel {
             foreach ($issue in $snap.Issues) {
                 $text = [string]$issue
                 # Baseline Alerts
-                $m = [regex]::Match($text, '^BASELINE ALERT:\s*(Local LLM|Cloud AI|Lumen Gateway)\b')
+                $m = [regex]::Match($text, '^BASELINE ALERT:\s*(Local LLM|Cloud AI|Core Gateway)\b')
                 if ($m.Success) {
                     switch ($m.Groups[1].Value) {
                         'Local LLM' { $res.Local.BaselineAlerts++ }
                         'Cloud AI' { $res.Cloud.BaselineAlerts++ }
-                        'Lumen Gateway' { $res.Gateway.BaselineAlerts++ }
+                        'Core Gateway' { $res.Gateway.BaselineAlerts++ }
                     }
                     continue
                 }
                 # Adaptive Alerts
-                $m = [regex]::Match($text, '^ADAPTIVE ALERT:\s*(Local LLM|Cloud AI|Lumen Gateway)\b')
+                $m = [regex]::Match($text, '^ADAPTIVE ALERT:\s*(Local LLM|Cloud AI|Core Gateway)\b')
                 if ($m.Success) {
                     switch ($m.Groups[1].Value) {
                         'Local LLM' { $res.Local.AdaptiveAlerts++ }
                         'Cloud AI' { $res.Cloud.AdaptiveAlerts++ }
-                        'Lumen Gateway' { $res.Gateway.AdaptiveAlerts++ }
+                        'Core Gateway' { $res.Gateway.AdaptiveAlerts++ }
                     }
                     continue
                 }
@@ -858,22 +862,22 @@ function Count-AdvancedByChannel {
             foreach ($warn in $snap.Warnings) {
                 $text = [string]$warn
                 # Baseline Warns
-                $m = [regex]::Match($text, '^BASELINE WARN:\s*(Local LLM|Cloud AI|Lumen Gateway)\b')
+                $m = [regex]::Match($text, '^BASELINE WARN:\s*(Local LLM|Cloud AI|Core Gateway)\b')
                 if ($m.Success) {
                     switch ($m.Groups[1].Value) {
                         'Local LLM' { $res.Local.BaselineWarns++ }
                         'Cloud AI' { $res.Cloud.BaselineWarns++ }
-                        'Lumen Gateway' { $res.Gateway.BaselineWarns++ }
+                        'Core Gateway' { $res.Gateway.BaselineWarns++ }
                     }
                     continue
                 }
                 # Adaptive Warns
-                $m = [regex]::Match($text, '^ADAPTIVE WARN:\s*(Local LLM|Cloud AI|Lumen Gateway)\b')
+                $m = [regex]::Match($text, '^ADAPTIVE WARN:\s*(Local LLM|Cloud AI|Core Gateway)\b')
                 if ($m.Success) {
                     switch ($m.Groups[1].Value) {
                         'Local LLM' { $res.Local.AdaptiveWarns++ }
                         'Cloud AI' { $res.Cloud.AdaptiveWarns++ }
-                        'Lumen Gateway' { $res.Gateway.AdaptiveWarns++ }
+                        'Core Gateway' { $res.Gateway.AdaptiveWarns++ }
                     }
                     continue
                 }
@@ -1215,8 +1219,8 @@ Write-Host "Parsing AGI Ledger..." -ForegroundColor Cyan
 
 # Try to get comprehensive metrics from Python collector first
 $pythonMetrics = $null
-$pythonExePath = "C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe"
-$dashboardScriptPath = "C:\workspace\agi\fdo_agi_repo\scripts\ops_dashboard.py"
+$pythonExePath = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
+$dashboardScriptPath = "$WorkspaceRoot\fdo_agi_repo\scripts\ops_dashboard.py"
 
 # Load thresholds configuration (for alerts and UI consumption)
 $thresholdConfig = Load-ThresholdConfig -Path $ThresholdConfigPath
@@ -1645,7 +1649,7 @@ $reportLines += ""
 
 $reportLines += "  Local LLM:     $localAvailStr avail  |  $localMeanStr mean"
 $reportLines += "  Cloud AI:      $cloudAvailStr avail  |  $cloudMeanStr mean"
-$reportLines += "  Lumen Gateway: $gatewayAvailStr avail  |  $gatewayMeanStr mean"
+$reportLines += "  Core Gateway: $gatewayAvailStr avail  |  $gatewayMeanStr mean"
 
 # Show Resonance Policy summary (if available)
 if ($agiMetrics.Policy) {
@@ -1720,8 +1724,8 @@ if ($evalMinQ -ne $null) {
 
 # Show Feedback Loop stats (if available)
 try {
-    $ytFeedbackPath = "C:\workspace\agi\fdo_agi_repo\outputs\youtube_feedback_bqi.jsonl"
-    $rpaFeedbackPath = "C:\workspace\agi\fdo_agi_repo\outputs\rpa_feedback_bqi.jsonl"
+    $ytFeedbackPath = "$WorkspaceRoot\fdo_agi_repo\outputs\youtube_feedback_bqi.jsonl"
+    $rpaFeedbackPath = "$WorkspaceRoot\fdo_agi_repo\outputs\rpa_feedback_bqi.jsonl"
     $ytCount = 0
     $rpaCount = 0
     if (Test-Path $ytFeedbackPath) {
@@ -1885,7 +1889,7 @@ function Add-ChannelSection([string]$Name, [hashtable]$Stats) {
 
 Add-ChannelSection -Name "Local LLM (LM Studio)" -Stats $localStats
 Add-ChannelSection -Name "Cloud AI (ion-api)" -Stats $cloudStats
-Add-ChannelSection -Name "Lumen Gateway" -Stats $gatewayStats
+Add-ChannelSection -Name "Core Gateway" -Stats $gatewayStats
 
 if ($hasLocal2 -and $local2Stats.Count -gt 0) {
     $reportLines += "### Optional Channels"
@@ -2189,7 +2193,7 @@ if ($null -ne $cloudStats.Availability -and $cloudStats.Availability -lt 95) {
 
 if ($null -ne $gatewayStats.Availability -and $gatewayStats.Availability -lt 95) {
     $severity = if ($gatewayStats.Availability -lt 90) { "[HIGH]" } else { "[MEDIUM]" }
-    $recommendations += "- **$severity Lumen Gateway**: Low availability ($($gatewayStats.Availability)%)."
+    $recommendations += "- **$severity Core Gateway**: Low availability ($($gatewayStats.Availability)%)."
     $recommendations += "  - Action: Verify routing configuration and backend connections"
     $recommendations += "  - Action: Check gateway process health and logs"
     $recommendations += "  - Action: Test backend endpoints independently"
@@ -2529,7 +2533,7 @@ if (-not $SkipEvents) {
                     $level = "ALERT"
                     $type = "Other"
                     $channel = ""
-                    $m = [regex]::Match($msg, '^(BASELINE ALERT|ADAPTIVE ALERT):\s*(Local LLM|Cloud AI|Lumen Gateway)')
+                    $m = [regex]::Match($msg, '^(BASELINE ALERT|ADAPTIVE ALERT):\s*(Local LLM|Cloud AI|Core Gateway)')
                     if ($m.Success) {
                         $type = ($m.Groups[1].Value -replace ' ', '') # BaselineAlert/AdaptiveAlert
                         $channel = $m.Groups[2].Value
@@ -2547,7 +2551,7 @@ if (-not $SkipEvents) {
                     $level = "WARN"
                     $type = "Other"
                     $channel = ""
-                    $m = [regex]::Match($msg, '^(BASELINE WARN|ADAPTIVE WARN):\s*(Local LLM|Cloud AI|Lumen Gateway)')
+                    $m = [regex]::Match($msg, '^(BASELINE WARN|ADAPTIVE WARN):\s*(Local LLM|Cloud AI|Core Gateway)')
                     if ($m.Success) {
                         $type = ($m.Groups[1].Value -replace ' ', '') # BaselineWarn/AdaptiveWarn
                         $channel = $m.Groups[2].Value

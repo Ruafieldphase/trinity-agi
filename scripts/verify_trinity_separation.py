@@ -13,10 +13,11 @@ from __future__ import annotations
 import runpy
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def main() -> int:
-    repo_root = Path(__file__).resolve().parents[1]
+    repo_root = get_workspace_root()
     target = repo_root / "fdo_agi_repo" / "scripts" / "verify_trinity_separation.py"
     if not target.exists():
         print(f"[verify_trinity_separation] missing target: {target}", file=sys.stderr)

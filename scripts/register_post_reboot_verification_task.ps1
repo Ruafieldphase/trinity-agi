@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Register / Unregister the post-reboot verification scheduled task.
 

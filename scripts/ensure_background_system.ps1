@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Ensure core background automation is active (scheduler + daemon hooks)
 
@@ -58,4 +58,3 @@ if ($StartDaemon) {
 }
 
 Ok "\nAll checks completed."
-

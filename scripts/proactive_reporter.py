@@ -11,9 +11,10 @@ import logging
 import time
 from pathlib import Path
 from typing import Dict, Any
+from workspace_root import get_workspace_root
 
 # Paths
-WORKSPACE = Path(__file__).resolve().parents[1]
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 SYNC_CACHE = OUTPUTS / "sync_cache"
 BOHM_FILE = OUTPUTS / "bohm_analysis_latest.json"

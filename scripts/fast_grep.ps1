@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Lightning-fast grep using Everything CLI + StreamReader
@@ -38,6 +38,9 @@ param(
     [Parameter(Mandatory = $false)]
     [string]$OutJson
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'

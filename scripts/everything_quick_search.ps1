@@ -1,4 +1,4 @@
-# Everything Quick Search (CLI-based)
+﻿# Everything Quick Search (CLI-based)
 # Ultra-fast file search using Everything Command Line Interface
 # Requires: Everything running + es.exe in scripts folder
 

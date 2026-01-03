@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, Optional
+from workspace_root import get_workspace_root
 
 
 class ContextMonitor:
@@ -142,7 +143,7 @@ def check_and_auto_switch(
         전환이 필요한지 여부
     """
     if workspace_root is None:
-        workspace_root = Path(__file__).parent.parent
+        workspace_root = get_workspace_root()
     
     monitor = ContextMonitor(workspace_root, max_tokens)
     status = monitor.get_status()
@@ -219,7 +220,7 @@ def main():
     args = parser.parse_args()
     
     if args.status_only:
-        workspace_root = Path(__file__).parent.parent
+        workspace_root = get_workspace_root()
         monitor = ContextMonitor(workspace_root, args.max_tokens)
         status = monitor.get_status()
         print(json.dumps(status, indent=2, ensure_ascii=False))

@@ -1,10 +1,14 @@
-# Add Performance Metrics to Unified Dashboard
+﻿# Add Performance Metrics to Unified Dashboard
 # Reads performance benchmark log and integrates into status dashboard
 
 param(
-    [string]$BenchmarkLog = "$PSScriptRoot\..\outputs\performance_benchmark_log.jsonl",
-    [string]$OutJson = "$PSScriptRoot\..\outputs\unified_dashboard_latest.json"
+    [string]$BenchmarkLog = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\performance_benchmark_log.jsonl",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\unified_dashboard_latest.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
@@ -24,10 +28,10 @@ if (Test-Path $BenchmarkLog) {
         $latestBench = Get-Content $BenchmarkLog -Tail 1 | ConvertFrom-Json
         $dashboard.performance = @{
             timestamp      = $latestBench.timestamp
-            lumen          = @{
-                available      = $latestBench.lumen.available
-                avg_latency_ms = $latestBench.lumen.avg_ms
-                success_rate   = $latestBench.lumen.success_rate
+            Core          = @{
+                available      = $latestBench.Core.available
+                avg_latency_ms = $latestBench.Core.avg_ms
+                success_rate   = $latestBench.Core.success_rate
             }
             lm_studio      = @{
                 available      = $latestBench.lm_studio.available
@@ -35,16 +39,16 @@ if (Test-Path $BenchmarkLog) {
                 tokens_per_sec = $latestBench.lm_studio.tokens_per_sec
                 success_rate   = $latestBench.lm_studio.success_rate
             }
-            recommendation = if ($latestBench.lumen.available -and $latestBench.lm_studio.available) {
-                if ($latestBench.lumen.avg_ms -lt $latestBench.lm_studio.avg_ms) {
-                    "Use Lumen (faster by $([math]::Round($latestBench.lm_studio.avg_ms - $latestBench.lumen.avg_ms, 2))ms)"
+            recommendation = if ($latestBench.Core.available -and $latestBench.lm_studio.available) {
+                if ($latestBench.Core.avg_ms -lt $latestBench.lm_studio.avg_ms) {
+                    "Use Core (faster by $([math]::Round($latestBench.lm_studio.avg_ms - $latestBench.Core.avg_ms, 2))ms)"
                 }
                 else {
-                    "Use LM Studio (faster by $([math]::Round($latestBench.lumen.avg_ms - $latestBench.lm_studio.avg_ms, 2))ms)"
+                    "Use LM Studio (faster by $([math]::Round($latestBench.Core.avg_ms - $latestBench.lm_studio.avg_ms, 2))ms)"
                 }
             }
-            elseif ($latestBench.lumen.available) {
-                "Lumen only"
+            elseif ($latestBench.Core.available) {
+                "Core only"
             }
             elseif ($latestBench.lm_studio.available) {
                 "LM Studio only"
@@ -61,7 +65,7 @@ if (Test-Path $BenchmarkLog) {
 }
 
 # 1b. Load routing policy if present
-$policyPath = "$PSScriptRoot\..\outputs\routing_policy.json"
+$policyPath = "$WorkspaceRoot\outputs\routing_policy.json"
 if (Test-Path $policyPath) {
     try {
         $policy = Get-Content $policyPath | ConvertFrom-Json
@@ -113,7 +117,7 @@ catch {
 }
 
 # 4. Check recent ledger activity (AGI)
-$ledgerPath = "C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl"
+$ledgerPath = "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl"
 if (Test-Path $ledgerPath) {
     try {
         $recentEntries = Get-Content $ledgerPath -Tail 100 | Where-Object { $_ -ne '' }
@@ -131,7 +135,7 @@ if (Test-Path $ledgerPath) {
 }
 
 # 5. Check autopoietic loop health
-$autoReportPath = "C:\workspace\agi\outputs\autopoietic_loop_report_24h.md"
+$autoReportPath = "$WorkspaceRoot\outputs\autopoietic_loop_report_24h.md"
 if (Test-Path $autoReportPath) {
     $dashboard.recent_activity.autopoietic_report_age_hours = [math]::Round(((Get-Date) - (Get-Item $autoReportPath).LastWriteTime).TotalHours, 1)
     Write-Host "  ✓ Autopoietic report checked" -ForegroundColor Green
@@ -141,7 +145,7 @@ if (Test-Path $autoReportPath) {
 $healthScore = 0
 $maxScore = 5
 
-if ($dashboard.performance.lumen.available -or $dashboard.performance.lm_studio.available) { $healthScore++ }
+if ($dashboard.performance.Core.available -or $dashboard.performance.lm_studio.available) { $healthScore++ }
 if ($dashboard.system_status.queue.online) { $healthScore++ }
 if ($dashboard.system_status.scheduled_tasks.ready -gt 0) { $healthScore++ }
 if ($dashboard.recent_activity.ledger_entries_24h -gt 0) { $healthScore++ }

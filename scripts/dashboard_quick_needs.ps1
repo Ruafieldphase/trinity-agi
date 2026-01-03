@@ -1,4 +1,4 @@
-# Quick Performance Dashboard - Needs Attention Only
+﻿# Quick Performance Dashboard - Needs Attention Only
 # Shows only systems requiring attention with band-filtered top attention list
 
 param(

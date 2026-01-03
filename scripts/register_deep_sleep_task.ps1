@@ -1,4 +1,4 @@
-# Deep Sleep Consolidation - Scheduled Task Registration (compat)
+﻿# Deep Sleep Consolidation - Scheduled Task Registration (compat)
 # docs/AGENT_HANDOFF.md의 `scripts/register_deep_sleep_task.ps1` 참조를 충족시키는 래퍼.
 # 실제 실행은 `scripts/deep_sleep_consolidation.py`를 호출한다.
 
@@ -8,6 +8,9 @@ param(
     [switch]$Status,
     [string]$Time = "03:00"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $TaskName = "AGI_Deep_Sleep_Consolidation"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot
@@ -121,4 +124,3 @@ if ($Register) {
     Write-Host "  상태:   .\\scripts\\register_deep_sleep_task.ps1 -Status" -ForegroundColor Gray
     Write-Host "  시간변경: .\\scripts\\register_deep_sleep_task.ps1 -Register -Time '04:00'" -ForegroundColor Gray
 }
-

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import json, pathlib, sys
+from workspace_root import get_workspace_root
 from statistics import mean
 
-LEDGER = pathlib.Path(r'C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl')
+LEDGER = get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 COUNT = 50
 if not LEDGER.exists():
     print('Ledger not found:', LEDGER)

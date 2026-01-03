@@ -1,4 +1,4 @@
-# Weekly Batch Validation - Automated Task Scheduler
+﻿# Weekly Batch Validation - Automated Task Scheduler
 # =================================================
 # 
 # Purpose: Run comprehensive AGI batch validation every Sunday at midnight

@@ -24,6 +24,7 @@ import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 try:
     from dotenv import load_dotenv
@@ -31,7 +32,7 @@ except Exception:
     load_dotenv = None
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = get_workspace_root()
 OUTPUTS = ROOT / "outputs"
 OUT = OUTPUTS / "natural_rhythm_clock_latest.json"
 STATE = OUTPUTS / "natural_rhythm_clock_state.json"

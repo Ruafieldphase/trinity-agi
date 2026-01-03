@@ -3,7 +3,7 @@
 Unified Orchestrator v2.0 - 모든 시스템을 통합하는 중앙 컨트롤러
 
 역할:
-  1. LUMEN 워크플로우 관리 (어디에 있는가?)
+  1. Core 워크플로우 관리 (어디에 있는가?)
   2. 현재 노드 상태 추적
   3. LUON 규칙으로 필요한 페르소나 결정
   4. BackgroundMonitor와 ConcurrentScheduler 조율
@@ -16,7 +16,7 @@ Unified Orchestrator v2.0 - 모든 시스템을 통합하는 중앙 컨트롤러
   │   UnifiedOrchestrator v2.0      │
   │   (모든 시스템의 두뇌)           │
   └─────────────────────────────────┘
-    ├─ WorkflowEngine (LUMEN)
+    ├─ WorkflowEngine (Core)
     ├─ PersonaRouter (LUON)
     ├─ TaskScheduler (ConcurrentScheduler)
     ├─ DataPipeline (AGI 데이터)
@@ -37,7 +37,7 @@ from pathlib import Path
 
 
 class NodeType(Enum):
-    """LUMEN 워크플로우 노드 타입"""
+    """Core 워크플로우 노드 타입"""
     USER_CLIP = "user_clip"          # 사용자 입력
     SAFE_PRE = "safe_pre"            # 사전 안전 검사
     META = "meta"                    # 메타인지
@@ -55,7 +55,7 @@ class PersonaType(Enum):
     """페르소나 타입"""
     SENA = "sena"
     LUBIT = "lubit"
-    LUMEN = "lumen"
+    Core = "Core"
     RUNE = "rune"
     GITCODE = "gitcode"
 
@@ -148,7 +148,7 @@ def {function_name}():
 
 
 class WorkflowNode:
-    """LUMEN 워크플로우 노드"""
+    """Core 워크플로우 노드"""
 
     def __init__(
         self,
@@ -175,7 +175,7 @@ class UnifiedOrchestrator:
     모든 시스템을 통합하는 중앙 오케스트레이터
 
     역할:
-      1. LUMEN 워크플로우 실행
+      1. Core 워크플로우 실행
       2. LUON 페르소나 라우팅
       3. 에이전트 자동 활성화
       4. 병렬 작업 조율
@@ -196,7 +196,7 @@ class UnifiedOrchestrator:
         print("[UnifiedOrchestrator v2.0] Initialized with GitHub Copilot Support")
 
     def _create_workflow(self) -> List[WorkflowNode]:
-        """LUMEN 워크플로우 생성"""
+        """Core 워크플로우 생성"""
         return [
             WorkflowNode("U1", NodeType.USER_CLIP, description="User input"),
             WorkflowNode("S0", NodeType.SAFE_PRE, description="Pre-safety check"),

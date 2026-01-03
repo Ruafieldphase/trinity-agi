@@ -1,4 +1,4 @@
-# LM Studio 성능 최적화 및 모니터링 스크립트
+﻿# LM Studio 성능 최적화 및 모니터링 스크립트
 # 목적: CPU 점유율 관리, 메모리 누수 감시, 자동 최적화
 
 param(
@@ -7,6 +7,10 @@ param(
     [int]$MemoryThreshold = 2048, # 메모리 임계값 (MB)
     [int]$MonitoringInterval = 30  # 모니터링 간격 (초)
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 # 색상 정의
 $colors = @{
@@ -123,7 +127,7 @@ function Optimize-LMStudio {
 function Monitor-LMStudio {
     Write-Log "LM Studio 모니터링 시작 (간격: ${MonitoringInterval}초, CPU 임계값: ${CPUThreshold}%, 메모리 임계값: ${MemoryThreshold}MB)" "Info"
 
-    $logFile = "C:\workspace\agi\outputs\lm_studio_monitoring.log"
+    $logFile = "$WorkspaceRoot\outputs\lm_studio_monitoring.log"
     $startTime = Get-Date
 
     while ($true) {

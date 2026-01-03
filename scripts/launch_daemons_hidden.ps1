@@ -1,8 +1,11 @@
-# Launch AGI daemons in hidden mode (no console windows)
+﻿# Launch AGI daemons in hidden mode (no console windows)
 # This script uses pythonw.exe to run Python scripts without console windows
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $pythonw = "pythonw"
-$scriptsPath = "C:\workspace\agi\scripts"
+$scriptsPath = "$WorkspaceRoot\scripts"
 
 Write-Host "Launching AGI daemons in hidden mode..."
 

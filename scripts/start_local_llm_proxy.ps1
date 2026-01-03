@@ -1,46 +1,50 @@
-# 로컬 LLM ?�록???�작 ?�크립트
+﻿# ARI Engine (Local LLM) 시작 스크립트 (UTF-8 BOM)
 param(
     [int]$Port = 8080,
-    [string]$LumenUrl = "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat"
+    [string]$CoreUrl = "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=" -ForegroundColor Cyan -NoNewline
-Write-Host ("=" * 59) -ForegroundColor Cyan
-Write-Host "로컬 LLM ?�록???�버 ?�작" -ForegroundColor Cyan
-Write-Host "=" -ForegroundColor Cyan -NoNewline
-Write-Host ("=" * 59) -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "ARI Engine (Local LLM) 시작" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
 
-$pythonPath = "C:\workspace\agi\LLM_Unified\.venv\Scripts\python.exe"
-$proxyScript = "C:\workspace\agi\scripts\local_llm_proxy.py"
+$pythonPath = Join-Path $WorkspaceRoot ".venv\Scripts\pythonw.exe"
+if (-not (Test-Path $pythonPath)) {
+    $pythonPath = Join-Path $WorkspaceRoot "fdo_agi_repo\.venv\Scripts\pythonw.exe"
+}
+if (-not (Test-Path $pythonPath)) {
+    $pythonPath = Join-Path $WorkspaceRoot ".venv\Scripts\python.exe"
+}
+$proxyScript = Join-Path $WorkspaceRoot "scripts\local_llm_proxy.py"
 
 if (-not (Test-Path $pythonPath)) {
-    Write-Host "??Python ?�행 ?�일??찾을 ???�습?�다: $pythonPath" -ForegroundColor Red
+    Write-Host "실행용 Python을 찾을 수 없습니다: $pythonPath" -ForegroundColor Red
     exit 1
 }
 
 if (-not (Test-Path $proxyScript)) {
-    Write-Host "???�록???�크립트�?찾을 ???�습?�다: $proxyScript" -ForegroundColor Red
+    Write-Host "프록시 스크립트를 찾을 수 없습니다: $proxyScript" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "?�트: $Port" -ForegroundColor Yellow
-Write-Host "?�워?? $LumenUrl" -ForegroundColor Yellow
-Write-Host ""
+Write-Host "포트: $Port" -ForegroundColor Yellow
+Write-Host "게이트웨이: $CoreUrl" -ForegroundColor Yellow
 
-# ?�경변???�정
-$env:LUMEN_GATEWAY_URL = $LumenUrl
+# 환경변수 설정
+$env:CORE_GATEWAY_URL = $CoreUrl
 $env:PROXY_PORT = $Port
 
-Write-Host "?�록???�버 ?�작 �?.." -ForegroundColor Green
-Write-Host "종료?�려�?Ctrl+C�??�르?�요" -ForegroundColor Yellow
-Write-Host ""
+Write-Host "ARI Engine (Local LLM)을 백그라운드에서 실행합니다..." -ForegroundColor Green
 
 try {
-    & $pythonPath $proxyScript
+    Start-Process -FilePath $pythonPath -ArgumentList @($proxyScript) -WorkingDirectory $WorkspaceRoot -WindowStyle Hidden
+    Write-Host "성공적으로 시작되었습니다. (창은 보이지 않습니다)" -ForegroundColor Cyan
 }
 catch {
-    Write-Host "???�록???�버 ?�행 �??�류 발생: $_" -ForegroundColor Red
+    Write-Host "실행 중 오류 발생: $_" -ForegroundColor Red
     exit 1
 }

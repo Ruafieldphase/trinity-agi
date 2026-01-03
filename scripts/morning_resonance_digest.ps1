@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Morning resonance digest - 최근 Resonance 이벤트의 요약 (ledger lookback).
@@ -15,8 +15,11 @@
 param(
     [int]$Hours = 12,
     [switch]$OpenMarkdown,
-    [string]$WorkspaceRoot = ""
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = ""
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}
@@ -36,7 +39,7 @@ if (-not (Test-Path $ledgerPath)) {
     $altPaths = @(
         (Join-Path (Join-Path $WorkspaceRoot "fdo_agi_repo") "memory\resonance_ledger.jsonl"),
         (Join-Path (Split-Path -Parent $WorkspaceRoot) "fdo_agi_repo\memory\resonance_ledger.jsonl"),
-        "C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl"
+        "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl"
     )
     foreach ($alt in $altPaths) {
         if (Test-Path $alt) {

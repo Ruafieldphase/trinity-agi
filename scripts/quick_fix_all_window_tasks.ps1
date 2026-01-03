@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 #Requires -RunAsAdministrator
 <#
 .SYNOPSIS
@@ -9,6 +9,9 @@ Identifies tasks that don't have -WindowStyle Hidden in their arguments
 and offers to update them.
 #>
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = 'Stop'
 
 Write-Host "`n🔧 Scanning for tasks without -WindowStyle Hidden..." -ForegroundColor Cyan
@@ -53,7 +56,7 @@ foreach ($taskName in $tasksToFix) {
     }
     
     if ($registerScript) {
-        $fullPath = Join-Path 'C:\workspace\agi' $registerScript
+        $fullPath = Join-Path "$WorkspaceRoot" $registerScript
         if (Test-Path -LiteralPath $fullPath) {
             try {
                 Write-Host "     Running: $registerScript -Register -Force" -ForegroundColor Cyan

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $true)][string]$Url,
     [string]$Server = 'http://127.0.0.1:8091',
     [int]$IntervalSeconds = 60,
@@ -7,8 +7,11 @@ param(
     [double]$FrameInterval = 30.0,
     [switch]$EnableOcr,
     [int]$DurationSeconds = 0, # 0 = run indefinitely
-    [string]$OutDir = "${PSScriptRoot}\..\outputs\telemetry"
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\telemetry"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest

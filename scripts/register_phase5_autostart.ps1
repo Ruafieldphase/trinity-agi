@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$Unregister,
     [string]$Server = 'http://127.0.0.1:8091'
 )
@@ -73,4 +73,3 @@ foreach ($t in $tasks) {
 }
 
 Write-Host "\nDone. Use -Unregister to remove all tasks." -ForegroundColor Cyan
-

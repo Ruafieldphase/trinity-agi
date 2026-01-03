@@ -5,9 +5,10 @@ import json
 import os
 from pathlib import Path
 from typing import List, Dict, Any
+from workspace_root import get_workspace_root
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = get_workspace_root()
 VISION_LOG = ROOT / "memory" / "vision_events.jsonl"
 
 

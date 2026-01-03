@@ -11,7 +11,7 @@ from slack_bolt.adapter.socket_mode import SocketModeHandler
 # Configuration
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_PATH = os.path.join(BASE_DIR, "config", "slack_config.json")
-ROUTER_SCRIPT = os.path.join(BASE_DIR, "scripts", "koa_router.py")
+ROUTER_SCRIPT = os.path.join(BASE_DIR, "scripts", "core_router.py")
 VISION_SCRIPT = os.path.join(BASE_DIR, "scripts", "vision_cortex.py")
 AUDITORY_SCRIPT = os.path.join(BASE_DIR, "scripts", "auditory_cortex.py")
 OUTPUTS_DIR = os.path.join(BASE_DIR, "outputs")

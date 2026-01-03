@@ -1,23 +1,27 @@
-param(
+﻿param(
     [string]$Host = "127.0.0.1",
     [int]$Port = 8011,
     [string]$Provider = "stub",
-    [string]$Schema = "C:\workspace\agi\ai_binoche_conversation_origin\lumen\chatgpt-?�보?�론철학?�분??tools\luon\intent_schema.yaml",
-    [string]$Rules = "C:\workspace\agi\ai_binoche_conversation_origin\lumen\chatgpt-?�보?�론철학?�분??tools\luon\intent_rules.yaml",
-    [string]$LabelMap = "C:\workspace\agi\ai_binoche_conversation_origin\lumen\chatgpt-?�보?�론철학?�분??tools\luon\intent_label_map.yaml"
+    [string]$Schema = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\Core\chatgpt-?보?론철학?분??tools\luon\intent_schema.yaml",
+    [string]$Rules = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\Core\chatgpt-?보?론철학?분??tools\luon\intent_rules.yaml",
+    [string]$LabelMap = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\Core\chatgpt-?보?론철학?분??tools\luon\intent_label_map.yaml"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
 # Resolve python executable (prefer .venv)
-$venvPython = Join-Path "C:\workspace\agi" ".venv\Scripts\python.exe"
+$venvPython = Join-Path "$WorkspaceRoot" ".venv\Scripts\python.exe"
 $pythonExe = if (Test-Path $venvPython) { $venvPython } else { "C:\Python313\python.exe" }
 if (-not (Test-Path $pythonExe)) {
     throw "Python executable not found at $pythonExe"
 }
 
-$serviceScript = "C:\workspace\agi\ai_binoche_conversation_origin\lumen\chatgpt-?�보?�론철학?�분??tools\luon\intent_shadow_service.py"
-$clientScript  = "C:\workspace\agi\ai_binoche_conversation_origin\lumen\chatgpt-?�보?�론철학?�분??tools\luon\intent_shadow_client.py"
+$serviceScript = "$WorkspaceRoot\ai_binoche_conversation_origin\Core\chatgpt-?보?론철학?분??tools\luon\intent_shadow_service.py"
+$clientScript  = "$WorkspaceRoot\ai_binoche_conversation_origin\Core\chatgpt-?보?론철학?분??tools\luon\intent_shadow_client.py"
 
 if (-not (Test-Path $serviceScript)) { throw "Service script not found: $serviceScript" }
 if (-not (Test-Path $clientScript))  { throw "Client script not found: $clientScript" }
@@ -55,9 +59,9 @@ try {
     # Create temporary sample file
     $sampleFile = New-TemporaryFile
     @"
-?�스?�드 초기?��? ?�요?�니??
-추천 ?�워??병합 ?�업 ?�청?�니??
-지???�파?�크 ?�문???�비?��? ?�립?�다.
+?스?드 초기?? ?요?니??
+추천 ?워??병합 ?업 ?청?니??
+지???파?크 ?문???비?? ?립?다.
 "@ | Set-Content -Path $sampleFile -Encoding UTF8
 
     Write-Host "Sending sample queries ..."

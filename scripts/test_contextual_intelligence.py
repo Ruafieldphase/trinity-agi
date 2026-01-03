@@ -2,15 +2,16 @@
 import sys
 from pathlib import Path
 import json
+from workspace_root import get_workspace_root
 
 # Add repo root to path
-sys.path.append("/home/bino/agi")
+sys.path.append(str(get_workspace_root()))
 
 from fdo_agi_repo.orchestrator.binoche_integration import BinocheDecisionEngine
 from scripts.rhythm_think import step2_unconscious_search
 
 def test_binoche_contextual_intelligence():
-    print("\n🧠 Testing Binoche Contextual Intelligence...")
+    print("\n🧠 Testing Binoche_Observer Contextual Intelligence...")
     engine = BinocheDecisionEngine()
     
     # Task that should trigger "Connection" thinking (Axiom 7)
@@ -23,9 +24,9 @@ def test_binoche_contextual_intelligence():
     print(f"   Reasoning: {decision.reasoning}")
     
     if "박문호" in decision.reasoning or "연결" in decision.reasoning or "맥락" in decision.reasoning:
-        print("   ✅ Binoche successfully applied Contextual Intelligence!")
+        print("   ✅ Binoche_Observer successfully applied Contextual Intelligence!")
     else:
-        print("   ⚠️ Binoche reasoning might be generic.")
+        print("   ⚠️ Binoche_Observer reasoning might be generic.")
 
 def test_rhythm_think_resonance():
     print("\n🎵 Testing Rhythm Think Resonance...")
@@ -58,7 +59,7 @@ if __name__ == "__main__":
     try:
         test_binoche_contextual_intelligence()
     except Exception as e:
-        print(f"❌ Binoche Test Failed: {e}")
+        print(f"❌ Binoche_Observer Test Failed: {e}")
         
     try:
         test_rhythm_think_resonance()

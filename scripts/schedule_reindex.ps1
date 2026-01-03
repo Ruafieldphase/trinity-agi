@@ -1,4 +1,4 @@
-# Schedule or remove nightly RAG vector store reindex
+﻿# Schedule or remove nightly RAG vector store reindex
 # Usage examples:
 #   Register daily 03:10:  powershell -NoProfile -ExecutionPolicy Bypass -File scripts/schedule_reindex.ps1 -Register -Time "03:10"
 #   Unregister:            powershell -NoProfile -ExecutionPolicy Bypass -File scripts/schedule_reindex.ps1 -Unregister

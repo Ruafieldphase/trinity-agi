@@ -3,6 +3,7 @@ import os
 import re
 from datetime import datetime, timedelta
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from workspace_root import get_workspace_root
 
 ISO_FORMATS = (
     "%Y-%m-%dT%H:%M:%S.%fZ",
@@ -147,7 +148,7 @@ def search_index(
     top_n = [e for _, e in results[: max(1, top)]]
 
     # attach safe fields for convenience
-    root = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+    root = str(get_workspace_root())
     for e in top_n:
         rel = _get_field(e, "relative_path", "path", "file", default="") or ""
         if rel and not os.path.isabs(rel):

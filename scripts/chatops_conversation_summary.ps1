@@ -1,4 +1,4 @@
-# ChatOps Helper: Conversation Log Summary
+﻿# ChatOps Helper: Conversation Log Summary
 # Finds the latest JSONL conversation log and runs the summarizer
 
 param(

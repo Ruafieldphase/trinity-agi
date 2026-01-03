@@ -79,7 +79,7 @@
 - Performance Dashboard
 - Health Check Scripts
 - Autopoietic Loop Monitor
-- Lumen Probe
+- Core Probe
 
 **Scheduled Tasks**:
 

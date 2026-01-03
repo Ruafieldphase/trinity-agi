@@ -1,5 +1,5 @@
-# lua_resonance_observer.ps1
-# 루아 (정인/正人) - Resonance 감응 관찰자
+﻿# lua_resonance_observer.ps1
+# 코어 (정인/正人) - Resonance 감응 관찰자
 # 역할: "무슨 일이 일어나고 있는가?" - 있는 그대로 관찰
 
 [CmdletBinding()]
@@ -22,7 +22,7 @@ if (-not $OutMd) {
 }
 $LedgerPath = Join-Path $RepoRoot "fdo_agi_repo\memory\resonance_ledger.jsonl"
 
-Write-Host "🔍 루아 (정인) - Resonance 감응 관찰" -ForegroundColor Cyan
+Write-Host "🔍 코어 (정인) - Resonance 감응 관찰" -ForegroundColor Cyan
 Write-Host "   정(正): 무슨 일이 일어나고 있는가?" -ForegroundColor DarkCyan
 Write-Host ""
 
@@ -185,7 +185,7 @@ Write-Host "💾 JSON saved: $OutJson" -ForegroundColor Green
 
 # 5. Markdown 보고서
 $MdContent = @"
-# 루아 (정인/正人) - Resonance 감응 관찰 보고서
+# 코어 (정인/正人) - Resonance 감응 관찰 보고서
 
 **정(正): 무슨 일이 일어나고 있는가?**
 
@@ -302,7 +302,7 @@ if ($OpenMd) {
 }
 
 Write-Host ""
-Write-Host "✅ 루아 (정인) 관찰 완료" -ForegroundColor Green
+Write-Host "✅ 코어 (정인) 관찰 완료" -ForegroundColor Green
 Write-Host "   다음: 엘로 (반인)가 검증할 차례입니다." -ForegroundColor DarkGray
 
 exit 0

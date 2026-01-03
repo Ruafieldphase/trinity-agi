@@ -3,7 +3,32 @@
 -- and reading responses back. Designed to work with scripts/send_to_chatgpt_lua.ps1.
 
 -- Configuration
-local WORKSPACE = os.getenv("AGI_WORKSPACE") or "C:/workspace/agi"
+local function _script_dir()
+    local source = debug.getinfo(1, "S").source
+    if source:sub(1, 1) == "@" then
+        source = source:sub(2)
+    end
+    return source:match("^(.*[\\/])") or ""
+end
+
+local function _detect_workspace()
+    local env = os.getenv("AGI_WORKSPACE") or os.getenv("AGI_WORKSPACE_ROOT") or os.getenv("WORKSPACE_ROOT")
+    if env and #env > 0 then
+        return env
+    end
+    local dir = _script_dir()
+    if dir ~= "" then
+        local trimmed = dir:gsub("[\\/]+$", "")
+        return trimmed:match("^(.*)[/\\\\][^/\\\\]+$") or ""
+    end
+    return ""
+end
+
+local WORKSPACE = _detect_workspace()
+if WORKSPACE == "" then
+    error("Workspace not set. Define AGI_WORKSPACE or WORKSPACE_ROOT.")
+end
+WORKSPACE = WORKSPACE:gsub("\\", "/")
 local REQUEST_DIR = WORKSPACE .. "/outputs/lua_requests"
 local RESPONSE_DIR = WORKSPACE .. "/outputs/trinity_responses"
 

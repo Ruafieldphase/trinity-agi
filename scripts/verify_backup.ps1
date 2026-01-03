@@ -5,12 +5,15 @@
 #>
 
 param(
-    [string]$BackupRoot = "C:\workspace\agi\backups",
-    [string]$OutReport = "C:\workspace\agi\outputs\backup_verification_report_latest.md",
+    [string]$BackupRoot = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\backups",
+    [string]$OutReport = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\backup_verification_report_latest.md",
     [string]$HashAlgorithm = "MD5",
     [int]$MaxEntries = 5,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}

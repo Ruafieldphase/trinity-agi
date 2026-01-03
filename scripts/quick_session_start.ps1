@@ -1,10 +1,10 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-    Quick Session Start - 30�??�에 ?�체 ?�스???�태 ?�악
+    Quick Session Start - 30??에 ?체 ?스???태 ?악
 
 .DESCRIPTION
-    ???�션 ?�작 ??AGI, Canary, Lumen, System ?�태�?빠르�??�인?�는 ?�크립트
+    ???션 ?작 ??AGI, Canary, Core, System ?태?빠르??인?는 ?크립트
 
 .EXAMPLE
     .\scripts\quick_session_start.ps1
@@ -17,9 +17,12 @@ param(
     [switch]$Detailed,
     [switch]$Json
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
-$BaseDir = "C:\workspace\agi"
+$BaseDir = "$WorkspaceRoot"
 
 Write-Host ""
 Write-Host "============================================================" -ForegroundColor Cyan
@@ -89,7 +92,7 @@ try {
         Write-Host "   Monitoring: Not found" -ForegroundColor Red
     }
     
-    # Check probe results (최근 ?�행 결과)
+    # Check probe results (최근 ?행 결과)
     $probeFiles = Get-ChildItem "$logDir\probe_iter_*.json" -ErrorAction SilentlyContinue | 
     Sort-Object LastWriteTime -Descending | Select-Object -First 1
     

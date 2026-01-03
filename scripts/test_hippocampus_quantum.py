@@ -7,7 +7,8 @@ Tests wave-particle duality in memory formation
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+from workspace_root import get_workspace_root
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 
 from copilot.hippocampus import Hippocampus
 from datetime import datetime, timedelta

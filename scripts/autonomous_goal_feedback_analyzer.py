@@ -10,8 +10,9 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Tuple
 from collections import defaultdict
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 GOAL_TRACKER = WORKSPACE / "fdo_agi_repo" / "memory" / "goal_tracker.json"
 RESONANCE_LEDGER = WORKSPACE / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 FEEDBACK_OUTPUT = WORKSPACE / "fdo_agi_repo" / "memory" / "goal_feedback_insights.json"

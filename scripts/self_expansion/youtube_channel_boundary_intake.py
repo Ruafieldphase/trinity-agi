@@ -35,9 +35,14 @@ from typing import Any, Optional
 
 import sys
 import argparse
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+
+WORKSPACE = get_workspace_root()
 if str(WORKSPACE) not in sys.path:
     sys.path.insert(0, str(WORKSPACE))
 OUTPUTS = WORKSPACE / "outputs"

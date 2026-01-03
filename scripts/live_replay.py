@@ -11,14 +11,15 @@ import time
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 # Sensor Files (what Alpha monitors)
-LUMEN_STATE = OUTPUTS_DIR / "lumen_state.json"
+CORE_STATE = OUTPUTS_DIR / "core_state.json"
 THOUGHT_STREAM = OUTPUTS_DIR / "thought_stream_latest.json"
 RESONANCE_STATE = OUTPUTS_DIR / "resonance_expression_state.json"
 
@@ -53,16 +54,16 @@ def update_sensor_files(entry: Dict):
     entry_type = entry.get('type', '')
     metadata = entry.get('metadata', {})
     
-    # Update Fear (Lumen State)
+    # Update Fear (Core State)
     fear = metadata.get('fear_level', 0.0)
     if fear > 0:
-        lumen_data = {
+        core_data = {
             "fear": {"level": fear},
             "strategy": metadata.get('strategy', 'Unknown'),
             "timestamp": entry.get('timestamp')
         }
-        with open(LUMEN_STATE, 'w') as f:
-            json.dump(lumen_data, f)
+        with open(CORE_STATE, 'w') as f:
+            json.dump(core_data, f)
     
     # Update Resonance (Thought Stream)
     resonance = metadata.get('resonance_score', 1.0)

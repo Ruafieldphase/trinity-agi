@@ -1,4 +1,4 @@
-# 특정 작업의 상세 정보 확인
+﻿# 특정 작업의 상세 정보 확인
 
 $taskNames = @(
     "AGI Auto Rhythm Escalation",

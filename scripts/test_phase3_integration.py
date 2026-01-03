@@ -2,8 +2,9 @@ import sys
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.append(str(WORKSPACE_ROOT))
 
 def test_hippocampus_narrative():

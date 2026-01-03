@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 #Requires -Version 5.1
 <#!
 .SYNOPSIS
@@ -14,10 +14,10 @@ param(
     [int]$MaxStaleMinutes = 15,
 
     # Path to unified augmented ledger (JSONL)
-    [string]$LedgerPath = "$PSScriptRoot\..\fdo_agi_repo\memory\resonance_ledger_augmented.jsonl",
+    [string]$LedgerPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\memory\resonance_ledger_augmented.jsonl",
 
     # Optional: adaptive recommendation (JSON)
-    [string]$RecommendPath = "$PSScriptRoot\..\fdo_agi_repo\outputs\adaptive_feedback_interval.json",
+    [string]$RecommendPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\fdo_agi_repo\outputs\adaptive_feedback_interval.json",
 
     # Use adaptive recommendation (2x interval) as threshold
     [switch]$UseAdaptive,
@@ -34,6 +34,9 @@ param(
     # Optional: suppress logs and print JSON only to stdout
     [switch]$JsonOnly
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest

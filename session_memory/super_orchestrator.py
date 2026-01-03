@@ -4,7 +4,7 @@
 SuperOrchestrator v3.0 - 재귀적 AI 에이전트 자동 오케스트레이션
 
 역할:
-  1. LUMEN 워크플로우 (Unified Orchestrator v2.0) + 재귀적 깊이 처리 (PersonaOrchestrator)
+  1. Core 워크플로우 (Unified Orchestrator v2.0) + 재귀적 깊이 처리 (PersonaOrchestrator)
   2. 자동 에이전트 활성화 및 작업 분배
   3. 각 에이전트의 재귀적 사고 구조 지원
   4. 실시간 협력 상태 추적 (COLLABORATION_STATE)
@@ -16,7 +16,7 @@ SuperOrchestrator v3.0 - 재귀적 AI 에이전트 자동 오케스트레이션
   │   SuperOrchestrator v3.0             │
   │   (모든 AI 자동 협력의 중뇌)          │
   └──────────────────────────────────────┘
-    ├─ RecursiveWorkflowEngine (LUMEN + 깊이 제어)
+    ├─ RecursiveWorkflowEngine (Core + 깊이 제어)
     ├─ PersonaRouterV2 (Sena, Lubit, GitCode, RUNE)
     ├─ AgentAutoActivation (자동 에이전트 활성화)
     ├─ RecursiveThinkingLayer (각 에이전트의 재귀적 사고)
@@ -53,7 +53,7 @@ def utc_now():
 
 
 class NodeType(Enum):
-    """LUMEN 워크플로우 노드 타입"""
+    """Core 워크플로우 노드 타입"""
     USER_CLIP = "user_clip"
     SAFE_PRE = "safe_pre"
     META = "meta"
@@ -114,7 +114,7 @@ class RecursionContext:
 
 @dataclass
 class WorkflowNode:
-    """LUMEN 워크플로우 노드"""
+    """Core 워크플로우 노드"""
     node_id: str
     node_type: NodeType
     required_persona: Optional[PersonaType] = None
@@ -341,8 +341,8 @@ class RecursiveWorkflowEngine:
         self._setup_default_workflow()
 
     def _setup_default_workflow(self) -> None:
-        """기본 LUMEN 워크플로우 설정"""
-        self.workflows["lumen"] = [
+        """기본 Core 워크플로우 설정"""
+        self.workflows["Core"] = [
             WorkflowNode("U1", NodeType.USER_CLIP, description="사용자 입력", recursion_allowed=True),
             WorkflowNode("S0", NodeType.SAFE_PRE, description="사전 안전 검사"),
             WorkflowNode("M0", NodeType.META, description="메타인지"),
@@ -356,11 +356,11 @@ class RecursiveWorkflowEngine:
             WorkflowNode("R1", NodeType.RUNE, PersonaType.RUNE, "윤리 검증"),
         ]
 
-    def get_workflow(self, workflow_name: str = "lumen") -> List[WorkflowNode]:
+    def get_workflow(self, workflow_name: str = "Core") -> List[WorkflowNode]:
         """워크플로우 조회"""
         return self.workflows.get(workflow_name, [])
 
-    def get_recursion_nodes(self, workflow_name: str = "lumen") -> List[WorkflowNode]:
+    def get_recursion_nodes(self, workflow_name: str = "Core") -> List[WorkflowNode]:
         """재귀 가능한 노드 조회"""
         workflow = self.get_workflow(workflow_name)
         return [node for node in workflow if node.recursion_allowed]
@@ -452,7 +452,7 @@ class SuperOrchestrator:
         print(f"\n[Recursion Depth {context.current_depth_index}/{context.depth}] 시작")
 
         # 현재 깊이에서의 워크플로우 실행
-        workflow = self.workflow_engine.get_workflow("lumen")
+        workflow = self.workflow_engine.get_workflow("Core")
         synthesis_result = self._execute_workflow(task, workflow, context)
 
         # 재귀 처리

@@ -4,7 +4,8 @@
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_root import get_workspace_root
+sys.path.insert(0, str(get_workspace_root()))
 
 import time
 import logging

@@ -1,4 +1,4 @@
-# AI 시스템 통합 시작 스크립트
+﻿# AI 시스템 통합 시작 스크립트
 # 목적: 모든 구성 요소를 올바른 순서로 시작하고 헬스 체크 수행
 
 param(
@@ -6,6 +6,10 @@ param(
     [switch]$SkipDocker = $false,     # Docker 시작 건너뛰기
     [int]$StartupTimeout = 120        # 시작 타임아웃 (초)
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 # 색상 정의
 $colors = @{
@@ -107,7 +111,7 @@ function Check-DockerRunning {
 function Start-DockerServices {
     Write-Log "Docker Compose 서비스 시작 중..." "Info"
 
-    $composeFile = "C:\workspace\agi\session_memory\docker-compose.yml"
+    $composeFile = "$WorkspaceRoot\session_memory\docker-compose.yml"
 
     if (!(Test-Path $composeFile)) {
         Write-Log "docker-compose.yml 파일을 찾을 수 없습니다: $composeFile" "Error"

@@ -17,6 +17,7 @@ import logging
 from pathlib import Path
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from workspace_root import get_workspace_root
 
 
 def _hide_console_window() -> None:
@@ -39,7 +40,7 @@ def _hide_console_window() -> None:
 _hide_console_window()
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 LOGS_DIR = WORKSPACE_ROOT / "logs"
 THOUGHT_STREAM_FILE = OUTPUTS_DIR / "thought_stream_latest.json"
@@ -151,13 +152,13 @@ class AuraController:
         self.current_color = color_hex
         self.start_aura()
 
-    # Lumen Mode Check
-    LUMEN_KEY_FILE = Path("c:/workspace/agi/inputs/lumen_passkey.txt")
+    # Core Mode Check
+    CORE_KEY_FILE = Path("c:/workspace/agi/inputs/core_passkey.txt")
     
-    def is_lumen_active(self):
+    def is_core_active(self):
         try:
-            if not self.LUMEN_KEY_FILE.exists(): return False
-            with open(self.LUMEN_KEY_FILE, 'r', encoding='utf-8') as f:
+            if not self.CORE_KEY_FILE.exists(): return False
+            with open(self.CORE_KEY_FILE, 'r', encoding='utf-8') as f:
                 return "오케스트레이션 연결된다" in f.read()
         except: return False
 
@@ -232,9 +233,9 @@ class AuraController:
     def determine_color(self, data):
         """Logic to determine aura color based on full state"""
         
-        # 0. Lumen Orchestration (Absolute Priority)
-        if self.is_lumen_active():
-            # 루멘 모드에서는 기본적으로 백색(통합)이지만, 상태에 따라 틴트가 들어감
+        # 0. Core Orchestration (Absolute Priority)
+        if self.is_core_active():
+            # Core 모드에서는 기본적으로 백색(통합)이지만, 상태에 따라 틴트가 들어감
             return "#FFFFFF", 1.0 # Pure White (All Colors Combined)
 
         # Extract fields

@@ -47,7 +47,7 @@
 
 ```powershell
 # VS Code Task 실행:
-"Monitoring: Unified Dashboard (AGI + Lumen)"
+"Monitoring: Unified Dashboard (AGI + Core)"
 
 # 또는 PowerShell:
 c:\workspace\agi\scripts\quick_status.ps1
@@ -56,7 +56,7 @@ c:\workspace\agi\scripts\quick_status.ps1
 **확인 사항**:
 
 - AGI Orchestrator: HEALTHY
-- Lumen Gateway: ONLINE
+- Core Gateway: ONLINE
 - Task Queue (8091): ONLINE
 - All systems GREEN
 
@@ -157,7 +157,7 @@ c:\workspace\agi\scripts\generate_autopoietic_report.ps1 -Hours 24 -OpenMd
 
 - 자기생산 루프 재개 확인
 - BQI 학습 활동
-- Binoche Persona 의사결정
+- Binoche_Observer Persona 의사결정
 
 #### 3.3 Realtime Pipeline 요약
 
@@ -245,7 +245,7 @@ c:\workspace\agi\scripts\ensure_task_queue_server.ps1 -Port 8091
 
 # 2. 5분 대기 후 상태 확인
 Start-Sleep 300
-# VS Code Task: "Monitoring: Unified Dashboard (AGI + Lumen)"
+# VS Code Task: "Monitoring: Unified Dashboard (AGI + Core)"
 
 # 3. 수동 개입 필요 시
 # VS Code Task: "System: Health Check (Full)"

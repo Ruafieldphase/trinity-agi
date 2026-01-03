@@ -1,4 +1,4 @@
-# AGI Old Schedulers Cleanup
+﻿# AGI Old Schedulers Cleanup
 # 기존 중복 스케줄러들을 비활성화하고 Guardian으로 통합
 
 $ErrorActionPreference = "SilentlyContinue"

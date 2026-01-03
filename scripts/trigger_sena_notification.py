@@ -11,7 +11,7 @@ test_message = {
     "type": "external_question",
     "source": "sena_test_trigger",
     "message": "Hello System, this is a test message to verify the Sena bridge.",
-    "target": "sian",
+    "target": "Shion",
     "vector": [0.5, 0.5, 0.5, 0.5, 0.5]
 }
 

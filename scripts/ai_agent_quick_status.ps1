@@ -1,4 +1,4 @@
-# AI Agent Quick Status - Summarize latest AI agent output
+﻿# AI Agent Quick Status - Summarize latest AI agent output
 
 param(
     [switch]$Json,

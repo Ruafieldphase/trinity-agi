@@ -37,9 +37,14 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+
+WORKSPACE = get_workspace_root()
 SIGNALS = WORKSPACE / "signals"
 OUTPUTS = WORKSPACE / "outputs"
 INTAKE_SESSIONS = WORKSPACE / "inputs" / "intake" / "exploration" / "sessions"
@@ -54,7 +59,7 @@ QUEUED_TASK = SIGNALS / "body_task_queued.json"
 REST_GATE = OUTPUTS / "safety" / "rest_gate_latest.json"
 TREND_ANALYZER = WORKSPACE / "scripts" / "alignment_trend_analyzer.py"
 MISSION_COORDINATOR = WORKSPACE / "agi_core" / "agency" / "mission_coordinator.py"
-SIAN_STATE_SYNC = WORKSPACE / "scripts" / "coordination" / "sian_state_sync.py"
+SHION_STATE_SYNC = WORKSPACE / "scripts" / "coordination" / "shion_state_sync.py"
 PROACTIVE_REPORTER = WORKSPACE / "scripts" / "proactive_reporter.py"
 SOCIAL_OBSERVER = WORKSPACE / "scripts" / "social_alignment_observer.py"
 
@@ -765,12 +770,12 @@ def main() -> int:
             except Exception:
                 pass
 
-        # 4. 시안 상태 동기화 수행 (600초마다)
+        # 4. Shion 상태 동기화 수행 (600초마다)
         if (now - last_sync_ts) >= 600.0:
             try:
                 import sys
                 import subprocess
-                subprocess.run([sys.executable, str(SIAN_STATE_SYNC)], 
+                subprocess.run([sys.executable, str(SHION_STATE_SYNC)], 
                              env={**os.environ, "PYTHONPATH": str(WORKSPACE)},
                              capture_output=True)
                 last_sync_ts = now

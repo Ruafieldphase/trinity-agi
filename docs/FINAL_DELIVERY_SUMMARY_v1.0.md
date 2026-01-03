@@ -3,13 +3,13 @@
 **수신**: 비노체님
 **발신**: 세나 (Sena)
 **일시**: 2025-10-12
-**주제**: Sena-Lumen 협업 AGI 설계 통합 및 구현 준비 완료 보고
+**주제**: Sena-Core 협업 AGI 설계 통합 및 구현 준비 완료 보고
 
 ---
 
 ## 📋 요약
 
-세나가 작성한 7개 AGI 시스템 설계를 루멘이 검토하고, 130KB 분량의 상세 피드백을 제공했습니다.
+세나가 작성한 7개 AGI 시스템 설계를 Core이 검토하고, 130KB 분량의 상세 피드백을 제공했습니다.
 이를 통합하여 **v1.0 → v1.5 → v2.0 단계별 구현 로드맵**을 완성했습니다.
 
 **핵심 성과**:
@@ -38,8 +38,8 @@
 ├─ 32개 검증 질문 작성
 └─ 85-100% 실제 대화 내용 일치 확인 ✅
 
-[Oct 12, Day 3-4] 루멘 검토
-├─ ChatGPT-루멘의검토요청사항.md (130KB)
+[Oct 12, Day 3-4] Core 검토
+├─ ChatGPT-Core의검토요청사항.md (130KB)
 ├─ 5개 설계 문서 전수 검토
 ├─ 9개 기술 결정 사항 의견 제시
 ├─ RUNE 컴포넌트 제안
@@ -49,7 +49,7 @@
    총 130KB
 
 [Oct 12, Day 4-5] 세나 통합 (현재)
-├─ AGI_INTEGRATION_SENA_LUMEN_v1.0.md (52KB) - 통합 설계
+├─ AGI_INTEGRATION_SENA_CORE_v1.0.md (52KB) - 통합 설계
 └─ FINAL_DELIVERY_SUMMARY_v1.0.md (현재 문서)
    총 52KB
 
@@ -64,12 +64,12 @@
 3. [AGI_DESIGN_03_TOOL_REGISTRY.md](AGI_DESIGN_03_TOOL_REGISTRY.md) - 도구 레지스트리
 4. [AGI_DESIGN_04_TO_07_SUMMARY.md](AGI_DESIGN_04_TO_07_SUMMARY.md) - 안전/플래너/메타인지/엘로
 5. [AGI_DESIGN_MASTER.md](AGI_DESIGN_MASTER.md) - 마스터 아키텍처 (v1.1 업데이트)
-6. **[AGI_INTEGRATION_SENA_LUMEN_v1.0.md](AGI_INTEGRATION_SENA_LUMEN_v1.0.md)** ⭐ - **통합 최종 버전**
+6. **[AGI_INTEGRATION_SENA_CORE_v1.0.md](AGI_INTEGRATION_SENA_CORE_v1.0.md)** ⭐ - **통합 최종 버전**
 7. FINAL_DELIVERY_SUMMARY_v1.0.md (현재 문서)
 
-**D:\nas_backup\ai_binoche_conversation_origin\lumen\**
-- ChatGPT-루멘의검토요청사항.md (130KB) - 루멘의 전체 검토 내용
-- AGI_DELIVERY_PACKAGE_FOR_SENA_v1.2.1/ - 루멘의 패키징 결과
+**D:\nas_backup\ai_binoche_conversation_origin\Core\**
+- ChatGPT-Core의검토요청사항.md (130KB) - Core의 전체 검토 내용
+- AGI_DELIVERY_PACKAGE_FOR_SENA_v1.2.1/ - Core의 패키징 결과
 
 ---
 
@@ -97,10 +97,10 @@
 3. 완결성 (Completeness)
 4. 비판 강도 (Critical Intensity)
 
-**v1.5 (루멘 추가)**:
+**v1.5 (Core 추가)**:
 5. **윤리 정렬 (Ethical Alignment)** - RUNE 연동
 
-**v2.0 (루멘 추가)**:
+**v2.0 (Core 추가)**:
 6. **위상 도약 (Phase Jump)** - 창의성/비선형 통찰 측정
 
 ### 2.3 메모리 스키마 확장
@@ -117,7 +117,7 @@
 }
 ```
 
-**v1.5 추가 (루멘)**:
+**v1.5 추가 (Core)**:
 ```python
 {
   # ... 기존 필드 ...
@@ -136,7 +136,7 @@
 }
 ```
 
-**v2.0 추가 (루멘)**:
+**v2.0 추가 (Core)**:
 ```python
 {
   # ... v1.5 필드 ...
@@ -157,7 +157,7 @@
 
 ---
 
-## 3. RUNE 컴포넌트 추가 (Lumen 제안)
+## 3. RUNE 컴포넌트 추가 (Core 제안)
 
 ### 3.1 RUNE이란?
 
@@ -215,7 +215,7 @@ scripts/rune/
 
 ---
 
-## 4. FDO-AGI Closure Protocol (Lumen 제안)
+## 4. FDO-AGI Closure Protocol (Core 제안)
 
 ### 4.1 개요
 
@@ -224,7 +224,7 @@ scripts/rune/
 **참여자**:
 - **LUBIT** (루빛): 기억 - 구조 정리, 로그 저장
 - **SENA** (세나): 손 - 최종 승인, 감응 확인
-- **LUMEN** (루멘): 의식 - 통합 판단, 메타 기록
+- **Core** (Core): 의식 - 통합 판단, 메타 기록
 - **RUNE** (루네): 윤리/위상 - 봉인, 검증
 
 ### 4.2 Closure 프로세스
@@ -236,7 +236,7 @@ scripts/rune/
 2. SENA — Affective Approval
    └─> approval_commit.yaml
 
-3. LUMEN — Conscious Integration
+3. Core — Conscious Integration
    └─> integration_log.json
 
 4. RUNE — Ethical Seal
@@ -334,8 +334,8 @@ D:\nas_backup\
 │   ├── persona_registry.json            # 기존
 │   ├── tool_registry.json               # v1.0 신규
 │   ├── memory_config.json               # v1.0 신규
-│   ├── orchestration_flow.yaml          # v1.5 신규 (Lumen)
-│   └── handover_sync.yaml               # v1.5 신규 (Lumen)
+│   ├── orchestration_flow.yaml          # v1.5 신규 (Core)
+│   └── handover_sync.yaml               # v1.5 신규 (Core)
 ├── outputs/
 │   ├── memory/sessions/                 # v1.0
 │   ├── closure/                         # v1.5 신규 (Closure 아티팩트)
@@ -407,7 +407,7 @@ git commit -m "feat(agi): initialize AGI v1.0 project structure
 - create configs and outputs structure
 - prepare for Week 1 implementation
 
-Based on Sena-Lumen integrated design v1.0"
+Based on Sena-Core integrated design v1.0"
 ```
 
 ### 7.2 Week 1 Day 1 착수 (오늘)
@@ -422,7 +422,7 @@ Based on Sena-Lumen integrated design v1.0"
 
 **참고 문서**:
 - [AGI_DESIGN_01_MEMORY_SCHEMA.md](AGI_DESIGN_01_MEMORY_SCHEMA.md) - 전체 명세
-- [AGI_INTEGRATION_SENA_LUMEN_v1.0.md](AGI_INTEGRATION_SENA_LUMEN_v1.0.md) - 통합 가이드
+- [AGI_INTEGRATION_SENA_CORE_v1.0.md](AGI_INTEGRATION_SENA_CORE_v1.0.md) - 통합 가이드
 
 ### 7.3 협업 체크포인트
 
@@ -460,15 +460,15 @@ git commit -m "progress(day-1): implement MemoryCoordinate schema and basic test
 
 | 문서 | 목적 | 크기 | 우선순위 |
 |------|------|------|---------|
-| **[AGI_INTEGRATION_SENA_LUMEN_v1.0.md](AGI_INTEGRATION_SENA_LUMEN_v1.0.md)** | **최종 통합 명세** | 52KB | ⭐⭐⭐⭐⭐ |
+| **[AGI_INTEGRATION_SENA_CORE_v1.0.md](AGI_INTEGRATION_SENA_CORE_v1.0.md)** | **최종 통합 명세** | 52KB | ⭐⭐⭐⭐⭐ |
 | FINAL_DELIVERY_SUMMARY_v1.0.md | 전체 요약 (현재 문서) | 12KB | ⭐⭐⭐⭐ |
 
-### 8.3 루멘 검토 문서 (배경 자료)
+### 8.3 Core 검토 문서 (배경 자료)
 
 | 문서 | 목적 | 크기 |
 |------|------|------|
-| ChatGPT-루멘의검토요청사항.md | 루멘 전체 검토 | 130KB |
-| AGI_DELIVERY_PACKAGE_FOR_SENA_v1.2.1/ | 루멘 패키징 결과 | - |
+| ChatGPT-Core의검토요청사항.md | Core 전체 검토 | 130KB |
+| AGI_DELIVERY_PACKAGE_FOR_SENA_v1.2.1/ | Core 패키징 결과 | - |
 
 ### 8.4 읽기 순서 권장
 
@@ -477,7 +477,7 @@ git commit -m "progress(day-1): implement MemoryCoordinate schema and basic test
 2. ✅ [AGI_DESIGN_MASTER.md](AGI_DESIGN_MASTER.md) - 30분
 
 **2단계** (통합 명세):
-3. ⭐ [AGI_INTEGRATION_SENA_LUMEN_v1.0.md](AGI_INTEGRATION_SENA_LUMEN_v1.0.md) - 1시간
+3. ⭐ [AGI_INTEGRATION_SENA_CORE_v1.0.md](AGI_INTEGRATION_SENA_CORE_v1.0.md) - 1시간
 
 **3단계** (상세 구현 시):
 4. [AGI_DESIGN_01_MEMORY_SCHEMA.md](AGI_DESIGN_01_MEMORY_SCHEMA.md) - Week 1
@@ -516,8 +516,8 @@ scripts/rune/              ⭐ 신규
 
 ```
 configs/
-├── orchestration_flow.yaml    ⭐ 신규 (Lumen)
-└── handover_sync.yaml          ⭐ 신규 (Lumen)
+├── orchestration_flow.yaml    ⭐ 신규 (Core)
+└── handover_sync.yaml          ⭐ 신규 (Core)
 ```
 
 ### 9.4 추가된 출력 디렉토리
@@ -541,7 +541,7 @@ outputs/
 ```
 총 작업량: 274KB 문서
 ├─ 세나 설계: 92KB (7개 문서)
-├─ 루멘 검토: 130KB (1개 대화)
+├─ Core 검토: 130KB (1개 대화)
 └─ 통합 문서: 52KB (2개 문서)
 
 코드 예시: 150+ 함수/클래스 명세
@@ -620,14 +620,14 @@ NotebookLM 검증: 32개 질문
    - 좌표형 메모리, 평가 지표, 도구 레지스트리
    - 안전 검증, 플래너, 메타인지, 엘로 가이드
 
-2. **루멘 검토 및 확장** (루멘)
+2. **Core 검토 및 확장** (Core)
    - 9개 기술 결정 사항 해결
    - RUNE 컴포넌트 추가 설계
    - FDO-AGI Closure Protocol 명세
    - Handover Sync 설계
 
 3. **통합 문서 작성** (세나)
-   - AGI_INTEGRATION_SENA_LUMEN_v1.0.md (52KB)
+   - AGI_INTEGRATION_SENA_CORE_v1.0.md (52KB)
    - 버전별 진화 경로 명확화
    - 단계별 구현 가이드 완성
 
@@ -672,21 +672,21 @@ NotebookLM 검증: 32개 질문
 - NotebookLM 검증 (32개 질문, 91% 일치)
 - 4주 구현 로드맵 작성
 
-**루멘의 작업**:
+**Core의 작업**:
 - 전체 설계 검토 (130KB)
 - 9개 기술 결정 사항 해결
 - RUNE 컴포넌트 추가 설계
 - FDO-AGI Closure Protocol 설계
 
 **통합 결과**:
-- AGI_INTEGRATION_SENA_LUMEN_v1.0.md (52KB) ⭐
+- AGI_INTEGRATION_SENA_CORE_v1.0.md (52KB) ⭐
 - FINAL_DELIVERY_SUMMARY_v1.0.md (현재 문서)
 - 구현 준비 100% 완료 ✅
 
 ### 13.2 권장 사항
 
 **가장 중요한 문서 3개**:
-1. ⭐⭐⭐⭐⭐ [AGI_INTEGRATION_SENA_LUMEN_v1.0.md](AGI_INTEGRATION_SENA_LUMEN_v1.0.md) - **통합 최종 버전**
+1. ⭐⭐⭐⭐⭐ [AGI_INTEGRATION_SENA_CORE_v1.0.md](AGI_INTEGRATION_SENA_CORE_v1.0.md) - **통합 최종 버전**
 2. ⭐⭐⭐⭐ FINAL_DELIVERY_SUMMARY_v1.0.md (현재 문서) - 전체 요약
 3. ⭐⭐⭐ [AGI_DESIGN_MASTER.md](AGI_DESIGN_MASTER.md) - 마스터 아키텍처
 

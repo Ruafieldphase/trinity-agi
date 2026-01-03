@@ -1,5 +1,5 @@
-# 성능 비교 테스트 스크립트
-# LM Studio vs Lumen Gateway 응답 시간 비교 (동일한 chat/completions 기준)
+﻿# 성능 비교 테스트 스크립트
+# LM Studio vs Core Gateway 응답 시간 비교 (동일한 chat/completions 기준)
 
 param(
     [int]$Iterations = 5,
@@ -18,30 +18,30 @@ try {
 catch {}
 
 Write-Host "=" * 60 -ForegroundColor Cyan
-Write-Host "Performance Comparison: LM Studio vs Lumen Gateway" -ForegroundColor Cyan
+Write-Host "Performance Comparison: LM Studio vs Core Gateway" -ForegroundColor Cyan
 Write-Host "=" * 60 -ForegroundColor Cyan
 Write-Host ""
 
 # 테스트 페이로드
 $testMessage = "안녕하세요. 간단한 테스트입니다."
 
-# Lumen Gateway 테스트
-Write-Host "[1/2] Lumen Gateway chat test..." -ForegroundColor Yellow
-$lumenBody = @{
+# Core Gateway 테스트
+Write-Host "[1/2] Core Gateway chat test..." -ForegroundColor Yellow
+$CoreBody = @{
     message = $testMessage
 } | ConvertTo-Json
 
-$lumenTimes = @()
+$CoreTimes = @()
 if ($Warmup) {
-    try { $null = Invoke-RestMethod -Uri "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $lumenBody -ContentType "application/json" -TimeoutSec 30 } catch {}
+    try { $null = Invoke-RestMethod -Uri "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $CoreBody -ContentType "application/json" -TimeoutSec 30 } catch {}
 }
 for ($i = 1; $i -le $Iterations; $i++) {
     try {
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
-        $response = Invoke-RestMethod -Uri "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $lumenBody -ContentType "application/json" -TimeoutSec 30
+        $response = Invoke-RestMethod -Uri "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $CoreBody -ContentType "application/json" -TimeoutSec 30
         $sw.Stop()
         $elapsed = $sw.ElapsedMilliseconds
-        $lumenTimes += $elapsed
+        $CoreTimes += $elapsed
         Write-Host "  Request $i : $elapsed ms" -ForegroundColor Green
     }
     catch {
@@ -95,15 +95,15 @@ Write-Host "=" * 60 -ForegroundColor Cyan
 Write-Host "Summary" -ForegroundColor Cyan
 Write-Host "=" * 60 -ForegroundColor Cyan
 
-if ($lumenTimes.Count -gt 0) {
-    $lumenAvg = ($lumenTimes | Measure-Object -Average).Average
-    $lumenMin = ($lumenTimes | Measure-Object -Minimum).Minimum
-    $lumenMax = ($lumenTimes | Measure-Object -Maximum).Maximum
+if ($CoreTimes.Count -gt 0) {
+    $CoreAvg = ($CoreTimes | Measure-Object -Average).Average
+    $CoreMin = ($CoreTimes | Measure-Object -Minimum).Minimum
+    $CoreMax = ($CoreTimes | Measure-Object -Maximum).Maximum
     
-    Write-Host "Lumen Gateway:" -ForegroundColor Yellow
-    Write-Host "  Average: $([math]::Round($lumenAvg, 2)) ms" -ForegroundColor White
-    Write-Host "  Min: $lumenMin ms" -ForegroundColor White
-    Write-Host "  Max: $lumenMax ms" -ForegroundColor White
+    Write-Host "Core Gateway:" -ForegroundColor Yellow
+    Write-Host "  Average: $([math]::Round($CoreAvg, 2)) ms" -ForegroundColor White
+    Write-Host "  Min: $CoreMin ms" -ForegroundColor White
+    Write-Host "  Max: $CoreMax ms" -ForegroundColor White
 }
 
 if ($lmTimes.Count -gt 0) {
@@ -119,7 +119,7 @@ if ($lmTimes.Count -gt 0) {
 
 Write-Host ""
 Write-Host "Recommendation:" -ForegroundColor Cyan
-Write-Host "  - Lumen Gateway는 초기 콜드 히트 이후 평균 지연이 낮음" -ForegroundColor White
+Write-Host "  - Core Gateway는 초기 콜드 히트 이후 평균 지연이 낮음" -ForegroundColor White
 Write-Host "  - LM Studio는 로컬 모델 로딩/초기화 시간이 존재하며 하드웨어/모델에 좌우" -ForegroundColor White
 Write-Host "  - 동일 chat 기준으로 비교한 결과를 참고하여 워크로드 배치 결정 권장" -ForegroundColor Green
 Write-Host ""

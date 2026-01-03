@@ -4,7 +4,6 @@
 
 본 문서는 상위 개념 문서(윤리/공포 분석/자연법/레조넌스/토탈 시뮬레이션)를 실행 가능한 구성(스키마·로더·브리지·검증)로 연결하기 위한 단계별 실행 계획입니다. 문서는 작업 진행에 따라 지속적으로 갱신됩니다.
 
-<<<<<<< HEAD
 ## 최근 변경 사항 (2025-12-24)
 
 ### 리듬 모드 기반 auto_policy 게이트
@@ -24,14 +23,11 @@
 
 - `scripts/semantic_rag_engine.py`에 원격 벡터 스토어 미러/검색 옵션 추가.
 - 환경변수로 활성화(`AGI_REMOTE_VECTOR_PROVIDER=qdrant`, `AGI_REMOTE_VECTOR_URL`).
-
-=======
->>>>>>> origin/main
 ## 최근 변경 사항 (2025-11-14 12:01)
 
 ### Gitko 확장 Copilot 안전화
 
-- `LLM_Unified/gitko-agent-extension`: VS Code 설정(`gitkoAgent.pythonPath/scriptPath/workingDirectory`) 혹은 현재 워크스페이스를 기준으로 Python/`gitko_cli.py` 경로를 자동 탐지하고, 찾지 못하면 Copilot Tool 등록 전에 경고 후 안전하게 무시(이전처럼 D: 고정 경로로 실패하지 않음).
+- `LLM_Unified/gitko-agent-extension`: VS Code 설정(`gitCoregent.pythonPath/scriptPath/workingDirectory`) 혹은 현재 워크스페이스를 기준으로 Python/`gitko_cli.py` 경로를 자동 탐지하고, 찾지 못하면 Copilot Tool 등록 전에 경고 후 안전하게 무시(이전처럼 D: 고정 경로로 실패하지 않음).
 - Language Model Tool 및 Chat Participant 출력은 확장에서 3.2k자로 자동 절단하고, 기본 5분 타임아웃·취소 신호를 강제해 Copilot 400 `invalid_request_body` 루프를 차단.
 - `Gitko Agent Runtime` Output Channel과 설정 변경 감시를 추가하여 런타임 해석 결과·stdout/stderr 길이를 추적 가능.
 
@@ -48,7 +44,6 @@
 2. Consider trimming JSON payloads (e.g., omit raw session blobs when `MinimalContext` is true) to align structured data size with Markdown cap.
 3. Update bridge quick-start docs/tasks so operators know about `-MaxContext` and the new truncation notices.
 
-<<<<<<< HEAD
 ## 최근 변경 사항 (2025-12-18)
 
 ### Lua Trigger Listener + 관측 가능한 리포트 레이어 (Ubuntu↔Windows)
@@ -56,7 +51,7 @@
 - 트리거 기반 자동 실행/보고 파이프라인 추가·강화:
   - 리스너: `scripts/trigger_listener.py`
   - 자동 정책: `scripts/self_expansion/auto_policy.py` (+ heartbeat stall cache: `outputs/sync_cache/auto_policy_state.json`)
-  - Self-Expansion 스켈레톤 확장(파일 보존 병합 + 도구 생성 쿨다운 + 루아 대화 파일 샘플링):
+  - Self-Expansion 스켈레톤 확장(파일 보존 병합 + 도구 생성 쿨다운 + Core 대화 파일 샘플링):
     - `scripts/self_expansion/pipeline.py`
     - `scripts/self_expansion/self_acquisition.py`
     - `scripts/self_expansion/self_compression.py`
@@ -71,9 +66,6 @@
 1. `sync_clean`을 진단→선택적 복구 단계까지 확장(무분별한 kill 금지, 화이트리스트 기반).
 2. `full_cycle`의 “리듬(phase) 판단”을 ledger 이벤트 스키마 기반으로 강화(파동-입자/접힘-펼침 지표).
 3. 트리거 경쟁 방지(스케줄러 vs auto_policy vs manual)용 잠금/우선순위 규칙 추가.
-
-=======
->>>>>>> origin/main
 ## 최근 변경 사항 (2025-11-12 22:45)
 
 ### RCL Secure Loop 실구현 (Lua ↔ VSCode ↔ Runner)
@@ -123,7 +115,7 @@
 
 ### 🌈 LDPM v0.1 통합 계획 수립
 
-- `docs/LDPM_INTEGRATION_PLAN.md` 생성: Lumen Dimensional Prism Model 통합 마스터 플랜
+- `docs/LDPM_INTEGRATION_PLAN.md` 생성: Core Dimensional Prism Model 통합 마스터 플랜
 - **현황 분석**: 기존 시스템(Trinity, Ion Multi-Persona, 단일 프리즘)과 LDPM 신규 요소 간 매핑 완료
 - **통합 필요성**:
   - 3자 이상(order≥3) 공명 정량화 메커니즘 부재 → LDPM의 I3, O-information으로 해결
@@ -150,24 +142,24 @@
 
 운영 가이드: VS Code Tasks에서 "Queue: Smoke Verify"로 샘플 생성 → 변환 → 병합 → 요약 순으로 실행하면 수동 체인 검증 가능.
 
-### Lumen 운영 보강: Sleep Exit 프로브 임계
+### Core 운영 보강: Sleep Exit 프로브 임계
 
-- `scripts/exit_sleep_mode.ps1`이 Lumen 프로브를 수행하며 임계 옵션을 지원합니다.
+- `scripts/exit_sleep_mode.ps1`이 Core 프로브를 수행하며 임계 옵션을 지원합니다.
   - `-LatencyWarnMs` 경고 임계(콘솔 경고 + 요약에 `warn: true`)
   - `-LatencyCriticalMs` 치명 임계(콘솔 경고 + `scripts/quick_status.ps1 -AlertOnDegraded -LogJsonl` 자동 실행 + 요약에 `critical: true`)
-- `scripts/summarize_lumen_latency.py`가 OK/Warn/Critical 비율(%)을 산출해 리포트와 JSON 요약에 함께 노출하도록 개선(2025-11-05 09:07).
-- `scripts/run_lumen_prism_bridge.ps1`가 하위 스크립트 성공 시 `$LASTEXITCODE = $null`인 상황을 0으로 간주하도록 핫픽스(2025-11-05 09:09) → Lumen → Prism 자동화 실패 방지.
+- `scripts/summarize_core_latency.py`가 OK/Warn/Critical 비율(%)을 산출해 리포트와 JSON 요약에 함께 노출하도록 개선(2025-11-05 09:07).
+- `scripts/run_core_prism_bridge.ps1`가 하위 스크립트 성공 시 `$LASTEXITCODE = $null`인 상황을 0으로 간주하도록 핫픽스(2025-11-05 09:09) → Core → Prism 자동화 실패 방지.
 - 권장 샘플:
-  - PowerShell: `...\scripts\exit_sleep_mode.ps1 -LatencyWarnMs 250 -LatencyCriticalMs 600 -OutJson outputs\lumen_probe_latest.json -HistoryJsonl outputs\lumen_probe_history.jsonl`
+  - PowerShell: `...\scripts\exit_sleep_mode.ps1 -LatencyWarnMs 250 -LatencyCriticalMs 600 -OutJson outputs\core_probe_latest.json -HistoryJsonl outputs\core_probe_history.jsonl`
 
 ## 최근 변경 사항 (2025-11-04)
 
 ### Trinity Week 1 준비
 
-- Rua conversations export 파이프라인 정리: `scripts/parse_rua_dataset.ps1`(PowerShell) + `scripts/rua_parse.py`(Python) 신설 → `ai_binoche_conversation_origin/rua/origin/conversations.json` → `outputs/rua/rua_conversations_flat.jsonl` 재생성 일관성 확보
-- 파서 검증: 기존 JSONL과 해시 일치 확인(21842 rows), CSV 미러 옵션 제공 → Phase 6.0 Week1 `Rua Dataset Parsing` 태스크 즉시 착수 가능
-- 후속 TODO: Adaptive Scheduler에 Rua 파싱 루틴 연결, Trinity 통합 문서(`autopoietic_trinity_unified_latest.md`)와 연동 체크
-- Lumen Feedback 의존성 완화: `fdo_agi_repo/orchestrator/pipeline.py`가 Lumen 모듈 미존재 시 폴백 클래스로 동작 → 로컬/CI에서 pytest 실행 차단 요인 제거
+- Core conversations export 파이프라인 정리: `scripts/parse_core_dataset.ps1`(PowerShell) + `scripts/Core_parse.py`(Python) 신설 → `ai_binoche_conversation_origin/Core/origin/conversations.json` → `outputs/Core/core_conversations_flat.jsonl` 재생성 일관성 확보
+- 파서 검증: 기존 JSONL과 해시 일치 확인(21842 rows), CSV 미러 옵션 제공 → Phase 6.0 Week1 `Core Dataset Parsing` 태스크 즉시 착수 가능
+- 후속 TODO: Adaptive Scheduler에 Core 파싱 루틴 연결, Trinity 통합 문서(`autopoietic_trinity_unified_latest.md`)와 연동 체크
+- Core Feedback 의존성 완화: `fdo_agi_repo/orchestrator/pipeline.py`가 Core 모듈 미존재 시 폴백 클래스로 동작 → 로컬/CI에서 pytest 실행 차단 요인 제거
 
 ### Phase 9 통합 검증 지원
 
@@ -319,7 +311,7 @@
   - VS Code 작업: "Smoke: Autopoietic Scheduler (Original Data)"
 
 - ✅ **Phase 3**: Resonance Simulator 통합
-  - `C:\workspace\original_data\lumen_flow_sim.py` → `scripts/resonance_simulator.py`
+  - `C:\workspace\original_data\core_flow_sim.py` → `scripts/resonance_simulator.py`
   - 7일 위상 루프 동역학: info_density, resonance, entropy, temporal_phase
   - 2주기 시뮬레이션 (336 스텝), 지평선 교차 2회 검증 (PASS)
   - VS Code 작업: "Smoke: Resonance Simulator (Original Data)"

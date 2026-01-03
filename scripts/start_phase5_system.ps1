@@ -1,16 +1,20 @@
-# Phase 5 통합 시스템 시작 스크립트
+﻿# Phase 5 통합 시스템 시작 스크립트
 # Task Queue Server + Web Dashboard + Monitoring Daemon을 모두 시작
 
 param(
     [switch]$StopAll,
     [switch]$CheckStatus
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
 $TASK_QUEUE_PORT = 8091
 $WEB_DASHBOARD_PORT = 8000
-$WORKSPACE = "C:\workspace\agi"
+$WORKSPACE = "$WorkspaceRoot"
 
 function Write-Header {
     param([string]$Text)
@@ -97,7 +101,7 @@ if (Check-Port -Port $TASK_QUEUE_PORT) {
 }
 else {
     Start-Job -Name 'TaskQueueServer' -ScriptBlock {
-        Set-Location 'C:\workspace\agi\LLM_Unified\ion-mentoring'
+        Set-Location "$WorkspaceRoot\LLM_Unified\ion-mentoring"
         python task_queue_server.py --port 8091
     } | Out-Null
     
@@ -122,7 +126,7 @@ if (Check-Port -Port $WEB_DASHBOARD_PORT) {
 }
 else {
     Start-Job -Name 'WebDashboard' -ScriptBlock {
-        Set-Location 'C:\workspace\agi\fdo_agi_repo'
+        Set-Location "$WorkspaceRoot\fdo_agi_repo"
         python monitoring\web_server.py
     } | Out-Null
     

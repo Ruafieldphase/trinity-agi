@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     일과 종료 백업 - "오늘 여기까지" 명령 시 실행
@@ -16,9 +16,12 @@
 
 param(
     [string]$Note = "",
-    [string]$WorkspaceRoot = "$PSScriptRoot\..",
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$PSScriptRoot\..",
     [switch]$SkipArchive
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $timestamp = Get-Date -Format "yyyy-MM-dd_HHmmss"

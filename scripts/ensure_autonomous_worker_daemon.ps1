@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$IntervalSeconds = 60,
     [int]$WorkerIntervalSeconds = 300,
     [switch]$KillExisting

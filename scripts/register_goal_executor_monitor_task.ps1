@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Goal Executor Monitor를 Windows Scheduled Task로 등록
 
@@ -40,6 +40,9 @@ param(
     [int]$ThresholdMinutes = 15,
     [switch]$UserMode
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

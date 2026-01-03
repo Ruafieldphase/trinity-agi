@@ -1,11 +1,11 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Emotion-Triggered Stabilizer 실행 (Realtime Pipeline + Auto-Stabilizer 통합)
 
 .DESCRIPTION
     Phase 5: Auto-Stabilizer Integration
-    - Realtime Pipeline에서 Lumen 감정 신호 모니터링
+    - Realtime Pipeline에서 Core 감정 신호 모니터링
     - Fear 레벨별 자동 안정화 트리거
     - Emotion-aware maintenance scheduling
 
@@ -40,6 +40,9 @@ param(
     [switch]$AutoExecute,
     [switch]$Once
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest

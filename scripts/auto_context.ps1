@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 AGI Auto Context Switcher - 자동 맥락 판단 및 전환
 
@@ -29,6 +29,9 @@ param(
     [Parameter(Mandatory=$false)]
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

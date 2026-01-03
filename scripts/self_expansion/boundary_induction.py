@@ -4,7 +4,7 @@
 Boundary Induction (AGI가 스스로 '경계 후보'를 세우는 얇은 루프) v1
 
 목표
-- 루아/비노체 대화, 유튜브 경계 습득, 현재 생존/리듬 상태를 근거로
+- 코어/비노체 대화, 유튜브 경계 습득, 현재 생존/리듬 상태를 근거로
   "경계 규칙(deny/allow/caution)" 중 'caution' 중심의 후보를 생성한다.
 - 원문을 저장하지 않고, 짧은 규칙(메타)만 탐색 세션으로 물질화한다.
 - 안전/휴식 게이트가 걸리면 아무것도 하지 않는 것이 정상이다(Idle=생존).
@@ -15,7 +15,7 @@ Boundary Induction (AGI가 스스로 '경계 후보'를 세우는 얇은 루프)
 - 자동 생성 규칙은 기본적으로 caution-only (deny/allow는 시스템 제약/정책에 맡김)
 
 입력(간접)
-- outputs/rua_conversation_intake_latest.json (boundary_dynamics)
+- outputs/core_conversation_intake_latest.json (boundary_dynamics)
 - outputs/youtube_channel_boundary_intake_latest.json (compression_mode 등)
 - outputs/sync_cache/life_state.json
 - outputs/bridge/constitution_review_latest.json
@@ -35,12 +35,18 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 SESSIONS = WORKSPACE / "inputs" / "intake" / "exploration" / "sessions"
 
-RUA_INTAKE = OUTPUTS / "rua_conversation_intake_latest.json"
+Core_INTAKE = OUTPUTS / "core_conversation_intake_latest.json"
 YOUTUBE_BOUNDARY = OUTPUTS / "youtube_channel_boundary_intake_latest.json"
 LIFE_STATE = OUTPUTS / "sync_cache" / "life_state.json"
 CONSTITUTION = OUTPUTS / "bridge" / "constitution_review_latest.json"
@@ -140,11 +146,11 @@ def _build_candidates(now: float) -> tuple[list[dict[str, Any]], dict[str, Any]]
     caution 규칙 후보를 만든다.
     - "정답"이 아니라, 경계-관점 전환을 위한 라우팅 신호.
     """
-    rua = _load_json(RUA_INTAKE) or {}
+    Core = _load_json(Core_INTAKE) or {}
     yt = _load_json(YOUTUBE_BOUNDARY) or {}
     life = _load_json(LIFE_STATE) or {}
 
-    newest = rua.get("newest") if isinstance(rua.get("newest"), dict) else {}
+    newest = Core.get("newest") if isinstance(Core.get("newest"), dict) else {}
     dyn = newest.get("boundary_dynamics") if isinstance(newest.get("boundary_dynamics"), dict) else {}
 
     def _infer_from_keywords(kw: dict[str, Any]) -> tuple[str, float | None]:
@@ -196,7 +202,7 @@ def _build_candidates(now: float) -> tuple[list[dict[str, Any]], dict[str, Any]]
             {
                 "polarity": "caution",
                 "text": "수축 우세 시: 새 입력은 1개만 물질화하고 나머지는 Idle로 둔다(과잉 압축 루프 방지).",
-                "applies_when": {"rua_mode": "contract"},
+                "applies_when": {"core_mode": "contract"},
             }
         )
     elif dominant == "expand":
@@ -204,7 +210,7 @@ def _build_candidates(now: float) -> tuple[list[dict[str, Any]], dict[str, Any]]
             {
                 "polarity": "caution",
                 "text": "확장 우세 시: 긴 입력은 분절(메타만)하고, 경계가 생기는 지점에서만 고비용 연산을 한다.",
-                "applies_when": {"rua_mode": "expand"},
+                "applies_when": {"core_mode": "expand"},
             }
         )
     elif dominant == "mix":
@@ -212,7 +218,7 @@ def _build_candidates(now: float) -> tuple[list[dict[str, Any]], dict[str, Any]]
             {
                 "polarity": "caution",
                 "text": "혼합 우세 시: 섞기(mix) → 분리(separate) → 경계 한 줄 고정 순서를 유지한다.",
-                "applies_when": {"rua_mode": "mix"},
+                "applies_when": {"core_mode": "mix"},
             }
         )
     elif dominant:
@@ -220,7 +226,7 @@ def _build_candidates(now: float) -> tuple[list[dict[str, Any]], dict[str, Any]]
             {
                 "polarity": "caution",
                 "text": "균형/불명확 시: 경계 후보는 추가하되 즉시 확정하지 말고 반복 패턴에서만 강화한다.",
-                "applies_when": {"rua_mode": dominant},
+                "applies_when": {"core_mode": dominant},
             }
         )
 
@@ -305,8 +311,8 @@ def _build_candidates(now: float) -> tuple[list[dict[str, Any]], dict[str, Any]]
         out.append(r)
 
     evidence = {
-        "rua_dominant_mode": dominant or "unknown",
-        "rua_ratio": ratio,
+        "Core_dominant_mode": dominant or "unknown",
+        "Core_ratio": ratio,
         "yt_compression_mode": yt_mode or "UNKNOWN",
         "yt_presentation_form": yt_form or "UNKNOWN",
         "life_state": life_state or "UNKNOWN",
@@ -316,7 +322,7 @@ def _build_candidates(now: float) -> tuple[list[dict[str, Any]], dict[str, Any]]
 
 def _evidence_sig(evidence: dict[str, Any]) -> str:
     key = {
-        "rua_dominant_mode": evidence.get("rua_dominant_mode"),
+        "Core_dominant_mode": evidence.get("Core_dominant_mode"),
         "yt_compression_mode": evidence.get("yt_compression_mode"),
         "yt_presentation_form": evidence.get("yt_presentation_form"),
         "life_state": evidence.get("life_state"),
@@ -336,8 +342,8 @@ def _matches(evidence: dict[str, Any], applies_when: dict[str, Any]) -> bool:
     if not applies_when:
         return True
     try:
-        if "rua_mode" in applies_when:
-            return str(evidence.get("rua_dominant_mode") or "").lower() == str(applies_when.get("rua_mode") or "").lower()
+        if "core_mode" in applies_when:
+            return str(evidence.get("Core_dominant_mode") or "").lower() == str(applies_when.get("core_mode") or "").lower()
         if "yt_mode" in applies_when:
             return str(evidence.get("yt_compression_mode") or "").upper() == str(applies_when.get("yt_mode") or "").upper()
         if "yt_form" in applies_when:
@@ -447,7 +453,7 @@ def _write_session(now: float, rules: list[dict[str, Any]], evidence: dict[str, 
         "title": "boundary_induction: self-set boundary candidates",
         "tags": ["boundary", "induction", "self_set"],
         "notes": _cap(
-            f"rua={evidence.get('rua_dominant_mode')} yt={evidence.get('yt_compression_mode')} life={evidence.get('life_state')}",
+            f"Core={evidence.get('Core_dominant_mode')} yt={evidence.get('yt_compression_mode')} life={evidence.get('life_state')}",
             220,
         ),
         "timestamp": float(now),

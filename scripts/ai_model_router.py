@@ -1,5 +1,6 @@
 import re
 from typing import Dict, List, Optional
+from workspace_root import get_workspace_root
 
 class AIModelRouter:
     """
@@ -100,19 +101,11 @@ class AIModelRouter:
             if is_complex or len(task_intent) > 200:
                 selected = "gemini_pro"
                 reason = "Task requires complex reasoning or deep analysis."
-<<<<<<< HEAD
                 model_version = "gemini-2.5-pro"  # Prefer latest stable Pro
             else:
                 selected = "gemini_flash"
                 reason = "Task requires fast execution or simple code."
                 model_version = "gemini-2.5-flash"
-=======
-                model_version = "gemini-1.5-pro-002" # Or 3.0 Pro if available
-            else:
-                selected = "gemini_flash"
-                reason = "Task requires fast execution or simple code."
-                model_version = "gemini-2.0-flash-exp"
->>>>>>> origin/main
 
         return {
             "model": selected,
@@ -128,29 +121,20 @@ class AIModelRouter:
             import google.generativeai as genai
             import os
             from dotenv import load_dotenv
-<<<<<<< HEAD
             from pathlib import Path
             
-            root = Path(__file__).resolve().parents[1]
+            root = get_workspace_root()
             cred = root / ".env_credentials"
             if cred.exists():
                 load_dotenv(dotenv_path=cred, override=False)
             load_dotenv(dotenv_path=root / ".env", override=False)
-=======
-            
-            load_dotenv()
->>>>>>> origin/main
             api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
             if not api_key:
                 return None
                 
             genai.configure(api_key=api_key)
-<<<<<<< HEAD
             # Prefer 2.5 Flash (fallback handled by caller if needed)
             return genai.GenerativeModel("gemini-2.5-flash")
-=======
-            return genai.GenerativeModel('gemini-2.0-flash-exp')
->>>>>>> origin/main
         except Exception as e:
             print(f"Error initializing Gemini: {e}")
             return None

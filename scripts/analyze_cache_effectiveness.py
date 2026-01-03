@@ -7,14 +7,17 @@ Analyzes resonance_ledger.jsonl to understand cache usage patterns and suggest i
 import json
 import os
 import sys
+from pathlib import Path
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from typing import Dict, List, Any
 
-BASE = r"C:\workspace\agi"
-LEDGER_PATH = os.path.join(BASE, "fdo_agi_repo", "memory", "resonance_ledger.jsonl")
-OUT_JSON = os.path.join(BASE, "outputs", "cache_analysis_latest.json")
-OUT_MD = os.path.join(BASE, "outputs", "cache_analysis_latest.md")
+from workspace_root import get_workspace_root
+
+WORKSPACE_ROOT = get_workspace_root()
+LEDGER_PATH = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
+OUT_JSON = WORKSPACE_ROOT / "outputs" / "cache_analysis_latest.json"
+OUT_MD = WORKSPACE_ROOT / "outputs" / "cache_analysis_latest.md"
 
 
 def load_jsonl(path: str) -> List[Dict[str, Any]]:

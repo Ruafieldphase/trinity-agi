@@ -15,9 +15,10 @@ import json
 import numpy as np
 from pathlib import Path
 from typing import List, Dict
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 def create_feeling_vector(text: str) -> np.ndarray:

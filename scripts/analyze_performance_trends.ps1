@@ -1,13 +1,17 @@
-# 성능 트렌드 분석 - 시간 경과에 따른 개선도 측정
+﻿# 성능 트렌드 분석 - 시간 경과에 따른 개선도 측정
 # 시스템이 실제로 개선되고 있는지를 추적
 
 param(
     [int]$LookbackHours = 24,
-    [string]$DashboardFile = "C:\workspace\agi\outputs\rhythm_dashboard.json",
-    [string]$MetricsFile = "C:\workspace\agi\outputs\scheduler_metrics.json",
-    [string]$TrendFile = "C:\workspace\agi\outputs\performance_trend_analysis.json",
-    [string]$ReportFile = "C:\workspace\agi\outputs\performance_trend_analysis.md"
+    [string]$DashboardFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\rhythm_dashboard.json",
+    [string]$MetricsFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\scheduler_metrics.json",
+    [string]$TrendFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\performance_trend_analysis.json",
+    [string]$ReportFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\performance_trend_analysis.md"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 

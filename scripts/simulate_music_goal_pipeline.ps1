@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # simulate_music_goal_pipeline.ps1
 # Music → Rhythm → Goal 전체 파이프라인 시뮬레이션
 
@@ -8,9 +8,13 @@ param(
     [switch]$OpenResults,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
-$ws = "c:\workspace\agi"
+$ws = "$WorkspaceRoot"
 $py = "$ws\fdo_agi_repo\.venv\Scripts\python.exe"
 if (!(Test-Path -LiteralPath $py)) { $py = 'python' }
 

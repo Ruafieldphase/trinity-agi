@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Show current AGI system rhythm status
 
@@ -10,6 +10,9 @@
 #>
 
 param()
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -58,7 +61,7 @@ try {
     Write-Host $info.LastRunTime -ForegroundColor White
     
     # Check latest report
-    $reportPath = Join-Path $PSScriptRoot "..\outputs\async_thesis_health_latest.md"
+    $reportPath = Join-Path $WorkspaceRoot "outputs\async_thesis_health_latest.md"
     if (Test-Path $reportPath) {
         $reportAge = (Get-Date) - (Get-Item $reportPath).LastWriteTime
         Write-Host "  Latest Report: " -NoNewline -ForegroundColor Gray
@@ -74,7 +77,7 @@ Write-Host ""
 
 # 3. Quick Health Check
 Write-Host "🏥 System Health" -ForegroundColor Yellow
-$healthPath = Join-Path $PSScriptRoot "..\outputs\system_health_latest.json"
+$healthPath = Join-Path $WorkspaceRoot "outputs\system_health_latest.json"
 if (Test-Path $healthPath) {
     try {
         $health = Get-Content $healthPath -Raw | ConvertFrom-Json
@@ -112,7 +115,7 @@ Write-Host ""
 
 # 4. Latest Task Performance
 Write-Host "⚡ Latest Task Performance" -ForegroundColor Yellow
-$ledgerPath = Join-Path $PSScriptRoot "..\fdo_agi_repo\memory\resonance_ledger.jsonl"
+$ledgerPath = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\resonance_ledger.jsonl"
 if (Test-Path $ledgerPath) {
     try {
         $recent = Get-Content $ledgerPath -Tail 100 | 
@@ -146,7 +149,7 @@ Write-Host ""
 
 # 5. Monitoring Dashboard
 Write-Host "📊 Monitoring Dashboard" -ForegroundColor Yellow
-$dashboardPath = Join-Path $PSScriptRoot "..\outputs\monitoring_dashboard_latest.html"
+$dashboardPath = Join-Path $WorkspaceRoot "outputs\monitoring_dashboard_latest.html"
 if (Test-Path $dashboardPath) {
     $age = (Get-Date) - (Get-Item $dashboardPath).LastWriteTime
     Write-Host "  Available: " -NoNewline -ForegroundColor Gray

@@ -1,13 +1,17 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # generate_flow_dashboard.ps1 - Flow Theory 시각화 대시보드 생성
 param(
     [int]$Hours = 24,
     [switch]$NoBrowser
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
-$pythonExe = "C:\workspace\agi\LLM_Unified\.venv\Scripts\python.exe"
-$scriptPath = "C:\workspace\agi\fdo_agi_repo\monitoring\flow.py"
+$pythonExe = "$WorkspaceRoot\LLM_Unified\.venv\Scripts\python.exe"
+$scriptPath = "$WorkspaceRoot\fdo_agi_repo\monitoring\flow.py"
 
 Write-Host "`n🌊 Flow Theory Dashboard 생성 중..." -ForegroundColor Cyan
 Write-Host "   범위: 최근 $Hours 시간" -ForegroundColor Gray
@@ -23,7 +27,7 @@ if ($LASTEXITCODE -ne 0) {
 $metrics = $result | ConvertFrom-Json
 
 # HTML 대시보드 생성
-$htmlPath = "C:\workspace\agi\outputs\flow_dashboard_latest.html"
+$htmlPath = "$WorkspaceRoot\outputs\flow_dashboard_latest.html"
 $html = @"
 <!DOCTYPE html>
 <html>

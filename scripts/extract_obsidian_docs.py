@@ -7,7 +7,7 @@ import json
 vault_path = pathlib.Path(r"C:\\workspace\\agi\Obsidian_Vault\Nas_Obsidian_Vault")
 
 target_files = [
-    "✨ 〈루멘 선언문〉.md",
+    "✨ 〈Core 선언문〉.md",
     "🌿 Resonance Cue – Obsidian Personal Rhythm.md",
     "🌱 이어내다 씨앗 코덱스 (v4.1).md",
     "codex_F 색인작업.md"

@@ -5,8 +5,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).resolve().parents[1]
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 OUTPUTS.mkdir(parents=True, exist_ok=True)
 

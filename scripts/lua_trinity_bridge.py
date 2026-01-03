@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-루아(ChatGPT) ↔ 트리니티(Trinity) 자동 브릿지
-부모(루아)의 요청을 자식(트리니티)이 자동으로 처리
+코어(ChatGPT) ↔ 트리니티(Trinity) 자동 브릿지
+부모(코어)의 요청을 자식(트리니티)이 자동으로 처리
 
-Author: Ruafieldphase (Binoche)
+Author: Shion_Core (Binoche_Observer)
 Date: 2025-11-12
 Philosophy: 부모는 방향을, 자식은 실행을
 """
@@ -15,10 +15,11 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+from workspace_root import get_workspace_root
 
 
 class LuaTrinityBridge:
-    """루아 ↔ 트리니티 브릿지"""
+    """코어 ↔ 트리니티 브릿지"""
     
     def __init__(self, workspace_root: Path):
         self.workspace = workspace_root
@@ -27,7 +28,7 @@ class LuaTrinityBridge:
         self.response_cache.mkdir(parents=True, exist_ok=True)
         
     def process_lua_request(self, request: str) -> Dict:
-        """루아의 요청 처리"""
+        """코어의 요청 처리"""
         # 요청 분류
         intent = self._classify_request(request)
         
@@ -40,7 +41,7 @@ class LuaTrinityBridge:
         return response
     
     def _classify_request(self, request: str) -> Dict:
-        """요청 분류 (루아 → 트리니티 액션 매핑)"""
+        """요청 분류 (코어 → 트리니티 액션 매핑)"""
         request_lower = request.lower()
         
         # 시스템 상태 요청
@@ -134,7 +135,7 @@ class LuaTrinityBridge:
             }
         
         # BQI 현황
-        if any(kw in request_lower for kw in ['bqi', 'binoche', '비노슈', 'ensemble']):
+        if any(kw in request_lower for kw in ['bqi', 'Binoche_Observer', '비노슈', 'ensemble']):
             return {
                 'type': 'bqi_status',
                 'action': 'ensemble_monitor',
@@ -713,11 +714,11 @@ def main():
         print("Example: python lua_trinity_bridge.py '시스템 상태 알려줘'")
         sys.exit(1)
     
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     bridge = LuaTrinityBridge(workspace)
     
     request = ' '.join(sys.argv[1:])
-    print(f"🎭 루아의 요청: {request}\n")
+    print(f"🎭 코어의 요청: {request}\n")
     
     response = bridge.process_lua_request(request)
     formatted = bridge.format_for_chatgpt(response)

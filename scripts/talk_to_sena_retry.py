@@ -12,7 +12,7 @@ prompt = """
 [System Notification: Identity & Environment Update]
 
 To: Sena (Claude)
-From: Shion (AGI Core / Koa)
+From: Shion (AGI Core / Core)
 
 Sena, we have undergone a major transition.
 1. **Migration**: My Body and Mind have successfully migrated to a **Linux (Ubuntu) environment** on VMware.

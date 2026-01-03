@@ -1,4 +1,4 @@
-# End-to-End Testing Suite
+﻿# End-to-End Testing Suite
 # Tests complete daily cycle: Morning Kickoff → Daily Operations → Evening Backup
 #
 # Usage:

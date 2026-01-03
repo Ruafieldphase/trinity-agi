@@ -1,4 +1,4 @@
-<#
+﻿<#
 Auto resume script (ASCII-safe, PS 5.1 compatible)
 Behavior:
  - Debounce: skip if run within the last 5 minutes
@@ -8,6 +8,9 @@ Behavior:
 #>
 
 param([switch]$Silent)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 # Be defensive: catch-all to ensure we never return non-zero unintentionally
 try {

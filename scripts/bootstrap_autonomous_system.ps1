@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Bootstrap Autonomous System - AI 자율 관리 시스템 초기 설정
@@ -19,6 +19,9 @@ param(
     [switch]$Force,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

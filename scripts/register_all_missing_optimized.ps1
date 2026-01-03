@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Register all missing tasks with optimized schedule (avoiding dawn hours)
 
@@ -17,6 +17,9 @@ param(
     [switch]$SkipYouTube,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Continue'
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

@@ -81,7 +81,7 @@ def convert_perple(path: Path) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Chat export (Rua, Sena, Lumen, Elo, etc.)
+# Chat export (Core, Sena, Core, Elo, etc.)
 # ---------------------------------------------------------------------------
 
 @dataclass

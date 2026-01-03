@@ -1,10 +1,13 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 param(
     [int]$WindowSeconds = 300,
     [double]$MinEntropy = 2.5,
     [double]$MinCompressionRatio = 1.05,
     [switch]$OpenReport
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

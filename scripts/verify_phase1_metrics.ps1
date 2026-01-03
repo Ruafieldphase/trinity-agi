@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Phase 1 Quick Wins 검증 스크립트
@@ -93,8 +93,8 @@ $total_checks = 4
 
 # Check 1: Local LLM ALERT
 Write-Host "Check 1: Local LLM alert (target: ALERT less than 2 per 10 samples)" -ForegroundColor White
-if ($metrics -and $metrics.Lumen_Gateway.Local_LLM) {
-    $samples = $metrics.Lumen_Gateway.Local_LLM.recent_samples
+if ($metrics -and $metrics.Core_Gateway.Local_LLM) {
+    $samples = $metrics.Core_Gateway.Local_LLM.recent_samples
     if ($samples) {
         $alert_count = ($samples | Where-Object { $_ -gt 2500 }).Count
         $total_samples = $samples.Count
@@ -208,4 +208,3 @@ Write-Host '   - fdo_agi_repo\outputs\ledger_summary_latest.md' -ForegroundColor
 Write-Host ''
 
 exit 0
-

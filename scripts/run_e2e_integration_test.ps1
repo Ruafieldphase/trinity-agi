@@ -1,4 +1,4 @@
-# E2E Integration Test for 6 Systems
+﻿# E2E Integration Test for 6 Systems
 # Runs all systems in sequence and validates results
 
 param(
@@ -20,10 +20,10 @@ Write-Host "`n"
 $results = @()
 $startTime = Get-Date
 
-# Test 1: Resonance Loop + Lumen
-Write-Host "Test 1/6: Resonance Loop + Lumen Integration..." -ForegroundColor Cyan
+# Test 1: Resonance Loop + Core
+Write-Host "Test 1/6: Resonance Loop + Core Integration..." -ForegroundColor Cyan
 try {
-    & "$scriptDir\run_resonance_lumen_integration.ps1" -ErrorAction Stop
+    & "$scriptDir\run_resonance_core_integration.ps1" -ErrorAction Stop
     $results += @{
         System = "Resonance Loop"
         Status = "PASS"
@@ -41,10 +41,10 @@ catch {
 }
 Write-Host ""
 
-# Test 2: BQI Phase 6 + Lumen
-Write-Host "Test 2/6: BQI Phase 6 + Lumen Integration..." -ForegroundColor Cyan
+# Test 2: BQI Phase 6 + Core
+Write-Host "Test 2/6: BQI Phase 6 + Core Integration..." -ForegroundColor Cyan
 try {
-    & "$scriptDir\run_bqi_lumen_integration.ps1" -ErrorAction Stop
+    & "$scriptDir\run_bqi_core_integration.ps1" -ErrorAction Stop
     $results += @{
         System = "BQI Phase 6"
         Status = "PASS"
@@ -62,11 +62,11 @@ catch {
 }
 Write-Host ""
 
-# Test 3: YouTube + Lumen (optional)
+# Test 3: YouTube + Core (optional)
 if (-not $SkipYouTube) {
-    Write-Host "Test 3/6: YouTube + Lumen Enhancement..." -ForegroundColor Cyan
+    Write-Host "Test 3/6: YouTube + Core Enhancement..." -ForegroundColor Cyan
     try {
-        & "$scriptDir\run_youtube_lumen_enhancement.ps1" -Url $YouTubeUrl -ErrorAction Stop
+        & "$scriptDir\run_youtube_core_enhancement.ps1" -Url $YouTubeUrl -ErrorAction Stop
         $results += @{
             System = "YouTube Learning"
             Status = "PASS"
@@ -84,7 +84,7 @@ if (-not $SkipYouTube) {
     }
 }
 else {
-    Write-Host "Test 3/6: YouTube + Lumen Enhancement... SKIPPED" -ForegroundColor Yellow
+    Write-Host "Test 3/6: YouTube + Core Enhancement... SKIPPED" -ForegroundColor Yellow
     $results += @{
         System = "YouTube Learning"
         Status = "SKIP"

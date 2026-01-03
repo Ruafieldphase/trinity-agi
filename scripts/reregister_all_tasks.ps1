@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
     Re-register all scheduled tasks with fixed hidden window settings
@@ -55,10 +55,10 @@ $tasksToReregister = @(
         Description = 'Task Queue Watchdog'
     },
     @{
-        Name        = 'LumenProbeMonitor'
-        Script      = 'scripts\register_lumen_probe_task.ps1'
+        Name        = 'CoreProbeMonitor'
+        Script      = 'scripts\register_core_probe_task.ps1'
         Args        = '-Register -IntervalMinutes 10'
-        Description = 'Lumen Health Probe'
+        Description = 'Core Health Probe'
     },
     @{
         Name        = 'SnapshotRotation'

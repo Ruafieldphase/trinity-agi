@@ -1,4 +1,4 @@
-# Idle Task Generator - 작업이 없을 때 자동으로 테스트/학습 작업 생성
+﻿# Idle Task Generator - 작업이 없을 때 자동으로 테스트/학습 작업 생성
 # Usage: .\idle_task_generator.ps1 [-IdleThresholdMinutes 30] [-DryRun]
 
 param(
@@ -6,6 +6,10 @@ param(
     [switch]$DryRun,
     [string]$Server = "http://127.0.0.1:8091"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
@@ -14,7 +18,7 @@ Write-Host "   Threshold: $IdleThresholdMinutes minutes" -ForegroundColor Gray
 Write-Host "   Server: $Server" -ForegroundColor Gray
 
 # 1. Resonance Ledger에서 마지막 작업 확인
-$ledgerPath = "C:\workspace\agi\fdo_agi_repo\memory\resonance_ledger.jsonl"
+$ledgerPath = "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl"
 if (-not (Test-Path $ledgerPath)) {
     Write-Host "❌ Resonance ledger not found: $ledgerPath" -ForegroundColor Red
     exit 1

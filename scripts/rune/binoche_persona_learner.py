@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Binoche Persona Learner (stub v1)
+Binoche_Observer Persona Learner (stub v1)
 
 문서 참조 복구 + 최소한의 "데이터 존재 확인"만 수행한다.
 - 원문 저장/전송 없이 파일 개수/mtime만 요약해 outputs에 고정.
@@ -14,6 +14,12 @@ import os
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 
 def utc_iso(ts: float) -> str:
@@ -28,8 +34,8 @@ def _atomic_write_json(path: Path, obj: dict) -> None:
 
 
 def main() -> int:
-    ws = Path(__file__).resolve().parents[2]
-    src = ws / "ai_binoche_conversation_origin" / "rua"
+    ws = get_workspace_root()
+    src = ws / "ai_binoche_conversation_origin" / "Core"
     out = ws / "outputs" / "rune" / "binoche_persona_learner_latest.json"
     now = time.time()
 

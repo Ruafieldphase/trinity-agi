@@ -4,7 +4,7 @@ Summarize dream episodes from resonance_ledger.jsonl.
 
 Usage:
   python scripts/summarize_dream_episodes.py \
-    --workspace C:/workspace/agi \
+    --workspace <workspace_root> \
     --ledger fdo_agi_repo/memory/resonance_ledger.jsonl \
     --out outputs/dream_episodes_latest.json \
     --hours 72 \
@@ -18,10 +18,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
+from workspace_root import get_workspace_root
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Summarize dream episodes from resonance ledger")
-    p.add_argument("--workspace", default="C:/workspace/agi", help="Workspace root")
+    p.add_argument("--workspace", default=str(get_workspace_root()), help="Workspace root")
     p.add_argument("--ledger", default="fdo_agi_repo/memory/resonance_ledger.jsonl", help="Relative path to resonance ledger")
     p.add_argument("--out", default="outputs/dream_episodes_latest.json", help="Output summary JSON")
     p.add_argument("--hours", type=int, default=72, help="Lookback window in hours")

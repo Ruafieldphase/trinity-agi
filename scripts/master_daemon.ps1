@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 AGI Master Daemon - 모든 AGI 작업을 하나의 프로세스에서 제어
 
@@ -17,11 +17,13 @@ param(
     [switch]$Stop,
     [switch]$Restart,
     [switch]$Status,
-    [string]$ConfigPath = "C:\workspace\agi\config\master_daemon_config.json"
+    [string]$ConfigPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\config\master_daemon_config.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
-$WorkspaceRoot = "C:\workspace\agi"
 
 # 로깅 함수
 function Write-DaemonLog {
@@ -124,7 +126,6 @@ function Start-ManagedTask {
         if ($TaskConfig.pythonVenv) {
             # Python 스크립트
             $pythonExe = Join-Path $WorkspaceRoot $TaskConfig.pythonVenv
-<<<<<<< HEAD
             # 창 없는 실행을 우선한다 (pythonw가 있으면 사용).
             # - python.exe는 WindowStyle Hidden이어도 '깜빡임'이 발생할 수 있다.
             # - pythonw.exe는 콘솔 창을 만들지 않으므로 사용자 체감이 안정적이다.
@@ -133,9 +134,8 @@ function Start-ManagedTask {
                     $pythonwExe = Join-Path (Split-Path -Parent $pythonExe) "pythonw.exe"
                     if (Test-Path $pythonwExe) { $pythonExe = $pythonwExe }
                 }
-            } catch { }
-=======
->>>>>>> origin/main
+            }
+            catch { }
             $argList = @($scriptPath) + $TaskConfig.args
             $executable = $pythonExe
         }

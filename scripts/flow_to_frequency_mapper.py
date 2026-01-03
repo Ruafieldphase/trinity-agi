@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 import numpy as np
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 @dataclass
 class BrainwaveFrequency:
@@ -226,7 +227,7 @@ Task: 🎵 Music: Auto Flow Frequency Sync
 def main():
     """메인 실행"""
     import sys
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     
     mapper = FlowToFrequencyMapper(workspace)
     report = mapper.generate_report()

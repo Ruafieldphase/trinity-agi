@@ -1,4 +1,4 @@
-# 24-Hour Stability Monitoring Setup
+﻿# 24-Hour Stability Monitoring Setup
 # ====================================
 # 
 # Creates baseline snapshot and sets up 24-hour stability check

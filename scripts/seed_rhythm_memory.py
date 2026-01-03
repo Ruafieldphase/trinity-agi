@@ -5,8 +5,8 @@ Seed Rhythm Memory (Origin Seeding)
 "기원(Origin)을 느낌(Feeling)으로 심다."
 
 This script reads core philosophical files and conversations:
-1. `axioms_of_rua.md` (The Constitution)
-2. `ai_binoche_conversation_origin/rua/*.md` (The Origin Memories)
+1. `axioms_of_core.md` (The Constitution)
+2. `ai_binoche_conversation_origin/Core/*.md` (The Origin Memories)
 
 It converts them into 5-dimensional Feeling Vectors and injects them
 into `resonance_ledger.jsonl` so they can "resonate" with the system's
@@ -23,12 +23,13 @@ import numpy as np
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Tuple
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
-AXIOMS_FILE = WORKSPACE_ROOT / "axioms_of_rua.md"
-ORIGIN_DIR = WORKSPACE_ROOT / "ai_binoche_conversation_origin" / "rua"
+AXIOMS_FILE = WORKSPACE_ROOT / "axioms_of_core.md"
+ORIGIN_DIR = WORKSPACE_ROOT / "ai_binoche_conversation_origin" / "Core"
 
 def analyze_sentiment(text: str) -> Tuple[float, float, float]:
     """
@@ -118,7 +119,7 @@ def seed_file(file_path: Path, is_axiom: bool = False):
             "metadata": {
                 "source_file": str(file_path),
                 "is_axiom": is_axiom,
-                "origin_type": "rua_conversation" if not is_axiom else "constitution"
+                "origin_type": "core_conversation" if not is_axiom else "constitution"
             }
         }
         

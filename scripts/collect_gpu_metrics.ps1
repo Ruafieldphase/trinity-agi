@@ -1,11 +1,14 @@
-# GPU Monitoring Integration
+﻿# GPU Monitoring Integration
 # Collects GPU metrics using nvidia-smi and outputs to JSON
 # Part of Phase 3+ Real-Time Monitoring Enhancement
 
 param(
-    [string]$OutJson = "$PSScriptRoot\..\outputs\gpu_usage_latest.json",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\gpu_usage_latest.json",
     [switch]$Quiet
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 

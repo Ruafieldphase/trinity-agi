@@ -1,7 +1,10 @@
-param(
-    [string]$Folder = "${PSScriptRoot}\..\outputs",
+﻿param(
+    [string]$Folder = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs",
     [string]$Pattern = "screenshot_*.png"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 try {

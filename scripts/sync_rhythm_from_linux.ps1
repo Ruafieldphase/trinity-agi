@@ -1,9 +1,12 @@
-# Simple Rhythm Sync from Linux Brain to Windows Body
+﻿# Simple Rhythm Sync from Linux Brain to Windows Body
 # Uses SCP to pull latest state files
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $HOST = "bino@192.168.119.128"
 $REMOTE_DIR = "/home/bino/agi/outputs"
-$LOCAL_DIR = "c:\workspace\agi\outputs"
+$LOCAL_DIR = "$WorkspaceRoot\outputs"
 
 # Create local dir if not exists
 if (!(Test-Path $LOCAL_DIR)) {

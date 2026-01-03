@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 RCL Stack 자동 시작용 Windows 작업 등록기
 

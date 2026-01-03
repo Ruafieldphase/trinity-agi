@@ -6,9 +6,11 @@ param(
     [switch]$Unregister,
     [switch]$Status
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $TaskName = "AGI_TaskWatchdog"
-$WorkspaceRoot = "C:\workspace\agi"
 $PythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 $ScriptPath = "$WorkspaceRoot\fdo_agi_repo\scripts\task_watchdog.py"
 

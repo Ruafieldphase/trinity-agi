@@ -9,7 +9,7 @@ Writes:
 
 Usage:
   python scripts/apply_dream_signals.py \
-    --workspace C:/workspace/agi \
+    --workspace <workspace_root> \
     --episodes outputs/dream_episodes_latest.json \
     --out outputs/dream_signal_latest.json \
     --high-threshold 1e9 \
@@ -23,10 +23,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
+from workspace_root import get_workspace_root
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Apply dream signals to produce risk/creativity summary")
-    p.add_argument("--workspace", default="C:/workspace/agi", help="Workspace root")
+    p.add_argument("--workspace", default=str(get_workspace_root()), help="Workspace root")
     p.add_argument("--episodes", default="outputs/dream_episodes_latest.json", help="Path to dream episodes summary JSON")
     p.add_argument("--out", default="outputs/dream_signal_latest.json", help="Output path for dream signal")
     p.add_argument("--high-threshold", type=float, default=1e9, help="High risk/energy threshold for avg_delta")

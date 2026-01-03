@@ -2,15 +2,16 @@
 """
 Save Conscious Learning
 =======================
-Allows the conscious layer (Windows Koa or Antigravity) to explicitly save learnings.
+Allows the conscious layer (Windows Core or Antigravity) to explicitly save learnings.
 """
 import json
 import argparse
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Paths
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 LEARNING_LOG = OUTPUTS_DIR / "conscious_learning.jsonl"
 
@@ -50,7 +51,7 @@ def main():
     parser.add_argument("--meta", "-m", action="append", help="Meta-cognitive insight")
     parser.add_argument("--preference", "-p", action="append", help="User preference")
     parser.add_argument("--conversation-id", "-c", help="Conversation ID")
-    parser.add_argument("--source", "-s", default="antigravity", help="Source (antigravity, sian, sena, etc.)")
+    parser.add_argument("--source", "-s", default="antigravity", help="Source (antigravity, Shion, sena, etc.)")
     
     args = parser.parse_args()
     

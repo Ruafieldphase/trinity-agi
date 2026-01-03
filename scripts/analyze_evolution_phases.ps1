@@ -1,4 +1,4 @@
-# Purpose: Minimal stub to satisfy docs references.
+﻿# Purpose: Minimal stub to satisfy docs references.
 
 $ErrorActionPreference = "Stop"
 
@@ -22,4 +22,3 @@ Move-Item -Force $tmp $outFile
 
 Write-Host "ok: false (stub)"
 Write-Host "out: $outFile"
-

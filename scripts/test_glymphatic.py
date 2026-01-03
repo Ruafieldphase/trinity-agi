@@ -12,10 +12,11 @@ from __future__ import annotations
 import runpy
 from pathlib import Path
 import sys
+from workspace_root import get_workspace_root
 
 
 def main() -> int:
-    root = Path(__file__).resolve().parents[1]
+    root = get_workspace_root()
     target = root / "scripts" / "test_adaptive_glymphatic.py"
     if not target.exists():
         print(f"[error] missing target: {target}")

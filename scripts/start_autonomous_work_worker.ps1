@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Autonomous Work Worker 시작 (백그라운드)
 

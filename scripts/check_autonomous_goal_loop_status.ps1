@@ -1,3 +1,6 @@
+﻿. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 # check_autonomous_goal_loop_status.ps1
 # Check status of adaptive rhythm autonomous goal execution loop
 
@@ -21,7 +24,7 @@ if ($processes) {
     }
     
     # Check rhythm state
-    $rhythmPath = Join-Path $PSScriptRoot "..\outputs\rhythm_state.json"
+    $rhythmPath = Join-Path $WorkspaceRoot "outputs\rhythm_state.json"
     if (Test-Path $rhythmPath) {
         $rhythmState = Get-Content $rhythmPath -Raw | ConvertFrom-Json
         Write-Host "🎵 현재 리듬 상태:" -ForegroundColor Yellow
@@ -53,7 +56,7 @@ if ($processes) {
     }
     
     # Check tracker file
-    $trackerPath = Join-Path $PSScriptRoot "..\fdo_agi_repo\memory\goal_tracker.json"
+    $trackerPath = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\goal_tracker.json"
     if (Test-Path $trackerPath) {
         $tracker = Get-Content $trackerPath -Raw | ConvertFrom-Json
         $completed = ($tracker.goals | Where-Object { $_.status -eq "completed" }).Count

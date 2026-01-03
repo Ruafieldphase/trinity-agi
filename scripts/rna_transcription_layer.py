@@ -9,12 +9,13 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
+from workspace_root import get_workspace_root
 
 # Configure Logger
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - [RNA] - %(message)s')
 logger = logging.getLogger("RNALayer")
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 RNA_PLAN_OUT = OUTPUTS_DIR / "sync_cache" / "rna_plan_latest.json"
 CREATE_NO_WINDOW = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0

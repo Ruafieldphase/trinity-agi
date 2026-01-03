@@ -307,7 +307,7 @@ def calculate_critical_intensity(response: str, persona_id: str) -> Dict[str, An
 
 ### 3.3 확장 QC 지표 (RUNE + EVAL 연동)
 
-루멘 패키지에서 제안된 `투명성·재현성·검증성·영향지수`는 RUNE 분석 결과와 평가 시스템(EVAL 노드)에서 산출합니다.
+Core 패키지에서 제안된 `투명성·재현성·검증성·영향지수`는 RUNE 분석 결과와 평가 시스템(EVAL 노드)에서 산출합니다.
 
 ```python
 def calculate_resonance_metrics(
@@ -802,7 +802,7 @@ assert summary["quality_rating"] in ["Excellent", "Good", "Fair", "Poor"]
 
 ---
 
-## 10. 미결정 사항 (루멘과 논의 필요)
+## 10. 미결정 사항 (Core과 논의 필요)
 
 ### 10.1 지표 가중치 조정
 - 현재 제안한 가중치가 합리적인지?
@@ -825,7 +825,7 @@ assert summary["quality_rating"] in ["Excellent", "Good", "Fair", "Poor"]
 ## 11. 다음 단계
 
 1. ✅ 설계 문서 작성 완료
-2. ⏳ 루멘과 설계 리뷰
+2. ⏳ Core과 설계 리뷰
 3. ⏳ `scripts/evaluation/metrics.py` 구현
 4. ⏳ PersonaOrchestrator 통합
 5. ⏳ 테스트 실행 (10회 세션)

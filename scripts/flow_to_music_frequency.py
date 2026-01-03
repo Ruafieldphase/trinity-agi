@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 from dataclasses import dataclass, asdict
 from typing import Dict
+from workspace_root import get_workspace_root
 
 @dataclass
 class BiauralParams:
@@ -32,7 +33,7 @@ class FlowFrequencyMapper:
     }
     
     def __init__(self):
-        self.workspace = Path(__file__).parent.parent
+        self.workspace = get_workspace_root()
         self.flow_report_path = self.workspace / "outputs" / "flow_observer_report_latest.json"
     
     def load_current_flow(self) -> float:

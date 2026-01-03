@@ -8,9 +8,10 @@ Simple test script to verify the feeling learner works.
 import asyncio
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add scripts to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
+sys.path.insert(0, str(get_workspace_root() / "scripts"))
 
 from youtube_feeling_learner import YouTubeFeelingLearner
 

@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from collections import defaultdict
+from workspace_root import get_workspace_root
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -142,7 +143,7 @@ class RewardTracker:
 
 def demo_usage():
     """사용 예시"""
-    workspace_root = Path(__file__).parent.parent
+    workspace_root = get_workspace_root()
     tracker = RewardTracker(workspace_root)
     
     # 1. 목표 실행 후 보상 기록
@@ -180,7 +181,7 @@ if __name__ == "__main__":
     
     if len(sys.argv) > 1 and sys.argv[1] == "update-policy":
         # CLI 모드: 정책 업데이트
-        workspace_root = Path(__file__).parent.parent
+        workspace_root = get_workspace_root()
         tracker = RewardTracker(workspace_root)
         
         tracker.update_policy()

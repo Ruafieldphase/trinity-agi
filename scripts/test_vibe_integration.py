@@ -2,9 +2,10 @@ import json
 import time
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # 경로 설정
-WORKSPACE_ROOT = Path("c:/workspace/agi")
+WORKSPACE_ROOT = get_workspace_root()
 BRIDGE_DIR = WORKSPACE_ROOT / "outputs/bridge"
 TASKS_FILE = BRIDGE_DIR / "bridge_tasks.jsonl"
 RESPONSES_FILE = BRIDGE_DIR / "bridge_responses.jsonl"

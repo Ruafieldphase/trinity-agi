@@ -35,7 +35,7 @@ class SelfExpansionEngine:
         # memory sampler (state)
         self.acquisition.register_file_sampler(str(memory / "*.json"))
         # Lua conversation sampler (있으면 자동 포함)
-        self.acquisition.register_lua_conversation_sampler(workspace_root / "ai_binoche_conversation_origin" / "rua")
+        self.acquisition.register_lua_conversation_sampler(workspace_root / "ai_binoche_conversation_origin" / "Core")
 
     def _dummy_source(self) -> AcquisitionResult:
         payload = {"signal": random.random()}

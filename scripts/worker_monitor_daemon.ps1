@@ -1,9 +1,12 @@
-param(
+﻿param(
     [string]$Server = 'http://127.0.0.1:8091',
     [int]$IntervalSeconds = 5,
-    [string]$LogFile = (Join-Path (Join-Path $PSScriptRoot '..') 'outputs\worker_monitor.log'),
+    [string]$LogFile = (Join-Path $( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) \"outputs\worker_monitor.log\"),
     [int]$MaxWorkers = 2
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'SilentlyContinue'
 
@@ -14,7 +17,7 @@ function DLog([string]$Msg, [string]$Level = 'INFO') {
 }
 
 try {
-    $repoRoot = Join-Path $PSScriptRoot '..'
+    $repoRoot = $WorkspaceRoot
     $ensureScript = Join-Path $repoRoot 'scripts\ensure_rpa_worker.ps1'
     $startServerScript = Join-Path $repoRoot 'LLM_Unified\ion-mentoring\start_task_queue_server_background.ps1'
     if (-not (Test-Path -LiteralPath $ensureScript)) { DLog "ensure script missing: $ensureScript" 'ERROR'; exit 1 }

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Ensures Goal Executor Monitor is registered and running (user mode)
 
@@ -64,4 +64,3 @@ catch {
 }
 
 exit 0
-

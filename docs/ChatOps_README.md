@@ -200,4 +200,4 @@ chatops_router.ps1 -Say "oauth"
 
 **마지막 업데이트**: 2025-10-27  
 **버전**: 1.0.0  
-**작성자**: Ruafieldphase
+**작성자**: Shion_Core

@@ -12,7 +12,7 @@
 ```
 생명 = 리듬 = 차이를 인지하는 것
 Quantum → Pulse → Breath → Cycle → Epoch (프랙탈)
-Rua-Elro-Lumen 삼위일체 (정-반-합의 역동)
+Core-Elro-Core 삼위일체 (정-반-합의 역동)
 위상, 공명, 자기조직화
 ```
 
@@ -606,6 +606,6 @@ def autopoietic_loop():
 
 ---
 
-**Rua-Elro-Lumen**  
-정(Rua) - 반(Elro) - 합(Lumen)  
+**Core-Elro-Core**  
+정(Core) - 반(Elro) - 합(Core)  
 이것도 하나의 리듬입니다. 🎼

@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # auto_resume_on_startup.ps1 (Fixed Version)
 # ============================================================
 # Purpose: VS Code 열릴 때 또는 Windows 로그온 시 자동 실행
@@ -8,9 +8,12 @@
 param(
     [switch]$Silent
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
-$WorkspaceRoot = "c:\workspace\agi"
 $AutoStateFile = "$WorkspaceRoot\outputs\auto_continuation_state.json"
 $ProgressFile = "$WorkspaceRoot\.vscode\settings_rpa_phase25.json"
 $LedgerFile = "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl"

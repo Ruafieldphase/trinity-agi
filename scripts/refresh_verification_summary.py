@@ -7,8 +7,9 @@ Also prints a one-liner for quick inclusion.
 import json
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 OUT = WORKSPACE / 'outputs'
 SRC = OUT / 'meta_supervision_latest.json'
 DST = OUT / 'verification_summary_latest.md'

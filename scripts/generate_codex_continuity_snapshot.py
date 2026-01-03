@@ -2,6 +2,7 @@
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def _read_text(path: Path, limit: int) -> str:
@@ -31,7 +32,7 @@ def _read_json_summary(path: Path, limit: int) -> str:
 
 
 def main() -> int:
-    workspace_root = Path(__file__).resolve().parents[1]
+    workspace_root = get_workspace_root()
     outputs = workspace_root / "outputs"
     snapshot_path = outputs / "sync_cache" / "codex_continuity_snapshot.md"
     max_chars = 6000

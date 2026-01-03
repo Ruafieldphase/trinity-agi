@@ -30,6 +30,12 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v"}
@@ -209,7 +215,7 @@ def run_obs_recode_intake(workspace_root: Path, max_files: int = 200) -> dict[st
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", type=str, default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--workspace", type=str, default=str(get_workspace_root()))
     ap.add_argument("--out", type=str, default=str(Path("outputs") / "obs_recode_intake_latest.json"))
     ap.add_argument("--history", type=str, default=str(Path("outputs") / "obs_recode_intake_history.jsonl"))
     ap.add_argument("--task-log", type=str, default=str(Path("outputs") / "obs_recode_intake_task.log"))

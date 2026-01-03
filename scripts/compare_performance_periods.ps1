@@ -1,4 +1,4 @@
-# Performance Dashboard Comparison Tool
+﻿# Performance Dashboard Comparison Tool
 # Compare metrics across different time periods or band filters
 
 param(

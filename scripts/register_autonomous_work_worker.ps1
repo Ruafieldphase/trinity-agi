@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Autonomous Work Worker를 Windows 스케줄러에 등록/해제/확인
 

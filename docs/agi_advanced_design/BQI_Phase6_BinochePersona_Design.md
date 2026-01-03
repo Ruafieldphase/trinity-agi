@@ -38,7 +38,7 @@ User(비노체) → Goal → 비노체_페르소나 → AGI_Team → Auto_Review
 
 ## 비노체 페르소나 컴포넌트
 
-### 1. 패턴 학습 모듈 (Binoche Persona Learner)
+### 1. 패턴 학습 모듈 (Binoche_Observer Persona Learner)
 
 **파일**: `scripts/rune/binoche_persona_learner.py`
 
@@ -244,12 +244,12 @@ cd d:\nas_backup\fdo_agi_repo
 .\.venv\Scripts\python.exe scripts\rune\binoche_persona_learner.py
 
 # 출력 예시:
-# [Binoche] Analyzed 269 tasks
-# [Binoche] Decision Patterns:
+# [Binoche_Observer] Analyzed 269 tasks
+# [Binoche_Observer] Decision Patterns:
 #   - Approve: 65% (high quality + urgent)
 #   - Revise:  25% (quality < 0.7)
 #   - Reject:  10% (security concerns)
-# [Binoche] Preferences:
+# [Binoche_Observer] Preferences:
 #   - Tech: Python 78%, PowerShell 62%
 #   - Style: Documentation-first, TDD
 ```
@@ -315,7 +315,7 @@ print(f"Reasoning: {decision.reasoning}")  # → "과거 유사 상황에서 85%
 
 ```json
 {
-  "label": "🤖 Phase 6: Learn Binoche Persona",
+  "label": "🤖 Phase 6: Learn Binoche_Observer Persona",
   "type": "shell",
   "command": "powershell",
   "args": [
@@ -324,7 +324,7 @@ print(f"Reasoning: {decision.reasoning}")  # → "과거 유사 상황에서 85%
   ]
 },
 {
-  "label": "🤖 Phase 6: Open Binoche Persona Model",
+  "label": "🤖 Phase 6: Open Binoche_Observer Persona Model",
   "type": "shell",
   "command": "powershell",
   "args": [
@@ -342,7 +342,7 @@ Phase 4/5 learner와 함께 실행:
 # scripts/run_bqi_learner.ps1에 추가
 & "$RepoRoot\.venv\Scripts\python.exe" "$RepoRoot\scripts\rune\binoche_persona_learner.py"
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "[Binoche] Persona learner failed: exit $LASTEXITCODE" -ForegroundColor Red
+    Write-Host "[Binoche_Observer] Persona learner failed: exit $LASTEXITCODE" -ForegroundColor Red
 }
 ```
 
@@ -432,13 +432,13 @@ After:
 
 ```bash
 # 첫 실행 결과
-[Binoche] Loaded 5636 events
-[Binoche] Analyzed 269 tasks
-[Binoche] Decision Patterns:
+[Binoche_Observer] Loaded 5636 events
+[Binoche_Observer] Analyzed 269 tasks
+[Binoche_Observer] Decision Patterns:
   - Approve: 0 cases
   - Revise:  1 cases
   - Reject:  1 cases
-[Binoche] Generated 2 rules
+[Binoche_Observer] Generated 2 rules
 ```
 
 **Note**: 데이터가 부족한 이유는 Phase 5에서 방금 BQI를 ledger에 추가했기 때문. 향후 1-2주 데이터 수집 후 재학습 시 풍부한 패턴 생성 예상.

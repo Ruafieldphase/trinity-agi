@@ -29,14 +29,15 @@ import subprocess
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional
+from workspace_root import get_workspace_root
 
 # Configuration
 SCRIPT_DIR = Path(__file__).parent
-WORKSPACE_ROOT = SCRIPT_DIR.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 PROPOSALS_FILE = OUTPUTS_DIR / "proposals.json"
 THOUGHT_STREAM_FILE = OUTPUTS_DIR / "thought_stream_latest.json"
-LUMEN_STATE_FILE = OUTPUTS_DIR / "lumen_state.json"
+CORE_STATE_FILE = OUTPUTS_DIR / "core_state.json"
 RESONANCE_LEDGER = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 BRIDGE_RESPONSES_FILE = OUTPUTS_DIR / "bridge" / "bridge_responses.jsonl"
 
@@ -59,8 +60,8 @@ def load_json_safe(file_path: Path) -> Optional[Dict]:
         return None
 
 def get_fear_level() -> float:
-    """Get current fear level from Lumen state."""
-    state = load_json_safe(LUMEN_STATE_FILE)
+    """Get current fear level from Core state."""
+    state = load_json_safe(CORE_STATE_FILE)
     if state and 'fear' in state:
         return state['fear'].get('level', 0.0)
     return 0.0

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [string]$LunchTime = "12:30",
     [string]$DinnerTime = "18:30",
     [switch]$DryRun

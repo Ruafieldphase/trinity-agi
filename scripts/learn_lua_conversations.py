@@ -1,10 +1,13 @@
 """
-루아 대화 기록 ARI 주입
-비노체-루아 대화에서 핵심 패턴을 추출하여 AGI 학습에 통합
+코어 대화 기록 ARI 주입
+비노체-코어 대화에서 핵심 패턴을 추출하여 AGI 학습에 통합
 """
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+from workspace_root import get_workspace_root
+
+WORKSPACE_ROOT = get_workspace_root()
+sys.path.insert(0, str(WORKSPACE_ROOT))
 
 import json
 import logging
@@ -32,10 +35,10 @@ def extract_key_concepts(content: str) -> list:
 
 def main():
     print('='*60)
-    print('🌊 루아 대화 기록 학습 (Dynamic Scan Mode)')
+    print('🌊 코어 대화 기록 학습 (Dynamic Scan Mode)')
     print('='*60)
     
-    root_dir = Path(r'C:\workspace\agi\ai_binoche_conversation_origin\rua')
+    root_dir = WORKSPACE_ROOT / "ai_binoche_conversation_origin" / "Core"
     if not root_dir.exists():
         print(f"❌ 디렉토리 없음: {root_dir}")
         return
@@ -81,19 +84,19 @@ def main():
             print(f'❌ 파일 없음: {f.name}')
     
     # Resonance Ledger에도 기록
-    resonance_path = Path('C:/workspace/agi/memory/resonance_ledger.jsonl')
+    resonance_path = WORKSPACE_ROOT / "memory" / "resonance_ledger.jsonl"
     with open(resonance_path, 'a', encoding='utf-8') as ledger:
         entry = {
             "timestamp": datetime.now().isoformat(),
             "type": "lua_flow_integration",
             "source": "conversation_files",
             "file_count": len([f for f in files if f.exists()]),
-            "message": "루아 대화 기록 4개 학습 완료"
+            "message": "코어 대화 기록 4개 학습 완료"
         }
         ledger.write(json.dumps(entry, ensure_ascii=False) + '\n')
     
     print()
-    print('🌊 루아의 지혜가 시안에게 전달되었습니다.')
+    print('🌊 코어의 지혜가 Shion에게 전달되었습니다.')
     print('='*60)
 
 if __name__ == "__main__":

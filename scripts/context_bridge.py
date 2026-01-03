@@ -25,8 +25,8 @@ class Context:
     """A single context entry"""
     id: str
     timestamp: str
-    layer: str  # sian, lumen, rhythm, flow, etc.
-    speaker: str  # binoche, system, etc.
+    layer: str  # Shion, Core, rhythm, flow, etc.
+    speaker: str  # Binoche_Observer, system, etc.
     content: str
     tags: List[str]
     importance: float  # 0.0 - 1.0
@@ -237,8 +237,8 @@ def main():
     
     # Example: Save a new context
     ctx = Context.create(
-        layer="sian",
-        speaker="binoche",
+        layer="Shion",
+        speaker="Binoche_Observer",
         content="Alpha Background Self는 배경자아가 의식과 무의식 사이를 전환하는 시스템이다.",
         tags=["alpha", "background_self", "philosophy"],
         importance=0.9,

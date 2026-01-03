@@ -1,4 +1,4 @@
-# send_to_chatgpt_lua.ps1
+﻿# send_to_chatgpt_lua.ps1
 # Lua Trinity Bridge: Prepare ChatGPT handoff with comprehensive context
 # Clean rewrite - streamlined from 1332 lines to ~550 lines
 #
@@ -42,6 +42,9 @@ param(
     # Navigation helpers
     [switch]$ListSections
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $OutputEncoding = [System.Text.Encoding]::UTF8
@@ -466,7 +469,7 @@ function Get-SystemContext {
     }
     
     $agi = $data.agi_status
-    $lumen = $data.lumen_status
+    $Core = $data.core_status
     
     return @{
         Available = $true
@@ -474,8 +477,8 @@ function Get-SystemContext {
             Workers  = if ($agi.rpa_workers) { $agi.rpa_workers } else { 0 }
             Watchdog = if ($agi.watchdog_running) { "실행 중" } else { "중지됨" }
         }
-        Lumen     = @{
-            Status = if ($lumen.api_status) { $lumen.api_status } else { "UNKNOWN" }
+        Core     = @{
+            Status = if ($Core.api_status) { $Core.api_status } else { "UNKNOWN" }
         }
         Summary   = "Workers: $($agi.rpa_workers), Watchdog: $(if($agi.watchdog_running){'OK'}else{'DOWN'})"
         Timestamp = $data.timestamp

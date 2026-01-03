@@ -8,9 +8,10 @@ import json
 import time
 import subprocess
 from pathlib import Path
+from workspace_root import get_workspace_root
 from datetime import datetime, timedelta
 
-WORKSPACE = Path(r"C:\workspace\agi")
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 RHYTHM_DIR = OUTPUTS
 

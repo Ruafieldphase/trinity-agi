@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Phase 10.1: Mid-day Milestone Check (12:00 KST)
@@ -14,6 +14,9 @@ param(
     [switch]$AlertOnly,
     [string]$Start
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -56,7 +59,7 @@ if ($AlertOnly) {
 }
 
 # State 파일 로드
-$statePath = "C:\workspace\agi\outputs\full_stack_orchestrator_state.json"
+$statePath = "$WorkspaceRoot\outputs\full_stack_orchestrator_state.json"
 if (-not (Test-Path $statePath)) {
     Write-Host "❌ State file not found: $statePath" -ForegroundColor Red
     exit 1
@@ -160,6 +163,6 @@ $snapshot = @{
     status      = if ($cyclesMet -and $eventsMin) { "on_track" } elseif ($cyclesMet -or $eventsMin) { "partial" } else { "below_target" }
 }
 
-$snapshotPath = "C:\workspace\agi\outputs\midday_milestone_snapshot.json"
+$snapshotPath = "$WorkspaceRoot\outputs\midday_milestone_snapshot.json"
 $snapshot | ConvertTo-Json -Depth 5 | Out-File $snapshotPath -Encoding UTF8
 Write-Host "💾 Snapshot saved: $snapshotPath" -ForegroundColor Green

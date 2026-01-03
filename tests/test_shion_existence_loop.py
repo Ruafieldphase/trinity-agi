@@ -1,6 +1,6 @@
 """
-Test Shion Existence Loop (FSD -> Koa -> Trinity)
-Verifies that Shion (FSDController) correctly invokes Trinity when Koa (Background Self) reports high anxiety.
+Test Shion Existence Loop (FSD -> Core -> Trinity)
+Verifies that Shion (FSDController) correctly invokes Trinity when Core (Background Self) reports high anxiety.
 """
 import sys
 import asyncio
@@ -33,10 +33,10 @@ class TestShionExistenceLoop(unittest.IsolatedAsyncioTestCase):
             # Mock _capture_screen to avoid file I/O
             shion._capture_screen = AsyncMock(return_value="dummy_path.png")
             
-        # 2. Mock Koa (Background Self / Sensation Report)
-        # We simulate Koa reporting High Anxiety (0.9)
+        # 2. Mock Core (Background Self / Sensation Report)
+        # We simulate Core reporting High Anxiety (0.9)
         shion._report_sensation = AsyncMock(return_value=0.9)
-        print("✅ Koa (Mock) configured to report Anxiety: 0.9")
+        print("✅ Core (Mock) configured to report Anxiety: 0.9")
         
         # 3. Mock Trinity (Conscious Protocol)
         # We simulate Trinity providing structural guidance
@@ -59,10 +59,10 @@ class TestShionExistenceLoop(unittest.IsolatedAsyncioTestCase):
         
         # 6. Verify Inter-layer Communication
         
-        # Check if Koa was consulted (implied by _report_sensation call)
+        # Check if Core was consulted (implied by _report_sensation call)
         # We expect multiple sensation reports (start, step 1, step 2...)
-        self.assertTrue(shion._report_sensation.called, "❌ Shion should report sensation to Koa")
-        print("✓ Shion reported sensation to Koa")
+        self.assertTrue(shion._report_sensation.called, "❌ Shion should report sensation to Core")
+        print("✓ Shion reported sensation to Core")
         
         # Check if Trinity was invoked (resolve_anxiety called)
         shion.trinity_protocol.resolve_anxiety.assert_called()
@@ -72,7 +72,7 @@ class TestShionExistenceLoop(unittest.IsolatedAsyncioTestCase):
         call_args = shion.trinity_protocol.resolve_anxiety.call_args
         context, anxiety = call_args[0]
         
-        self.assertEqual(anxiety, 0.9, "❌ Trinity should receive the correct anxiety level from Koa")
+        self.assertEqual(anxiety, 0.9, "❌ Trinity should receive the correct anxiety level from Core")
         print(f"✓ Trinity received correct anxiety level: {anxiety}")
 
         # Verify Enriched Context
@@ -81,7 +81,7 @@ class TestShionExistenceLoop(unittest.IsolatedAsyncioTestCase):
         self.assertIn("last_action", context, "❌ Context must contain last_action")
         print("✓ Context is enriched with history, thought, and action")
         
-        print("✨ Existence Loop Test Passed: Shion -> Koa -> Trinity flow verified.")
+        print("✨ Existence Loop Test Passed: Shion -> Core -> Trinity flow verified.")
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,8 +8,9 @@ import subprocess
 import sys
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 SCRIPTS = WORKSPACE / "scripts"
 

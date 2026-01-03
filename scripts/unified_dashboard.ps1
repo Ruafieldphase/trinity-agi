@@ -1,9 +1,13 @@
-# ?�합 모니?�링 ?�?�보??# AGI (fdo_agi_repo) + Lumen (LLM_Unified) ?�스???�합 모니?�링
+﻿# ?합 모니?링 ??보??# AGI (fdo_agi_repo) + Core (LLM_Unified) ?스???합 모니?링
 
 param(
     [int]$Hours = 1,
     [switch]$Json
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 $OutputEncoding = [System.Text.Encoding]::UTF8
@@ -66,9 +70,9 @@ function Get-ChannelStatus {
     }
 }
 
-# AGI ?�스???�태 ?�인
+# AGI ?스???태 ?인
 Write-ColorLine "`n============================================================" "Cyan"
-Write-ColorLine "[START] ?�합 모니?�링 ?�?�보?? "Cyan"
+Write-ColorLine "[START] ?합 모니?링 ??보?? "Cyan"
 Write-ColorLine "============================================================`n" "Cyan"
 
 $agiStatus = @{
@@ -78,8 +82,8 @@ $agiStatus = @{
 }
 
 try {
-    # AGI Python ?�?�보???�행
-    $agiRoot = "C:\workspace\agi\fdo_agi_repo"
+    # AGI Python ??보???행
+    $agiRoot = "$WorkspaceRoot\fdo_agi_repo"
     $pythonExe = if (Test-Path "$agiRoot\.venv\Scripts\python.exe") {
         "$agiRoot\.venv\Scripts\python.exe"
     }
@@ -103,7 +107,7 @@ catch {
     $agiStatus.error = $_.Exception.Message
 }
 
-# AGI ?�스??출력
+# AGI ?스??출력
 Write-ColorLine "[System 1] AGI Orchestrator (fdo_agi_repo)" "Yellow"
 if ($agiStatus.healthy) {
     Write-ColorLine "   Status: " -NoNewline
@@ -112,7 +116,7 @@ if ($agiStatus.healthy) {
     $m = $agiStatus.metrics
     $p = $agiStatus.policy
     
-    Write-ColorLine "   Metrics (최근 $($p.recent_hours)?�간):"
+    Write-ColorLine "   Metrics (최근 $($p.recent_hours)?간):"
     Write-ColorLine "      ??Confidence: $([math]::Round($m.avg_confidence, 3)) (samples: $($p.samples.confidence))" "White"
     Write-ColorLine "      ??Quality:    $([math]::Round($m.avg_quality, 3)) (samples: $($p.samples.quality))" "White"
     Write-ColorLine "      ??2nd Pass:   $([math]::Round($m.second_pass_rate, 3)) ($($m.second_pass_count)/$($m.total_tasks))" "White"
@@ -125,11 +129,11 @@ if ($agiStatus.healthy) {
         Write-ColorLine "      ??Local Proxy:   ??Offline" "Red"
     }
     
-    if ($agiStatus.health_checks.lumen_ok) {
-        Write-ColorLine "      ??Lumen Gateway: ??Online" "Green"
+    if ($agiStatus.health_checks.core_ok) {
+        Write-ColorLine "      ??Core Gateway: ??Online" "Green"
     }
     else {
-        Write-ColorLine "      ??Lumen Gateway: ??Offline" "Red"
+        Write-ColorLine "      ??Core Gateway: ??Offline" "Red"
     }
 }
 else {
@@ -142,8 +146,8 @@ else {
 
 Write-ColorLine "`n------------------------------------------------------------`n"
 
-# Lumen ?�스???�태 ?�인
-Write-ColorLine "[System 2] Lumen Multi-Channel Gateway" "Yellow"
+# Core ?스???태 ?인
+Write-ColorLine "[System 2] Core Multi-Channel Gateway" "Yellow"
 
 # Local LLM (LM Studio)
 $localHealth = Get-ChannelStatus -Name "Local Health" -Url "http://localhost:8080/v1/models" -TimeoutSec 3
@@ -184,12 +188,12 @@ else {
     Write-ColorLine "      ??Status: ??Offline" "Red"
 }
 
-# Lumen Gateway
-$gateway = Get-ChannelStatus -Name "Lumen Gateway" -Url "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Body @{
+# Core Gateway
+$gateway = Get-ChannelStatus -Name "Core Gateway" -Url "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Body @{
     message = "ping"
 } -TimeoutSec 5
 
-Write-ColorLine "`n   [Channel 3] Lumen Gateway:"
+Write-ColorLine "`n   [Channel 3] Core Gateway:"
 if ($gateway.Status -eq "Online") {
     $msg = "      ??Status: ??Online (" + $gateway.ResponseTime + " ms)"
     Write-ColorLine $msg "Green"
@@ -198,7 +202,7 @@ else {
     Write-ColorLine "      ??Status: ??Offline" "Red"
 }
 
-# ?�체 ?�태 ?�약
+# ?체 ?태 ?약
 Write-ColorLine "`n============================================================" "Cyan"
 
 $allHealthy = $agiStatus.healthy -and 
@@ -216,13 +220,13 @@ else {
 
 Write-ColorLine "============================================================`n" "Cyan"
 
-# JSON 출력 (?�택)
+# JSON 출력 (?택)
 if ($Json) {
     $output = @{
         timestamp   = (Get-Date -Format "yyyy-MM-ddTHH:mm:ss")
         all_healthy = $allHealthy
         agi         = $agiStatus
-        lumen       = @{
+        Core       = @{
             local_llm = @{
                 health = $localHealth
                 chat   = $localChat
@@ -232,7 +236,7 @@ if ($Json) {
         }
     }
     
-    $jsonPath = "C:\workspace\agi\outputs\unified_dashboard_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
+    $jsonPath = "$WorkspaceRoot\outputs\unified_dashboard_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
     $output | ConvertTo-Json -Depth 10 | Out-File -Encoding utf8 -FilePath $jsonPath
     Write-ColorLine "JSON report saved: $jsonPath" "Cyan"
 }

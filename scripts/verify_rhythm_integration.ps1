@@ -1,4 +1,4 @@
-# Verify Integrated Rhythm System - All Phases Working Together
+﻿# Verify Integrated Rhythm System - All Phases Working Together
 # Complete integration test of Phase 1, 2, and 3
 
 $ErrorActionPreference = "Continue"
@@ -13,23 +13,23 @@ Write-Host ""
 $Phases = @{
     "Phase 1: Master Scheduler" = @{
         taskName = "AGI_Master_Scheduler"
-        logFile = "C:\workspace\agi\outputs\master_scheduler.log"
-        stateFile = "C:\workspace\agi\outputs\master_scheduler_state.json"
+        logFile = "$WorkspaceRoot\outputs\master_scheduler.log"
+        stateFile = "$WorkspaceRoot\outputs\master_scheduler_state.json"
     }
     "Phase 2: Adaptive Scheduler" = @{
         taskName = "AGI_Adaptive_Master_Scheduler"
-        logFile = "C:\workspace\agi\outputs\adaptive_scheduler.log"
-        stateFile = "C:\workspace\agi\outputs\adaptive_scheduler_state.json"
+        logFile = "$WorkspaceRoot\outputs\adaptive_scheduler.log"
+        stateFile = "$WorkspaceRoot\outputs\adaptive_scheduler_state.json"
     }
     "Phase 3: Event Detector" = @{
-        logFile = "C:\workspace\agi\outputs\event_detector.log"
-        queueFile = "C:\workspace\agi\outputs\event_queue.json"
+        logFile = "$WorkspaceRoot\outputs\event_detector.log"
+        queueFile = "$WorkspaceRoot\outputs\event_queue.json"
         status = "READY"
     }
     "Orchestrator: Integrated Rhythm" = @{
         taskName = "AGI_Integrated_Rhythm_Orchestrator"
-        logFile = "C:\workspace\agi\outputs\rhythm_orchestrator.log"
-        dashboardFile = "C:\workspace\agi\outputs\rhythm_dashboard.json"
+        logFile = "$WorkspaceRoot\outputs\rhythm_orchestrator.log"
+        dashboardFile = "$WorkspaceRoot\outputs\rhythm_dashboard.json"
     }
 }
 
@@ -37,6 +37,9 @@ $Phases = @{
 
 function Test-ScheduledTask {
     param([string]$TaskName)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
     try {
         $task = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
         if ($task) {
@@ -157,7 +160,7 @@ Write-Host ("─" * 90) -ForegroundColor Gray
 Write-Host ""
 
 # Phase 1 Logs
-$phase1Log = Test-LogFile "C:\workspace\agi\outputs\master_scheduler.log"
+$phase1Log = Test-LogFile "$WorkspaceRoot\outputs\master_scheduler.log"
 if ($phase1Log.exists) {
     $ageMin = [math]::Round((New-TimeSpan -Start $phase1Log.lastModified -End (Get-Date)).TotalMinutes)
     Write-Host "  ✅ Phase 1 Log (Size: $(($phase1Log.size/1KB).ToString("N1"))KB, Age: ${ageMin}min)" -ForegroundColor Green
@@ -167,7 +170,7 @@ if ($phase1Log.exists) {
 }
 
 # Phase 2 Logs
-$phase2Log = Test-LogFile "C:\workspace\agi\outputs\adaptive_scheduler.log"
+$phase2Log = Test-LogFile "$WorkspaceRoot\outputs\adaptive_scheduler.log"
 if ($phase2Log.exists) {
     $ageMin = [math]::Round((New-TimeSpan -Start $phase2Log.lastModified -End (Get-Date)).TotalMinutes)
     Write-Host "  ✅ Phase 2 Log (Size: $(($phase2Log.size/1KB).ToString("N1"))KB, Age: ${ageMin}min)" -ForegroundColor Green
@@ -177,7 +180,7 @@ if ($phase2Log.exists) {
 }
 
 # Orchestrator Logs
-$orchestratorLog = Test-LogFile "C:\workspace\agi\outputs\rhythm_orchestrator.log"
+$orchestratorLog = Test-LogFile "$WorkspaceRoot\outputs\rhythm_orchestrator.log"
 if ($orchestratorLog.exists) {
     $ageMin = [math]::Round((New-TimeSpan -Start $orchestratorLog.lastModified -End (Get-Date)).TotalMinutes)
     Write-Host "  ✅ Orchestrator Log (Size: $(($orchestratorLog.size/1KB).ToString("N1"))KB, Age: ${ageMin}min)" -ForegroundColor Green
@@ -194,7 +197,7 @@ Write-Host "3️⃣  STATE FILES & METRICS" -ForegroundColor Cyan
 Write-Host ("─" * 90) -ForegroundColor Gray
 Write-Host ""
 
-$phase1State = Test-StateFile "C:\workspace\agi\outputs\master_scheduler_state.json"
+$phase1State = Test-StateFile "$WorkspaceRoot\outputs\master_scheduler_state.json"
 if ($phase1State.exists) {
     Write-Host "  ✅ Phase 1 State ($($phase1State.taskCount) tasks tracked)" -ForegroundColor Green
     Write-Host "     Last Update: $($phase1State.lastUpdate)" -ForegroundColor Gray
@@ -202,7 +205,7 @@ if ($phase1State.exists) {
     Write-Host "  ⚠️  Phase 1 State: Not created yet" -ForegroundColor Yellow
 }
 
-$phase2State = Test-StateFile "C:\workspace\agi\outputs\adaptive_scheduler_state.json"
+$phase2State = Test-StateFile "$WorkspaceRoot\outputs\adaptive_scheduler_state.json"
 if ($phase2State.exists) {
     Write-Host "  ✅ Phase 2 State (Adaptive Metrics)" -ForegroundColor Green
     Write-Host "     Last Update: $($phase2State.lastUpdate)" -ForegroundColor Gray
@@ -211,8 +214,8 @@ if ($phase2State.exists) {
 }
 
 # Dashboard file
-if (Test-Path "C:\workspace\agi\outputs\rhythm_dashboard.json") {
-    $dashboard = Get-Content "C:\workspace\agi\outputs\rhythm_dashboard.json" | ConvertFrom-Json
+if (Test-Path "$WorkspaceRoot\outputs\rhythm_dashboard.json") {
+    $dashboard = Get-Content "$WorkspaceRoot\outputs\rhythm_dashboard.json" | ConvertFrom-Json
     Write-Host "  ✅ Orchestrator Dashboard" -ForegroundColor Green
     if ($dashboard.health_score) {
         Write-Host "     Health Score: $($dashboard.health_score)%" -ForegroundColor Cyan

@@ -16,10 +16,12 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List, Set
 
+from workspace_root import get_workspace_root
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Bridge dream logs into resonance ledger")
-    p.add_argument("--workspace", default="C:/workspace/agi", help="Workspace root")
+    p.add_argument("--workspace", default=str(get_workspace_root()), help="Workspace root")
     p.add_argument("--dreams-path", default="outputs/dreams.jsonl", help="Relative path to dreams jsonl")
     p.add_argument("--ledger-path", default="fdo_agi_repo/memory/resonance_ledger.jsonl", help="Relative path to resonance ledger")
     p.add_argument("--max-entries", type=int, default=50, help="How many dream lines to consider from the tail")

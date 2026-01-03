@@ -1,4 +1,4 @@
-# Music-Goal 통합 검증 스크립트
+﻿# Music-Goal 통합 검증 스크립트
 param(
     [switch]$Detailed,
     [switch]$OpenReport

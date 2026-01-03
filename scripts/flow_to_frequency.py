@@ -11,6 +11,7 @@ import json
 from pathlib import Path
 from dataclasses import dataclass, asdict
 from typing import Dict, Any
+from workspace_root import get_workspace_root
 
 @dataclass
 class FrequencyParams:
@@ -97,7 +98,7 @@ class FlowFrequencyEncoder:
             )
 
 def main():
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     flow_report = workspace / "outputs" / "flow_observer_report_latest.json"
     
     if not flow_report.exists():

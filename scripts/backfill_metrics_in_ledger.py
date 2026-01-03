@@ -7,9 +7,10 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 
 from orchestrator.event_emitter import normalize_metric_fields
 
@@ -124,7 +125,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--ledger",
         type=Path,
-        default=Path(__file__).parent.parent / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl",
+        default=get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl",
         help="Path to ledger file (default: fdo_agi_repo/memory/resonance_ledger.jsonl)"
     )
     parser.add_argument(

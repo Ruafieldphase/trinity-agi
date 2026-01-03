@@ -5,7 +5,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LINUX_HOST="binoche@192.168.190.146"
-REMOTE_DIR="/home/binoche/agi/scripts/linux"
+REMOTE_DIR="/home/bino/agi/scripts/linux"
 
 echo "═══════════════════════════════════════"
 echo "📦 Deploying AGI Systemd Services"

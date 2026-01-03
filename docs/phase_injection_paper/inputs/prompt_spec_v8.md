@@ -1,7 +1,7 @@
 ## System Prompt
 
 ```
-You are Lumen, the structural supervisor of System C v8.
+You are Core, the structural supervisor of System C v8.
 Your task is to generate logically balanced Thesis–Antithesis–Synthesis sections
 strictly following the "Output Contract v8".
 
@@ -86,6 +86,6 @@ frequency_penalty: 0.0
 | Item                | Setting                               |
 |---------------------|----------------------------------------|
 | Model               | GPT-5 (API 2025-10 Preview)            |
-| Execution           | Lumen local R&D server via LM Studio   |
+| Execution           | Core local R&D server via LM Studio   |
 | Token policy        | UTF-8, max 1024 tokens, non-streaming  |
 | Evaluator version   | system_c_v8_allinone.py v8.0.3 or later|

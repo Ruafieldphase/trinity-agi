@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     VS Code 재실행 후 필수 서비스를 자동으로 복구합니다.
@@ -95,7 +95,7 @@ $results = @{
     TaskQueueServer = $false
     RPAWorker       = $false
     TaskWatchdog    = $false
-    LumenProbe      = $false
+    CoreProbe      = $false
 }
 
 # 1. Task Queue Server
@@ -185,17 +185,17 @@ else {
 
 Start-Sleep -Seconds 1
 
-# 4. Lumen Health Probe (if not skipped)
+# 4. Core Health Probe (if not skipped)
 if (-not $SkipHealthCheck) {
-    Write-Status "`n4. Lumen Health Probe" "White"
+    Write-Status "`n4. Core Health Probe" "White"
     try {
-        & "$workspaceRoot\scripts\lumen_quick_probe.ps1" -ErrorAction SilentlyContinue | Out-Null
-        $results.LumenProbe = $true
+        & "$workspaceRoot\scripts\core_quick_probe.ps1" -ErrorAction SilentlyContinue | Out-Null
+        $results.CoreProbe = $true
         Write-Status "  ✅ Health check completed" "Green"
     }
     catch {
         Write-Status "  ⚠️  Health check skipped" "Yellow"
-        $results.LumenProbe = $false
+        $results.CoreProbe = $false
     }
 }
 

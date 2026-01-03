@@ -1,10 +1,13 @@
-param(
+﻿param(
     [switch]$Register,
     [switch]$Unregister,
     [switch]$Status,
     [string]$Time = "09:45",
     [string]$TaskName = "MonitoringMorningDigest"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -51,7 +54,7 @@ try {
         $parts = $Time.Split(':')
         $at = (Get-Date).Date.AddHours([int]$parts[0]).AddMinutes([int]$parts[1])
 
-        $reportScript = Join-Path $PSScriptRoot "..\scripts\generate_monitoring_report.ps1"
+        $reportScript = Join-Path $WorkspaceRoot "scripts\generate_monitoring_report.ps1"
         if (-not (Test-Path -LiteralPath $reportScript)) { throw "generate_monitoring_report.ps1 not found at $reportScript" }
 
         # Generate 24h report and metrics without auto-opening UI

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     24h Production을 완전히 백그라운드에서 실행 (터미널 방해 없음)
 
@@ -37,9 +37,11 @@ param(
     
     [switch]$Register
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
-$WorkspaceRoot = "C:\workspace\agi"
 
 function Write-Info {
     param([string]$Message, [string]$Color = "Cyan")

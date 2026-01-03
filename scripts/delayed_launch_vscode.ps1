@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$DelayMinutes = 5,
     [string]$Workspace = "${PSScriptRoot}\.."
 )

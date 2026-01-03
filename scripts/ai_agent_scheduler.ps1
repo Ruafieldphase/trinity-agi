@@ -1,4 +1,4 @@
-# AI Agent Scheduler - Autonomous Background Monitoring
+﻿# AI Agent Scheduler - Autonomous Background Monitoring
 # Runs AI Performance Agent on a schedule for continuous monitoring
 
 param(

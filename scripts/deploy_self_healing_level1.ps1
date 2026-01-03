@@ -1,9 +1,13 @@
-# Self-Healing Level 1 배포 및 등록
+﻿# Self-Healing Level 1 배포 및 등록
 # 자동 복구 시스템을 Windows Scheduled Task로 등록
 
 param(
     [switch]$AutoStart = $true
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 
@@ -14,7 +18,7 @@ Write-Host ("=" * 90) -ForegroundColor Magenta
 Write-Host ""
 
 $TaskName = "AGI_Self_Healing_Level1"
-$ScriptPath = "C:\workspace\agi\scripts\self_healing_level1.ps1"
+$ScriptPath = "$WorkspaceRoot\scripts\self_healing_level1.ps1"
 
 # 스크립트 존재 확인
 if (-not (Test-Path $ScriptPath)) {

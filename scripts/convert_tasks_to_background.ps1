@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     모든 AGI 작업을 백그라운드(숨김)로 전환
 
@@ -146,7 +146,7 @@ Write-Host "`n✅ [3/3] 결과 확인..." -ForegroundColor Yellow
 $allTasks = Get-ScheduledTask | Where-Object { 
     $_.TaskName -like "*AGI*" -or 
     $_.TaskName -like "*Monitoring*" -or 
-    $_.TaskName -like "*Binoche*" 
+    $_.TaskName -like "*Binoche_Observer*" 
 }
 
 $hiddenCount = 0

@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Network and Process Profiling for Phase 8.5 Task 1
@@ -15,9 +15,12 @@
 
 param(
     [int]$Duration = 60,
-    [string]$OutJson = "$PSScriptRoot\..\outputs\network_profile_latest.json",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\network_profile_latest.json",
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest

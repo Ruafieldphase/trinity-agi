@@ -1,4 +1,4 @@
-# Task Queue Priority Test Script
+﻿# Task Queue Priority Test Script
 # Tests the new priority queue functionality
 
 param(

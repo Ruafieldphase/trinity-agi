@@ -1,4 +1,4 @@
-# run_docker_install_demo.ps1
+﻿# run_docker_install_demo.ps1
 # Phase 2.5 Week 2 Day 8-9: Docker Desktop Auto-Installation Demo
 
 param(

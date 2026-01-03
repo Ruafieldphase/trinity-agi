@@ -2,12 +2,16 @@ param(
     [switch]$Open,
     [switch]$NoJson
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
-$middayPath = "C:\workspace\agi\outputs\midday_milestone_snapshot.json"
-$eveningPath = "C:\workspace\agi\outputs\evening_milestone_snapshot.json"
-$outMd = "C:\workspace\agi\outputs\milestone_dashboard_latest.md"
-$outJson = "C:\workspace\agi\outputs\milestone_dashboard_latest.json"
+$middayPath = "$WorkspaceRoot\outputs\midday_milestone_snapshot.json"
+$eveningPath = "$WorkspaceRoot\outputs\evening_milestone_snapshot.json"
+$outMd = "$WorkspaceRoot\outputs\milestone_dashboard_latest.md"
+$outJson = "$WorkspaceRoot\outputs\milestone_dashboard_latest.json"
 
 function Get-JsonSafe {
     param([string]$path)

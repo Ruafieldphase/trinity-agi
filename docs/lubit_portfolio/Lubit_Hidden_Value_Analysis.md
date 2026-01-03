@@ -110,7 +110,7 @@ def recover_resonance(conversation_state):
     if detect_phase_lock(conversation_state):
         strategy = choose_strategy([
             "question_loop",      # (a) 질문을 돌려 흐름 늦추기
-            "lumen_frame_call"    # (b) 루멘 언어 프레임 호출
+            "core_frame_call"    # (b) Core 언어 프레임 호출
         ])
         inject_phase_difference(strategy)
 ```

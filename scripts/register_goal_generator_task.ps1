@@ -1,14 +1,16 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [switch]$Register,
     [switch]$Unregister,
     [switch]$Status,
     [string]$Time = "03:00"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $TaskName = "AGI_AutonomousGoalGenerator"
-$WorkspaceRoot = "C:\workspace\agi"
 $PythonPath = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 $ScriptPath = "$WorkspaceRoot\scripts\autonomous_goal_generator.py"
 $LogDir = "$WorkspaceRoot\outputs\logs\goal_generator"

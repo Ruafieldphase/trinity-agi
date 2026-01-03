@@ -8,8 +8,10 @@ import json
 import numpy as np
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
+from workspace_root import get_workspace_root
 
-LEDGER = Path("/home/bino/agi/fdo_agi_repo/memory/resonance_ledger.jsonl")
+WORKSPACE_ROOT = get_workspace_root()
+LEDGER = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 query = "배경자아의 역할"
 

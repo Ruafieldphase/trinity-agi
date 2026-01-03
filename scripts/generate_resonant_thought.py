@@ -1,16 +1,17 @@
 import sys
 import json
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add paths
 sys.path.append(str(Path(__file__).parent))
-sys.path.append(str(Path(__file__).parent.parent))
+sys.path.append(str(get_workspace_root()))
 
 from vertex_ai_smart_router import VertexAISmartRouter
 
 def generate_resonant_thought():
     # 1. Load Pulse
-    pulse_path = Path(__file__).parent.parent / "outputs" / "unified_pulse.json"
+    pulse_path = get_workspace_root() / "outputs" / "unified_pulse.json"
     try:
         with open(pulse_path, 'r', encoding='utf-8') as f:
             pulse = json.load(f)

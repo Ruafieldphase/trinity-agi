@@ -10,13 +10,14 @@ import json
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(get_workspace_root()))
 
 def analyze_thesis_breakdown(hours: int = 24):
     """Ledger에서 Thesis 관련 이벤트만 추출하여 병목 분석"""
-    ledger_path = Path(__file__).parent.parent / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
+    ledger_path = get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
     
     if not ledger_path.exists():
         print(f"❌ Ledger not found: {ledger_path}")

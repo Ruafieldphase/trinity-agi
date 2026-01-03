@@ -1,4 +1,4 @@
-# Resonance Simulator Smoke Test Runner
+﻿# Resonance Simulator Smoke Test Runner
 # 목적: 7일 위상 루프 기반 공명/에너지/엔트로피 동역학 시뮬레이션 검증
 
 $ErrorActionPreference = "Stop"

@@ -5,9 +5,10 @@ import logging
 import subprocess
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 THOUGHT_STREAM_FILE = OUTPUTS_DIR / "thought_stream_latest.json"
 LOG_FILE = WORKSPACE_ROOT / "logs" / "ari_automator.log"

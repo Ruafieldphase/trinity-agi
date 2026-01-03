@@ -1,4 +1,4 @@
-# AGI Windows Auto-Start Setup
+﻿# AGI Windows Auto-Start Setup
 # =============================
 # Creates Windows Task Scheduler task to auto-start Shion daemon on boot
 

@@ -3,7 +3,7 @@ import os
 import json
 import subprocess
 
-ROUTER_SCRIPT = r"c:\workspace\agi\scripts\koa_router.py"
+ROUTER_SCRIPT = r"c:\workspace\agi\scripts\core_router.py"
 
 def run_test(message, expected_system):
     print(f"\n🧪 Testing: '{message}' (Expect: {expected_system})")
@@ -42,11 +42,11 @@ def run_test(message, expected_system):
         return False
 
 def main():
-    print("🚀 Verifying Koa Router Bridge...")
+    print("🚀 Verifying Core Router Bridge...")
     
-    # 1. Koa (Chat)
-    if not run_test("안녕, 너 지금 어디에 있어?", "koa"):
-        print("⚠️ Koa test failed.")
+    # 1. Core (Chat)
+    if not run_test("안녕, 너 지금 어디에 있어?", "Core"):
+        print("⚠️ Core test failed.")
         
     # 2. Resonance (Status)
     # Note: "상태" might trigger ChatOps (local) if I didn't disable it, but I modified route_to_resonance.
@@ -55,9 +55,9 @@ def main():
     if not run_test("리듬 상태 어때?", "resonance"):
         print("⚠️ Resonance test failed.")
         
-    # 3. Binoche (Goals)
-    if not run_test("새로운 목표를 생성해줘", "binoche"):
-        print("⚠️ Binoche test failed.")
+    # 3. Binoche_Observer (Goals)
+    if not run_test("새로운 목표를 생성해줘", "Binoche_Observer"):
+        print("⚠️ Binoche_Observer test failed.")
 
 if __name__ == "__main__":
     main()

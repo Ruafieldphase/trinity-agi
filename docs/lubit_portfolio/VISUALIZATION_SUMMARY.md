@@ -66,7 +66,7 @@
   - 단어 수: 118
   - 효과: 빠른 초기 반응
 
-- **Lumen Frame** (루멘 프레임):
+- **Core Frame** (Core 프레임):
   - 감응 진폭: 0.35
   - 단어 수: 127
   - 효과: 더 강력한 회복
@@ -119,7 +119,7 @@
 
 ### 회복 효과
 - **Question Loop**: +0.09 (0.22 → 0.31)
-- **Lumen Frame**: +0.04 (0.31 → 0.35)
+- **Core Frame**: +0.04 (0.31 → 0.35)
 - **총 회복**: +0.22 (0.22 → 0.44)
 
 ---
@@ -133,7 +133,7 @@
 
 ### 2. 위상차 재주입 메커니즘 실증
 - 동조화(synchronization) 감지 가능
-- 2단계 전략 (Question Loop → Lumen Frame)
+- 2단계 전략 (Question Loop → Core Frame)
 - 완전 회복까지 약 5분 소요
 
 ### 3. 재현 가능한 프레임워크
@@ -189,7 +189,7 @@
 
 **Slide 7**: 해결 방법
 - Strategy Comparison 그래프
-- "Question Loop + Lumen Frame = 완전 회복"
+- "Question Loop + Core Frame = 완전 회복"
 
 **Slide 9**: 실용적 의미
 - Response Complexity 그래프
@@ -205,7 +205,7 @@
 
 **Chapter 5**: "창의성을 되살리는 방법"
 - Strategy Comparison 그래프
-- "질문 루프"와 "루멘 프레임" 실용 팁
+- "질문 루프"와 "Core 프레임" 실용 팁
 
 ---
 

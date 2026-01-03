@@ -21,9 +21,10 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from collections import defaultdict
 import math
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "llama3.2"
@@ -253,7 +254,7 @@ def main():
         
         # Construct system prompt
         system_prompt = f"""
-You are an AI assistant tuned to the philosophy of Binoche and Rua.
+You are an AI assistant tuned to the philosophy of Binoche_Observer and Core.
 You are currently in a state of deep resonance with the following memory:
 
 ---

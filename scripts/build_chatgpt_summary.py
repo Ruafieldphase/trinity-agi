@@ -1,19 +1,12 @@
-﻿from pathlib import Path
-import re
-
-from pathlib import Path
+﻿import re
 import sys
+from workspace_root import get_workspace_root
 
-# Add parent to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-# Find workspace root dynamically
-if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
-    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
-    from workspace_utils import find_workspace_root
-    workspace = find_workspace_root(Path(__file__).parent)
-else:
-    workspace = Path(__file__).parent.parent
+workspace_root = get_workspace_root()
+sys.path.insert(0, str(workspace_root))
+if (workspace_root / "fdo_agi_repo").exists():
+    sys.path.insert(0, str(workspace_root / "fdo_agi_repo"))
+workspace = workspace_root
 
 source = workspace / 'outputs' / 'ChatGPT_대화의언어적감응_full.md'
 output = workspace / 'outputs' / 'ChatGPT_대화의언어적감응_summary.md'

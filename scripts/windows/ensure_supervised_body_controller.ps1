@@ -15,11 +15,13 @@ param(
   [switch]$ForceRestart,
   [switch]$Silent
 )
+. "$PSScriptRoot\..\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 
 $ErrorActionPreference = "SilentlyContinue"
 
 try {
-  $ws = Resolve-Path "$PSScriptRoot\\..\\.."
+  $ws = $WorkspaceRoot
   $script = Join-Path $ws "scripts\\windows\\supervised_body_controller.py"
   if (-not (Test-Path $script)) { exit 0 }
 

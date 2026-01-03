@@ -1,12 +1,12 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
-    Binoche 페르소나에게 작업 계속을 자동으로 요청하는 스크립트
+    Binoche_Observer 페르소나에게 작업 계속을 자동으로 요청하는 스크립트
     
 .DESCRIPTION
-    세션 핸드오버 정보를 읽어 Binoche 페르소나(나 자신)에게 작업 계속 요청
+    세션 핸드오버 정보를 읽어 Binoche_Observer 페르소나(나 자신)에게 작업 계속 요청
     - latest_handover.json 로드
-    - Binoche 메시지 생성: "루이슬로가 [task] 작업 중이었어. 이어서 해줘"
+    - Binoche_Observer 메시지 생성: "루이슬로가 [task] 작업 중이었어. 이어서 해줘"
     - Task Queue Server (localhost:8091)에 POST 또는 클립보드 복사
     - 호출 로그 기록
     
@@ -18,7 +18,7 @@
     
 .EXAMPLE
     .\invoke_binoche_continuation.ps1
-    # 클립보드에 Binoche 메시지 복사 (Copilot에 수동 붙여넣기)
+    # 클립보드에 Binoche_Observer 메시지 복사 (Copilot에 수동 붙여넣기)
     
 .EXAMPLE
     .\invoke_binoche_continuation.ps1 -Mode taskqueue
@@ -48,7 +48,7 @@ $workspaceRoot = Split-Path -Parent $PSScriptRoot
 $handoverPath = Join-Path $workspaceRoot "session_memory\handovers\latest_handover.json"
 $logPath = Join-Path $workspaceRoot "outputs\binoche_invocations.jsonl"
 
-Write-Host "🔄 Binoche Continuation Invoker" -ForegroundColor Cyan
+Write-Host "🔄 Binoche_Observer Continuation Invoker" -ForegroundColor Cyan
 Write-Host "================================" -ForegroundColor Cyan
 
 # 1. 최신 핸드오버 로드
@@ -61,7 +61,7 @@ if (-not (Test-Path $handoverPath)) {
 Write-Host "📥 Loading handover from: $handoverPath" -ForegroundColor Green
 $handover = Get-Content $handoverPath -Raw | ConvertFrom-Json
 
-# 2. Binoche 메시지 생성
+# 2. Binoche_Observer 메시지 생성
 $task = $handover.task_description
 $progress = $handover.current_progress
 $nextSteps = $handover.next_steps -join ", "
@@ -79,7 +79,7 @@ $nextSteps
 타임스탬프: $($handover.timestamp)
 "@
 
-Write-Host "`n📝 Generated Binoche message:" -ForegroundColor Cyan
+Write-Host "`n📝 Generated Binoche_Observer message:" -ForegroundColor Cyan
 Write-Host $binocheMessage -ForegroundColor White
 
 # 3. Dry-run 체크
@@ -142,5 +142,5 @@ if (-not (Test-Path $logDir)) {
 Add-Content -Path $logPath -Value $logEntry -Encoding UTF8
 
 Write-Host "`n📊 Invocation logged to: $logPath" -ForegroundColor Cyan
-Write-Host "`n✅ Binoche continuation invoked successfully!" -ForegroundColor Green
+Write-Host "`n✅ Binoche_Observer continuation invoked successfully!" -ForegroundColor Green
 Write-Host "   Next: Start new Copilot session and paste message" -ForegroundColor Yellow

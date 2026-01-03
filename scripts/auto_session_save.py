@@ -16,6 +16,7 @@ import argparse
 import json
 from datetime import datetime
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def save_session_context(workspace_root: Path, session_id: str = None, summary: str = None):
@@ -76,7 +77,7 @@ def main():
     
     args = parser.parse_args()
     
-    workspace = Path(__file__).parent.parent
+    workspace = get_workspace_root()
     
     print("💾 Automatic Session Save")
     print("=" * 60)

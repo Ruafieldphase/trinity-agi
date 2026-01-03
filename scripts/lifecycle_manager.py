@@ -4,9 +4,10 @@ import time
 import subprocess
 import logging
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Setup Logging
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LOGS_DIR = WORKSPACE_ROOT / "logs"
 os.makedirs(LOGS_DIR, exist_ok=True)
 

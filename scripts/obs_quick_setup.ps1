@@ -1,4 +1,4 @@
-# OBS Studio 빠른 설정 및 시작 스크립트
+﻿# OBS Studio 빠른 설정 및 시작 스크립트
 # VS Code 화면 유튜브 라이브 스트리밍용
 
 param(

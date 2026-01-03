@@ -26,13 +26,19 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
-WORKSPACE = Path(__file__).resolve().parents[2]
+
+WORKSPACE = get_workspace_root()
 OUTPUTS = WORKSPACE / "outputs"
 SIGNALS = WORKSPACE / "signals"
 SESSIONS_DIR = WORKSPACE / "inputs" / "intake" / "exploration" / "sessions"
-RUA_DIR = WORKSPACE / "ai_binoche_conversation_origin" / "rua"
+Core_DIR = WORKSPACE / "ai_binoche_conversation_origin" / "Core"
 
 STATE_PATH = OUTPUTS / "sync_cache" / "experience_acquisition_state.json"
 OUT_LATEST = OUTPUTS / "experience_acquisition_latest.json"
@@ -42,7 +48,7 @@ CONSTITUTION = OUTPUTS / "bridge" / "constitution_review_latest.json"
 REST_GATE = OUTPUTS / "safety" / "rest_gate_latest.json"
 
 OBS_INTAKE = OUTPUTS / "obs_recode_intake_latest.json"
-RUA_INTAKE = OUTPUTS / "rua_conversation_intake_latest.json"
+Core_INTAKE = OUTPUTS / "core_conversation_intake_latest.json"
 BODY_HISTORY = OUTPUTS / "body_supervised_history.jsonl"
 
 
@@ -154,9 +160,9 @@ def _safe_read_text(path: Path, max_bytes: int = 220_000) -> str:
         return ""
 
 
-def _extract_rua_boundaries(text: str, max_rules: int = 12) -> list[dict[str, Any]]:
+def _extract_Core_boundaries(text: str, max_rules: int = 12) -> list[dict[str, Any]]:
     """
-    RUA 문서에서 '경계 후보'만 아주 얇게 추출한다.
+    Core 문서에서 '경계 후보'만 아주 얇게 추출한다.
     - 이메일/URL 등은 기록하지 않는다.
     """
     deny_markers = ("하면 안", "하지 말", "금지", "불가", "하지마", "위험", "주의", "조심", "❌")
@@ -254,17 +260,17 @@ def _infer_topics_from_text(text: str) -> list[str]:
     return out
 
 
-def _candidate_from_rua_workspace(now: float) -> tuple[str, dict[str, Any]] | None:
+def _candidate_from_Core_workspace(now: float) -> tuple[str, dict[str, Any]] | None:
     """
-    Windows 워크스페이스의 rua 문서를 직접 스캔한다.
-    - Ubuntu에서 생성되는 outputs/rua_conversation_intake_latest.json이 stale할 수 있어
+    Windows 워크스페이스의 Core 문서를 직접 스캔한다.
+    - Ubuntu에서 생성되는 outputs/core_conversation_intake_latest.json이 stale할 수 있어
       '로컬 파일 변경'을 바로 경험 신호로 잡기 위함.
     """
-    if not RUA_DIR.exists():
+    if not Core_DIR.exists():
         return None
     newest: Path | None = None
     newest_m = 0.0
-    for p in RUA_DIR.glob("*.md"):
+    for p in Core_DIR.glob("*.md"):
         try:
             m = float(p.stat().st_mtime)
         except Exception:
@@ -278,9 +284,9 @@ def _candidate_from_rua_workspace(now: float) -> tuple[str, dict[str, Any]] | No
     text = _safe_read_text(newest)
     sha = _sha256_head(text)
     m_iso = utc_iso(newest_m)
-    sig = f"rua_ws|{sha}|{m_iso}"
+    sig = f"Core_ws|{sha}|{m_iso}"
     st = _load_state()
-    if st.get("last_rua_ws_sig") == sig:
+    if st.get("last_Core_ws_sig") == sig:
         return None
 
     title = ""
@@ -295,7 +301,7 @@ def _candidate_from_rua_workspace(now: float) -> tuple[str, dict[str, Any]] | No
         "event_epoch": float(newest_m),
         "title": title,
         "sha256_head": sha,
-        "boundaries_sample": _extract_rua_boundaries(text),
+        "boundaries_sample": _extract_Core_boundaries(text),
         "topic_tags": _infer_topics_from_text(text),
     }
     return sig, details
@@ -368,8 +374,8 @@ def _candidate_from_obs(now: float) -> tuple[str, dict[str, Any]] | None:
     return sig, details
 
 
-def _candidate_from_rua(now: float) -> tuple[str, dict[str, Any]] | None:
-    obj = _load_json(RUA_INTAKE) or {}
+def _candidate_from_Core(now: float) -> tuple[str, dict[str, Any]] | None:
+    obj = _load_json(Core_INTAKE) or {}
     if not isinstance(obj, dict):
         return None
     newest = obj.get("newest") if isinstance(obj.get("newest"), dict) else {}
@@ -380,9 +386,9 @@ def _candidate_from_rua(now: float) -> tuple[str, dict[str, Any]] | None:
     if not rel or not m_iso:
         return None
 
-    sig = f"rua|{sha or rel}|{m_iso}"
+    sig = f"Core|{sha or rel}|{m_iso}"
     st = _load_state()
-    if st.get("last_rua_sig") == sig:
+    if st.get("last_Core_sig") == sig:
         return None
 
     details = {
@@ -490,20 +496,20 @@ def run_experience_acquisition(workspace_root: Path, *, cooldown_sec: int = 15 *
             )
         )
 
-    # 후보 선택: (1) OBS(패시브) → (2) RUA(패시브) → (3) BODY(액티브)
+    # 후보 선택: (1) OBS(패시브) → (2) Core(패시브) → (3) BODY(액티브)
     # REST 모드에서는 패시브만 허용한다.
     candidates: list[tuple[str, str, dict[str, Any]]] = []
     c_obs = _candidate_from_obs(now)
     if c_obs:
         candidates.append(("obs_recode", c_obs[0], c_obs[1]))
-    # RUA: 로컬 파일 기반(우선) + outputs 인덱스 기반(보조)
-    c_rua_ws = _candidate_from_rua_workspace(now)
-    if c_rua_ws:
-        candidates.append(("rua_conversation", c_rua_ws[0], c_rua_ws[1]))
+    # Core: 로컬 파일 기반(우선) + outputs 인덱스 기반(보조)
+    c_Core_ws = _candidate_from_Core_workspace(now)
+    if c_Core_ws:
+        candidates.append(("core_conversation", c_Core_ws[0], c_Core_ws[1]))
     else:
-        c_rua = _candidate_from_rua(now)
-        if c_rua:
-            candidates.append(("rua_conversation", c_rua[0], c_rua[1]))
+        c_Core = _candidate_from_Core(now)
+        if c_Core:
+            candidates.append(("core_conversation", c_Core[0], c_Core[1]))
 
     if rest_status != "REST":
         c_body = _candidate_from_body(now)
@@ -533,8 +539,8 @@ def run_experience_acquisition(workspace_root: Path, *, cooldown_sec: int = 15 *
     kind, sig, details = candidates[0]
 
     boundaries = _build_boundaries_base()
-    # RUA 기반 경험은 "경계 규칙" 후보가 핵심이므로, 샘플 규칙을 세션 boundary로 합친다.
-    if kind == "rua_conversation":
+    # Core 기반 경험은 "경계 규칙" 후보가 핵심이므로, 샘플 규칙을 세션 boundary로 합친다.
+    if kind == "core_conversation":
         bs = details.get("boundaries_sample")
         if isinstance(bs, list):
             for b in bs:
@@ -562,13 +568,13 @@ def run_experience_acquisition(workspace_root: Path, *, cooldown_sec: int = 15 *
         title = f"experience: obs_recode {details.get('basename')}"
         tags = ["experience", "acquisition", "obs_recode", "windows_ui"]
         notes = f"OBS 녹화 파일 메타 감지: {details.get('basename')} (mtime={details.get('mtime_iso')})"
-    elif kind == "rua_conversation":
-        title = f"experience: rua_doc {details.get('title') or details.get('relpath')}"
-        tags = ["experience", "acquisition", "rua_doc", "conceptual_map"]
+    elif kind == "core_conversation":
+        title = f"experience: Core_doc {details.get('title') or details.get('relpath')}"
+        tags = ["experience", "acquisition", "Core_doc", "conceptual_map"]
         extra = details.get("topic_tags")
         if isinstance(extra, list):
             tags.extend([str(x) for x in extra if isinstance(x, str) and x.strip()])
-        notes = f"RUA 문서 갱신 감지: {details.get('relpath')} (mtime={details.get('mtime_iso')})"
+        notes = f"Core 문서 갱신 감지: {details.get('relpath')} (mtime={details.get('mtime_iso')})"
     else:
         title = f"experience: supervised_body {details.get('goal')}"
         tags = ["experience", "acquisition", "supervised_body"]
@@ -593,10 +599,10 @@ def run_experience_acquisition(workspace_root: Path, *, cooldown_sec: int = 15 *
     st["last_sig"] = sig
     if kind == "obs_recode":
         st["last_obs_sig"] = sig
-    elif kind == "rua_conversation":
-        st["last_rua_sig"] = sig
-        if str(sig).startswith("rua_ws|"):
-            st["last_rua_ws_sig"] = sig
+    elif kind == "core_conversation":
+        st["last_Core_sig"] = sig
+        if str(sig).startswith("Core_ws|"):
+            st["last_Core_ws_sig"] = sig
     else:
         st["last_body_sig"] = sig
     _save_state(st)

@@ -2,9 +2,10 @@ import sys
 from pathlib import Path
 import json
 import time
+from workspace_root import get_workspace_root
 
 # Set paths
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.append(str(WORKSPACE_ROOT))
 
 from fdo_agi_repo.copilot.hippocampus import CopilotHippocampus
@@ -22,7 +23,7 @@ def verify_rag():
         return
 
     # 2. Store a unique memory in working memory
-    unique_content = "시안은 2025년 크리스마스 이브에 LangChain 기반의 벡터 RAG 시스템으로 업그레이드되었습니다."
+    unique_content = "Shion은 2025년 크리스마스 이브에 LangChain 기반의 벡터 RAG 시스템으로 업그레이드되었습니다."
     hp.add_to_working_memory({
         "type": "event",
         "content": unique_content,
@@ -38,8 +39,8 @@ def verify_rag():
     print("OK: Consolidation complete.")
 
     # 4. Search with a semantic query (not identical words)
-    # Search for "시안의 업그레이드 내용" (What was Shion's upgrade?)
-    search_query = "시안이의 시스템 업데이트 내용에 대해 알려줘"
+    # Search for "Shion의 업그레이드 내용" (What was Shion's upgrade?)
+    search_query = "Shion이의 시스템 업데이트 내용에 대해 알려줘"
     print(f"Searching for: '{search_query}'")
     
     results = hp.recall(search_query, top_k=5)

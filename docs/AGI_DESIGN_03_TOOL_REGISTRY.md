@@ -88,7 +88,7 @@ AGI로 나아가려면 페르소나가 **필요한 도구를 자동으로 선택
 ```json
 {
   "tool_id": "bqi_analyzer",
-  "name": "Binoche Question Interface",
+  "name": "Binoche_Observer Question Interface",
   "description": "Extract rhythm coordinates (time/space/agent/emotion) from the user's request",
   "category": "orchestration",
   "execution": {

@@ -1,4 +1,4 @@
-<#
+﻿<#
 Open Status Dashboard v2
 
 비노체용 원클릭:
@@ -7,6 +7,9 @@ Open Status Dashboard v2
 #>
 
 param([int]$Port = 3031)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Continue'
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

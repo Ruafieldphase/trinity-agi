@@ -6,9 +6,10 @@ Information Flow Score 테스트
 
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # fdo_agi_repo 경로 추가
-sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 
 from monitor.metrics_collector import MetricsCollector
 

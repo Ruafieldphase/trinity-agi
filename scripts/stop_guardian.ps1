@@ -1,8 +1,11 @@
-# Rhythm Guardian Stopper
+﻿# Rhythm Guardian Stopper
 # Guardian을 안전하게 종료합니다
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "SilentlyContinue"
-$ProjectRoot = "C:\workspace\agi"
+$ProjectRoot = "$WorkspaceRoot"
 $PidFile = "$ProjectRoot\outputs\rhythm_guardian.pid"
 
 Write-Host "========================================" -ForegroundColor Cyan

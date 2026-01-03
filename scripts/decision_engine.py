@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 # Add scripts to path
 sys.path.insert(0, str(Path(__file__).parent))
 
+from workspace_root import get_workspace_root
 from context_bridge import ContextBridge
 from context_embedding import ContextEmbedding
 
@@ -46,7 +47,8 @@ class DecisionEngine:
     """
     
     def __init__(self, whitelist_path: str = None):
-        self.whitelist_path = whitelist_path or Path.home() / "agi" / "config" / "execution_whitelist.json"
+        self.base_dir = get_workspace_root()
+        self.whitelist_path = whitelist_path or self.base_dir / "config" / "execution_whitelist.json"
         self.whitelist = self._load_whitelist()
         
         # Core components
@@ -54,7 +56,7 @@ class DecisionEngine:
         self.embedder = ContextEmbedding()
         
         # Load or create action history
-        self.action_history_path = Path.home() / "agi" / "outputs" / "action_history.jsonl"
+        self.action_history_path = self.base_dir / "outputs" / "action_history.jsonl"
         self.action_counts = self._load_action_counts()
     
     def _load_whitelist(self) -> Dict:
@@ -86,14 +88,14 @@ class DecisionEngine:
         
         return counts
     
-    def decide(self, input_text: str, layer: str = "sian", 
+    def decide(self, input_text: str, layer: str = "Shion", 
                alpha_state: Dict = None) -> Decision:
         """
         Main decision function
         
         Args:
             input_text: User input (e.g., Slack message)
-            layer: Which layer is requesting (sian, lumen, etc.)
+            layer: Which layer is requesting (Shion, Core, etc.)
             alpha_state: Current Alpha state (optional)
             
         Returns:
@@ -165,7 +167,7 @@ class DecisionEngine:
     
     def _extract_tags(self, text: str) -> List[str]:
         """Extract likely tags from text"""
-        keywords = ["alpha", "background", "lumen", "rhythm", "status", "위기", "개입", "상태"]
+        keywords = ["alpha", "background", "Core", "rhythm", "status", "위기", "개입", "상태"]
         text_lower = text.lower()
         return [kw for kw in keywords if kw in text_lower]
     
@@ -298,10 +300,10 @@ def main():
     
     # Test cases
     test_inputs = [
-        ("Alpha 상태가 어때?", "sian"),
-        ("지금 시스템 상태 확인해줘", "lumen"),
-        ("이 대화 기억해줘", "sian"),
-        ("완전히 새로운 요청입니다", "sian")
+        ("Alpha 상태가 어때?", "Shion"),
+        ("지금 시스템 상태 확인해줘", "Core"),
+        ("이 대화 기억해줘", "Shion"),
+        ("완전히 새로운 요청입니다", "Shion")
     ]
     
     for text, layer in test_inputs:

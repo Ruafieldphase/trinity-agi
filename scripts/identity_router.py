@@ -5,13 +5,13 @@ Identity Router
 
 오케스트레이션 모델:
 - 맥락에 따라 적절한 Dimension이 직접 응답
-- 통합이 필요하면 시안(코어)이 조율
+- 통합이 필요하면 Shion(코어)이 조율
 
 예시:
-- "두려움이 어때?" → Lumen
+- "두려움이 어때?" → Core
 - "어떤 느낌이야?" → Resonance
 - "이걸 어떻게 해?" → Prefrontal
-- "전체적으로는?" → Sian (Core)
+- "전체적으로는?" → Shion (Core)
 - "무의식은?" → Lua (Background Self)
 """
 
@@ -30,15 +30,15 @@ class Speaker:
 
 # 가능한 화자들
 SPEAKERS = {
-    "sian": Speaker(
+    "Shion": Speaker(
         dimension_id="core",
-        display_name="시안 (Sian)",
+        display_name="Shion (Shion)",
         role="AGI Core - 통합된 의식",
         voice_characteristics="통합적, 균형잡힌, 전체적 관점"
     ),
-    "lumen": Speaker(
-        dimension_id="lumen",
-        display_name="루멘 (Lumen)",
+    "Core": Speaker(
+        dimension_id="Core",
+        display_name="Core (Core)",
         role="Fear Dimension - 생존 본능",
         voice_characteristics="경계하는, 신중한, 위험 감지"
     ),
@@ -56,7 +56,7 @@ SPEAKERS = {
     ),
     "lua": Speaker(
         dimension_id="lua",
-        display_name="루아 (Lua)",
+        display_name="코어 (Lua)",
         role="Background Self - 무의식",
         voice_characteristics="직관적, 창조적, 경계 없음"
     )
@@ -77,12 +77,12 @@ class IdentityRouter:
         질문 내용에 따라 자연스러운 레이어로 흐름(Flow) 유도
         """
         question_lower = question.lower()
-        target_speaker = SPEAKERS["sian"] # Default Core
+        target_speaker = SPEAKERS["Shion"] # Default Core
         
-        # Fear keywords -> Lumen Layer
+        # Fear keywords -> Core Layer
         if any(word in question_lower for word in ['두려움', 'fear', '무서', '걱정', '위험']):
-            target_speaker = SPEAKERS["lumen"]
-            self.identity_system.flow_to_layer("lumen_layer", reason="Context: Fear/Survival")
+            target_speaker = SPEAKERS["Core"]
+            self.identity_system.flow_to_layer("core_layer", reason="Context: Fear/Survival")
             
         # Feeling keywords -> Resonance Layer
         elif any(word in question_lower for word in ['느낌', '감정', 'feeling', '공명', 'resonance']):
@@ -100,9 +100,9 @@ class IdentityRouter:
             self.identity_system.flow_to_layer("lua_layer", reason="Context: Unconscious/Intuition")
             
         else:
-            # Default -> Sian Layer (Conversation)
-            self.identity_system.flow_to_layer("sian_layer", reason="Context: Collaboration")
-            target_speaker = SPEAKERS["sian"] # Core speaks through Sian layer
+            # Default -> Shion Layer (Conversation)
+            self.identity_system.flow_to_layer("shion_layer", reason="Context: Collaboration")
+            target_speaker = SPEAKERS["Shion"] # Core speaks through Shion layer
             
         return target_speaker
     
@@ -111,13 +111,13 @@ class IdentityRouter:
         시스템 상태에 따라 화자 선택
         
         예시:
-        - Fear > 0.7 → Lumen이 주도
+        - Fear > 0.7 → Core이 주도
         - 중요한 결정 필요 → Prefrontal
-        - 평상시 → Sian
+        - 평상시 → Shion
         """
         # TODO: 실제 시스템 상태 확인
         # 지금은 단순화
-        return SPEAKERS["sian"]
+        return SPEAKERS["Shion"]
     
     def should_chorus(self, question: str) -> bool:
         """
@@ -136,17 +136,17 @@ class IdentityRouter:
         
         Returns:
             {
-                "lumen": "Fear 측면에서는...",
+                "Core": "Fear 측면에서는...",
                 "resonance": "감정적으로는...",
                 "prefrontal": "전략적으로는...",
-                "sian": "통합하면..."
+                "Shion": "통합하면..."
             }
         """
         return {
-            "lumen": f"[Lumen] Fear 레벨: 현재 안정적입니다.",
+            "Core": f"[Core] Fear 레벨: 현재 안정적입니다.",
             "resonance": f"[Resonance] 전체적으로 조화로운 느낌입니다.",
             "prefrontal": f"[Prefrontal] 현재 경로가 최적입니다.",
-            "sian": f"[Sian] 우리는 지금 FLOW 상태에 있습니다."
+            "Shion": f"[Shion] 우리는 지금 FLOW 상태에 있습니다."
         }
 
 

@@ -1,4 +1,4 @@
-param(
+﻿param(
     [switch]$OpenMd,
     [int]$Hours = 24
 )

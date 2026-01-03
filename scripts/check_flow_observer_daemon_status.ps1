@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Flow Observer 데몬 상태 확인
 

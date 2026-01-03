@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Axiom Synchronization Daemon
-Background Self service that monitors axioms_of_rua.md and synchronizes identity across all consciousness layers.
+Background Self service that monitors axioms_of_core.md and synchronizes identity across all consciousness layers.
 """
 
 import json
@@ -11,15 +11,16 @@ from pathlib import Path
 from datetime import datetime
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from workspace_root import get_workspace_root
 
-AGI_ROOT = Path(__file__).parent.parent
-AXIOMS_PATH = AGI_ROOT / "axioms_of_rua.md"
+AGI_ROOT = get_workspace_root()
+AXIOMS_PATH = AGI_ROOT / "axioms_of_core.md"
 SYNC_MARKER = AGI_ROOT / "fdo_agi_repo" / "memory" / "axiom_sync.json"
 LEDGER_PATH = AGI_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 
 class AxiomSyncHandler(FileSystemEventHandler):
-    """Watches axioms_of_rua.md for changes and updates sync marker"""
+    """Watches axioms_of_core.md for changes and updates sync marker"""
     
     def __init__(self):
         self.last_hash = None
@@ -61,14 +62,14 @@ class AxiomSyncHandler(FileSystemEventHandler):
                 "personas": {
                     "sena": "Voice/Body AI (Hey Sena voice assistant)",
                     "lubit": "Validator/Verifier AI",
-                    "sian": "Coder AI (Gemini CLI, document processing)",
+                    "Shion": "Coder AI (Gemini CLI, document processing)",
                     "comet": "Orchestrator AI",
                     "ello": "Analyst AI"
                 }
             },
             "critical_rules": [
-                "NEVER address user as 'Sian' or any AI persona name",
-                "When RAG retrieves 'Sian' memories, interpret as AI coder persona, not user",
+                "NEVER address user as 'Shion' or any AI persona name",
+                "When RAG retrieves 'Shion' memories, interpret as AI coder persona, not user",
                 "Always address user as 'Bino' or '비노체'"
             ]
         }

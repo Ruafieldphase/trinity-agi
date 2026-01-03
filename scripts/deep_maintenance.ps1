@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Deep Maintenance stub (Fear ≥ 0.9 경고 시 수동/자동 실행)

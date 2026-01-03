@@ -1,13 +1,16 @@
-param(
+﻿param(
     [string]$Server = 'http://127.0.0.1:8091',
     [int]$IntervalSeconds = 5,
     [switch]$KillExisting,
-    [string]$LogFile = (Join-Path (Join-Path $PSScriptRoot '..') 'outputs\worker_monitor.log')
+    [string]$LogFile = (Join-Path $( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) \"outputs\worker_monitor.log\")
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 try {
-    $repoRoot = Join-Path $PSScriptRoot '..'
+    $repoRoot = $WorkspaceRoot
     $daemon = Join-Path $repoRoot 'scripts\worker_monitor_daemon.ps1'
     if (-not (Test-Path -LiteralPath $daemon)) { throw "daemon script not found: $daemon" }
 

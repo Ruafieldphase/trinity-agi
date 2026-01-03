@@ -1,10 +1,13 @@
-# Register Rhythm Guardian as Windows Startup Task
+﻿# Register Rhythm Guardian as Windows Startup Task
 # 부팅 시 자동으로 Guardian 시작
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "SilentlyContinue"
 
 $TaskName = "RhythmGuardian"
-$ProjectRoot = "C:\workspace\agi"
+$ProjectRoot = "$WorkspaceRoot"
 $Python = "$ProjectRoot\.venv\Scripts\pythonw.exe"  # pythonw = no console window
 $Script = "$ProjectRoot\scripts\rhythm_guardian.py"
 

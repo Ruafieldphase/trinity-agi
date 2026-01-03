@@ -745,7 +745,7 @@ print(store.latest())
 
 - `TaskSpec` 기반 실행 (domain-specific 스코프: "doc", "code", "analysis")
 - `EvalReport` 평가 지표 (quality, evidence_ok)
-- `BQI` 좌표 (binoche, quality, intent, rhythm_phase)
+- `BQI` 좌표 (Binoche_Observer, quality, intent, rhythm_phase)
 - **Resonance 기록 없음** → 교차 도메인 메트릭 집계 불가
 
 ### 설계
@@ -773,7 +773,7 @@ print(store.latest())
 - `record_task_resonance(task_id, task_goal, eval_report, bqi_coord, duration_sec)`:
   - `eval_report` → `metrics.quality`, `metrics.evidence`
   - `bqi_coord` → `tags.bqi_binoche`, `tags.bqi_quality`, `tags.bqi_intent`
-  - BQI 기반 subdomain 추론 (binoche > 0.7 → "binoche_high")
+  - BQI 기반 subdomain 추론 (Binoche_Observer > 0.7 → "binoche_high")
   - `resonance_key`: `"orchestrator:reason[:subdomain]"`
 
 #### pipeline.py 수정
@@ -792,7 +792,7 @@ print(store.latest())
 | `eval_report.quality` | `metrics.quality` | 직접 매핑 (0.0-1.0) |
 | `eval_report.evidence_ok` | `metrics.evidence` | bool → float (1.0/0.0) |
 | execution duration | `metrics.latency_ms` | ✅ `time.perf_counter()` 계측 완료 |
-| `bqi_coord.binoche` | `tags.bqi_binoche` | BQI 좌표 기록 |
+| `bqi_coord.Binoche_Observer` | `tags.bqi_binoche` | BQI 좌표 기록 |
 | `bqi_coord.quality` | `tags.bqi_quality` | |
 | `bqi_coord.intent` | `tags.bqi_intent` | |
 

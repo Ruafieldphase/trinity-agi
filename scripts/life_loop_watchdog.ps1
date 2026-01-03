@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Life Loop Watchdog - 자동 재시작 담당
 

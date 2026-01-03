@@ -1,20 +1,13 @@
 ﻿import re
-from pathlib import Path
-
-from pathlib import Path
-import re
 import sys
+from pathlib import Path
+from workspace_root import get_workspace_root
 
-# Add parent to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-# Find workspace root dynamically
-if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
-    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
-    from workspace_utils import find_workspace_root
-    workspace = find_workspace_root(Path(__file__).parent)
-else:
-    workspace = Path(__file__).parent.parent
+workspace_root = get_workspace_root()
+sys.path.insert(0, str(workspace_root))
+if (workspace_root / "fdo_agi_repo").exists():
+    sys.path.insert(0, str(workspace_root / "fdo_agi_repo"))
+workspace = workspace_root
 
 SCAN_DIRS = [
     workspace / "outputs",

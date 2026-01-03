@@ -1,12 +1,12 @@
-# 🎯 AGI System - Unified Real-Time Dashboard
+﻿# 🎯 AGI System - Unified Real-Time Dashboard
 
 <#
 .SYNOPSIS
-    통합 실시간 대시보드 - Lumen, Trinity, Original Data 모니터링
+    통합 실시간 대시보드 - Core, Trinity, Original Data 모니터링
 
 .DESCRIPTION
     3가지 핵심 Production을 실시간으로 모니터링합니다:
-    1. Lumen 24h Production (5분 사이클)
+    1. Core 24h Production (5분 사이클)
     2. Trinity Autopoietic Cycle (24시간 실행)
     3. Original Data Index (10,000 files)
 
@@ -25,11 +25,14 @@ param(
     [int]$RefreshSeconds = 10,
     [switch]$Once
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'SilentlyContinue'
 
-function Get-LumenStatus {
-    $logFile = "C:\workspace\agi\fdo_agi_repo\outputs\lumen_production_24h_stable.jsonl"
+function Get-CoreStatus {
+    $logFile = "$WorkspaceRoot\fdo_agi_repo\outputs\core_production_24h_stable.jsonl"
     
     if (-not (Test-Path $logFile)) {
         return @{
@@ -71,7 +74,7 @@ function Get-LumenStatus {
 
 function Get-TrinityStatus {
     # Trinity는 새 터미널에서 실행 중이므로 출력 파일로 상태 확인
-    $reportFile = "C:\workspace\agi\outputs\trinity\autopoietic_trinity_integration_latest.md"
+    $reportFile = "$WorkspaceRoot\outputs\trinity\autopoietic_trinity_integration_latest.md"
     
     if (Test-Path $reportFile) {
         $lastMod = (Get-Item $reportFile).LastWriteTime
@@ -89,7 +92,7 @@ function Get-TrinityStatus {
 }
 
 function Get-OriginalDataStatus {
-    $indexFile = "C:\workspace\agi\outputs\original_data_index.json"
+    $indexFile = "$WorkspaceRoot\outputs\original_data_index.json"
     
     if (-not (Test-Path $indexFile)) {
         return @{
@@ -132,15 +135,15 @@ while ($true) {
     
     Write-Host "📊 Update #$iteration - $timestamp (Refresh: ${RefreshSeconds}s)`n" -ForegroundColor Yellow
     
-    # Lumen 상태
-    $lumen = Get-LumenStatus
-    Write-Host "🌟 Lumen Feedback System (24h Production)" -ForegroundColor Magenta
-    Write-Host "   Status:      $($lumen.Status)" -ForegroundColor White
-    Write-Host "   Cycles:      $($lumen.Cycles)" -ForegroundColor White
-    Write-Host "   Progress:    $($lumen.Progress)" -ForegroundColor White
-    Write-Host "   Last Update: $($lumen.LastUpdate)" -ForegroundColor Gray
-    if ($lumen.ElapsedSeconds) {
-        Write-Host "   Elapsed:     $($lumen.ElapsedSeconds)s" -ForegroundColor Gray
+    # Core 상태
+    $Core = Get-CoreStatus
+    Write-Host "🌟 Core Feedback System (24h Production)" -ForegroundColor Magenta
+    Write-Host "   Status:      $($Core.Status)" -ForegroundColor White
+    Write-Host "   Cycles:      $($Core.Cycles)" -ForegroundColor White
+    Write-Host "   Progress:    $($Core.Progress)" -ForegroundColor White
+    Write-Host "   Last Update: $($Core.LastUpdate)" -ForegroundColor Gray
+    if ($Core.ElapsedSeconds) {
+        Write-Host "   Elapsed:     $($Core.ElapsedSeconds)s" -ForegroundColor Gray
     }
     Write-Host ""
     
@@ -160,7 +163,7 @@ while ($true) {
     Write-Host ""
     
     # 전체 시스템 상태
-    $allGreen = ($lumen.Status -match "RUNNING|COMPLETED") -and 
+    $allGreen = ($Core.Status -match "RUNNING|COMPLETED") -and 
     ($trinity.Status -match "RUNNING|COMPLETED") -and 
     ($originalData.Status -eq "✅ INDEXED")
     

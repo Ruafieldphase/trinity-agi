@@ -1,4 +1,4 @@
-# Everything Setup Helper
+﻿# Everything Setup Helper
 # Helps configure Everything for workspace integration
 
 param(
@@ -12,8 +12,12 @@ param(
     [switch]$AddWorkspaceToIndex,
     
     [Parameter(Mandatory = $false)]
-    [string]$WorkspaceFolder = "c:\workspace\agi"
+    [string]$WorkspaceFolder = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 
@@ -229,4 +233,4 @@ Write-Host ""
 Write-Host "Examples:" -ForegroundColor Yellow
 Write-Host "  .\scripts\everything_setup.ps1 -CheckStatus"
 Write-Host "  .\scripts\everything_setup.ps1 -DownloadCLI"
-Write-Host "  .\scripts\everything_setup.ps1 -AddWorkspaceToIndex -WorkspaceFolder 'c:\workspace\agi'"
+Write-Host "  .\scripts\everything_setup.ps1 -AddWorkspaceToIndex -WorkspaceFolder "$WorkspaceRoot""

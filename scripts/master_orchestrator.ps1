@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Master Orchestrator - 모든 자동화를 조율하는 중앙 제어 시스템
@@ -17,8 +17,11 @@ param(
     [switch]$Force,
     [switch]$Quiet,
     [int]$ServerPort = 8091,
-    [string]$WorkspaceRoot = "$PSScriptRoot\.."
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$PSScriptRoot\.."
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $startTime = Get-Date
@@ -250,7 +253,7 @@ Write-Host "`n[extra 2/4] BQI Phase 6 System..." -ForegroundColor Cyan
 try {
     # 패턴으로 검색
     $bqiTasks = Get-ScheduledTask -ErrorAction SilentlyContinue | Where-Object {
-        $_.TaskName -like '*BQI*' -or $_.TaskName -like '*Binoche*'
+        $_.TaskName -like '*BQI*' -or $_.TaskName -like '*Binoche_Observer*'
     }
     
     if ($bqiTasks.Count -gt 0) {

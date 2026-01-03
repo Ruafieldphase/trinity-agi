@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Analyze Network Profile Results for Phase 8.5
@@ -9,9 +9,12 @@
 #>
 
 param(
-    [string]$ProfileJson = "$PSScriptRoot\..\outputs\network_profile_latest.json",
-    [string]$OutMd = "$PSScriptRoot\..\outputs\network_analysis_latest.md"
+    [string]$ProfileJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\network_profile_latest.json",
+    [string]$OutMd = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\network_analysis_latest.md"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest

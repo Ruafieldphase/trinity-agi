@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 # Phase 2.5 RPA 자동 재개 스크립트
 # ============================================================
 # 목적: VS Code 재실행, 재부팅 후 자동으로 Phase 2.5 작업 재개
@@ -9,9 +9,12 @@ param(
     [switch]$DryRun,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
-$WorkspaceRoot = "C:\workspace\agi"
 $PlanFile = Join-Path $WorkspaceRoot "PHASE_2_5_RPA_YOUTUBE_LEARNING_PLAN.md"
 $ProgressFile = Join-Path $WorkspaceRoot ".vscode\settings_rpa_phase25.json"
 $LogFile = Join-Path $WorkspaceRoot "outputs\rpa_phase25_resume.log"

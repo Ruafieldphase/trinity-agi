@@ -12,10 +12,11 @@ import json
 import time
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 from datetime import datetime
 
 # Paths
-WORKSPACE = Path("C:/workspace/agi")
+WORKSPACE = get_workspace_root()
 REQUESTS_DIR = WORKSPACE / "outputs/lua_requests"
 RESPONSES_DIR = WORKSPACE / "outputs/trinity_responses"
 

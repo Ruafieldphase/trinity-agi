@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
 Post-reboot verification + auto-fix wrapper.
@@ -16,8 +16,11 @@ Exit code mirrors underlying script (non-zero if errors encountered).
 #>
 param(
     [switch]$OpenMd,
-    [string]$WorkspaceRoot = "${PSScriptRoot}/.."
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "${PSScriptRoot}/.."
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Continue'
 function Info($m) { Write-Host "[INFO] $m" -ForegroundColor Cyan }

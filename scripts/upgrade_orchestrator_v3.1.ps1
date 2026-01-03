@@ -1,7 +1,10 @@
-# 오케스트레이터를 v3.1로 업그레이드 (Self-Healing 내장)
+﻿# 오케스트레이터를 v3.1로 업그레이드 (Self-Healing 내장)
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $TaskName = 'AGI_Integrated_Rhythm_Orchestrator'
-$ScriptPathNew = 'C:\workspace\agi\scripts\integrated_rhythm_system_v3.1.ps1'
+$ScriptPathNew = "$WorkspaceRoot\scripts\integrated_rhythm_system_v3.1.ps1"
 
 Write-Host "`n" -NoNewline
 Write-Host ("=" * 90) -ForegroundColor Magenta

@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#!
 .SYNOPSIS
     Metrics collector daemon status checker

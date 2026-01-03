@@ -8,9 +8,10 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 경로 추가
-workspace = Path(__file__).resolve().parent.parent
+workspace = get_workspace_root()
 sys.path.insert(0, str(workspace / "fdo_agi_repo"))
 
 from copilot.flow_observer_integration import FlowObserverIntegration

@@ -1,15 +1,18 @@
-# Save Performance Benchmark to JSON
+﻿# Save Performance Benchmark to JSON
 # Runs performance tests and saves results with timestamps for trend analysis
 
 param(
     [int]$Iterations = 5,
     [int]$MaxTokens = 64,
     [switch]$Warmup,
-    [string]$OutJson = "$PSScriptRoot\..\outputs\performance_benchmark_log.jsonl",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\performance_benchmark_log.jsonl",
     [switch]$Append,
     [switch]$RunAnalysis,
     [switch]$OptimizePolicy
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
@@ -65,7 +68,7 @@ $result = @{
         max_tokens = $MaxTokens
         warmup     = $Warmup.IsPresent
     }
-    lumen     = @{
+    Core     = @{
         available    = $false
         times_ms     = @()
         avg_ms       = $null
@@ -84,26 +87,26 @@ $result = @{
     }
 }
 
-# Test Lumen Gateway
-Write-Host "[1/2] Testing Lumen Gateway..." -ForegroundColor Yellow
+# Test Core Gateway
+Write-Host "[1/2] Testing Core Gateway..." -ForegroundColor Yellow
 try {
-    $lumenBody = @{ message = $testMessage } | ConvertTo-Json
-    $lumenTimes = @()
-    $lumenSuccess = 0
+    $CoreBody = @{ message = $testMessage } | ConvertTo-Json
+    $CoreTimes = @()
+    $CoreSuccess = 0
     
     if ($Warmup) {
-        try { $null = Invoke-RestMethod -Uri "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $lumenBody -ContentType "application/json" -TimeoutSec 30 } catch {}
+        try { $null = Invoke-RestMethod -Uri "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $CoreBody -ContentType "application/json" -TimeoutSec 30 } catch {}
         Write-Host "  Warmup completed" -ForegroundColor DarkGray
     }
     
     for ($i = 1; $i -le $Iterations; $i++) {
         try {
             $sw = [System.Diagnostics.Stopwatch]::StartNew()
-            $response = Invoke-RestMethod -Uri "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $lumenBody -ContentType "application/json" -TimeoutSec 30
+            $response = Invoke-RestMethod -Uri "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $CoreBody -ContentType "application/json" -TimeoutSec 30
             $sw.Stop()
             $elapsed = $sw.ElapsedMilliseconds
-            $lumenTimes += $elapsed
-            $lumenSuccess++
+            $CoreTimes += $elapsed
+            $CoreSuccess++
             Write-Host "  Request $i : $elapsed ms" -ForegroundColor Green
         }
         catch {
@@ -112,18 +115,18 @@ try {
         Start-Sleep -Milliseconds 500
     }
     
-    if ($lumenTimes.Count -gt 0) {
-        $result.lumen.available = $true
-        $result.lumen.times_ms = $lumenTimes
-        $result.lumen.avg_ms = [math]::Round(($lumenTimes | Measure-Object -Average).Average, 2)
-        $result.lumen.min_ms = ($lumenTimes | Measure-Object -Minimum).Minimum
-        $result.lumen.max_ms = ($lumenTimes | Measure-Object -Maximum).Maximum
-        $result.lumen.success_rate = [math]::Round($lumenSuccess / $Iterations, 2)
-        Write-Host "  ✓ Lumen: Avg $($result.lumen.avg_ms)ms" -ForegroundColor Green
+    if ($CoreTimes.Count -gt 0) {
+        $result.Core.available = $true
+        $result.Core.times_ms = $CoreTimes
+        $result.Core.avg_ms = [math]::Round(($CoreTimes | Measure-Object -Average).Average, 2)
+        $result.Core.min_ms = ($CoreTimes | Measure-Object -Minimum).Minimum
+        $result.Core.max_ms = ($CoreTimes | Measure-Object -Maximum).Maximum
+        $result.Core.success_rate = [math]::Round($CoreSuccess / $Iterations, 2)
+        Write-Host "  ✓ Core: Avg $($result.Core.avg_ms)ms" -ForegroundColor Green
     }
 }
 catch {
-    Write-Host "  ✗ Lumen unavailable: $_" -ForegroundColor Yellow
+    Write-Host "  ✗ Core unavailable: $_" -ForegroundColor Yellow
 }
 
 Write-Host ""
@@ -218,20 +221,20 @@ else {
 # Print recommendation
 Write-Host ""
 Write-Host "Recommendation:" -ForegroundColor Cyan
-if ($result.lumen.available -and $result.lm_studio.available) {
-    if ($result.lumen.avg_ms -lt $result.lm_studio.avg_ms) {
-        $diff = $result.lm_studio.avg_ms - $result.lumen.avg_ms
-        Write-Host "  → Lumen is faster by ${diff}ms on average" -ForegroundColor Green
-        Write-Host "    Use Lumen for latency-sensitive workloads" -ForegroundColor White
+if ($result.Core.available -and $result.lm_studio.available) {
+    if ($result.Core.avg_ms -lt $result.lm_studio.avg_ms) {
+        $diff = $result.lm_studio.avg_ms - $result.Core.avg_ms
+        Write-Host "  → Core is faster by ${diff}ms on average" -ForegroundColor Green
+        Write-Host "    Use Core for latency-sensitive workloads" -ForegroundColor White
     }
     else {
-        $diff = $result.lumen.avg_ms - $result.lm_studio.avg_ms
+        $diff = $result.Core.avg_ms - $result.lm_studio.avg_ms
         Write-Host "  → LM Studio is faster by ${diff}ms on average" -ForegroundColor Green
         Write-Host "    Consider LM Studio for cost optimization" -ForegroundColor White
     }
 }
-elseif ($result.lumen.available) {
-    Write-Host "  → Only Lumen available, use as primary" -ForegroundColor Yellow
+elseif ($result.Core.available) {
+    Write-Host "  → Only Core available, use as primary" -ForegroundColor Yellow
 }
 elseif ($result.lm_studio.available) {
     Write-Host "  → Only LM Studio available, use as primary" -ForegroundColor Yellow

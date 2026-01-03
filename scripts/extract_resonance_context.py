@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Resonance Context Extractor
-루멘의 시선: Resonance Ledger에서 Context (where, when, who) 추출
+Core의 시선: Resonance Ledger에서 Context (where, when, who) 추출
 """
 
 import json
@@ -10,8 +10,9 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional
 from collections import defaultdict
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 LEDGER_PATH = WORKSPACE / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 OUTPUT_PATH = WORKSPACE / "outputs" / "context_samples.jsonl"
 
@@ -95,17 +96,17 @@ def analyze_context_distribution(contexts: List[Dict]) -> Dict:
 
 
 def main():
-    print("🔮 [Lumen] Extracting Context from Resonance Ledger...")
+    print("🔮 [Core] Extracting Context from Resonance Ledger...")
     print(f"   Ledger: {LEDGER_PATH}")
     
     if not LEDGER_PATH.exists():
-        print(f"❌ [Lumen] Ledger not found: {LEDGER_PATH}")
+        print(f"❌ [Core] Ledger not found: {LEDGER_PATH}")
         return 1
     
     contexts = []
     errors = 0
     
-    print(f"\n📖 [Lumen] Reading ledger...")
+    print(f"\n📖 [Core] Reading ledger...")
     with open(LEDGER_PATH, 'r', encoding='utf-8') as f:
         for i, line in enumerate(f, 1):
             if not line.strip():
@@ -119,21 +120,21 @@ def main():
             except json.JSONDecodeError as e:
                 errors += 1
                 if errors <= 5:
-                    print(f"⚠️  [Lumen] Parse error at line {i}: {e}")
+                    print(f"⚠️  [Core] Parse error at line {i}: {e}")
             except Exception as e:
                 errors += 1
                 if errors <= 5:
-                    print(f"⚠️  [Lumen] Extraction error at line {i}: {e}")
+                    print(f"⚠️  [Core] Extraction error at line {i}: {e}")
     
-    print(f"\n✅ [Lumen] Extracted {len(contexts):,} contexts")
+    print(f"\n✅ [Core] Extracted {len(contexts):,} contexts")
     if errors > 0:
-        print(f"⚠️  [Lumen] {errors:,} errors encountered")
+        print(f"⚠️  [Core] {errors:,} errors encountered")
     
     # 분석
-    print(f"\n📊 [Lumen] Analyzing context distribution...")
+    print(f"\n📊 [Core] Analyzing context distribution...")
     analysis = analyze_context_distribution(contexts)
     
-    print(f"\n📈 [Lumen] Distribution Summary:")
+    print(f"\n📈 [Core] Distribution Summary:")
     print(f"   Total Contexts: {analysis['total_contexts']:,}")
     print(f"\n   Top 10 'Where' (locations):")
     for where, count in list(analysis['where_distribution'].items())[:10]:
@@ -148,7 +149,7 @@ def main():
     # 저장
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     
-    print(f"\n💾 [Lumen] Saving contexts to {OUTPUT_PATH}")
+    print(f"\n💾 [Core] Saving contexts to {OUTPUT_PATH}")
     with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
         for ctx in contexts:
             f.write(json.dumps(ctx, ensure_ascii=False) + '\n')
@@ -158,10 +159,10 @@ def main():
     with open(analysis_path, 'w', encoding='utf-8') as f:
         json.dump(analysis, f, indent=2, ensure_ascii=False)
     
-    print(f"📊 [Lumen] Analysis saved to {analysis_path}")
+    print(f"📊 [Core] Analysis saved to {analysis_path}")
     
     # 최근 10개 샘플 출력
-    print(f"\n🔍 [Lumen] Recent context samples (last 10):")
+    print(f"\n🔍 [Core] Recent context samples (last 10):")
     for ctx in contexts[-10:]:
         print(f"\n   {ctx['when']}")
         print(f"   Where: {ctx['where']}")
@@ -170,7 +171,7 @@ def main():
         if ctx['meta']:
             print(f"   Meta: {ctx['meta']}")
     
-    print(f"\n✨ [Lumen] Context extraction complete!")
+    print(f"\n✨ [Core] Context extraction complete!")
     print(f"   Next: Use these contexts for CI3 conditioning")
     print(f"   Command: python scripts/contextualized_i3.py")
     

@@ -1,4 +1,4 @@
-# Daily Briefing Scheduler
+﻿# Daily Briefing Scheduler
 # Registers a scheduled task to generate daily briefing every morning
 
 param(

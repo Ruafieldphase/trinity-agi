@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 from dataclasses import dataclass, asdict
+from workspace_root import get_workspace_root
 
 # Resonance Simulator 임포트
 sys.path.insert(0, str(Path(__file__).parent))
@@ -351,7 +352,7 @@ def main():
     parser.add_argument(
         "--ledger",
         type=Path,
-        default=Path(__file__).parent.parent
+        default=get_workspace_root()
         / "fdo_agi_repo"
         / "memory"
         / "resonance_ledger.jsonl",
@@ -372,7 +373,7 @@ def main():
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path(__file__).parent.parent
+        default=get_workspace_root()
         / "outputs"
         / "realtime_resonance_latest.json",
         help="Output JSON path",

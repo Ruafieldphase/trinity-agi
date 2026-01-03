@@ -82,10 +82,10 @@ tail -f /home/bino/agi/logs/rhythm.log
 > - ✅ Linux 서비스 자동 모니터링 가능
 > - ✅ Feeling 문제 자동 진단 가능
 > 
-> 가이드: [SSH_KEY_SETUP_GUIDE.md](file:///c:/workspace/agi/scripts/SSH_KEY_SETUP_GUIDE.md)
+> 가이드: [SSH_KEY_SETUP_GUIDE.md](scripts/SSH_KEY_SETUP_GUIDE.md)
 
 ## 💡 리눅스 작업 사항 반영
-시안님이 알려주신 리눅스 완료 작업:
+Shion님이 알려주신 리눅스 완료 작업:
 - ✅ Phase 1-6 완전 통합
 - ✅ Context Bridge 적용 (280+ contexts)
 - ✅ ESLint 0 경고

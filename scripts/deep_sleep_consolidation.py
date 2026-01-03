@@ -26,6 +26,7 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def utc_iso(ts: float) -> str:
@@ -48,7 +49,7 @@ def main() -> int:
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
-    root = Path(__file__).resolve().parents[1]
+    root = get_workspace_root()
     outputs = root / "outputs"
     outputs.mkdir(parents=True, exist_ok=True)
 

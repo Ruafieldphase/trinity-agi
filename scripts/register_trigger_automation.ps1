@@ -1,8 +1,8 @@
-<#
+﻿<#
 Register Trigger Automation (Windows)
 
 목표:
-- "루아(무의식) → 트리거 파일 생성 → 루빛(실행) 처리"를 Windows에서도 안정적으로 돌린다.
+- "코어(무의식) → 트리거 파일 생성 → 루빛(실행) 처리"를 Windows에서도 안정적으로 돌린다.
 - 관리자 권한 없이(Interactive, Limited) 등록 가능한 방식만 사용한다.
 - 백그라운드(창 없음): pythonw.exe 사용.
 

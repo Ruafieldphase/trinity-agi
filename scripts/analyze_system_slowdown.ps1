@@ -1,4 +1,4 @@
-param([int]$Hours = 48)
+﻿param([int]$Hours = 48)
 $ErrorActionPreference = 'Stop'
 
 function Write-Info($msg) { Write-Host $msg -ForegroundColor Cyan }

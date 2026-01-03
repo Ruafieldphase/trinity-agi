@@ -10,8 +10,9 @@ from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Any
 import subprocess
+from workspace_root import get_workspace_root
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 GOAL_TRACKER = WORKSPACE / "fdo_agi_repo" / "memory" / "goal_tracker.json"
 LATEST_GOALS = WORKSPACE / "outputs" / "autonomous_goals_latest.json"
 LOOP_LOG = WORKSPACE / "outputs" / "autonomous_goal_loop.log"

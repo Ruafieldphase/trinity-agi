@@ -1,4 +1,7 @@
-# Final System Status Check
+﻿# Final System Status Check
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 Write-Host '════════════════════════════════════════════════════════════════' -ForegroundColor Cyan
 Write-Host '  리듬 기반 자동화 완성 - 최종 상태 점검' -ForegroundColor Yellow
 Write-Host '════════════════════════════════════════════════════════════════' -ForegroundColor Cyan
@@ -17,7 +20,7 @@ Write-Host '[2] 생성된 파일 목록' -ForegroundColor Yellow
     @{ name = 'PHASE2_ADAPTIVE_RHYTHM.md'; dir = '.' },
     @{ name = 'SYSTEM_SLOWDOWN_FINAL_DIAGNOSIS.md'; dir = '.' }
 ) | ForEach-Object {
-    $path = "C:\workspace\agi\$($_.dir)\$($_.name)"
+    $path = "$WorkspaceRoot\$($_.dir)\$($_.name)"
 
     if (Test-Path $path) {
         Write-Host "  ✅ $($_.name)" -ForegroundColor Green
@@ -28,7 +31,7 @@ Write-Host '[2] 생성된 파일 목록' -ForegroundColor Yellow
 
 Write-Host ''
 Write-Host '[3] Output Files (Scheduler)' -ForegroundColor Yellow
-Get-ChildItem 'C:\workspace\agi\outputs' -Filter '*scheduler*' -ErrorAction SilentlyContinue | ForEach-Object {
+Get-ChildItem "$WorkspaceRoot\outputs" -Filter '*scheduler*' -ErrorAction SilentlyContinue | ForEach-Object {
     Write-Host "  📄 $($_.Name)" -ForegroundColor Green
 }
 

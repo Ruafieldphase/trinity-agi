@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     PowerShell 스크립트에서 이모지를 ASCII로 수동 변환 가이드
 

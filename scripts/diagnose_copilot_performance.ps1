@@ -1,10 +1,13 @@
-# VS Code Copilot Performance Analysis
+﻿# VS Code Copilot Performance Analysis
 # Copilot 응답 속도 저하 원인 분석 및 해결
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 Write-Host "`n=== VS Code Copilot Performance Analysis ===" -ForegroundColor Cyan
 Write-Host "Analyzing workspace complexity impact on Copilot..." -ForegroundColor Yellow
 
-$workspace = "C:\workspace\agi"
+$workspace = "$WorkspaceRoot"
 
 # 1. Workspace 크기 분석
 Write-Host "`n[1/6] Workspace Size Analysis" -ForegroundColor Cyan
@@ -149,10 +152,10 @@ if ($issues.Count -gt 0) {
     Write-Host "`n=== Recommended Fixes ===" -ForegroundColor Green
     Write-Host ""
     Write-Host "1️⃣  Create/Update .vscodeignore:" -ForegroundColor Cyan
-    Write-Host "   powershell C:\workspace\agi\scripts\create_vscodeignore.ps1"
+    Write-Host "   powershell $WorkspaceRoot\scripts\create_vscodeignore.ps1"
     Write-Host ""
     Write-Host "2️⃣  Update VS Code settings.json:" -ForegroundColor Cyan
-    Write-Host "   powershell C:\workspace\agi\scripts\optimize_vscode_settings.ps1"
+    Write-Host "   powershell $WorkspaceRoot\scripts\optimize_vscode_settings.ps1"
     Write-Host ""
     Write-Host "3️⃣  Disable Copilot for heavy files:" -ForegroundColor Cyan
     Write-Host "   Add to settings: 'github.copilot.enable': {'*': true, 'jsonl': false}"

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Cache Validation Monitor Daemon (Background Worker)
@@ -17,7 +17,7 @@ try {
 catch {}
 
 $ErrorActionPreference = "Continue"
-$RepoRoot = "C:\workspace\agi"
+$RepoRoot = "$WorkspaceRoot"
 $LogFile = "$RepoRoot\outputs\cache_validation_monitor.log"
 $ScheduleFile = "$RepoRoot\outputs\cache_validation_schedule.json"
 $StateFile = "$RepoRoot\outputs\cache_validation_state.json"
@@ -25,6 +25,9 @@ $ValidationScript = "$RepoRoot\scripts\auto_cache_validation.ps1"
 
 function Write-Log {
     param([string]$Message, [string]$Level = "INFO")
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
     $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     $logLine = "[$timestamp] [$Level] $Message"
     Add-Content -Path $LogFile -Value $logLine -Encoding UTF8

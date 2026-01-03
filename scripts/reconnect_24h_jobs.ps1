@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     종료된 터미널에서 24h Production Job 로그 재연결
 
@@ -12,6 +12,9 @@
 
 [CmdletBinding()]
 param()
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Continue'
 
@@ -51,12 +54,12 @@ Write-Host "`n📊 로그 파일 상태:" -ForegroundColor Cyan
 
 $logFiles = @(
     "outputs\fullstack_24h_monitoring.jsonl",
-    "outputs\lumen_24h_latest.json",
+    "outputs\core_24h_latest.json",
     "outputs\gateway_optimization_log.jsonl"
 )
 
 foreach ($logFile in $logFiles) {
-    $fullPath = Join-Path $PSScriptRoot "..\$logFile"
+    $fullPath = Join-Path $WorkspaceRoot "$logFile"
     if (Test-Path $fullPath) {
         $size = (Get-Item $fullPath).Length / 1KB
         $lastWrite = (Get-Item $fullPath).LastWriteTime
@@ -71,10 +74,10 @@ foreach ($logFile in $logFiles) {
 
 Write-Host "`n💡 Tip:" -ForegroundColor Yellow
 Write-Host "   실시간 로그 보기:" -ForegroundColor White
-Write-Host "   Get-Job -Name 'AGI_Lumen_24h' | Receive-Job -Keep -Wait" -ForegroundColor Cyan
+Write-Host "   Get-Job -Name 'AGI_Core_24h' | Receive-Job -Keep -Wait" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "   특정 Job 로그 마지막 10줄:" -ForegroundColor White
-Write-Host "   Get-Job -Name 'AGI_Lumen_24h' | Receive-Job -Keep | Select-Object -Last 10" -ForegroundColor Cyan
+Write-Host "   Get-Job -Name 'AGI_Core_24h' | Receive-Job -Keep | Select-Object -Last 10" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "   Job 중지:" -ForegroundColor White
 Write-Host "   Get-Job -Name 'AGI_*' | Stop-Job" -ForegroundColor Cyan

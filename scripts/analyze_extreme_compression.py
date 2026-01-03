@@ -6,8 +6,10 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from collections import Counter
 
+from workspace_root import get_workspace_root
+
 def analyze_extreme_compression():
-    ledger = Path("C:/workspace/agi/fdo_agi_repo/memory/resonance_ledger.jsonl")
+    ledger = get_workspace_root() / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
     
     # 173.9x 압축 시점: 2025-11-05T15:57:57
     compression_time = datetime.fromisoformat('2025-11-05T15:57:57')

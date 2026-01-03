@@ -12,7 +12,7 @@ ChatGPT + OpenAI API + MCP Integration Bridge
 3. Lua 스크립트와의 브릿지 연결
 4. VS Code 액션 자동 실행
 
-Author: Ruafieldphase
+Author: Shion_Core
 Date: 2025-11-14
 Philosophy: Connectivity > Depth
 """

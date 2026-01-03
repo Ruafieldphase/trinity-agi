@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     24시간 모니터링 스크립트를 백그라운드에서 실행.

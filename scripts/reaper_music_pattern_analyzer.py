@@ -13,6 +13,7 @@ import sys
 import json
 import os
 from pathlib import Path
+from workspace_root import get_workspace_root
 from datetime import datetime
 from typing import Dict, List, Tuple
 
@@ -273,8 +274,9 @@ def analyze_music_library(music_dir: str, output_json: str):
 
 if __name__ == "__main__":
     # Default paths for AGI system
-    MUSIC_DIR = r"C:\workspace\agi\music"
-    OUTPUT_JSON = r"C:\workspace\agi\outputs\music_pattern_analysis.json"
+    workspace_root = get_workspace_root()
+    MUSIC_DIR = str(workspace_root / "music")
+    OUTPUT_JSON = str(workspace_root / "outputs" / "music_pattern_analysis.json")
     
     if len(sys.argv) > 1:
         MUSIC_DIR = sys.argv[1]

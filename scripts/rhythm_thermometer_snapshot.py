@@ -4,10 +4,11 @@ import sys
 import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 
 def main() -> int:
-    workspace_root = Path(__file__).resolve().parents[1]
+    workspace_root = get_workspace_root()
     script = workspace_root / "scripts" / "rhythm_check.py"
     out_path = workspace_root / "outputs" / "bridge" / "rhythm_thermometer_latest.json"
 

@@ -11,9 +11,10 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, List, Any, Optional
+from workspace_root import get_workspace_root
 
 # 프로젝트 루트 설정
-workspace_root = Path(__file__).parent.parent
+workspace_root = get_workspace_root()
 sys.path.insert(0, str(workspace_root))
 sys.path.insert(0, str(workspace_root / "fdo_agi_repo"))
 sys.path.insert(0, str(workspace_root / "scripts"))

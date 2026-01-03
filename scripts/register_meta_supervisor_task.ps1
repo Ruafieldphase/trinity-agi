@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Meta Supervisor 자동 실행 등록
 

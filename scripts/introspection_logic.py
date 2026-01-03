@@ -2,7 +2,7 @@
 Introspection Logic
 ===================
 
-Implements the "Self-Reflection" capability for the Lumen System.
+Implements the "Self-Reflection" capability for the Core System.
 When a "Somatic Anomaly" (Gut Feeling) is detected, this module
 uses the LLM to analyze the "Decompressed Memories" and explain
 WHY the system feels weird.
@@ -14,6 +14,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, Optional
+from workspace_root import get_workspace_root
 
 # Import LLM Wrapper
 try:
@@ -21,17 +22,17 @@ try:
 except ImportError:
     # Fallback for relative import if needed
     import sys
-    sys.path.append(str(Path(__file__).parent.parent))
+    sys.path.append(str(get_workspace_root()))
     from scripts.llm_wrapper import ollama_generate
 
 logger = logging.getLogger(__name__)
 
-def perform_introspection(lumen_state: Dict[str, Any], workspace_root: Path) -> Dict[str, Any]:
+def perform_introspection(core_state: Dict[str, Any], workspace_root: Path) -> Dict[str, Any]:
     """
-    Perform introspection based on the current Lumen state.
+    Perform introspection based on the current Core state.
     
     Args:
-        lumen_state: The dictionary returned by LumenSystem.process_emotion_signal()
+        core_state: The dictionary returned by CoreSystem.process_emotion_signal()
         workspace_root: Root path of the workspace
         
     Returns:
@@ -39,16 +40,16 @@ def perform_introspection(lumen_state: Dict[str, Any], workspace_root: Path) -> 
     """
     
     # 1. Check if introspection is actually recommended
-    actions = lumen_state.get('recommended_actions', [])
+    actions = core_state.get('recommended_actions', [])
     if not any("내면 스캔" in a for a in actions):
         return {"performed": False, "reason": "No introspection action recommended"}
         
     logger.info("🧘 Starting Introspection (Self-Reflection)...")
     
     # 2. Extract Context
-    somatic = lumen_state.get('somatic_anomaly', {})
-    memories = lumen_state.get('decompressed_memories', [])
-    body = lumen_state.get('body_signals', {})
+    somatic = core_state.get('somatic_anomaly', {})
+    memories = core_state.get('decompressed_memories', [])
+    body = core_state.get('body_signals', {})
     
     if not somatic.get('is_anomaly'):
         return {"performed": False, "reason": "No somatic anomaly detected"}

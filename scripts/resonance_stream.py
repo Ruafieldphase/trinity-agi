@@ -5,9 +5,10 @@ import websockets
 from pathlib import Path
 import time
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 THOUGHT_STREAM_FILE = WORKSPACE_ROOT / "outputs" / "thought_stream_latest.json"
 PORT = 8765
 

@@ -1,12 +1,16 @@
-param(
+﻿param(
     [switch]$StopProxy
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'SilentlyContinue'
 
 Write-Host '=== Cleanup: stopping workspace-related watchers ==='
 $patterns = @(
-    '*C:\workspace\agi\scripts\lumen_dashboard.ps1*',
+    '*$WorkspaceRoot\scripts\core_dashboard.ps1*',
     '*extension_api.py*watch-status*',
     '*ion-mentoring*start_monitor_loop*.ps1*',
     '*scripts\start_luon_watch.ps1*'

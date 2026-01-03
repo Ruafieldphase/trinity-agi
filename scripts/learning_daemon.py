@@ -20,12 +20,13 @@ from typing import Dict, Optional
 
 # Add script directory to path
 import sys
+from workspace_root import get_workspace_root
 sys.path.append(str(Path(__file__).parent))
 
 from striatum_pattern_engine import StriatumPatternEngine
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).resolve().parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 # Setup Logging

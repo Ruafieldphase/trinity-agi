@@ -1,9 +1,13 @@
-# Phase 3 배포 - 이벤트 감지기 (Event Detector) 활성화
+﻿# Phase 3 배포 - 이벤트 감지기 (Event Detector) 활성화
 # 시스템 지능형 모니터링 및 이상 탐지 시작
 
 param(
     [switch]$AutoStart = $true
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 
@@ -14,7 +18,7 @@ Write-Host ("=" * 90) -ForegroundColor Magenta
 Write-Host ""
 
 $TaskName = "AGI_Event_Detector"
-$ScriptPath = "C:\workspace\agi\scripts\event_detector.ps1"
+$ScriptPath = "$WorkspaceRoot\scripts\event_detector.ps1"
 
 # 스크립트 존재 확인
 if (-not (Test-Path $ScriptPath)) {

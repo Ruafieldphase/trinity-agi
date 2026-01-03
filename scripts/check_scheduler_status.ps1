@@ -1,4 +1,7 @@
-param([switch]$Json)
+﻿param([switch]$Json)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'SilentlyContinue'
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

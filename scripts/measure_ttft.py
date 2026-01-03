@@ -7,9 +7,10 @@ import os
 import sys
 import time
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add project root to path
-repo_root = Path(__file__).resolve().parent.parent / "fdo_agi_repo"
+repo_root = get_workspace_root() / "fdo_agi_repo"
 sys.path.insert(0, str(repo_root))
 
 import google.generativeai as genai  # type: ignore[import]

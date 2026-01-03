@@ -9,11 +9,12 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Any
 import numpy as np
+from workspace_root import get_workspace_root
 
 # librosa는 실제 분석에만 사용 (import는 실행 시점에)
 # import librosa
 
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 MUSIC_DIR = WORKSPACE / "music"
 OUTPUT_DIR = WORKSPACE / "outputs"
 

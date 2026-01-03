@@ -1,4 +1,4 @@
-# Setup dependencies for YouTube Live Auto-Reply Bot
+﻿# Setup dependencies for YouTube Live Auto-Reply Bot
 # Usage: powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup_youtube_bot_env.ps1
 
 param(

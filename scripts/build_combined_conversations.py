@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Combine flattened conversation datasets (Rua/Sena/others) and build summary outputs."""
+"""Combine flattened conversation datasets (Core/Sena/others) and build summary outputs."""
 from __future__ import annotations
 
 import argparse
@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-DEFAULT_SOURCES = ["rua", "sena", "elro", "lumen"]
+DEFAULT_SOURCES = ["Core", "sena", "elro", "Core"]
 OUTPUT_DIR = Path("outputs")
 COMBINED_CSV = OUTPUT_DIR / "ai_conversations_combined.csv"
 SUMMARY_TXT = OUTPUT_DIR / "ai_conversations_summary.txt"

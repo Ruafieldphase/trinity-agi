@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Stop Local LLM Proxy using proxy_info.json
 #>

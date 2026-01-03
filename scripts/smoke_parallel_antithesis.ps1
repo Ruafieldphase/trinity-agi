@@ -1,10 +1,13 @@
-# Parallel Antithesis Prep - Smoke Test
+﻿# Parallel Antithesis Prep - Smoke Test
 # Phase 2: Antithesis 준비 작업 병렬화 검증
 
 param(
     [switch]$EnableParallel = $false,
     [switch]$Verbose = $false
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

@@ -1,10 +1,13 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # smoke_e2e_streaming_pipeline.ps1
 # Phase 2.9: End-to-End Streaming Pipeline Smoke Test
 
 param(
     [string]$Mode = "streaming"  # "streaming" or "baseline"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

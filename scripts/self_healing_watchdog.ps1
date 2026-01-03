@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Self-Healing Watchdog - 모든 핵심 프로세스를 감시하고 자동으로 재시작
@@ -15,8 +15,11 @@
 param(
     [int]$CheckInterval = 300,  # 5분
     [int]$ServerPort = 8091,
-    [string]$LogFile = "$PSScriptRoot\..\outputs\watchdog_log.jsonl"
+    [string]$LogFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\watchdog_log.jsonl"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

@@ -26,9 +26,9 @@ from typing import Optional, Dict, Any, List, Tuple
 
 import backoff  # type: ignore
 from dotenv import load_dotenv  # type: ignore
+from workspace_root import get_workspace_root
 
-<<<<<<< HEAD
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = get_workspace_root()
 cred = REPO_ROOT / ".env_credentials"
 if cred.exists():
     load_dotenv(dotenv_path=cred, override=False)
@@ -38,14 +38,6 @@ load_dotenv(dotenv_path=REPO_ROOT / ".env", override=False)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 _repo_root_str = os.path.dirname(SCRIPT_DIR)
 sys.path.insert(0, os.path.join(_repo_root_str, "fdo_agi_repo"))
-=======
-load_dotenv(override=False)
-
-# Add emoji filter
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT = os.path.dirname(SCRIPT_DIR)
-sys.path.insert(0, os.path.join(REPO_ROOT, "fdo_agi_repo"))
->>>>>>> origin/main
 from utils.emoji_filter import remove_emojis
 
 SCOPES = [
@@ -66,7 +58,7 @@ def load_creds(token_file: Optional[str] = None):
 
     token_path = token_file or os.environ.get("GOOGLE_OAUTH_TOKEN_FILE")
     if not token_path:
-        token_path = str(Path(__file__).resolve().parents[1] / "credentials" / "youtube_token.json")
+        token_path = str(get_workspace_root() / "credentials" / "youtube_token.json")
     p = Path(token_path)
     if not p.exists():
         raise BotError(f"OAuth token not found: {p}. Run youtube_oauth_setup.py")
@@ -151,11 +143,7 @@ def answer_with_gemini(prompt: str) -> Optional[str]:
     except Exception:
         return None
     genai.configure(api_key=api_key)
-<<<<<<< HEAD
     model = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
-=======
-    model = os.environ.get("GEMINI_MODEL", "gemini-1.5-flash")
->>>>>>> origin/main
     try:
         resp = genai.GenerativeModel(model).generate_content(prompt)
         return remove_emojis(resp.text)

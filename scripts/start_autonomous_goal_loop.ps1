@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     자율 목표 실행 시스템 - 적응형 리듬 백그라운드 루프
 
@@ -71,6 +71,9 @@ Write-Host ""
 # 백그라운드 프로세스 시작
 $job = Start-Job -ScriptBlock {
     param($DaemonScript)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
     & powershell -NoProfile -ExecutionPolicy Bypass -File $DaemonScript
 } -ArgumentList $DaemonScript
 

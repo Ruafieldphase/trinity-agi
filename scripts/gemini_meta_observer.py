@@ -14,6 +14,7 @@ import argparse
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
+from workspace_root import get_workspace_root
 
 try:
     import google.generativeai as genai
@@ -370,7 +371,7 @@ def main():
     parser.add_argument(
         "--workspace",
         type=Path,
-        default=Path(__file__).parent.parent,
+        default=get_workspace_root(),
         help="Workspace root directory"
     )
     parser.add_argument(

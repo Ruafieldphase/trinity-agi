@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Windows Scheduled Task 등록 - 자동 백업을 매일 03:30에 실행
@@ -13,6 +13,9 @@ param(
     [string]$TaskName = "AGI_Auto_Backup",
     [string]$Time = "03:30"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

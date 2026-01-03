@@ -1,4 +1,7 @@
-﻿$scriptPath = 'C:\workspace\agi\scripts\collect_system_metrics.ps1'
+﻿
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+﻿$scriptPath = "$WorkspaceRoot\scripts\collect_system_metrics.ps1"
 $interval = 300
 
 while ($true) {

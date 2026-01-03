@@ -1,4 +1,4 @@
-# Everything Search Integration
+﻿# Everything Search Integration
 # Fast file/folder search using Everything HTTP API
 # Requires: Everything with HTTP Server enabled (default port 8080)
 

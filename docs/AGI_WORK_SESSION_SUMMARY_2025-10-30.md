@@ -152,7 +152,7 @@ append_ledger({"event": "binoche_enhanced_decision", ...})
 ### Phase 3: 완전 전환 (2주 후)
 
 - 100% 신규 시스템 전환
-- 기존 복잡한 Binoche 코드 제거
+- 기존 복잡한 Binoche_Observer 코드 제거
 - 성능 최적화
 
 ---
@@ -167,7 +167,7 @@ append_ledger({"event": "binoche_enhanced_decision", ...})
 
 ### 정성적 효과
 
-- **코드 단순화**: 복잡한 Binoche 앙상블 시스템 → 8가지 명확한 규칙
+- **코드 단순화**: 복잡한 Binoche_Observer 앙상블 시스템 → 8가지 명확한 규칙
 - **투명성 향상**: 의사결정 근거 명확 ("규칙 #3 적용: P1 Exploration 92% 승인률")
 - **학습 가능**: 지속적인 데이터 수집으로 규칙 개선
 

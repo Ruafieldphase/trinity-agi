@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Continue'
+﻿$ErrorActionPreference = 'Continue'
 
 $jobs = Get-Job -Name 'NerveCenter' -ErrorAction SilentlyContinue
 if ($jobs) {

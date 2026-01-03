@@ -3,17 +3,13 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import json
 import sys
+from workspace_root import get_workspace_root
 
-# Add parent to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-# Find workspace root dynamically
-if (Path(__file__).parent.parent / 'fdo_agi_repo').exists():
-    sys.path.insert(0, str(Path(__file__).parent.parent / 'fdo_agi_repo'))
-    from workspace_utils import find_workspace_root
-    base = find_workspace_root(Path(__file__).parent) / 'outputs'
-else:
-    base = Path(__file__).parent.parent / 'outputs'
+workspace_root = get_workspace_root()
+sys.path.insert(0, str(workspace_root))
+if (workspace_root / "fdo_agi_repo").exists():
+    sys.path.insert(0, str(workspace_root / "fdo_agi_repo"))
+base = workspace_root / "outputs"
 
 # Keyword chart
 df_kw = pd.read_csv(base / 'perple_6m_keyword_groups.csv')

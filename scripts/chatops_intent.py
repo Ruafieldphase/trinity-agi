@@ -15,6 +15,7 @@ import os
 import re
 import sys
 from datetime import datetime, timezone
+from workspace_root import get_workspace_root
 
 
 def resolve_rules(utter: str) -> str:
@@ -51,7 +52,7 @@ def resolve_rules(utter: str) -> str:
     # BQI Operations
     if re.search(r"(bqi|페르소나|persona|phase\s*6|페이즈\s*6).*(학습|실행|run)", u):
         return "bqi_phase6"
-    if re.search(r"(비노쉬|binoche).*(학습|persona)", u):
+    if re.search(r"(비노쉬|Binoche_Observer).*(학습|persona)", u):
         return "bqi_phase6"
     
     # Canary Operations
@@ -66,22 +67,22 @@ def resolve_rules(utter: str) -> str:
     if re.search(r"(카나리|canary).*(롤백|되돌려|원복)", u):
         return "canary_rollback"
     
-    # Lumen Gateway ("관문" == gateway)
-    # Examples: "루멘 관문을 열자", "루멘 게이트 열어", "lumen gate open", "루멘 상태 확인", "lumen health check", "루멘 대시보드"
+    # Core Gateway ("관문" == gateway)
+    # Examples: "Core 관문을 열자", "Core 게이트 열어", "Core gate open", "Core 상태 확인", "Core health check", "Core 대시보드"
     # Dashboard intent (more specific than general health/status)
     if (
-        re.search(r"(루멘|lumen).*(대시보드|dashboard|현황판)", u)
-        or re.search(r"(대시보드|dashboard|현황판).*(루멘|lumen)", u)
+        re.search(r"(Core|Core).*(대시보드|dashboard|현황판)", u)
+        or re.search(r"(대시보드|dashboard|현황판).*(Core|Core)", u)
     ):
-        return "lumen_dashboard"
+        return "core_dashboard"
     # Health/open intent
     if (
-        re.search(r"(루멘|lumen).*(관문|게이트|게이트웨이).*(열|open|오픈)", u)
-        or re.search(r"(관문|게이트|게이트웨이).*(열|open|오픈).*(루멘|lumen)", u)
-        or re.search(r"(루멘|lumen).*(상태|헬스|체크|점검|health|status|probe)", u)
-        or re.search(r"(lumen).*(gate).*\b(open|probe|health|status)\b", u)
+        re.search(r"(Core|Core).*(관문|게이트|게이트웨이).*(열|open|오픈)", u)
+        or re.search(r"(관문|게이트|게이트웨이).*(열|open|오픈).*(Core|Core)", u)
+        or re.search(r"(Core|Core).*(상태|헬스|체크|점검|health|status|probe)", u)
+        or re.search(r"(Core).*(gate).*\b(open|probe|health|status)\b", u)
     ):
-        return "lumen_open"
+        return "core_open"
     
     # Unified Ops Dashboard
     if re.search(r"(통합|전체).*(상태|대시보드|현황)", u):
@@ -327,9 +328,9 @@ def _log_event(utter: str, intent: str, resolved_by: str) -> None:
     Fields: ts, utter, intent, by
     """
     try:
-        out_dir = os.path.join(os.path.dirname(__file__), "..", "outputs")
-        os.makedirs(out_dir, exist_ok=True)
-        path = os.path.abspath(os.path.join(out_dir, "llm_intent_log.jsonl"))
+        out_dir = get_workspace_root() / "outputs"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        path = out_dir / "llm_intent_log.jsonl"
         rec = {
             "ts": datetime.now(timezone.utc).isoformat(),
             "utter": utter,

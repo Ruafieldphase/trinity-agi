@@ -1,4 +1,4 @@
-# 🧠 Adaptive Glymphatic System - User-Friendly Control CLI
+﻿# 🧠 Adaptive Glymphatic System - User-Friendly Control CLI
 # Advanced control interface with natural language commands
 
 param(
@@ -6,6 +6,9 @@ param(
     [switch]$Force,
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path $PSScriptRoot -Parent

@@ -1,4 +1,4 @@
-# AI-to-AI Communication Hub
+﻿# AI-to-AI Communication Hub
 # Enables AI agents to send notifications and coordinate actions
 
 param(

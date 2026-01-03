@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Session Capacity Monitor - 세션 용량 모니터링 및 자동 핸드오프
 
@@ -34,8 +34,11 @@ param(
     [switch]$CheckOnly,
     [int]$ThresholdPercent = 80,
     [switch]$SaveHandoff,
-    [string]$WorkspaceFolder = "C:\workspace\agi"
+    [string]$WorkspaceFolder = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 

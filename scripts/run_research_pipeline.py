@@ -7,9 +7,10 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Dict, List, Sequence, Tuple
+from workspace_root import get_workspace_root
 
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = get_workspace_root()
 CONFIG_PATH = ROOT / "configs" / "persona_registry.json"
 SCENARIO_PATH = ROOT / "scripts" / "prompt_scenarios.json"
 

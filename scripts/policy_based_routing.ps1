@@ -1,14 +1,17 @@
-# Policy-Based Routing: Auto-select Lumen vs LM Studio
+﻿# Policy-Based Routing: Auto-select Core vs LM Studio
 # Routes requests based on latency thresholds and availability
 
 param(
     [string]$Message = "테스트 메시지입니다.",
     [int]$MaxTokens = 64,
-    [int]$LatencyThresholdMs = 2000,  # Switch to Lumen if LM Studio exceeds this
+    [int]$LatencyThresholdMs = 2000,  # Switch to Core if LM Studio exceeds this
     [switch]$PreferLocal,  # Prefer LM Studio when both are comparable
-    [string]$BenchmarkLog = "$PSScriptRoot\..\outputs\performance_benchmark_log.jsonl",
-    [string]$PolicyFile = "$PSScriptRoot\..\outputs\routing_policy.json"
+    [string]$BenchmarkLog = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\performance_benchmark_log.jsonl",
+    [string]$PolicyFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\routing_policy.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 $ErrorActionPreference = "Stop"
 try {
     [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8
@@ -26,7 +29,7 @@ $policy = if (Test-Path $PolicyFile) {
 else {
     Write-Host "⚠️  No policy file found, using defaults" -ForegroundColor Yellow
     @{
-        primary_backend      = "lumen"
+        primary_backend      = "Core"
         fallback_backend     = "lm_studio"
         latency_threshold_ms = 2000
     }
@@ -41,18 +44,18 @@ Write-Host "=" * 60 -ForegroundColor Cyan
 Write-Host ""
 
 # Read latest benchmark if available
-$lumenAvg = $null
+$CoreAvg = $null
 $lmAvg = $null
 $lmAvailable = $false
-$lumenAvailable = $false
+$CoreAvailable = $false
 
 if (Test-Path $BenchmarkLog) {
     try {
         $latestBenchmark = Get-Content $BenchmarkLog -Tail 1 | ConvertFrom-Json
-        if ($latestBenchmark.lumen.available) {
-            $lumenAvg = $latestBenchmark.lumen.avg_ms
-            $lumenAvailable = $true
-            Write-Host "📊 Lumen recent average: ${lumenAvg}ms" -ForegroundColor Cyan
+        if ($latestBenchmark.Core.available) {
+            $CoreAvg = $latestBenchmark.Core.avg_ms
+            $CoreAvailable = $true
+            Write-Host "📊 Core recent average: ${CoreAvg}ms" -ForegroundColor Cyan
         }
         if ($latestBenchmark.lm_studio.available) {
             $lmAvg = $latestBenchmark.lm_studio.avg_ms
@@ -66,19 +69,19 @@ if (Test-Path $BenchmarkLog) {
 }
 
 # Live probe if no benchmark data
-if ($null -eq $lumenAvg) {
-    Write-Host "🔍 Probing Lumen..." -ForegroundColor Yellow
+if ($null -eq $CoreAvg) {
+    Write-Host "🔍 Probing Core..." -ForegroundColor Yellow
     try {
         $body = @{ message = "ping" } | ConvertTo-Json
         $sw = [System.Diagnostics.Stopwatch]::StartNew()
-        $null = Invoke-RestMethod -Uri "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $body -ContentType "application/json" -TimeoutSec 5
+        $null = Invoke-RestMethod -Uri "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $body -ContentType "application/json" -TimeoutSec 5
         $sw.Stop()
-        $lumenAvg = $sw.ElapsedMilliseconds
-        $lumenAvailable = $true
-        Write-Host "  ✓ Lumen probe: ${lumenAvg}ms" -ForegroundColor Green
+        $CoreAvg = $sw.ElapsedMilliseconds
+        $CoreAvailable = $true
+        Write-Host "  ✓ Core probe: ${CoreAvg}ms" -ForegroundColor Green
     }
     catch {
-        Write-Host "  ✗ Lumen unavailable" -ForegroundColor Red
+        Write-Host "  ✗ Core unavailable" -ForegroundColor Red
     }
 }
 
@@ -109,31 +112,31 @@ Write-Host ""
 $selectedBackend = $null
 $reason = ""
 
-if (-not $lumenAvailable -and -not $lmAvailable) {
+if (-not $CoreAvailable -and -not $lmAvailable) {
     Write-Host "❌ ERROR: No inference backend available!" -ForegroundColor Red
     exit 1
 }
-elseif ($lumenAvailable -and -not $lmAvailable) {
-    $selectedBackend = "Lumen"
+elseif ($CoreAvailable -and -not $lmAvailable) {
+    $selectedBackend = "Core"
     $reason = "LM Studio offline"
 }
-elseif ($lmAvailable -and -not $lumenAvailable) {
+elseif ($lmAvailable -and -not $CoreAvailable) {
     $selectedBackend = "LM Studio"
-    $reason = "Lumen offline"
+    $reason = "Core offline"
 }
 else {
     # Both available: apply policy
     if ($lmAvg -gt $LatencyThresholdMs) {
-        $selectedBackend = "Lumen"
+        $selectedBackend = "Core"
         $reason = "LM Studio exceeds latency threshold (${lmAvg}ms > ${LatencyThresholdMs}ms)"
     }
     elseif ($PreferLocal) {
         $selectedBackend = "LM Studio"
         $reason = "PreferLocal policy (${lmAvg}ms within threshold)"
     }
-    elseif ($lumenAvg -lt $lmAvg) {
-        $selectedBackend = "Lumen"
-        $reason = "Lower latency (${lumenAvg}ms vs ${lmAvg}ms)"
+    elseif ($CoreAvg -lt $lmAvg) {
+        $selectedBackend = "Core"
+        $reason = "Lower latency (${CoreAvg}ms vs ${lmAvg}ms)"
     }
     else {
         $selectedBackend = "LM Studio"
@@ -150,9 +153,9 @@ Write-Host "📤 Sending request..." -ForegroundColor Yellow
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 
 try {
-    if ($selectedBackend -eq "Lumen") {
+    if ($selectedBackend -eq "Core") {
         $body = @{ message = $Message } | ConvertTo-Json
-        $response = Invoke-RestMethod -Uri "https://lumen-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $body -ContentType "application/json" -TimeoutSec 30
+        $response = Invoke-RestMethod -Uri "https://Core-gateway-x4qvsargwa-uc.a.run.app/chat" -Method POST -Body $body -ContentType "application/json" -TimeoutSec 30
         $content = $response.response
     }
     else {

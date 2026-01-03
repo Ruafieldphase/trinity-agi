@@ -1,4 +1,4 @@
-# Check AGI processes
+﻿# Check AGI processes
 Write-Host "=== Python Processes ===" -ForegroundColor Cyan
 Get-Process -Name "python*" -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime | Format-Table -AutoSize
 

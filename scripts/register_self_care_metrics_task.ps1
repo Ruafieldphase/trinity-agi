@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Self-Care 텔레메트리 요약 작업을 Windows 작업 스케줄러에 등록/관리합니다.
 

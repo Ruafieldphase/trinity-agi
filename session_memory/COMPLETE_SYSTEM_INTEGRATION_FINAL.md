@@ -14,7 +14,7 @@
 ```
 문제점: "우리가 만든 작업들이 많은데 통합이 안 되어있는 것 같아"
 결과: 10개 이상의 독립적인 시스템 발견
-      - LUMEN 워크플로우
+      - Core 워크플로우
       - LUON 페르소나 라우팅
       - COLLABORATION_STATE
       - BackgroundMonitor + ConcurrentScheduler
@@ -36,7 +36,7 @@
 진단: "모든 시스템이 분리되어 자동화 불가능"
 구현:
   - UnifiedOrchestrator v1.0 (통합 엔진)
-  - LUMEN 11-node 워크플로우 구현
+  - Core 11-node 워크플로우 구현
   - LUON 규칙 기반 페르소나 라우팅
   - AGI 데이터 파이프라인 자동화
 ```
@@ -66,7 +66,7 @@
 │  (모든 시스템을 조율 + GitHub Copilot 협업 지원)                    │
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  LUMEN Layer                LUON Layer               Copilot Layer │
+│  Core Layer                LUON Layer               Copilot Layer │
 │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐ │
 │  │ 11 Workflow      │  │ Persona Router   │  │ Code Generation  │ │
 │  │ Nodes            │  │ Rules & Rules    │  │ Architecture     │ │
@@ -139,7 +139,7 @@ Charlie: CopilotAssistance (GitHub Copilot)
 User Input
   ↓
 UnifiedOrchestrator Start
-  ├─ LUMEN 워크플로우 로드
+  ├─ Core 워크플로우 로드
   ├─ 현재 노드: "Tool Selection" (L1)
   ├─ LUON 규칙 확인: "Sena 필요"
   ├─ 에이전트 활성화
@@ -259,7 +259,7 @@ learning_outcomes:
 ## ✅ **완성된 시스템 체크리스트**
 
 ### 기본 구성 요소
-- [x] LUMEN Workflow Engine (11 nodes)
+- [x] Core Workflow Engine (11 nodes)
 - [x] LUON Persona Router
 - [x] COLLABORATION_STATE System
 - [x] BackgroundMonitor

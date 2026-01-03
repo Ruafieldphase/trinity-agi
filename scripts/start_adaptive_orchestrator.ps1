@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Adaptive Rhythm Orchestrator - PowerShell Wrapper
@@ -48,6 +48,9 @@ param(
     [Parameter(HelpMessage = "상세 로그 출력")]
     [switch]$VerboseLog
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

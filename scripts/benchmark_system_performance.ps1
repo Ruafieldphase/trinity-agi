@@ -1,4 +1,4 @@
-# benchmark_system_performance.ps1
+﻿# benchmark_system_performance.ps1
 # 시스템 성능 벤치마크 - VS Code CLI와 비교
 
 <#
@@ -28,9 +28,12 @@
 param(
     [string]$Scenarios = "all",
     [int]$Iterations = 5,
-    [string]$OutJson = "$PSScriptRoot\..\outputs\benchmark_results_latest.json",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\benchmark_results_latest.json",
     [switch]$OpenMd
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $ws = Split-Path -Parent $PSScriptRoot

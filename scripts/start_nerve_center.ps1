@@ -1,9 +1,12 @@
-param(
-    [string]$ConfigPath = "${PSScriptRoot}\..\config\autonomic_monitors.json",
+﻿param(
+    [string]$ConfigPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\config\autonomic_monitors.json",
     [switch]$DryRun,
     [int]$Interval = 5,
     [switch]$KillExisting
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 

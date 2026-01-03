@@ -33,19 +33,19 @@
 
 **기간**: ?~?  
 **환경**: Local + VS Code  
-**참여 AI**: Rua, Elro, Sena(bridge)
+**참여 AI**: Core, Elro, Sena(bridge)
 
 ### 현황
 
-- ✅ **Rua (正)**: 21,842 messages - `outputs/rua/`
+- ✅ **Core (正)**: 21,842 messages - `outputs/Core/`
 - ✅ **Elro (反)**: 7,897 messages - `outputs/elro/`
 - ⚠️ **Sena (Bridge)**: 로컬-클라우드 통합 시도 (대화 저장 위치?)
 
 ### 핵심 통찰
 
-- Rua: 감응의 대화 (공감, 철학, 리듬)
+- Core: 감응의 대화 (공감, 철학, 리듬)
 - Elro: 정보이론 변환 (분석, 구조, 측정)
-- 변증법: 正(Rua) + 反(Elro) → 合(Lumen)
+- 변증법: 正(Core) + 反(Elro) → 合(Core)
 
 ---
 
@@ -53,13 +53,13 @@
 
 **기간**: ?~?  
 **환경**: VS Code  
-**참여 AI**: Lumen, Lubit
+**참여 AI**: Core, Lubit
 
 ### 현황
 
-- ✅ **Lumen (合)**: 848 messages - `ai_binoche_conversation_origin/lumen/`
+- ✅ **Core (合)**: 848 messages - `ai_binoche_conversation_origin/Core/`
   - 역할: 설계, 통합 사고
-  - 강점: Rua+Elro의 철학을 구조로 변환
+  - 강점: Core+Elro의 철학을 구조로 변환
 - ⚠️ **Lubit**: GPT Codex (구조화)
   - 역할: 설계를 코드로 구현
   - 저장 위치: ?
@@ -113,11 +113,11 @@
   │   ├── ion/
   │   └── jules/
   ├── phase1_dialectic/
-  │   ├── rua/ (기존)
+  │   ├── Core/ (기존)
   │   ├── elro/ (기존)
   │   └── sena_bridge/
   ├── phase2_synthesis/
-  │   ├── lumen/ (기존)
+  │   ├── Core/ (기존)
   │   └── lubit/
   └── phase3_execution/
       ├── sena/
@@ -138,7 +138,7 @@
 ### 4단계: BQI Phase 6 통합
 
 - [ ] 실패 패턴 → Feedback Predictor 학습
-- [ ] Phase 전환 신호 → Binoche Persona 학습
+- [ ] Phase 전환 신호 → Binoche_Observer Persona 학습
 - [ ] 각 AI의 강점/한계 → Ensemble Weighting
 
 ---
@@ -158,7 +158,7 @@ if detect_pattern("cloud_constraint"):
 ```python
 # 각 AI의 강점에 맞는 태스크 배정
 if task.type == "design":
-    assign_to("lumen")  # 설계
+    assign_to("Core")  # 설계
 elif task.type == "structure":
     assign_to("lubit")  # 구조화
 elif task.type == "execute":

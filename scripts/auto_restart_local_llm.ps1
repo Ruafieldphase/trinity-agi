@@ -1,4 +1,4 @@
-# Auto-Restart Local LLM Monitoring Script
+﻿# Auto-Restart Local LLM Monitoring Script
 # Monitors Local LLM health and provides restart recommendations
 
 param(
@@ -6,8 +6,11 @@ param(
     [int]$MaxRetries = 3,
     [switch]$AutoRestart,  # 자동 재시작 (주의!)
     [switch]$Continuous,   # 지속적 모니터링
-    [string]$LogFile = "$PSScriptRoot\..\outputs\llm_health_monitor.log"
+    [string]$LogFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\llm_health_monitor.log"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 

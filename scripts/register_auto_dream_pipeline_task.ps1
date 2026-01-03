@@ -1,4 +1,4 @@
-#>
+﻿#>
 
 param(
     [switch]$Register,
@@ -8,6 +8,9 @@ param(
     [switch]$SendEmail,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $TaskName = "AutoDreamPipeline"

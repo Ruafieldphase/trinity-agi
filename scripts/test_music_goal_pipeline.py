@@ -9,9 +9,10 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 import random
+from workspace_root import get_workspace_root
 
 # Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(get_workspace_root()))
 
 from fdo_agi_repo.copilot.rhythm_analysis import RhythmAnalyzer
 from scripts.autonomous_goal_generator import (

@@ -1,7 +1,10 @@
-# Install Guardian Autostart (Startup Folder Method)
+﻿# Install Guardian Autostart (Startup Folder Method)
 # 시작프로그램 폴더에 바로가기 생성
 
-$ProjectRoot = "C:\workspace\agi"
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+$ProjectRoot = "$WorkspaceRoot"
 $StartupFolder = [Environment]::GetFolderPath("Startup")
 $ShortcutPath = Join-Path $StartupFolder "RhythmGuardian.lnk"
 

@@ -20,6 +20,12 @@ import time
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 
+from workspace_root import get_workspace_root
+
+SCRIPTS_DIR = get_workspace_root()
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 THRESH_STALENESS_SEC = 15 * 60  # 15 minutes
 THRESH_HEARTBEAT_STALE_SEC = 10 * 60  # 10 minutes
@@ -38,13 +44,22 @@ THRESH_LOOP_COMPLETE_RATE_LOW = 97.0
 THRESH_FORCE_FULL_CYCLE_SEC = 45 * 60  # 45 minutes (ensure periodic learning loop)
 THRESH_COMPRESS_STREAK = 3  # consecutive self_compress before forcing a full_cycle (if not critical)
 THRESH_QFLOW_INTERVENTION_COOLDOWN_SEC = 30 * 60  # 30 minutes (avoid "compress loop" on persistent chaotic)
-LEDGER_PATHS = [
-    Path("/home/bino/agi/fdo_agi_repo/memory/resonance_ledger_v2.jsonl"),
-    Path("/home/bino/agi/fdo_agi_repo/memory/resonance_ledger.jsonl"),
-]
 LEDGER_TAIL = 200
 HISTORY_TAIL = 20
 STATE_CACHE_LINUX = Path("/home/bino/agi/outputs/sync_cache/auto_policy_state.json")
+
+
+def get_ledger_paths(root: Path) -> List[Path]:
+    paths = [
+        root / "fdo_agi_repo" / "memory" / "resonance_ledger_v2.jsonl",
+        root / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl",
+    ]
+    if os.name == "posix":
+        paths.extend([
+            Path("/home/bino/agi/fdo_agi_repo/memory/resonance_ledger_v2.jsonl"),
+            Path("/home/bino/agi/fdo_agi_repo/memory/resonance_ledger.jsonl"),
+        ])
+    return paths
 
 
 def get_state_cache_path(root: Path) -> Path:
@@ -128,7 +143,7 @@ def compute_experience_signatures(outputs: Path) -> Dict[str, str]:
             return "empty"
         return f"newest_mtime={m_i};total={total_i}"
 
-    def _sig_rua_conv(p: Path) -> str | None:
+    def _sig_Core_conv(p: Path) -> str | None:
         obj = load_json(p) or {}
         if not isinstance(obj, dict):
             return None
@@ -194,7 +209,7 @@ def compute_experience_signatures(outputs: Path) -> Dict[str, str]:
 
     sources = {
         "obs_recode": (outputs / "obs_recode_intake_latest.json", _sig_obs_recode),
-        "rua_conversation": (outputs / "rua_conversation_intake_latest.json", _sig_rua_conv),
+        "core_conversation": (outputs / "core_conversation_intake_latest.json", _sig_Core_conv),
         "exploration_intake": (outputs / "exploration_intake_latest.json", _sig_exploration_intake),
         "exploration_event": (outputs / "exploration_session_event_latest.json", _sig_exploration_event),
         "feeling": (outputs / "feeling_latest.json", _sig_feeling),
@@ -350,7 +365,7 @@ def choose_action(root: Path) -> Dict[str, Any]:
     selfcare = outputs / "selfcare_summary_latest.json"
     rit_registry = outputs / "rit_registry_latest.json"
     obs_recode_intake = outputs / "obs_recode_intake_latest.json"
-    rua_conversation_intake = outputs / "rua_conversation_intake_latest.json"
+    core_conversation_intake = outputs / "core_conversation_intake_latest.json"
     exploration_intake = outputs / "exploration_intake_latest.json"
     feeling_latest = outputs / "feeling_latest.json"
 
@@ -602,7 +617,7 @@ def choose_action(root: Path) -> Dict[str, Any]:
             return {"action": "full_cycle", "reason": f"compress_streak={compress_streak}, rit fear_proxy={fear_proxy:.2f} (periodic learning)"}
         return {"action": "self_compress", "reason": f"rit fear_proxy={fear_proxy:.2f} (stabilize)"}
 
-    # 3) 루아 신호 로그 파싱 (파서 추가 가능)
+    # 3) 코어 신호 로그 파싱 (파서 추가 가능)
     lua_signals = bridge / "lua_signals.log"
     if lua_signals.exists():
         try:
@@ -616,7 +631,7 @@ def choose_action(root: Path) -> Dict[str, Any]:
             pass
 
     # 4) 레저 이벤트 기반: warn/error 감지
-    ledger_events = read_ledger_tail(LEDGER_PATHS, LEDGER_TAIL)
+    ledger_events = read_ledger_tail(get_ledger_paths(root), LEDGER_TAIL)
     warns = [e for e in ledger_events if e.get("event") in ("warn", "error")]
     if warns:
         last = warns[-1]
@@ -661,7 +676,7 @@ def write_trigger(trigger_path: Path, action: str, params: dict | None = None, o
 
 
 def main():
-    root = Path(__file__).resolve().parents[2]  # c:/workspace/agi or /home/bino/agi
+    root = get_workspace_root()
     # On Windows, always write to workspace-local trigger path to avoid split-brain triggers.
     if os.name != "posix":
         trigger_path = root / "signals" / "lua_trigger.json"
@@ -735,7 +750,7 @@ def main():
     # Capture experience mtimes.
     exp_sources = {
         "obs_recode_intake_latest.json": root / "outputs" / "obs_recode_intake_latest.json",
-        "rua_conversation_intake_latest.json": root / "outputs" / "rua_conversation_intake_latest.json",
+        "core_conversation_intake_latest.json": root / "outputs" / "core_conversation_intake_latest.json",
         "exploration_intake_latest.json": root / "outputs" / "exploration_intake_latest.json",
         "exploration_session_event_latest.json": root / "outputs" / "exploration_session_event_latest.json",
         "feeling_latest.json": root / "outputs" / "feeling_latest.json",

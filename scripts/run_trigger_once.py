@@ -21,6 +21,7 @@ from pathlib import Path
 import os
 import subprocess
 import atexit
+from workspace_root import get_workspace_root
 
 
 _LOCK_HANDLE = None
@@ -40,7 +41,7 @@ def _acquire_single_instance_best_effort() -> bool:
     - If the guard itself fails, proceed (best-effort).
     """
     global _LOCK_HANDLE, _MUTEX_HANDLE
-    root = Path(__file__).resolve().parents[1]
+    root = get_workspace_root()
     lock_path = root / "outputs" / "sync_cache" / "run_trigger_once.instance.lock"
 
     try:
@@ -139,7 +140,7 @@ def _trigger_listener_daemon_running() -> bool:
       idle_tick이 과도하게 호출되어 rest_gate/오라/리포트가 "폭주"처럼 보일 수 있다.
     """
     try:
-        root = Path(__file__).resolve().parents[1]
+        root = get_workspace_root()
         needle = str(root / "scripts" / "trigger_listener.py").lower()
         if os.name == "nt":
             creationflags = subprocess.CREATE_NO_WINDOW if hasattr(subprocess, "CREATE_NO_WINDOW") else 0
@@ -182,7 +183,7 @@ def _trigger_listener_daemon_running() -> bool:
 
 
 def _load_trigger_listener() -> object:
-    root = Path(__file__).resolve().parents[1]
+    root = get_workspace_root()
     path = root / "scripts" / "trigger_listener.py"
     spec = importlib.util.spec_from_file_location("trigger_listener", path)
     if spec is None or spec.loader is None:
@@ -225,7 +226,7 @@ def main() -> int:
         # 스케줄러/백그라운드 실행에서 "실패로 인해 루프가 멈추는 것"을 막기 위해 항상 0 종료.
         # 필요 시 traceback은 Windows 이벤트 로그/작업 스케줄러 기록으로 남는다.
         try:
-            root = Path(__file__).resolve().parents[1]
+            root = get_workspace_root()
             out = root / "outputs" / "run_trigger_once_last_error.txt"
             out.parent.mkdir(parents=True, exist_ok=True)
             out.write_text(traceback.format_exc(), encoding="utf-8")

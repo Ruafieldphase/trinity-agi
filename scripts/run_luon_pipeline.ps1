@@ -1,7 +1,11 @@
-param(
-    [string]$LogDirectory = "$PSScriptRoot\..\logs",
+﻿param(
+    [string]$LogDirectory = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\logs",
     [switch]$StopOnError
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Stop"
 $env:PYTHONIOENCODING = "utf-8"
@@ -15,7 +19,7 @@ $venvPython = Join-Path "$PSScriptRoot\.." ".venv\Scripts\python.exe"
 $pythonExe = if (Test-Path $venvPython) { $venvPython } else { "C:\\Python313\\python.exe" }
 if (-not (Test-Path $pythonExe)) { throw "Python executable not found at $pythonExe" }
 
-$root = "C:\workspace\agi"
+$root = "$WorkspaceRoot"
 $corpus = Join-Path $root "outputs\run_corpus_adapter.py"
 $build = Join-Path $root "outputs\build_events.py"
 $schema = Join-Path $root "outputs\derive_schema.py"

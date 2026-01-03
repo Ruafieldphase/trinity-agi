@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
     Fix all task registration scripts to properly hide windows
@@ -26,7 +26,7 @@ $scriptsToFix = @(
     'scripts\register_task_watchdog_scheduled_task.ps1',
     'scripts\register_snapshot_rotation_task.ps1',
     'scripts\register_trinity_cycle_task.ps1',
-    'scripts\register_resonance_lumen_task.ps1',
+    'scripts\register_resonance_core_task.ps1',
     'scripts\register_worker_monitor_task.ps1',
     'fdo_agi_repo\scripts\register_online_learner_task.ps1',
     'fdo_agi_repo\scripts\register_online_learner_scheduled_task.ps1',

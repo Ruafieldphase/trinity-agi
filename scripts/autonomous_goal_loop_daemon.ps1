@@ -2,18 +2,23 @@
 param(
     [switch]$Once
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 
+# Workspace root (SSOT)
+
 # Paths
-$PythonExe = "C:\workspace\agi\fdo_agi_repo\.venv\Scripts\python.exe"
-$ExecutorScript = "C:\workspace\agi\scripts\autonomous_goal_executor.py"
-$RhythmCalculator = "C:\workspace\agi\scripts\adaptive_rhythm_calculator.py"
+$PythonExe = Join-Path $WorkspaceRoot "fdo_agi_repo\.venv\Scripts\python.exe"
+$ExecutorScript = Join-Path $WorkspaceRoot "scripts\autonomous_goal_executor.py"
+$RhythmCalculator = Join-Path $WorkspaceRoot "scripts\adaptive_rhythm_calculator.py"
 
 # Files
-$LogFile = "C:\workspace\agi\outputs\autonomous_goal_loop.log"
-$StatusFile = "C:\workspace\agi\outputs\autonomous_goal_loop_status.json"
-$StopFlag = "C:\workspace\agi\outputs\stop_autonomous_goal_loop.flag"
+$LogFile = Join-Path $WorkspaceRoot "outputs\autonomous_goal_loop.log"
+$StatusFile = Join-Path $WorkspaceRoot "outputs\autonomous_goal_loop_status.json"
+$StopFlag = Join-Path $WorkspaceRoot "outputs\stop_autonomous_goal_loop.flag"
 
 # Utilities
 function Write-StatusJson {
@@ -80,7 +85,7 @@ function Get-IntervalMinutes {
 
 function Health-Gate {
     try {
-        $healthScript = "C:\workspace\agi\scripts\run_quick_health.ps1"
+        $healthScript = Join-Path $WorkspaceRoot "scripts\run_quick_health.ps1"
         if (Test-Path -LiteralPath $healthScript) {
             & $healthScript -JsonOnly -Fast -TimeoutSec 10 -MaxDuration 8 | Out-Null
             if ($LASTEXITCODE -ne 0) {
@@ -125,7 +130,7 @@ try {
             }
 
             # 1.6 Goal Pre-validation: 실행할 목표가 있는지 확인
-            $trackerPath = "C:\workspace\agi\fdo_agi_repo\memory\goal_tracker.json"
+            $trackerPath = Join-Path $WorkspaceRoot "fdo_agi_repo\memory\goal_tracker.json"
             $hasGoals = $false
             if (Test-Path -LiteralPath $trackerPath) {
                 try {
@@ -143,7 +148,7 @@ try {
                 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] 📝 실행할 목표 없음. 자동 생성 중..." -ForegroundColor Yellow
                 "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] 목표 자동 생성 시도" | Out-File -FilePath $LogFile -Append
                 
-                $generatorScript = "C:\workspace\agi\scripts\autonomous_goal_generator.py"
+                $generatorScript = Join-Path $WorkspaceRoot "scripts\autonomous_goal_generator.py"
                 if (Test-Path -LiteralPath $generatorScript) {
                     try {
                         & $PythonExe $generatorScript --hours 24 2>&1 | Out-File -FilePath $LogFile -Append
@@ -166,11 +171,7 @@ try {
             Write-Host "[$(Get-Date -Format 'HH:mm:ss')] 🚀 Goal Executor 실행 중 (Quantum Mode)..." -ForegroundColor Cyan
             "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] Executor 시작 (Quantum)" | Out-File -FilePath $LogFile -Append
         
-<<<<<<< HEAD
-            & $PythonExe $ExecutorScript 2>&1 | Out-File -FilePath $LogFile -Append
-=======
             & $PythonExe $ExecutorScript --use-quantum 2>&1 | Out-File -FilePath $LogFile -Append
->>>>>>> origin/main
         
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "[$(Get-Date -Format 'HH:mm:ss')] ✅ 완료" -ForegroundColor Green

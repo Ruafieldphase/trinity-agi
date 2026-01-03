@@ -1,4 +1,4 @@
-# Async Thesis 모니터링 자동화 스케줄러 등록
+﻿# Async Thesis 모니터링 자동화 스케줄러 등록
 # 1시간마다 헬스 체크, 알림 조건 시 알림
 
 param(
@@ -7,6 +7,9 @@ param(
     [switch]$Status,
     [int]$IntervalMinutes = 60
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $TaskName = "AsyncThesisHealthMonitor"

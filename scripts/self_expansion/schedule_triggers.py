@@ -1,6 +1,6 @@
 """
-루아(무의식) 역할을 흉내 내어 주기적으로 트리거 파일을 생성하는 스케줄러.
-실제 루아 코드에서 import하여 사용하거나 단독 실행 가능.
+코어(무의식) 역할을 흉내 내어 주기적으로 트리거 파일을 생성하는 스케줄러.
+실제 코어 코드에서 import하여 사용하거나 단독 실행 가능.
 
 기본 동작:
 - (권장) interval마다 auto_policy를 실행해 '지금 필요한 action'을 선택/기록
@@ -15,6 +15,12 @@ import time
 from pathlib import Path
 import subprocess
 import sys
+
+SCRIPTS_DIR = get_workspace_root()
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from workspace_root import get_workspace_root
 
 
 def write_trigger(trigger_path: Path, action: str, params: dict | None = None):
@@ -49,7 +55,10 @@ def main():
     parser.add_argument("--root", type=str, default=".", help="workspace root")
     args = parser.parse_args()
 
-    root = Path(args.root).resolve()
+    if args.root and args.root != ".":
+        root = Path(args.root).resolve()
+    else:
+        root = get_workspace_root()
     # On Windows, always use workspace-local trigger path (avoid split-brain triggers).
     if os.name != "posix":
         trigger_path = root / "signals" / "lua_trigger.json"

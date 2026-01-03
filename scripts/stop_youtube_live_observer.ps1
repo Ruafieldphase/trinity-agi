@@ -1,7 +1,10 @@
-param(
-    [string]$OutDir = "${PSScriptRoot}\..\outputs\telemetry",
+﻿param(
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\telemetry",
     [switch]$Quiet
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 $OutDir = [IO.Path]::GetFullPath($OutDir)

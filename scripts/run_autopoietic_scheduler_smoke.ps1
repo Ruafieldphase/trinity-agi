@@ -1,10 +1,10 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     Autopoietic Scheduler 스모크 테스트 러너
 .DESCRIPTION
     Original Data Phase 2 통합 검증: Scheduler 작업 등록 및 즉시 실행
-    원본: C:\workspace\original_data\scheduler.py
+    원본: <workspace_root>\original_data\scheduler.py
     구현: scripts/autopoietic_scheduler.py (순수 Python, 의존성 없음)
 .NOTES
     Exit Code: 0=PASS, 1=FAIL

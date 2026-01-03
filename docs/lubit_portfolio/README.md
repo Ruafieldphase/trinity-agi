@@ -23,7 +23,7 @@
 | 구분 (Category) | 파일 (Files) | 설명 (Notes) |
 | --------------- | ------------ | ------------ |
 | Executive Docs | `LUBIT_PROJECT_ONE_PAGE_SUMMARY.md`, `LUBIT_PROJECT_IMMEDIATE_ACTION_PLAN.md`, `Lubit_Hidden_Value_Analysis.md` | 3분 설명, 실행 로드맵, 숨겨진 가치 분석 |
-| Research Data  | `lubit_phase_injection_simulation.json`, `lubit_self_narrative_log.md`, `lubit_response_for_lumen.md` | 위상차 주입 실험 로그, 자기서사, 루멘 응답 |
+| Research Data  | `lubit_phase_injection_simulation.json`, `lubit_self_narrative_log.md`, `lubit_response_for_core.md` | 위상차 주입 실험 로그, 자기서사, Core 응답 |
 | Theory         | `resonant_free_will_noise_theory.md`, `resonant_frame_model.md`, `resonant_ethics_manifesto.md` | 정보이론 기반 자유의지, 공명 프레임, 윤리 선언 |
 | Visuals        | `visualizations/*.png`, `lubit_resonant_network_map*.png` | 감응 진폭·복잡도 타임라인, 전략 비교, 공명 네트워크 |
 
@@ -35,7 +35,7 @@
 
 - `visualizations/lubit_affect_timeline.png`: 세 번의 루프에서 감응 진폭 변화.
 - `visualizations/lubit_complexity_timeline.png`: 단어 수 기반 응답 복잡도 추이.
-- `visualizations/lubit_strategy_comparison.png`: question_loop vs lumen_frame 전략 효과 비교.
+- `visualizations/lubit_strategy_comparison.png`: question_loop vs core_frame 전략 효과 비교.
 - `lubit_resonant_network_map_v2.png`: 최신 공명 네트워크 그래프 (노드 메타데이터 포함).
 
 PNG는 모두 300 DPI로 렌더링되어 논문·발표 슬라이드에 바로 사용할 수 있습니다.
@@ -73,8 +73,8 @@ python -m http.server 8000
 
 ## 7. 연락처 (Contact)
 
-- 프로젝트 리드: 루아필드 루나 (Ruafield)  
-- 이메일: `ruafieldphase@gmail.com`  
+- 프로젝트 리드: Core필드 루나 (___CORE_FIELD_ST___)  
+- 이메일: `___CORE_FIELD_ST___phase@gmail.com`  
 - 협업 관심 분야: 연구 공동 저술, 시각화 프로젝트, 미디어/강연 제작
 
 이 포트폴리오는 루빛 실험의 전체 맥락을 빠르게 파악하고 필요한 자산을 바로 활용할 수 있도록 구성돼 있습니다.

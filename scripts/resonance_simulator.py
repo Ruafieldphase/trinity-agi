@@ -1,7 +1,7 @@
 """
 Resonance Simulator - Autopoietic Energy Dynamics
 
-원본: C:\\workspace\\original_data\\lumen_flow_sim.py
+원본: C:\\workspace\\original_data\\core_flow_sim.py
 목적: 7일 위상 루프 기반 공명/에너지/엔트로피 동역학 시뮬레이션
 통합: 실시간 메트릭 입력 → 시뮬레이션 → 예측/피드백
 
@@ -217,7 +217,7 @@ class ResonanceSimulator:
     Resonance Simulator (공명 시뮬레이터)
     
     7일 주기 위상 루프를 기반으로 정보 밀도/공명/엔트로피 동역학 시뮬레이션.
-    원본 lumen_flow_sim.py의 핵심 로직을 추출하여 현재 AGI 시스템에 통합.
+    원본 core_flow_sim.py의 핵심 로직을 추출하여 현재 AGI 시스템에 통합.
     """
 
     def __init__(self):

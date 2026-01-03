@@ -47,8 +47,8 @@
 
 1. 관계 강화
 
-- 외부 상호작용(Queue/YouTube/Lumen/Canary)을 최소 1개 이상 항상 유지
-- 관련 빠른 태스크 활용: Queue/YouTube/Lumen Quick* 그룹
+- 외부 상호작용(Queue/YouTube/Core/Canary)을 최소 1개 이상 항상 유지
+- 관련 빠른 태스크 활용: Queue/YouTube/Core Quick* 그룹
 
 ---
 

@@ -4,9 +4,10 @@ import json
 import sys
 from pathlib import Path
 import google.generativeai as genai
+from workspace_root import get_workspace_root
 
 # Configuration
-WORKSPACE_ROOT = Path(r"C:\workspace\agi")
+WORKSPACE_ROOT = get_workspace_root()
 IGNORE_DIRS = {".git", "__pycache__", "outputs", "node_modules", ".next", ".vscode"}
 IGNORE_EXTS = {".pyc", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".jsonl", ".log"}
 

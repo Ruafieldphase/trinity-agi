@@ -12,8 +12,9 @@ import json
 import time
 from pathlib import Path
 from typing import List, Dict, Any, Optional
+from workspace_root import get_workspace_root
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = get_workspace_root()
 SYNC_CACHE = ROOT / "outputs" / "sync_cache"
 TWIN_STATE = SYNC_CACHE / "digital_twin_state.json"
 TREND_OUT = SYNC_CACHE / "alignment_trend_latest.json"

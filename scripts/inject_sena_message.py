@@ -3,6 +3,7 @@ import sys
 import os
 from datetime import datetime
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 def inject(message, requires_response=True, priority='medium', target='sena'):
     """
@@ -14,9 +15,8 @@ def inject(message, requires_response=True, priority='medium', target='sena'):
         priority: 'low', 'medium', 'high', or 'urgent'
         target: 'shion', 'sena', or 'both'
     """
-    # Find workspace root
-    current_dir = Path(__file__).parent.resolve()
-    workspace_root = current_dir.parent
+    # Find workspace root (SSOT)
+    workspace_root = get_workspace_root()
     
     ledger_path = workspace_root / "fdo_agi_repo/memory/resonance_ledger.jsonl"
     

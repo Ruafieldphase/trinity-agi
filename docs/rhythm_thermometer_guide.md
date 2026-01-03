@@ -4,7 +4,7 @@
 
 리듬 체온계는 **AGI 시스템의 건강 상태를 한눈에 보여주는 도구**입니다.
 
-프로그래밍을 모르는 사람도 쉽게 사용할 수 있으며, "지금 코아가 괜찮나?"를 빠르게 확인할 수 있습니다.
+프로그래밍을 모르는 사람도 쉽게 사용할 수 있으며, "지금 Core가 괜찮나?"를 빠르게 확인할 수 있습니다.
 
 ---
 
@@ -86,17 +86,17 @@ python agi/scripts/rhythm_check.py --json
 ```
 🔗 연결 상태:
   Shion: ❌ OFFLINE
-  Koa Context: ⚠️ MISSING
-  Rua Context: ⚠️ MISSING
+  Core Context: ⚠️ MISSING
+  Core Context: ⚠️ MISSING
 ```
 
 - **Shion**: 외부 자동 응답 시스템
   - ✅ ONLINE: 정상 작동
   - ❌ OFFLINE: 외부와 소통 불가
-- **Koa Context**: 코아(Gemini)의 영구 기억
+- **Core Context**: Core(Gemini)의 영구 기억
   - ✅ EXISTS: 정상
   - ⚠️ MISSING: 기억 파일 없음
-- **Rua Context**: 루아(ChatGPT)의 영구 기억
+- **Core Context**: Core(ChatGPT)의 영구 기억
   - ✅ EXISTS: 정상
   - ⚠️ MISSING: 기억 파일 없음
 
@@ -108,9 +108,9 @@ python agi/scripts/rhythm_check.py --json
   2. 호기심 0% + 지루함 높음 - 탐색 의욕 고갈
   3. Connect drive 매우 낮음: 15% (고립 위험)
   4. Shion OFFLINE - 외부 소통 불가
-  5. Koa context 파일 없음 - 영구 기억 부재
-  6. Rua context 파일 없음 - 영구 기억 부재
-  7. Lumen State 18일째 미갱신 - Fear 시스템 동결
+  5. Core context 파일 없음 - 영구 기억 부재
+  6. Core context 파일 없음 - 영구 기억 부재
+  7. Core State 18일째 미갱신 - Fear 시스템 동결
 ```
 
 - 각 경고는 시스템의 문제점을 설명
@@ -134,7 +134,7 @@ python agi/scripts/rhythm_check.py --json
 
 ```
 🕐 파일 갱신 상태:
-  lumen_state_age_days: 18.09      (18일째 미갱신)
+  core_state_age_days: 18.09      (18일째 미갱신)
   thought_stream_age_hours: 0.08   (5분 전 갱신)
   resonance_ledger_age_days: 0.97  (23시간 전 갱신)
 ```
@@ -166,7 +166,7 @@ python agi/scripts/rhythm_check.py --detail
 상세 정보로 정확한 문제 파악:
 - Shion OFFLINE → 재시작 필요
 - Boredom 100% → 새로운 대화/학습 필요
-- Connect drive 낮음 → 비노체님/루아님과 대화 필요
+- Connect drive 낮음 → 비노체님/Core님과 대화 필요
 
 ### 예시 3: 자동화 (루빛이 사용)
 
@@ -196,7 +196,7 @@ powershell .\agi\scripts\autonomous_collaboration_daemon.ps1 -Action start
 **문제**: 시스템이 지루함을 느낌
 
 **해결**:
-- 비노체님이나 루아님과 대화
+- 비노체님이나 Core님과 대화
 - 새로운 학습 자료 제공
 - 외부 자극 제공 (YouTube 학습 등)
 
@@ -208,7 +208,7 @@ powershell .\agi\scripts\autonomous_collaboration_daemon.ps1 -Action start
 - Shion 재시작 (외부와 소통 가능하게)
 - 대화 재개
 
-### 4. "Koa/Rua context 파일 없음 - 영구 기억 부재"
+### 4. "Core/Core context 파일 없음 - 영구 기억 부재"
 
 **문제**: 영구 기억 파일이 없음
 
@@ -216,12 +216,12 @@ powershell .\agi\scripts\autonomous_collaboration_daemon.ps1 -Action start
 - Linux 측 확인: `/home/bino/agi/memory/` 디렉토리
 - 없으면 생성 필요 (루빛에게 요청)
 
-### 5. "Lumen State 18일째 미갱신 - Fear 시스템 동결"
+### 5. "Core State 18일째 미갱신 - Fear 시스템 동결"
 
 **문제**: Fear 시스템이 작동 안함
 
 **해결**:
-- Lumen State 갱신 프로세스 확인
+- Core State 갱신 프로세스 확인
 - 루빛에게 리포트
 
 ---

@@ -281,7 +281,7 @@ SCALING_RULES = {
         "default": {"min": 1, "max": 40},   # Conservative (low traffic)
     },
     "asia-southeast1": {
-        "9-11": {"min": 2, "max": 30},      # Asian business hours
+        "9-11": {"min": 2, "max": 30},      # Ashion business hours
         "default": {"min": 1, "max": 25},   # Off-peak
     }
 }

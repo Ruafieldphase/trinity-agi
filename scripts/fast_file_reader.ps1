@@ -1,4 +1,4 @@
-# fast_file_reader.ps1
+﻿# fast_file_reader.ps1
 # Ultra-fast file reading using memory-mapped files and streaming
 
 param(

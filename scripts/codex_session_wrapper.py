@@ -4,6 +4,7 @@ import sys
 import json
 import time
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 def main():
     # Use the provided args from persona_registry.json
@@ -15,7 +16,7 @@ def main():
     # Environment variable set by agi_session_start.ps1
     session_id = os.environ.get("CODEX_SESSION_ID")
 
-    workspace_root = Path(__file__).resolve().parents[1]
+    workspace_root = get_workspace_root()
     state_path = workspace_root / "outputs" / "sync_cache" / "codex_session_state.json"
     bootstrap_marker = "CODEX_CONTINUITY_SNAPSHOT"
     bootstrap_candidates = [

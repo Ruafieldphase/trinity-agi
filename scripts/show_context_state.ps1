@@ -1,5 +1,8 @@
-# Show Context State - ASCII safe for PowerShell 5.1
+﻿# Show Context State - ASCII safe for PowerShell 5.1
 param([switch]$Verbose)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

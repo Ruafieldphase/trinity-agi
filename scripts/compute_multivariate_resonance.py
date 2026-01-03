@@ -141,7 +141,7 @@ def main() -> int:
     parser.add_argument(
         "--participants",
         default="",
-        help="Comma-separated participants that must be present (e.g. lumen,binoche,rio).",
+        help="Comma-separated participants that must be present (e.g. Core,Binoche_Observer,rio).",
     )
     parser.add_argument(
         "--out-json",

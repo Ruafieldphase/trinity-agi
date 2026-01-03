@@ -1,5 +1,8 @@
+﻿
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $Action = "Start-Process"
-$ScriptPath = "c:\workspace\agi\scripts\rhythm_guardian.py"
+$ScriptPath = "$WorkspaceRoot\scripts\rhythm_guardian.py"
 $PythonPath = "pythonw.exe"
 
 Write-Host "🛡️ Invoking Rhythm Guardian..."

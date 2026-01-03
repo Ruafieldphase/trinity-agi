@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Autonomous Loop Executor
     자율적으로 작업을 계획하고 실행하는 루프
@@ -22,9 +22,11 @@ param(
     [switch]$AutoApprove,
     [int]$IntervalSeconds = 5
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
-$WorkspaceRoot = "C:\workspace\agi"
 $PythonExe = "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 $PlannerScript = "$WorkspaceRoot\fdo_agi_repo\orchestrator\autonomous_work_planner.py"
 $OutputDir = "$WorkspaceRoot\outputs"

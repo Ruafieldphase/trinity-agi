@@ -21,6 +21,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Optional, Tuple
 import sys
+from workspace_root import get_workspace_root
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
@@ -43,7 +44,7 @@ class FeelingMemory:
     
     def __init__(self, memory_dir: Path = None):
         if memory_dir is None:
-            workspace_root = Path(__file__).parent.parent
+            workspace_root = get_workspace_root()
             memory_dir = workspace_root / "outputs" / "feeling_memory"
         
         self.memory_dir = Path(memory_dir)

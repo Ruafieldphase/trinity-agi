@@ -1,6 +1,9 @@
 # 최종 팝업 제거 스크립트 (관리자 권한 필요)
 # 우클릭 → "관리자 권한으로 실행"
 
+
+. "$PSScriptRoot\..\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "Continue"
 
 Write-Host "`n=== 최종 팝업 제거 작업 ===" -ForegroundColor Cyan
@@ -53,6 +56,6 @@ else {
 }
 
 Write-Host "`n=== Master Daemon 상태 ===" -ForegroundColor Cyan
-& "C:\workspace\agi\scripts\master_daemon.ps1" -Status
+& "$WorkspaceRoot\scripts\master_daemon.ps1" -Status
 
 Read-Host "`nPress Enter to exit"

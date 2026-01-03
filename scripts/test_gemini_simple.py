@@ -7,6 +7,7 @@ Tests basic functionality and encoding handling.
 import subprocess
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Ensure UTF-8 output for Windows console
 try:
@@ -15,7 +16,7 @@ try:
 except AttributeError:
     pass
 
-ROOT = Path(__file__).parent.parent
+ROOT = get_workspace_root()
 GEMINI_SCRIPT = ROOT / "scripts" / "gemini_chat_simple.py"
 
 

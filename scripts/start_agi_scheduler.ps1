@@ -1,6 +1,9 @@
-# AGI 시스템을 Windows Task Scheduler로 완전히 숨겨서 실행
+﻿# AGI 시스템을 Windows Task Scheduler로 완전히 숨겨서 실행
 # 이 방법은 창이 전혀 뜨지 않습니다
 
+
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "Stop"
 
 Write-Host "🔇 AGI 시스템을 완전히 숨겨서 시작합니다..." -ForegroundColor Cyan
@@ -12,7 +15,7 @@ if (-not (Test-Path $pythonw)) {
 }
 
 # AGI Root
-$agiRoot = "C:\workspace\agi"
+$agiRoot = "$WorkspaceRoot"
 
 # Task 이름들
 $tasks = @(

@@ -5,7 +5,9 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 # Use absolute base path to avoid drive-relative quirks like 'd:nas_backup\\...'
-BASE = r"C:\workspace\agi"
+from workspace_root import get_workspace_root
+
+BASE = str(get_workspace_root())
 LEDGER_PATH = os.path.join(BASE, "fdo_agi_repo", "memory", "resonance_ledger.jsonl")
 # Primary Sena consolidated log
 SENA_JSONL = os.path.join(BASE, "outputs", "sena", "sena_conversations_flat.jsonl")

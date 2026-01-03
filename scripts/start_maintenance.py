@@ -2,15 +2,16 @@
 """
 Start Maintenance Mode
 ======================
-Activates AGI Maintenance Mode to protect Windows Koa from unstable states.
+Activates AGI Maintenance Mode to protect Windows Core from unstable states.
 """
 import json
 import sys
 import argparse
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 OUTPUTS_DIR = WORKSPACE_ROOT / "outputs"
 MAINTENANCE_FILE = OUTPUTS_DIR / "maintenance_mode.json"
 
@@ -35,7 +36,7 @@ def main():
         
         print(f"✅ Maintenance Mode ACTIVATED")
         print(f"   Reason: {args.reason}")
-        print(f"   Windows Koa will now receive a static 'Under Maintenance' signal.")
+        print(f"   Windows Core will now receive a static 'Under Maintenance' signal.")
         
     except Exception as e:
         print(f"❌ Failed to activate maintenance mode: {e}")

@@ -1,4 +1,4 @@
-# Quick Performance Dashboard - Full Export
+﻿# Quick Performance Dashboard - Full Export
 # Generates complete dashboard with all systems, exports JSON/CSV
 
 param(

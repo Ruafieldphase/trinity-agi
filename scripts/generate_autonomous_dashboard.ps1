@@ -1,4 +1,7 @@
-param([switch]$OpenBrowser)
+﻿param([switch]$OpenBrowser)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8; $OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}

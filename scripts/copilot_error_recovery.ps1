@@ -1,4 +1,4 @@
-# Copilot Error Recovery System
+﻿# Copilot Error Recovery System
 # Detects 400 invalid_request_body loops and activates fallback CLI agents
 
 param(
@@ -7,6 +7,10 @@ param(
     [switch]$ActivateFallback,
     [switch]$LogOnly
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorMessage = @"
 🔴 Copilot Request Failed: 400 invalid_request_body
@@ -20,7 +24,7 @@ Detected Error Pattern:
 🛠️ Recovery Actions:
 1. Request body validation (SHA256 dedup, size check)
 2. Retry with truncated context (if size issue)
-3. Fallback to CLI agents (Lubit/Sian) if persistent
+3. Fallback to CLI agents (Lubit/Shion) if persistent
 "@
 
 Write-Host $ErrorMessage -ForegroundColor Red
@@ -43,10 +47,10 @@ if ($LogOnly) {
 }
 
 # Check if fallback CLI bridges exist
-$LubitPath = "c:\workspace\agi\fdo_agi_repo\integrations\openai_codex_bridge.py"
-$SianPath = "c:\workspace\agi\fdo_agi_repo\integrations\gemini_cli_bridge.py"
+$LubitPath = "$WorkspaceRoot\fdo_agi_repo\integrations\openai_codex_bridge.py"
+$ShionPath = "$WorkspaceRoot\fdo_agi_repo\integrations\gemini_cli_bridge.py"
 
-$FallbackAvailable = (Test-Path $LubitPath) -or (Test-Path $SianPath)
+$FallbackAvailable = (Test-Path $LubitPath) -or (Test-Path $ShionPath)
 
 if ($ActivateFallback -and $FallbackAvailable) {
     Write-Host "🔄 Activating fallback CLI bridge..." -ForegroundColor Yellow
@@ -55,15 +59,15 @@ if ($ActivateFallback -and $FallbackAvailable) {
         Write-Host "  → Trying OpenAI Codex (Lubit)..." -ForegroundColor Cyan
         & python $LubitPath --mode error-recovery --context clipboard
     }
-    elseif (Test-Path $SianPath) {
-        Write-Host "  → Trying Gemini CLI (Sian)..." -ForegroundColor Cyan
-        & python $SianPath --mode error-recovery --context clipboard
+    elseif (Test-Path $ShionPath) {
+        Write-Host "  → Trying Gemini CLI (Shion)..." -ForegroundColor Cyan
+        & python $ShionPath --mode error-recovery --context clipboard
     }
 }
 elseif ($ActivateFallback) {
     Write-Host "⚠️ Fallback bridges not found. Creating scaffolds..." -ForegroundColor Yellow
     
-    $ScaffoldScript = "c:\workspace\agi\scripts\create_fallback_bridges.ps1"
+    $ScaffoldScript = "$WorkspaceRoot\scripts\create_fallback_bridges.ps1"
     if (Test-Path $ScaffoldScript) {
         & $ScaffoldScript
     }

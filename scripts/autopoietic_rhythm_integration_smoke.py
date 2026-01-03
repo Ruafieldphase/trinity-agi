@@ -8,9 +8,10 @@ Autopoietic Rhythm Integration Smoke Test
 """
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Import resonance converter from ion-mentoring
-repo_root = Path(__file__).resolve().parents[1]
+repo_root = get_workspace_root()
 ion_mentoring = repo_root / "LLM_Unified" / "ion-mentoring"
 sys.path.insert(0, str(ion_mentoring))
 

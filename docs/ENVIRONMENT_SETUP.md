@@ -25,11 +25,7 @@ GOOGLE_API_KEY=your-api-key
 
 # Vertex AI (선택사항)
 GCP_LOCATION=us-central1
-<<<<<<< HEAD
 VERTEX_MODEL_GEMINI=gemini-2.5-flash
-=======
-VERTEX_MODEL_GEMINI=gemini-1.5-flash-002
->>>>>>> origin/main
 EMBEDDINGS_MODEL=text-embedding-004
 ```
 
@@ -56,11 +52,7 @@ python scripts/check_env_config.py --verbose
 | `GOOGLE_CLOUD_REGION` | ⚪ | - | GCP_LOCATION 별칭 |
 | `VERTEX_LOCATION` | ⚪ | - | GCP_LOCATION 별칭 |
 | `GOOGLE_API_KEY` | ⚪ | - | Google AI Studio API 키 (없으면 ADC 사용) |
-<<<<<<< HEAD
 | `VERTEX_MODEL_GEMINI` | ⚪ | gemini-2.5-flash | 사용할 Gemini 모델 |
-=======
-| `VERTEX_MODEL_GEMINI` | ⚪ | gemini-1.5-flash-002 | 사용할 Gemini 모델 |
->>>>>>> origin/main
 | `GEMINI_MODEL` | ⚪ | - | VERTEX_MODEL_GEMINI 별칭 |
 | `EMBEDDINGS_MODEL` | ⚪ | text-embedding-004 | 임베딩 모델 |
 
@@ -74,7 +66,6 @@ python scripts/check_env_config.py --verbose
 | `REDIS_DB` | ⚪ | 0 | Redis DB 번호 |
 | `REDIS_PASSWORD` | ⚪ | - | Redis 비밀번호 |
 
-<<<<<<< HEAD
 ### Remote Vector Store (Qdrant)
 
 | 변수 | 필수 | 기본값 | 설명 |
@@ -115,7 +106,7 @@ python scripts/check_env_config.py --verbose
 |------|------|--------|------|
 | `AGI_CHAT_ROUTING` | ⚪ | ari | `ari` / `trinity` (미설정 시 `ari`) |
 
-메시지에 `ari:` 또는 `trinity:` 접두어가 있으면 해당 대상으로 강제 전송됩니다.
+메세지에 `ari:` 또는 `trinity:` 접두어가 있으면 해당 대상으로 강제 전송됩니다.
 
 ### GUI 샌드박스(JSON)
 
@@ -127,9 +118,6 @@ python scripts/check_env_config.py --verbose
   "allowed_window_titles": ["Chrome", "Google Chrome"]
 }
 ```
-
-=======
->>>>>>> origin/main
 ### 모니터링 설정
 
 | 변수 | 필수 | 기본값 | 설명 |
@@ -171,11 +159,7 @@ GCP_LOCATION=us-central1
 REDIS_ENABLED=true
 REDIS_HOST=prod-redis.example.com
 REDIS_PASSWORD=${REDIS_PROD_PASSWORD}  # Secret Manager에서 주입
-<<<<<<< HEAD
 VERTEX_MODEL_GEMINI=gemini-2.5-pro  # 더 강력한 모델 사용
-=======
-VERTEX_MODEL_GEMINI=gemini-1.5-pro  # 더 강력한 모델 사용
->>>>>>> origin/main
 ```
 
 ## 인증 설정

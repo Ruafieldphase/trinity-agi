@@ -12,6 +12,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any
 import time
+from workspace_root import get_workspace_root
 
 try:
     from youtube_transcript_api import YouTubeTranscriptApi
@@ -21,7 +22,7 @@ except ImportError:
     sys.exit(1)
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 CHANNELS_FILE = WORKSPACE_ROOT / "scripts" / "youtube_channels.json"
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 

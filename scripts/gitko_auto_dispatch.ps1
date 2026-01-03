@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Gitko's intelligent work distribution engine - automatically routes work to appropriate agents.
 
@@ -6,7 +6,7 @@
   Analyzes incoming work requests and automatically dispatches to:
   - Gitko (solo): Code implementation, debugging, technical fixes
   - Lubit: Review, validation, documentation quality checks
-  - Sian: Code suggestions, refactoring proposals, AI-assisted improvements
+  - Shion: Code suggestions, refactoring proposals, AI-assisted improvements
   - Parallel: Complex tasks requiring both review and code assist
 
 .PARAMETER WorkRequest
@@ -16,7 +16,7 @@
   Optional context: files, error messages, or additional information
 
 .PARAMETER ForceAgent
-  Override auto-detection: 'gitko', 'lubit', 'sian', 'parallel'
+  Override auto-detection: 'gitko', 'lubit', 'Shion', 'parallel'
 
 .PARAMETER DryRun
   Show routing decision without executing
@@ -24,7 +24,7 @@
 .NOTES
   Decision Rules:
   - Review keywords (리뷰, 검토, 확인, 검증) → Lubit
-  - Code assist keywords (제안, 개선, 리팩터, 최적화) → Sian
+  - Code assist keywords (제안, 개선, 리팩터, 최적화) → Shion
   - Documentation keywords (문서화, 정리, 보고서) → Lubit
   - Implementation keywords (구현, 수정, 추가, 버그) → Gitko
   - Complex tasks (병렬, 협업, 전체) → Parallel
@@ -37,7 +37,7 @@ param(
   
     [string]$Context = "",
   
-    [ValidateSet('auto', 'gitko', 'lubit', 'sian', 'parallel')]
+    [ValidateSet('auto', 'gitko', 'lubit', 'Shion', 'parallel')]
     [string]$ForceAgent = 'auto',
   
     [switch]$DryRun
@@ -54,7 +54,7 @@ $patterns = @{
         'review', 'validate', 'check', 'audit', 'document', 'inspect',
         'verify', 'quality', 'handoff', 'report'
     )
-    Sian     = @(
+    Shion     = @(
         'suggest', 'refactor', 'optimize', 'improve', 'assist',
         'enhance', 'modernize', 'performance', 'code.*quality'
     )
@@ -74,7 +74,7 @@ function Get-WorkClassification {
   
     $scores = @{
         Lubit    = 0
-        Sian     = 0
+        Shion     = 0
         Parallel = 0
         Gitko    = 0
     }
@@ -88,8 +88,8 @@ function Get-WorkClassification {
         }
     }
   
-    # Parallel wins if both Lubit and Sian have signals
-    if ($scores.Lubit -gt 0 -and $scores.Sian -gt 0) {
+    # Parallel wins if both Lubit and Shion have signals
+    if ($scores.Lubit -gt 0 -and $scores.Shion -gt 0) {
         return 'Parallel'
     }
   
@@ -127,15 +127,15 @@ function Invoke-LubitReview {
     }
 }
 
-function Invoke-SianAssist {
+function Invoke-ShionAssist {
     param([string]$Task, [string]$Ctx)
-    Write-Host "[Sian] Generating code assist..." -ForegroundColor Yellow
+    Write-Host "[Shion] Generating code assist..." -ForegroundColor Yellow
     $outDir = Join-Path $repoRoot 'outputs'
     if (-not (Test-Path -LiteralPath $outDir)) {
         New-Item -ItemType Directory -Path $outDir | Out-Null
     }
     $ts = (Get-Date).ToUniversalTime().ToString('yyyyMMdd_HHmmss\Z')
-    $outPath = Join-Path $outDir "sian_assist_${ts}.md"
+    $outPath = Join-Path $outDir "shion_assist_${ts}.md"
   
     $venvPython = Join-Path $repoRoot 'LLM_Unified/.venv/Scripts/python.exe'
     $pythonExe = if (Test-Path -LiteralPath $venvPython) { $venvPython } else { 'python' }
@@ -143,18 +143,18 @@ function Invoke-SianAssist {
   
     if (Test-Path -LiteralPath $geminiPOC) {
         & $pythonExe $geminiPOC --issue $Task --out $outPath
-        return @{ Agent = 'Sian'; Mode = 'CodeAssist'; Status = 'Dispatched'; Output = $outPath }
+        return @{ Agent = 'Shion'; Mode = 'CodeAssist'; Status = 'Dispatched'; Output = $outPath }
     }
     else {
-        Write-Warning "Sian tool not found: $geminiPOC"
-        return @{ Agent = 'Sian'; Mode = 'CodeAssist'; Status = 'ToolMissing' }
+        Write-Warning "Shion tool not found: $geminiPOC"
+        return @{ Agent = 'Shion'; Mode = 'CodeAssist'; Status = 'ToolMissing' }
     }
 }
 
 function Invoke-ParallelWork {
     param([string]$Task, [string]$Ctx)
-    Write-Host "[Parallel] Distributing to Lubit & Sian..." -ForegroundColor Cyan
-    $script = Join-Path $PSScriptRoot 'dispatch_to_lubit_and_sian.ps1'
+    Write-Host "[Parallel] Distributing to Lubit & Shion..." -ForegroundColor Cyan
+    $script = Join-Path $PSScriptRoot 'dispatch_to_lubit_and_shion.ps1'
     if (Test-Path -LiteralPath $script) {
         & $script -Issue $Task
         return @{ Agent = 'Parallel'; Mode = 'Distributed'; Status = 'Dispatched'; Script = $script }
@@ -182,7 +182,7 @@ if ($DryRun.IsPresent) {
 $result = switch ($agent) {
     'Gitko' { Invoke-GitkoWork -Task $WorkRequest -Ctx $Context }
     'Lubit' { Invoke-LubitReview -Task $WorkRequest -Ctx $Context }
-    'Sian' { Invoke-SianAssist -Task $WorkRequest -Ctx $Context }
+    'Shion' { Invoke-ShionAssist -Task $WorkRequest -Ctx $Context }
     'Parallel' { Invoke-ParallelWork -Task $WorkRequest -Ctx $Context }
     default { Invoke-GitkoWork -Task $WorkRequest -Ctx $Context }
 }

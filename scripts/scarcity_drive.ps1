@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#!
 .SYNOPSIS
   Compute a simple Scarcity (결핍) Drive and map it to recommended knobs for Dream/Unconscious.
@@ -41,6 +41,9 @@ param(
     [switch]$ProbeOutputs,
     [string]$OutJson = "outputs\\scarcity_drive_latest.json"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

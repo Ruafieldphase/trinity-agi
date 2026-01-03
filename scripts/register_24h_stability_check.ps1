@@ -1,18 +1,22 @@
-# 24?�간 ?�정??체크 ?�동???��?�?# Windows Task Scheduler ?�록 ?�크립트
+﻿# 24?간 ?정??체크 ?동?????# Windows Task Scheduler ?록 ?크립트
 
 param(
     [switch]$Register,
     [switch]$Unregister,
     [switch]$Status
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 
 $taskName = "AGI_24H_Stability_Check"
-$scriptPath = "C:\workspace\agi\scripts\monitor_stability_24h.ps1"
-$logPath = "C:\workspace\agi\outputs\scheduled_stability_check.log"
+$scriptPath = "$WorkspaceRoot\scripts\monitor_stability_24h.ps1"
+$logPath = "$WorkspaceRoot\outputs\scheduled_stability_check.log"
 
-# 2025-10-28 17:47 ?�후 ?�행
+# 2025-10-28 17:47 ?후 ?행
 $triggerTime = Get-Date "2025-10-28 17:47:00"
 
 if ($Status) {
@@ -75,7 +79,7 @@ if ($Register) {
         -Trigger $trigger `
         -Principal $principal `
         -Settings $settings `
-        -Description "AGI 24?�간 ?�정??체크 (2025-10-27 17:47 ??2025-10-28 17:47)" `
+        -Description "AGI 24?간 ?정??체크 (2025-10-27 17:47 ??2025-10-28 17:47)" `
     | Out-Null
     
     Write-Host "[OK] Task registered successfully!" -ForegroundColor Green

@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 <#
 .SYNOPSIS
     보상 기반 행동 정책을 업데이트합니다 (기저핵 습관 강화)

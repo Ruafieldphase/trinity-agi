@@ -23,10 +23,11 @@ import os
 import sys
 import warnings
 from pathlib import Path
+from workspace_root import get_workspace_root
 from typing import Optional
 
 # Import emoji filter
-sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+sys.path.insert(0, str(get_workspace_root() / "fdo_agi_repo"))
 from utils.emoji_filter import remove_emojis
 
 
@@ -49,7 +50,6 @@ ALLOWED_INTENTS = {
 }
 
 
-<<<<<<< HEAD
 def _load_dotenv_value(name: str) -> str | None:
     """
     Process env에 값이 없으면 워크스페이스 .env에서 읽어온다.
@@ -57,7 +57,7 @@ def _load_dotenv_value(name: str) -> str | None:
     - 기존 env를 덮어쓰지 않음
     """
     try:
-        root = Path(__file__).resolve().parents[1]  # C:\workspace\agi
+        root = get_workspace_root()
         for env_path in (root / ".env_credentials", root / ".env"):
             if not env_path.exists():
                 continue
@@ -73,10 +73,6 @@ def _load_dotenv_value(name: str) -> str | None:
     except Exception:
         return None
     return None
-
-
-=======
->>>>>>> origin/main
 def _is_allowed(intent: str) -> bool:
     if intent in ALLOWED_INTENTS:
         return True
@@ -114,11 +110,7 @@ SYSTEM_PROMPT = (
 
 def _google_ai_studio_classify(utter: str) -> Optional[str]:
     """Use Google AI Studio (google-generativeai) to classify intent."""
-<<<<<<< HEAD
     api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or _load_dotenv_value("GOOGLE_API_KEY") or _load_dotenv_value("GEMINI_API_KEY")
-=======
-    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
->>>>>>> origin/main
     if not api_key:
         print("DEBUG: No GOOGLE_API_KEY or GEMINI_API_KEY found", file=sys.stderr)
         return None
@@ -149,7 +141,7 @@ def _google_ai_studio_classify(utter: str) -> Optional[str]:
         return "unknown"
     
     except Exception as e:
-        print(f"DEBUG google-ai-studio failed: {e}", file=sys.stderr)
+        # Avoid noisy logs for missing keys if we have a fallback
         return None
 
 
@@ -158,13 +150,8 @@ def _vertex_classify(utter: str) -> Optional[str]:
     # Fallback priority: VERTEXAI_PROJECT > GCP_PROJECT
     project = os.getenv("VERTEXAI_PROJECT") or os.getenv("GCP_PROJECT")
     location = os.getenv("VERTEXAI_LOCATION") or os.getenv("GCP_LOCATION", "us-central1")
-<<<<<<< HEAD
     # Prefer newer flash models; allow override via env.
     model_name = os.getenv("VERTEXAI_INTENT_MODEL") or os.getenv("VERTEX_MODEL_GEMINI", "gemini-2.0-flash-001")
-=======
-    # Use gemini-1.5-flash-002 as verified in .env
-    model_name = os.getenv("VERTEXAI_INTENT_MODEL") or os.getenv("VERTEX_MODEL_GEMINI", "gemini-1.5-flash-002")
->>>>>>> origin/main
     if not project:
         return None
     try:
@@ -235,37 +222,28 @@ def classify_intent(utter: str) -> Optional[str]:
     Classify user utterance into ChatOps intent token.
     
     Priority order:
-      1. Google AI Studio (if GOOGLE_API_KEY or GEMINI_API_KEY set)
-      2. Vertex AI (if VERTEXAI_PROJECT or GCP_PROJECT set)
-      3. None (fallback to rules-based)
+      1. Google AI Studio (Free Tier) - Primary
+      2. Vertex AI (Paid Tier) - Fallback/Override
     """
     provider = os.getenv("LLM_PROVIDER", "google-ai-studio").lower()
     
-    # Try Google AI Studio first (primary method)
-    if provider in {"google-ai-studio", "gemini", "google"}:
-        result = _google_ai_studio_classify(utter)
-        if result:
-            return result
-    
-    # Fallback to Vertex AI if configured
-    if provider in {"vertex", "vertexai", "gcp"}:
-        result = _vertex_classify(utter)
-        if result:
-            return result
-    
-    # Auto-detect: try Google AI Studio first, then Vertex
-    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    # 1. Force AI Studio if API Key is present (Safety first)
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY") or _load_dotenv_value("GOOGLE_API_KEY")
     if api_key:
         result = _google_ai_studio_classify(utter)
         if result:
             return result
-    
-    project = os.getenv("VERTEXAI_PROJECT") or os.getenv("GCP_PROJECT")
+
+    # 2. Vertex AI Fallback (Only if explicitly requested or AI Studio failed)
+    project = os.getenv("VERTEXAI_PROJECT") or os.getenv("GCP_PROJECT") or _load_dotenv_value("GOOGLE_CLOUD_PROJECT")
     if project:
+        # LOG WARNING: Using paid tier
+        if os.getenv("AGI_VERBOSE_COSTS") == "1":
+            print(f"⚠️ [COST_WARNING] Falling back to Paid Vertex AI for project: {project}", file=sys.stderr)
+            
         result = _vertex_classify(utter)
         if result:
             return result
     
-    # No provider configured or all failed
     return None
 

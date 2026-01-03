@@ -70,7 +70,7 @@ chatops_router.ps1 -Say "작업 추가"
 또는:
 
 ```powershell
-.\session_memory\session_tools.ps1 task "Binoche Persona Learner 설계"
+.\session_memory\session_tools.ps1 task "Binoche_Observer Persona Learner 설계"
 ```
 
 ### 3. 파일 추적
@@ -153,7 +153,7 @@ from session_search import SessionSearch
 logger = SessionLogger()
 session_id = logger.start_session(
     title="BQI Phase 6 Implementation",
-    description="Binoche Persona Learning with Ensemble Judges",
+    description="Binoche_Observer Persona Learning with Ensemble Judges",
     context="Implementing online learning for judge ensemble weights",
     persona="Perple",
     tags=["bqi", "phase-6", "machine-learning"]
@@ -161,7 +161,7 @@ session_id = logger.start_session(
 
 # 작업 추가
 logger.add_task(
-    title="Design Binoche Persona Learner",
+    title="Design Binoche_Observer Persona Learner",
     description="Create adaptive persona model based on resonance feedback",
     status="in-progress"
 )
@@ -200,7 +200,7 @@ searcher.export_to_markdown(session, "outputs/session_report.md")
 - `title`, `description`, `context`
 - `status` (active/paused/completed/abandoned)
 - `branch`, `commit_hash` (Git 정보)
-- `persona` (Perple, Binoche, Sena 등)
+- `persona` (Perple, Binoche_Observer, Sena 등)
 - `parent_session_id` (FK, 연속 작업 추적)
 - `resonance_score` (0.0-1.0)
 
@@ -459,7 +459,7 @@ chcp 65001
 
 ## 베스트 프랙티스
 
-1. **세션 시작 시 명확한 제목**: "BQI Phase 6" 대신 "BQI Phase 6 - Binoche Persona Learner Implementation"
+1. **세션 시작 시 명확한 제목**: "BQI Phase 6" 대신 "BQI Phase 6 - Binoche_Observer Persona Learner Implementation"
 2. **태그 일관성 유지**: "bqi", "phase-6", "machine-learning" (소문자, 하이픈)
 3. **Resonance Score 기준**:
    - 0.0-0.3: 실패 또는 막힘

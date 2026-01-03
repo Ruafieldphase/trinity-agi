@@ -15,6 +15,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
+from workspace_root import get_workspace_root
 
 
 def utc_iso(ts: float) -> str:
@@ -36,7 +37,7 @@ def _load_json(path: Path) -> Dict[str, Any]:
 
 
 def main() -> int:
-    ws = Path(__file__).resolve().parents[1]
+    ws = get_workspace_root()
     src = ws / "outputs" / "trinity_synthesis_latest.json"
     out_md = ws / "outputs" / "trinity_manifold_latest.md"
     out_json = ws / "outputs" / "trinity_manifold_latest.json"

@@ -7,9 +7,10 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Any
+from workspace_root import get_workspace_root
 
 # Add workspace root to path to import vision_cortex
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.append(str(WORKSPACE_ROOT))
 
 try:
@@ -195,7 +196,7 @@ def main():
             
             if extract_frame(video_path, frame_path, ts):
                 # Analyze with Vision Cortex
-                context = "The person filming this video is Binoche (The User). Observe the scene from their perspective."
+                context = "The person filming this video is Binoche_Observer (The User). Observe the scene from their perspective."
                 analysis = cortex.analyze_image(str(frame_path), context=context)
                 
                 video_result['frames'].append({

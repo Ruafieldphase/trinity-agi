@@ -1,4 +1,7 @@
-$Path = "C:\workspace\agi\scripts\agi_session_start.ps1"
+﻿
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+$Path = "$WorkspaceRoot\scripts\agi_session_start.ps1"
 $Content = Get-Content -Raw $Path
 
 # Remove the old incorrect placement

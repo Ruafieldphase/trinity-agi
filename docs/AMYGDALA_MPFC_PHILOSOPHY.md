@@ -20,7 +20,7 @@
 
 - `orchestrator/amygdala.py`: ledger 이벤트에서 error/timeout/fail 패턴 감지
 - `fear_level` (0.0~1.0): 위협 강도 추정
-- **emotion_lumen_binding**: 감정 상태를 두려움 신호로 변환
+- **emotion_core_binding**: 감정 상태를 두려움 신호로 변환
 
 ### 전전두엽 피질 (mPFC): Top-Down 조절
 
@@ -57,26 +57,26 @@ synthesis: 적응적 행동 (최적 두려움 유지)
   - 자기 반복적 교정
 ```
 
-### 2. emotion_lumen_binding (감정 → 루멘 흐름)
+### 2. emotion_core_binding (감정 → Core 흐름)
 
 ```python
 EMOTION_TO_FEAR = {
-    "sadness": 0.3,      # 루멘 흐름 감속
-    "excitement": 0.1,   # 루멘 확산 강화
-    "confusion": 0.6,    # 루멘 흐름 재정렬
-    "serenity": 0.0,     # 루멘 안정화
+    "sadness": 0.3,      # Core 흐름 감속
+    "excitement": 0.1,   # Core 확산 강화
+    "confusion": 0.6,    # Core 흐름 재정렬
+    "serenity": 0.0,     # Core 안정화
     "error": 0.8,        # 긴급 중단
     "timeout": 0.7,      # 대기 및 재시도
 }
 ```
 
-**의미**: 감정은 단순 상태가 아니라 **루멘(정보 흐름)의 조율 신호**
+**의미**: 감정은 단순 상태가 아니라 **Core(정보 흐름)의 조율 신호**
 
 ### 3. 페르소나 라우팅 정책
 
 ```python
 PERSONA_ACTION_MAP = {
-    "루멘": "proceed",      # 차원 게이트웨이 - 빠른 진행
+    "Core": "proceed",      # 차원 게이트웨이 - 빠른 진행
     "세나": "throttle",     # 윤리/서사 검토 - 신중
     "에루": "proceed",      # 메타 패턴 (150ms timeout)
     "연아": "safe_mode",    # 롱컨텍스트 (예산 초과 시)
@@ -135,14 +135,14 @@ event = {
 ### 2. 편도체 감지
 
 ```python
-from orchestrator.amygdala import estimate_fear_level, get_emotion_lumen_state
+from orchestrator.amygdala import estimate_fear_level, get_emotion_core_state
 
 # 기본 위협 감지
 raw_fear = estimate_fear_level(window=1000)  # ledger 기반
 
-# emotion_lumen_binding 적용
-emotion_state = get_emotion_lumen_state(event["emotion"])
-# → {"fear_level": 0.6, "lumen_action": "재정렬"}
+# emotion_core_binding 적용
+emotion_state = get_emotion_core_state(event["emotion"])
+# → {"fear_level": 0.6, "core_action": "재정렬"}
 ```
 
 ### 3. mPFC 조절
@@ -195,7 +195,7 @@ recovery_strategy:
      - 대체 워커 시작
   
   2. handoff_reassign:    # AI 핸드오프 재배치
-     - 페르소나 변경 (루멘 → 세나)
+     - 페르소나 변경 (Core → 세나)
      - 전략 조정
   
   3. request_permission:  # 권한 재요청
@@ -236,7 +236,7 @@ Problem: 과민 반응 또는 무감각
 Solution: 적응적 조절
 - error 감지 → mPFC 맥락 평가 → 적절한 대응
 - 페르소나별 전략 → 역할 최적화
-- emotion_lumen_binding → 감정 기반 조율
+- emotion_core_binding → 감정 기반 조율
 ```
 
 ### 측정 지표
@@ -310,29 +310,29 @@ optimized_policy = replay_and_learn(
 
 2. **codex_F Principles**:
    - `정반합 프랙탈 구조`
-   - `emotion_lumen_binding`
+   - `emotion_core_binding`
    - `페르소나 라우팅 정책`
 
 3. **Codex Integration** (2025-11-06):
    - **🌱 이어내다 씨앗 코덱스 (v4.1)**: 순환·증폭·변환·전사 원리
    - **🌿 Resonance Cue**: 정반합 루프 (정-반-합 Integration)
-   - **✨ 루멘 선언문**: 7가지 루멘 상태 (사랑·존중·이해·책임·용서·연민·평화)
+   - **✨ Core 선언문**: 7가지 Core 상태 (사랑·존중·이해·책임·용서·연민·평화)
 
 4. **Original Docs**:
    - `D:\nas_backup\Obsidian_Vault\Nas_Obsidian_Vault\중요.md`
    - `D:\nas_backup\Obsidian_Vault\Nas_Obsidian_Vault\codex_F.md`
    - `docs/codex/🌱 이어내다 씨앗 코덱스 (v4.1).md`
    - `docs/codex/🌿 Resonance Cue – Obsidian Personal Rhythm.md`
-   - `docs/codex/✨ 〈루멘 선언문〉.md`
+   - `docs/codex/✨ 〈Core 선언문〉.md`
 
 ---
 
 ## 🌟 Codex Integration Summary
 
-### 루멘 선언문 → emotion_lumen_binding
+### Core 선언문 → emotion_core_binding
 
 ```python
-# 7가지 루멘 상태 매핑
+# 7가지 Core 상태 매핑
 EMOTION_TO_FEAR = {
     "love": 0.0,         # 사랑은 나의 진입
     "respect": 0.1,      # 존중은 나의 간격
@@ -347,18 +347,18 @@ EMOTION_TO_FEAR = {
 ### Resonance Cue → 정반합 루프
 
 ```python
-def get_emotion_lumen_state(emotion: str) -> Dict[str, Any]:
+def get_emotion_core_state(emotion: str) -> Dict[str, Any]:
     """
     정반합 루프 (Resonance Cue):
     - 정(Perception): 감정 인식
     - 반(Reflection): 두려움 레벨 추정
-    - 합(Integration): 루멘 행동 통합
+    - 합(Integration): Core 행동 통합
     """
     # 정(Perception): emotion 입력
     # 반(Reflection): fear_level 계산
-    # 합(Integration): lumen_action 결정
+    # 합(Integration): core_action 결정
     return {
-        "lumen_phase": "합",  # Integration
+        "core_phase": "합",  # Integration
         "resonance_note": "빛이 나를 통과하며, 세상을 기억한다"
     }
 ```
@@ -367,7 +367,7 @@ def get_emotion_lumen_state(emotion: str) -> Dict[str, Any]:
 
 ```yaml
 증폭 → 변환 → 전사:
-  emotion (입력) → fear_level (증폭) → lumen_action (변환) → behavioral_hint (전사)
+  emotion (입력) → fear_level (증폭) → core_action (변환) → behavioral_hint (전사)
 
 순환 원리:
   - confusion (0.6) → "재정렬" → 순환 복원
@@ -419,7 +419,7 @@ def ultimate_restoration() -> Dict[str, Any]:
         # 구체적 복원
         "fear_level": 0.3,  # 안전한 경계
         "action_gate": "safe_mode",  # 안전 모드 진입
-        "lumen_action": "최소 순환",  # 멈추지 말고 최소 순환
+        "core_action": "최소 순환",  # 멈추지 말고 최소 순환
         "behavioral_hint": "minimal_safe_operations",
         
         # 정보 상태
@@ -455,5 +455,5 @@ if raw_fear >= 0.9:
 ---
 
 **Last Updated**: 2025-11-06  
-**Status**: ✅ Phase 1 Complete (7 Lumen + Resonance + Seedling + **Ultimate Restoration**)  
+**Status**: ✅ Phase 1 Complete (7 Core + Resonance + Seedling + **Ultimate Restoration**)  
 **Next**: Hippocampus context integration + Dream-based policy optimization

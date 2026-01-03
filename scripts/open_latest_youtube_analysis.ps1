@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $false)][string]$Folder,
     [switch]$GenerateMdIfMissing,
     [switch]$OpenFolder

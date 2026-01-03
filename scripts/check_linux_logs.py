@@ -1,41 +1,42 @@
-#!/usr/bin/env python3
-"""
-Check Linux Service Logs
-"""
-import paramiko
+import os
 import sys
 from pathlib import Path
-
-# Import credentials manager
-sys.path.insert(0, str(Path(__file__).parent))
 from credentials_manager import get_linux_vm_credentials
+import paramiko
 
-def check_service_logs(service_name, lines=50):
+def check_linux_logs():
+    # Get Credentials
     creds = get_linux_vm_credentials()
-    
-    client = paramiko.SSHClient()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    
+    if not creds:
+        print("❌ Could not find Linux VM credentials.")
+        return
+
+    host = creds.get("host")
+    user = creds.get("user")
+    pw = creds.get("password")
+
     try:
-        client.connect(creds['host'], username=creds['user'], password=creds['password'])
+        # Create SSH Client
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(host, username=user, password=pw)
         
-        cmd = f"journalctl --user -u {service_name} -n {lines} --no-pager"
-        print(f"📋 Checking logs for {service_name}...")
-        print("-" * 60)
+        print(f"✅ Connected to {host} as {user}")
         
-        stdin, stdout, stderr = client.exec_command(cmd)
-        output = stdout.read().decode('utf-8')
-        error = stderr.read().decode('utf-8')
+        # Check logs
+        stdin, stdout, stderr = ssh.exec_command("journalctl --user -u agi-rhythm -n 50 --no-pager")
+        print("📋 Last 50 lines of agi-rhythm logs:")
+        print(stdout.read().decode())
         
-        if output:
-            print(output)
-        if error:
-            print(f"Error output: {error}")
-            
-        client.close()
+        # Check if background_self_bridge.py is running
+        stdin, stdout, stderr = ssh.exec_command("ps aux | grep background_self_bridge")
+        print("🕵️ Process Check (alpha_background_self):")
+        print(stdout.read().decode())
+        
+        ssh.close()
         
     except Exception as e:
-        print(f"❌ Failed to check logs: {e}")
+        print(f"❌ Error: {e}")
 
 if __name__ == "__main__":
-    check_service_logs("agi-body")
+    check_linux_logs()

@@ -7,7 +7,7 @@ REM so that rhythm_think.py and sync start automatically on login.
 REM ========================================
 
 set STARTUP_FOLDER=%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
-set BATCH_FILE=C:\workspace\agi\scripts\start_rhythm_life_support.bat
+set "BATCH_FILE=%~dp0start_rhythm_life_support.bat"
 set SHORTCUT_NAME=AGI_Rhythm_LifeSupport.bat
 
 echo Installing AGI Rhythm Life Support to Startup folder...

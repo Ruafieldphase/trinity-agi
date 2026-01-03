@@ -54,7 +54,7 @@
 ### 필요한 새 컴포넌트
 
 1️⃣ **세션 핸드오버 프로토콜** (Session Handover)  
-2️⃣ **자동 페르소나 호출 메커니즘** (Auto-invoke Binoche)  
+2️⃣ **자동 페르소나 호출 메커니즘** (Auto-invoke Binoche_Observer)  
 3️⃣ **컨텍스트 직렬화/역직렬화** (Context Serialization)  
 4️⃣ **연속성 검증** (Continuity Verification)  
 
@@ -232,7 +232,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "🔄 Binoche Continuation Invoked" -ForegroundColor Cyan
+Write-Host "🔄 Binoche_Observer Continuation Invoked" -ForegroundColor Cyan
 
 # 1. 핸드오버 확인
 if (-not (Test-Path $HandoverPath)) {
@@ -265,11 +265,11 @@ $binocheMessage = @"
 
 # 3. GitHub Copilot Chat API 호출 (VS Code Extension API)
 # Note: 실제 구현에서는 VS Code API 또는 MCP 서버를 통해 호출
-Write-Host "🤖 Invoking Binoche Persona..." -ForegroundColor Magenta
+Write-Host "🤖 Invoking Binoche_Observer Persona..." -ForegroundColor Magenta
 
 # Option A: VS Code Extension API (gitko-agent-extension 활용)
 $payload = @{
-    persona = "binoche"
+    persona = "Binoche_Observer"
     message = $binocheMessage
     context = @{
         handover_path = $HandoverPath
@@ -287,7 +287,7 @@ try {
     
     # Option B: 클립보드에 메시지 복사 (사용자가 수동으로 Copilot Chat에 붙여넣기)
     Set-Clipboard -Value $binocheMessage
-    Write-Host "📋 Binoche message copied to clipboard" -ForegroundColor Cyan
+    Write-Host "📋 Binoche_Observer message copied to clipboard" -ForegroundColor Cyan
     Write-Host "   Paste it into Copilot Chat to continue" -ForegroundColor Yellow
 }
 
@@ -408,7 +408,7 @@ python scripts/monitor_token_usage.py --threshold 0.9 --interval 30 &
 ```python
 #!/usr/bin/env python3
 """
-Binoche Auto-Resume: 자동으로 핸드오버된 작업 재개
+Binoche_Observer Auto-Resume: 자동으로 핸드오버된 작업 재개
 
 Usage:
     python binoche_auto_resume.py
@@ -430,12 +430,12 @@ def resume_work():
     handover = manager.get_latest_handover()
     
     if not handover:
-        print("[Binoche] No pending handover found.")
+        print("[Binoche_Observer] No pending handover found.")
         return
     
-    print(f"[Binoche] Resuming task: {handover.task_description}")
-    print(f"[Binoche] Last progress: {handover.current_progress}")
-    print(f"[Binoche] Next steps:")
+    print(f"[Binoche_Observer] Resuming task: {handover.task_description}")
+    print(f"[Binoche_Observer] Last progress: {handover.current_progress}")
+    print(f"[Binoche_Observer] Next steps:")
     for i, step in enumerate(handover.next_steps, 1):
         print(f"  {i}. {step}")
     
@@ -458,7 +458,7 @@ def resume_work():
     # 클립보드 복사 (Windows)
     import subprocess
     subprocess.run(["clip"], input=resume_message.encode('utf-16le'), check=True)
-    print("[Binoche] Resume message copied to clipboard. Paste it into Copilot Chat.")
+    print("[Binoche_Observer] Resume message copied to clipboard. Paste it into Copilot Chat.")
     
     # 완료 후 핸드오버 삭제
     # manager.clear_handover(handover.session_id)
@@ -572,7 +572,7 @@ if handover:
 
    ```json
    {
-     "label": "🔄 Binoche: Resume Work",
+     "label": "🔄 Binoche_Observer: Resume Work",
      "type": "shell",
      "command": "python fdo_agi_repo/scripts/rune/binoche_auto_resume.py"
    }

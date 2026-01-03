@@ -27,6 +27,12 @@ from dataclasses import dataclass, asdict, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, List, Dict, Optional
+import sys
+from workspace_root import get_workspace_root
+SCRIPTS_DIR = Path(__file__).resolve().parents[1]
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
 
 # --- Configuration ---
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v"}
@@ -55,7 +61,7 @@ class ExplorationSession:
     timestamp: float     # 사용자 기입 타임스탬프 (없으면 파일 mtime)
     mtime_iso: str       # 파일 수정 시간
     where: Dict[str, Any] = field(default_factory=dict)  # 예: {"country":"JP","city":"Tokyo","lat":...,"lon":...}
-    who: Dict[str, Any] = field(default_factory=dict)    # 예: {"role":"binoche","mode":"observer"}
+    who: Dict[str, Any] = field(default_factory=dict)    # 예: {"role":"Binoche_Observer","mode":"observer"}
     boundaries: List[Dict[str, Any]] = field(default_factory=list)  # allow/deny 규칙(선택)
     comparisons: List[Dict[str, Any]] = field(default_factory=list) # 비교/차이(선택)
 
@@ -247,7 +253,7 @@ def run_exploration_intake(workspace_root: Path) -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", type=str, default=str(Path(__file__).resolve().parents[2]))
+    ap.add_argument("--workspace", type=str, default=str(get_workspace_root()))
     args = ap.parse_args()
     
     ws = Path(args.workspace).resolve()

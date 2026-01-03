@@ -5,9 +5,10 @@ Test gemini-2.5-flash-lite-preview model
 
 import sys
 from pathlib import Path
+from workspace_root import get_workspace_root
 
 # Add Ion Mentoring path
-ION_PATH = Path(__file__).parent.parent / "LLM_Unified/ion-mentoring"
+ION_PATH = get_workspace_root() / "LLM_Unified/ion-mentoring"
 sys.path.append(str(ION_PATH))
 
 try:

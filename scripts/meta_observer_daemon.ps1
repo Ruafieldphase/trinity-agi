@@ -1,12 +1,15 @@
-# Meta-Layer Observer Daemon
+﻿# Meta-Layer Observer Daemon
 # OS-level supervision with heartbeat monitoring
 # Runs as Scheduled Task, independent of PowerShell jobs
 
 param(
     [int]$IntervalSeconds = 30,
     [int]$TimeoutSeconds = 300,  # 5 minutes
-    [string]$LogFile = "$PSScriptRoot\..\outputs\meta_observer_log.jsonl"
+    [string]$LogFile = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\meta_observer_log.jsonl"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 

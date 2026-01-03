@@ -35,6 +35,9 @@ param(
     [string]$Time = "10:00",
     [int]$Hours = 24
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $TaskName = "AGI_AutopoieticTrinityCycle"

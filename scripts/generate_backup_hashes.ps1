@@ -27,12 +27,15 @@
 #>
 
 param(
-    [string]$BackupRoot = "C:\workspace\agi\backups",
+    [string]$BackupRoot = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\backups",
     [string]$BackupName,
     [string[]]$Sections = @("config", "fdo_agi_repo\memory", "outputs"),
     [string]$Algorithm = "MD5",
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [System.Text.UTF8Encoding]::UTF8 } catch {}

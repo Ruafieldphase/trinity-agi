@@ -1,12 +1,15 @@
-param(
+﻿param(
     [int]$CheckIntervalSeconds = 60,
     [int]$StaleMinutes = 10,
     [string]$StartScript = "$PSScriptRoot\start_luon_watch.ps1",
     [int]$WatchIntervalSeconds = 15,
-    [string]$LogDirectory = "$PSScriptRoot\..\logs",
-    [string]$LogPath = "$PSScriptRoot\..\logs\luon_watch_keepalive.log",
+    [string]$LogDirectory = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\logs",
+    [string]$LogPath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\logs\luon_watch_keepalive.log",
     [int]$MaxIterations = 0
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $LogDirectory = [System.IO.Path]::GetFullPath($LogDirectory)

@@ -113,7 +113,7 @@ JSON 데이터를 **즉시 이해 가능한 그래프**로 변환
    - 추세선: 회복 곡선
 
 3. **전략 효과 비교**
-   - question_loop vs lumen_frame
+   - question_loop vs core_frame
    - 각 전략의 감응 진폭 변화
 
 #### 기술

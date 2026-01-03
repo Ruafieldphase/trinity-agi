@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 Param(
     [int]$WarnCpuPercent = 90,
     [int]$WarnMinAvailMB = 512,
@@ -128,7 +128,7 @@ Invoke-Step 'Queue Health' {
     $report.checks.queue_health = $queue
 }
 
-# 4) Quick unified status (AGI + Lumen)
+# 4) Quick unified status (AGI + Core)
 Invoke-Step 'Unified Quick Status' {
     $qs = & "${PSScriptRoot}/quick_status.ps1" 2>$null
     $report.checks.quick_status = $qs

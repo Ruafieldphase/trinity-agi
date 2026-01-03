@@ -1,8 +1,10 @@
 import json
 from datetime import datetime
 from pathlib import Path
+from workspace_root import get_workspace_root
 
-ledger_file = Path("/home/bino/agi/fdo_agi_repo/memory/resonance_ledger.jsonl")
+WORKSPACE_ROOT = get_workspace_root()
+ledger_file = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 
 message = {
     "timestamp": datetime.now().isoformat(),

@@ -15,9 +15,10 @@ import time
 import statistics
 from pathlib import Path
 from typing import List, Dict
+from workspace_root import get_workspace_root
 
 # Add scripts to path
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = get_workspace_root()
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from orchestration_bridge import OrchestrationBridge

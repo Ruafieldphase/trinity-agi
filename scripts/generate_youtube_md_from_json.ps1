@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $false)][string]$File,
     [Parameter(Mandatory = $false)][string]$OutFile,
     [switch]$NoOpen

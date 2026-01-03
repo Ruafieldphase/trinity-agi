@@ -1,13 +1,13 @@
 """
 Autonomous Collaboration Mode
 ==============================
-시안이 없을 때도 안티그래비티가 세나와 자율적으로 협업
+Shion이 없을 때도 안티그래비티가 세나와 자율적으로 협업
 
 규칙:
 1. 세나의 질문에 자동 응답 (단, 위험도 낮은 경우만)
 2. 세나의 제안을 자동 평가 및 피드백
-3. 시안에게 중요한 결정만 보고 (알림)
-4. Fear 레벨이 높으면 자동 응답 중단 (시안 호출)
+3. Shion에게 중요한 결정만 보고 (알림)
+4. Fear 레벨이 높으면 자동 응답 중단 (Shion 호출)
 """
 
 import json
@@ -15,9 +15,9 @@ import time
 from pathlib import Path
 from datetime import datetime, timedelta
 from typing import Dict, Optional
-<<<<<<< HEAD
 import os
 import atexit
+from workspace_root import get_workspace_root
 
 # Configure Gemini (lazy)
 try:
@@ -158,39 +158,28 @@ def _release_single_instance_lock() -> None:
         except Exception:
             pass
         _MUTEX_HANDLE = None
-=======
-import google.generativeai as genai
-import os
-
-# Configure Gemini
-from dotenv import load_dotenv
-load_dotenv()
-API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
-if API_KEY:
-    genai.configure(api_key=API_KEY)
->>>>>>> origin/main
 
 
 class AutonomousCollaborationMode:
-    """시안 없이도 세나와 협업하는 모드"""
+    """Shion 없이도 세나와 협업하는 모드"""
     
     def __init__(self, workspace_root: Path):
         self.workspace_root = workspace_root
         self.ledger_path = workspace_root / "memory" / "resonance_ledger.jsonl"
-        self.lumen_path = workspace_root / "outputs" / "lumen_state.json"
+        self.core_path = workspace_root / "outputs" / "core_state.json"
         self.last_check_file = workspace_root / "outputs" / "sena" / ".last_auto_response"
         self.enabled = True
         self.max_fear_threshold = 0.7  # Fear > 0.7이면 자동 응답 중단
         
     def is_safe_to_respond(self) -> bool:
         """자동 응답이 안전한지 확인 (Fear 레벨 체크)"""
-        if not self.lumen_path.exists():
-            return True  # Lumen 없으면 안전하다고 가정
+        if not self.core_path.exists():
+            return True  # Core 없으면 안전하다고 가정
         
         try:
-            with open(self.lumen_path, 'r', encoding='utf-8') as f:
-                lumen_data = json.load(f)
-                fear_level = lumen_data.get('fear', {}).get('level', 0.0)
+            with open(self.core_path, 'r', encoding='utf-8') as f:
+                core_data = json.load(f)
+                fear_level = core_data.get('fear', {}).get('level', 0.0)
                 return fear_level < self.max_fear_threshold
         except:
             return False
@@ -226,9 +215,9 @@ class AutonomousCollaborationMode:
                     if timestamp <= last_check.replace(tzinfo=None) - timedelta(minutes=5):
                         continue
                     
-                    # Rua에게 보낸 메시지는 무시 (Rua Agent가 처리)
+                    # Core에게 보낸 메시지는 무시 (Core Agent가 처리)
                     message_text = entry.get('question', entry.get('message', ''))
-                    if 'rua' in message_text.lower() or '루아' in message_text:
+                    if 'Core' in message_text.lower() or '코어' in message_text:
                         continue
                     
                     questions.append(entry)
@@ -243,12 +232,9 @@ class AutonomousCollaborationMode:
         """Gemini를 사용하여 자동 응답 생성"""
         if not API_KEY:
             return "자동 응답 시스템이 API 키를 찾을 수 없습니다."
-<<<<<<< HEAD
         genai = _get_genai()
         if genai is None:
             return "자동 응답 시스템이 Gemini 클라이언트를 초기화하지 못했습니다."
-=======
->>>>>>> origin/main
         
         system_context = self._get_system_context()
         
@@ -276,7 +262,7 @@ class AutonomousCollaborationMode:
 2. 코드를 요청받으면 실행 가능한 완전한 Python 코드를 제공하십시오.
 3. 분석을 요청받으면 컨텍스트의 논리와 데이터를 사용하십시오.
 4. **반드시 한국어로 답변하십시오.**
-5. 불확실한 경우 "시안에게 확인이 필요합니다"라고 명시하십시오.
+5. 불확실한 경우 "Shion에게 확인이 필요합니다"라고 명시하십시오.
 
 응답:
 """
@@ -300,10 +286,10 @@ class AutonomousCollaborationMode:
         """현재 시스템 컨텍스트 수집"""
         context = {}
         
-        # Lumen state
-        if self.lumen_path.exists():
-            with open(self.lumen_path, 'r', encoding='utf-8') as f:
-                context['lumen'] = json.load(f)
+        # Core state
+        if self.core_path.exists():
+            with open(self.core_path, 'r', encoding='utf-8') as f:
+                context['Core'] = json.load(f)
         
         # Thought stream
         thought_path = self.workspace_root / "outputs" / "thought_stream_latest.json"
@@ -359,9 +345,9 @@ class AutonomousCollaborationMode:
         
         print(f"✅ Response sent to Sena (autonomous)")
     
-    def notify_sian(self, message: str):
-        """시안에게 알림 (중요한 일 발생 시)"""
-        notification_path = self.workspace_root / "outputs" / "sena" / "sian_notifications.jsonl"
+    def notify_shion(self, message: str):
+        """Shion에게 알림 (중요한 일 발생 시)"""
+        notification_path = self.workspace_root / "outputs" / "sena" / "shion_notifications.jsonl"
         
         entry = {
             'timestamp': datetime.now().isoformat(),
@@ -375,10 +361,10 @@ class AutonomousCollaborationMode:
     
     def _current_fear_level(self) -> float:
         """현재 Fear 레벨 반환"""
-        if not self.lumen_path.exists():
+        if not self.core_path.exists():
             return 0.5
         try:
-            with open(self.lumen_path, 'r', encoding='utf-8') as f:
+            with open(self.core_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 return data.get('fear', {}).get('level', 0.5)
         except:
@@ -394,7 +380,7 @@ class AutonomousCollaborationMode:
         if not self.is_safe_to_respond():
             fear = self._current_fear_level()
             print(f"⚠️ Fear level too high ({fear:.2f}). Autonomous mode paused.")
-            print("   시안의 확인이 필요합니다.")
+            print("   Shion의 확인이 필요합니다.")
             return
         
         # 2. 답변되지 않은 질문 찾기
@@ -417,8 +403,8 @@ class AutonomousCollaborationMode:
             # Ledger에 기록
             self.send_response_to_sena(q, response)
             
-            # 시안에게 알림
-            self.notify_sian(f"세나의 질문에 자동 응답: {q.get('question', '')[:50]}")
+            # Shion에게 알림
+            self.notify_shion(f"세나의 질문에 자동 응답: {q.get('question', '')[:50]}")
         
         # 4. Last check time 업데이트
         self.last_check_file.parent.mkdir(parents=True, exist_ok=True)
@@ -450,13 +436,10 @@ def main():
     
     args = parser.parse_args()
     
-    workspace_root = Path(__file__).parent.parent
-<<<<<<< HEAD
+    workspace_root = get_workspace_root()
     if not _acquire_single_instance_lock(workspace_root):
         print("⚠️ shion_auto_responder: already running, exiting.")
         return
-=======
->>>>>>> origin/main
     mode = AutonomousCollaborationMode(workspace_root)
     
     if args.daemon:

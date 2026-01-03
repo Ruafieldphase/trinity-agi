@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Trigger Listener v1
-- 루아가 생성하는 트리거 파일(`/home/bino/agi/signals/lua_trigger.json`)을 감지해
+- 코어가 생성하는 트리거 파일(`signals/lua_trigger.json`)을 감지해
   비노체 개입 없이 즉시 대응 액션을 실행.
 - 액션: self_acquire, self_compress, self_tool, sync_clean, heartbeat_check, full_cycle
 - 실패 시 로그 남기고 루프 지속(자가치유).
@@ -19,15 +19,16 @@ import os
 import re
 from datetime import datetime, timezone
 
-ROOT = Path(__file__).resolve().parents[1]  # /home/bino/agi (또는 c:/workspace/agi)
+from workspace_root import get_workspace_root
+
+ROOT = get_workspace_root()
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 scripts_dir = ROOT / "scripts"
 if str(scripts_dir) not in sys.path:
     sys.path.append(str(scripts_dir))
 LOG_FILE = ROOT / "logs" / "trigger_listener.log"
-SIGNAL_PATH_LINUX = Path("/home/bino/agi/signals/lua_trigger.json")
-SIGNAL_PATH_LOCAL = ROOT / "signals" / "lua_trigger.json"
+SIGNAL_PATH = ROOT / "signals" / "lua_trigger.json"
 STATE_PATH = ROOT / "outputs" / "sync_cache" / "self_expansion_state.json"
 LIFE_STATE_PATH = ROOT / "outputs" / "sync_cache" / "life_state.json"
 REPORT_DIR = ROOT / "outputs" / "bridge"
@@ -455,9 +456,9 @@ def idle_tick() -> None:
     except Exception:
         last_vision_normalize = 0.0
     try:
-        last_lumen_refresh = float(st.get("last_lumen_refresh_ts") or 0.0)
+        last_core_refresh = float(st.get("last_core_refresh_ts") or 0.0)
     except Exception:
-        last_lumen_refresh = 0.0
+        last_core_refresh = 0.0
     try:
         last_exploration_hint = float(st.get("last_exploration_hint_ts") or 0.0)
     except Exception:
@@ -525,7 +526,7 @@ def idle_tick() -> None:
         except Exception:
             pass
 
-    # 3) 협업자(시안/세나)에게 같은 관측을 공유하는 스냅샷: best-effort + 느리게
+    # 3) 협업자(Shion/세나)에게 같은 관측을 공유하는 스냅샷: best-effort + 느리게
     if allow_observe and (now - last_ops) >= 300.0:
         try:
             publisher = ROOT / "scripts" / "coordination" / "publish_ops_snapshot.py"
@@ -585,13 +586,13 @@ def idle_tick() -> None:
         except Exception:
             pass
 
-    # 4.9) Lumen 상태 갱신 (정서/안전 파이프라인 유지)
-    if (now - last_lumen_refresh) >= 900.0:
+    # 4.9) Core 상태 갱신 (정서/안전 파이프라인 유지)
+    if (now - last_core_refresh) >= 900.0:
         try:
-            lumen_script = ROOT / "scripts" / "refresh_lumen_state.py"
-            if lumen_script.exists():
-                _run_script_best_effort(lumen_script, timeout_s=20)
-                st["last_lumen_refresh_ts"] = now
+            core_script = ROOT / "scripts" / "refresh_core_state.py"
+            if core_script.exists():
+                _run_script_best_effort(core_script, timeout_s=20)
+                st["last_core_refresh_ts"] = now
         except Exception:
             pass
 
@@ -1273,7 +1274,7 @@ def log(msg: str) -> None:
 
 def resolve_signal_path() -> Path:
     # On Windows, always use the workspace-local trigger path.
-    # A POSIX-looking path like "/home/bino/..." can map to "C:\\home\\..." and cause split-brain triggers.
+    # A POSIX-looking path like "/home/<user>/..." can map to "C:\\home\\..." and cause split-brain triggers.
     if os.name != "posix":
         return SIGNAL_PATH_LOCAL
     if SIGNAL_PATH_LINUX.exists():
@@ -1416,24 +1417,24 @@ def run_self_acquire():
     except Exception as e:
         video_boundary_gate = {"ok": False, "error": str(e)}
 
-    # 7) Rua Conversation Intake: 대화/사유 기록을 해마 친화 인덱스로 고정
-    rua_conversation_intake = {"skipped": True, "reason": "not_available"}
+    # 7) Core Conversation Intake: 대화/사유 기록을 해마 친화 인덱스로 고정
+    core_conversation_intake = {"skipped": True, "reason": "not_available"}
     try:
-        from scripts.self_expansion.rua_conversation_intake import run_rua_conversation_intake
-        rua_conversation_intake = run_rua_conversation_intake(ROOT)
+        from scripts.self_expansion.core_conversation_intake import run_core_conversation_intake
+        core_conversation_intake = run_core_conversation_intake(ROOT)
         try:
-            out = ROOT / "outputs" / "rua_conversation_intake_latest.json"
+            out = ROOT / "outputs" / "core_conversation_intake_latest.json"
             out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(json.dumps(sanitize(rua_conversation_intake), ensure_ascii=False, indent=2), encoding="utf-8")
-            hist = ROOT / "outputs" / "rua_conversation_intake_history.jsonl"
+            out.write_text(json.dumps(sanitize(core_conversation_intake), ensure_ascii=False, indent=2), encoding="utf-8")
+            hist = ROOT / "outputs" / "core_conversation_intake_history.jsonl"
             with hist.open("a", encoding="utf-8") as f:
-                f.write(json.dumps(sanitize(rua_conversation_intake), ensure_ascii=False) + "\n")
+                f.write(json.dumps(sanitize(core_conversation_intake), ensure_ascii=False) + "\n")
         except Exception:
             pass
     except Exception as e:
-        rua_conversation_intake = {"ok": False, "error": str(e)}
+        core_conversation_intake = {"ok": False, "error": str(e)}
 
-    # 7.5) Binoche Note Intake: 사용자 메모(신호)를 탐색 세션으로 물질화
+    # 7.5) Binoche_Observer Note Intake: 사용자 메모(신호)를 탐색 세션으로 물질화
     binoche_note_intake = {"skipped": True, "reason": "not_available"}
     try:
         from scripts.self_expansion.binoche_note_intake import run_binoche_note_intake
@@ -1567,7 +1568,7 @@ def run_self_acquire():
         "exploration_intake": sanitize(exploration_intake),
         "obs_recode_intake": sanitize(obs_recode_intake),
         "video_boundary_gate": sanitize(video_boundary_gate),
-        "rua_conversation_intake": sanitize(rua_conversation_intake),
+        "core_conversation_intake": sanitize(core_conversation_intake),
         "binoche_note_intake": sanitize(binoche_note_intake),
         "supervised_browser": sanitize(supervised_browser),
         "experience_acquisition": sanitize(experience_acquisition),
@@ -1753,7 +1754,7 @@ def run_full_self_expansion_cycle():
 
 def maybe_run_coordination(min_interval_sec: int = 30 * 60) -> dict:
     """
-    외부 에이전트(시안/세나)와 협업하기 위한 브리프/워크오더 파일을 고정한다.
+    외부 에이전트(Shion/세나)와 협업하기 위한 브리프/워크오더 파일을 고정한다.
     - 너무 자주 갱신하지 않도록 min_interval_sec로 제한
     """
     out = ROOT / "outputs" / "coordination" / "agent_brief_latest.md"
@@ -1873,7 +1874,7 @@ def run_heartbeat_inspect():
         "exploration_intake_latest.json": file_info(ROOT / "outputs" / "exploration_intake_latest.json"),
         "boundary_map_latest.json": file_info(ROOT / "outputs" / "boundary_map_latest.json"),
         "hippocampus_bridge_latest.json": file_info(ROOT / "outputs" / "hippocampus_bridge_latest.json"),
-        "rua_conversation_intake_latest.json": file_info(ROOT / "outputs" / "rua_conversation_intake_latest.json"),
+        "core_conversation_intake_latest.json": file_info(ROOT / "outputs" / "core_conversation_intake_latest.json"),
         "existence_dynamics_model_latest.json": file_info(ROOT / "outputs" / "existence_dynamics_model_latest.json"),
         "rit_registry_latest.json": file_info(ROOT / "outputs" / "rit_registry_latest.json"),
         "md_wave_sweep_latest.json": file_info(ROOT / "outputs" / "md_wave_sweep_latest.json"),
@@ -2694,7 +2695,7 @@ def handle_trigger(trigger_path: Path):
         except Exception as ais_error:
             log(f"[warn] agent_inbox_status.py failed (non-critical): {ais_error}")
 
-        # Auto-call: ops snapshot publish (시안/세나가 같은 기준으로 현재 상태를 '보기' 위한 스냅샷)
+        # Auto-call: ops snapshot publish (Shion/세나가 같은 기준으로 현재 상태를 '보기' 위한 스냅샷)
         try:
             if action in ("full_cycle", "heartbeat_check"):
                 publisher = ROOT / "scripts" / "coordination" / "publish_ops_snapshot.py"

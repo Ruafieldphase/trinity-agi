@@ -1,8 +1,11 @@
 # Real-time Process Creation Monitor
 # 새로 생성되는 PowerShell/Python 프로세스를 즉시 감지
 
+
+. "$PSScriptRoot\..\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 $ErrorActionPreference = "Continue"
-$logPath = "C:\workspace\agi\outputs\process_creation_monitor.log"
+$logPath = "$WorkspaceRoot\outputs\process_creation_monitor.log"
 
 Write-Host "=== Process Creation Monitor ===" -ForegroundColor Cyan
 Write-Host "Detecting new PowerShell/Python processes..." -ForegroundColor Yellow

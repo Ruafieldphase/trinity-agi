@@ -8,9 +8,10 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, List, Optional
+from workspace_root import get_workspace_root
 
 # 경로 설정
-WORKSPACE = Path(__file__).parent.parent
+WORKSPACE = get_workspace_root()
 REAPER_PROJECTS = WORKSPACE / "reaper_projects"
 REAPER_RENDERS = WORKSPACE / "outputs" / "generated_music"
 REAPER_TEMPLATES = REAPER_PROJECTS / "templates"

@@ -12,9 +12,10 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime, timezone
+from workspace_root import get_workspace_root
 
 # Add workspace to path
-WORKSPACE = Path(__file__).resolve().parent.parent
+WORKSPACE = get_workspace_root()
 sys.path.insert(0, str(WORKSPACE))
 
 print(f"[DEBUG] WORKSPACE: {WORKSPACE}")

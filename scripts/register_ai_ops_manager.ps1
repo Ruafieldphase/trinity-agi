@@ -1,8 +1,11 @@
-param([switch]$Register, [switch]$Unregister, [switch]$Status)
+﻿param([switch]$Register, [switch]$Unregister, [switch]$Status)
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 $TaskName = 'AGI_AI_Ops_Manager'
-$WorkspaceRoot = 'C:\workspace\agi'
 $ScriptPath = Join-Path $WorkspaceRoot 'scripts\ai_ops_manager.ps1'
 $StartupDir = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Startup'
 $StartupLink = Join-Path $StartupDir 'AGI_AIOpsManager.lnk'

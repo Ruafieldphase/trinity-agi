@@ -18,9 +18,10 @@ import sys
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Set
+from workspace_root import get_workspace_root
 
 # Add workspace to path
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 sys.path.insert(0, str(WORKSPACE_ROOT))
 
 from fdo_agi_repo.rpa.youtube_learner import YouTubeLearner, YouTubeLearnerConfig

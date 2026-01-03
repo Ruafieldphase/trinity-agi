@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Auto-Upgrade Detector - Git pull 후 자동으로 환경을 업데이트
@@ -11,10 +11,13 @@
 #>
 
 param(
-    [string]$WorkspaceRoot = "$PSScriptRoot\..",
+    [string]$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } ) = "$PSScriptRoot\..",
     [switch]$DryRun,
     [switch]$Force
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $logFile = "$WorkspaceRoot\outputs\auto_upgrade_log.jsonl"

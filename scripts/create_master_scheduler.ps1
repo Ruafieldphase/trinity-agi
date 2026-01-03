@@ -1,4 +1,4 @@
-# Master Scheduler - Unified Orchestration Engine
+﻿# Master Scheduler - Unified Orchestration Engine
 # Consolidates all 42 automation scripts into single coordinated rhythm
 # Executes tasks based on time intervals and dependencies
 # Replaces: 42 independent Scheduled Task scripts → 1 Master Scheduler
@@ -8,13 +8,17 @@ param(
     [switch]$InstallSchedule,  # Register as Windows Scheduled Task
     [int]$CheckIntervalSeconds = 60
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = "Continue"
 
 # === Configuration ===
-$MasterLogFile = "C:\workspace\agi\outputs\master_scheduler.log"
-$StateFile = "C:\workspace\agi\outputs\master_scheduler_state.json"
-$ScriptsDir = "C:\workspace\agi\scripts"
+$MasterLogFile = "$WorkspaceRoot\outputs\master_scheduler.log"
+$StateFile = "$WorkspaceRoot\outputs\master_scheduler_state.json"
+$ScriptsDir = "$WorkspaceRoot\scripts"
 
 # === Task Definitions ===
 # Structure: interval (minutes), last_run, commands, depends_on

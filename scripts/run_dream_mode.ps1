@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     AGI Dream Mode - Constraint-free pattern exploration during sleep.
@@ -30,6 +30,9 @@ param(
     [double]$Temperature = 1.0,
     [double]$Recombination = 1.0
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 $WorkspaceRoot = Split-Path -Parent $PSScriptRoot

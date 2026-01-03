@@ -1,10 +1,13 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # final_verification.ps1
 # Phase 5 프로젝트 최종 검증 스크립트
 
 param(
     [switch]$Verbose
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = 'Stop'
 
@@ -88,19 +91,19 @@ function Test-Check {
 Write-Host "`nRequired Files Verification..." -ForegroundColor Cyan
 
 Test-Check -Name "Web Server File" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\fdo_agi_repo\monitoring\web_server.py"
+    Test-Path "$WorkspaceRoot\fdo_agi_repo\monitoring\web_server.py"
 } -SuccessMessage "web_server.py found" -FailureMessage "web_server.py missing"
 
 Test-Check -Name "Dashboard HTML" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\fdo_agi_repo\monitoring\static\index.html"
+    Test-Path "$WorkspaceRoot\fdo_agi_repo\monitoring\static\index.html"
 } -SuccessMessage "index.html found" -FailureMessage "index.html missing"
 
 Test-Check -Name "Dashboard JavaScript" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\fdo_agi_repo\monitoring\static\app.js"
+    Test-Path "$WorkspaceRoot\fdo_agi_repo\monitoring\static\app.js"
 } -SuccessMessage "app.js found" -FailureMessage "app.js missing"
 
 Test-Check -Name "Dashboard CSS" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\fdo_agi_repo\monitoring\static\style.css"
+    Test-Path "$WorkspaceRoot\fdo_agi_repo\monitoring\static\style.css"
 } -SuccessMessage "style.css found" -FailureMessage "style.css missing"
 
 Test-Check -Name "Start Script" -Critical -Test {
@@ -111,23 +114,23 @@ Test-Check -Name "Start Script" -Critical -Test {
 Write-Host "`nDocument Verification..." -ForegroundColor Cyan
 
 Test-Check -Name "Operations Guide" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\OPERATIONS_GUIDE.md"
+    Test-Path "$WorkspaceRoot\OPERATIONS_GUIDE.md"
 } -SuccessMessage "OPERATIONS_GUIDE.md found" -FailureMessage "Operations guide missing"
 
 Test-Check -Name "Release Notes" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\RELEASE_NOTES_PHASE5.md"
+    Test-Path "$WorkspaceRoot\RELEASE_NOTES_PHASE5.md"
 } -SuccessMessage "RELEASE_NOTES_PHASE5.md found" -FailureMessage "Release notes missing"
 
 Test-Check -Name "Project Completion" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\PROJECT_COMPLETION.md"
+    Test-Path "$WorkspaceRoot\PROJECT_COMPLETION.md"
 } -SuccessMessage "PROJECT_COMPLETION.md found" -FailureMessage "Completion doc missing"
 
 Test-Check -Name "Final Summary" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\PHASE_5_FINAL_SUMMARY.md"
+    Test-Path "$WorkspaceRoot\PHASE_5_FINAL_SUMMARY.md"
 } -SuccessMessage "PHASE_5_FINAL_SUMMARY.md found" -FailureMessage "Final summary missing"
 
 Test-Check -Name "Project README" -Critical -Test {
-    $readme = Get-Content "$PSScriptRoot\..\README.md" -Raw
+    $readme = Get-Content "$WorkspaceRoot\README.md" -Raw
     $readme -match "Phase 5"
 } -SuccessMessage "README.md has Phase 5 content" -FailureMessage "README.md missing Phase 5"
 
@@ -135,18 +138,18 @@ Test-Check -Name "Project README" -Critical -Test {
 Write-Host "`nPython Environment Verification..." -ForegroundColor Cyan
 
 Test-Check -Name "fdo_agi_repo venv" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\fdo_agi_repo\.venv\Scripts\python.exe"
+    Test-Path "$WorkspaceRoot\fdo_agi_repo\.venv\Scripts\python.exe"
 } -SuccessMessage "fdo_agi_repo Python venv found" -FailureMessage "Virtual environment missing"
 
 Test-Check -Name "LLM_Unified venv" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\LLM_Unified\.venv\Scripts\python.exe"
+    Test-Path "$WorkspaceRoot\LLM_Unified\.venv\Scripts\python.exe"
 } -SuccessMessage "LLM_Unified Python venv found" -FailureMessage "Virtual environment missing"
 
 # 4. Task Queue Server
 Write-Host "`nTask Queue Server Verification..." -ForegroundColor Cyan
 
 Test-Check -Name "Task Queue Server File" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\LLM_Unified\ion-mentoring\task_queue_server.py"
+    Test-Path "$WorkspaceRoot\LLM_Unified\ion-mentoring\task_queue_server.py"
 } -SuccessMessage "task_queue_server.py found" -FailureMessage "Task Queue Server file missing"
 
 Test-Check -Name "Task Queue Server Running" -Test {
@@ -176,15 +179,15 @@ Test-Check -Name "Recent Commit" -Test {
 Write-Host "`nDirectory Structure Verification..." -ForegroundColor Cyan
 
 Test-Check -Name "monitoring directory" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\fdo_agi_repo\monitoring" -PathType Container
+    Test-Path "$WorkspaceRoot\fdo_agi_repo\monitoring" -PathType Container
 } -SuccessMessage "monitoring directory found" -FailureMessage "monitoring directory missing"
 
 Test-Check -Name "static directory" -Critical -Test {
-    Test-Path "$PSScriptRoot\..\fdo_agi_repo\monitoring\static" -PathType Container
+    Test-Path "$WorkspaceRoot\fdo_agi_repo\monitoring\static" -PathType Container
 } -SuccessMessage "static directory found" -FailureMessage "static directory missing"
 
 Test-Check -Name "outputs directory" -Test {
-    Test-Path "$PSScriptRoot\..\outputs" -PathType Container
+    Test-Path "$WorkspaceRoot\outputs" -PathType Container
 } -SuccessMessage "outputs directory found" -FailureMessage "outputs directory missing (auto-created)"
 
 # Final Results
@@ -227,7 +230,7 @@ Write-Host ""
 
 # JSON Output (Optional)
 if ($Verbose) {
-    $jsonPath = "$PSScriptRoot\..\outputs\verification_result.json"
+    $jsonPath = "$WorkspaceRoot\outputs\verification_result.json"
     $verificationResults | ConvertTo-Json -Depth 5 | Out-File -FilePath $jsonPath -Encoding UTF8
     Write-Host "Detailed results saved: $jsonPath" -ForegroundColor Gray
 }

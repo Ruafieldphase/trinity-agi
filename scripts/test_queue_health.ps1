@@ -1,4 +1,4 @@
-param()
+﻿param()
 $ErrorActionPreference = 'Stop'
 try {
     $r = Invoke-WebRequest -Uri 'http://localhost:8091/api/health' -TimeoutSec 3 -UseBasicParsing

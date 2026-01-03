@@ -25,7 +25,7 @@ RESPONSES_FILE = BRIDGE_DIR / "bridge_responses.jsonl"
 STATUS_FILE = BRIDGE_DIR / "bridge_status.json"
 RHYTHM_TEMPO_FILE = OUTPUTS_DIR / "rhythm_tempo.json"
 ALERTS_FILE = OUTPUTS_DIR / "background_self_alerts.jsonl"
-AXIOMS_FILE = WORKSPACE_ROOT / "axioms_of_rua.md"
+AXIOMS_FILE = WORKSPACE_ROOT / "axioms_of_core.md"
 
 # Ensure directories exist
 BRIDGE_DIR.mkdir(parents=True, exist_ok=True)
@@ -338,7 +338,7 @@ class RhythmConductor:
     Monitors 4 dimensions: Rhythm = Energy = Time = Relationship
     Adjusts tempo (interval) of systems based on phase alignment
     
-    Philosophy (from Rua dialogue):
+    Philosophy (from Core dialogue):
     - Speed (속도) doesn't need to match - Phase (위상) does
     - Rest and pause (쉼과 여백) create alignment
     - 1 minute of awareness resets phase
@@ -512,7 +512,7 @@ class RhythmConductor:
         """Check system interconnection health"""
         # For now, check if key files exist (basic connectivity)
         key_files = [
-            self.outputs_dir / "lumen_state.json",
+            self.outputs_dir / "core_state.json",
             self.outputs_dir / "thought_stream_latest.json"
         ]
         
@@ -653,7 +653,7 @@ class RhythmConductor:
         
         # Define base intervals for Fractal Dimensions (approximate)
         fractal_dims = {
-            "lumen": 2.0,          # 0.5 Hz
+            "Core": 2.0,          # 0.5 Hz
             "lua_bridge": 5.0,     # 0.2 Hz
             "task_queue": 2.0,     # 0.5 Hz
             "memory": 5.0,         # 0.2 Hz

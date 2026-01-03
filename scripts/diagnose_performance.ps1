@@ -1,3 +1,6 @@
+﻿. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 # System Performance Diagnosis Script
 # Identifies potential bottlenecks and slowdowns
 
@@ -42,11 +45,11 @@ Write-Host ""
 Write-Host "[2] Recent Performance Metrics (Last 24h)" -ForegroundColor Yellow
 Write-Host ""
 
-if (Test-Path "$PSScriptRoot\..\outputs\monitoring_metrics_latest.json") {
+if (Test-Path "$WorkspaceRoot\outputs\monitoring_metrics_latest.json") {
     try {
-        $metrics = Get-Content "$PSScriptRoot\..\outputs\monitoring_metrics_latest.json" -Raw | ConvertFrom-Json
+        $metrics = Get-Content "$WorkspaceRoot\outputs\monitoring_metrics_latest.json" -Raw | ConvertFrom-Json
 
-        Write-Host "Lumen Gateway:" -ForegroundColor Cyan
+        Write-Host "Core Gateway:" -ForegroundColor Cyan
         Write-Host "  Mean: $($metrics.Channels.Gateway.Mean)ms" -ForegroundColor White
         Write-Host "  Median: $($metrics.Channels.Gateway.Median)ms" -ForegroundColor White
         Write-Host "  P95: $($metrics.Channels.Gateway.P95)ms" -ForegroundColor White
@@ -75,8 +78,8 @@ Write-Host ""
 Write-Host "[3] System Activity (Last 24h)" -ForegroundColor Yellow
 Write-Host ""
 
-if (Test-Path "$PSScriptRoot\..\fdo_agi_repo\memory\resonance_ledger.jsonl") {
-    $eventLines = @(Get-Content "$PSScriptRoot\..\fdo_agi_repo\memory\resonance_ledger.jsonl")
+if (Test-Path "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl") {
+    $eventLines = @(Get-Content "$WorkspaceRoot\fdo_agi_repo\memory\resonance_ledger.jsonl")
     $totalEvents = $eventLines.Count
     $eventRate = [math]::Round($totalEvents / (24 * 60), 2)
 

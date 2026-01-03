@@ -1,4 +1,4 @@
-#!/usr/bin/env pwsh
+﻿#!/usr/bin/env pwsh
 # Perspective Theory + Flow Observer 통합 테스트
 # Author: Copilot
 # Date: 2025-11-06

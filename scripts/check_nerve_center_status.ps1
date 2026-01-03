@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Continue'
+﻿$ErrorActionPreference = 'Continue'
 
 $job = Get-Job -Name 'NerveCenter' -ErrorAction SilentlyContinue | Select-Object -First 1
 if ($job) {

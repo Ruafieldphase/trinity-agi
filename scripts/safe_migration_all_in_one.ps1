@@ -1,11 +1,15 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 param(
     [string]$Source = 'D:\nas_backup',
-    [string]$Target = 'C:\workspace\agi',
+    [string]$Target = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )",
     [string[]]$Folders = @('scripts', 'outputs', 'session_memory', 'docs', 'configs', 'knowledge_base'),
     [switch]$DryRun,
     [switch]$NoOpen
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 $ErrorActionPreference = 'Stop'
 

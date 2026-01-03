@@ -17,11 +17,12 @@ from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any
 from collections import defaultdict
 import sys
+from workspace_root import get_workspace_root
 
 # Paths
-REPO_ROOT = Path(__file__).parent.parent / "fdo_agi_repo"
+REPO_ROOT = get_workspace_root() / "fdo_agi_repo"
 LEDGER = REPO_ROOT / "memory" / "resonance_ledger.jsonl"
-OUTPUTS = Path(__file__).parent.parent / "outputs"
+OUTPUTS = get_workspace_root() / "outputs"
 OUTPUTS.mkdir(exist_ok=True)
 
 

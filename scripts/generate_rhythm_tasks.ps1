@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     Rhythm-based Task Generator - 리듬 기반 작업 생성기
@@ -8,10 +8,13 @@
 #>
 
 param(
-    [string]$WorkspaceFolder = "C:\workspace\agi",
+    [string]$WorkspaceFolder = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )",
     [switch]$Force,
     [switch]$ShowRhythm
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
@@ -76,8 +79,8 @@ $rhythmTasks = @{
         "?? AGI: Start Session (Check Status)",
         "System: Health Check (Quick)",
         "AGI: Quick Health Check (fast)",
-        "Lumen: Quick Health Probe",
-        "Monitoring: Unified Dashboard (AGI + Lumen)",
+        "Core: Quick Health Probe",
+        "Monitoring: Unified Dashboard (AGI + Core)",
         "Queue: Health Check",
         "Watchdog: Check Task Watchdog Status"
     )
@@ -98,7 +101,7 @@ $rhythmTasks = @{
     
     DAYTIME_FLOW  = @(
         # 분석 & 모니터링
-        "Monitoring: Unified Dashboard (AGI + Lumen)",
+        "Monitoring: Unified Dashboard (AGI + Core)",
         "Realtime: Summarize + Open",
         "YouTube: Build Index (open)",
         "Original Data: Build Index (open)",
@@ -152,7 +155,7 @@ $rhythmTasks = @{
         # 긴급 복구
         "Emergency: Rollback Canary (Interactive)",
         "Recover: Auto-Recover (one-shot)",
-        "Diag: Binoche Agent (one-shot)",
+        "Diag: Binoche_Observer Agent (one-shot)",
         
         # 최소 체크
         "AGI: Quick Health Check (fast)",
@@ -176,7 +179,7 @@ $rhythmTasks = @{
         "Queue: Quick E2E (Verify ??Results ??Open Screenshot)",
         
         # 상태 확인
-        "Monitoring: Unified Dashboard (AGI + Lumen)",
+        "Monitoring: Unified Dashboard (AGI + Core)",
         "?? Rhythm: Detect Current"
     )
     

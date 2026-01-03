@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 # Observe active window/process telemetry and write JSONL for later summarization.
 # - Polls foreground window at a fixed interval
 # - Captures timestamp (UTC), process name/id, window title
@@ -14,8 +14,11 @@
 param(
     [int]$IntervalSeconds = 5,
     [int]$DurationSeconds = 0,
-    [string]$OutDir = "${PSScriptRoot}\..\outputs\telemetry"
+    [string]$OutDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\telemetry"
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

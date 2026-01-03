@@ -19,9 +19,10 @@ import sys
 import json
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 # Add fdo_agi_repo to path
-repo_root = Path(__file__).parent.parent
+repo_root = get_workspace_root()
 fdo_agi_repo = repo_root / "fdo_agi_repo"
 if str(fdo_agi_repo) not in sys.path:
     sys.path.insert(0, str(fdo_agi_repo))

@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 from datetime import datetime
+from workspace_root import get_workspace_root
 
 
 def load_summary(summary_path: Path):
@@ -30,7 +31,7 @@ def write_reports(out_dir: Path, report_md: str, report_json: dict):
 
 
 def main():
-    workspace = Path(__file__).resolve().parents[1]
+    workspace = get_workspace_root()
     summary_path = workspace / 'outputs' / 'architecture_probe_summary.json'
     out_dir = workspace / 'outputs'
 

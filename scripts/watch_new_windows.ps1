@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
 .SYNOPSIS
     새로 열리는 PowerShell 창 감시 및 로그
@@ -7,8 +7,11 @@
 param(
     [int]$DurationMinutes = 10
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
 
-$logFile = "$PSScriptRoot\..\outputs\new_windows_log.txt"
+
+$logFile = "$WorkspaceRoot\outputs\new_windows_log.txt"
 $endTime = (Get-Date).AddMinutes($DurationMinutes)
 
 Write-Host "🔍 Watching for new PowerShell windows..." -ForegroundColor Cyan

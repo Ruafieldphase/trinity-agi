@@ -30,6 +30,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from workspace_root import get_workspace_root
+
 # 로깅 설정
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -221,7 +223,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_args(argv)
-    workspace = Path(__file__).resolve().parent.parent
+    workspace = get_workspace_root()
     try:
         executor = GoalExecutor(workspace, task_queue_server=args.server)
         res = executor.execute_once(goal_index=args.goal_index)
@@ -1283,8 +1285,8 @@ def main():
     parser.add_argument(
         "--workspace",
         type=str,
-        default="C:/workspace/agi",
-        help="Workspace root path"
+        default=str(get_workspace_root()),
+        help="Workspace root path (default: auto-detected)"
     )
     parser.add_argument(
         "--task-queue",

@@ -1,4 +1,4 @@
-# Glymphatic System Integration for Master Orchestrator
+﻿# Glymphatic System Integration for Master Orchestrator
 # 마스터 오케스트레이터에 Glymphatic 시스템 추가
 
 param(
@@ -6,6 +6,9 @@ param(
     [switch]$Disable,
     [switch]$Status
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Continue"
 $WorkspaceRoot = "$PSScriptRoot\.."

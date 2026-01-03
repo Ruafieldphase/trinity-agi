@@ -15,9 +15,12 @@
 
 param(
     [int]$LookbackHours = 24,
-    [string]$OutHtml = "$PSScriptRoot\..\outputs\system_dashboard_enhanced.html",
+    [string]$OutHtml = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\system_dashboard_enhanced.html",
     [switch]$OpenBrowser
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 $ErrorActionPreference = "Stop"
 
@@ -26,15 +29,15 @@ Write-Host "📊 Collecting system metrics..." -ForegroundColor Cyan
 
 # 1. GPU Metrics
 & "$PSScriptRoot\collect_gpu_metrics.ps1" -Quiet
-$gpuData = Get-Content "$PSScriptRoot\..\outputs\gpu_usage_latest.json" | ConvertFrom-Json
+$gpuData = Get-Content "$WorkspaceRoot\outputs\gpu_usage_latest.json" | ConvertFrom-Json
 
 # 2. Performance Metrics (if exists)
-$perfFile = "$PSScriptRoot\..\outputs\performance_metrics_latest.json"
+$perfFile = "$WorkspaceRoot\outputs\performance_metrics_latest.json"
 if (Test-Path $perfFile) {
     $perfData = Get-Content $perfFile | ConvertFrom-Json
 }
 else {
-    $perfData = @{ lumen = @{ available = $false }; lmstudio = @{ available = $false } }
+    $perfData = @{ Core = @{ available = $false }; lmstudio = @{ available = $false } }
 }
 
 # 3. Queue Status
@@ -47,7 +50,7 @@ catch {
 
 # 4. Anomaly Detection Data
 $anomalyBaseline = @{}
-$baselinePath = "$PSScriptRoot\..\outputs\anomaly_baseline.json"
+$baselinePath = "$WorkspaceRoot\outputs\anomaly_baseline.json"
 if (Test-Path $baselinePath) {
     try {
         $anomalyBaseline = Get-Content $baselinePath -Raw | ConvertFrom-Json -AsHashtable
@@ -58,7 +61,7 @@ if (Test-Path $baselinePath) {
 }
 
 $recentAnomalies = @()
-$anomalyLogPath = "$PSScriptRoot\..\outputs\anomaly_log.jsonl"
+$anomalyLogPath = "$WorkspaceRoot\outputs\anomaly_log.jsonl"
 if (Test-Path $anomalyLogPath) {
     $cutoff = (Get-Date).AddHours(-$LookbackHours)
     try {
@@ -75,7 +78,7 @@ if (Test-Path $anomalyLogPath) {
 
 # 5. Healing History Data
 $recentHealings = @()
-$healingLogPath = "$PSScriptRoot\..\outputs\healing_log.jsonl"
+$healingLogPath = "$WorkspaceRoot\outputs\healing_log.jsonl"
 if (Test-Path $healingLogPath) {
     $cutoff = (Get-Date).AddHours(-$LookbackHours)
     try {
@@ -91,7 +94,7 @@ if (Test-Path $healingLogPath) {
 }
 
 $policySnapshot = @()
-$policySnapshotPath = "$PSScriptRoot\..\outputs\policy_ab_snapshot_latest.md"
+$policySnapshotPath = "$WorkspaceRoot\outputs\policy_ab_snapshot_latest.md"
 if (Test-Path $policySnapshotPath) {
     try {
         $policySnapshot = Get-Content $policySnapshotPath -TotalCount 40
@@ -107,7 +110,7 @@ if ($policySnapshot.Count -gt 0) {
     }
 }
 
-$resourceSummaryPath = "$PSScriptRoot\..\outputs\resource_optimizer_summary.md"
+$resourceSummaryPath = "$WorkspaceRoot\outputs\resource_optimizer_summary.md"
 $resourceSummaryText = ""
 if (Test-Path $resourceSummaryPath) {
     try {
@@ -118,7 +121,7 @@ if (Test-Path $resourceSummaryPath) {
     }
 }
 
-$rpaStatusPath = "$PSScriptRoot\..\outputs\rpa_worker_status.txt"
+$rpaStatusPath = "$WorkspaceRoot\outputs\rpa_worker_status.txt"
 $rpaStatusLine = ""
 if (Test-Path $rpaStatusPath) {
     try {
@@ -129,7 +132,7 @@ if (Test-Path $rpaStatusPath) {
     }
 }
 
-$rpaAlertPath = "$PSScriptRoot\..\outputs\alerts\rpa_worker_alert.json"
+$rpaAlertPath = "$WorkspaceRoot\outputs\alerts\rpa_worker_alert.json"
 $rpaAlertSummary = ""
 if (Test-Path $rpaAlertPath) {
     try {
@@ -157,7 +160,7 @@ if (Test-Path $rpaAlertPath) {
     }
 }
 
-$monitoringMetricsPath = "$PSScriptRoot\..\outputs\monitoring_metrics_latest.json"
+$monitoringMetricsPath = "$WorkspaceRoot\outputs\monitoring_metrics_latest.json"
 $policyOptimization = $null
 $gatewayOptimizerMetrics = $null
 try {
@@ -642,14 +645,14 @@ $html += @"
                 <h2><span class="icon">⚡</span> LLM Performance</h2>
 "@
 
-if ($perfData.lumen.available) {
-    $lumenLatency = [math]::Round($perfData.lumen.p50_ms, 1)
-    $lumenStatus = if ($lumenLatency -lt 100) { "status-ok" } elseif ($lumenLatency -lt 200) { "status-warning" } else { "status-error" }
+if ($perfData.Core.available) {
+    $CoreLatency = [math]::Round($perfData.Core.p50_ms, 1)
+    $CoreStatus = if ($CoreLatency -lt 100) { "status-ok" } elseif ($CoreLatency -lt 200) { "status-warning" } else { "status-error" }
     $html += @"
                 <div class="metric">
-                    <span class="metric-label">Lumen (Cloud)</span>
+                    <span class="metric-label">Core (Cloud)</span>
                     <span class="metric-value">
-                        <span class="status-badge $lumenStatus">${lumenLatency}ms</span>
+                        <span class="status-badge $CoreStatus">${CoreLatency}ms</span>
                     </span>
                 </div>
 "@
@@ -657,7 +660,7 @@ if ($perfData.lumen.available) {
 else {
     $html += @"
                 <div class="metric">
-                    <span class="metric-label">Lumen (Cloud)</span>
+                    <span class="metric-label">Core (Cloud)</span>
                     <span class="metric-value">
                         <span class="status-badge status-offline">Not Available</span>
                     </span>
@@ -914,5 +917,3 @@ if ($OpenBrowser) {
 }
 
 exit 0
-
-

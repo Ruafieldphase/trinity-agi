@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
 .SYNOPSIS
   Toggle background services by daily rhythm: Focus (lean), Balanced, Collection (night).

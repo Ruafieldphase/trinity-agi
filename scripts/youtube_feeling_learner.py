@@ -24,8 +24,8 @@ from pathlib import Path
 from typing import List, Dict, Optional, Any
 
 import numpy as np
+from workspace_root import get_workspace_root
 
-<<<<<<< HEAD
 # Optional backends (Vertex AI / GenAI)
 VERTEX_AVAILABLE = False
 GENAI_AVAILABLE = False
@@ -44,17 +44,11 @@ try:  # Google AI Studio (GenAI)
     GENAI_AVAILABLE = True
 except Exception:
     GENAI_AVAILABLE = False
-=======
-# Vertex AI imports
-import vertexai
-from vertexai.generative_models import GenerativeModel, Part
-from vertexai.language_models import TextEmbeddingModel
->>>>>>> origin/main
 
 from youtube_transcript_api import YouTubeTranscriptApi
 
 # Configuration
-WORKSPACE_ROOT = Path(__file__).parent.parent
+WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
 OUTPUT_DIR = WORKSPACE_ROOT / "outputs" / "youtube_feelings"
 
@@ -62,7 +56,6 @@ OUTPUT_DIR = WORKSPACE_ROOT / "outputs" / "youtube_feelings"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-<<<<<<< HEAD
 def _load_dotenv_value(key: str) -> str:
     try:
         for env_path in (WORKSPACE_ROOT / ".env_credentials", WORKSPACE_ROOT / ".env"):
@@ -80,10 +73,6 @@ def _load_dotenv_value(key: str) -> str:
     except Exception:
         return ""
     return ""
-
-
-=======
->>>>>>> origin/main
 @dataclass
 class FeelingAnalysis:
     """YouTube video feeling analysis result"""
@@ -101,7 +90,7 @@ class FeelingAnalysis:
     
     # Context metadata (WWW)
     timestamp: str
-    analyzed_by: str = "sian"
+    analyzed_by: str = "Shion"
     context: str = ""
     
     # Raw data
@@ -135,7 +124,6 @@ class YouTubeFeelingLearner:
             or location
         )
         
-<<<<<<< HEAD
         self.backend = "none"  # 'genai' | 'vertex' | 'none'
         self.model = None
         self.embedding_model = None
@@ -157,7 +145,7 @@ class YouTubeFeelingLearner:
         if api_key and GENAI_AVAILABLE:
             try:
                 genai.configure(api_key=api_key)
-                # Prefer 2.5 flash; fallback to 2.0 flash (GenAI에서 1.5 계열이 비활성인 환경이 있어 제외).
+                # Prefer 2.5 flash; fallback to 2.0 flash
                 preferred = (
                     os.getenv("GEMINI_FAST_MODEL")
                     or os.getenv("GEMINI_MODEL")
@@ -180,14 +168,16 @@ class YouTubeFeelingLearner:
                     except Exception:
                         continue
                 if not self.model:
-                    raise RuntimeError("No available GenAI model (tried: " + ", ".join([c for c in candidates if c]) + ")")
+                    raise RuntimeError("No available GenAI model")
                 self.backend = "genai"
-                print("✅ YouTube Feeling Learner initialized (GenAI)")
-                print(f"   Model: {model_name}")
+                if os.getenv("AGI_VERBOSE_COSTS") == "1":
+                    print("✅ YouTube Feeling Learner initialized (AI Studio - FREE TIER)")
                 return
             except Exception as e:
-                print(f"⚠️ GenAI initialization failed: {e}")
+                if os.getenv("AGI_VERBOSE_COSTS") == "1":
+                    print(f"⚠️ GenAI initialization failed: {e}")
 
+        # Vertex is strictly opt-in to prevent accidental GCP billing
         if use_vertex and VERTEX_AVAILABLE:
             try:
                 vertexai.init(project=project_id, location=location)
@@ -195,56 +185,30 @@ class YouTubeFeelingLearner:
                 self.model = GenerativeModel(vertex_model)
                 self.embedding_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
                 self.backend = "vertex"
-                print("✅ YouTube Feeling Learner initialized (Vertex AI)")
+                print(f"⚠️ [COST_WARNING] YouTube Feeling Learner initialized (Vertex AI - PAID TIER)")
                 print(f"   Project: {project_id}")
-                print(f"   Location: {location}")
-                print(f"   Model: {vertex_model}")
                 return
             except Exception as e:
-                print(f"⚠️ Vertex AI initialization failed: {e}")
+                print(f"❌ Vertex AI initialization failed: {e}")
+
+        # Final Fallback: If both fail but we have an API key, try simple GenAI model one more time
+        if api_key and GENAI_AVAILABLE:
+             try:
+                 genai.configure(api_key=api_key)
+                 self.model = genai.GenerativeModel("gemini-1.5-flash")
+                 self.backend = "genai"
+                 return
+             except: pass
 
         raise RuntimeError(
-            "No usable LLM backend for YouTubeFeelingLearner (need GenAI API key or AGI_USE_VERTEX=1 with Vertex credentials)."
+            "No usable LLM backend for YouTubeFeelingLearner. Please check your GOOGLE_API_KEY."
         )
-=======
-        try:
-            # Check for local service account key if env var not set
-            if not os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
-                local_key = Path(__file__).parent.parent / "config" / "naeda-genesis-5034a5936036.json"
-                if local_key.exists():
-                    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(local_key)
-                    print(f"🔑 Using local key: {local_key.name}")
-
-            # Initialize Vertex AI
-            vertexai.init(project=project_id, location=location)
-            
-            # Initialize models
-            self.model = GenerativeModel("gemini-1.5-flash")
-            self.embedding_model = TextEmbeddingModel.from_pretrained("text-embedding-004")
-            
-            print(f"✅ YouTube Feeling Learner initialized")
-            print(f"   Project: {project_id}")
-            print(f"   Location: {location}")
-            print(f"   Model: Gemini 1.5 Flash (Vertex AI)")
-            print(f"   💰 Using Vertex AI credits (140만원)")
-        
-        except Exception as e:
-            print(f"⚠️ Vertex AI initialization failed: {e}")
-            print(f"   Trying with ion_mentoring credentials...")
-            
-            # Check for service account key
-            creds_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-            if creds_path:
-                print(f"   Using Service Account: {creds_path}")
-            
-            raise
->>>>>>> origin/main
     
     async def analyze_feeling(
         self, 
         video_url: str, 
         context: str = "",
-        analyzed_by: str = "sian"
+        analyzed_by: str = "Shion"
     ) -> FeelingAnalysis:
         """
         Analyze YouTube video feeling.
@@ -252,7 +216,7 @@ class YouTubeFeelingLearner:
         Args:
             video_url: YouTube video URL
             context: Optional context (e.g., "배경자아 연구 중")
-            analyzed_by: Who is analyzing (default: "sian")
+            analyzed_by: Who is analyzing (default: "Shion")
         
         Returns:
             FeelingAnalysis object
@@ -321,8 +285,6 @@ class YouTubeFeelingLearner:
         print(f"   Themes: {', '.join(analysis.resonance_themes)}")
         
         return analysis
-<<<<<<< HEAD
-
     def _hash_embedding(self, text: str, dim: int = 768) -> np.ndarray:
         import hashlib
 
@@ -338,8 +300,6 @@ class YouTubeFeelingLearner:
                     break
             counter += 1
         return np.array(out[:dim], dtype=np.float32)
-=======
->>>>>>> origin/main
     
     def _extract_video_id(self, video_url: str) -> str:
         """Extract video ID from YouTube URL"""
@@ -353,7 +313,6 @@ class YouTubeFeelingLearner:
     def _get_subtitles(self, video_id: str) -> List[Dict]:
         """Get video subtitles using youtube-transcript-api"""
         try:
-<<<<<<< HEAD
             # Some environments ship an older youtube-transcript-api that does not provide
             # list_transcripts(). Prefer it when available; otherwise fall back to get_transcript().
             if hasattr(YouTubeTranscriptApi, "list_transcripts"):
@@ -381,21 +340,6 @@ class YouTubeFeelingLearner:
                 return []
 
             return []
-=======
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-            
-            # Try to get Korean or English subtitles
-            try:
-                transcript = transcript_list.find_transcript(['ko', 'en'])
-            except:
-                # Fall back to first available
-                available = list(transcript_list)
-                if not available:
-                    return []
-                transcript = available[0]
-            
-            return transcript.fetch()
->>>>>>> origin/main
         
         except Exception as e:
             print(f"   ⚠️ Subtitle extraction failed: {e}")
@@ -452,18 +396,13 @@ class YouTubeFeelingLearner:
             }
     
     def _create_feeling_vector(self, feeling_data: Dict, subtitle_text: str) -> np.ndarray:
-<<<<<<< HEAD
         """Create feeling embedding vector (Vertex if available, else deterministic hash)."""
-=======
-        """Create feeling embedding vector using Vertex AI"""
->>>>>>> origin/main
         
         # Combine feeling data for embedding
         combined_text = f"{feeling_data['emotional_tone']}. {feeling_data['core_message']}. "
         combined_text += f"주제: {', '.join(feeling_data['resonance_themes'])}. "
         combined_text += subtitle_text
         
-<<<<<<< HEAD
         if self.backend == "vertex" and self.embedding_model is not None:
             try:
                 embeddings = self.embedding_model.get_embeddings([combined_text])
@@ -477,17 +416,6 @@ class YouTubeFeelingLearner:
                 print(f"   ⚠️ Vertex embedding failed: {e}, using hash embedding")
 
         return self._hash_embedding(combined_text, dim=768)
-=======
-        try:
-            # Use Vertex AI embedding
-            embeddings = self.embedding_model.get_embeddings([combined_text])
-            vector = np.array(embeddings[0].values)
-            return vector
-        
-        except Exception as e:
-            print(f"   ⚠️ Embedding failed: {e}, using zero vector")
-            return np.zeros(768)  # Default 768-dim zero vector
->>>>>>> origin/main
     
     def _get_video_metadata(self, video_id: str, subtitle_text: str) -> tuple:
         """
@@ -608,8 +536,8 @@ async def main():
     )
     parser.add_argument(
         "--analyzed-by",
-        default="sian",
-        help="Who is analyzing (default: sian)"
+        default="Shion",
+        help="Who is analyzing (default: Shion)"
     )
     parser.add_argument(
         "--project-id",

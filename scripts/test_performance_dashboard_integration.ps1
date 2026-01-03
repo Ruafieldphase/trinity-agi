@@ -1,4 +1,4 @@
-# Performance Dashboard Integration Test Script
+﻿# Performance Dashboard Integration Test Script
 # Tests all profiles and wrappers to ensure consistent behavior
 
 param(

@@ -2,11 +2,11 @@
 """
 Auto Constitution Review (Comprehensive Safety Report)
 Purpose: Generate comprehensive safety review combining all safety modules
-Target Audience: Binoche (non-programmer, Observer)
+Target Audience: Binoche_Observer (non-programmer, Observer)
 
 Input:
   - trigger_report_latest.json
-  - lumen_constitution.json
+  - core_constitution.json
   - ethics_scorer_latest.json
   - child_data_protector_latest.json
   - red_line_monitor_latest.json (if exists)
@@ -22,6 +22,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Any, Optional
+from workspace_root import get_workspace_root
 
 
 class ConstitutionReviewer:
@@ -39,15 +40,13 @@ class ConstitutionReviewer:
         red_line_monitor_path: str = None,
         output_dir: str = None
     ):
-        # Set defaults based on script location (absolute paths)
-        script_file = Path(__file__).resolve()  # Get absolute path
-        # Find agi root directory (go up until we find 'agi' or reach parent with 'agi')
-        agi_root = script_file.parent.parent  # scripts/auto_constitution_review.py -> scripts -> agi
+        # Set defaults based on workspace root (SSOT)
+        agi_root = get_workspace_root()
 
         if trigger_report_path is None:
             trigger_report_path = str(agi_root / "outputs" / "bridge" / "trigger_report_latest.json")
         if constitution_path is None:
-            constitution_path = str(agi_root / "policy" / "lumen_constitution.json")
+            constitution_path = str(agi_root / "policy" / "core_constitution.json")
         if ethics_scorer_path is None:
             ethics_scorer_path = str(agi_root / "outputs" / "ethics_scorer_latest.json")
         if child_protector_path is None:

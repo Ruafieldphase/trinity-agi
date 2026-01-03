@@ -24,7 +24,7 @@
 ### ✅ Phase 3: Pipeline 통합 (A/B Mode)
 
 - `pipeline.py` 업데이트
-  - Phase 6b: Enhanced Binoche Decision
+  - Phase 6b: Enhanced Binoche_Observer Decision
   - Phase 6k: A/B Comparison Logging
   - 기존 Legacy 시스템 유지
 

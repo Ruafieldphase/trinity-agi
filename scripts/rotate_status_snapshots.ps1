@@ -1,12 +1,16 @@
-param(
-    [string]$FilePath = "C:\workspace\agi\outputs\status_snapshots.jsonl",
+﻿param(
+    [string]$FilePath = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\status_snapshots.jsonl",
     [int]$MaxLines = 50000,
     [int]$MaxSizeMB = 50,
-    [string]$ArchiveDir = "C:\workspace\agi\outputs\archive",
+    [string]$ArchiveDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\archive",
     [int]$RetentionDays = 30,
     [switch]$Zip,
     [switch]$DryRun
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

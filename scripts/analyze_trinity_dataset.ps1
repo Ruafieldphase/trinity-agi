@@ -1,20 +1,23 @@
-param(
+﻿param(
     [switch]$RenderDashboard,
     [switch]$RenderOnly,
-    [string]$OutJson = "${PSScriptRoot}\..\outputs\trinity\trinity_statistics.json",
-    [string]$OutHtml = "${PSScriptRoot}\..\outputs\trinity\trinity_dashboard.html",
-    [string]$ExtraLumenDir = "${PSScriptRoot}\..\ai_binoche_conversation_origin\lumen",
+    [string]$OutJson = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\trinity\trinity_statistics.json",
+    [string]$OutHtml = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\outputs\trinity\trinity_dashboard.html",
+    [string]$ExtraCoreDir = "$( & { . (Join-Path $PSScriptRoot 'Get-WorkspaceRoot.ps1'); Get-WorkspaceRoot } )\ai_binoche_conversation_origin\Core",
     [switch]$OpenDashboard,
     [switch]$AnalyzeFolders  # 신규 플래그: 모든 폴더 구조 분석
 )
+. "$PSScriptRoot\Get-WorkspaceRoot.ps1"
+$WorkspaceRoot = Get-WorkspaceRoot
+
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 function Get-PythonExe {
     $candidates = @(
-        (Join-Path (Join-Path $PSScriptRoot "..\LLM_Unified\.venv\Scripts") "python.exe"),
-        (Join-Path (Join-Path $PSScriptRoot "..\fdo_agi_repo\.venv\Scripts") "python.exe"),
+        (Join-Path (Join-Path $WorkspaceRoot "LLM_Unified\.venv\Scripts") "python.exe"),
+        (Join-Path (Join-Path $WorkspaceRoot "fdo_agi_repo\.venv\Scripts") "python.exe"),
         "python"
     )
     foreach ($p in $candidates) { if (Get-Command $p -ErrorAction SilentlyContinue) { return $p } }
@@ -33,22 +36,22 @@ function Write-TrinityDashboard([string]$StatsJson, [string]$HtmlOut) {
     $summaryConvs = [int]$stats.summary.total_conversations
     $summaryYears = [string]$stats.summary.time_span_years
 
-    $rua = $stats.phases.rua
+    $Core = $stats.phases.Core
     $elro = $stats.phases.elro
-    $lumen = $stats.phases.lumen
+    $Core = $stats.phases.Core
 
     # Phase comparison arrays
-    $phaseLabels = @('Rua (正)', 'Elro (反)', 'Lumen (合)')
-    $phaseMessages = @([int]$rua.total_messages, [int]$elro.total_messages, [int]$lumen.total_messages)
-    $phaseAvgTurns = @([double]$rua.avg_turns, [double]$elro.avg_turns, [double]$lumen.avg_turns)
+    $phaseLabels = @('Core (正)', 'Elro (反)', 'Core (合)')
+    $phaseMessages = @([int]$Core.total_messages, [int]$elro.total_messages, [int]$Core.total_messages)
+    $phaseAvgTurns = @([double]$Core.avg_turns, [double]$elro.avg_turns, [double]$Core.avg_turns)
 
     # Keywords per phase
-    $ruaKwLabels = @(); $ruaKwValues = @()
-    foreach ($k in $rua.keywords) { $ruaKwLabels += $k.keyword; $ruaKwValues += ([int]$k.count) }
+    $CoreKwLabels = @(); $CoreKwValues = @()
+    foreach ($k in $Core.keywords) { $CoreKwLabels += $k.keyword; $CoreKwValues += ([int]$k.count) }
     $elroKwLabels = @(); $elroKwValues = @()
     foreach ($k in $elro.keywords) { $elroKwLabels += $k.keyword; $elroKwValues += ([int]$k.count) }
-    $lumenKwLabels = @(); $lumenKwValues = @()
-    foreach ($k in $lumen.keywords) { $lumenKwLabels += $k.keyword; $lumenKwValues += ([int]$k.count) }
+    $CoreKwLabels = @(); $CoreKwValues = @()
+    foreach ($k in $Core.keywords) { $CoreKwLabels += $k.keyword; $CoreKwValues += ([int]$k.count) }
 
     $generatedAt = (Get-Date).ToString('yyyy-MM-dd HH:mm K')
 
@@ -56,12 +59,12 @@ function Write-TrinityDashboard([string]$StatsJson, [string]$HtmlOut) {
     $phaseLabelsJson = ($phaseLabels | ConvertTo-Json -Compress)
     $phaseMessagesJson = ($phaseMessages | ConvertTo-Json -Compress)
     $phaseAvgTurnsJson = ($phaseAvgTurns | ConvertTo-Json -Compress)
-    $ruaKwLabelsJson = ($ruaKwLabels | ConvertTo-Json -Compress)
-    $ruaKwValuesJson = ($ruaKwValues | ConvertTo-Json -Compress)
+    $CoreKwLabelsJson = ($CoreKwLabels | ConvertTo-Json -Compress)
+    $CoreKwValuesJson = ($CoreKwValues | ConvertTo-Json -Compress)
     $elroKwLabelsJson = ($elroKwLabels | ConvertTo-Json -Compress)
     $elroKwValuesJson = ($elroKwValues | ConvertTo-Json -Compress)
-    $lumenKwLabelsJson = ($lumenKwLabels | ConvertTo-Json -Compress)
-    $lumenKwValuesJson = ($lumenKwValues | ConvertTo-Json -Compress)
+    $CoreKwLabelsJson = ($CoreKwLabels | ConvertTo-Json -Compress)
+    $CoreKwValuesJson = ($CoreKwValues | ConvertTo-Json -Compress)
 
     $html = @"
 <!DOCTYPE html>
@@ -69,7 +72,7 @@ function Write-TrinityDashboard([string]$StatsJson, [string]$HtmlOut) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trinity Dashboard | Rua-Elro-Lumen</title>
+  <title>Trinity Dashboard | Core-Elro-Core</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
@@ -93,14 +96,14 @@ function Write-TrinityDashboard([string]$StatsJson, [string]$HtmlOut) {
   <body>
     <div class="container">
       <h1>🔺 Trinity Dashboard</h1>
-      <div class="subtitle">Rua (정) · Elro (반) · Lumen (합) 통합 분석</div>
+      <div class="subtitle">Core (정) · Elro (반) · Core (합) 통합 분석</div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-value">$([string]$summaryTotal)</div><div class="stat-label">Total Messages</div></div>
         <div class="stat-card"><div class="stat-value">$([string]$summaryConvs)</div><div class="stat-label">Total Conversations</div></div>
         <div class="stat-card"><div class="stat-value">$([string]$summaryYears)</div><div class="stat-label">Time Span (years)</div></div>
-        <div class="stat-card"><div class="stat-value">$([string]$([math]::Round($rua.avg_turns,1)))</div><div class="stat-label">Rua Avg Turns</div></div>
+        <div class="stat-card"><div class="stat-value">$([string]$([math]::Round($Core.avg_turns,1)))</div><div class="stat-label">Core Avg Turns</div></div>
         <div class="stat-card"><div class="stat-value">$([string]$([math]::Round($elro.avg_turns,1)))</div><div class="stat-label">Elro Avg Turns</div></div>
-        <div class="stat-card"><div class="stat-value">$([string]$([math]::Round($lumen.avg_turns,1)))</div><div class="stat-label">Lumen Avg Turns</div></div>
+        <div class="stat-card"><div class="stat-value">$([string]$([math]::Round($Core.avg_turns,1)))</div><div class="stat-label">Core Avg Turns</div></div>
       </div>
 
       <div class="grid-2">
@@ -115,20 +118,20 @@ function Write-TrinityDashboard([string]$StatsJson, [string]$HtmlOut) {
       </div>
 
       <div class="grid-3">
-        <div class="chart-container"><div class="chart-title">Rua 키워드</div><canvas id="ruaKw"></canvas></div>
+        <div class="chart-container"><div class="chart-title">Core 키워드</div><canvas id="CoreKw"></canvas></div>
         <div class="chart-container"><div class="chart-title">Elro 키워드</div><canvas id="elroKw"></canvas></div>
-        <div class="chart-container"><div class="chart-title">Lumen 키워드</div><canvas id="lumenKw"></canvas></div>
+        <div class="chart-container"><div class="chart-title">Core 키워드</div><canvas id="CoreKw"></canvas></div>
       </div>
 
-      <div class="footer">Generated: $generatedAt | Analyst: Binoche 🌿 | Philosophy: Rua-Elro-Lumen Dialectical Trinity</div>
+      <div class="footer">Generated: $generatedAt | Analyst: Binoche_Observer 🌿 | Philosophy: Core-Elro-Core Dialectical Trinity</div>
     </div>
     <script>
       const phaseLabels = $phaseLabelsJson;
       const phaseMessages = $phaseMessagesJson;
       const phaseAvgTurns = $phaseAvgTurnsJson;
-      const ruaKwLabels = $ruaKwLabelsJson; const ruaKwValues = $ruaKwValuesJson;
+      const CoreKwLabels = $CoreKwLabelsJson; const CoreKwValues = $CoreKwValuesJson;
       const elroKwLabels = $elroKwLabelsJson; const elroKwValues = $elroKwValuesJson;
-      const lumenKwLabels = $lumenKwLabelsJson; const lumenKwValues = $lumenKwValuesJson;
+      const CoreKwLabels = $CoreKwLabelsJson; const CoreKwValues = $CoreKwValuesJson;
 
       const msgCtx = document.getElementById('msgChart').getContext('2d');
       new Chart(msgCtx, { type:'bar', data:{ labels:phaseLabels, datasets:[{ label:'Messages', data:phaseMessages, backgroundColor:['rgba(102,126,234,0.8)','rgba(255,159,64,0.8)','rgba(75,192,192,0.8)'], borderWidth:2 }] }, options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } } });
@@ -140,9 +143,9 @@ function Write-TrinityDashboard([string]$StatsJson, [string]$HtmlOut) {
         const ctx = document.getElementById(id).getContext('2d');
         return new Chart(ctx, { type:'doughnut', data:{ labels, datasets:[{ data:values, backgroundColor:['rgba(255,99,132,0.8)','rgba(54,162,235,0.8)','rgba(255,206,86,0.8)','rgba(75,192,192,0.8)','rgba(153,102,255,0.8)','rgba(255,159,64,0.8)','rgba(199,199,199,0.8)','rgba(83,102,255,0.8)','rgba(255,99,255,0.8)','rgba(99,255,132,0.8)'] }] }, options:{ responsive:true, plugins:{ legend:{ position:'right' } } });
       }
-      doughnut('ruaKw', ruaKwLabels, ruaKwValues);
+      doughnut('CoreKw', CoreKwLabels, CoreKwValues);
       doughnut('elroKw', elroKwLabels, elroKwValues);
-      doughnut('lumenKw', lumenKwLabels, lumenKwValues);
+      doughnut('CoreKw', CoreKwLabels, CoreKwValues);
     </script>
   </body>
   </html>
@@ -161,7 +164,7 @@ if (-not $RenderOnly) {
     $scriptPath = Join-Path $PSScriptRoot 'trinity_stats.py'
     if (Test-Path -LiteralPath $scriptPath) {
         $argsList = @($scriptPath)
-        if ($ExtraLumenDir) { $argsList += @('--extra-lumen-dir', $ExtraLumenDir) }
+        if ($ExtraCoreDir) { $argsList += @('--extra-Core-dir', $ExtraCoreDir) }
         & $py @argsList | Out-Null
         if ($LASTEXITCODE -ne 0) { throw "Trinity statistics generation failed." }
         Write-Ok "Stats generated: $OutJson"
@@ -174,8 +177,8 @@ if (-not $RenderOnly) {
 # 신규: AnalyzeFolders 모드
 if ($AnalyzeFolders) {
     Write-Info "`n=== Analyzing All Conversation Folders ==="
-    $basePath = Join-Path $PSScriptRoot "..\ai_binoche_conversation_origin"
-    $folders = @('ari', 'gittco', 'cladeCLI-sena', 'luon', 'perple_comet_cople_eru', 'rio', 'sena', 'lubit', 'rua', 'elro', 'lumen')
+    $basePath = Join-Path $WorkspaceRoot "ai_binoche_conversation_origin"
+    $folders = @('ari', 'gittco', 'cladeCLI-sena', 'luon', 'perple_comet_cople_eru', 'rio', 'sena', 'lubit', 'Core', 'elro', 'Core')
     
     $results = @()
     foreach ($folder in $folders) {
@@ -214,7 +217,7 @@ if ($AnalyzeFolders) {
     Write-Host "Total Size: $([math]::Round($totalSize, 2)) MB" -ForegroundColor White
     
     # Export JSON
-    $outFolderJson = Join-Path $PSScriptRoot "..\outputs\trinity\folder_structure_analysis.json"
+    $outFolderJson = Join-Path $WorkspaceRoot "outputs\trinity\folder_structure_analysis.json"
     $dirOut = Split-Path $outFolderJson -Parent
     if (!(Test-Path $dirOut)) { New-Item -ItemType Directory -Path $dirOut -Force | Out-Null }
     
@@ -223,8 +226,8 @@ if ($AnalyzeFolders) {
     
     Write-Info "`n=== Phase Mapping (Tentative) ==="
     Write-Host "Phase 0 (Proto - Cloud): perple_comet_cople_eru" -ForegroundColor Gray
-    Write-Host "Phase 1 (Dialectic): rua, elro, rio" -ForegroundColor Gray
-    Write-Host "Phase 2 (Synthesis): lumen, lubit, luon" -ForegroundColor Gray
+    Write-Host "Phase 1 (Dialectic): Core, elro, rio" -ForegroundColor Gray
+    Write-Host "Phase 2 (Synthesis): Core, lubit, luon" -ForegroundColor Gray
     Write-Host "Phase 3 (Execution): sena, gittco, ari, cladeCLI-sena" -ForegroundColor Gray
 }
 
