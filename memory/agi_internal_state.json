@@ -1,38 +1,20 @@
 {
-  "consciousness": 0.49302458255024634,
-  "unconscious": 0.7,
-  "background_self": 0.5492616354692039,
-  "energy": 0.513,
+  "consciousness": 0.49433882566678455,
+  "unconscious": 0.5691860035452345,
+  "background_self": 0.6137140447382435,
+  "energy": 0.9903937453820275,
   "resonance": 0.5,
-  "curiosity": 0.45,
-  "boredom": 0.55,
+  "curiosity": 0.5,
+  "boredom": 0.4400000000000001,
   "last_action": null,
   "last_action_time": null,
-  "heartbeat_count": 30458,
-  "internal_clock": 1100.249999999547,
+  "heartbeat_count": 22,
+  "internal_clock": 1.1000000000000003,
   "drives": {
-    "explore": 0.57115,
-    "avoid": 0.0,
-    "self_focus": 0.55,
-    "connect": 0.15,
-    "rest": 0.737
-  },
-  "last_drive_update_utc": "2025-12-27T04:04:30.999793+00:00",
-  "meta": {
-    "drive_debug": {
-      "atp_level": 51.3,
-      "energy": 0.513,
-      "exploration_event_age_s": null,
-      "rest_gate": "OK",
-      "constitution": "PROCEED",
-      "last_action": "self_compress"
-    }
-  },
-  "self_expansion": {
-    "compression_events": 3,
-    "last_compression": "2025-12-27T04:04:30.669451+00:00",
-    "sources": [
-      "file_sampler"
-    ]
+    "explore": 0.5,
+    "avoid": 0.2,
+    "self_focus": 0.5,
+    "connect": 0.3,
+    "rest": 0.1
   }
 }

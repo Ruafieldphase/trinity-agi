@@ -6,7 +6,7 @@
     "induction",
     "self_set"
   ],
-  "notes": "rua=contract yt=UNKNOWN life=ALIVE_IDLE",
+  "notes": "Core=contract yt=UNKNOWN life=ALIVE_IDLE",
   "timestamp": 1766804966.6728365,
   "where": {
     "platform": "windows",
@@ -23,7 +23,7 @@
       "polarity": "caution",
       "text": "수축 우세 시: 새 입력은 1개만 물질화하고 나머지는 Idle로 둔다(과잉 압축 루프 방지).",
       "applies_when": {
-        "rua_mode": "contract"
+        "core_mode": "contract"
       },
       "strength_0_1": 1.0,
       "last_seen_epoch": 1766804966.6728365
@@ -41,8 +41,8 @@
   ],
   "meta": {
     "evidence": {
-      "rua_dominant_mode": "contract",
-      "rua_ratio": 0.6,
+      "Core_dominant_mode": "contract",
+      "Core_ratio": 0.6,
       "yt_compression_mode": "UNKNOWN",
       "yt_presentation_form": "UNKNOWN",
       "life_state": "ALIVE_IDLE"

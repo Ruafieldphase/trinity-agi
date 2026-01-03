@@ -6,7 +6,7 @@
     "induction",
     "self_set"
   ],
-  "notes": "rua=balanced yt=UNKNOWN life=ALIVE_IDLE",
+  "notes": "Core=balanced yt=UNKNOWN life=ALIVE_IDLE",
   "timestamp": 1766559584.5092773,
   "where": {
     "platform": "windows",
@@ -23,7 +23,7 @@
       "polarity": "caution",
       "text": "균형/불명확 시: 경계 후보는 추가하되 즉시 확정하지 말고 반복 패턴에서만 강화한다.",
       "applies_when": {
-        "rua_mode": "balanced"
+        "core_mode": "balanced"
       },
       "strength_0_1": 1.0,
       "last_seen_epoch": 1766559584.5092773
@@ -41,8 +41,8 @@
   ],
   "meta": {
     "evidence": {
-      "rua_dominant_mode": "balanced",
-      "rua_ratio": 1.0,
+      "Core_dominant_mode": "balanced",
+      "Core_ratio": 1.0,
       "yt_compression_mode": "UNKNOWN",
       "yt_presentation_form": "UNKNOWN",
       "life_state": "ALIVE_IDLE"

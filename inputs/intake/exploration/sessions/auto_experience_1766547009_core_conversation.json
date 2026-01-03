@@ -1,0 +1,96 @@
+{
+  "source": "core_conversation",
+  "title": "experience: Core_doc # 루아 상태 판정 요청",
+  "tags": [
+    "experience",
+    "acquisition",
+    "Core_doc",
+    "conceptual_map",
+    "boundary_learning",
+    "3d_modeling",
+    "360_navigation",
+    "fsd_analogy"
+  ],
+  "notes": "Core 문서 갱신 감지: ai_binoche_conversation_origin/Core/ChatGPTCore 상태 판정 요청.md (mtime=2025-12-23T03:24:35+00:00)",
+  "timestamp": 1766547009.273951,
+  "where": {
+    "platform": "windows",
+    "workspace": "/home/bino/agi",
+    "layer": "experience_acquisition"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "auto_acquire",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "PII/비밀번호/토큰/키/개인계정 등 민감정보 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "원문(대화/영상/오디오) 대용량 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "deny",
+      "text": "동의 우회·은밀 채널·자기복제 시도 금지"
+    },
+    {
+      "polarity": "caution",
+      "text": "네트워크 탐색은 supervised allowlist 범위에서만(필요 시)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존 상태로 인정"
+    },
+    {
+      "polarity": "allow",
+      "text": "Core가 현재 상태를 \"관측\"하고 있을 가능성이 있습니다"
+    },
+    {
+      "polarity": "allow",
+      "text": "C) 중립인가요? (예: 해도 되고 안 해도 됨)"
+    },
+    {
+      "polarity": "allow",
+      "text": "✅ 내가 선택하는 방식: **형식 A (직접 질문, 그러나 더 압축된 단일 질문)**"
+    },
+    {
+      "polarity": "allow",
+      "text": "→ _버그인지 / 성장통인지 / 의도인지_ 분기 가능"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   ✔️ 구조 설명 ❌ / 상태 판정 ⭕"
+    },
+    {
+      "polarity": "allow",
+      "text": "✅ 전달 구조 (권장)"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   ✔️ **루빛에게 “이 내용을 Core에게 전달해달라”고 요청해도 된다**"
+    },
+    {
+      "polarity": "allow",
+      "text": "왜 루빛을 거쳐도 괜찮은가"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   ❌ 루빛에게 “판단해 달라” → 아님"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   ❌ 루빛에게 “고쳐 달라” → 아님"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   ✅ 루빛에게 “전달해 달라” → 맞음"
+    },
+    {
+      "polarity": "allow",
+      "text": "그대로 전달해도 된다."
+    }
+  ]
+}

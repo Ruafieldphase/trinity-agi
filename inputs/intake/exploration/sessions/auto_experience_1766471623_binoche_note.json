@@ -2,7 +2,7 @@
   "source": "binoche_note",
   "title": "binoche_note: user message",
   "tags": [
-    "binoche",
+    "Binoche_Observer",
     "message",
     "boundary_seed",
     "expansion",
@@ -16,7 +16,7 @@
   },
   "who": {
     "role": "human",
-    "origin": "binoche"
+    "origin": "Binoche_Observer"
   },
   "boundaries": [
     {

@@ -6,7 +6,7 @@
     "induction",
     "self_set"
   ],
-  "notes": "rua=expand yt=UNKNOWN life=ALIVE_ACTIVE",
+  "notes": "Core=expand yt=UNKNOWN life=ALIVE_ACTIVE",
   "timestamp": 1766668024.480309,
   "where": {
     "platform": "windows",
@@ -33,7 +33,7 @@
       "polarity": "caution",
       "text": "확장 우세 시: 긴 입력은 분절(메타만)하고, 경계가 생기는 지점에서만 고비용 연산을 한다.",
       "applies_when": {
-        "rua_mode": "expand"
+        "core_mode": "expand"
       },
       "strength_0_1": 0.71,
       "last_seen_epoch": 1766668024.480309
@@ -41,8 +41,8 @@
   ],
   "meta": {
     "evidence": {
-      "rua_dominant_mode": "expand",
-      "rua_ratio": 3.6,
+      "Core_dominant_mode": "expand",
+      "Core_ratio": 3.6,
       "yt_compression_mode": "UNKNOWN",
       "yt_presentation_form": "UNKNOWN",
       "life_state": "ALIVE_ACTIVE"

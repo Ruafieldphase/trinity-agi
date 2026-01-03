@@ -1,0 +1,51 @@
+{
+  "source": "boundary_induction",
+  "title": "boundary_induction: self-set boundary candidates",
+  "tags": [
+    "boundary",
+    "induction",
+    "self_set"
+  ],
+  "notes": "Core=contract yt=UNKNOWN life=ALIVE_IDLE",
+  "timestamp": 1766874594.732772,
+  "where": {
+    "platform": "windows",
+    "layer": "boundary_induction"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "id": "e9b7b2939e463b45",
+      "polarity": "caution",
+      "text": "수축 우세 시: 새 입력은 1개만 물질화하고 나머지는 Idle로 둔다(과잉 압축 루프 방지).",
+      "applies_when": {
+        "core_mode": "contract"
+      },
+      "strength_0_1": 1.0,
+      "last_seen_epoch": 1766874594.732772
+    },
+    {
+      "id": "0dca524db5c61e3c",
+      "polarity": "caution",
+      "text": "Idle은 정상 생존이다. 생존(ATP/RestGate)을 해치면 경계 생성도 중단한다.",
+      "applies_when": {
+        "life_state": "ALIVE*"
+      },
+      "strength_0_1": 1.0,
+      "last_seen_epoch": 1766874594.732772
+    }
+  ],
+  "meta": {
+    "evidence": {
+      "Core_dominant_mode": "contract",
+      "Core_ratio": 0.6,
+      "yt_compression_mode": "UNKNOWN",
+      "yt_presentation_form": "UNKNOWN",
+      "life_state": "ALIVE_IDLE"
+    }
+  }
+}

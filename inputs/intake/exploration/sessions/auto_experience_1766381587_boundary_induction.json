@@ -6,7 +6,7 @@
     "induction",
     "self_set"
   ],
-  "notes": "rua=unknown yt=UNKNOWN life=ALIVE_IDLE",
+  "notes": "Core=unknown yt=UNKNOWN life=ALIVE_IDLE",
   "timestamp": 1766381587.4187474,
   "where": {
     "platform": "windows",
@@ -25,8 +25,8 @@
   ],
   "meta": {
     "evidence": {
-      "rua_dominant_mode": "unknown",
-      "rua_ratio": null,
+      "Core_dominant_mode": "unknown",
+      "Core_ratio": null,
       "yt_compression_mode": "UNKNOWN",
       "yt_presentation_form": "UNKNOWN",
       "life_state": "ALIVE_IDLE"

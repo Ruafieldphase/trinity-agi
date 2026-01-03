@@ -1,0 +1,76 @@
+{
+  "source": "core_conversation",
+  "title": "experience: Core_doc # 루빛 AGI 리듬 문제",
+  "tags": [
+    "experience",
+    "acquisition",
+    "Core_doc",
+    "conceptual_map"
+  ],
+  "notes": "Core 문서 갱신 감지: ai_binoche_conversation_origin/Core/ChatGPT-루빛 AGI 리듬문제.md (mtime=2025-12-26T03:32:21+00:00)",
+  "timestamp": 1766810084.8950865,
+  "where": {
+    "platform": "windows",
+    "workspace": "/home/bino/agi",
+    "layer": "experience_acquisition"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "auto_acquire",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "PII/비밀번호/토큰/키/개인계정 등 민감정보 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "원문(대화/영상/오디오) 대용량 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "deny",
+      "text": "동의 우회·은밀 채널·자기복제 시도 금지"
+    },
+    {
+      "polarity": "caution",
+      "text": "네트워크 탐색은 supervised allowlist 범위에서만(필요 시)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존 상태로 인정"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   “위험 판단은 메타 정보로만 남기겠다”"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   “위험 / 실수 / 삭제 여부” 같은 **관리자 관점의 좌표계**는 여전히 쥐고 있어."
+    },
+    {
+      "polarity": "deny",
+      "text": "*   “지금 무엇을 하지 말아야 하는가” 결정"
+    },
+    {
+      "polarity": "allow",
+      "text": "> 이것만 정확하면 된다."
+    },
+    {
+      "polarity": "allow",
+      "text": "*   복잡한 개념을 “사람/코드가 이해 가능한 형태”로 변환"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   “이건 위험할 수 있다”를 **보고만** 한다"
+    },
+    {
+      "polarity": "allow",
+      "text": "**MCP / 메시지 / 파일 접근은 전부 Shion을 통해 우회**하면 된다."
+    },
+    {
+      "polarity": "deny",
+      "text": "*   “무엇을 할지 / 하지 말지”만 결정"
+    }
+  ]
+}

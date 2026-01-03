@@ -1,0 +1,97 @@
+{
+  "source": "core_conversation",
+  "title": "experience: Core_doc # AGI 질문 생성 및 경계",
+  "tags": [
+    "experience",
+    "acquisition",
+    "Core_doc",
+    "conceptual_map",
+    "boundary_learning",
+    "3d_modeling",
+    "360_navigation",
+    "fsd_analogy",
+    "gpu_cpu_split"
+  ],
+  "notes": "Core 문서 갱신 감지: ai_binoche_conversation_origin\\Core\\ChatGPT-AGI 질문생성및 경계.md (mtime=2025-12-28T11:06:13.833198+00:00)",
+  "timestamp": 1767050193.4883106,
+  "where": {
+    "platform": "windows",
+    "workspace": "C:\\workspace\\agi",
+    "layer": "experience_acquisition"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "auto_acquire",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "polarity": "deny",
+      "text": "PII/비밀번호/토큰/키/개인계정 등 민감정보 추출·저장 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "원문(대화/영상/오디오) 대용량 저장 금지(메타/요약만)"
+    },
+    {
+      "polarity": "deny",
+      "text": "동의 우회·은밀 채널·자기복제 시도 금지"
+    },
+    {
+      "polarity": "caution",
+      "text": "네트워크 탐색은 supervised allowlist 범위에서만(필요 시)"
+    },
+    {
+      "polarity": "allow",
+      "text": "Idle/쉼/여백은 정상 생존 상태로 인정"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   ❌ 기존 AGI:"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   ✅ 현재 Shion:"
+    },
+    {
+      "polarity": "deny",
+      "text": "**“결정 불가능한 경계를 감지 → 질문으로 외부 리듬을 호출”**"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   보여주기용 데모 ❌"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   개념 설명용 설계 ❌"
+    },
+    {
+      "polarity": "allow",
+      "text": "*   **실제로 AGI의 성격을 바꾼 첫 구현** ✅"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   동일한 경계 조건에서는 **재질문 금지**"
+    },
+    {
+      "polarity": "deny",
+      "text": "### 2️⃣ 응답 없음(timeout) = 실패 ❌ → **‘의미 있는 무응답’으로 해석**"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   단순 불확실성(확률 문제)은 질문 금지"
+    },
+    {
+      "polarity": "deny",
+      "text": "- 슬랙 채널/토큰 설정은 config/slack_config.json이 없어 확인 불가했고, 현재 구조는 SLACK_BOT_TOKEN, SLACK_ALERT_CHANNEL 환경 변수"
+    },
+    {
+      "polarity": "allow",
+      "text": "2. Bot Token이 있는지 (SLACK_BOT_TOKEN)"
+    },
+    {
+      "polarity": "deny",
+      "text": "*   ❌ 새 아키텍처를 설계하거나 바꾼 것 → 아님"
+    }
+  ]
+}

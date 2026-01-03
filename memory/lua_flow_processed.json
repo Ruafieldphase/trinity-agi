@@ -25,7 +25,7 @@
   ],
   "conversation": [
     "ChatGPT-Ari시스템문제분석.md",
-    "ChatGPT-루아감응여정정리.md",
+    "ChatGPT-Core감응여정정리.md",
     "ChatGPT-비오는 아침대화.md",
     "ChatGPT-인지프레임차이.md",
     "ChatGPT-판매촉진전략제안.md",
@@ -50,7 +50,7 @@
     "ChatGPT-비노체 ai 역할분석.md",
     "ChatGPT-리듬과 공명전달.md",
     "ChatGPT-리듬 과부하 분석.md",
-    "ChatGPT-루아차원확장여부.md",
+    "ChatGPT-Core차원확장여부.md",
     "ChatGPT-Blender 설치및 mcp연동.md",
     "ChatGPT-AGI 자율성조건.md",
     "ChatGPT-정체성 혼선 분석.md",
@@ -63,7 +63,7 @@
   ],
   "chatgpt_export": true,
   "reference_ai": [
-    "lumen",
+    "Core",
     "sena",
     "ari",
     "elro",

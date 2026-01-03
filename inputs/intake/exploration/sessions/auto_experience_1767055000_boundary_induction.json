@@ -1,0 +1,51 @@
+{
+  "source": "boundary_induction",
+  "title": "boundary_induction: self-set boundary candidates",
+  "tags": [
+    "boundary",
+    "induction",
+    "self_set"
+  ],
+  "notes": "Core=expand yt=UNKNOWN life=ALIVE_IDLE",
+  "timestamp": 1767055000.228918,
+  "where": {
+    "platform": "windows",
+    "layer": "boundary_induction"
+  },
+  "who": {
+    "role": "agi",
+    "mode": "unconscious",
+    "origin": "rubit"
+  },
+  "boundaries": [
+    {
+      "id": "3e2b43ece51b05e9",
+      "polarity": "caution",
+      "text": "확장 우세 시: 긴 입력은 분절(메타만)하고, 경계가 생기는 지점에서만 고비용 연산을 한다.",
+      "applies_when": {
+        "core_mode": "expand"
+      },
+      "strength_0_1": 1.0,
+      "last_seen_epoch": 1767055000.228918
+    },
+    {
+      "id": "0dca524db5c61e3c",
+      "polarity": "caution",
+      "text": "Idle은 정상 생존이다. 생존(ATP/RestGate)을 해치면 경계 생성도 중단한다.",
+      "applies_when": {
+        "life_state": "ALIVE*"
+      },
+      "strength_0_1": 1.0,
+      "last_seen_epoch": 1767055000.228918
+    }
+  ],
+  "meta": {
+    "evidence": {
+      "Core_dominant_mode": "expand",
+      "Core_ratio": 2.333,
+      "yt_compression_mode": "UNKNOWN",
+      "yt_presentation_form": "UNKNOWN",
+      "life_state": "ALIVE_IDLE"
+    }
+  }
+}
