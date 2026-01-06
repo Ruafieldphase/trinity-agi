@@ -1,8 +1,0 @@
-{
-  "task_id": "b2aa6a94-468c-4ad2-9c63-4594537b7090",
-  "worker": "comet-browser",
-  "status": "failed",
-  "data": {},
-  "completed_at": "2025-10-28T21:54:02.946243",
-  "error_message": "Unknown task type: calculation"
-}

@@ -1,8 +1,0 @@
-{
-  "task_id": "61d756e3-2dc0-4dcb-a9fc-2f8d17feebc4",
-  "worker": "comet-extension",
-  "status": "error",
-  "data": {},
-  "completed_at": "2025-10-28T22:43:05.829309",
-  "error_message": "Cannot read properties of undefined (reading 'toLowerCase')"
-}

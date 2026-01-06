@@ -1,8 +1,0 @@
-{
-  "task_id": "e08e34ec-53b2-4c3d-bbbf-a2a280c1b57f",
-  "worker": "comet-browser",
-  "status": "failed",
-  "data": {},
-  "completed_at": "2025-10-28T21:40:43.198638",
-  "error_message": "Unknown task type: json_process"
-}

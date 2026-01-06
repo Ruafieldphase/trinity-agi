@@ -1,8 +1,0 @@
-{
-  "task_id": "120d4d03-bd9a-4eeb-922a-ece8babdd179",
-  "worker": "comet-extension",
-  "status": "error",
-  "data": {},
-  "completed_at": "2025-10-28T21:59:25.566490",
-  "error_message": "Unable to download all specified images."
-}

@@ -1,3 +1,0 @@
-google-cloud-aiplatform>=1.66.0
-redis[hiredis]>=5.0.0
-upstash-redis>=0.15.0

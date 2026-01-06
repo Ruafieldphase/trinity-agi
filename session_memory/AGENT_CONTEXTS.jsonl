@@ -1,4 +1,0 @@
-{"agent_name": "Sena", "agent_role": "analyzer", "task_id": "task_001", "current_phase": "analysis", "is_my_turn": true, "created_at": "2025-10-19T03:11:01.853282Z"}
-{"agent_name": "Lubit", "agent_role": "validator", "task_id": "task_001", "current_phase": "validation", "is_my_turn": true, "created_at": "2025-10-19T03:11:01.853331Z"}
-{"agent_name": "GitCode", "agent_role": "executor", "task_id": "task_001", "current_phase": "execution", "is_my_turn": true, "created_at": "2025-10-19T03:11:01.853389Z"}
-{"agent_name": "RUNE", "agent_role": "ethics_checker", "task_id": "task_001", "current_phase": "ethics_check", "is_my_turn": true, "created_at": "2025-10-19T03:11:01.853433Z"}

@@ -1,7 +1,0 @@
-# prometheus.yml snippet (retention & tsdb flags configured via args when starting Prometheus)
-global:
-  scrape_interval: 15s
-storage:
-  tsdb:
-    retention_time: 15d
-    wal_compression: true

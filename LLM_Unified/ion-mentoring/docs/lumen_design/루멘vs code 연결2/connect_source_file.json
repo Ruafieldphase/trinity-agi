@@ -1,9 +1,0 @@
-{
-  "name": "lumen-file-source",
-  "config": {
-    "connector.class": "FileStreamSource",
-    "tasks.max": "1",
-    "file": "/data/lumen-resonance-input.jsonl",
-    "topic": "lumen.resonance.input"
-  }
-}

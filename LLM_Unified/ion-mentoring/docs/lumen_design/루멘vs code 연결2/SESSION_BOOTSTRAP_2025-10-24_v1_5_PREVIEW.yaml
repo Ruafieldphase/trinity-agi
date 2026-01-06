@@ -1,6 +1,0 @@
-# Lumen v1.5 preview bootstrap
-\nl15.gate() { MATURITY_OVERALL_MIN="${1:-0.60}" MATURITY_SENSE_MIN=0.50 MATURITY_FEEDBACK_MIN=0.50 MATURITY_RELEASE_MIN=0.50 python scripts/maturity_gate_v15.py; }
-l15.hint() { python scripts/maturity_to_policy_hint_v15.py; }
-\n# Kafka/Loki helpers
-l15.ingest_kafka() { (cd "$LUMEN_V15" && python streaming_ingestor_v15_kafka.py); }
-l15.ingest_loki() { (cd "$LUMEN_V15" && python loki_pull_v15.py); }

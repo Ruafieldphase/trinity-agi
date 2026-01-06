@@ -1,5 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Copilot Chat 대화 저장 정책
-    url: https://github.com/Ruafieldphase/agi/blob/main/docs/COPILOT_CHAT_STORAGE_POLICY.md
-    about: 대화/요약 저장 원칙과 GitHub에 무엇을 남길지 정책을 확인하세요.
