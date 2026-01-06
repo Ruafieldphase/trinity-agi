@@ -1,0 +1,19 @@
+{
+  "scenarios": [
+    {
+      "id": "creative_coach",
+      "prompt": "Design an empathic AI coach for creative writers.",
+      "depth": 2
+    },
+    {
+      "id": "resilience_audit",
+      "prompt": "Assess emotional resilience for remote research teams.",
+      "depth": 1
+    },
+    {
+      "id": "somatic_loop",
+      "prompt": "How should NAEDA respond when affect drops below 0.2?",
+      "depth": 2
+    }
+  ]
+}

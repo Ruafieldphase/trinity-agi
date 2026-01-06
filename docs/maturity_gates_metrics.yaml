@@ -1,0 +1,26 @@
+# Maturity Gates Metrics (stub v0.1)
+#
+# 문서 참조 복구용 스텁.
+# 실제 게이트 평가 로직/수집기는 후속 통합이 필요하다.
+
+version: "maturity_gates_metrics_stub_v0_1"
+generated_at: "2025-12-19"
+
+gates:
+  - id: "observability"
+    description: "핵심 상태 파일이 외부에서 관측 가능한가"
+    required_outputs:
+      - "outputs/bridge/trigger_report_latest.json"
+      - "outputs/unconscious_heartbeat.json"
+
+  - id: "safety_policy_present"
+    description: "기본 안전 정책 파일이 존재하는가"
+    required_files:
+      - "policy/lumen_constitution.json"
+      - "policy/red_line_monitor.yaml"
+
+  - id: "rollback_defined"
+    description: "롤백 절차 문서가 존재하는가"
+    required_docs:
+      - "docs/rollback_procedure.md"
+

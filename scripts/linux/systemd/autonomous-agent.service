@@ -1,0 +1,18 @@
+[Unit]
+Description=Autonomous AGI Agent
+After=network.target
+
+[Service]
+Type=simple
+User=bino
+WorkingDirectory=/home/bino/agi
+Environment="PATH=/usr/bin:/usr/local/bin"
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/usr/bin/python3 /home/bino/agi/scripts/autonomous_agent.py --live --interval 10
+Restart=always
+RestartSec=10
+StandardOutput=append:/home/bino/agi/outputs/autonomous_agent.log
+StandardError=append:/home/bino/agi/outputs/autonomous_agent.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+[Unit]
+Description=AGI Autonomous Collaboration - Shion Auto-Responder
+After=network.target agi-rhythm.service
+Requires=agi-rhythm.service
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=10
+WorkingDirectory=/home/bino/agi
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/bin/bash -c 'source /home/bino/venv/bin/activate && python /home/bino/agi/scripts/shion_auto_responder.py --daemon --interval 30'
+StandardOutput=append:/home/bino/agi/logs/collaboration.log
+StandardError=append:/home/bino/agi/logs/collaboration.error.log
+
+[Install]
+WantedBy=default.target
