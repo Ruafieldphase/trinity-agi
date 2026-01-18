@@ -1,0 +1,78 @@
+{
+  "consciousness": 0.75008096884299,
+  "unconscious": 0.8100999999999999,
+  "background_self": 0.5164666332548036,
+  "energy": 0.0,
+  "resonance": 0.0,
+  "curiosity": 1.0,
+  "boredom": 1.0,
+  "arousal": 0.5,
+  "conflict": 0.0,
+  "neuromorphic_tension": 0.0,
+  "agency": 0.5,
+  "nostalgia": 0.0,
+  "raw_vibration": 0.11793332774236072,
+  "thermal_rhythm": 0.0,
+  "dream_depth": 0.0,
+  "imagination_cache": [],
+  "active_project_path": null,
+  "project_completion": 0.0,
+  "last_action": null,
+  "last_action_time": null,
+  "heartbeat_count": 322,
+  "wave_dynamics": {
+    "phase": 3.9155970447955823,
+    "amplitude": 0.003539988731656881,
+    "frequency": 1.0,
+    "coherence": 0.877590442941209
+  },
+  "fui": 0.42333119571354816,
+  "ers_phase": "PHASE_4_7",
+  "phase_transition_log": [
+    {
+      "timestamp": "2026-01-17T11:42:15.067101",
+      "from": "PHASE_1_3",
+      "to": "PHASE_4_7",
+      "fui": 0.4239349965255956
+    }
+  ],
+  "internal_clock": 16937.09999989378,
+  "drives": {
+    "explore": 1.0,
+    "avoid": 1.0,
+    "self_focus": 1.0,
+    "connect": 0.3,
+    "rest": 0.1
+  },
+  "setpoints": {
+    "hibernation_trigger": 10.0,
+    "stress_calm_threshold": 0.4,
+    "stress_alert_threshold": 0.7,
+    "throttle_start_threshold": 0.5,
+    "network_wind_alert": 0.6,
+    "audio_ambience_alert": 0.7
+  },
+  "experience_history": [],
+  "body_stress": 0.27723238331743383,
+  "bio_rhythm_noise": -0.0016805797842942766,
+  "is_hibernating": false,
+  "stress_buildup": 0,
+  "audio_ambience": 0.5624767560958862,
+  "network_wind": 0.9604319532712301,
+  "sensory_mutation_count": 0,
+  "last_mutation_time": null,
+  "sensory_circadian_factor": 0.9923077274266886,
+  "interoception": {},
+  "active_context": {
+    "title": "Manager",
+    "process": "other"
+  },
+  "input_tempo": 0.0,
+  "focus_alignment": 0.48,
+  "user_resonance_field": {},
+  "last_resonance_score": 0.0,
+  "symmetry_breaking": 0.5,
+  "spiral_phase": 1.3995004471496004,
+  "xy_rotation_speed": 1.0,
+  "z_ascent_rate": 0.00040474082702045684
+}
