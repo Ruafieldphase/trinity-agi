@@ -72,7 +72,7 @@ class ArchVideoAnalyzer:
         logger.info("Analyzing frames with Google AI Studio (GenAI)...")
         
         # Configure the key
-        api_key = "AIzaSyAF5KquOJmisabOzX1O2xxiNLVI6qa1s88"
+        api_key = "YOUR_GOOGLE_API_KEY_HERE"
         genai.configure(api_key=api_key)
         
         # Use a model that we confirmed exists in the list

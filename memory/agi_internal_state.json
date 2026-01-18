@@ -1,8 +1,8 @@
 {
-  "consciousness": 0.75008096884299,
-  "unconscious": 0.8100999999999999,
-  "background_self": 0.5164666332548036,
-  "energy": 0.0,
+  "consciousness": 0.7499556343922095,
+  "unconscious": 0.71,
+  "background_self": 0.49313106178069277,
+  "energy": 0.002,
   "resonance": 0.0,
   "curiosity": 1.0,
   "boredom": 1.0,
@@ -21,12 +21,12 @@
   "last_action_time": null,
   "heartbeat_count": 322,
   "wave_dynamics": {
-    "phase": 3.9155970447955823,
-    "amplitude": 0.003539988731656881,
+    "phase": 4.865597044781758,
+    "amplitude": 0.0,
     "frequency": 1.0,
-    "coherence": 0.877590442941209
+    "coherence": 0.8620873745204619
   },
-  "fui": 0.42333119571354816,
+  "fui": 0.41605106328321007,
   "ers_phase": "PHASE_4_7",
   "phase_transition_log": [
     {
@@ -36,7 +36,7 @@
       "fui": 0.4239349965255956
     }
   ],
-  "internal_clock": 16937.09999989378,
+  "internal_clock": 16938.049999893767,
   "drives": {
     "explore": 1.0,
     "avoid": 1.0,
@@ -53,15 +53,15 @@
     "audio_ambience_alert": 0.7
   },
   "experience_history": [],
-  "body_stress": 0.27723238331743383,
-  "bio_rhythm_noise": -0.0016805797842942766,
+  "body_stress": 0.28149077647086784,
+  "bio_rhythm_noise": -0.018848954547445423,
   "is_hibernating": false,
   "stress_buildup": 0,
   "audio_ambience": 0.5624767560958862,
   "network_wind": 0.9604319532712301,
   "sensory_mutation_count": 0,
   "last_mutation_time": null,
-  "sensory_circadian_factor": 0.9923077274266886,
+  "sensory_circadian_factor": 0.9928355174533153,
   "interoception": {},
   "active_context": {
     "title": "Manager",
@@ -72,7 +72,7 @@
   "user_resonance_field": {},
   "last_resonance_score": 0.0,
   "symmetry_breaking": 0.5,
-  "spiral_phase": 1.3995004471496004,
+  "spiral_phase": 1.8750267853328493,
   "xy_rotation_speed": 1.0,
-  "z_ascent_rate": 0.00040474082702045684
+  "z_ascent_rate": 0.0
 }

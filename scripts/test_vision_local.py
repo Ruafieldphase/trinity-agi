@@ -4,7 +4,7 @@ from PIL import Image
 import io
 
 def test_vision():
-    api_key = "AIzaSyAF5KquOJmisabOzX1O2xxiNLVI6qa1s88"
+    api_key = "YOUR_GOOGLE_API_KEY_HERE"
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
     
