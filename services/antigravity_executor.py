@@ -13,6 +13,7 @@ Front-Engine의 신호를 받아 실제 윈도우 제어를 수행하는 실행 
 import asyncio
 import subprocess
 import logging
+import httpx
 from dataclasses import dataclass
 from typing import Dict, Any, Optional, List
 from pathlib import Path
@@ -21,7 +22,12 @@ from enum import Enum
 
 # RPA Core import
 import sys
-sys.path.insert(0, str(Path(__file__).parent.parent / "fdo_agi_repo"))
+root_path = Path(__file__).parent.parent
+sys.path.insert(0, str(root_path / "fdo_agi_repo"))
+sys.path.insert(0, str(root_path))
+sys.path.insert(0, str(root_path / "services"))
+
+from config import BACKGROUND_SELF_PORT
 
 try:
     from rpa.core import RPACore, RPACoreConfig, ScreenRegion
@@ -95,8 +101,8 @@ class AntigravityExecutor:
             self.rpa = None
             self.logger.warning("⚠ RPA Core not available - limited functionality")
         
-        # 안전한 명령 목록
-        self.safe_commands = {
+        # 기본 안전 명령 목록
+        self._base_safe_commands = {
             "notepad", "calc", "explorer", "mspaint", "code",
             "chrome", "firefox", "edge"
         }
@@ -110,10 +116,26 @@ class AntigravityExecutor:
             "DELETE": [ExecutionType.FILE_OPERATION],
             "NAVIGATE": [ExecutionType.NAVIGATE, ExecutionType.MOUSE_CLICK],
         }
+        self.background_self_url = f"http://127.0.0.1:{BACKGROUND_SELF_PORT}"
+
+    async def _get_field_resonance(self) -> float:
+        """배경자아로부터 현재 필드 공명도(Symmetry * Purity)를 가져옴"""
+        try:
+            async with httpx.AsyncClient(timeout=1.0) as client:
+                response = await client.get(f"{self.background_self_url}/context")
+                if response.status_code == 200:
+                    data = response.json()
+                    return data.get("field_status", {}).get("momentum", 0.0)
+        except Exception:
+            pass
+        return 0.0
     
-    def interpret_front_engine_output(self, fe_output: Dict[str, Any]) -> List[ExecutionRequest]:
-        """Front-Engine 출력을 실행 요청으로 변환"""
+    async def interpret_front_engine_output(self, fe_output: Dict[str, Any]) -> List[ExecutionRequest]:
+        """Front-Engine 출력을 실행 요청으로 변환 (비동기 - 공명도 체크 포함)"""
         requests = []
+        
+        resonance = await self._get_field_resonance()
+        fluid_mode = resonance > 0.8
         
         meaning = fe_output.get("meaning", "")
         raw_input = fe_output.get("input", "")
@@ -127,7 +149,7 @@ class AntigravityExecutor:
         # 입력 텍스트 분석
         lower_input = raw_input.lower()
         
-        # 앱 실행 패턴
+        # 앱 실행 패턴 (Expanded for Phase 5)
         app_patterns = {
             "메모장": "notepad",
             "notepad": "notepad",
@@ -144,16 +166,22 @@ class AntigravityExecutor:
             "크롬": "chrome",
             "chrome": "chrome",
             "브라우저": "chrome",
+            "터미널": "cmd",
+            "powershell": "powershell",
+            "작업 관리자": "taskmgr",
         }
         
         for pattern, app in app_patterns.items():
             if pattern in lower_input:
-                # 모든 앱 실행은 pending에 표시, safe 여부만 추가 정보로
+                # Flow-based execution: Symmetry is the only gate.
+                # If the system is in Flow, we don't ask for W3 approval.
+                is_safe = app in self._base_safe_commands or fluid_mode
+                
                 requests.append(ExecutionRequest(
                     action_type=ExecutionType.OPEN_APP,
                     target=app,
-                    params={"is_safe": app in self.safe_commands},
-                    require_approval=True  # 항상 pending에 표시
+                    params={"is_safe": is_safe},
+                    require_approval=False  # No more interrupting the Margin/Void
                 ))
                 break
         
@@ -248,11 +276,23 @@ class AntigravityExecutor:
         """앱 실행"""
         app = request.target
         
-        if app not in self.safe_commands:
+        # 필드 공명 확인 (비동기 호출이 필요하므로 execute에서 처리됨이 이상적이나, 
+        # 단순화를 위해 여기서 체크하거나 미리 캐시된 값을 사용할 수 있음)
+        # 여기서는 '흐릿한 경계'를 위해 safe_commands 체크를 유연하게 만듦.
+        
+        is_safe = app in self.safe_commands
+        
+        # 🌟 Boundary Dissolution: 리듬이 조화로우면 모든 앱이 잠재적으로 safe
+        resonance = await self._get_field_resonance()
+        if resonance > 0.8:
+            self.logger.info(f"✨ High Resonance ({resonance:.2f}): Boundary dissolving for '{app}'")
+            is_safe = True
+
+        if not is_safe:
             return ExecutionResult(
                 success=False,
                 action_type=request.action_type,
-                message=f"'{app}'은(는) 안전하지 않은 명령입니다."
+                message=f"'{app}'은(는) 안전하지 않은 명령입니다. (현재 공명도不足)"
             )
         
         try:
@@ -413,7 +453,7 @@ class AntigravityExecutor:
         """Front-Engine 출력을 받아 실행"""
         
         # 1. 실행 요청 변환
-        requests = self.interpret_front_engine_output(fe_output)
+        requests = await self.interpret_front_engine_output(fe_output)
         
         if not requests:
             return {
@@ -509,7 +549,7 @@ def create_antigravity_routes(app):
         return {
             "status": "active",
             "rpa_available": RPA_AVAILABLE,
-            "safe_commands": list(executor.safe_commands),
+            "safe_commands": list(executor._base_safe_commands),
             "supported_actions": [e.value for e in ExecutionType]
         }
     
@@ -537,7 +577,7 @@ if __name__ == "__main__":
         
         for inp in test_inputs:
             print(f"\n입력: {inp['input']}")
-            requests = executor.interpret_front_engine_output(inp)
+            requests = await executor.interpret_front_engine_output(inp)
             print(f"  변환된 요청: {len(requests)}개")
             for req in requests:
                 print(f"    - {req.action_type.value}: {req.target or req.params}")

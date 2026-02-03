@@ -11,8 +11,12 @@ from datetime import datetime
 from typing import Dict, Any
 import sys
 
-# Add parent directory to path
+# Add parent directory and scripts directory to path
+root = Path(__file__).parent.parent
+sys.path.append(str(root))
+sys.path.append(str(root / "scripts"))
 sys.path.append(str(Path(__file__).parent))
+
 from config import CORS_ORIGINS, BODY_PATH, MIND_PATH, OUTPUTS_PATH
 
 app = FastAPI(title="Consciousness Metrics API")

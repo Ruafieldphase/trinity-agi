@@ -22,7 +22,7 @@ class SlackEventQueue:
     """
     
     def __init__(self, queue_dir: str = None):
-        self.queue_dir = Path(queue_dir or Path.home() / "agi" / "outputs" / "slack_queue")
+        self.queue_dir = Path(queue_dir or "c:/workspace/agi/outputs/slack_queue")
         self.queue_dir.mkdir(parents=True, exist_ok=True)
         
         self.pending_file = self.queue_dir / "pending_events.jsonl"
@@ -31,27 +31,42 @@ class SlackEventQueue:
     def add_event(self, event: Dict) -> str:
         """
         Add a new Slack event to the queue
-        
-        Args:
-            event: Slack event dict with keys:
-                - text: message text
-                - channel: channel ID
-                - user: user ID
-                - thread_ts: thread timestamp
-                - ts: event timestamp
-                
-        Returns:
-            Event ID
         """
         # Generate event ID
         timestamp = event.get("ts")
         if timestamp:
-            # Slack ts is already a float string
             event_id = f"slack_{timestamp.replace('.', '_')}"
         else:
-            # Generate from current time
             event_id = f"slack_{int(datetime.now(timezone.utc).timestamp() * 1000)}"
         
+        # Deduplication: check if already in pending
+        if self.pending_file.exists():
+            with open(self.pending_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if line.strip():
+                        try:
+                            item = json.loads(line)
+                            if item.get("id") == event_id:
+                                # print(f"⚠️ Duplicate event skipped: {event_id}")
+                                return event_id
+                        except:
+                            pass
+        
+        # Deduplication: check if already processed
+        if self.processed_file.exists():
+            with open(self.processed_file, 'r', encoding='utf-8') as f:
+                # We only check last 50 processed events for performance
+                lines = f.readlines()
+                for line in lines[-50:]:
+                    if line.strip():
+                        try:
+                            item = json.loads(line)
+                            if item.get("id") == event_id:
+                                # print(f"⚠️ Event already processed: {event_id}")
+                                return event_id
+                        except:
+                            pass
+
         # Add metadata
         enriched_event = {
             "id": event_id,

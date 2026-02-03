@@ -69,23 +69,22 @@ class ModelSelector:
         self.project = project or os.getenv("GOOGLE_CLOUD_PROJECT")
         self.location = location or os.getenv("GOOGLE_CLOUD_LOCATION", "us-central1")
 
-        # Keys: support both legacy and newer env var names.
-        # - Do not log key values.
+        # Priority: 1. Local file (.env_credentials), 2. Process Environment
         self.api_key = (
-            os.getenv("GOOGLE_API_KEY")
-            or os.getenv("GEMINI_API_KEY")
-            or _load_dotenv_value("GOOGLE_API_KEY")
+            _load_dotenv_value("GOOGLE_API_KEY")
             or _load_dotenv_value("GEMINI_API_KEY")
+            or os.getenv("GOOGLE_API_KEY")
+            or os.getenv("GEMINI_API_KEY")
         )
 
-        # Model preferences (Gemini 3 as default for efficiency)
-        self.fast_model = os.getenv("GEMINI_FAST_MODEL", "gemini-3-flash")
-        self.balanced_model = os.getenv("GEMINI_BALANCED_MODEL", "gemini-3-flash")
-        self.vision_model = os.getenv("GEMINI_VISION_MODEL", "gemini-3-flash")
+        # Model preferences (Gemini 2.5/3.0 as default for future-proof intelligence)
+        self.fast_model = os.getenv("GEMINI_FAST_MODEL", "gemini-2.5-flash")
+        self.balanced_model = os.getenv("GEMINI_BALANCED_MODEL", "gemini-2.5-flash")
+        self.vision_model = os.getenv("GEMINI_VISION_MODEL", "gemini-2.5-flash")
         self.top_model = (
             os.getenv("GEMINI_TOP_TIER_MODEL")
-            or os.getenv("GEMINI_30_MODEL")
-            or os.getenv("GEMINI_EXPERIMENTAL_MODEL")
+            or "gemini-2.5-pro"
+            or "gemini-3-pro-preview"
         )
 
         self.backend = "none" # 'vertex' or 'genai'
@@ -117,8 +116,9 @@ class ModelSelector:
                 self._last_error = {"backend": "genai", "error_type": e.__class__.__name__, "message": str(e)[:400]}
                 self.logger.warning(f"GenAI init failed: {e}")
 
-        # 2. Fallback to Vertex AI
-        if VERTEX_AVAILABLE and self.project:
+        # 2. Fallback to Vertex AI (If not explicitly disabled)
+        disable_vertex = os.getenv("DISABLE_VERTEX_AI", "false").lower() == "true"
+        if VERTEX_AVAILABLE and self.project and not disable_vertex:
             try:
                 vertexai.init(project=self.project, location=self.location)
                 self.backend = "vertex"
@@ -211,13 +211,13 @@ class ModelSelector:
         
         full_list = ordered + [e for e in extras if e not in ordered]
         
-        # If using GenAI, prefer Gemini 3 series first
+        # If using GenAI, prefer Gemini 2.5 series first
         if self.backend == "genai":
-            pref = ["gemini-3-flash", "gemini-3-pro", "gemini-2.5-flash", "gemini-2.5-flash-lite"]
+            pref = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-3-flash-preview"]
             full_list = [p for p in pref if p not in full_list] + full_list
              # Ensure generic names are present for GenAI aliases
-            if "gemini-1.5-flash" not in full_list: full_list.append("gemini-1.5-flash")
-            if "gemini-1.5-pro" not in full_list: full_list.append("gemini-1.5-pro")
+            if "gemini-2.5-flash" not in full_list: full_list.append("gemini-2.5-flash")
+            if "gemini-2.5-pro" not in full_list: full_list.append("gemini-2.5-pro")
 
         return self._dedup(full_list)
 

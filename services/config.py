@@ -2,11 +2,30 @@
 Configuration for AGI Unified Frontend Services
 """
 from agi_core.utils.paths import get_workspace_root, add_to_sys_path
+import sys
 
 # 워크스페이스 루트 및 경로 설정
-WINDOWS_AGI_ROOT = add_to_sys_path()
+WINDOWS_AGI_ROOT = get_workspace_root()
+if str(WINDOWS_AGI_ROOT) not in sys.path:
+    sys.path.insert(0, str(WINDOWS_AGI_ROOT))
+if str(WINDOWS_AGI_ROOT / "scripts") not in sys.path:
+    sys.path.insert(0, str(WINDOWS_AGI_ROOT / "scripts"))
 
-from credentials_manager import get_linux_vm_credentials
+try:
+    from credentials_manager import get_linux_vm_credentials
+    # Linux VM Credentials
+    LINUX_CREDS = get_linux_vm_credentials()
+except (ImportError, Exception):
+    # Nature-based mode fallbacks
+    LINUX_CREDS = {
+        'host': '127.0.0.1', 
+        'user': 'agi', 
+        'password': 'agi'
+    }
+
+LINUX_HOST = LINUX_CREDS.get('host', '127.0.0.1')
+LINUX_USER = LINUX_CREDS.get('user', 'agi')
+LINUX_PASSWORD = LINUX_CREDS.get('password', 'agi')
 
 # API Ports
 CONSCIOUSNESS_PORT = 8100
@@ -19,12 +38,6 @@ CORS_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
-
-# Linux VM Credentials
-LINUX_CREDS = get_linux_vm_credentials()
-LINUX_HOST = LINUX_CREDS['host']
-LINUX_USER = LINUX_CREDS['user']
-LINUX_PASSWORD = LINUX_CREDS['password']
 
 # Paths
 # WINDOWS_AGI_ROOT는 위에서 이미 설정됨 (WINDOWS_AGI_ROOT was already set above)

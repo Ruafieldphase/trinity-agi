@@ -30,10 +30,21 @@ AXIOMS_FILE = WORKSPACE_ROOT / "axioms_of_core.md"
 # Ensure directories exist
 BRIDGE_DIR.mkdir(parents=True, exist_ok=True)
 
-# Force Vertex AI Environment Variables
+# Force Vertex AI Environment Variables - Cross-platform fix
 os.environ["VERTEX_PROJECT_ID"] = "naeda-genesis"
 os.environ["VERTEX_LOCATION"] = "global"
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/bino/agi/config/naeda-genesis-5034a5936036.json"
+
+# Check if we are on Windows and if the credential file exists in a Windows-friendly path
+if os.name == "nt":
+    win_cred_path = WORKSPACE_ROOT / "config" / "naeda-genesis-5034a5936036.json"
+    if win_cred_path.exists():
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(win_cred_path)
+    else:
+        # If missing, it will fallback to mock mode or default ADC
+        pass
+else:
+    # Original Linux path
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/home/bino/agi/config/naeda-genesis-5034a5936036.json"
 
 DEBUG_LOG_FILE = BRIDGE_DIR / "bridge_debug.log"
 

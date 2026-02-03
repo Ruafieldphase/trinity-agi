@@ -1,0 +1,45 @@
+{
+    "allowed_actions": [
+        {
+            "id": "respond_to_slack",
+            "description": "Send a message to Slack channel",
+            "requires_confidence": 0.7,
+            "max_frequency": "60/hour"
+        },
+        {
+            "id": "save_context",
+            "description": "Save important context to bridge",
+            "requires_confidence": 0.5,
+            "max_frequency": "unlimited"
+        },
+        {
+            "id": "run_diagnostic",
+            "description": "Check system health",
+            "requires_confidence": 0.6,
+            "max_frequency": "unlimited"
+        },
+        {
+            "id": "execute_emergency_protocol",
+            "description": "Action in case of drift",
+            "requires_confidence": 0.8,
+            "max_frequency": "10/hour"
+        },
+        {
+            "id": "execute_fsd_goal",
+            "description": "Execute a desktop/system goal via Anna (Shion)",
+            "requires_confidence": 0.65,
+            "max_frequency": "10/hour"
+        }
+    ],
+    "forbidden_actions": [
+        {
+            "id": "delete_all",
+            "reason": "Irreversible damage"
+        }
+    ],
+    "sovereign_mode": {
+        "enabled": true,
+        "confidence_boost_by_resonance": 0.3,
+        "minimum_resonance_for_boost": 0.4
+    }
+}

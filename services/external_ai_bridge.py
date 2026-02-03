@@ -35,6 +35,9 @@ class AITarget(Enum):
     COMET = "comet"
     PERPLEXITY = "perplexity"
     BROWSER = "browser"
+    OLLAMA = "ollama"
+    ZHIPU = "zhipu"
+    GEMINI = "gemini"
 
 
 # 대상별 설정
@@ -58,6 +61,20 @@ TARGET_CONFIGS = {
         "window_title": "Perplexity",
         "url": "https://www.perplexity.ai",
         "is_browser": True,
+    },
+    AITarget.OLLAMA: {
+        "url": "http://localhost:11434/api/chat",
+        "model": "llama3.2:latest",
+        "is_api": True,
+    },
+    AITarget.ZHIPU: {
+        "url": "https://open.bigmodel.cn/api/paas/v4/chat/completions",
+        "model": "glm-4-flash",
+        "is_api": True,
+    },
+    AITarget.GEMINI: {
+        "model": "gemini-1.5-flash",
+        "is_api": True,
     },
 }
 
@@ -306,10 +323,133 @@ class ExternalAIBridge:
         if self.aura_process:
             try:
                 self.aura_process.terminate()
-                self.aura_process = None
                 logger.info("Aura stopped")
             except:
                 pass
+
+    async def _send_to_zhipu(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Optional[str]:
+        """Zhipu AI (BigModel) API를 통한 통신"""
+        config = TARGET_CONFIGS.get(AITarget.ZHIPU)
+        url = config.get("url")
+        model = config.get("model")
+        
+        # API Key load
+        api_key = os.getenv("ZHIPU_API_KEY") or os.getenv("WAVE_API_KEY")
+        if not api_key:
+            # Try credentials manager
+            try:
+                from scripts.credentials_manager import CredentialsManager
+                cm = CredentialsManager()
+                api_key = cm.get_credential("ZHIPU_API_KEY") or cm.get_credential("WAVE_API_KEY")
+            except:
+                pass
+        
+        if not api_key:
+            logger.error("ZHIPU_API_KEY not found in environment or credentials.")
+            return "Error: Zhipu API Key missing. Please check .env_credentials."
+
+        messages = []
+        if identity:
+            messages.append({"role": "system", "content": identity})
+        
+        user_content = ""
+        if context:
+            user_content += f"[Context]\n{context}\n\n"
+        user_content += message
+        messages.append({"role": "user", "content": user_content})
+        
+        try:
+            import json
+            import httpx
+            
+            logger.info(f"Zhipu API 요청 시작: {model}")
+            
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "model": model,
+                "messages": messages,
+                "stream": False
+            }
+            
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(url, json=payload, headers=headers)
+                response.raise_for_status()
+                result = response.json()
+                
+                content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
+                self._log_resonance("zhipu_response", content, AITarget.ZHIPU)
+                return content
+                
+        except Exception as e:
+            logger.error(f"Zhipu communication failed: {e}")
+            return None
+
+    async def _send_to_gemini(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Optional[str]:
+        """Gemini API를 통한 직접 통신"""
+        logger.info("Gemini API 요청 시작: gemini-1.5-flash")
+        
+        full_prompt = ""
+        if identity:
+            full_prompt += f"You are: {identity}\n\n"
+        if context:
+            full_prompt += f"Context: {context}\n\n"
+        full_prompt += message
+        
+        try:
+            # ModelSelector (which is already initialized in __init__)
+            response, model_used = self.model_selector.try_generate_content(full_prompt)
+            if response and hasattr(response, 'text'):
+                content = response.text
+                self._log_resonance("gemini_response", content, AITarget.GEMINI)
+                return content
+            return None
+        except Exception as e:
+            logger.error(f"Gemini communication failed: {e}")
+            return None
+
+    async def _send_to_ollama(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Optional[str]:
+        """Ollama API를 통한 직접 통신 (Chat API 사용)"""
+        config = TARGET_CONFIGS.get(AITarget.OLLAMA)
+        url = config.get("url")
+        model = config.get("model")
+        
+        system_prompt = identity if identity else "당신은 시온(Shion)입니다."
+        if context:
+            system_prompt += f"\n\n[이전 대화 맥락]\n{context}"
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": message}
+        ]
+        
+        try:
+            import json
+            import httpx
+            
+            logger.info(f"Ollama Chat API 요청 시작: {model}")
+            
+            payload = {
+                "model": model,
+                "messages": messages,
+                "stream": False
+            }
+            
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                response = await client.post(url, json=payload)
+                response.raise_for_status()
+                result = response.json()
+                
+                content = result.get("message", {}).get("content", "")
+                self._log_resonance("ollama_response", content, AITarget.OLLAMA)
+                return content
+                
+        except Exception as e:
+            logger.error(f"Ollama communication failed: {e}")
+            return None
     
     async def send_message(
         self,
@@ -329,6 +469,13 @@ class ExternalAIBridge:
             identity: 신분 소개 (선택)
             timeout_sec: 응답 대기 시간
         """
+        if target == AITarget.OLLAMA:
+            return await self._send_to_ollama(message, context, identity)
+        if target == AITarget.ZHIPU:
+            return await self._send_to_zhipu(message, context, identity)
+        if target == AITarget.GEMINI:
+            return await self._send_to_gemini(message, context, identity)
+            
         logger.info(f"Sending message to {target.value}...")
         self._start_aura(AURA_COLOR_ACTIVE)
         

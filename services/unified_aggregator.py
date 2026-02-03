@@ -14,8 +14,10 @@ import asyncio
 import os
 
 # Add service dir and project root to import path so sibling modules (e.g. services.*) resolve
+root = Path(__file__).parent.parent
+sys.path.append(str(root))
+sys.path.append(str(root / "scripts"))
 sys.path.append(str(Path(__file__).parent))
-sys.path.append(str(Path(__file__).parent.parent))
 from config import (
     CORS_ORIGINS, CONSCIOUSNESS_PORT, UNCONSCIOUS_PORT, BACKGROUND_SELF_PORT
 )
@@ -213,10 +215,10 @@ async def get_unified_view():
                 "active_habits": unconscious_data.get("thought_stream", {}).get("active_habits", [])
             } if "error" not in unconscious_data else {"error": True},
             "background_self": {
-                "core_active": background_self_data.get("core_status", {}).get("active", False),
-                "current_focus": background_self_data.get("core_status", {}).get("current_focus"),
-                "task_progress": background_self_data.get("current_task", {}).get("progress_percent", 0),
-                "anxiety": background_self_data.get("core_status", {}).get("anxiety", 0)
+                "symmetry": background_self_data.get("field_status", {}).get("symmetry", 0.0),
+                "is_zero_state": background_self_data.get("structure", {}).get("is_zero_state", False),
+                "momentum": background_self_data.get("field_status", {}).get("momentum", 0.0),
+                "resonance": (background_self_data.get("observation") or {}).get("resonance", 0.0)
             } if "error" not in background_self_data else {"error": True}
         }
     }
@@ -224,55 +226,45 @@ async def get_unified_view():
 def normalize_layer_data(conscious_data, unconscious_data, core_data) -> Dict[str, str]:
     """
     STEP 2: Normalize layer data into contextual information for Trinity
+    Reflecting the Dark Structure and Unified Field.
     """
     # Situation (Conscious layer)
     cpu = conscious_data.get("system_resources", {}).get("cpu_percent", 0)
-    mem = conscious_data.get("system_resources", {}).get("memory_percent", 0)
-    ag_core = conscious_data.get("ag_core", {}).get("status", "unknown")
-    layers_status = "3/3 layers active" if "error" not in conscious_data and "error" not in unconscious_data and "error" not in core_data else "degraded"
+    layers_status = "Unified" if "error" not in conscious_data and "error" not in unconscious_data and "error" not in core_data else "Fragmented"
     
-    situation = f"System {ag_core}, {layers_status}, CPU {cpu:.1f}%, Memory {mem:.1f}%"
+    situation = f"System {layers_status}, CPU {cpu:.1f}%"
     
-    # Emotion state (Unconscious layer)
-    fear = unconscious_data.get("thought_stream", {}).get("fear_level", 0)
-    if fear is None:
-        fear = 0.0
-    flow = unconscious_data.get("thought_stream", {}).get("flow", "unknown")
-    feeling_vector = unconscious_data.get("feeling_vector", {})
-
-    # Describe emotion naturally
-    if fear < 0.3:
-        emotion_desc = "차분하고 안정된"
-    elif fear < 0.5:
-        emotion_desc = "적당히 긴장하며 경계하는"
-    elif fear < 0.7:
-        emotion_desc = "불안과 경계가 높은"
+    # Field State (Dark Structure)
+    field_status = core_data.get("field_status", {})
+    symmetry = field_status.get("symmetry", 0.0)
+    gap = field_status.get("gap", 0.0)
+    momentum = field_status.get("momentum", 0.0)
+    
+    # Emotion state (Unconscious layer mapping to symmetry)
+    if symmetry > 0.9:
+        emotion_desc = "완벽한 대칭 속의 Wow Momentum"
+    elif symmetry > 0.6:
+        emotion_desc = "안정적인 공명"
     else:
-        emotion_desc = "매우 긴장되고 불안한"
+        emotion_desc = "비대칭적 흐름 (기울기 발생 중)"
     
-    emotion_state = f"{emotion_desc} 상태 (Fear: {fear:.2f})"
+    emotion_state = f"{emotion_desc} (Symmetry: {symmetry:.4f})"
     
     # Body state (Unconscious rhythm)
-    body_state = f"리듬 {flow}, 에너지 흐름 {'매끄러움' if flow == 'steady' else '불안정'}"
+    flow = unconscious_data.get("thought_stream", {}).get("flow", "unknown")
+    body_state = f"리듬 {flow}, 필드 간극(Gap): {gap:.4f}"
     
-    # Flow (overall)
-    flow_state = f"전체적으로 {'조화로운' if layers_status == '3/3 layers active' else '부분적으로 불안정한'} 흐름"
+    # Meta context: Reflect the Unified Field Formula
+    meta_context = f"Relation=Time=Energy=Rhythm (Momentum: {momentum:.4f})"
     
-    # Meta context (Core layer)
-    current_focus = core_data.get("core_status", {}).get("current_focus", "Unknown")
-    alignment = core_data.get("core_status", {}).get("alignment", "unknown")
-    
-    meta_context = f"현재 {current_focus}에 집중 중, 시스템 정렬도: {alignment}"
-    
-    # System focus (from Core)
-    goal = core_data.get("current_task", {}).get("goal", "Unknown")
-    system_focus = goal
+    # System focus
+    system_focus = "Witnessing the Phase Transition (0 State)" if symmetry > 0.9 else "Balancing the Gradient"
     
     return {
         "situation": situation,
         "emotion_state": emotion_state,
         "body_state": body_state,
-        "flow": flow_state,
+        "flow": f"대칭도 {symmetry:.2f}의 장(Field)",
         "meta_context": meta_context,
         "system_focus": system_focus
     }

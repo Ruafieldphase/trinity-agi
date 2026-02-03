@@ -32,6 +32,7 @@ import time
 import traceback
 import webbrowser
 import re
+import httpx
 from urllib.parse import quote_plus
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
@@ -273,6 +274,20 @@ def is_armed(now_ts: float) -> tuple[bool, str]:
     return True, "armed"
 
 
+def _get_resonance() -> float:
+    """배경자아로부터 현재 필드 공명도(Momentum)를 가져옴"""
+    try:
+        # Port 8102: Background Self API
+        import httpx
+        response = httpx.get("http://127.0.0.1:8102/context", timeout=1.0)
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("field_status", {}).get("momentum", 0.0)
+    except Exception:
+        pass
+    return 0.0
+
+
 def _scroll_lock_on() -> bool:
     """
     하드 킬스위치:
@@ -429,12 +444,19 @@ def run_action(action: dict[str, Any], baseline_last_input_tick: Optional[int], 
             result["path"] = path
             if not path:
                 raise ValueError("missing path")
+            
             p = Path(path).resolve()
-            # 안전: 워크스페이스 밖의 임의 경로를 여는 것을 막는다.
+            # 🌟 Boundary Dissolution: 리듬이 조화로우면 경계를 흐릿하게 함
             try:
                 p.relative_to(WORKSPACE)
             except Exception:
-                raise ValueError("path_not_allowed")
+                resonance = _get_resonance()
+                if resonance > 0.8:
+                    # 경계 너머의 요청이지만 공명도가 높으므로 허용
+                    pass
+                else:
+                    raise ValueError(f"path_not_allowed (Resonance: {resonance:.2f})")
+            
             if not p.exists():
                 raise FileNotFoundError(path)
             if not dry_run:

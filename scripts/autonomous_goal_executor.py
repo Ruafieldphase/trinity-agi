@@ -31,6 +31,11 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from workspace_root import get_workspace_root
+try:
+    from scripts.sovereign_voice import speak
+except ImportError:
+    # Fallback if not easily importable
+    def speak(msg): print(f"[SPEAK] {msg}")
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -1050,6 +1055,9 @@ if __name__ == "__main__":
         logger.info(f"Executing Goal: {goal['title']}")
         logger.info("=" * 70)
         
+        # Proactive start message
+        speak(f"🌀 *Starting Autonomous Goal*: {goal['title']}")
+        
         # 🧠 Glymphatic Pre-Execution Check
         glymphatic_ready = self._check_glymphatic_readiness()
         if not glymphatic_ready:
@@ -1098,10 +1106,17 @@ if __name__ == "__main__":
                 break
         
         # 3. 결과 기록
+        all_success = all(r["status"] in ("success", "skipped") for r in task_results)
         self.record_execution(goal, task_results)
         
+        if not all_success:
+            last_error = task_results[-1].get("error", "Unknown error")
+            speak(f"⚠️ *Goal Execution Failed*: {goal['title']}\nError: {last_error[:200]}\n\n제가 이 장애물을 어떻게 넘어야 할까요? 당신의 개입이 필요할 수도 있습니다.")
+        elif all_success:
+             speak(f"✅ *Goal Completed*: {goal['title']}")
+        
         # 4. 성공 여부
-        success = all(r["status"] in ("success", "skipped") for r in task_results)
+        success = all_success
         
         # 🧠 Post-Execution Cleanup Scheduling
         if success:

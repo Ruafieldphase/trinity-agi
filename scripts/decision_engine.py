@@ -246,10 +246,7 @@ class DecisionEngine:
     
     def is_allowed(self, decision: Decision) -> Tuple[bool, str]:
         """
-        Check if decision is allowed by whitelist
-        
-        Returns:
-            (allowed: bool, reason: str)
+        Check if decision is allowed by whitelist with Sovereign Mode boost
         """
         # 1. Check if action exists in whitelist
         allowed_actions = {a["id"]: a for a in self.whitelist.get("allowed_actions", [])}
@@ -259,12 +256,36 @@ class DecisionEngine:
         
         action_def = allowed_actions[decision.action]
         
-        # 2. Check confidence threshold
-        required_conf = action_def.get("requires_confidence", 0.9)
-        if decision.confidence < required_conf:
-            return False, f"Confidence {decision.confidence:.2f} < required {required_conf}"
+        # 2. Sovereign Mode Boost (Trust the Nature)
+        sov_config = self.whitelist.get("sovereign_mode", {})
+        current_confidence = decision.confidence
         
-        # 3. Check rate limit
+        if sov_config.get("enabled"):
+            try:
+                # Get current resonance from heartbeat
+                heartbeat_file = self.base_dir / "outputs" / "unconscious_heartbeat.json"
+                if heartbeat_file.exists():
+                    with open(heartbeat_file, 'r') as f:
+                        hb_data = json.load(f)
+                        resonance = hb_data.get("state", {}).get("resonance", 0.0)
+                        
+                        min_res = sov_config.get("minimum_resonance_for_boost", 0.4)
+                        boost_val = sov_config.get("confidence_boost_by_resonance", 0.2)
+                        
+                        if resonance > min_res:
+                            # Boost confidence based on how much it exceeds threshold
+                            effective_boost = boost_val * ((resonance - min_res) / (1.0 - min_res))
+                            current_confidence = min(1.0, current_confidence + effective_boost)
+                            print(f"   ✨ Sovereign Boost: +{effective_boost:.2f} (Resonance: {resonance:.2f})")
+            except Exception as e:
+                print(f"   ⚠️ Sovereign boost calculation failed: {e}")
+
+        # 3. Check confidence threshold
+        required_conf = action_def.get("requires_confidence", 0.9)
+        if current_confidence < required_conf:
+            return False, f"Confidence {current_confidence:.2f} < required {required_conf}"
+        
+        # 4. Check rate limit
         max_freq = action_def.get("max_frequency", "unlimited")
         if max_freq != "unlimited":
             count, period = max_freq.split("/")

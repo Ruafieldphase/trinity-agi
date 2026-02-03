@@ -8,8 +8,12 @@ from datetime import datetime
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 
+from dotenv import load_dotenv
+
 # Configuration
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(BASE_DIR, ".env_credentials"))
+
 CONFIG_PATH = os.path.join(BASE_DIR, "config", "slack_config.json")
 ROUTER_SCRIPT = os.path.join(BASE_DIR, "scripts", "core_router.py")
 VISION_SCRIPT = os.path.join(BASE_DIR, "scripts", "vision_cortex.py")
@@ -25,24 +29,31 @@ from slack_event_queue import SlackEventQueue
 os.makedirs(OUTPUTS_DIR, exist_ok=True)
 
 def load_config():
-    if not os.path.exists(CONFIG_PATH):
-        return {}
-    try:
-        with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
+    config = {}
+    if os.path.exists(CONFIG_PATH):
+        try:
+            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+                config.update(json.load(f))
+        except Exception:
+            pass
+    
+    # Priority: Env > Config
+    config["SLACK_BOT_TOKEN"] = os.getenv("SLACK_BOT_TOKEN") or config.get("SLACK_BOT_TOKEN")
+    config["SLACK_APP_TOKEN"] = os.getenv("SLACK_APP_TOKEN") or config.get("SLACK_APP_TOKEN")
+    config["CHATGPT_SLACK_BOT_TOKEN"] = os.getenv("CHATGPT_SLACK_BOT_TOKEN") or config.get("CHATGPT_SLACK_BOT_TOKEN")
+    config["CHATGPT_SLACK_APP_TOKEN"] = os.getenv("CHATGPT_SLACK_APP_TOKEN") or config.get("CHATGPT_SLACK_APP_TOKEN")
+    
+    return config
 
 config = load_config()
-# Use CHATGPT specific tokens if available, otherwise fallback to default
 SLACK_BOT_TOKEN = config.get("CHATGPT_SLACK_BOT_TOKEN") or config.get("SLACK_BOT_TOKEN")
 SLACK_APP_TOKEN = config.get("CHATGPT_SLACK_APP_TOKEN") or config.get("SLACK_APP_TOKEN")
 
-if not SLACK_BOT_TOKEN or SLACK_BOT_TOKEN.startswith("xoxb-your"):
+if not SLACK_BOT_TOKEN or "your-token" in SLACK_BOT_TOKEN:
     print("Invalid or missing SLACK_BOT_TOKEN. Exiting.")
     sys.exit(1)
 
-if not SLACK_APP_TOKEN or SLACK_APP_TOKEN.startswith("xapp-your"):
+if not SLACK_APP_TOKEN or "your-token" in SLACK_APP_TOKEN:
     print("Invalid or missing SLACK_APP_TOKEN. Exiting.")
     sys.exit(1)
 
@@ -219,14 +230,15 @@ def process_audio(file_info, channel_id, thread_ts):
 
 @app.event("app_mention")
 def handle_app_mention_events(body, logger):
-    print(f"DEBUG: app_mention received: {body}")
+    log_debug(f"DEBUG: app_mention received: {json.dumps(body)}")
     event = body["event"]
     text = event.get("text", "")
     channel_id = event["channel"]
-    thread_ts = event.get("ts")
+    thread_ts = event.get("thread_ts") or event.get("ts")
     user_id = event.get("user")
     ts = event.get("ts")
     
+    log_debug(f"DEBUG: Handling app_mention in channel {channel_id}, thread {thread_ts}")
     threading.Thread(target=process_message, args=(text, channel_id, thread_ts, user_id, ts)).start()
 
 @app.event("message")
@@ -234,28 +246,37 @@ def handle_message_events(body, logger):
     log_debug(f"DEBUG: message received: {json.dumps(body)}")
     event = body["event"]
     
-    # Ignore bot messages
-    if event.get("bot_id"):
+    if event.get("bot_id") or event.get("subtype") == "bot_message":
         return
         
     channel_type = event.get("channel_type")
-    # Only handle DMs or if explicitly mentioned (handled by app_mention)
-    if channel_type == "im":
+    channel_id = event["channel"]
+    text = event.get("text", "")
+    user_id = event.get("user")
+    ts = event.get("ts")
+    thread_ts = event.get("thread_ts")
+    
+    log_debug(f"DEBUG: Message info - channel_type: {channel_type}, thread_ts: {thread_ts}, text: {text[:20]}")
+    
+    if channel_type == "im" or thread_ts:
+        log_debug(f"DEBUG: Conditions met (im or thread). Proceeding to process.")
         files = event.get("files", [])
         if files:
             for file_info in files:
                 mimetype = file_info.get("mimetype", "")
                 if mimetype.startswith("image/"):
-                    threading.Thread(target=process_image, args=(file_info, event["channel"], event.get("ts"))).start()
+                    threading.Thread(target=process_image, args=(file_info, channel_id, thread_ts or ts)).start()
                     return
                 elif mimetype.startswith("audio/") or mimetype.startswith("video/"):
-                    threading.Thread(target=process_audio, args=(file_info, event["channel"], event.get("ts"))).start()
+                    threading.Thread(target=process_audio, args=(file_info, channel_id, thread_ts or ts)).start()
                     return
         
-        text = event.get("text", "")
-        user_id = event.get("user")
-        ts = event.get("ts")
-        threading.Thread(target=process_message, args=(text, event["channel"], event.get("ts"), user_id, ts)).start()
+        if text:
+            threading.Thread(target=process_message, args=(text, channel_id, thread_ts or ts, user_id, ts)).start()
+        else:
+            log_debug(f"DEBUG: No text in message, skipping.")
+    else:
+        log_debug(f"DEBUG: Message ignored (not im and not thread).")
 
 if __name__ == "__main__":
     print("Starting ChatGPT Slack Listener (Bolt)...")
