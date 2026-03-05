@@ -12,7 +12,7 @@ from services.external_ai_bridge import ExternalAIBridge, AITarget
 
 async def analyze_rua_intelligence():
     # Set API Key for Zhipu (Wave API)
-    os.environ["ZHIPU_API_KEY"] = "wave_60hn6pf7-zba22qzp-tdfe9tm2-t2a8d1y1"
+    os.environ["ZHIPU_API_KEY"] = "[MASKED_API_KEY]"
     
     bridge = ExternalAIBridge()
     

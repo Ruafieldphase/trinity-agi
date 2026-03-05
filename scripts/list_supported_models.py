@@ -7,7 +7,7 @@ def list_models():
     # Load key from .env_credentials
     api_key = None
     # Force use of wave_ key from memory
-    api_key = 'wave_oqmqci0z-ymwu4j2z-m188fsu2-ayj6qasr'
+    api_key = '[MASKED_API_KEY]'
         
     genai.configure(api_key=api_key)
     

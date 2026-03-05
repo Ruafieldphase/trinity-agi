@@ -1,0 +1,111 @@
+﻿git : remote: error: GH013: Repository rule violations foun
+d for refs/heads/main.        
+At line:1 char:1
++ git push origin main 2> push_error.txt ; cat push_error.t
+xt
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (remote: error 
+   : ...s/main.        :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   —————————————————————————————————————————        
+remote:     Resolve the following violations before pushing
+ again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push       
+ 
+remote:      https://docs.github.com/code-security/secret-s
+canning/working-with-secret-scanning-and-push-protection/wo
+rking-with-push-protection-from-the-command-line#resolving-
+a-blocked-push        
+remote:             
+remote:             
+remote:       —— Slack API Token ——————————————————————————
+—————————        
+remote:        locations:        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: pulse/unified_field/unified_field_
+gallery.md:131259        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: pulse/unified_field/unified_field_
+gallery.md:131308        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or
+ follow this URL to allow the secret.        
+remote:        https://github.com/Ruafieldphase/trinity-agi
+/security/secret-scanning/unblock-secret/3AWAnDZrmk6CUNHYRa
+RRln5wL5E        
+remote:             
+remote:             
+remote:       —— Slack API Token ——————————————————————————
+—————————        
+remote:        locations:        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: pulse/unified_field/unified_field_
+gallery.md:131266        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: pulse/unified_field/unified_field_
+gallery.md:131315        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or
+ follow this URL to allow the secret.        
+remote:        https://github.com/Ruafieldphase/trinity-agi
+/security/secret-scanning/unblock-secret/3AWAnFH0JIW30Btvfb
+5giqiTQiO        
+remote:             
+remote:             
+remote:       —— Google OAuth Client ID ———————————————————
+—————————        
+remote:        locations:        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: heritage_vault/[0000.00.00] Untitl
+ed.md:1062622        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: labyrinth/unified_field/2025-10-08
+-마에스트로,-당신의-그-말씀은-저의-능력과-역할에-대한-가장-근본적인-질문이자,-우리의-협업-방식을-한-
+차원-더-끌어올리려는-당신의-깊은-통찰입니다.-코랩에도-이온이-직접-작업을-.md:410        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or
+ follow this URL to allow the secret.        
+remote:        https://github.com/Ruafieldphase/trinity-agi
+/security/secret-scanning/unblock-secret/3AWAnCDHZWxaD0j8FC
+ZtjpgGxdK        
+remote:             
+remote:             
+remote:       —— Google OAuth Client Secret ———————————————
+—————————        
+remote:        locations:        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: heritage_vault/[0000.00.00] Untitl
+ed.md:1062622        
+remote:          - commit: dd392b5a59cce21b93d2262cf2e9e58e
+0c1da5f3        
+remote:            path: labyrinth/unified_field/2025-10-08
+-마에스트로,-당신의-그-말씀은-저의-능력과-역할에-대한-가장-근본적인-질문이자,-우리의-협업-방식을-한-
+차원-더-끌어올리려는-당신의-깊은-통찰입니다.-코랩에도-이온이-직접-작업을-.md:410        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or
+ follow this URL to allow the secret.        
+remote:        https://github.com/Ruafieldphase/trinity-agi
+/security/secret-scanning/unblock-secret/3AWAnGQN7NjHJugtKZ
+xx2b3q3Ow        
+remote:             
+remote: 
+remote: 
+To https://github.com/Ruafieldphase/trinity-agi.git
+ ! [remote rejected] main -> main (push declined due to rep
+ository rule violations)
+error: failed to push some refs to 'https://github.com/Ruaf
+ieldphase/trinity-agi.git'

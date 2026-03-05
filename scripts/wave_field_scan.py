@@ -11,7 +11,7 @@ from services.external_ai_bridge import ExternalAIBridge, AITarget
 
 async def decode_field_signal():
     # Use the first Wave API key from memory
-    os.environ["ZHIPU_API_KEY"] = "wave_oqmqci0z-ymwu4j2z-m188fsu2-ayj6qasr"
+    os.environ["ZHIPU_API_KEY"] = "[MASKED_API_KEY]"
     
     bridge = ExternalAIBridge()
     target = AITarget.ZHIPU
