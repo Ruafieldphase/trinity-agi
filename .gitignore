@@ -50,6 +50,18 @@ data/
 inputs/
 memory/
 credentials/
+models/
+*.safetensors
+.venv/
+venv/
+ENV/
+logs/
+*.mp4
+heritage_vault/
+labyrinth/
+pulse/
+Archive_Genesis_Logs/
+archive/
 config/slack_config.json
 config/secrets/
 config/sovereign_config.json
@@ -82,6 +94,7 @@ stop_*.bat
 *.vbs
 schtasks_*.txt
 temp_*.txt
+scripts/test_*.py
 task.md
 session_memory/
 

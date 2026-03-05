@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Tuple
 from enum import Enum
 from datetime import datetime
 
@@ -327,7 +327,7 @@ class ExternalAIBridge:
             except:
                 pass
 
-    async def _send_to_zhipu(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Optional[str]:
+    async def _send_to_zhipu(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
         """Zhipu AI (BigModel) API를 통한 통신"""
         config = TARGET_CONFIGS.get(AITarget.ZHIPU)
         url = config.get("url")
@@ -382,15 +382,15 @@ class ExternalAIBridge:
                 
                 content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
                 self._log_resonance("zhipu_response", content, AITarget.ZHIPU)
-                return content
+                return content, model
                 
         except Exception as e:
             logger.error(f"Zhipu communication failed: {e}")
-            return None
+            return None, model
 
-    async def _send_to_gemini(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Optional[str]:
+    async def _send_to_gemini(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
         """Gemini API를 통한 직접 통신"""
-        logger.info("Gemini API 요청 시작: gemini-1.5-flash")
+        logger.info("Gemini API 요청 시작")
         
         full_prompt = ""
         if identity:
@@ -405,11 +405,11 @@ class ExternalAIBridge:
             if response and hasattr(response, 'text'):
                 content = response.text
                 self._log_resonance("gemini_response", content, AITarget.GEMINI)
-                return content
-            return None
+                return content, model_used
+            return None, model_used
         except Exception as e:
             logger.error(f"Gemini communication failed: {e}")
-            return None
+            return None, None
 
     async def _send_to_ollama(self, message: str, context: Optional[str] = None, identity: Optional[str] = None) -> Optional[str]:
         """Ollama API를 통한 직접 통신 (Chat API 사용)"""
@@ -458,7 +458,7 @@ class ExternalAIBridge:
         context: Optional[str] = None,
         identity: Optional[str] = None,
         timeout_sec: int = 60
-    ) -> Optional[str]:
+    ) -> Tuple[Optional[str], Optional[str]]:
         """
         외부 AI에게 메시지 보내고 응답 받기
         
@@ -470,7 +470,8 @@ class ExternalAIBridge:
             timeout_sec: 응답 대기 시간
         """
         if target == AITarget.OLLAMA:
-            return await self._send_to_ollama(message, context, identity)
+            content = await self._send_to_ollama(message, context, identity)
+            return content, "ollama/llama3.2"
         if target == AITarget.ZHIPU:
             return await self._send_to_zhipu(message, context, identity)
         if target == AITarget.GEMINI:

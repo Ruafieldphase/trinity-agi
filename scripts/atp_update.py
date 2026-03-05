@@ -137,19 +137,49 @@ def main() -> int:
 
     cpu_usage = _infer_cpu_usage_from_activity(now)
 
+    # Load Relational State from Sensor output
+    sig_path = ROOT / "outputs" / "rhythm_signature.json"
+    relational_state = "ORCHESTRATOR"
+    if sig_path.exists():
+        try:
+            sig = json.loads(sig_path.read_text(encoding="utf-8"))
+            relational_state = sig.get("relational_state", "ORCHESTRATOR")
+        except: pass
+
     current_state = {
         "fear_level": float(fear_level or 0.0),
         "phase": phase,
+        "relational_state": relational_state,
         "body_signals": {"cpu_usage": float(cpu_usage)},
     }
 
-    try:
-        mito = Mitochondria(ROOT)
-        mito.metabolize(current_state, resonance_score=float(resonance))
-    except Exception:
-        # best-effort: do not fail the caller loop
-        pass
-
+    mito = Mitochondria(ROOT)
+    # In Pioneer mode, we boost production (High Voltage Thesis)
+    # In Follower mode, we minimize burn (Passive Induction Antithesis)
+    prod_mod = 1.0
+    if relational_state == "PIONEER": prod_mod = 1.3
+    elif relational_state == "FOLLOWER": prod_mod = 0.8
+    
+    print(f"🔋 [ATP] Metabolizing in {relational_state} mode (Mod: {prod_mod})")
+    mito.metabolize() # No arguments in the actual class definition
+    
+    # Apply production modifier to the state for the next pulse
+    state_file = ROOT / "outputs" / "mitochondria_state.json"
+    if state_file.exists():
+        try:
+            m_state = json.loads(state_file.read_text())
+            # Ensure keys exist
+            if "atp_production" not in m_state:
+                m_state["atp_production"] = 5.0 # default baseline
+            
+            m_state["atp_production"] *= prod_mod
+            m_state["relational_mode"] = relational_state
+            m_state["last_update"] = datetime.now().isoformat()
+            state_file.write_text(json.dumps(m_state, indent=2))
+            print(f"✅ [ATP] State updated with relational bias.")
+        except Exception as e:
+            print(f"⚠️ [ATP] Failed to write bias: {e}")
+            
     return 0
 
 

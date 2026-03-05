@@ -61,7 +61,7 @@ class MetaSupervisor:
 
     def _run_cmd(self, cmd: List[str]) -> Dict[str, Any]:
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', creationflags=CREATE_NO_WINDOW)
+            result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8', creationflags=CREATE_NO_WINDOW, cwd=str(self.workspace))
             return {
                 "exit_code": result.returncode,
                 "stdout": result.stdout[-800:],
@@ -475,7 +475,8 @@ class MetaSupervisor:
             capture_output=True,
             text=True,
             encoding='utf-8',
-            creationflags=CREATE_NO_WINDOW
+            creationflags=CREATE_NO_WINDOW,
+            cwd=str(self.workspace)
         )
         ok = result.returncode == 0
         msg = "Self-care 요약 갱신 완료" if ok else f"갱신 실패: {(result.stderr or '')[-800:]}"
@@ -498,6 +499,7 @@ class MetaSupervisor:
                     text=True,
                     encoding="utf-8",
                     creationflags=CREATE_NO_WINDOW,
+                    cwd=str(self.workspace),
                 )
                 if rep.returncode != 0:
                     msg += f" | report_render_failed: {(rep.stderr or '')[-200:]}"
@@ -517,7 +519,8 @@ class MetaSupervisor:
             capture_output=True,
             text=True,
             encoding='utf-8',
-            creationflags=CREATE_NO_WINDOW
+            creationflags=CREATE_NO_WINDOW,
+            cwd=str(self.workspace)
         )
         ok = result.returncode == 0
         msg = "목표 생성 완료" if ok else f"생성 실패: {(result.stderr or '')[-800:]}"
@@ -535,7 +538,8 @@ class MetaSupervisor:
             capture_output=True,
             text=True,
             encoding='utf-8',
-            creationflags=CREATE_NO_WINDOW
+            creationflags=CREATE_NO_WINDOW,
+            cwd=str(self.workspace)
         )
         
         if result.returncode != 0:
@@ -549,7 +553,8 @@ class MetaSupervisor:
                 capture_output=True,
                 text=True,
                 encoding='utf-8',
-                creationflags=CREATE_NO_WINDOW
+                creationflags=CREATE_NO_WINDOW,
+                cwd=str(self.workspace)
             )
             ok = action_result.returncode == 0
             msg = "피드백 분석 및 액션 적용 완료" if ok else f"피드백 액션 적용 실패: {(action_result.stderr or '')[-800:]}"
@@ -582,7 +587,8 @@ class MetaSupervisor:
                 capture_output=True,
                 text=True,
                 encoding='utf-8',
-                creationflags=CREATE_NO_WINDOW
+                creationflags=CREATE_NO_WINDOW,
+                cwd=str(self.workspace)
             )
             recovery_steps.append("Task Queue Server 재시작" if result.returncode == 0 else "Server 재시작 실패")
         
@@ -594,15 +600,18 @@ class MetaSupervisor:
                 capture_output=True,
                 text=True,
                 encoding='utf-8',
-                creationflags=CREATE_NO_WINDOW
+                creationflags=CREATE_NO_WINDOW,
+                cwd=str(self.workspace)
             )
             recovery_steps.append("RPA Worker 재시작" if result.returncode == 0 else "Worker 재시작 실패")
         
         # 3. Self-care 갱신
-        recovery_steps.append(self._update_self_care())
+        sc_res = self._update_self_care()
+        recovery_steps.append(f"Self-care: {sc_res.get('message', sc_res)}")
         
         # 4. 목표 생성
-        recovery_steps.append(self._generate_goals())
+        gg_res = self._generate_goals()
+        recovery_steps.append(f"Goals: {gg_res.get('message', gg_res)}")
         
         print("  ✅ 긴급 복구 완료")
         return f"긴급 복구 완료: {'; '.join(recovery_steps)}"

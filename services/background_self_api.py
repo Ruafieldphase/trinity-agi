@@ -292,7 +292,13 @@ async def get_background_self_context():
             "is_zero_state": integrity["void_ready"],
             "description": "Unified Field Formula: Relation = Time = Energy = Rhythm"
         },
-        "observation": field.observation_history[-1] if field.observation_history else None
+        "observation": field.observation_history[-1] if field.observation_history else {
+            "purity": round(field.void_purity, 4),
+            "resonance": round(field.lua_resonance, 4),
+            "symmetry": round(field.symmetry, 4),
+            "gap": round(field.gap, 4),
+            "drift_score": round(1.0 - field.symmetry, 4)
+        }
     }
 
 @app.post("/chat")

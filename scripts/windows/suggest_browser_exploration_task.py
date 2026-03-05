@@ -22,10 +22,14 @@ import ctypes
 from pathlib import Path
 from typing import Any
 import sys
+from pathlib import Path
+
+# Add scripts directory to path before importing workspace_root
+scripts_dir = Path(__file__).resolve().parent.parent
+if str(scripts_dir) not in sys.path:
+    sys.path.insert(0, str(scripts_dir))
+
 from workspace_root import get_workspace_root
-SCRIPTS_DIR = Path(__file__).resolve().parents[1]
-if str(SCRIPTS_DIR) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS_DIR))
 
 
 

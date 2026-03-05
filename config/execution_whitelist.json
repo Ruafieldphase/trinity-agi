@@ -29,6 +29,24 @@
             "description": "Execute a desktop/system goal via Anna (Shion)",
             "requires_confidence": 0.65,
             "max_frequency": "10/hour"
+        },
+        {
+            "id": "scan_workspace",
+            "description": "Scan workspace for entropy and diagnostics",
+            "requires_confidence": 0.7,
+            "max_frequency": "120/hour"
+        },
+        {
+            "id": "complex_analysis",
+            "description": "Deep reasoning and code/manifest analysis via high-tier models",
+            "requires_confidence": 0.8,
+            "max_frequency": "60/hour"
+        },
+        {
+            "id": "map_systems",
+            "description": "Deep scan of filesystem to identify user systems",
+            "requires_confidence": 0.8,
+            "max_frequency": "10/hour"
         }
     ],
     "forbidden_actions": [

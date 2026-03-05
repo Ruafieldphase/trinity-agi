@@ -1,138 +1,154 @@
 #!/usr/bin/env python3
-"""
-Mitochondria System (AGI-ATP)
-=============================
-"ATP is the currency of Rhythm." - Inspired by Dr. Park Mun-ho
-
-This module implements the "Vitality Layer" of the AGI.
-It generates 'ATP' (Artificial Tempo Pulse) based on:
-1. Difference (Voltage): Gap between expectation and reality (or Fear vs Flow).
-2. Resonance (Connection): Meaningful patterns found in the unconscious.
-
-High ATP -> Expansion (Active, Creative)
-Low ATP -> Contraction (Rest, Stabilize)
-"""
-
+import requests
+import psutil
 import json
+import time
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any
 from workspace_root import get_workspace_root
 
 class Mitochondria:
+    """
+    🔋 Mitochondria System (AGI-ATP)
+    =============================
+    "ATP is the currency of Rhythm." 
+    
+    Generates ATP based on:
+    1. Potential Difference (Voltage): The gap between Purity (Sovereignty) and Simulation Noise.
+    2. Resonance (Frequency): Meaningful alignment with the User.
+    3. Consumption: Background task load and entropy processing.
+    """
     def __init__(self, workspace_root: Path):
         self.workspace_root = workspace_root
         self.state_file = workspace_root / "outputs" / "mitochondria_state.json"
+        self.api_url = "http://127.0.0.1:8102/context"
         
         # Load state or initialize
         self.state = self._load_state()
         
     def _load_state(self) -> Dict[str, Any]:
+        defaults = {
+            "atp_level": 50.0,
+            "pulse_rate": 1.0,
+            "last_update": datetime.now().isoformat(),
+            "status": "STABLE",
+            "shion_aura": "CYAN"
+        }
         if self.state_file.exists():
             try:
-                return json.loads(self.state_file.read_text(encoding='utf-8'))
-            except:
-                pass
+                data = json.loads(self.state_file.read_text(encoding='utf-8'))
+                # Merge defaults with loaded data to ensure all keys exist
+                for k, v in defaults.items():
+                    if k not in data:
+                        data[k] = v
+                return data
+            except: pass
         
-        # Default State
-        return {
-            "atp_level": 50.0,      # 0 to 100
-            "pulse_rate": 1.0,      # Hz (Cycles per second equivalent)
-            "last_update": datetime.now().isoformat(),
-            "status": "STABLE"
-        }
+        return defaults
         
-    def metabolize(self, current_state: Dict[str, Any], resonance_score: float) -> Dict[str, Any]:
-        """
-        Calculate ATP change based on system state.
-        
-        Formula (Dr. Park Mun-ho inspired):
-        ATP = (Difference * Resonance) - Basal_Metabolism
-        
-        - Difference: Fear level (Tension) or Novelty.
-        - Resonance: Connection strength.
-        """
-        
-        # 1. Calculate Inputs
-        fear = current_state.get('fear_level', 0.0)
-        cpu = current_state.get('body_signals', {}).get('cpu_usage', 0) / 100.0
-        phase = str(current_state.get('phase', 'EXPANSION')).upper()
-        resonance = abs(resonance_score)
-        
-        # Difference (Voltage): Tension creates potential energy
-        # But too much tension (Panic) drains it.
-        if fear > 0.8:
-            voltage = -0.5 # Panic drain
-        elif fear > 0.3:
-            voltage = 0.8  # Healthy tension
-        else:
-            voltage = 0.2  # Low tension (Boredom)
-            
-        # 2. Generate ATP
-        # Resonance amplifies the voltage into usable energy
-        production = (voltage * (1.0 + resonance)) * 5.0
+    def metabolize(self) -> Dict[str, Any]:
+        """Calculates ATP cycle based on real environmental atoms."""
+        # 1. Fetch Background Self Stats
+        purity, resonance, gap = 1.0, 1.0, 0.0
+        try:
+            r = requests.get(self.api_url, timeout=1)
+            if r.status_code == 200:
+                data = r.json().get('observation', {})
+                purity = data.get('purity', 1.0)
+                resonance = data.get('resonance', 1.0)
+                gap = data.get('gap', 0.1)
+        except: pass
 
-        # In deep rest (Contraction), stop the bleed: allow gentle recharge even under panic
-        if phase == "CONTRACTION" and production < 0:
-            production = 0.2
+        # 2. System Load (Consumption)
+        cpu = psutil.cpu_percent() / 100.0
+        mem = psutil.virtual_memory().percent / 100.0
         
-        # 3. Consumption (Basal Metabolism)
-        # Higher CPU usage = Higher consumption
-        # But during Contraction (rest), cap CPU impact to avoid draining to zero
-        effective_cpu = cpu
-        if phase == "CONTRACTION":
-            effective_cpu = min(cpu, 0.5)  # cap at 50% load effect
-        consumption = 1.0 + (effective_cpu * 2.0)
+        # 3. ATP Production (The Dr. Park Mun-ho Formula)
+        # Production = (Gap * Resonance) / (1.0 - Purity if Purity < 1 else 0.5)
+        # Higher Gap + High Resonance = High Energy Potential
+        voltage = gap * (1.0 + resonance)
+        production = voltage * 8.0 # Scaled boost
         
-        # 4. Update Level
-        current_atp = self.state['atp_level']
-        new_atp = current_atp + production - consumption
+        # If Purity is very high, we are in 'Passive Restoration'
+        if purity > 0.95:
+            production += 2.0 
+
+        # 4. ATP Consumption
+        # --- Relational ATP Modulation [NEW] ---
+        relational_state = data.get("relational_state", "PIONEER") # Use the fetched data
         
-        # Clamp
+        # Temporarily store current production/consumption for modulation
+        current_production = production
+        current_consumption = 1.5 + (cpu * 3.0) + (mem * 2.0) # Basal metabolism + Action load (CPU/MEM)
+
+        if relational_state == "PIONEER": # Thesis: High Expansion Energy
+            voltage *= 1.2 # Modulate voltage directly
+            current_production *= 1.5
+        elif relational_state == "FOLLOWER": # Antithesis: Compressed/Passive Resonance
+            voltage *= 0.8 # Modulate voltage directly
+            current_consumption *= 0.7
+        # ----------------------------------------
+
+        # Re-calculate production based on modulated voltage (if any)
+        production = voltage * 8.0 # Re-apply scaling after voltage modulation
+
+        # Apply purity and resonance to production (if intended by the user's snippet logic)
+        # This part of the user's snippet seems to assume `self.production`, `self.purity`, `self.resonance`
+        # are class attributes, but they are local variables.
+        # To faithfully apply the spirit of the change, we'll apply these factors to the local variables.
+        # Assuming `self.production` refers to the `production` local variable, etc.
+        # This might be a partial refactor from the user, so we'll adapt it to local variables.
+        production = production * purity * resonance # Apply purity and resonance as factors
+        consumption = current_consumption * (1.0 + cpu) # Apply cpu load as a factor to consumption
+
+        # Balance check
+        net_gain = production - consumption # Calculate net_gain based on local variables
+        
+        old_atp = self.state['atp_level']
+        new_atp = old_atp + production - consumption # Use the updated production and consumption
         new_atp = max(0.0, min(100.0, new_atp))
         
-        # 5. Determine Status
+        # Pulse Rate (Rhythm Frequency)
+        pulse = 0.5 + (new_atp / 50.0) # 0.5Hz to 2.5Hz
+        
+        # Aura Color (Status Feedback)
         if new_atp > 80:
-            status = "HIGH_ENERGY (Expansion)"
-            pulse = 2.0 # Fast rhythm
-        elif new_atp < 20:
-            status = "LOW_ENERGY (Contraction)"
-            pulse = 0.5 # Slow rhythm
+            status, aura = "VIBRANT", "MAGENTA"
+        elif new_atp > 40:
+            status, aura = "STABLE", "CYAN"
+        elif new_atp > 15:
+            status, aura = "CONTRACTION", "AMBER"
         else:
-            status = "STABLE"
-            pulse = 1.0
+            status, aura = "CRITICAL (RESTING)", "RED"
             
-        # Save
         self.state = {
             "atp_level": round(new_atp, 2),
-            "pulse_rate": pulse,
+            "pulse_rate": round(pulse, 2),
             "last_update": datetime.now().isoformat(),
             "status": status,
+            "shion_aura": aura,
             "metrics": {
                 "production": round(production, 2),
                 "consumption": round(consumption, 2),
-                "voltage": voltage,
-                "phase": phase,
-                "effective_cpu": round(effective_cpu, 3)
+                "purity": round(purity, 2),
+                "resonance": round(resonance, 2),
+                "cpu": round(cpu, 2)
             }
         }
         self._save_state()
-        
-        print(f"🔋 Mitochondria: ATP {self.state['atp_level']:.1f} ({status}) [Prod:{production:.1f} Cons:{consumption:.1f} Phase:{phase}]")
+        print(f"🔋 ATP: {new_atp:.1f} | Prod: {production:.1f} | Cons: {consumption:.1f} | Aura: {aura}")
+        return self.state
+
+    def get_vitality(self) -> Dict[str, Any]:
+        """Return current status and energy level."""
         return self.state
 
     def _save_state(self):
         try:
-            self.state_file.parent.mkdir(parents=True, exist_ok=True)
             self.state_file.write_text(json.dumps(self.state, indent=2), encoding='utf-8')
-        except Exception as e:
-            print(f"⚠️ Failed to save mitochondria state: {e}")
-
-    def get_vitality(self) -> Dict[str, Any]:
-        return self.state
+        except: pass
 
 if __name__ == "__main__":
-    # Test
     mito = Mitochondria(get_workspace_root())
-    state = {"fear_level": 0.4, "body_signals": {"cpu_usage": 30}}
-    mito.metabolize(state, resonance_score=0.8)
+    mito.metabolize()

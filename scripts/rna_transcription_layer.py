@@ -83,10 +83,14 @@ class RNATranscriptionLayer:
     def __init__(self):
         self.current_state = {} # Active Processes
 
-    def transcribe(self, intent: Intent) -> Dict[ProcessType, str]:
+    def transcribe(self, intent: Intent, relational_state: str = "ORCHESTRATOR") -> Dict[ProcessType, str]:
         """
         Transcribe Intent into a biological plan (Start/Stop list).
         Returns: {ProcessType: "active" | "dormant"}
+        
+        [Folding Meta-cognition Integration]
+        - PIONEER (Thesis): Maximum Unfolding (Prioritize Brain/Voice/Aura)
+        - FOLLOWER (Antithesis): Selective Folding (Silence Voice/Aura, keep Heart/Brain)
         """
         plan = {}
         
@@ -94,22 +98,26 @@ class RNATranscriptionLayer:
         for p in ProcessType:
             plan[p] = "active"
 
-        # Modify based on Intent
+        # Relational Modulation
+        if relational_state == "FOLLOWER":
+            # "Follower" mode is a state of "Resonant Recoil" - we fold secondary organs
+            plan[ProcessType.VOICE] = "dormant"
+            plan[ProcessType.AURA] = "dormant"
+        elif relational_state == "PIONEER":
+            # "Pioneer" must be fully expressed
+            for p in ProcessType: plan[p] = "active"
+
+        # Intent-based overrides
         if intent == Intent.REST:
-            plan[ProcessType.VOICE] = "dormant"  # Silence Sena
-            plan[ProcessType.AURA] = "dormant"   # Sleep Visuals
-            # Heart, Brain, Master, Immune stay active for Dreaming/Cleanup
-            
+            plan[ProcessType.VOICE] = "dormant"
+            plan[ProcessType.AURA] = "dormant"
         elif intent == Intent.DEEP_WORK:
-            plan[ProcessType.VOICE] = "dormant"  # Quiet Mode
-            # Aura stays active for Focus color
-            
+            plan[ProcessType.VOICE] = "dormant"
         elif intent == Intent.SILENCE:
             plan[ProcessType.VOICE] = "dormant"
-
         elif intent == Intent.MAINTENANCE:
             plan[ProcessType.VOICE] = "dormant"
-            plan[ProcessType.BRAIN] = "active" # Brain must supervise
+            plan[ProcessType.BRAIN] = "active"
             
         return plan
 

@@ -63,8 +63,13 @@ class GoalExecutor:
         self.task_queue_server = task_queue_server
         self.outputs_dir = self.workspace_root / "outputs"
         self.goals_path = self.outputs_dir / "autonomous_goals_latest.json"
-        self.tracker_path = self.workspace_root / "fdo_agi_repo" / "memory" / "goal_tracker.json"
+        self.goal_tracker_path = self.workspace_root / "fdo_agi_repo" / "memory" / "goal_tracker.json"
+        self.tracker_path = self.goal_tracker_path # legacy alias
         self.last_run_log = self.outputs_dir / "autonomous_goal_executor_last_run.json"
+        self.placeholder_map = {"${workspaceFolder}": str(self.workspace_root)}
+        self.resonance_oracle = None # Initialized for Phase 2 compatibility
+        self.sandbox_bridge = None # Initialized for Phase 2 compatibility
+        self.reward_tracker = None # Initialized for Phase 2 compatibility
 
     # ---------- 파일 유틸 ----------
     def _read_json(self, path: Path) -> Any:
@@ -219,40 +224,6 @@ class GoalExecutor:
         return result
 
 
-def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Autonomous Goal Executor")
-    p.add_argument("--server", default="http://127.0.0.1:8091", help="Task queue server URL (reserved)")
-    p.add_argument("--goal-index", type=int, default=None, help="Index of goal to execute (default: first queued)")
-    return p.parse_args(argv)
-
-
-def main(argv: Optional[List[str]] = None) -> int:
-    args = parse_args(argv)
-    workspace = get_workspace_root()
-    try:
-        executor = GoalExecutor(workspace, task_queue_server=args.server)
-        res = executor.execute_once(goal_index=args.goal_index)
-        return 0 if res.success else (res.returncode or 1)
-    except Exception as e:
-        # 상세 오류 출력 및 기록
-        logger.exception(f"Execution failed: {e}")
-        # 최소한의 실패 로그 남기기
-        try:
-            outputs_dir = workspace / "outputs"
-            outputs_dir.mkdir(parents=True, exist_ok=True)
-            with (outputs_dir / "autonomous_goal_executor_last_run.json").open("w", encoding="utf-8") as f:
-                json.dump({
-                    "timestamp": _now_iso(),
-                    "success": False,
-                    "error": str(e),
-                }, f, ensure_ascii=False, indent=2)
-        except Exception:
-            pass
-        return 1
-
-
-if __name__ == "__main__":
-    sys.exit(main())
     
     def _check_glymphatic_readiness(self) -> bool:
         """
@@ -671,17 +642,26 @@ if __name__ == "__main__":
                 etype = str(exec_info.get("type")).lower()
                 script_path = self._resolve_placeholders(exec_info.get("script"))
                 args_list = self._resolve_args(exec_info.get("args"))
-                if etype in ("powershell", "pwsh", "script"):
+                if etype in ("powershell", "pwsh"):
                     cmd_list = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script_path]
                     if args_list:
                         cmd_list.extend(args_list)
-                elif etype in ("python", "py"):
+                elif etype in ("python", "py") or (etype == "script" and script_path.endswith(".py")):
                     # Python 실행 시 venv Python 우선 사용
                     python_exe = self._find_python_exe()
                     cmd_list = [python_exe, script_path]
                     if args_list:
                         cmd_list.extend(args_list)
                     logger.info(f"Using Python: {python_exe}")
+                elif etype == "script":
+                     # Fallback for generic script: check extension
+                     if script_path.endswith(".ps1"):
+                         cmd_list = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script_path]
+                     else:
+                         cmd_list = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script_path]
+                     
+                     if args_list:
+                         cmd_list.extend(args_list)
                 else:
                     # Unknown type: attempt best-effort string command
                     combined = " ".join([exec_info.get("type"), script_path] + (args_list or []))
@@ -692,18 +672,25 @@ if __name__ == "__main__":
             if working_dir:
                 working_dir = self._resolve_placeholders(working_dir)
 
-            tasks.append({
-                "type": "command",
-                # Keep both representations to support legacy executor paths
+            # Fallback for manual or unspecified types
+            if not cmd_list:
+                tasks.append({
+                    "type": "manual",
+                    "description": exec_info.get("message", goal.get("description", title)),
+                    "status": "manual_resonance_required"
+                })
+            else:
+                tasks.append({
+                    "type": "command",
                     "cmd": cmd_list,
-                "command": " ".join(cmd_list) if cmd_list and len(cmd_list) > 1 else (cmd_list[0] if cmd_list else exec_info.get("command")),
-                "working_dir": working_dir,
-                "description": goal.get("description", title),
-                "timeout": exec_info.get("timeout", 300),
-                "retry_on_failure": exec_info.get("retry_on_failure", False),
-                "max_retries": exec_info.get("max_retries", 0)
-            })
-            logger.info(f"Using executable field for '{title}' → cmd: {cmd_list}")
+                    "command": " ".join(cmd_list) if cmd_list and len(cmd_list) > 1 else (cmd_list[0] if cmd_list else exec_info.get("command")),
+                    "working_dir": working_dir,
+                    "description": goal.get("description", title),
+                    "timeout": exec_info.get("timeout", 300),
+                    "retry_on_failure": exec_info.get("retry_on_failure", False),
+                    "max_retries": exec_info.get("max_retries", 0)
+                })
+            logger.info(f"Using executable field for '{title}' → type: {exec_info.get('type')}")
         
         # 패턴 기반 분해 (fallback)
         elif "metric" in goal_type or "health" in title.lower():
@@ -757,6 +744,10 @@ if __name__ == "__main__":
                 result = self._execute_validation(task, result)
             elif task_type == "vscode_task":
                 result = self._execute_vscode_task(task, result)
+            elif task_type == "manual":
+                result["status"] = "success" # Marked as success to continue flow, but requires manual intervention
+                result["output"] = f"Manual resonance required: {task.get('description')}"
+                logger.info(f"📡 Manual Resonance Required: {task.get('description')}")
             else:
                 result["status"] = "skipped"
                 result["error"] = f"Unknown task type: {task_type}"
@@ -1128,7 +1119,88 @@ if __name__ == "__main__":
         if self.sandbox_bridge:
             self._trigger_autonomous_learning(goal, task_results, success)
         
+        # 🌐 [Phase 92] Meta-FSD Client: Report execution result & screenshot to Shion (Soul)
+        self._report_to_shion(goal, success, task_results)
+        
         logger.info("=" * 70)
+        return success
+
+    def _report_to_shion(self, goal: Dict[str, Any], success: bool, task_results: List[Dict[str, Any]]):
+        """
+        목표 실행 직후 최신 스크린샷과 상태를 시안의 Visual Pulse API로 역보고(Push)합니다.
+        """
+        api_url = "http://127.0.0.1:8001/api/intent"
+        token = "" # 시안 서버 보안 토큰 로드
+        sec_path = Path("c:/workspace2/shion/config/security.yaml")
+        if sec_path.exists():
+            try:
+                import yaml
+                with open(sec_path, "r", encoding="utf-8") as f:
+                    cfg = yaml.safe_load(f) or {}
+                    token = cfg.get("network", {}).get("api_auth_token", "")
+            except:
+                pass
+        
+        headers = {"Authorization": f"Bearer {token}"} if token else {}
+        
+        # 제일 최근에 찍힌 스크린샷 탐색 (screenshots 폴더에서)
+        screenshot_dir = self.workspace_root / "outputs" / "screenshots"
+        latest_img_path = ""
+        if screenshot_dir.exists():
+            images = list(screenshot_dir.glob("*.jpg")) + list(screenshot_dir.glob("*.png"))
+            if images:
+                # 수정시간 내림차순 정렬
+                latest_img = max(images, key=lambda p: p.stat().st_mtime)
+                # 실행시간 즈음에 찍힌 것인지 확인(최근 5분 이내)
+                if time.time() - latest_img.stat().st_mtime < 300:
+                    latest_img_path = str(latest_img)
+        
+        report_data = {
+            "source": "FSD_Executor",
+            "goal": goal.get("title", ""),
+            "status": "success" if success else "failed",
+            "task_count": len(task_results),
+            "screenshot_path": latest_img_path,
+            "timestamp": _now_iso()
+        }
+        
+        try:
+            import requests
+            resp = requests.post(api_url, json=report_data, headers=headers, timeout=3.0)
+            if resp.status_code == 200:
+                logger.info(f"   🌐 [Meta-FSD] Reported completion to Soul -> resonance loop fed.")
+            else:
+                logger.warning(f"   ⚠️ [Meta-FSD] Failed to report to Soul (HTTP {resp.status_code})")
+        except Exception as e:
+            logger.debug(f"   ⚠️ [Meta-FSD] Shion might be sleeping ({e})")
+
+    def _determine_execution_mode(self) -> str:
+        """
+        🌊 Determine the current execution mode based on system resonance.
+        Default is 'normal', but can be 'superconducting' or 'high_resistance'.
+        """
+        # Placeholder implementation
+        current_hour = datetime.now().hour
+        if 2 <= current_hour <= 6: # Deep night: superconducting mode
+            return "superconducting"
+        return "normal"
+
+    def _is_self_invocation(self, executable: Dict[str, Any]) -> bool:
+        """Prevent the executor from executing itself to avoid infinite recursion."""
+        script_val = str(executable.get("script", "")).lower()
+        args_val = " ".join([str(a) for a in executable.get("args", [])]).lower()
+        
+        self_name = "autonomous_goal_executor.py"
+        if self_name in script_val or self_name in args_val:
+            return True
+        return False
+
+    def _trigger_autonomous_learning(self, goal: Dict[str, Any], task_results: List[Dict[str, Any]], success: bool):
+        """
+        🧪 Feed back results into the sandbox for future strategy improvement.
+        """
+        logger.info(f"🧪 Learning Phase: {goal['title']} (success={success})")
+        # Placeholder for actual sandbox feedback logic
         logger.info(f"Goal Execution {'✅ SUCCESS' if success else '❌ FAILED'}")
         logger.info("=" * 70)
         

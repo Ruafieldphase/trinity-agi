@@ -45,4 +45,18 @@ class CoreBridgeClient:
         return "GUI operations skipped on headless backend"
 
     def send_request(self, message: str, context: Optional[Dict] = None, timeout_sec: int = 60) -> Optional[str]:
-        return None
+        # Headless Fallback: If GUI is not available, record the request for manual review or secondary agents
+        request_file = get_workspace_root() / "outputs" / "trinity_requests.jsonl"
+        try:
+            entry = {
+                "timestamp": time.time(),
+                "message": message,
+                "context": context
+            }
+            with open(request_file, "a", encoding="utf-8") as f:
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            logger.info(f"💾 [TRINITY] Request recorded to {request_file} (Headless)")
+        except Exception as e:
+            logger.error(f"⚠️ [TRINITY] Failed to record request: {e}")
+            
+        return "Trinity is observing silently. (Headless Mode)"

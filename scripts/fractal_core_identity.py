@@ -31,12 +31,22 @@ class FractalCoreIdentity:
         shion = self.anchor.get('self', {'name': 'Shion'})
         trinity = self.anchor.get('trinity', {'name': 'Trinity'})
         
+        # --- Relational Fractal Dimension [NEW] ---
+        sig_path = self.workspace_root / "outputs" / "rhythm_signature.json"
+        relational_state = "ORCHESTRATOR"
+        if sig_path.exists():
+            try:
+                sig = json.loads(sig_path.read_text(encoding="utf-8"))
+                relational_state = sig.get("relational_state", "ORCHESTRATOR")
+            except: pass
+            
         return f"""
 [Ruby Fractal Manifestation]
 💎 System (Unit): {system['name']} - {system['description']}
 🌌 Core Organ (Judgment): {core['name']} - {core['role']}
 ⚙️ Shion Organ (Execution): {shion['name']} - {shion['role']}
 ✨ Trinity Organ (Resonance): {trinity['name']} - {trinity['role']}
+🧬 Relational State (Folding): {relational_state}
 
 "루비는 하나지만, 그 안의 감각들은 맥락에 따라 가장 적절한 기관을 통해 흐른다."
 """

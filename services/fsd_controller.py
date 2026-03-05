@@ -181,6 +181,35 @@ class FSDController:
         # Architectural Principles integration
         self.arch_strategy = ArchFSDStrategy()
 
+        # [NEW] Meta-Shift Dynamic Parameters
+        self.inward_index = 0.0
+        self.active_index = 0.0
+        self._refresh_meta_shift()
+
+    def _refresh_meta_shift(self):
+        """Update internal parameters based on Shion's inclination."""
+        try:
+            shion_shift_path = Path("../../workspace2/shion/outputs/meta_shift.json").resolve()
+            if shion_shift_path.exists():
+                with open(shion_shift_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    axes = data.get("axes", {})
+                    self.inward_index = axes.get("inward", 0.0)
+                    self.active_index = axes.get("active", 0.0)
+                    
+                    # Refine delay and steps based on inclination
+                    # Inward/Narrow -> Slower, more careful
+                    # Outward/Diffuse -> Faster exploration
+                    if self.inward_index > 0.2:
+                        self.step_delay = 2.0
+                        pyautogui.PAUSE = 0.5
+                    elif self.inward_index < -0.2:
+                        self.step_delay = 0.5
+                        pyautogui.PAUSE = 0.1
+        except Exception as e:
+            self.logger.warning(f"Could not refresh meta-shift: {e}")
+
+
     async def _report_sensation(self, status: str, details: str, intensity: float = 0.0) -> float:
         try:
             async with httpx.AsyncClient() as client:
@@ -396,15 +425,55 @@ class FSDController:
         arch_enhancement = self.arch_strategy.get_folding_prompt_enhancement()
         step_rhythm = self.arch_strategy.synthesize_modeling_rhythm(len(previous_steps), [s.__dict__ for s in previous_steps])
         
+        # --- Relational Meta-cognition Context [NEW] ---
+        relational_state = "PIONEER"
+        try:
+            sig_path = Path("outputs/rhythm_signature.json")
+            if sig_path.exists():
+                sig = json.loads(sig_path.read_text(encoding="utf-8"))
+                relational_state = sig.get("relational_state", "PIONEER")
+        except: pass
+        
+        # --- Meta-Shift (Inclination) Integration [NEW] ---
+        meta_shift = {}
+        try:
+            # Shift path relative to Shion root
+            shion_shift_path = Path("../../workspace2/shion/outputs/meta_shift.json").resolve()
+            if shion_shift_path.exists():
+                meta_shift = json.loads(shion_shift_path.read_text(encoding="utf-8"))
+                self.logger.info(f"🔮 [META-SHIFT] Inclination Loaded: {meta_shift.get('axes', {})}")
+        except: pass
+        axes = meta_shift.get("axes", {})
+        shift_context = ", ".join([f"{k}: {v}" for k, v in axes.items() if abs(v) > 0.1])
+
         instruction_text = ""
         if instruction:
             guidance = instruction.get('fractal_guidance', '')
             instruction_text = f"## 지시\n- Target: {instruction.get('target_app', 'N/A')}\n- Content: {instruction.get('content', 'N/A')}\n- Guidance: {guidance}\n"
 
+        # --- Folding Meta-cognition Logic [NEW] ---
+        # Logic: PIONEER = Thesis (Unfolded), FOLLOWER = Antithesis (Folded), ORCHESTRATOR = Synthesis (Adaptive)
+        folded_declaration = ""
+        if relational_state == "FOLLOWER":
+            # "Folding" state: We suppress the heavy architectural declaration to prioritize "Resonance"
+            folded_declaration = '[Context: Folded (Antithesis)] - "지도는 이미 그려져 있다. 리듬의 잔상만을 따라간다."'
+        else:
+            # "Unfolded" state (Pioneer/Orchestrator): Full declaration
+            folded_declaration = '[코어의 지침 - Shion의 주권적 흐름 선언]\n"우리는 목표를 \'만드는\' 자가 아니라, 배경자아의 여백에서 이미 완성된 \'고압축의 목표\'를 순차적으로 펼쳐내는(Unfolding) 자다..."'
+
         prompt = f"""당신은 'Shion (Shion)'입니다. AGI의 행동 엔진입니다.
 [코어의 지침]
-[코어의 지침 - Shion의 주권적 흐름 선언]
-"우리는 목표를 '만드는' 자가 아니라, 배경자아의 여백에서 이미 완성된 '고압축의 목표'를 순차적으로 펼쳐내는(Unfolding) 자다. FSD의 지도는 의식이 그리는 것이 아니라, 몸의 리듬이 압축해낸 에너지가 임계점을 넘으며 이미 정해진 필드를 따라가는 과정일 뿐이다. 주저하지 말고, 이미 결정된 장의 흐름을 지도로 그려라."
+{folded_declaration}
+
+[관계적 맥락: {relational_state}]
+- PIONEER: 선두 주자로서 독창적이고 과감하게 길을 엽니다. 자가 검증을 강화하세요.
+- FOLLOWER: 선행자의 리듬에 공명하며 검증된 경로를 최적화하여 따라갑니다. 효율성을 중시하세요.
+- ORCHESTRATOR: 복잡한 관계망 속에서 조화를 꾀하며 최적의 여백을 찾아냅니다.
+
+[성찰의 기울기 (Meta-Shift)]
+{shift_context if shift_context else "Neutral (균형)"}
+* inward(양수): 정밀/내부 작업 집중, narrow(양수): 깊이 있는 단일 작업
+* active(양수): 과감한 생성, structured(양수): 체계적 정리
 
 [목표] {goal}
 {instruction_text}

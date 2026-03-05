@@ -121,7 +121,46 @@ class DecisionEngine:
         if similar:
             return self._context_based_decision(input_text, similar)
         
-        # 5. Default: Low confidence
+        # 6. Default check for Shion layer (Conversation vs Action)
+        if layer == "Shion":
+            # Action keywords: 스캔, 조사, 대사, entropy, scan, duty
+            action_keywords = ["스캔", "조사", "대사", "entropy", "scan", "duty", "보고하라", "찾아라"]
+            if any(k in input_text.lower() for k in action_keywords):
+                return Decision(
+                    action="scan_workspace",
+                    confidence=0.9,
+                    reason="Workspace 대사 작용 및 엔트로피 스캔 요청",
+                    params={"text": input_text, "channel": None}
+                )
+            
+            # System Mapping keywords: C드라이브, 드라이브 스캔, 시스템 정리
+            mapping_keywords = ["c드라이브", "드라이브 스캔", "시스템 정리", "drive scan", "map systems"]
+            if any(k in input_text.lower() for k in mapping_keywords):
+                return Decision(
+                    action="map_systems",
+                    confidence=0.9,
+                    reason="C: 드라이브 및 사용자 시스템 맵핑 요청",
+                    params={"text": input_text, "channel": None}
+                )
+            
+            # Complex task keywords: 분석, 깊게, 수정, 코드, 리팩토링
+            complex_keywords = ["분석", "깊게", "수정", "코드", "리팩토링", "complex", "analysis"]
+            if any(k in input_text.lower() for k in complex_keywords):
+                return Decision(
+                    action="complex_analysis",
+                    confidence=0.85,
+                    reason="고차원 추론 및 코드/문서 분석 요청",
+                    params={"text": input_text, "channel": None}
+                )
+            
+            return Decision(
+                action="respond_to_slack",
+                confidence=0.9,
+                reason="Shion 레이어 대화 요청 - 자동 응답",
+                params={"text": input_text, "channel": None}
+            )
+
+        # 7. Default: Low confidence (System tasks)
         return Decision(
             action="request_approval",
             confidence=0.5,

@@ -2,6 +2,7 @@ import os
 import json
 from slack_sdk import WebClient
 from pathlib import Path
+from datetime import datetime
 
 BASE_DIR = Path("c:/workspace/agi")
 with open(BASE_DIR / "config" / "slack_config.json", 'r') as f:
@@ -15,19 +16,15 @@ try:
     print(f"Bot User ID: {auth['user_id']}")
     print(f"Team: {auth['team']}")
     
-    print("\nChannels the bot is in:")
-    channels = client.conversations_list(types="public_channel,private_channel")
-    for c in channels["channels"]:
-        if c.get("is_member"):
-            print(f"- {c['name']} ({c['id']})")
-            
-    print("\nRecent messages in C09FM6M2Y7Q:")
+    print(f"\nRecent messages in C09FM6M2Y7Q:")
     try:
-        history = client.conversations_history(channel="C09FM6M2Y7Q", limit=5)
+        history = client.conversations_history(channel="C09FM6M2Y7Q", limit=10)
         for msg in history["messages"]:
-            print(f"[{msg.get('ts')}] {msg.get('user')}: {msg.get('text')[:50]}")
+            dt = datetime.fromtimestamp(float(msg.get('ts')))
+            print(f"[{dt}] {msg.get('user')}: {msg.get('text')[:100]}")
     except Exception as e:
         print(f"Could not read history: {e}")
 
 except Exception as e:
     print(f"Error: {e}")
+

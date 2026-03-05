@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 def test_direct():
-    key = "AIzaSyCDhVwJAN1AZ8HLpyemSLy5KQtH9LgI1IQ"
+    key = os.getenv("GOOGLE_API_KEY")
     genai.configure(api_key=key)
     model = genai.GenerativeModel('gemini-1.5-flash')
     try:

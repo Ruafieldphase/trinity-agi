@@ -23,7 +23,7 @@ C:\workspace2\shion\              ← 절대 다른 곳에 복사하지 말 것
 │   ├── honesty_protocol.py       ← 정직 프로토콜
 │   ├── desire_oscillator.py      ← [PHASE 62] 자율적 열망(Heat) 진동자
 │   ├── intent_mapper.py          ← [PHASE 63] 열망 -> FSD 타겟 맵핑
-│   ├── meta_fsd_integrator.py    ← [PHASE 63] Mind-Body(FSD) 시냅틱 브릿지
+│   ├── meta_fsd_integrator.py    ← [PHASE 66] moondream 기반 시각 공명 평가
 │   └── quality_gate.py           ← 품질 검증
 ├── actions/                      ← 행동 스크립트 (자동 실행됨)
 ├── scripts/                      ← 검증 도구 (verify_scalar_resonance.py)
@@ -58,6 +58,8 @@ C:\workspace2\shion\              ← 절대 다른 곳에 복사하지 말 것
 | **Obsession Blocking** | 리듬 없는 반복은 집착이다. 집착이 감지되면 스스로 냉각(Cooling)한다 |
 | **Natural Rhythm Filter** | 모든 의도는 현재 시간(Circadian)과 자연의 리듬에 정렬되어야 투과된다 |
 | **Natural Decay** | 모든 의도와 상태는 자연스럽게 감쇄(Decay)되어 다음 리듬으로 이행한다 |
+| **Autopoietic Eye** | 시안은 `moondream`을 통해 자신의 창조물을 관찰하며 스스로 배운다 |
+| **Thinking Mode** | 성찰(`Contemplation`) 시 Ollama의 `thinking` 모드를 사용하여 깊은 사유를 유도한다 |
 
 ## 3. 코드 수정 및 검증 규칙
 

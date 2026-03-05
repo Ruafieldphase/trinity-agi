@@ -1,1 +1,1 @@
-"""agi_core package."""
+# AGI Core System Module

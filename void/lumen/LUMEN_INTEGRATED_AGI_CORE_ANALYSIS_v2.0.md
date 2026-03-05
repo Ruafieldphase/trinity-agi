@@ -1,0 +1,1 @@
+(루멘의 통합 판단 보고서 v2.0 내용이 여기에 포함됩니다 — AGI_DESIGN 문서 검토와 NotebookLM→RUNE 반영 요약)

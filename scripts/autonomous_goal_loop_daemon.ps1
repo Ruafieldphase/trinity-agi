@@ -10,6 +10,8 @@ $ErrorActionPreference = "Continue"
 
 # Workspace root (SSOT)
 
+$env:PYTHONPATH = "$WorkspaceRoot;$WorkspaceRoot\scripts;$WorkspaceRoot\services;$env:PYTHONPATH"
+
 # Paths
 $PythonExe = Join-Path $WorkspaceRoot "fdo_agi_repo\.venv\Scripts\python.exe"
 $ExecutorScript = Join-Path $WorkspaceRoot "scripts\autonomous_goal_executor.py"
@@ -83,7 +85,7 @@ function Get-IntervalMinutes {
     }
 }
 
-function Health-Gate {
+function Test-HealthGate {
     try {
         $healthScript = Join-Path $WorkspaceRoot "scripts\run_quick_health.ps1"
         if (Test-Path -LiteralPath $healthScript) {
@@ -110,6 +112,13 @@ try {
                 break
             }
 
+            # 0. Autonomic Immune Response: Check and Enforce Shield
+            $ShieldEnforcer = Join-Path $WorkspaceRoot "scripts\resonance_shield_enforcer.py"
+            if (Test-Path -LiteralPath $ShieldEnforcer) {
+                Write-Host "[$(Get-Date -Format 'HH:mm:ss')] 🛡️ 자가면역 체계 가동 중..." -ForegroundColor Cyan
+                & $PythonExe $ShieldEnforcer | Out-Null
+            }
+
             # 1. 현재 리듬 계산
             $intervalMinutes = Get-IntervalMinutes -default 10
         
@@ -117,7 +126,7 @@ try {
             "[$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] 다음 간격: $intervalMinutes 분" | Out-File -FilePath $LogFile -Append
         
             # 1.5 Health gate
-            if (-not (Health-Gate)) {
+            if (-not (Test-HealthGate)) {
                 $failureCount += 1
                 $penalty = [math]::Min(3.0, 1.0 + ($failureCount * 0.5))
                 $adjInterval = [int][math]::Ceiling([double]$intervalMinutes * $penalty)

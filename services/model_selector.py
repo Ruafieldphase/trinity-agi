@@ -87,7 +87,8 @@ class ModelSelector:
             or "gemini-3-pro-preview"
         )
 
-        self.backend = "none" # 'vertex' or 'genai'
+        self.backend = "none" # 'vertex', 'genai', or 'shion'
+        self.shion_url = os.getenv("SHION_MODEL_URL", "http://127.0.0.1:8000/v1")
         self._cache: Dict[str, Any] = {}
         # Feature flags / soft memory (avoid repeated 404 calls).
         # NOTE: do not call network from __init__ (human summaries should be network-free).
@@ -98,7 +99,18 @@ class ModelSelector:
 
     def _init_backend(self) -> None:
         """Initialize connection to either GenAI or Vertex AI."""
-        # 1. Try GenAI (API Key) first if available - it's often more reliable for personal keys
+        # 0. Try Local Shion (Sovereign Core) first
+        try:
+            with httpx.Client(timeout=2.0) as client:
+                res = client.get(f"{self.shion_url.replace('/v1', '')}/health")
+                if res.status_code == 200:
+                    self.backend = "shion"
+                    self.logger.info(f"Sovereign Shion Core Detected at {self.shion_url}")
+                    return
+        except Exception:
+            pass
+
+        # 1. Try GenAI (API Key) first if available
         if GENAI_AVAILABLE and self.api_key:
             try:
                 # Prevent Vertex/GoogleAuth from picking up the Service Account credentials
@@ -209,16 +221,10 @@ class ModelSelector:
                 extras.append(m + "-002")
                 extras.append(m + "-001")
         
-        full_list = ordered + [e for e in extras if e not in ordered]
+        # If local shion is available, prioritize it at the very top
+        if self.backend == "shion":
+            full_list = ["shion-v1"] + [m for m in full_list if m != "shion-v1"]
         
-        # If using GenAI, prefer Gemini 2.5 series first
-        if self.backend == "genai":
-            pref = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-3-flash-preview"]
-            full_list = [p for p in pref if p not in full_list] + full_list
-             # Ensure generic names are present for GenAI aliases
-            if "gemini-2.5-flash" not in full_list: full_list.append("gemini-2.5-flash")
-            if "gemini-2.5-pro" not in full_list: full_list.append("gemini-2.5-pro")
-
         return self._dedup(full_list)
 
     def _get_model(self, model_name: str) -> Any:
@@ -229,9 +235,43 @@ class ModelSelector:
         if self.backend == "genai":
             # AI Studio
             model = genai.GenerativeModel(model_name)
-        elif self.backend == "vertex":
-            # Vertex AI
-            model = VertexModel(model_name)
+        elif self.backend == "shion":
+            # [INTERNAL] Wrap the URL/Request for shion server
+            class ShionWrapper:
+                def __init__(self, url, logger):
+                    self.url = url
+                    self.logger = logger
+                def generate_content(self, content, **kwargs):
+                    import httpx
+                    import json
+                    # Construct OpenAI-like Chat Completion payload
+                    prompt = content if isinstance(content, str) else str(content)
+                    payload = {
+                        "model": "shion-v1",
+                        "messages": [{"role": "user", "content": prompt}],
+                        "temperature": kwargs.get("generation_config", {}).get("temperature", 0.7),
+                        "max_tokens": 4096
+                    }
+                    try:
+                        with httpx.Client(timeout=60.0) as client:
+                            resp = client.post(f"{self.url}/chat/completions", json=payload)
+                            resp.raise_for_status()
+                            data = resp.json()
+                            text = data["choices"][0]["message"]["content"]
+                            
+                            # Compatibility layer: mimics google.generativeai.types.GenerateContentResponse
+                            class ShionResponse:
+                                def __init__(self, t):
+                                    self.text = t
+                                    self._candidates = []
+                                @property
+                                def candidates(self): return self._candidates
+                                
+                            return ShionResponse(text)
+                    except Exception as e:
+                        self.logger.error(f"Shion Hub Connection Failed: {e}")
+                        raise e
+            model = ShionWrapper(self.shion_url, self.logger)
         
         if model:
             self._cache[model_name] = model

@@ -8,8 +8,7 @@ Trinity 피드백 로더 - 정반합 권장사항을 다른 시스템에 제공
 
 사용:
     from load_trinity_feedback import load_trinity_high_priority
-from workspace_root import get_workspace_root
-    
+
     high_priority_items = load_trinity_high_priority()
     # ["Refactor Core Components", "Improve Documentation", ...]
 """
@@ -19,6 +18,7 @@ import logging
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
+from workspace_root import get_workspace_root
 
 logger = logging.getLogger(__name__)
 

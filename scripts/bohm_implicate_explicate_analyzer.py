@@ -175,16 +175,31 @@ class BohmAnalyzer:
                 elif compression < prev_compression * 0.67 or is_creative_context:
                     explicate_moments.append(event)
         
+        # --- Relational Meta-cognition Mapping [NEW] ---
+        sig_path = self.workspace / "outputs" / "rhythm_signature.json"
+        relational_state = "ORCHESTRATOR"
+        if sig_path.exists():
+            try:
+                sig = json.loads(sig_path.read_text(encoding="utf-8"))
+                relational_state = sig.get("relational_state", "ORCHESTRATOR")
+            except: pass
+
         # Fear 상관관계
         fear_signals = self.extract_fear_signal(events)
         fear_correlation = self._calculate_fear_compression_correlation(events, fear_signals)
+        
+        ie_ratio = len(implicate_moments) / max(len(explicate_moments), 1)
+        # FOLLOWER (Antithesis) increases Implicate density by default
+        if relational_state == "FOLLOWER": ie_ratio *= 1.5
+        elif relational_state == "PIONEER": ie_ratio *= 0.7 
         
         return {
             'implicate_count': len(implicate_moments),
             'explicate_count': len(explicate_moments),
             'singularity_moments': singularities,
             'fear_correlation': fear_correlation,
-            'implicate_explicate_ratio': len(implicate_moments) / max(len(explicate_moments), 1)
+            'implicate_explicate_ratio': ie_ratio,
+            'relational_state': relational_state
         }
     
     def _calculate_fear_compression_correlation(

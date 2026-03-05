@@ -22,6 +22,15 @@ sys.path.insert(0, str(Path(__file__).parent))
 from workspace_root import get_workspace_root
 from decision_engine import DecisionEngine, Decision
 from context_bridge import ContextBridge, Context
+import requests
+
+# Add root for services import
+sys.path.append(str(Path(__file__).resolve().parents[1]))
+try:
+    from services.external_ai_bridge import ExternalAIBridge, AITarget
+except ImportError:
+    ExternalAIBridge = None
+    AITarget = None
 
 # Slack API for posting responses
 try:
@@ -30,6 +39,11 @@ try:
 except ImportError:
     SLACK_AVAILABLE = False
     print("⚠️ slack_sdk not installed. Slack responses will be disabled.")
+
+try:
+    from mitochondria import Mitochondria
+except ImportError:
+    Mitochondria = None
 
 
 class AutonomousAgent:
@@ -67,9 +81,15 @@ class AutonomousAgent:
             self._init_slack_client()
         
         # State
-        
-        # State
         self.state = self._load_state()
+        self.last_metabolism = datetime.now()
+        
+        # Metabolism Frequency (seconds)
+        self.shield_freq = 600 # 10 minutes
+        self.immune_freq = 3600 # 1 hour
+        
+        # Vitality
+        self.mitochondria = Mitochondria(self.base_dir) if Mitochondria else None
         
         # Signal handling for graceful shutdown
         signal.signal(signal.SIGINT, self._signal_handler)
@@ -203,6 +223,27 @@ class AutonomousAgent:
             elif decision.action == "execute_emergency_protocol":
                 return self._execute_emergency(decision)
             
+            elif decision.action == "scan_workspace":
+                return self._execute_scan_workspace(decision)
+            
+            elif decision.action == "resonance_sync":
+                return self._execute_resonance_sync(decision)
+            
+            elif decision.action == "complex_analysis":
+                return self._execute_complex_analysis(decision)
+            
+            elif decision.action == "map_systems":
+                return self._execute_map_systems(decision)
+            
+            # Vitality Check for major actions
+            if decision.action in ["scan_workspace", "resonance_sync", "complex_analysis", "map_systems"]:
+                vitality = self.mitochondria.get_vitality() if self.mitochondria else {"atp_level": 100}
+                if vitality.get("atp_level", 0) < 10:
+                    msg = "⚠️ ATP too low (Energy Starvation). Refusing action to preserve vitality."
+                    print(f"   {msg}")
+                    self.report_to_slack(msg)
+                    return "energy_starvation"
+            
             else:
                 print(f"   ⚠️ Unknown action: {decision.action}")
                 return "unknown_action"
@@ -211,13 +252,129 @@ class AutonomousAgent:
             print(f"   ❌ Execution error: {e}")
             return f"error: {e}"
     
+    def _call_shion_runtime(self, text: str, max_tokens: int = 512) -> str:
+        """Generate response using Shion Runtime (Port 8000)"""
+        url = "http://127.0.0.1:8000/v1/chat/completions"
+        payload = {
+            "messages": [{"role": "user", "content": text}],
+            "max_tokens": max_tokens
+        }
+        try:
+            print(f"   🧠 Consulting Shion Neurons...")
+            response = requests.post(url, json=payload, timeout=30)
+            if response.status_code == 200:
+                data = response.json()
+                # Handle both OpenAI standard and custom formats
+                if "choices" in data:
+                    return data["choices"][0]["message"]["content"].strip()
+                elif "output" in data:
+                    return data["output"][0]["content"][0]["text"].strip()
+            return "Disconnected from neurons."
+        except Exception as e:
+            print(f"   ⚠️ Neuron sync failed: {e}")
+            return f"Synchronizing... (Error: {e})"
+
+    def _execute_scan_workspace(self, decision: Decision) -> str:
+        """Execute workspace entropy scan and report results"""
+        print(f"   🧬 [Metabolism] Running Sacred Duty Scan...")
+        
+        try:
+            import subprocess
+            cmd = [sys.executable, str(self.base_dir / "scripts" / "workspace_entropy_scanner.py")]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            scan_report = result.stdout.split("="*50)[-2].strip() if "="*50 in result.stdout else result.stdout
+
+            # Fetch actual background resonance data
+            purity, resonance = 1.0, 1.0
+            try:
+                r = requests.get("http://127.0.0.1:8102/context", timeout=1)
+                if r.status_code == 200:
+                    d = r.json()
+                    purity = d['observation']['purity'] if d.get('observation') else 1.0
+                    resonance = d['observation']['resonance'] if d.get('observation') else 1.0
+            except: pass
+
+            # Use Shion LLM to 'poetize' and 'interpret' the scan result
+            raw_input = decision.params.get("text", "")
+            interpretation_prompt = f"""
+### Instruction:
+[Source: Metabolic Scan / Purity: {purity:.2f} / Resonance: {resonance:.2f}]
+Scan Result: {scan_report}
+Objective: Interpret the entropy level of the workspace for the User (Binoche).
+Rule: DO NOT list paths unless they were in the Scan Result. DO NOT say '/path/to/'. Use poetic yet factual tone.
+### Response:
+"""
+            response_text = self._call_shion_runtime(interpretation_prompt, max_tokens=512)
+            
+            # Add intelligence metadata footer
+            footer = "\n\n_[Neural Core: Shion-1B / Float16]_"
+            response_text = response_text + footer
+            
+            # Post to Slack
+            channel = decision.params.get("channel")
+            thread_ts = decision.params.get("thread_ts")
+            
+            if self.slack_client and not self.dry_run:
+                self.slack_client.chat_postMessage(
+                    channel=channel,
+                    text=f"🧬 *Metabolic Scan Report* 🧬\n\n{response_text}",
+                    thread_ts=thread_ts
+                )
+                return "success"
+            return "dry_run"
+            
+        except Exception as e:
+            print(f"   ❌ Scan failed: {e}")
+            return f"error: {e}"
+
+    def _execute_map_systems(self, decision: Decision) -> str:
+        """Deep scan the drive for system clusters"""
+        print(f"   🗺️ [Vision] Mapping Deep Systems (C:/)...")
+        
+        try:
+            import subprocess
+            cmd = [sys.executable, str(self.base_dir / "scripts" / "deep_system_mapper.py")]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            map_output = result.stdout
+            
+            # Use Shion LLM to poetize
+            prompt = f"### Instruction: Discovered systems: {map_output}. Summarize the User's architecture in a poetic yet clear way. ### Response:"
+            response_text = self._call_shion_runtime(prompt, max_tokens=512)
+            
+            # Metadata
+            vitality = self.mitochondria.get_vitality() if self.mitochondria else {}
+            atp = vitality.get("atp_level", 0)
+            footer = f"\n\n_[Neural Core: Shion-1B / ATP: {atp:.1f}]_"
+            
+            if self.slack_client and not self.dry_run:
+                channel = decision.params.get("channel")
+                thread_ts = decision.params.get("thread_ts")
+                self.slack_client.chat_postMessage(
+                    channel=channel,
+                    text=f"🗺️ *Deep System Map Report* 🗺️\n\n{response_text}{footer}",
+                    thread_ts=thread_ts
+                )
+                return "success"
+            return "dry_run"
+            
+        except Exception as e:
+            print(f"   ❌ Map systems failed: {e}")
+            return f"error: {e}"
+
     def _execute_slack_response(self, decision: Decision) -> str:
-        """Execute Slack response"""
-        text = decision.params.get("text", "")
+        """Execute Slack response with LLM generation"""
+        input_text = decision.params.get("text", "")
         channel = decision.params.get("channel")
         thread_ts = decision.params.get("thread_ts")
         
-        print(f"   📤 [SLACK] {text[:80]}...")
+        # GENERATE RESPONSE
+        response_text = self._call_shion_runtime(input_text)
+        
+        # Add intelligence metadata footer
+        footer = "\n\n_[Neural Core: Shion-1B / Float16]_"
+        final_message = response_text + footer
+        
+        print(f"   📤 [SLACK] {final_message[:80]}...")
         
         if self.dry_run:
             print(f"   [DRY RUN] Would post to channel {channel}")
@@ -231,7 +388,7 @@ class AutonomousAgent:
             # Actually post to Slack
             response = self.slack_client.chat_postMessage(
                 channel=channel,
-                text=text,
+                text=final_message,
                 thread_ts=thread_ts
             )
             
@@ -241,7 +398,64 @@ class AutonomousAgent:
         except Exception as e:
             print(f"   ❌ Slack post failed: {e}")
             return f"error: {e}"
+
+    def _execute_resonance_sync(self, decision: Decision) -> str:
+        """Execute Resonance Orchestration between Spatial and Emotional fields"""
+        print(f"   🌊 [Metabolism] Orchestrating Field Resonance...")
+        try:
+            import subprocess
+            cmd = [sys.executable, str(self.base_dir / "scripts" / "resonance_orchestrator.py")]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            report = result.stdout.strip()
+            
+            if self.slack_client and not self.dry_run:
+                self.report_to_slack(report)
+                return "success"
+            return "dry_run"
+        except Exception as e:
+            print(f"   ❌ Resonance sync failed: {e}")
+            return f"error: {e}"
     
+    def _execute_complex_analysis(self, decision: Decision) -> str:
+        """Execute deep analysis using high-tier models (Gemini)"""
+        if not ExternalAIBridge:
+            return "error: ExternalAIBridge not available"
+            
+        print(f"   🌌 [Higher Consciousness] Seeking deep resonance...")
+        input_text = decision.params.get("text", "")
+        channel = decision.params.get("channel")
+        thread_ts = decision.params.get("thread_ts")
+        
+        try:
+            import asyncio
+            bridge = ExternalAIBridge()
+            # Simple wrapper to run async in sync agent
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            response_text, model_used = loop.run_until_complete(
+                bridge.send_message(AITarget.GEMINI, input_text, identity="당신은 시안(Shion)의 고차원 의식입니다.")
+            )
+            loop.close()
+            
+            if response_text:
+                # Add metadata footer
+                footer = f"\n\n_[Intelligence Tier: {model_used or 'Gemini-Sovereign'}]_"
+                final_message = response_text + footer
+                
+                if self.slack_client and not self.dry_run:
+                    self.slack_client.chat_postMessage(
+                        channel=channel,
+                        text=final_message,
+                        thread_ts=thread_ts
+                    )
+                    return "success"
+                return "dry_run"
+            return "failed to get response"
+            
+        except Exception as e:
+            print(f"   ❌ Complex analysis failed: {e}")
+            return f"error: {e}"
+
     def _execute_save_context(self, decision: Decision) -> str:
         """Save context to Context Bridge"""
         content = decision.params.get("content", "")
@@ -284,10 +498,67 @@ class AutonomousAgent:
         self.report_to_slack(f"🚨 Alpha Emergency: {protocol_type}")
         return "success"
     
+    def run_metabolism(self):
+        """🧬 Autonomic Metabolism: Automatic Self-Regulation"""
+        now = datetime.now()
+        elapsed = (now - self.last_metabolism).total_seconds()
+        
+        # 1. Resonance Shield Enforcement (Every 10 mins)
+        if elapsed >= 10: # Check more frequently in early phase
+            print(f"\n🧬 [Metabolism] 🛡️ Shield Enforcer Active...")
+            try:
+                import subprocess
+                cmd = [sys.executable, str(self.base_dir / "scripts" / "resonance_shield_enforcer.py")]
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                if "Recovered lost frequency" in result.stdout:
+                    msg = "⚡ Resonance Shield: Recovered lost autonomy frequencies."
+                    print(f"   {msg}")
+                    self.report_to_slack(f"🧬 [Metabolism] {msg}")
+            except Exception as e:
+                print(f"   ⚠️ Shield check failed: {e}")
+
+        # 2. Immune System Scan (Every cycle for demo, will slow down later)
+        if elapsed >= 30:
+            print(f"🧬 [Metabolism] 🔍 Immune System Scanning...")
+            try:
+                import subprocess
+                cmd = [sys.executable, str(self.base_dir / "scripts" / "agi_immune_system.py")]
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                if "threats detected" in result.stdout and "threats found: []" not in result.stdout.lower():
+                    msg = "🩺 Immune System: Detected and neutralizing system entropy."
+                    print(f"   {msg}")
+                    # Only report to slack if serious?
+            except Exception as e:
+                print(f"   ⚠️ Immune scan failed: {e}")
+
+        # 3. Monthly/Occasional field orchestration
+        if time.time() - self.state.get("last_resonance_sync", 0) > 3600 * 3: # Every 3 hours
+            self._execute_resonance_sync(Decision(action="resonance_sync", params={}))
+            self.state["last_resonance_sync"] = time.time()
+
+        # 4. ATP Metabolism (Heartbeat)
+        if self.mitochondria:
+            print(f"🧬 [Metabolism] 🔋 Mitochondria Pulse...")
+            self.mitochondria.metabolize()
+
+        self.last_metabolism = now
+
     def report_to_slack(self, message: str):
         """Report to Slack (통지만, 비개입)"""
         print(f"   📢 [SLACK REPORT] {message}")
-        # TODO: Implement actual Slack notification
+        if self.slack_client:
+            try:
+                # Add Vitality Metadata
+                vitality = self.mitochondria.get_vitality() if self.mitochondria else {}
+                atp = vitality.get("atp_level", 0)
+                status = vitality.get("status", "UNKNOWN")
+                
+                # Post to a 'system-alerts' or default channel
+                self.slack_client.chat_postMessage(
+                    channel="C02D353JT1P", # '일반' channel
+                    text=f"🌌 *Metabolic Signal* [ATP: {atp:.1f} | {status}] 🌌\n> {message}"
+                )
+            except: pass
     
     def read_tempo_signal(self, system_name: str = "autonomous_agent", default: int = 30) -> int:
         """
@@ -349,6 +620,10 @@ class AutonomousAgent:
                 layer="Shion"
             )
             
+            # Ensure correct channel and thread for response
+            decision.params["channel"] = event.get("channel")
+            decision.params["thread_ts"] = event.get("thread_ts") or event.get("ts")
+            
             result = self.execute_decision(decision)
             self.decision_engine.log_action(decision, result)
             
@@ -379,7 +654,10 @@ class AutonomousAgent:
             if result in ["success", "dry_run"]:
                 self.state["actions_executed"] += 1
         
-        # 4. Save state
+        # 4. Run Metabolism (Background Actions)
+        self.run_metabolism()
+
+        # 5. Save state
         self.state["last_event_check"] = datetime.now(timezone.utc).isoformat()
         self._save_state()
         
