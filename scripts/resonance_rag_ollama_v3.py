@@ -19,7 +19,7 @@ import json
 import numpy as np
 import requests
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from collections import defaultdict
 import math
 import re
@@ -28,8 +28,20 @@ from workspace_root import get_workspace_root
 # Configuration
 WORKSPACE_ROOT = get_workspace_root()
 LEDGER_FILE = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl"
+LEDGER_BACKUP = WORKSPACE_ROOT / "fdo_agi_repo" / "memory" / "resonance_ledger.jsonl.backup"
 OLLAMA_URL = "http://localhost:11434/api/generate"
 MODEL_NAME = "llama3.2"
+
+# Import Hippocampal Leap Search
+try:
+    sys.path.append(str(Path(__file__).parent))
+    from hippocampal_leap_search import HippocampalSearch
+    # Add workspace2 paths for bridge
+    sys.path.append(str(Path("C:/workspace2/shion/core")))
+    from resonance_phase_bridge import ResonancePhaseBridge
+except ImportError:
+    HippocampalSearch = None
+    ResonancePhaseBridge = None
 
 # Optimized weights based on testing
 SEMANTIC_WEIGHT = 0.7
@@ -162,10 +174,55 @@ def create_feeling_vector(text: str) -> Optional[np.ndarray]:
         print(f"⚠️ Embedding error: {e}")
         return None
 
+def get_metacognitive_params() -> Dict[str, Any]:
+    """Reads Shion's internal state and emotional bias to adjust search precision."""
+    state_file = Path("C:/workspace2/shion/outputs/mitochondria_state.json")
+    entropy_file = Path("C:/workspace2/shion/outputs/body_entropy_latest.json")
+    bias_file = Path("C:/workspace2/shion/outputs/emotional_bias.json")
+    
+    params = {
+        "atp": 50.0, 
+        "entropy": 0.5, 
+        "leap_boost": 0.0,
+        "target_w_layer": None,
+        "theme_keywords": []
+    }
+    
+    if state_file.exists():
+        try:
+            state = json.loads(state_file.read_text(encoding='utf-8'))
+            params["atp"] = state.get("atp_level", 50.0)
+        except: pass
+        
+    if entropy_file.exists():
+        try:
+            ent = json.loads(entropy_file.read_text(encoding='utf-8'))
+            params["entropy"] = ent.get("entropy", 0.5)
+        except: pass
+
+    if bias_file.exists():
+        try:
+            bias = json.loads(bias_file.read_text(encoding='utf-8'))
+            params["target_w_layer"] = bias.get("target_w_layer")
+            params["theme_keywords"] = bias.get("theme_keywords", [])
+            print(f"🎭 [META] Emotional Bias Loaded: {params['target_w_layer']}")
+        except: pass
+        
+    # Strategic Adjustments
+    if params["atp"] < 30.0:
+        print("🔋 [META] Low ATP detected. Shifting to aggressive Leap Search for efficiency.")
+        params["leap_boost"] = 0.2
+        
+    return params
+
 def find_resonant_memory_optimized(query: str, top_k: int = 10) -> Optional[Dict]:
     """
-    Optimized hybrid search with multi-field BM25.
+    Optimized hybrid search with multi-field BM25 and Metacognitive feedback.
     """
+    meta = get_metacognitive_params()
+    # Adjust top_k based on ATP (Survival mode: fewer results, more leap)
+    if meta["atp"] < 20.0:
+        top_k = max(3, top_k // 2)
     if not LEDGER_FILE.exists():
         print(f"❌ Ledger not found: {LEDGER_FILE}")
         return None
@@ -177,18 +234,18 @@ def find_resonant_memory_optimized(query: str, top_k: int = 10) -> Optional[Dict
             for line in f:
                 try:
                     entry = json.loads(line)
-                    if entry.get('type') in ['origin_memory', 'axiom']:
-                        documents.append(entry)
+                    # Allow more types or everything for broader resonance
+                    documents.append(entry)
                 except:
                     continue
     except Exception as e:
-        print(f"❌ Error: {e}")
-        return None
+        print(f"❌ Error loading ledger: {e}")
     
-    if not documents:
-        return None
+    # We still want to proceed even if the ledger file wasn't loaded (e.g. if it's too big or missing)
+    # because leap search can still work on the backup or via PowerShell.
     
-    print(f"📚 Loaded {len(documents)} memories")
+    if documents:
+        print(f"📚 Loaded {len(documents)} memories from main ledger")
     
     # Semantic scoring
     query_vec = create_feeling_vector(query)
@@ -199,6 +256,10 @@ def find_resonant_memory_optimized(query: str, top_k: int = 10) -> Optional[Dict
     semantic_scores = []
     
     for doc in documents:
+        if 'vector' not in doc:
+            semantic_scores.append(0.0)
+            continue
+            
         doc_vec = np.array(doc['vector'])
         doc_norm = np.linalg.norm(doc_vec)
         
@@ -209,16 +270,53 @@ def find_resonant_memory_optimized(query: str, top_k: int = 10) -> Optional[Dict
         semantic_scores.append(float(sim))
     
     # Normalize
-    max_s = max(semantic_scores)
-    min_s = min(semantic_scores)
-    range_s = max_s - min_s if max_s > min_s else 1.0
-    semantic_scores = [(s - min_s) / range_s for s in semantic_scores]
+    if semantic_scores:
+        max_s = max(semantic_scores)
+        min_s = min(semantic_scores)
+        range_s = max_s - min_s if max_s > min_s else 1.0
+        semantic_scores = [(s - min_s) / range_s for s in semantic_scores]
+    else:
+        semantic_scores = [0.0] * len(documents)
     
     # Multi-field BM25
     print("🔍 Building multi-field BM25 index...")
     fields = build_multifield_bm25_index(documents)
     query_tokens = tokenize(query)
     print(f"   Query tokens: {query_tokens}")
+    
+    # [NON-LINEAR LEAP] Check if leap search is applicable
+    leaped_results = []
+    if HippocampalSearch:
+        searcher = HippocampalSearch(WORKSPACE_ROOT)
+        
+        # Priority: Emotional target w-layer
+        w_layers = ["W1", "W2", "W3", "W4"]
+        if meta.get("target_w_layer") in w_layers:
+            # Move target layer to the front
+            w_layers.remove(meta["target_w_layer"])
+            w_layers.insert(0, meta["target_w_layer"])
+
+        for w in w_layers:
+            # Matches if w is in query OR it's our emotional priority
+            resonance_hit = w.lower() in query.lower() or w == meta.get("target_w_layer")
+            if resonance_hit:
+                print(f"🚀 [LEAP] Resonance phase detected: {w}. Performing non-linear excavation...")
+                leaped_findings = searcher.search_w_layer(w)
+                for finding in leaped_findings:
+                    # Create a temporary document from leaped finding
+                    # Hybrid score is boosted by metacognitive leap_boost
+                    hybrid_score = min(0.99, 0.95 + meta["leap_boost"])
+                    leaped_results.append({
+                        'doc': {
+                            'summary': f"[LEAPED] {w} Resonance at line {finding['line']}",
+                            'narrative': str(finding['data']),
+                            'type': 'leaped_fragment',
+                            'vector': query_vec.tolist() # Temporary vector for ranking
+                        },
+                        'hybrid': hybrid_score, 
+                        'semantic': 0.9,
+                        'bm25': 1.0
+                    })
     
     bm25_scores = []
     for idx in range(len(documents)):
@@ -246,13 +344,16 @@ def find_resonant_memory_optimized(query: str, top_k: int = 10) -> Optional[Dict
             'bm25': bm25_scores[idx]
         })
     
+    # Merge with leaped results
+    results.extend(leaped_results)
+    
     results.sort(key=lambda x: x['hybrid'], reverse=True)
     
     # Display top results
     print(f"\n✨ Top {min(top_k, len(results))} Matches:")
     print("-" * 90)
     for i, r in enumerate(results[:top_k], 1):
-        summary = r['doc']['summary'][:70]
+        summary = r['doc'].get('summary', r['doc'].get('narrative', 'No Summary available'))[:70]
         print(f"{i}. {summary}...")
         print(f"   Hybrid={r['hybrid']:.4f} (Sem={r['semantic']:.4f} × 0.7 + "
               f"BM25={r['bm25']:.4f} × 0.3)")
@@ -293,14 +394,19 @@ def main():
     query = sys.argv[1]
     use_ollama = "--ollama" in sys.argv
     
+    # [PHASE BRIDGE] Enhance query with workspace phase context
+    if ResonancePhaseBridge:
+        bridge = ResonancePhaseBridge(Path("C:/workspace2/shion"), Path("C:/workspace/agi"))
+        query = bridge.inject_phase_into_query(query)
+
     print(f"\n❓ Query: \"{query}\"")
     print("=" * 90)
     
     memory = find_resonant_memory_optimized(query, top_k=10)
     
     if memory:
-        print(f"\n🎯 Selected: \"{memory['summary']}\"")
-        print(f"   Resonance: {memory['resonance_score']:.4f}")
+        print(f"\n🎯 Selected: \"{memory.get('summary', memory.get('narrative', 'No Summary'))[:100]}\"")
+        print(f"   Resonance: {memory.get('resonance_score', 0.0):.4f}")
         
         if use_ollama:
             system_prompt = f"""You are tuned to Binoche_Observer & Core's philosophy.

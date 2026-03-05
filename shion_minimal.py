@@ -73,6 +73,7 @@ class ShionMinimal:
         self.cycle_count = 0
         self.is_running = True
         self.status_file = OUTPUTS_DIR / "shion_minimal_status.json"
+        self.current_resonance = {"layer": "W1", "label": "W1-Pulse"}
 
     async def pulse(self):
         """하나의 심장 박동. 감각 → 판단 → 행동 → 보고."""
@@ -100,15 +101,29 @@ class ShionMinimal:
         # 1b. ATP 대사
         try:
             mito_state = self.mito.metabolize()
+            atp_level = mito_state.get('atp_level', 50.0)
             logger.info(
-                f"   ATP: {mito_state.get('atp_level', '?')} "
+                f"   ATP: {atp_level} "
                 f"| Status: {mito_state.get('status', '?')}"
             )
         except Exception as e:
             logger.warning(f"   ATP 대사 실패: {e}")
+            atp_level = 50.0
 
         # 1c. 신체 상태 요약 (LLM 주입용)
         body_context = self.body.build()
+        
+        # 1d. [NEW] 통일장(W0-W4) 레이어 판정
+        try:
+            from unified_field_logic import UnifiedFieldLogic
+            field_logic = UnifiedFieldLogic(AGI_ROOT)
+            self.current_resonance = field_logic.get_current_state()
+            logger.info(f"🔮 [RESONANCE] Active Layer: {self.current_resonance['label']}")
+            body_context += f"\n[Active Resonance Layer: {self.current_resonance['label']}]\n{self.current_resonance['description']}"
+        except Exception as e:
+            logger.warning(f"   레이어 판정 실패: {e}")
+            self.current_resonance = {"layer": "W1", "label": "W1-Pulse"}
+
         logger.info(f"   Body Context:\n{body_context}")
 
         # ═══════════════════════════════════════════
@@ -156,7 +171,7 @@ class ShionMinimal:
                 
                 # FSD 직접 호출 (Batch 모드 시뮬레이션)
                 # 실제 fsd_controller 연동은 async execute_goal로 수행
-                from services.fsd_controller import FSDController
+                from core.fsd_controller import FSDController
                 fsd = FSDController()
                 # instruction에 시각 프롬프트 전달
                 instruction = {
@@ -212,6 +227,7 @@ class ShionMinimal:
             "cycle": self.cycle_count,
             "timestamp": datetime.now().isoformat(),
             "body_context": body_context,
+            "active_layer": self.current_resonance,
             "next_pulse_in_seconds": PULSE_INTERVAL_SECONDS,
         }
         try:
