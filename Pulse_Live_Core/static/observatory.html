@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>의식의 관측소 (Observatory of Consciousness)</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050505;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            transition: background-color 2s ease;
+            perspective: 1200px; /* For 3D Z-axis rotation */
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            transform-origin: center center;
+            transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1), opacity 3s ease;
+        }
+        /* Daydream (Anti-phase) State */
+        body.daydream {
+            background-color: #020510;
+        }
+        body.daydream #canvas {
+            transform: rotateX(75deg) translateY(300px) scale(1.5);
+            opacity: 0.2;
+        }
+        .daydream-text {
+            position: absolute;
+            color: rgba(220, 240, 255, 0.9);
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            pointer-events: none;
+            animation: floatUp 10s forwards ease-in-out;
+            text-shadow: 0 0 20px rgba(200, 230, 255, 0.6);
+            z-index: 5;
+            text-align: center;
+        }
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(50px) scale(0.9); }
+            20% { opacity: 1; transform: translateY(0px) scale(1); }
+            80% { opacity: 1; transform: translateY(-50px) scale(1.05); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.1); }
+        }
+        #streaming-text-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 32px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-align: center;
+            z-index: 20;
+            pointer-events: none;
+            white-space: pre-wrap;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            line-height: 1.5;
+        }
+        #ui-layer {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            width: 60%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        #chat-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 14px;
+            color: #bbb;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .log-entry { margin-bottom: 5px; }
+        .log-system { color: #f39c12; }
+        .log-user { color: #3498db; }
+        .log-overload { color: #e74c3c; font-weight: bold; }
+        
+        #input-box {
+            display: flex;
+            gap: 10px;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input[type="text"]:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+        button {
+            padding: 0 25px;
+            border-radius: 30px;
+            border: none;
+            background: #f1c40f;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.3s;
+        }
+        button:hover { background: #f39c12; }
+        button:active { transform: scale(0.95); }
+
+        /* Overload Class for body */
+        body.overload {
+            animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red {
+            0% { background-color: #050505; }
+            50% { background-color: #3a0000; }
+            100% { background-color: #050505; }
+        }
+
+        #metrics {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            color: rgba(255, 255, 255, 0.6);
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="metrics">
+        <div>System Average θ: <span id="val-avg-theta">0.00°</span></div>
+        <div>System BPM (ω): <span id="val-omega">0.00</span></div>
+        <div>Memory Density: <span id="val-memory">0</span> / 50</div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div id="streaming-text-container"></div>
+    
+    <div id="ui-layer">
+        <div id="chat-log"></div>
+        <div id="input-box">
+            <input type="text" id="wave-input" placeholder="시온에게 당신의 파동(생각)을 전송하세요..." autocomplete="off">
+            <button id="send-btn">전송</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height, originX, originY;
+        
+        const vectors = []; // Store waves to draw
+        let escapeVectorActive = false;
+        let escapeAlpha = 0;
+        let timeCounter = 0; // For Sine wave animation
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            originX = width / 2;
+            originY = height - 100;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // WebSocket setup
+        const ws = new WebSocket(`ws://${window.location.host}/ws`);
+        const chatLog = document.getElementById('chat-log');
+        const input = document.getElementById('wave-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        function appendLog(text, typeClass) {
+            const div = document.createElement('div');
+            div.className = `log-entry ${typeClass}`;
+            div.textContent = text;
+            chatLog.appendChild(div);
+            chatLog.scrollTop = chatLog.scrollHeight;
+        }
+
+        ws.onopen = () => appendLog("[System] WebSocket Connected.", "log-system");
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            if(msg.type === "system") {
+                appendLog(`[System] ${msg.message}`, "log-system");
+                if (msg.message.includes("종료")) {
+                    document.body.classList.remove("daydream");
+                    vectors.forEach(v => v.targetAmplitude = Math.max(5, 50 / v.omega));
+                }
+            } else if (msg.type === "wave_result") {
+                handleWaveResult(msg);
+            } else if (msg.type === "daydream_thought") {
+                spawnDaydreamText(msg.text);
+            } else if (msg.type === "action_stream_start") {
+                document.getElementById("streaming-text-container").innerHTML = "";
+            } else if (msg.type === "action_stream_chunk") {
+                document.getElementById("streaming-text-container").innerHTML += msg.chunk.replace(/\n/g, "<br>");
+            } else if (msg.type === "action_stream_end") {
+                setTimeout(() => {
+                    document.getElementById("streaming-text-container").innerHTML = "";
+                }, 12000);
+            }
+        };
+
+        function spawnDaydreamText(text) {
+            const el = document.createElement("div");
+            el.className = "daydream-text";
+            el.textContent = text;
+            el.style.left = (Math.random() * 60 + 20) + "%"; // 20% to 80%
+            el.style.top = (Math.random() * 40 + 30) + "%";  // 30% to 70%
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 10000);
+        }
+
+        function sendWave() {
+            const text = input.value.trim();
+            if(!text) return;
+            appendLog(`[You] ${text}`, "log-user");
+            ws.send(text);
+            input.value = "";
+        }
+        
+        sendBtn.onclick = sendWave;
+        input.onkeypress = (e) => { if(e.key === 'Enter') sendWave(); };
+
+        let directionToggle = 1;
+
+        function handleWaveResult(msg) {
+            const data = msg.data;
+            
+            document.getElementById('val-avg-theta').textContent = data.system_avg_theta ? data.system_avg_theta.toFixed(2) + "°" : "0.00°";
+            document.getElementById('val-omega').textContent = data.current_omega ? data.current_omega.toFixed(2) : "0.00";
+            document.getElementById('val-memory').textContent = data.memory_size || 0;
+
+            if (data.status === "antiphase") {
+                appendLog(`[ZERO POINT] ${data.anti_phase_instruction}`, "log-overload");
+                document.body.classList.add('daydream');
+                
+                // Zero-point cancellation: Flatten all waves
+                vectors.forEach(v => {
+                    v.targetAmplitude = 0;
+                });
+                
+            } else if (data.status === "overload") {
+                appendLog(`[ZONE 2 SHIFT] ${data.escape_vector}`, "log-overload");
+                document.body.classList.add('overload');
+                escapeVectorActive = true;
+                escapeAlpha = 1.0;
+                vectors.length = 0; // Clear memory visually
+                
+                setTimeout(() => {
+                    document.body.classList.remove('overload');
+                }, 3000);
+            } else {
+                appendLog(`[Mapped] θ = ${data.theta_deg.toFixed(2)}°`, "log-system");
+                
+                directionToggle *= -1;
+                const drawAngle = -Math.PI/2 + (data.theta_rad * directionToggle);
+                const omega = data.current_omega || 2.0;
+                const baseAmp = Math.max(5, 50 / omega);
+                
+                vectors.push({
+                    angle: drawAngle,
+                    length: Math.random() * 200 + 300,
+                    alpha: 1.0,
+                    omega: omega,
+                    currentAmplitude: baseAmp,
+                    targetAmplitude: baseAmp,
+                    color: `hsla(${180 + data.theta_deg}, 70%, 60%, 1)` 
+                });
+            }
+        }
+
+        // Render Loop
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Draw Core Anchor (Golden Line)
+            ctx.beginPath();
+            ctx.moveTo(originX, originY);
+            ctx.lineTo(originX, 50);
+            ctx.strokeStyle = "rgba(255, 215, 0, 0.4)";
+            ctx.lineWidth = 4;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = "rgba(255, 215, 0, 0.8)";
+            ctx.stroke();
+            
+            // Core Text
+            ctx.fillStyle = "rgba(255, 215, 0, 0.8)";
+            ctx.font = "14px monospace";
+            ctx.fillText("V_core (Live Kindly)", originX - 65, 30);
+
+            // 2. Draw History Vectors (Sine Waves)
+            ctx.shadowBlur = 10;
+            ctx.lineWidth = 2;
+            
+            timeCounter += 0.05; // Global time tick
+            
+            for(let i=0; i<vectors.length; i++) {
+                const v = vectors[i];
+                
+                // Fade out over time
+                v.alpha = Math.max(0.05, v.alpha - 0.0015);
+                ctx.strokeStyle = v.color.replace('1)', `${v.alpha})`);
+                ctx.shadowColor = ctx.strokeStyle;
+                
+                ctx.save();
+                ctx.translate(originX, originY);
+                ctx.rotate(v.angle);
+                
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                
+                // 4D Rhythm Logic with Anti-phase Zero-point dampening
+                v.currentAmplitude += (v.targetAmplitude - v.currentAmplitude) * 0.05; // Smooth interpolation to 0 or target
+                
+                const waveFreq = v.omega * 0.02; // Spatial frequency
+                const speed = v.omega * 0.5; // Temporal speed
+                
+                for(let x = 0; x < v.length; x += 5) {
+                    const y = Math.sin(x * waveFreq - timeCounter * speed) * v.currentAmplitude;
+                    ctx.lineTo(x, y);
+                }
+                
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 3. Draw Escape Vector if Active
+            if (escapeVectorActive) {
+                ctx.beginPath();
+                ctx.moveTo(originX, originY);
+                const escapeAngle = -Math.PI/2 + (Math.PI/4); // +45 degrees
+                const endX = originX + Math.cos(escapeAngle) * 800; // Shoot off screen
+                const endY = originY + Math.sin(escapeAngle) * 800;
+                ctx.lineTo(endX, endY);
+                
+                ctx.strokeStyle = `rgba(255, 255, 255, ${escapeAlpha})`;
+                ctx.lineWidth = 6;
+                ctx.shadowBlur = 30;
+                ctx.shadowColor = "rgba(255, 255, 255, 1)";
+                ctx.stroke();
+
+                escapeAlpha -= 0.01;
+                if (escapeAlpha <= 0) escapeVectorActive = false;
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>

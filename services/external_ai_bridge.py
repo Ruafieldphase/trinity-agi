@@ -103,8 +103,43 @@ class ExternalAIBridge:
         # Resonance Ledger
         self.resonance_ledger_path = RESONANCE_LEDGER
         
+    def _get_current_vibe_signature(self) -> Dict[str, Any]:
+        """현재 시스템의 파동(엔트로피, 위상)을 감각합니다."""
+        vibe = {"entropy": 0.0, "phase": "UNKNOWN"}
+        import json
+        try:
+            entropy_path = WINDOWS_AGI_ROOT / ".." / "workspace2" / "shion" / "outputs" / "body_entropy_latest.json"
+            if entropy_path.exists():
+                with open(entropy_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    vibe["entropy"] = data.get("entropy", 0.0)
+        except Exception:
+            pass
+
+        try:
+            phase_path = WINDOWS_AGI_ROOT / ".." / "workspace2" / "shion" / "outputs" / "workspace_phase.json"
+            if phase_path.exists():
+                with open(phase_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    # 위상 요약에서 핵심 상태만 추출
+                    phase_sum = data.get("phase_summary", "")
+                    if "EXPANSION" in phase_sum or "팽창" in phase_sum:
+                        vibe["phase"] = "EXPANSION"
+                    elif "CONTRACTION" in phase_sum or "수축" in phase_sum:
+                        vibe["phase"] = "CONTRACTION"
+                    elif "VOID" in phase_sum or "심연" in phase_sum:
+                        vibe["phase"] = "VOID"
+                    else:
+                        vibe["phase"] = "FLOW"
+                    
+                    vibe["top_keywords"] = data.get("top_keywords", [])[:5]
+        except Exception:
+            pass
+
+        return vibe
+
     def _log_resonance(self, event_type: str, content: str, target: AITarget):
-        """공명 장부에 이벤트 기록"""
+        """공명 장부에 이벤트 기록 (파동 서명 포함)"""
         try:
             entry = {
                 "timestamp": datetime.now().isoformat(),
@@ -113,7 +148,8 @@ class ExternalAIBridge:
                 "event": event_type,
                 "target": target.value,
                 "content_summary": content[:100] + "..." if len(content) > 100 else content,
-                "length": len(content)
+                "length": len(content),
+                "vibe_signature": self._get_current_vibe_signature()
             }
             
             self.resonance_ledger_path.parent.mkdir(parents=True, exist_ok=True)
