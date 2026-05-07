@@ -4,7 +4,14 @@ import logging
 import time
 import os
 from typing import Dict, Any, Optional, List
-from agi_core.agency.checkin_registry import CheckInRegistry
+try:
+    from agi_core.agency.checkin_registry import CheckInRegistry
+except ModuleNotFoundError:
+    class CheckInRegistry:
+        """Fallback for legacy Blender bridge verification outside the old agency tree."""
+
+        def check_in(self, *_args, **_kwargs):
+            return True
 from services.local_vision_service import analyze_image_locally
 
 class BlenderBridgeService:

@@ -1,4 +1,4 @@
-﻿# Autonomous Collaboration Daemon Manager
+# Autonomous Collaboration Daemon Manager
 # =======================================
 # Runs Shion (and optionally simulated Sena) auto-responders as background services
 
@@ -53,7 +53,7 @@ function Start-Daemon {
     $shionProc = Start-Process -FilePath $PythonExe `
         -ArgumentList "scripts\shion_auto_responder.py", "--daemon", "--interval", $ShionInterval `
         -WorkingDirectory $WorkspaceRoot `
-        -WindowStyle Hidden `
+        -WindowStyle Normal `
         -PassThru
     
     if ($shionProc) {
@@ -72,7 +72,7 @@ function Start-Daemon {
         $senaProc = Start-Process -FilePath $PythonExe `
             -ArgumentList "scripts\sena_auto_responder.py", "--daemon", "--interval", $SenaInterval `
             -WorkingDirectory $WorkspaceRoot `
-            -WindowStyle Hidden `
+            -WindowStyle Normal `
             -PassThru
         
         if ($senaProc) {

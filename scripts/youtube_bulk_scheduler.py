@@ -22,7 +22,7 @@ except ImportError:
 AGI_ROOT = Path("C:/workspace/agi")
 CRED_DIR = AGI_ROOT / "credentials"
 YT_TOKEN = CRED_DIR / "youtube_token.json"
-VIDEO_DIR = Path("D:/ARCHIVE_WORKSPACE/agi/music/ready_videos")
+VIDEO_DIR = Path("C:/workspace/agi/music/ready_videos")
 HISTORY_PATH = AGI_ROOT / "outputs" / "youtube_manifestation_history.json"
 STATE_PATH = AGI_ROOT / "outputs" / "youtube_manifestation_state.json"
 

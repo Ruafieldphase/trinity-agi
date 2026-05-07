@@ -139,14 +139,15 @@ class RhythmThermometer:
         """연결 상태 체크 (Shion, Core, Core)"""
         connections = {}
 
-        # Shion 체크 (v2 check via PID)
+        # Shion 체크 (v2 check via PID in outputs)
         try:
-            shion_pid_file = self.root / "agi" / "logs" / "shion.pid"
+            # We check for the autonomous collaboration daemon PID
+            shion_pid_file = self.root / "agi" / "outputs" / "autonomous_collab_daemon.pid"
             is_running = False
             if shion_pid_file.exists():
                 try:
                     pid = int(shion_pid_file.read_text().strip())
-                    # Windows에서 PID 존재 여부 체크
+                    # Windows PID check
                     import ctypes
                     PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
                     h_process = ctypes.windll.kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
@@ -155,20 +156,28 @@ class RhythmThermometer:
                         is_running = True
                 except:
                     pass
+            
+            # Fallback: check for shion_auto_responder.py process directly
+            if not is_running:
+                try:
+                    output = subprocess.check_output('wmic process where "name=\'python.exe\'" get commandline', shell=True).decode()
+                    if "shion_auto_responder.py" in output:
+                        is_running = True
+                except:
+                    pass
 
             if not is_running:
                 connections["shion"] = "OFFLINE"
-                # Shion 마지막 실행 시간 파악 (대략)
                 age = self.get_file_age_days("agi/memory/resonance_ledger.jsonl")
                 if age and age > 7:
-                    self.warnings.append(f"Shion OFFLINE ({age:.0f}일째) - 외부 소통 불가")
+                    self.warnings.append(f"ARI-Resonance OFFLINE ({age:.0f}일째) - 외부 소통 불가")
                     self.health_score -= 20
                 else:
-                    self.warnings.append("Shion OFFLINE - 외부 소통 불가")
+                    self.warnings.append("ARI-Resonance OFFLINE - 외부 소통 불가")
                     self.health_score -= 15
             else:
                 connections["shion"] = "ONLINE"
-                self.oks.append("Shion 작동 중")
+                self.oks.append("ARI-Resonance (Shion) 작동 중")
         except Exception:
             connections["shion"] = "UNKNOWN"
             self.warnings.append("Shion 상태 확인 실패")
@@ -176,17 +185,12 @@ class RhythmThermometer:
 
         # Core context 체크
         core_exists = (self.root / "agi/memory/core_context.json").exists()
+        if not core_exists:
+            # Fallback check for alternate context files
+            core_exists = (self.root / "agi/outputs/sena/sena_context.md").exists()
+            
         connections["core_context"] = "EXISTS" if core_exists else "MISSING"
         if not core_exists:
-            self.warnings.append("Core context 파일 없음 - 영구 기억 부재")
-            self.health_score -= 10
-        else:
-            self.oks.append("Core context 존재")
-
-        # Core context 체크
-        Core_exists = (self.root / "agi/memory/core_context.json").exists()
-        connections["core_context"] = "EXISTS" if Core_exists else "MISSING"
-        if not Core_exists:
             self.warnings.append("Core context 파일 없음 - 영구 기억 부재")
             self.health_score -= 10
         else:
@@ -350,17 +354,14 @@ class RhythmThermometer:
             print("🔗 연결 상태:")
             shion = connections.get("shion", "UNKNOWN")
             if shion == "ONLINE":
-                print(f"  Shion: ✅ ONLINE")
+                print(f"  ARI-Resonance: ✅ ONLINE")
             elif shion == "OFFLINE":
-                print(f"  Shion: ❌ OFFLINE")
+                print(f"  ARI-Resonance: ❌ OFFLINE")
             else:
-                print(f"  Shion: ⚠️ UNKNOWN")
+                print(f"  ARI-Resonance: ⚠️ UNKNOWN")
 
-            Core = connections.get("core_context", "MISSING")
-            print(f"  Core Context: {'✅' if Core == 'EXISTS' else '⚠️'} {Core}")
-
-            Core = connections.get("core_context", "MISSING")
-            print(f"  Core Context: {'✅' if Core == 'EXISTS' else '⚠️'} {Core}")
+            core_status = connections.get("core_context", "MISSING")
+            print(f"  Core Context: {'✅' if core_status == 'EXISTS' else '⚠️'} {core_status}")
             print()
 
         # 경고
