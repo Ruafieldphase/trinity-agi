@@ -20,6 +20,10 @@ Trinity AGI begins from that operational gap. It is the body and infrastructure 
 
 Trinity AGI는 그 운영상의 간극에서 시작합니다. Shion AI의 몸과 인프라 레이어로서, 형태가 잡힌 의도를 자동화, 예약, 게시, 로컬 런타임 지원, 동기화, 상태 보고 같은 실제 작업으로 바꿉니다.
 
+If you are new, start with [`START_HERE.md`](START_HERE.md). If you are asking your own AI to inspect this repository, give it [`AI_READ_THIS_FIRST.md`](AI_READ_THIS_FIRST.md) first.
+
+처음이라면 [`START_HERE.md`](START_HERE.md)에서 시작하세요. 당신의 AI에게 이 저장소를 읽히려면 먼저 [`AI_READ_THIS_FIRST.md`](AI_READ_THIS_FIRST.md)를 읽게 하세요.
+
 This README follows the same phase-transition path as the system it supports:
 
 이 README는 Trinity가 지탱하는 시스템과 같은 위상전이 흐름을 따릅니다.

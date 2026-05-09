@@ -4,6 +4,10 @@ This guide explains how to approach the public `trinity-agi` repository as an op
 
 이 가이드는 공개 `trinity-agi` 저장소를 Shion AI의 운영 동반 저장소로 접근하는 방법을 설명합니다.
 
+For the shortest path, start with `START_HERE.md`. For your AI assistant, use `AI_READ_THIS_FIRST.md`.
+
+가장 짧은 경로는 `START_HERE.md`에서 시작하세요. 당신의 AI 어시스턴트에게는 `AI_READ_THIS_FIRST.md`를 먼저 읽히세요.
+
 ---
 
 ## 1. What Trinity Is / Trinity가 하는 일
