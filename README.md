@@ -24,6 +24,10 @@ If you are new, start with [`START_HERE.md`](START_HERE.md). If you are asking y
 
 처음이라면 [`START_HERE.md`](START_HERE.md)에서 시작하세요. 당신의 AI에게 이 저장소를 읽히려면 먼저 [`AI_READ_THIS_FIRST.md`](AI_READ_THIS_FIRST.md)를 읽게 하세요.
 
+For concrete no-install examples, see [`EXAMPLES.md`](EXAMPLES.md).
+
+설치 없이 따라 하는 구체적인 예시는 [`EXAMPLES.md`](EXAMPLES.md)를 보세요.
+
 This README follows the same phase-transition path as the system it supports:
 
 이 README는 Trinity가 지탱하는 시스템과 같은 위상전이 흐름을 따릅니다.
