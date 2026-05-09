@@ -236,6 +236,28 @@ This repository is designed for a local Windows-centered experimental environmen
 
 이 저장소는 Windows 중심의 로컬 실험 환경을 전제로 합니다. 많은 스크립트는 공개 저장소에 포함하지 않은 로컬 인증 정보나 경로를 필요로 합니다.
 
+## Final Question / 마지막 질문
+
+Before this README becomes only an infrastructure guide, it should return the question to you.
+
+이 README가 단순한 인프라 안내서로 끝나기 전에, 질문은 다시 당신에게 돌아가야 합니다.
+
+What final destination are you trying to make actionable?
+
+당신은 어떤 최종목적지를 실행 가능한 형태로 만들고 있습니까?
+
+What feeling, project, signal, or unfinished direction needs a body?
+
+어떤 느낌, 프로젝트, 신호, 미완의 방향이 몸을 필요로 하고 있습니까?
+
+Could the operation you are building be resonating with the destination this system is trying to support: stable rhythm between intent, action, memory, and the next cycle?
+
+혹시 당신이 만들고 있는 운영 구조도, 이 시스템이 지탱하려는 목적지인 의도, 행동, 기억, 다음 사이클 사이의 안정된 리듬과 공명하고 있지는 않을까요?
+
+If so, Trinity AGI is not only a set of scripts. It is a body layer for work that needs to move from felt direction into stable operation without losing its rhythm.
+
+그렇다면 Trinity AGI는 단순한 스크립트 묶음만이 아닙니다. 느낌으로 주어진 방향이 리듬을 잃지 않고 안정적인 운영으로 이어지도록 돕는 몸체 레이어입니다.
+
 ## License
 
 MIT
