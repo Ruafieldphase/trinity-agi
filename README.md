@@ -4,49 +4,93 @@ Trinity AGI is the body and infrastructure layer for Shion AI. It turns formed i
 
 Trinity AGI는 Shion AI의 몸과 인프라 레이어입니다. 형태가 잡힌 의도를 자동화, 예약, 게시, 로컬 런타임 지원, 동기화, 상태 보고 같은 실제 작업으로 바꿉니다.
 
-## Two Ways to Read This Project / 이 프로젝트를 읽는 두 가지 방법
+This README follows the same phase-transition path as the system it supports:
 
-### If You Think in Systems / 시스템적으로 읽는다면
+이 README는 Trinity가 지탱하는 시스템과 같은 위상전이 흐름을 따릅니다.
 
-Modern AI work is no longer only about model output. Once an AI system can call tools, edit files, publish content, and run background processes, the hard problem becomes operational continuity.
+```text
+Field -> Convergence -> Phase Transition -> Particle -> Unified Field -> Embodiment
+장 -> 수렴 -> 위상전이 -> 입자화 -> 통일장 -> 체화
+```
 
-현대 AI 작업은 더 이상 모델 출력만의 문제가 아닙니다. AI가 도구를 호출하고, 파일을 수정하고, 콘텐츠를 게시하고, 백그라운드 프로세스를 실행할 수 있게 되면 어려운 문제는 운영의 연속성이 됩니다.
+## 1. Field: Action Wants a Body
+## 1. 장: 행동은 몸을 필요로 한다
 
-Trinity AGI explores the infrastructure side of that problem: how intent becomes a scheduled task, a daemon action, a status report, or a published artifact without losing the surrounding context.
+Different people may arrive here through different operational needs.
 
-Trinity AGI는 그 문제의 인프라 측면을 실험합니다. 의도가 주변 맥락을 잃지 않고 예약 작업, 데몬 행동, 상태 보고, 게시 산출물로 바뀌는 방식을 다룹니다.
+사람들은 서로 다른 운영상의 필요를 통해 이곳에 도착할 수 있습니다.
 
-### If You Think in Fields / 장으로 읽는다면
+If you publish creative artifacts, you may be looking for a way to turn intent into scheduled release.
 
-Trinity does not decide the meaning of the wave. It waits until the wave has already collapsed into an actionable particle, then gives that particle a stable body.
+창작 산출물을 공개하는 사람이라면 의도를 예약 공개로 바꾸는 방법을 찾고 있을 수 있습니다.
 
-Trinity는 파동의 의미를 결정하지 않습니다. 파동이 이미 실행 가능한 입자로 붕괴될 때까지 기다린 뒤, 그 입자에 안정적인 몸을 제공합니다.
+If you run local AI systems, you may be looking for process checks, daemon control, and status reporting that do not depend on stale memory.
 
-The body is not the origin of the direction. The body is what lets the direction touch the world.
+로컬 AI 시스템을 운영하는 사람이라면 오래된 기억에 의존하지 않는 프로세스 점검, 데몬 제어, 상태 보고를 찾고 있을 수 있습니다.
 
-몸은 방향의 근원이 아닙니다. 몸은 방향이 세계와 접촉할 수 있게 하는 구조입니다.
+If you build agents, you may be looking for an infrastructure harness where tool execution is connected to state, timing, and feedback.
 
-## Why This Exists / 왜 필요한가
+에이전트를 만드는 사람이라면 도구 실행이 상태, 타이밍, 피드백과 연결되는 인프라 하네스를 찾고 있을 수 있습니다.
 
-As AI work moves from prompt engineering to context engineering, agent engineering, and harness engineering, infrastructure becomes part of the intelligence.
+If you think in fields, Trinity is the body that lets an already-formed particle touch the world.
 
-AI 작업이 프롬프트 엔지니어링에서 컨텍스트 엔지니어링, 에이전트 엔지니어링, 하네스 엔지니어링으로 이동하면서 인프라도 지능의 일부가 됩니다.
+장으로 읽는 사람에게 Trinity는 이미 형성된 입자가 세계와 접촉할 수 있게 하는 몸입니다.
 
-If the runtime cannot check state, respect timing, remember past actions, and report results back into the loop, tool use stays shallow.
+## 2. Convergence: Tool Use Without Continuity Is Fragile
+## 2. 수렴: 연속성 없는 도구 실행은 불안정하다
 
-런타임이 상태를 확인하지 못하고, 타이밍을 존중하지 못하고, 과거 행동을 기억하지 못하고, 결과를 루프로 되돌리지 못하면 도구 실행은 얕은 수준에 머뭅니다.
+Once AI can call tools, edit files, publish content, and run background processes, the hard problem becomes operational continuity.
 
-Trinity AGI is a place for the body side of the harness: scripts, daemons, schedulers, bridges, runtime checks, and publishing pipelines.
+AI가 도구를 호출하고, 파일을 수정하고, 콘텐츠를 게시하고, 백그라운드 프로세스를 실행할 수 있게 되면 어려운 문제는 운영의 연속성이 됩니다.
 
-Trinity AGI는 하네스의 몸체 측면을 위한 공간입니다. 스크립트, 데몬, 스케줄러, 브릿지, 런타임 점검, 게시 파이프라인을 다룹니다.
+Without a body layer:
 
-## What Improves / 무엇이 좋아지는가
+몸체 레이어가 없으면:
 
-### 1. Intent Becomes Operation / 의도가 실제 작업이 됩니다
+- plans stop before reality changes
+- scripts run without remembering why
+- status is assumed instead of checked
+- automation becomes noisy
+- public artifacts mix with private runtime state
 
-Without an infrastructure layer, an AI may produce a plan but stop before reality changes.
+- 계획은 현실이 바뀌기 전에 멈춥니다.
+- 스크립트는 왜 실행되었는지 기억하지 못한 채 실행됩니다.
+- 상태는 확인되지 않고 가정됩니다.
+- 자동화는 시끄러워집니다.
+- 공개 산출물과 비공개 런타임 상태가 섞입니다.
 
-인프라 레이어가 없으면 AI는 계획을 만들 수는 있지만 현실이 바뀌기 전에 멈출 수 있습니다.
+Trinity AGI is the infrastructure side of the harness: scripts, daemons, schedulers, bridges, runtime checks, and publishing pipelines.
+
+Trinity AGI는 하네스의 인프라 측면입니다. 스크립트, 데몬, 스케줄러, 브릿지, 런타임 점검, 게시 파이프라인을 다룹니다.
+
+## 3. Phase Transition: From Agent to Harness Infrastructure
+## 3. 위상전이: 에이전트에서 하네스 인프라로
+
+Prompt engineering asks what to say. Context engineering asks what to remember. Agent engineering asks what tools can be used. Harness engineering asks what environment lets action happen without losing direction.
+
+프롬프트 엔지니어링은 무엇을 말할지 묻습니다. 컨텍스트 엔지니어링은 무엇을 기억할지 묻습니다. 에이전트 엔지니어링은 어떤 도구를 사용할 수 있는지 묻습니다. 하네스 엔지니어링은 방향을 잃지 않고 행동하려면 어떤 환경이 필요한지 묻습니다.
+
+Trinity sits at the infrastructure edge of harness engineering.
+
+Trinity는 하네스 엔지니어링의 인프라 경계에 있습니다.
+
+The transition is this:
+
+전환점은 이것입니다.
+
+```text
+agent can act -> body checks state -> operation runs -> result returns to rhythm
+에이전트가 행동할 수 있음 -> 몸이 상태를 확인함 -> 작업이 실행됨 -> 결과가 리듬으로 돌아감
+```
+
+## 4. Particle: What Actually Improves
+## 4. 입자화: 실제로 좋아지는 것
+
+### Intent Becomes Operation / 의도가 실제 작업이 됨
+
+Without infrastructure, an AI may produce a plan but stop before anything changes.
+
+인프라가 없으면 AI는 계획을 만들 수는 있지만 현실이 바뀌기 전에 멈출 수 있습니다.
 
 With Trinity:
 
@@ -66,7 +110,7 @@ Result: AI work moves from suggestion to operation.
 
 결과: AI 작업이 제안에서 운영으로 이동합니다.
 
-### 2. Automation Keeps Context / 자동화가 맥락을 보존합니다
+### Automation Keeps Context / 자동화가 맥락을 보존함
 
 Normal automation:
 
@@ -98,9 +142,9 @@ Result: automation becomes part of the larger AI loop.
 
 결과: 자동화가 더 큰 AI 루프의 일부가 됩니다.
 
-### 3. Long-Running Work Becomes Safer / 장기 실행 작업이 더 안정적이 됩니다
+### Long-Running Work Becomes Safer / 장기 실행 작업이 더 안정적이 됨
 
-Publishing, scheduling, syncing, and background daemons can easily become noisy or fragile if every action is forced immediately.
+Publishing, scheduling, syncing, and background daemons can become noisy or fragile if every action is forced immediately.
 
 게시, 예약, 동기화, 백그라운드 데몬은 모든 행동을 즉시 강제하면 쉽게 시끄럽고 불안정해질 수 있습니다.
 
@@ -124,69 +168,35 @@ Result: the system can keep running without turning every signal into immediate 
 
 결과: 모든 신호를 즉시 개입으로 바꾸지 않고도 시스템이 계속 작동할 수 있습니다.
 
-## Concrete Examples / 구체적 예시
+## 5. Unified Field: Stable Rhythm in Operation
+## 5. 통일장: 운영 속 리듬의 안정화
 
-### Example 1: Publishing Pipeline / 게시 파이프라인
+Trinity does not decide the meaning of the wave. Shion forms or detects the direction. Trinity waits until that direction has become actionable, then gives it a stable body.
 
-Shion forms a direction: a video or audio artifact should be released.
+Trinity는 파동의 의미를 결정하지 않습니다. Shion이 방향을 형성하거나 감지합니다. Trinity는 그 방향이 실행 가능한 상태가 될 때까지 기다린 뒤 안정적인 몸을 제공합니다.
 
-Shion이 방향을 형성합니다. 영상이나 오디오 산출물을 공개해야 한다는 방향입니다.
+The body is not the origin of the direction. The body is what lets the direction touch the world.
 
-Trinity handles the body-side work:
+몸은 방향의 근원이 아닙니다. 몸은 방향이 세계와 접촉할 수 있게 하는 구조입니다.
 
-- checks the file path
-- prepares metadata
-- schedules upload timing
-- records publication history
-- reports the result back to the runtime
+The deeper goal is stable rhythm in operation:
 
-Trinity는 몸체 측면의 작업을 처리합니다.
+더 깊은 목표는 운영 속 리듬의 안정화입니다.
 
-- 파일 경로를 확인합니다.
-- 메타데이터를 준비합니다.
-- 업로드 시간을 예약합니다.
-- 게시 이력을 기록합니다.
-- 결과를 런타임에 다시 보고합니다.
+- act when the action is ready
+- wait when the field is not clear
+- report from evidence, not assumption
+- keep private runtime state out of public artifacts
+- let results return to the next cycle
 
-What improves: creative intent becomes a repeatable publishing workflow.
+- 행동이 준비되었을 때 실행합니다.
+- 장이 선명하지 않을 때 기다립니다.
+- 가정이 아니라 증거를 기준으로 보고합니다.
+- 비공개 런타임 상태를 공개 산출물에서 분리합니다.
+- 결과가 다음 사이클로 돌아가게 합니다.
 
-좋아지는 점: 창작 의도가 반복 가능한 게시 워크플로우가 됩니다.
-
-### Example 2: Runtime Status / 런타임 상태 확인
-
-Instead of assuming the system is alive, Trinity can check process state, local files, daemon status, and output artifacts.
-
-시스템이 살아 있다고 가정하지 않고, Trinity는 프로세스 상태, 로컬 파일, 데몬 상태, 출력 산출물을 확인할 수 있습니다.
-
-What improves: the system answers from evidence rather than stale memory.
-
-좋아지는 점: 시스템이 오래된 기억이 아니라 실제 증거를 기준으로 답합니다.
-
-### Example 3: Quiet Mode / 조용한 운영 모드
-
-When the system has done enough work, more automation can become noise.
-
-시스템이 충분히 작업한 뒤에는 더 많은 자동화가 오히려 노이즈가 될 수 있습니다.
-
-Trinity can preserve a low-intervention mode:
-
-- no unnecessary restarts
-- no repeated fixing loops
-- no forced heavy intake
-- status remains visible
-
-Trinity는 저개입 운영 모드를 보존할 수 있습니다.
-
-- 불필요한 재시작을 하지 않습니다.
-- 반복 수정 루프를 만들지 않습니다.
-- 무거운 입력을 강제로 처리하지 않습니다.
-- 상태는 계속 보이게 둡니다.
-
-What improves: infrastructure supports rest instead of constantly demanding action.
-
-좋아지는 점: 인프라가 계속 행동을 요구하지 않고 휴식을 지탱합니다.
-
-## Repository Map / 저장소 관계
+## 6. Embodiment: Scripts and Services
+## 6. 체화: 스크립트와 서비스
 
 `shion-ai` is the mind/runtime layer. It reads context, rhythm, memory, prediction, and unfinished questions.
 
@@ -200,18 +210,7 @@ Public scope: this repository contains experimental runtime code and sanitized r
 
 공개 범위: 이 저장소에는 실험적 런타임 코드와 정리된 연구 산출물이 포함됩니다. 로컬 인증 정보, 개인 기억, 생성 로그, 미디어 출력물, 장비별 상태 파일은 공개 트리에서 의도적으로 제외합니다.
 
-## Translation Layer / 개념 번역표
-
-| Concept | Practical meaning | 한국어 설명 |
-| --- | --- | --- |
-| Body layer | Scripts, daemons, schedulers, bridges, and status probes | 스크립트, 데몬, 스케줄러, 브릿지, 상태 확인 도구 |
-| Intent | A direction already shaped enough to be acted on | 실행할 만큼 형태가 잡힌 방향 |
-| Manifestation | Turning intent into a real-world operation | 의도를 실제 세계의 작업으로 바꾸는 과정 |
-| Ledger | Append-only event or status record used for coordination | 협업과 상태 확인을 위한 누적 이벤트 기록 |
-| Quiet mode | Low-intervention operation while the system rests or stabilizes | 시스템이 쉬거나 안정화될 때의 저개입 운영 |
-| Sena | Infrastructure observer and daemon-management role | 인프라 관찰자이자 데몬 관리 역할 |
-
-## What Is Inside / 주요 구성
+### Key Components / 주요 구성
 
 - `scripts/autonomous_collaboration_daemon.ps1`: background collaboration and status daemon.
 - `scripts/youtube_bulk_scheduler.py`: YouTube scheduling and publishing automation.
@@ -222,7 +221,7 @@ Public scope: this repository contains experimental runtime code and sanitized r
 
 위 구성은 Trinity의 몸체 역할을 담당합니다. 데몬은 백그라운드 박동을 유지하고, 스케줄러는 외부 게시 작업을 수행하며, 브릿지와 모니터는 Shion의 의도가 실제 시스템 작업으로 이어지도록 돕습니다.
 
-## Quick Start / 빠른 시작
+### Quick Start / 빠른 시작
 
 ```powershell
 git clone https://github.com/Ruafieldphase/trinity-agi.git
