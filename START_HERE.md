@@ -143,12 +143,14 @@ Look for:
 ## Read Next / 다음 문서
 
 - `AI_READ_THIS_FIRST.md`: instructions for your AI assistant
+- `AXIOMATIC_GROUNDING.md`: foundational assumptions and reading lenses
 - `EXAMPLES.md`: no-install examples for status, publishing, and repeated operations
 - `LINEAR_HARNESS_GUIDE.md`: step-by-step path for linear readers
 - `FIRST_PARTICLE_TEMPLATE.md`: template for the first operation test (particle)
 - `INTEGRATION_ANTI_PATTERNS.md`: what not to do
 
 - `AI_READ_THIS_FIRST.md`: 당신의 AI를 위한 읽기 지침
+- `AXIOMATIC_GROUNDING.md`: 기반 공리와 읽기 렌즈
 - `EXAMPLES.md`: 상태 점검, 게시, 반복 운영을 위한 설치 없는 예제
 - `LINEAR_HARNESS_GUIDE.md`: 선형적 독자를 위한 단계별 경로
 - `FIRST_PARTICLE_TEMPLATE.md`: 첫 운영 테스트(입자) 양식

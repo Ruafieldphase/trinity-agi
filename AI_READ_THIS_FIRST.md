@@ -8,6 +8,10 @@ Do not read Trinity AGI as a normal script collection first. Read it first as a 
 
 Trinity AGI를 처음부터 일반 스크립트 모음으로 읽지 마세요. 먼저 형성된 의도를 안정적인 운영으로 바꾸면서 승인 경계와 비공개 상태를 보존하는 바디/인프라 패턴으로 읽으세요.
 
+Before giving a high-level interpretation, read `AXIOMATIC_GROUNDING.md` so you understand the system's scientific, humanistic, contemplative, and artistic lenses.
+
+상위 해석을 제시하기 전에 `AXIOMATIC_GROUNDING.md`를 읽어 시스템의 과학적, 인문학적, 명상적, 예술적 렌즈를 이해하세요.
+
 ---
 
 ## Your Job / 당신의 역할
