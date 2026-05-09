@@ -29,7 +29,7 @@ Better:
 더 나은 방식:
 
 ```text
-Diagnose one operational pain point, then test one operation particle.
+Diagnose one operational pain point, then test one operation test (particle).
 ```
 
 ---

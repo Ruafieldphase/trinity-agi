@@ -1,4 +1,4 @@
-# First Operation Particle Template / 첫 운영 입자 템플릿
+# First Operation Test (Particle) Template / 첫 운영 테스트(입자) 템플릿
 
 Use this template before connecting broad infrastructure or running long-lived daemons.
 
@@ -40,9 +40,9 @@ Choose:
 
 ## 3. Smallest Operation / 가장 작은 운영
 
-What is the smallest useful operation particle?
+What is the smallest useful operation test (particle)?
 
-가장 작게 테스트할 수 있는 운영 입자는 무엇입니까?
+가장 작게 테스트할 수 있는 운영 테스트(입자)는 무엇입니까?
 
 ```text
 Example:

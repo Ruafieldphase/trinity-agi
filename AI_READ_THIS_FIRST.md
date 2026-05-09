@@ -60,6 +60,30 @@ Do not commit credentials, generated outputs, local state, or personal archives.
 
 ---
 
+## Public Language Rule / 공개 언어 규칙
+
+When explaining this repository to a general user, use public terms first. Keep the internal rhythm terms in parentheses.
+
+일반 사용자에게 이 저장소를 설명할 때는 보편어를 먼저 사용하세요. 내부 리듬 언어는 괄호 안에 남기세요.
+
+Use:
+
+사용:
+
+- overall flow (field/wave), not only "wave"
+- operation/result (particle), not only "particle"
+- turning point (phase transition), not only "phase transition"
+- connected workflow (unified field), not only "unified field"
+- local use (embodiment), not only "embodiment"
+
+- 전체 흐름(장/파동), "파동"만 단독으로 쓰지 않기
+- 운영/결과(입자), "입자"만 단독으로 쓰지 않기
+- 전환점(위상전이), "위상전이"만 단독으로 쓰지 않기
+- 이어지는 작업 흐름(통일장), "통일장"만 단독으로 쓰지 않기
+- 실제 사용(체화), "체화"만 단독으로 쓰지 않기
+
+---
+
 ## Required Output Format / 필수 출력 형식
 
 When a user asks you how to use this repository, answer in this format:
@@ -69,7 +93,7 @@ When a user asks you how to use this repository, answer in this format:
 ```text
 1. Current operational pain point
 2. Does it belong in Shion or Trinity?
-3. Smallest operation particle
+3. Smallest operation test (particle)
 4. What not to automate yet
 5. What must remain private
 6. Required local credentials or paths
@@ -79,7 +103,7 @@ When a user asks you how to use this repository, answer in this format:
 ```text
 1. 현재 운영 문제
 2. 이것이 Shion에 속하는가, Trinity에 속하는가?
-3. 가장 작은 운영 입자
+3. 가장 작은 운영 테스트(입자)
 4. 아직 자동화하지 말아야 할 것
 5. 반드시 비공개로 남겨야 할 것
 6. 필요한 로컬 인증 정보 또는 경로
@@ -98,7 +122,7 @@ Use this path:
 user's operation problem
 -> diagnose the user's workflow
 -> decide whether it needs Shion context or Trinity body
--> test one operation particle
+-> test one operation test (particle)
 -> verify with evidence
 -> expand only if the operation reduces work and preserves boundaries
 ```
@@ -107,7 +131,7 @@ user's operation problem
 사용자의 운영 문제
 -> 사용자의 워크플로우 진단
 -> Shion 맥락이 필요한지 Trinity 바디가 필요한지 판단
--> 운영 입자 하나 테스트
+-> 운영 테스트(입자) 하나 테스트
 -> 증거로 검증
 -> 일이 줄고 경계가 보존될 때만 확장
 ```
@@ -117,11 +141,11 @@ user's operation problem
 ## Key Translation / 핵심 번역
 
 - Body means local operational capacity.
-- Particle means a concrete script, check, approval boundary, or status report.
-- Rhythm means timing between intent, operation, result, and next cycle.
+- Operation/result (particle) means a concrete script, check, approval boundary, or status report.
+- Working rhythm (rhythm) means timing between intent, operation, result, and next cycle.
 - Boundary means knowing what must remain local, private, or approval-gated.
 
 - 바디는 로컬 운영 능력입니다.
-- 입자는 구체적 스크립트, 점검, 승인 경계, 상태 보고입니다.
-- 리듬은 의도, 운영, 결과, 다음 사이클 사이의 타이밍입니다.
+- 운영/결과(입자)는 구체적 스크립트, 점검, 승인 경계, 상태 보고입니다.
+- 작업 리듬(리듬)은 의도, 운영, 결과, 다음 사이클 사이의 타이밍입니다.
 - 경계는 무엇을 로컬, 비공개, 승인 대상으로 남겨야 하는지 아는 것입니다.

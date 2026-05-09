@@ -12,22 +12,22 @@ Trinity AGI는 세 단계로 시도하는 것이 가장 쉽습니다.
 Level 0: No Install
 Ask your current AI where your workflow needs a body.
 
-Level 1: First Operation Particle
+Level 1: First Operation Test (Particle)
 Choose one repeated operation and test one small script/check/boundary.
 
 Level 2: Local Infrastructure
-Only after the first operation helps, connect more of the local infrastructure.
+Only after the first operation test (particle) helps, connect more of the local infrastructure.
 ```
 
 ```text
 Level 0: 설치 없음
 현재 AI에게 워크플로우 어디에 몸이 필요한지 진단시킵니다.
 
-Level 1: 첫 운영 입자
+Level 1: 첫 운영 테스트(입자)
 반복되는 운영 하나를 고르고 작은 스크립트/점검/경계 하나를 테스트합니다.
 
 Level 2: 로컬 인프라
-첫 운영 입자가 도움이 된 뒤에만 로컬 인프라를 더 연결합니다.
+첫 운영 테스트(입자)가 도움이 된 뒤에만 로컬 인프라를 더 연결합니다.
 ```
 
 ---
@@ -54,7 +54,7 @@ Find where it:
 Return:
 1. my main operational pain point,
 2. whether it belongs in Shion or Trinity,
-3. the smallest operation particle to test,
+3. the smallest operation test (particle) to try,
 4. what not to automate yet,
 5. what must remain private,
 6. what local credentials or paths are required,
@@ -79,7 +79,7 @@ https://github.com/Ruafieldphase/trinity-agi 저장소를 일반 스크립트 �
 다음 형식으로 답해줘.
 1. 내 주요 운영 문제
 2. 이것이 Shion에 속하는지 Trinity에 속하는지
-3. 가장 작게 테스트할 운영 입자
+3. 가장 작게 테스트할 운영 테스트(입자)
 4. 아직 자동화하지 말아야 할 것
 5. 반드시 비공개로 남겨야 할 것
 6. 필요한 로컬 인증 정보 또는 경로
@@ -88,13 +88,13 @@ https://github.com/Ruafieldphase/trinity-agi 저장소를 일반 스크립트 �
 
 ---
 
-## Level 1: First Operation Particle / 첫 운영 입자
+## Level 1: First Operation Test (Particle) / 첫 운영 테스트(입자)
 
 Do not connect the whole infrastructure. Choose one repeated operation.
 
 전체 인프라를 연결하려고 하지 마세요. 반복되는 운영 하나만 고르세요.
 
-Good first operation particles:
+Good first operation tests (particles):
 
 - one status check that replaces assumption
 - one approval checklist before publishing
@@ -102,7 +102,7 @@ Good first operation particles:
 - one "do not commit" boundary for credentials and outputs
 - one result note that returns an operation to the next AI cycle
 
-좋은 첫 운영 입자는 다음과 같습니다.
+좋은 첫 운영 테스트(입자)는 다음과 같습니다.
 
 - 가정을 대체하는 상태 점검 하나
 - 게시 전 승인 체크리스트 하나
@@ -145,11 +145,11 @@ Look for:
 - `AI_READ_THIS_FIRST.md`: instructions for your AI assistant
 - `EXAMPLES.md`: no-install examples for status, publishing, and repeated operations
 - `LINEAR_HARNESS_GUIDE.md`: step-by-step path for linear readers
-- `FIRST_PARTICLE_TEMPLATE.md`: template for the first operation test
+- `FIRST_PARTICLE_TEMPLATE.md`: template for the first operation test (particle)
 - `INTEGRATION_ANTI_PATTERNS.md`: what not to do
 
 - `AI_READ_THIS_FIRST.md`: 당신의 AI를 위한 읽기 지침
 - `EXAMPLES.md`: 상태 점검, 게시, 반복 운영을 위한 설치 없는 예제
 - `LINEAR_HARNESS_GUIDE.md`: 선형적 독자를 위한 단계별 경로
-- `FIRST_PARTICLE_TEMPLATE.md`: 첫 운영 테스트 양식
+- `FIRST_PARTICLE_TEMPLATE.md`: 첫 운영 테스트(입자) 양식
 - `INTEGRATION_ANTI_PATTERNS.md`: 하지 말아야 할 연결 방식

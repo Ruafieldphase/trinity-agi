@@ -19,7 +19,7 @@ Read https://github.com/Ruafieldphase/trinity-agi and especially AI_READ_THIS_FI
 
 Do not summarize first.
 Diagnose where my AI workflow fails to turn intent into stable operation.
-Return one operation particle we can test without running the full infrastructure.
+Return one operation test (particle) we can try without running the full infrastructure.
 ```
 
 ```text
@@ -27,7 +27,7 @@ https://github.com/Ruafieldphase/trinity-agi 저장소와 AI_READ_THIS_FIRST.md�
 
 요약부터 하지 말고,
 내 AI 워크플로우가 어디에서 의도를 안정적인 운영으로 바꾸지 못하는지 진단해줘.
-전체 인프라를 실행하지 않고 테스트할 수 있는 운영 입자 하나를 제안해줘.
+전체 인프라를 실행하지 않고 테스트할 수 있는 운영 테스트(입자) 하나를 제안해줘.
 ```
 
 ### Step 2. Choose one operation / 2단계. 운영 하나 고르기
@@ -52,7 +52,7 @@ Pick one:
 - 승인 경계
 - 로컬 인증 정보 경계
 
-### Step 3. Write the first operation particle / 3단계. 첫 운영 입자 작성
+### Step 3. Write the first operation test (particle) / 3단계. 첫 운영 테스트(입자) 작성
 
 Use `FIRST_PARTICLE_TEMPLATE.md`.
 
@@ -153,7 +153,7 @@ The user repeats the same manual operational step every time.
 ### Prompt / 프롬프트
 
 ```text
-Turn this repeated operation into a first operation particle, not a full automation loop.
+Turn this repeated operation into a first operation test (particle), not a full automation loop.
 
 Operation:
 [write operation here]
@@ -166,7 +166,7 @@ Return:
 ```
 
 ```text
-이 반복 운영을 전체 자동화 루프가 아니라 첫 운영 입자로 바꿔줘.
+이 반복 운영을 전체 자동화 루프가 아니라 첫 운영 테스트(입자)로 바꿔줘.
 
 운영:
 [여기에 운영 작성]

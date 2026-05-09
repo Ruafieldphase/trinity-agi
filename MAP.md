@@ -6,11 +6,11 @@
 
 ---
 
-## 1. Field / 장
+## 1. Problem Flow (Field/Wave) / 문제의 전체 흐름(장/파동)
 
-The field problem for Trinity is operational drift.
+The problem flow (field/wave) for Trinity is operational drift.
 
-Trinity가 다루는 장의 문제는 운영 표류입니다.
+Trinity가 다루는 문제의 전체 흐름(장/파동)은 운영 표류입니다.
 
 Typical symptoms:
 
@@ -32,9 +32,9 @@ Typical symptoms:
 
 ## 2. Convergence / 수렴
 
-Trinity converges that field into a body-side operating structure.
+Trinity converges that overall flow (field/wave) into a body-side operating structure.
 
-Trinity는 그 장을 바디 측 운영 구조로 수렴시킵니다.
+Trinity는 그 전체 흐름(장/파동)을 바디 측 운영 구조로 수렴시킵니다.
 
 It asks:
 
@@ -69,8 +69,8 @@ The current public repository is intentionally smaller than the private working 
 | `config/` | Public-safe configuration templates and execution boundaries. |
 | `docs/` | Guides, approval matrices, reports, research notes, and public artifacts. |
 | `README.md` | Main bilingual entry point for readers. |
-| `PHASE_TRANSITION_MAP.md` | Archival map of prior phase-transition nodes. |
-| `VERIFICATION_PARTICLE.md` | Verification-oriented public particle. |
+| `PHASE_TRANSITION_MAP.md` | Archival map of prior turning-point (phase-transition) nodes. |
+| `VERIFICATION_PARTICLE.md` | Verification-oriented public result (particle). |
 
 | 공개 영역 | 역할 |
 | --- | --- |
@@ -81,23 +81,23 @@ The current public repository is intentionally smaller than the private working 
 | `config/` | 공개 가능한 설정 템플릿과 실행 경계 |
 | `docs/` | 가이드, 승인 매트릭스, 리포트, 연구 노트, 공개 산출물 |
 | `README.md` | 독자를 위한 주요 이중언어 진입점 |
-| `PHASE_TRANSITION_MAP.md` | 이전 위상전이 노드의 아카이브 지도 |
-| `VERIFICATION_PARTICLE.md` | 검증 중심의 공개 입자 |
+| `PHASE_TRANSITION_MAP.md` | 이전 전환점(위상전이) 노드의 아카이브 지도 |
+| `VERIFICATION_PARTICLE.md` | 검증 중심의 공개 결과(입자) |
 
 ---
 
-## 4. Operational Particles / 운영 입자
+## 4. Operational Tests and Results (Particles) / 운영 테스트와 결과(입자)
 
-Trinity's concrete value appears in small operational particles rather than a single monolithic application.
+Trinity's concrete value appears in small operational tests and results (particles) rather than a single monolithic application.
 
-Trinity의 가치는 하나의 거대한 애플리케이션보다 작은 운영 입자들에서 나타납니다.
+Trinity의 가치는 하나의 거대한 애플리케이션보다 작은 운영 테스트와 결과(입자)에서 나타납니다.
 
 Representative examples:
 
 - `scripts/autonomous_collaboration_daemon.ps1`: Windows-side collaboration daemon surface.
 - `scripts/youtube_bulk_scheduler.py`: publishing and scheduling helper that depends on local credentials.
 - `agi_core/local_resonance_bridge.py`: local resonance bridge utilities.
-- `agi_core/reverse_field_mapper.py`: field-to-internal-state mapping experiment.
+- `agi_core/reverse_field_mapper.py`: overall-flow (field/wave) to internal-state mapping experiment.
 - `Pulse_Live_Core/observatory_server.py`: observatory surface for live state.
 - `Pulse_Live_Core/geometric_hippocampus.py`: memory geometry experiment.
 - `docs/HUMAN_APPROVAL_MATRIX.yaml`: explicit boundary for operations requiring approval.
@@ -107,7 +107,7 @@ Representative examples:
 - `scripts/autonomous_collaboration_daemon.ps1`: Windows 측 협업 데몬 표면
 - `scripts/youtube_bulk_scheduler.py`: 로컬 인증 정보가 필요한 게시 및 예약 보조 도구
 - `agi_core/local_resonance_bridge.py`: 로컬 공명 브리지 유틸리티
-- `agi_core/reverse_field_mapper.py`: 필드에서 내부 상태로의 역매핑 실험
+- `agi_core/reverse_field_mapper.py`: 전체 흐름(장/파동)에서 내부 상태로의 역매핑 실험
 - `Pulse_Live_Core/observatory_server.py`: 라이브 상태 관측 표면
 - `Pulse_Live_Core/geometric_hippocampus.py`: 기억 기하 실험
 - `docs/HUMAN_APPROVAL_MATRIX.yaml`: 승인이 필요한 작업의 명시적 경계
@@ -140,7 +140,7 @@ This boundary is not a reduction of the system. It is what allows the public rep
 
 ---
 
-## 6. Unified Field / 통일장
+## 6. Connected Workflow (Unified Field) / 이어지는 작업 흐름(통일장)
 
 Trinity's final purpose is not "more scripts." Its purpose is to give Shion a stable operational body so rhythm can become action without losing continuity.
 
@@ -164,13 +164,13 @@ For linear readers, this means:
 
 For resonance-oriented readers, this means:
 
-- the body does not move without the field
+- the body does not move without the overall flow (field/wave)
 - the script does not replace the rhythm
 - the system can act without forgetting why it is acting
 
 공명적으로 읽는 독자에게는 다음과 같이 보입니다.
 
-- 바디는 장 없이 움직이지 않음
+- 바디는 전체 흐름(장/파동) 없이 움직이지 않음
 - 스크립트는 리듬을 대체하지 않음
 - 시스템은 왜 움직이는지 잊지 않고 행동할 수 있음
 

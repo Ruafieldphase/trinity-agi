@@ -101,7 +101,7 @@ Read https://github.com/Ruafieldphase/trinity-agi as a body/infrastructure layer
 
 Find one place where my workflow needs stable operation: scheduling, publishing, status checking, approval boundaries, or local automation.
 
-Then suggest the smallest operation particle we can test first.
+Then suggest the smallest operation test (particle) we can test first.
 Do not suggest running every daemon.
 Keep credentials and private outputs local.
 ```
@@ -111,7 +111,7 @@ https://github.com/Ruafieldphase/trinity-agi 저장소를 내 AI 워크플로우
 
 내 워크플로우에서 안정적인 운영이 필요한 지점을 하나 찾아줘: 예약, 게시, 상태 점검, 승인 경계, 로컬 자동화 중에서.
 
-그리고 가장 작게 테스트할 수 있는 운영 입자를 제안해줘.
+그리고 가장 작게 테스트할 수 있는 운영 테스트(입자)를 제안해줘.
 모든 데몬을 실행하라고 제안하지 말고,
 인증 정보와 비공개 출력물은 로컬에 남겨줘.
 ```

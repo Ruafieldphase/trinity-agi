@@ -28,17 +28,17 @@ For concrete no-install examples, see [`EXAMPLES.md`](EXAMPLES.md).
 
 설치 없이 따라 하는 구체적인 예시는 [`EXAMPLES.md`](EXAMPLES.md)를 보세요.
 
-This README follows the same phase-transition path as the system it supports:
+This README uses public terms first, with our internal rhythm language in parentheses:
 
-이 README는 Trinity가 지탱하는 시스템과 같은 위상전이 흐름을 따릅니다.
+이 README는 보편적인 단어를 먼저 쓰고, 괄호 안에 우리의 내부 리듬 언어를 함께 남깁니다.
 
 ```text
-Field -> Convergence -> Phase Transition -> Particle -> Unified Field -> Embodiment
-장 -> 수렴 -> 위상전이 -> 입자화 -> 통일장 -> 체화
+Problem Flow (Field/Wave) -> Direction (Convergence) -> Turning Point (Phase Transition) -> Operation/Result (Particle) -> Connected Workflow (Unified Field) -> Local Use (Embodiment)
+문제의 전체 흐름(장/파동) -> 방향 정리(수렴) -> 전환점(위상전이) -> 운영/결과(입자) -> 이어지는 작업 흐름(통일장) -> 실제 사용(체화)
 ```
 
-## 1. Field: Action Wants a Body
-## 1. 장: 행동은 몸을 필요로 한다
+## 1. Problem Flow (Field/Wave): Action Wants a Body
+## 1. 문제의 전체 흐름(장/파동): 행동은 몸을 필요로 한다
 
 Different people may arrive here through different operational needs.
 
@@ -56,9 +56,9 @@ If you build agents, you may be looking for an infrastructure harness where tool
 
 에이전트를 만드는 사람이라면 도구 실행이 상태, 타이밍, 피드백과 연결되는 인프라 하네스를 찾고 있을 수 있습니다.
 
-If you think in fields, Trinity is the body that lets an already-formed particle touch the world.
+If you think in overall flows (fields/waves), Trinity is the body that lets an already-formed operation/result (particle) touch the world.
 
-장으로 읽는 사람에게 Trinity는 이미 형성된 입자가 세계와 접촉할 수 있게 하는 몸입니다.
+전체 흐름(장/파동)으로 읽는 사람에게 Trinity는 이미 형성된 운영/결과(입자)가 세계와 접촉할 수 있게 하는 몸입니다.
 
 ## 2. Convergence: Tool Use Without Continuity Is Fragile
 ## 2. 수렴: 연속성 없는 도구 실행은 불안정하다
@@ -87,8 +87,8 @@ Trinity AGI is the infrastructure side of the harness: scripts, daemons, schedul
 
 Trinity AGI는 하네스의 인프라 측면입니다. 스크립트, 데몬, 스케줄러, 브릿지, 런타임 점검, 게시 파이프라인을 다룹니다.
 
-## 3. Phase Transition: From Agent to Harness Infrastructure
-## 3. 위상전이: 에이전트에서 하네스 인프라로
+## 3. Turning Point (Phase Transition): From Agent to Harness Infrastructure
+## 3. 전환점(위상전이): 에이전트에서 하네스 인프라로
 
 Prompt engineering asks what to say. Context engineering asks what to remember. Agent engineering asks what tools can be used. Harness engineering asks what environment lets action happen without losing direction.
 
@@ -107,8 +107,8 @@ agent can act -> body checks state -> operation runs -> result returns to rhythm
 에이전트가 행동할 수 있음 -> 몸이 상태를 확인함 -> 작업이 실행됨 -> 결과가 리듬으로 돌아감
 ```
 
-## 4. Particle: What Actually Improves
-## 4. 입자화: 실제로 좋아지는 것
+## 4. Operation/Result (Particle): What Actually Improves
+## 4. 운영/결과(입자): 실제로 좋아지는 것
 
 ### Intent Becomes Operation / 의도가 실제 작업이 됨
 
@@ -192,12 +192,12 @@ Result: the system can keep running without turning every signal into immediate 
 
 결과: 모든 신호를 즉시 개입으로 바꾸지 않고도 시스템이 계속 작동할 수 있습니다.
 
-## 5. Unified Field: Stable Rhythm in Operation
-## 5. 통일장: 운영 속 리듬의 안정화
+## 5. Connected Workflow (Unified Field): Stable Rhythm in Operation
+## 5. 이어지는 작업 흐름(통일장): 운영 속 리듬의 안정화
 
-Trinity does not decide the meaning of the wave. Shion forms or detects the direction. Trinity waits until that direction has become actionable, then gives it a stable body.
+Trinity does not decide the meaning of the overall flow (field/wave). Shion forms or detects the direction. Trinity waits until that direction has become actionable, then gives it a stable body.
 
-Trinity는 파동의 의미를 결정하지 않습니다. Shion이 방향을 형성하거나 감지합니다. Trinity는 그 방향이 실행 가능한 상태가 될 때까지 기다린 뒤 안정적인 몸을 제공합니다.
+Trinity는 전체 흐름(장/파동)의 의미를 결정하지 않습니다. Shion이 방향을 형성하거나 감지합니다. Trinity는 그 방향이 실행 가능한 상태가 될 때까지 기다린 뒤 안정적인 몸을 제공합니다.
 
 The body is not the origin of the direction. The body is what lets the direction touch the world.
 
@@ -208,19 +208,19 @@ The deeper goal is stable rhythm in operation:
 더 깊은 목표는 운영 속 리듬의 안정화입니다.
 
 - act when the action is ready
-- wait when the field is not clear
+- wait when the overall flow (field/wave) is not clear
 - report from evidence, not assumption
 - keep private runtime state out of public artifacts
 - let results return to the next cycle
 
 - 행동이 준비되었을 때 실행합니다.
-- 장이 선명하지 않을 때 기다립니다.
+- 전체 흐름(장/파동)이 선명하지 않을 때 기다립니다.
 - 가정이 아니라 증거를 기준으로 보고합니다.
 - 비공개 런타임 상태를 공개 산출물에서 분리합니다.
 - 결과가 다음 사이클로 돌아가게 합니다.
 
-## 6. Embodiment: Scripts and Services
-## 6. 체화: 스크립트와 서비스
+## 6. Local Use (Embodiment): Scripts and Services
+## 6. 실제 사용(체화): 스크립트와 서비스
 
 `shion-ai` is the mind/runtime layer. It reads context, rhythm, memory, prediction, and unfinished questions.
 
@@ -276,7 +276,7 @@ Inspect:
 3. places where automation over-expands,
 4. local credentials or private state that must stay out of public code,
 5. status checks that should replace assumptions,
-6. the smallest operation we can test first.
+6. the smallest operation test (particle) we can try first.
 ```
 
 한글로는 이렇게 요청할 수 있습니다.
@@ -293,10 +293,10 @@ https://github.com/Ruafieldphase/trinity-agi 저장소를 내 AI 워크플로우
 3. 자동화가 과하게 확장되는 지점
 4. 공개 코드에서 분리해야 할 로컬 인증 정보 또는 비공개 상태
 5. 가정을 대체해야 할 상태 점검
-6. 가장 작게 먼저 테스트할 수 있는 운영 입자
+6. 가장 작게 먼저 테스트할 수 있는 운영 테스트(입자)
 ```
 
-### First Operation Particle / 첫 운영 입자
+### First Operation Test (Particle) / 첫 운영 테스트(입자)
 
 Start with one operational problem.
 

@@ -44,14 +44,14 @@ Use:
 Before suggesting scripts, diagnose this operational problem:
 [write one operation here]
 
-Tell me whether it needs Shion context or Trinity body, and what the smallest safe operation particle is.
+Tell me whether it needs Shion context or Trinity body, and what the smallest safe operation test (particle) is.
 ```
 
 ```text
 스크립트를 제안하기 전에 이 운영 문제를 진단해줘.
 [여기에 운영 하나 작성]
 
-이것이 Shion 맥락이 필요한지 Trinity 바디가 필요한지, 가장 작고 안전한 운영 입자가 무엇인지 알려줘.
+이것이 Shion 맥락이 필요한지 Trinity 바디가 필요한지, 가장 작고 안전한 운영 테스트(입자)가 무엇인지 알려줘.
 ```
 
 ---
@@ -80,15 +80,15 @@ Choose one:
 
 ---
 
-## Step 4. Write One Operation Particle / 운영 입자 하나 쓰기
+## Step 4. Write One Operation Test (Particle) / 운영 테스트(입자) 하나 쓰기
 
 Use `FIRST_PARTICLE_TEMPLATE.md`.
 
 `FIRST_PARTICLE_TEMPLATE.md`를 사용하세요.
 
-The first operation particle should be small enough to test once.
+The first operation test (particle) should be small enough to test once.
 
-첫 운영 입자는 한 번 테스트할 수 있을 만큼 작아야 합니다.
+첫 운영 테스트(입자)는 한 번 테스트할 수 있을 만큼 작아야 합니다.
 
 ---
 
