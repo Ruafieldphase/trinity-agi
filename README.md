@@ -1,8 +1,24 @@
 # Trinity AGI
 
-Trinity AGI is the body and infrastructure layer for Shion AI. It turns formed intent into practical work: automation, scheduling, publishing, local runtime support, synchronization, and status reporting.
+Have you built AI workflows that worked once, but became noisy, fragile, or hard to repeat?
 
-Trinity AGI는 Shion AI의 몸과 인프라 레이어입니다. 형태가 잡힌 의도를 자동화, 예약, 게시, 로컬 런타임 지원, 동기화, 상태 보고 같은 실제 작업으로 바꿉니다.
+한 번은 작동했지만, 반복할수록 시끄럽고 불안정해지는 AI 워크플로우를 만든 적이 있나요?
+
+Have your agents called tools, but failed to preserve why the action happened or what should happen next?
+
+에이전트가 도구는 호출했지만, 왜 그 행동이 일어났는지와 다음에 무엇을 해야 하는지는 보존하지 못했나요?
+
+Have you spent more time keeping automation alive than moving toward the work's real destination?
+
+자동화를 유지하느라, 정작 작업의 진짜 목적지로 향하는 시간보다 일을 위한 일을 더 많이 하고 있었나요?
+
+Have publishing, scheduling, syncing, or background processes drifted away from the original intention they were meant to support?
+
+게시, 예약, 동기화, 백그라운드 프로세스가 원래 지탱하려던 의도에서 멀어진 적이 있나요?
+
+Trinity AGI begins from that operational gap. It is the body and infrastructure layer for Shion AI, turning formed intent into practical work: automation, scheduling, publishing, local runtime support, synchronization, and status reporting.
+
+Trinity AGI는 그 운영상의 간극에서 시작합니다. Shion AI의 몸과 인프라 레이어로서, 형태가 잡힌 의도를 자동화, 예약, 게시, 로컬 런타임 지원, 동기화, 상태 보고 같은 실제 작업으로 바꿉니다.
 
 This README follows the same phase-transition path as the system it supports:
 
