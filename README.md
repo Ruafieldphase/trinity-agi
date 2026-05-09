@@ -2,6 +2,11 @@
 
 > **"마음(Mind)이 파동을 그리면, 몸(Body)은 그것을 현실로 현현(Manifest)한다."**
 
+`shion-ai` = Mind / ARI Runtime.  
+`trinity-agi` = Body / Infrastructure Runtime.
+
+> Public scope: this repository contains experimental runtime code and sanitized research artifacts. Local credentials, personal memory, generated logs, media outputs, and machine-specific state are intentionally excluded from the public tree.
+
 ---
 
 ## 🏛️ Identity: The Body Layer of ARI

@@ -31,6 +31,7 @@ wheels/
 .DS_Store
 Thumbs.db
 desktop.ini
+*.lnk
 
 # Logs
 *.log
@@ -49,6 +50,7 @@ backups/
 data/
 inputs/
 memory/
+state/
 credentials/
 models/
 *.safetensors
@@ -81,6 +83,8 @@ fdo_agi_repo/
 LLM_Unified/
 node_modules/
 dashboard/.next/
+monolith/
+void/
 
 # Binary
 *.exe
@@ -101,6 +105,9 @@ session_memory/
 # Transient Artifacts
 *_COMPLETE.md
 GIT_COMMIT_MESSAGE_*.md
+deep_history_scan.txt
+push_error*.txt
+tmp_results.txt
 *.bak
 *.old
 test_capture_*.png
