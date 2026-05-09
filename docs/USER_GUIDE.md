@@ -82,7 +82,55 @@ Publishing helpers such as `scripts/youtube_bulk_scheduler.py` depend on local c
 
 ---
 
-## 4. Approval Boundary / 승인 경계
+## 4. Ask Your AI To Read Trinity / 당신의 AI에게 Trinity를 읽히기
+
+If you already use an AI assistant or coding agent, ask it to read Trinity as an operational body, not only as a code repository.
+
+이미 AI 어시스턴트나 코딩 에이전트를 쓰고 있다면, Trinity를 단순 코드 저장소가 아니라 운영 바디로 읽게 하세요.
+
+Use this prompt:
+
+다음 프롬프트를 사용할 수 있습니다.
+
+```text
+Read https://github.com/Ruafieldphase/trinity-agi as a body/infrastructure layer for my AI workflow.
+
+Find one place where my workflow needs stable operation: scheduling, publishing, status checking, approval boundaries, or local automation.
+
+Then suggest the smallest operation particle we can test first.
+Do not suggest running every daemon.
+Keep credentials and private outputs local.
+```
+
+```text
+https://github.com/Ruafieldphase/trinity-agi 저장소를 내 AI 워크플로우를 위한 바디/인프라 층으로 읽어줘.
+
+내 워크플로우에서 안정적인 운영이 필요한 지점을 하나 찾아줘: 예약, 게시, 상태 점검, 승인 경계, 로컬 자동화 중에서.
+
+그리고 가장 작게 테스트할 수 있는 운영 입자를 제안해줘.
+모든 데몬을 실행하라고 제안하지 말고,
+인증 정보와 비공개 출력물은 로컬에 남겨줘.
+```
+
+Ask your AI to return:
+
+AI에게 다음 결과를 요구하세요.
+
+- the operational pain point
+- whether it belongs in Shion or Trinity
+- the smallest script/check/boundary to test
+- required local credentials or paths
+- what should never be committed publicly
+
+- 운영상의 문제 지점
+- 그것이 Shion에 속하는지 Trinity에 속하는지
+- 테스트할 가장 작은 스크립트/점검/경계
+- 필요한 로컬 인증 정보 또는 경로
+- 절대 공개 커밋하면 안 되는 것
+
+---
+
+## 5. Approval Boundary / 승인 경계
 
 Trinity should not make every possible action automatic.
 
@@ -112,7 +160,7 @@ For policy and boundary examples, see `docs/HUMAN_APPROVAL_MATRIX.yaml`.
 
 ---
 
-## 5. Troubleshooting / 문제 해결
+## 6. Troubleshooting / 문제 해결
 
 If the system feels noisy:
 
@@ -132,7 +180,7 @@ If the system feels noisy:
 
 ---
 
-## 6. What To Look For / 확인할 것
+## 7. What To Look For / 확인할 것
 
 Trinity is working well when:
 

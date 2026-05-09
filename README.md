@@ -237,6 +237,79 @@ Public scope: this repository contains experimental runtime code and sanitized r
 
 위 구성은 Trinity의 몸체 역할을 담당합니다. 데몬은 백그라운드 박동을 유지하고, 스케줄러는 외부 게시 작업을 수행하며, 브릿지와 모니터는 Shion의 의도가 실제 시스템 작업으로 이어지도록 돕습니다.
 
+## 7. How To Use This With Your Own AI
+## 7. 당신의 AI와 함께 사용하는 방법
+
+This repository was uploaded so people can try connecting their own AI systems to a body-side infrastructure layer. The first step is not to copy every script. The first step is to ask your current AI where your workflow needs a body.
+
+이 저장소는 사람들이 자신의 AI 시스템을 바디 측 인프라 층에 연결해 볼 수 있도록 공개되었습니다. 첫 단계는 모든 스크립트를 복사하는 것이 아닙니다. 먼저 당신의 AI에게 당신의 워크플로우 어디에 몸이 필요한지 보게 해야 합니다.
+
+Do not ask only:
+
+단순히 이렇게만 묻지 마세요.
+
+```text
+Summarize this repository.
+```
+
+Instead, ask:
+
+대신 이렇게 요청하세요.
+
+```text
+Read https://github.com/Ruafieldphase/trinity-agi as a possible body/infrastructure layer for my AI workflow.
+
+Do not only summarize the repository.
+Look for where my current system fails to turn intent into stable operation.
+
+Inspect:
+1. repeated workflows that could become scripts,
+2. actions that need approval boundaries,
+3. places where automation over-expands,
+4. local credentials or private state that must stay out of public code,
+5. status checks that should replace assumptions,
+6. the smallest operation we can test first.
+```
+
+한글로는 이렇게 요청할 수 있습니다.
+
+```text
+https://github.com/Ruafieldphase/trinity-agi 저장소를 내 AI 워크플로우에 연결 가능한 바디/인프라 층으로 읽어줘.
+
+단순 요약만 하지 말고,
+내 시스템이 어디에서 의도를 안정적인 운영으로 바꾸지 못하는지 찾아줘.
+
+다음을 점검해줘.
+1. 스크립트가 될 수 있는 반복 워크플로우
+2. 승인 경계가 필요한 행동
+3. 자동화가 과하게 확장되는 지점
+4. 공개 코드에서 분리해야 할 로컬 인증 정보 또는 비공개 상태
+5. 가정을 대체해야 할 상태 점검
+6. 가장 작게 먼저 테스트할 수 있는 운영 입자
+```
+
+### First Operation Particle / 첫 운영 입자
+
+Start with one operational problem.
+
+운영상 문제 하나에서 시작하세요.
+
+```text
+1. Pick one repeated workflow: publishing, scheduling, status checking, syncing, or reporting.
+2. Ask your AI whether it belongs in Shion's context layer or Trinity's body layer.
+3. Identify the smallest script, check, or approval boundary that would make it safer.
+4. Keep credentials and private outputs local.
+5. Test once, record the result, and decide whether it should become a loop.
+```
+
+```text
+1. 반복되는 워크플로우 하나를 고릅니다: 게시, 예약, 상태 점검, 동기화, 보고.
+2. 당신의 AI에게 그것이 Shion의 맥락 층에 속하는지 Trinity의 바디 층에 속하는지 구분하게 합니다.
+3. 그것을 더 안전하게 만들 가장 작은 스크립트, 점검, 승인 경계를 찾습니다.
+4. 인증 정보와 비공개 출력물은 로컬에 둡니다.
+5. 한 번 테스트하고, 결과를 기록한 뒤 루프로 만들지 결정합니다.
+```
+
 ### Quick Start / 빠른 시작
 
 ```powershell
