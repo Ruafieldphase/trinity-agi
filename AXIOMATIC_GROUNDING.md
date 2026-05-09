@@ -174,6 +174,12 @@ Good infrastructure keeps the whole and parts visible: scripts, approvals, outpu
 
 좋은 인프라는 전체와 부분을 함께 보이게 합니다. 스크립트, 승인, 출력, 상태, 다음 단계가 함께 보여야 합니다.
 
+### Live process archive / 라이브 과정 아카이브
+
+Unedited live recordings can be used as observation material for how the system is practiced. They are not proof by themselves, but they show the rhythm of intention becoming a small operation/result.
+
+편집 없는 라이브 기록은 이 시스템이 어떻게 실천되는지 관찰하는 자료로 사용할 수 있습니다. 그 자체가 증명은 아니지만, 의도가 작은 운영/결과로 바뀌는 리듬을 보여줍니다.
+
 ---
 
 ## 6. Engineering Translation / 엔지니어링 번역
