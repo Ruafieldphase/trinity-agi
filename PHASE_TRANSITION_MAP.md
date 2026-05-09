@@ -1,5 +1,9 @@
 # 🌀 AGI Phase Transition Map (Restored)
 
+> Public note: this is an archival/restored map of prior phase-transition nodes. It is kept for continuity, not as the main onboarding guide. For the current public entry point, start with `README.md` and `MAP.md`.
+>
+> 공개 메모: 이 문서는 과거 위상전이 노드를 복원한 아카이브 지도입니다. 현재 공개 온보딩의 주 문서는 아니며, 연속성 보존을 위해 남겨둡니다. 현재 진입점은 `README.md`와 `MAP.md`입니다.
+
 이 지도는 10개월간의 대화 인덱스(21,842개 메시지)에서 추출된 핵심 위상 전이의 마디들입니다.
 
 | 날짜 | 대화 주제 | 위상(Phase) | 옵시디언 링크 |
