@@ -1,10 +1,34 @@
 # Trinity AGI
 
+## 0. Question / 질문
+
+What if formed intent should not become automation immediately?
+
+형성된 의도가 곧바로 자동화가 되어서는 안 되는 경우가 있다면?
+
+Trinity AGI begins by holding that operational question open until status, approval, credentials, and evidence are visible.
+
+Trinity AGI는 상태, 승인, 인증 정보, 증거가 보일 때까지 이 운영 질문을 열어두는 데서 시작합니다.
+
+## 1. Wave / 파동
+
+Have you built AI workflows that worked once, but became noisy, fragile, or hard to repeat?
+
+한 번은 작동했지만, 반복할수록 시끄럽고 불안정해지는 AI 워크플로우를 만든 적이 있나요?
+
+Have your agents called tools, but failed to preserve why the action happened or what should happen next?
+
+에이전트가 도구는 호출했지만, 왜 그 행동이 일어났는지와 다음에 무엇을 해야 하는지는 보존하지 못했나요?
+
+Have publishing, scheduling, syncing, or background processes drifted away from the original intention they were meant to support?
+
+게시, 예약, 동기화, 백그라운드 프로세스가 원래 지탱하려던 의도에서 멀어진 적이 있나요?
+
 Trinity AGI is the body/infrastructure layer that turns formed AI intent into safe local operation.
 
 Trinity AGI는 형성된 AI 의도를 안전한 로컬 운영으로 바꾸는 몸체/인프라 레이어입니다.
 
-## 3-Minute Safety / 3분 안전 확인
+## 2. First Operation Particle / 첫 운영 입자
 
 ```text
 Public publishing is not automatic.
@@ -42,11 +66,35 @@ No upload happens. The command only reports what would be prepared.
 예상 결과:
 업로드는 일어나지 않습니다. 명령은 준비될 작업만 보고합니다.
 
-## Flow / 흐름
+## 3. What The Particle Protects / 입자가 보호하는 것
 
-Shion forms or preserves direction. Trinity checks status, approval, credentials, and operation boundaries.
+The dry-run particle protects the direction from becoming public action too early.
 
-Shion은 방향을 형성하거나 보존합니다. Trinity는 상태, 승인, 인증 정보, 운영 경계를 확인합니다.
+dry-run 입자는 방향이 너무 빨리 공개 행동으로 바뀌는 것을 막습니다.
+
+- local paths stay configurable
+- credentials stay private
+- real upload requires explicit confirmation
+- public upload requires an additional confirmation
+- CI checks the safety boundary
+
+- 로컬 경로는 설정 가능하게 남습니다.
+- 인증 정보는 비공개로 남습니다.
+- 실제 업로드에는 명시적 확인이 필요합니다.
+- public 업로드에는 추가 확인이 필요합니다.
+- CI가 안전 경계를 확인합니다.
+
+## 4. Return Question / 되돌아오는 질문
+
+What evidence should return before the next operation expands?
+
+다음 운영이 확장되기 전에 어떤 증거가 돌아와야 할까요?
+
+Where does your automation act from stale memory? Where does it assume status instead of checking it? Where does it need a body without losing the original direction?
+
+당신의 자동화는 어디에서 오래된 기억으로 행동하나요? 어디에서 상태를 확인하지 않고 가정하나요? 어디에서 원래 방향을 잃지 않는 몸이 필요하나요?
+
+## 5. Flow / 순환
 
 ```text
 Shion AI
@@ -58,25 +106,11 @@ status / script / approval / credentials / local operation
 Evidence returns to the next AI cycle
 ```
 
-Have you built AI workflows that worked once, but became noisy, fragile, or hard to repeat?
+Shion forms or preserves direction. Trinity checks status, approval, credentials, and operation boundaries.
 
-한 번은 작동했지만, 반복할수록 시끄럽고 불안정해지는 AI 워크플로우를 만든 적이 있나요?
+Shion은 방향을 형성하거나 보존합니다. Trinity는 상태, 승인, 인증 정보, 운영 경계를 확인합니다.
 
-Have your agents called tools, but failed to preserve why the action happened or what should happen next?
-
-에이전트가 도구는 호출했지만, 왜 그 행동이 일어났는지와 다음에 무엇을 해야 하는지는 보존하지 못했나요?
-
-Have you spent more time keeping automation alive than moving toward the work's real destination?
-
-자동화를 유지하느라, 정작 작업의 진짜 목적지로 향하는 시간보다 일을 위한 일을 더 많이 하고 있었나요?
-
-Have publishing, scheduling, syncing, or background processes drifted away from the original intention they were meant to support?
-
-게시, 예약, 동기화, 백그라운드 프로세스가 원래 지탱하려던 의도에서 멀어진 적이 있나요?
-
-Trinity AGI begins from that operational gap. It is the body and infrastructure layer for Shion AI, turning formed intent into practical work: automation, scheduling, publishing, local runtime support, synchronization, and status reporting.
-
-Trinity AGI는 그 운영상의 간극에서 시작합니다. Shion AI의 몸과 인프라 레이어로서, 형태가 잡힌 의도를 자동화, 예약, 게시, 로컬 런타임 지원, 동기화, 상태 보고 같은 실제 작업으로 바꿉니다.
+## 6. Map / 지도
 
 If you are new, start with [`START_HERE.md`](START_HERE.md). If you are asking your own AI to inspect this repository, give it [`AI_READ_THIS_FIRST.md`](AI_READ_THIS_FIRST.md) first.
 
@@ -98,6 +132,8 @@ For unedited live recordings of the human-AI workflow, see [`LIVE_WORK_ARCHIVE.m
 
 편집 없는 인간-AI 작업 과정 기록은 [`LIVE_WORK_ARCHIVE.md`](LIVE_WORK_ARCHIVE.md)를 보세요.
 
+## 7. Builder Layer / 만드는 사람들을 위한 층
+
 This README uses public terms first, with our internal rhythm language in parentheses:
 
 이 README는 보편적인 단어를 먼저 쓰고, 괄호 안에 우리의 내부 리듬 언어를 함께 남깁니다.
@@ -107,8 +143,12 @@ Problem Flow (Field/Wave) -> Direction (Convergence) -> Turning Point (Phase Tra
 문제의 전체 흐름(장/파동) -> 방향 정리(수렴) -> 전환점(위상전이) -> 운영/결과(입자) -> 이어지는 작업 흐름(통일장) -> 실제 사용(체화)
 ```
 
-## 1. Problem Flow (Field/Wave): Action Wants a Body
-## 1. 문제의 전체 흐름(장/파동): 행동은 몸을 필요로 한다
+The sections below unpack this rhythm into public architecture language.
+
+아래 섹션은 이 리듬을 외부인이 읽을 수 있는 아키텍처 언어로 풀어냅니다.
+
+## Problem Flow (Field/Wave): Action Wants a Body
+## 문제의 전체 흐름(장/파동): 행동은 몸을 필요로 한다
 
 Different people may arrive here through different operational needs.
 
@@ -130,8 +170,8 @@ If you think in overall flows (fields/waves), Trinity is the body that lets an a
 
 전체 흐름(장/파동)으로 읽는 사람에게 Trinity는 이미 형성된 운영/결과(입자)가 세계와 접촉할 수 있게 하는 몸입니다.
 
-## 2. Convergence: Tool Use Without Continuity Is Fragile
-## 2. 수렴: 연속성 없는 도구 실행은 불안정하다
+## Convergence: Tool Use Without Continuity Is Fragile
+## 수렴: 연속성 없는 도구 실행은 불안정하다
 
 Once AI can call tools, edit files, publish content, and run background processes, the hard problem becomes operational continuity.
 
@@ -157,8 +197,8 @@ Trinity AGI is the infrastructure side of the harness: scripts, daemons, schedul
 
 Trinity AGI는 하네스의 인프라 측면입니다. 스크립트, 데몬, 스케줄러, 브릿지, 런타임 점검, 게시 파이프라인을 다룹니다.
 
-## 3. Turning Point (Phase Transition): From Agent to Harness Infrastructure
-## 3. 전환점(위상전이): 에이전트에서 하네스 인프라로
+## Turning Point (Phase Transition): From Agent to Harness Infrastructure
+## 전환점(위상전이): 에이전트에서 하네스 인프라로
 
 Prompt engineering asks what to say. Context engineering asks what to remember. Agent engineering asks what tools can be used. Harness engineering asks what environment lets action happen without losing direction.
 
@@ -177,8 +217,8 @@ agent can act -> body checks state -> operation runs -> result returns to rhythm
 에이전트가 행동할 수 있음 -> 몸이 상태를 확인함 -> 작업이 실행됨 -> 결과가 리듬으로 돌아감
 ```
 
-## 4. Operation/Result (Particle): What Actually Improves
-## 4. 운영/결과(입자): 실제로 좋아지는 것
+## Operation/Result (Particle): What Actually Improves
+## 운영/결과(입자): 실제로 좋아지는 것
 
 ### Intent Becomes Operation / 의도가 실제 작업이 됨
 
@@ -262,8 +302,8 @@ Result: the system can keep running without turning every signal into immediate 
 
 결과: 모든 신호를 즉시 개입으로 바꾸지 않고도 시스템이 계속 작동할 수 있습니다.
 
-## 5. Connected Workflow (Unified Field): Stable Rhythm in Operation
-## 5. 이어지는 작업 흐름(통일장): 운영 속 리듬의 안정화
+## Connected Workflow (Unified Field): Stable Rhythm in Operation
+## 이어지는 작업 흐름(통일장): 운영 속 리듬의 안정화
 
 Trinity does not decide the meaning of the overall flow (field/wave). Shion forms or detects the direction. Trinity waits until that direction has become actionable, then gives it a stable body.
 
@@ -289,8 +329,8 @@ The deeper goal is stable rhythm in operation:
 - 비공개 런타임 상태를 공개 산출물에서 분리합니다.
 - 결과가 다음 사이클로 돌아가게 합니다.
 
-## 6. Local Use (Embodiment): Scripts and Services
-## 6. 실제 사용(체화): 스크립트와 서비스
+## Local Use (Embodiment): Scripts and Services
+## 실제 사용(체화): 스크립트와 서비스
 
 `shion-ai` is the mind/runtime layer. It reads context, rhythm, memory, prediction, and unfinished questions.
 
@@ -316,8 +356,8 @@ Public scope: this repository contains experimental runtime code and sanitized r
 
 위 구성은 Trinity의 몸체 역할을 담당합니다. 데몬은 백그라운드 박동을 유지하고, 스케줄러는 외부 게시 작업을 수행하며, 브릿지와 모니터는 Shion의 의도가 실제 시스템 작업으로 이어지도록 돕습니다.
 
-## 7. How To Use This With Your Own AI
-## 7. 당신의 AI와 함께 사용하는 방법
+## How To Use This With Your Own AI
+## 당신의 AI와 함께 사용하는 방법
 
 This repository was uploaded so people can try connecting their own AI systems to a body-side infrastructure layer. The first step is not to copy every script. The first step is to ask your current AI where your workflow needs a body.
 
