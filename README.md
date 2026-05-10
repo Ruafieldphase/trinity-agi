@@ -29,12 +29,18 @@ Start small:
 3. Pick one repeated operation.
 4. Run one first operation test.
 
+Expected result:
+No upload happens. The command only reports what would be prepared.
+
 작게 시작하세요.
 
 1. 처음부터 모든 스크립트나 데몬을 실행하지 마세요.
 2. 먼저 dry-run 점검을 실행하세요: `python scripts/youtube_bulk_scheduler.py --dry-run --mode sync --limit 1`
 3. 반복 운영 하나를 고르세요.
 4. 첫 운영 테스트 하나만 실행하세요.
+
+예상 결과:
+업로드는 일어나지 않습니다. 명령은 준비될 작업만 보고합니다.
 
 ## Flow / 흐름
 
