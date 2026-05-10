@@ -1,10 +1,12 @@
-# path-config-v0.1
+# Trinity path-config-v0.1: YouTube Workflow as the First Operation Example
 
-This note records the first Trinity YouTube path configuration baseline.
+This note records the first Trinity path configuration baseline, using the YouTube workflow as the first operation example.
+
+The YouTube workflow is a personal publishing use case, but the pattern is general: configurable paths, dry-run by default, explicit confirmation gates, private credentials, and CI-verified safety.
 
 ## Trinity YouTube Path Config
 
-This update connects the YouTube operation helpers to the public path configuration layer.
+This update connects the first real operation helpers to the public path configuration layer.
 
 Included in this baseline:
 
@@ -24,7 +26,7 @@ Included in this baseline:
 
 This is the first small path cleanup step after `public-onboarding-v0.1.0`.
 
-The public onboarding entry remains stable, while internal local path dependency begins to move into explicit configuration.
+The public onboarding entry remains stable, while internal local path dependency begins to move into explicit configuration. The specific workflow is YouTube publishing, but the reusable operating pattern can apply to other local automations such as blog publishing, backups, batch jobs, or local agent operations.
 
 ## Next Direction
 
@@ -37,7 +39,9 @@ Next steps should remain small:
 
 ## Korean Summary
 
-이 노트는 Trinity YouTube 계열의 첫 path-config 기준점입니다.
+이 노트는 YouTube 작업을 첫 운영 예제로 삼은 Trinity path-config 기준점입니다.
+
+YouTube 워크플로우는 개인적인 게시 작업 사례이지만, 그 패턴은 범용적입니다. 설정 가능한 경로, 기본 dry-run, 명시적 승인 경계, 비공개 인증 정보, CI로 검증되는 안전 경계가 핵심입니다.
 
 이번 변경으로 `upload_to_youtube.py`와 `youtube_bulk_scheduler.py`가 `path_config.resolve_paths()`를 사용하게 되었고, `ready_videos`, `ready_shorts` 경로가 공개 예시 설정에 추가되었습니다.
 
