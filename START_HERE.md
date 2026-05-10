@@ -101,6 +101,7 @@ Good first operation tests (particles):
 - one local script wrapper for a repeated manual step
 - one "do not commit" boundary for credentials and outputs
 - one result note that returns an operation to the next AI cycle
+- one dry-run publishing check before any real upload or schedule
 
 좋은 첫 운영 테스트(입자)는 다음과 같습니다.
 
@@ -109,10 +110,15 @@ Good first operation tests (particles):
 - 반복 수동 작업을 감싸는 로컬 스크립트 하나
 - 인증 정보와 출력물에 대한 "커밋 금지" 경계 하나
 - 운영 결과를 다음 AI 사이클로 돌려주는 결과 노트 하나
+- 실제 업로드나 예약 전에 dry-run 게시 점검 하나
 
 Use `FIRST_PARTICLE_TEMPLATE.md` to write the test.
 
 테스트는 `FIRST_PARTICLE_TEMPLATE.md`로 작성하세요.
+
+Publishing scripts should stay dry-run unless an explicit confirmation flag is supplied.
+
+게시 스크립트는 명시적 확인 플래그가 없으면 dry-run으로 남아야 합니다.
 
 ---
 

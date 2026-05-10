@@ -20,6 +20,40 @@ Trinity AGI begins from that operational gap. It is the body and infrastructure 
 
 Trinity AGI는 그 운영상의 간극에서 시작합니다. Shion AI의 몸과 인프라 레이어로서, 형태가 잡힌 의도를 자동화, 예약, 게시, 로컬 런타임 지원, 동기화, 상태 보고 같은 실제 작업으로 바꿉니다.
 
+```text
+Start small:
+1. Do not run all scripts or daemons first.
+2. Keep public publishing behind explicit confirmation.
+3. Pick one repeated operation.
+4. Run one first operation test.
+```
+
+```text
+작게 시작하세요:
+1. 처음부터 모든 스크립트나 데몬을 실행하지 마세요.
+2. 공개 게시에는 명시적 확인 경계를 두세요.
+3. 반복 운영 하나를 고르세요.
+4. 첫 운영 테스트 하나만 실행하세요.
+```
+
+Shion AI preserves direction across AI sessions. Trinity AGI turns formed direction into safe local operation.
+
+Shion AI는 AI 세션 사이에서 방향을 보존합니다. Trinity AGI는 형성된 방향을 안전한 로컬 운영으로 바꿉니다.
+
+```text
+User's vague direction
+        ↓
+Shion AI
+context / memory / rhythm / unfinished questions
+        ↓
+First small particle test
+        ↓
+Trinity AGI
+status / script / approval / local operation
+        ↓
+Evidence returns to the next AI cycle
+```
+
 If you are new, start with [`START_HERE.md`](START_HERE.md). If you are asking your own AI to inspect this repository, give it [`AI_READ_THIS_FIRST.md`](AI_READ_THIS_FIRST.md) first.
 
 처음이라면 [`START_HERE.md`](START_HERE.md)에서 시작하세요. 당신의 AI에게 이 저장소를 읽히려면 먼저 [`AI_READ_THIS_FIRST.md`](AI_READ_THIS_FIRST.md)를 읽게 하세요.
@@ -249,7 +283,8 @@ Public scope: this repository contains experimental runtime code and sanitized r
 ### Key Components / 주요 구성
 
 - `scripts/autonomous_collaboration_daemon.ps1`: background collaboration and status daemon.
-- `scripts/youtube_bulk_scheduler.py`: YouTube scheduling and publishing automation.
+- `scripts/youtube_bulk_scheduler.py`: YouTube scheduling and publishing automation. It stays dry-run unless `--confirm-upload` is supplied.
+- `scripts/upload_to_youtube.py`: direct YouTube upload helper. It defaults to dry-run/private and requires `--confirm-upload`; public uploads also require `--confirm-public-upload`.
 - `agi_core/`: local resonance bridge, monitoring, routing, and orchestration experiments.
 - `Pulse_Live_Core/`: observatory, field engine, and live response experiments.
 - `config/`: public configuration examples and execution boundaries.

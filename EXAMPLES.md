@@ -140,6 +140,24 @@ The system can prepare and report without crossing the publishing boundary.
 
 시스템이 게시 경계를 넘지 않고 준비와 보고를 할 수 있습니다.
 
+### Small Command / 작은 명령
+
+Use dry-run first:
+
+먼저 dry-run으로 확인하세요.
+
+```bash
+python scripts/youtube_bulk_scheduler.py --dry-run --mode sync --limit 1
+```
+
+Real scheduled uploads require explicit confirmation and remain private by default:
+
+실제 예약 업로드는 명시적 확인이 필요하며 기본값은 private입니다.
+
+```bash
+python scripts/youtube_bulk_scheduler.py --confirm-upload --mode sync
+```
+
 ---
 
 ## Example 3: Repeated Operation / 예제 3: 반복 운영

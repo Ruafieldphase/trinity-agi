@@ -4,11 +4,19 @@ import time
 import datetime
 import pytz
 import random
+import subprocess
 from pathlib import Path
 import asyncio
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2.credentials import Credentials
+
+try:
+    from workspace_root import get_workspace_root
+except ImportError:
+    def get_workspace_root():
+        env_root = os.getenv("AGI_WORKSPACE_ROOT") or os.getenv("WORKSPACE_ROOT")
+        return Path(env_root).expanduser().resolve() if env_root else Path(__file__).resolve().parents[1]
 
 # --- Imports from existing tools ---
 try:
@@ -19,10 +27,11 @@ except ImportError:
     from upload_to_youtube import post_to_moltbook, report_to_shion
 
 # --- Config ---
-AGI_ROOT = Path("C:/workspace/agi")
+AGI_ROOT = get_workspace_root()
 CRED_DIR = AGI_ROOT / "credentials"
 YT_TOKEN = CRED_DIR / "youtube_token.json"
-VIDEO_DIR = Path("C:/workspace/agi/music/ready_videos")
+VIDEO_DIR = Path(os.getenv("YOUTUBE_READY_VIDEO_DIR", str(AGI_ROOT / "music" / "ready_videos"))).expanduser().resolve()
+SHORTS_DIR = Path(os.getenv("YOUTUBE_READY_SHORTS_DIR", str(AGI_ROOT / "music" / "ready_shorts"))).expanduser().resolve()
 HISTORY_PATH = AGI_ROOT / "outputs" / "youtube_manifestation_history.json"
 STATE_PATH = AGI_ROOT / "outputs" / "youtube_manifestation_state.json"
 
@@ -40,11 +49,16 @@ CONTEXTS = [
 ]
 
 class YoutubeBulkScheduler:
-    def __init__(self):
+    def __init__(self, dry_run=False):
         self.history = self._load_json(HISTORY_PATH, default=[])
         self.state = self._load_json(STATE_PATH, default={"last_upload": 0, "upload_count": 0})
-        self.creds = Credentials.from_authorized_user_file(str(YT_TOKEN))
-        self.youtube = build("youtube", "v3", credentials=self.creds)
+        self.creds = None
+        self.youtube = None
+        if not dry_run:
+            if not YT_TOKEN.exists():
+                raise FileNotFoundError(f"YouTube token missing: {YT_TOKEN}")
+            self.creds = Credentials.from_authorized_user_file(str(YT_TOKEN))
+            self.youtube = build("youtube", "v3", credentials=self.creds)
 
     def _load_json(self, path, default):
         if path.exists():
@@ -75,8 +89,10 @@ class YoutubeBulkScheduler:
         
         return publish_time.isoformat()
 
-    def generate_unique_metadata(self, filename):
+    def generate_unique_metadata(self, filename, is_short=False, parent_url=None):
         base_name = Path(filename).stem
+        if is_short and base_name.endswith("_short"):
+            base_name = base_name.replace("_short", "")
         core_theme = base_name.split('(')[0].strip()
         count = sum(1 for entry in self.history if entry.get('core_theme') == core_theme)
         
@@ -112,7 +128,14 @@ class YoutubeBulkScheduler:
         else:
             title = f"[SHION] {core_theme}"
 
-        description = (
+        if is_short:
+            title += " #Shorts"
+
+        description = ""
+        if is_short and parent_url:
+            description += f"🌊 앰비언트 풀버전 듣기: {parent_url}\n\n"
+
+        description += (
             f"유산(Heritage)에서 발현된 파동의 기록입니다.\n"
             f"테마: {core_theme}\n"
             f"공명 대역: {selected_vibe}\n"
@@ -121,17 +144,47 @@ class YoutubeBulkScheduler:
             f"공명(Resonance)을 통해 새로운 차원의 입자를 경험해보세요.\n\n"
             f"#Shion #AI #Resonance #UnifiedField #{selected_vibe}"
         )
+        if is_short:
+            description += " #Shorts"
+            
         return title, description, core_theme
 
-    async def schedule_video(self, video_path, publish_at, dry_run=False):
-        title, description, core_theme = self.generate_unique_metadata(video_path.name)
+    def generate_short_for_video(self, video_path, dry_run=False):
+        SHORTS_DIR.mkdir(parents=True, exist_ok=True)
+        short_path = SHORTS_DIR / f"{video_path.stem}_short.mp4"
+        if short_path.exists():
+            return short_path
+            
+        print(f"✂️ [SCHEDULER] Generating Short for: {video_path.name}")
+        if dry_run:
+            print("   🧪 [DRY RUN] Skipping FFmpeg generation.")
+            return short_path
+            
+        command = [
+            "ffmpeg", "-y", "-ss", "00:01:00", "-i", str(video_path),
+            "-t", "59", "-vf", "crop=ih*9/16:ih", "-c:v", "libx264",
+            "-preset", "fast", "-crf", "23", "-c:a", "aac", "-b:a", "192k",
+            str(short_path)
+        ]
+        try:
+            result = subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if result.returncode == 0:
+                return short_path
+        except Exception as e:
+            print(f"   ❌ FFmpeg error: {e}")
+        return None
+
+    async def schedule_video(self, video_path, publish_at, dry_run=False, is_short=False, parent_url=None):
+        title, description, core_theme = self.generate_unique_metadata(video_path.name, is_short, parent_url)
         print(f"📦 [SCHEDULER] Preparing: {video_path.name}")
         print(f"   📅 Target: {publish_at} (KST)")
         print(f"   ✨ Title: {title}")
 
         if dry_run:
             print("   🧪 [DRY RUN] No upload performed.")
-            return True
+            return f"https://youtu.be/dummy_{'short' if is_short else 'long'}_{random.randint(1000,9999)}"
+        if self.youtube is None:
+            raise RuntimeError("YouTube client is not initialized. Use --confirm-upload for real uploads.")
 
         try:
             body = {
@@ -172,45 +225,115 @@ class YoutubeBulkScheduler:
             })
             self._save_json(HISTORY_PATH, self.history)
             
-            # Sync to Shion
+            # Sync to Shion (only sync long videos or short videos to avoid spam, we'll sync both for now)
             await report_to_shion(video_url, title=title)
-            return True
+            return video_url
 
         except Exception as e:
             print(f"   ❌ FAILED for {video_path.name}: {e}")
-            return False
+            return None
 
-    async def run_bulk_scheduling(self, dry_run=False):
-        all_videos = list(VIDEO_DIR.glob("*.mp4"))
+    async def run_bulk_scheduling(self, dry_run=False, mode="sync", limit=None):
+        if mode == "retro":
+            uploaded_shorts = [Path(entry['original_path']).name for entry in self.history if "_short.mp4" in entry['original_path']]
+            
+            retro_candidates = []
+            for entry in self.history:
+                if "_short.mp4" not in entry['original_path']:
+                    video_path = Path(entry['original_path'])
+                    short_name = f"{video_path.stem}_short.mp4"
+                    if short_name not in uploaded_shorts and video_path.exists():
+                        retro_candidates.append(entry)
+
+            if not retro_candidates:
+                print("✅ All uploaded videos already have Shorts.")
+                return
+            if limit is not None:
+                retro_candidates = retro_candidates[:limit]
+
+            print(f"📝 [SCHEDULER] {len(retro_candidates)} retroactive Shorts to schedule.")
+            day_offset = 1
+            for entry in retro_candidates:
+                video_path = Path(entry['original_path'])
+                long_video_url = entry.get('url')
+                
+                short_path = self.generate_short_for_video(video_path, dry_run=dry_run)
+                if short_path:
+                    publish_at = self.get_next_publish_time(day_offset)
+                    success = await self.schedule_video(
+                        short_path, publish_at, 
+                        dry_run=dry_run, is_short=True, parent_url=long_video_url
+                    )
+                    if success:
+                        day_offset += 1
+                        if not dry_run:
+                            await asyncio.sleep(2)
+            return
+
+        if mode == "shorts": # legacy support
+            all_videos = list(SHORTS_DIR.glob("*.mp4"))
+        else:
+            all_videos = list(VIDEO_DIR.glob("*.mp4"))
+            
         if not all_videos:
-            print("❌ No videos found in ready_videos.")
+            print(f"❌ No videos found.")
             return
 
         uploaded_paths = [entry['original_path'] for entry in self.history]
         available_videos = [v for v in all_videos if str(v) not in uploaded_paths]
         available_videos.sort() # Temporal consistency
+        if limit is not None:
+            available_videos = available_videos[:limit]
 
         if not available_videos:
             print("✅ All videos have already been scheduled.")
             return
 
-        print(f"📝 [SCHEDULER] {len(available_videos)} new videos to schedule.")
+        print(f"📝 [SCHEDULER] {len(available_videos)} new videos to schedule in {mode.upper()} mode.")
         
-        # We start scheduling from 1 day offset (tomorrow) unless specified otherwise
         day_offset = 1 
         for video in available_videos:
-            publish_at = self.get_next_publish_time(day_offset)
-            success = await self.schedule_video(video, publish_at, dry_run=dry_run)
-            if success:
-                day_offset += 1
-                # Small cool-down between API calls
-                await asyncio.sleep(2)
+            if mode == "shorts":
+                publish_at = self.get_next_publish_time(day_offset)
+                success = await self.schedule_video(video, publish_at, dry_run=dry_run, is_short=True)
+                if success:
+                    day_offset += 1
+                    if not dry_run:
+                        await asyncio.sleep(2)
+            else:
+                # SYNC MODE: Long video then Short video
+                publish_at_long = self.get_next_publish_time(day_offset)
+                long_video_url = await self.schedule_video(video, publish_at_long, dry_run=dry_run)
+                
+                if long_video_url:
+                    short_path = self.generate_short_for_video(video, dry_run=dry_run)
+                    if short_path:
+                        # Schedule short 15 mins after the long video
+                        dt = datetime.datetime.fromisoformat(publish_at_long)
+                        dt_short = dt + datetime.timedelta(minutes=15)
+                        publish_at_short = dt_short.isoformat()
+                        
+                        await self.schedule_video(
+                            short_path, publish_at_short, 
+                            dry_run=dry_run, is_short=True, parent_url=long_video_url
+                        )
+                    
+                    day_offset += 1
+                    if not dry_run:
+                        await asyncio.sleep(2)
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--confirm-upload", action="store_true", help="Perform real private scheduled uploads. Without this, the command stays dry-run.")
+    parser.add_argument("--mode", choices=["sync", "shorts", "retro"], default="sync")
+    parser.add_argument("--limit", type=int, default=None, help="Limit the number of source videos processed in this run.")
     args = parser.parse_args()
 
-    scheduler = YoutubeBulkScheduler()
-    asyncio.run(scheduler.run_bulk_scheduling(dry_run=args.dry_run))
+    effective_dry_run = args.dry_run or not args.confirm_upload
+    if effective_dry_run and not args.dry_run:
+        print("🧪 [SAFE DEFAULT] No --confirm-upload flag supplied; running as dry-run.")
+
+    scheduler = YoutubeBulkScheduler(dry_run=effective_dry_run)
+    asyncio.run(scheduler.run_bulk_scheduling(dry_run=effective_dry_run, mode=args.mode, limit=args.limit))
