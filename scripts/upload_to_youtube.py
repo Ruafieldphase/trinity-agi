@@ -9,11 +9,25 @@ except ImportError:
         env_root = os.getenv("AGI_WORKSPACE_ROOT") or os.getenv("WORKSPACE_ROOT")
         return Path(env_root).expanduser().resolve() if env_root else Path(__file__).resolve().parents[1]
 
+try:
+    from path_config import resolve_paths
+except ImportError:
+    def resolve_paths(config_path=None):
+        root = get_workspace_root()
+        return {
+            "agi_workspace_root": root,
+            "outputs": root / "outputs",
+            "credentials": root / "credentials",
+            "shion_root": None,
+        }
+
 # --- Config ---
-AGI_ROOT = get_workspace_root()
-CRED_DIR = AGI_ROOT / "credentials"
+PATHS = resolve_paths()
+AGI_ROOT = PATHS.get("agi_workspace_root") or get_workspace_root()
+CRED_DIR = PATHS.get("credentials") or (AGI_ROOT / "credentials")
 YT_TOKEN = CRED_DIR / "youtube_token.json"
-VIDEO_PATH = AGI_ROOT / "outputs" / "youtube_resonator" / "sacred_hole.mp4"
+OUTPUTS_DIR = PATHS.get("outputs") or (AGI_ROOT / "outputs")
+VIDEO_PATH = OUTPUTS_DIR / "youtube_resonator" / "sacred_hole.mp4"
 DEFAULT_PRIVACY_STATUS = "private"
 ALLOWED_PRIVACY_STATUSES = {"private", "unlisted", "public"}
 
@@ -21,10 +35,13 @@ ALLOWED_PRIVACY_STATUSES = {"private", "unlisted", "public"}
 MOLT_KEY_PATH = CRED_DIR / "moltbook_api_key.json"
 
 def _resolve_shion_security_path():
+    shion_root_path = PATHS.get("shion_root")
+    if shion_root_path:
+        return shion_root_path / "config" / "security.yaml"
     shion_root = os.getenv("SHION_ROOT")
     if shion_root:
         return Path(shion_root).expanduser().resolve() / "config" / "security.yaml"
-    return Path("c:/workspace2/shion/config/security.yaml")
+    return None
 
 async def upload_video(
     video_path=None,
@@ -172,7 +189,7 @@ async def report_to_shion(video_url, title, status="success", error_msg=""):
     # 시안 서버 보안 토큰 로드 시도
     token = ""
     sec_path = _resolve_shion_security_path()
-    if sec_path.exists():
+    if sec_path and sec_path.exists():
         try:
             import yaml
             with open(sec_path, "r", encoding="utf-8") as f:

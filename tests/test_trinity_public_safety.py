@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import asyncio
 import importlib.util
 import os
+import sys
 from pathlib import Path
 
 
@@ -18,6 +20,37 @@ def test_direct_youtube_upload_is_not_public_by_default() -> None:
     assert '"privacyStatus": privacy_status' in source
     assert "--confirm-public-upload" in source
     assert '"privacyStatus": "public"' not in source
+
+
+def test_direct_youtube_upload_confirm_gates_behave() -> None:
+    script_dir = ROOT / "scripts"
+    sys.path.insert(0, str(script_dir))
+    try:
+        spec = importlib.util.spec_from_file_location("upload_to_youtube", script_dir / "upload_to_youtube.py")
+        assert spec and spec.loader
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+    finally:
+        try:
+            sys.path.remove(str(script_dir))
+        except ValueError:
+            pass
+
+    assert asyncio.run(module.upload_video(dry_run=True)) is None
+
+    try:
+        asyncio.run(module.upload_video(dry_run=False, confirm_upload=False))
+    except ValueError as exc:
+        assert "confirm_upload=True" in str(exc)
+    else:
+        raise AssertionError("real upload without confirm_upload should fail")
+
+    try:
+        asyncio.run(module.upload_video(privacy_status="public", confirm_public_upload=False, dry_run=True))
+    except ValueError as exc:
+        assert "--confirm-public-upload" in str(exc)
+    else:
+        raise AssertionError("public upload without confirm_public_upload should fail")
 
 
 def test_bulk_scheduler_requires_confirm_for_real_uploads() -> None:
