@@ -10,7 +10,7 @@ Trinity AGI begins by holding that operational question open until status, appro
 
 Trinity AGI는 상태, 승인, 인증 정보, 증거가 보일 때까지 이 운영 질문을 열어두는 데서 시작합니다.
 
-## 1. Wave / 파동
+## 1. Opening Question (Wave) / 여는 질문(파동)
 
 Have you built AI workflows that worked once, but became noisy, fragile, or hard to repeat?
 
@@ -28,7 +28,7 @@ Trinity AGI is the body/infrastructure layer that turns formed AI intent into sa
 
 Trinity AGI는 형성된 AI 의도를 안전한 로컬 운영으로 바꾸는 몸체/인프라 레이어입니다.
 
-## 2. First Operation Particle / 첫 운영 입자
+## 2. First Safe Operation Test (Particle) / 첫 안전 운영 테스트(입자)
 
 ```text
 Public publishing is not automatic.
@@ -66,11 +66,11 @@ No upload happens. The command only reports what would be prepared.
 예상 결과:
 업로드는 일어나지 않습니다. 명령은 준비될 작업만 보고합니다.
 
-## 3. What The Particle Protects / 입자가 보호하는 것
+## 3. What The Safe Test Protects (Particle) / 안전 테스트가 보호하는 것(입자)
 
-The dry-run particle protects the direction from becoming public action too early.
+The dry-run test protects the direction from becoming public action too early.
 
-dry-run 입자는 방향이 너무 빨리 공개 행동으로 바뀌는 것을 막습니다.
+dry-run 테스트는 방향이 너무 빨리 공개 행동으로 바뀌는 것을 막습니다.
 
 - local paths stay configurable
 - credentials stay private
@@ -98,7 +98,7 @@ Where does your automation act from stale memory? Where does it assume status in
 
 ```text
 Shion AI
-formed direction / context recovery note / first particle test
+formed direction / context recovery note / first small test (particle)
         ↓
 Trinity AGI
 status / script / approval / credentials / local operation
@@ -139,16 +139,16 @@ This README uses public terms first, with our internal rhythm language in parent
 이 README는 보편적인 단어를 먼저 쓰고, 괄호 안에 우리의 내부 리듬 언어를 함께 남깁니다.
 
 ```text
-Problem Flow (Field/Wave) -> Direction (Convergence) -> Turning Point (Phase Transition) -> Operation/Result (Particle) -> Connected Workflow (Unified Field) -> Local Use (Embodiment)
-문제의 전체 흐름(장/파동) -> 방향 정리(수렴) -> 전환점(위상전이) -> 운영/결과(입자) -> 이어지는 작업 흐름(통일장) -> 실제 사용(체화)
+Overall context (field/wave) -> Direction settling (convergence) -> Turning point (phase transition) -> Operation result (particle) -> Connected workflow (unified field) -> Local use (embodiment)
+전체 맥락(장/파동) -> 방향 정리(수렴) -> 전환점(위상전이) -> 운영 결과(입자) -> 이어지는 작업 흐름(통일장) -> 실제 사용(체화)
 ```
 
 The sections below unpack this rhythm into public architecture language.
 
 아래 섹션은 이 리듬을 외부인이 읽을 수 있는 아키텍처 언어로 풀어냅니다.
 
-## Problem Flow (Field/Wave): Action Wants a Body
-## 문제의 전체 흐름(장/파동): 행동은 몸을 필요로 한다
+## Overall Context (Field/Wave): Action Wants a Body
+## 전체 맥락(장/파동): 행동은 몸을 필요로 한다
 
 Different people may arrive here through different operational needs.
 
@@ -217,8 +217,8 @@ agent can act -> body checks state -> operation runs -> result returns to rhythm
 에이전트가 행동할 수 있음 -> 몸이 상태를 확인함 -> 작업이 실행됨 -> 결과가 리듬으로 돌아감
 ```
 
-## Operation/Result (Particle): What Actually Improves
-## 운영/결과(입자): 실제로 좋아지는 것
+## Operation Result (Particle): What Actually Improves
+## 운영 결과(입자): 실제로 좋아지는 것
 
 ### Intent Becomes Operation / 의도가 실제 작업이 됨
 
