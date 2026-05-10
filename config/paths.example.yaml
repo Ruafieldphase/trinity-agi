@@ -1,0 +1,14 @@
+# Example public path configuration for Trinity AGI.
+#
+# Copy this file to config/paths.local.yaml for a local machine. Keep local
+# credentials, private archives, generated outputs, and machine-specific paths
+# out of public commits.
+
+paths:
+  agi_workspace_root: "."
+  shion_root: "../shion"
+  outputs: "outputs"
+  memory: "memory"
+  logs: "logs"
+  credentials: "credentials"
+  archive_workspace: ""
