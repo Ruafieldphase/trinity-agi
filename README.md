@@ -1,5 +1,57 @@
 # Trinity AGI
 
+Trinity AGI is the body/infrastructure layer that turns formed AI intent into safe local operation.
+
+Trinity AGI는 형성된 AI 의도를 안전한 로컬 운영으로 바꾸는 몸체/인프라 레이어입니다.
+
+## 3-Minute Safety / 3분 안전 확인
+
+```text
+Public publishing is not automatic.
+Upload helpers default to private/dry-run.
+Real upload requires --confirm-upload.
+Public upload also requires --confirm-public-upload.
+Public safety CI checks this.
+```
+
+```text
+공개 게시는 자동으로 실행되지 않습니다.
+업로드 도우미는 기본값이 private/dry-run입니다.
+실제 업로드에는 --confirm-upload가 필요합니다.
+public 업로드에는 --confirm-public-upload도 필요합니다.
+Public safety CI가 이 경계를 확인합니다.
+```
+
+Start small:
+
+1. Do not run all scripts or daemons first.
+2. Run a dry-run check first: `python scripts/youtube_bulk_scheduler.py --dry-run --mode sync --limit 1`
+3. Pick one repeated operation.
+4. Run one first operation test.
+
+작게 시작하세요.
+
+1. 처음부터 모든 스크립트나 데몬을 실행하지 마세요.
+2. 먼저 dry-run 점검을 실행하세요: `python scripts/youtube_bulk_scheduler.py --dry-run --mode sync --limit 1`
+3. 반복 운영 하나를 고르세요.
+4. 첫 운영 테스트 하나만 실행하세요.
+
+## Flow / 흐름
+
+Shion forms or preserves direction. Trinity checks status, approval, credentials, and operation boundaries.
+
+Shion은 방향을 형성하거나 보존합니다. Trinity는 상태, 승인, 인증 정보, 운영 경계를 확인합니다.
+
+```text
+Shion AI
+formed direction / context recovery note / first particle test
+        ↓
+Trinity AGI
+status / script / approval / credentials / local operation
+        ↓
+Evidence returns to the next AI cycle
+```
+
 Have you built AI workflows that worked once, but became noisy, fragile, or hard to repeat?
 
 한 번은 작동했지만, 반복할수록 시끄럽고 불안정해지는 AI 워크플로우를 만든 적이 있나요?
@@ -19,40 +71,6 @@ Have publishing, scheduling, syncing, or background processes drifted away from 
 Trinity AGI begins from that operational gap. It is the body and infrastructure layer for Shion AI, turning formed intent into practical work: automation, scheduling, publishing, local runtime support, synchronization, and status reporting.
 
 Trinity AGI는 그 운영상의 간극에서 시작합니다. Shion AI의 몸과 인프라 레이어로서, 형태가 잡힌 의도를 자동화, 예약, 게시, 로컬 런타임 지원, 동기화, 상태 보고 같은 실제 작업으로 바꿉니다.
-
-```text
-Start small:
-1. Do not run all scripts or daemons first.
-2. Keep public publishing behind explicit confirmation.
-3. Pick one repeated operation.
-4. Run one first operation test.
-```
-
-```text
-작게 시작하세요:
-1. 처음부터 모든 스크립트나 데몬을 실행하지 마세요.
-2. 공개 게시에는 명시적 확인 경계를 두세요.
-3. 반복 운영 하나를 고르세요.
-4. 첫 운영 테스트 하나만 실행하세요.
-```
-
-Shion AI preserves direction across AI sessions. Trinity AGI turns formed direction into safe local operation.
-
-Shion AI는 AI 세션 사이에서 방향을 보존합니다. Trinity AGI는 형성된 방향을 안전한 로컬 운영으로 바꿉니다.
-
-```text
-User's vague direction
-        ↓
-Shion AI
-context / memory / rhythm / unfinished questions
-        ↓
-First small particle test
-        ↓
-Trinity AGI
-status / script / approval / local operation
-        ↓
-Evidence returns to the next AI cycle
-```
 
 If you are new, start with [`START_HERE.md`](START_HERE.md). If you are asking your own AI to inspect this repository, give it [`AI_READ_THIS_FIRST.md`](AI_READ_THIS_FIRST.md) first.
 
