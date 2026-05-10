@@ -11,4 +11,6 @@ paths:
   memory: "memory"
   logs: "logs"
   credentials: "credentials"
+  ready_videos: "music/ready_videos"
+  ready_shorts: "music/ready_shorts"
   archive_workspace: ""

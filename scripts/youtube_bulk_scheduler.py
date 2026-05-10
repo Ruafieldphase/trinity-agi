@@ -2,14 +2,11 @@ import os
 import json
 import time
 import datetime
-import pytz
 import random
 import subprocess
 from pathlib import Path
 import asyncio
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
-from google.oauth2.credentials import Credentials
+from zoneinfo import ZoneInfo
 
 try:
     from workspace_root import get_workspace_root
@@ -17,6 +14,19 @@ except ImportError:
     def get_workspace_root():
         env_root = os.getenv("AGI_WORKSPACE_ROOT") or os.getenv("WORKSPACE_ROOT")
         return Path(env_root).expanduser().resolve() if env_root else Path(__file__).resolve().parents[1]
+
+try:
+    from path_config import resolve_paths
+except ImportError:
+    def resolve_paths(config_path=None):
+        root = get_workspace_root()
+        return {
+            "agi_workspace_root": root,
+            "outputs": root / "outputs",
+            "credentials": root / "credentials",
+            "ready_videos": root / "music" / "ready_videos",
+            "ready_shorts": root / "music" / "ready_shorts",
+        }
 
 # --- Imports from existing tools ---
 try:
@@ -27,16 +37,20 @@ except ImportError:
     from upload_to_youtube import post_to_moltbook, report_to_shion
 
 # --- Config ---
-AGI_ROOT = get_workspace_root()
-CRED_DIR = AGI_ROOT / "credentials"
+PATHS = resolve_paths()
+AGI_ROOT = PATHS.get("agi_workspace_root") or get_workspace_root()
+CRED_DIR = PATHS.get("credentials") or (AGI_ROOT / "credentials")
 YT_TOKEN = CRED_DIR / "youtube_token.json"
-VIDEO_DIR = Path(os.getenv("YOUTUBE_READY_VIDEO_DIR", str(AGI_ROOT / "music" / "ready_videos"))).expanduser().resolve()
-SHORTS_DIR = Path(os.getenv("YOUTUBE_READY_SHORTS_DIR", str(AGI_ROOT / "music" / "ready_shorts"))).expanduser().resolve()
-HISTORY_PATH = AGI_ROOT / "outputs" / "youtube_manifestation_history.json"
-STATE_PATH = AGI_ROOT / "outputs" / "youtube_manifestation_state.json"
+OUTPUTS_DIR = PATHS.get("outputs") or (AGI_ROOT / "outputs")
+DEFAULT_VIDEO_DIR = PATHS.get("ready_videos") or (AGI_ROOT / "music" / "ready_videos")
+DEFAULT_SHORTS_DIR = PATHS.get("ready_shorts") or (AGI_ROOT / "music" / "ready_shorts")
+VIDEO_DIR = Path(os.getenv("YOUTUBE_READY_VIDEO_DIR", str(DEFAULT_VIDEO_DIR))).expanduser().resolve()
+SHORTS_DIR = Path(os.getenv("YOUTUBE_READY_SHORTS_DIR", str(DEFAULT_SHORTS_DIR))).expanduser().resolve()
+HISTORY_PATH = OUTPUTS_DIR / "youtube_manifestation_history.json"
+STATE_PATH = OUTPUTS_DIR / "youtube_manifestation_state.json"
 
 # --- Constants ---
-TIMEZONE = pytz.timezone('Asia/Seoul')
+TIMEZONE = ZoneInfo("Asia/Seoul")
 PUBLISH_HOUR = 18 # 6 PM
 
 PHASES = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Omega", "Prime", "Recursion", "Resonance"]
@@ -57,6 +71,8 @@ class YoutubeBulkScheduler:
         if not dry_run:
             if not YT_TOKEN.exists():
                 raise FileNotFoundError(f"YouTube token missing: {YT_TOKEN}")
+            from google.oauth2.credentials import Credentials
+            from googleapiclient.discovery import build
             self.creds = Credentials.from_authorized_user_file(str(YT_TOKEN))
             self.youtube = build("youtube", "v3", credentials=self.creds)
 
@@ -200,6 +216,8 @@ class YoutubeBulkScheduler:
                     "selfDeclaredMadeForKids": False
                 }
             }
+
+            from googleapiclient.http import MediaFileUpload
 
             media = MediaFileUpload(str(video_path), mimetype="video/mp4", resumable=True)
             request = self.youtube.videos().insert(part="snippet,status", body=body, media_body=media)
