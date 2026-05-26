@@ -1,9 +1,12 @@
 import paramiko
+import os
 import time
 
-host = '192.168.119.128'
-user = 'bino'
-password = '0000'
+host = os.environ.get('TRINITY_LINUX_HOST', '192.168.119.128')
+user = os.environ.get('TRINITY_LINUX_USER', 'bino')
+password = os.environ.get('TRINITY_LINUX_PASSWORD')
+if not password:
+    raise RuntimeError('Set TRINITY_LINUX_PASSWORD before connecting to the Linux bridge.')
 
 client = paramiko.SSHClient()
 client.set_missing_host_key_policy(paramiko.AutoAddPolicy())

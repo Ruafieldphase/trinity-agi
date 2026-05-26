@@ -59,6 +59,9 @@ venv/
 ENV/
 logs/
 *.mp4
+*.webm
+*.part
+*.webm.part
 heritage_vault/
 labyrinth/
 pulse/
@@ -109,6 +112,9 @@ deep_history_scan.txt
 push_error*.txt
 tmp_results.txt
 *.bak
+*.bak.*
+*.backup
+*.backup_*
 *.old
 test_capture_*.png
 torus_*.png
