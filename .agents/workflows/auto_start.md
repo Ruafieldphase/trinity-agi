@@ -1,16 +1,51 @@
 ---
-description: 🌀 Auto-Start Autonomy Workflow
+description: Historical auto-start recipe — disabled by currentness boundary
+status: historical_disabled
 ---
-// turbo-all
 
-1. **Enforce Resonance Shield**: Restore autonomy settings (No-Run-Button, Auto-Allow) if missing.
-// turbo
-`python C:/workspace/agi/scripts/resonance_shield_enforcer.py`
+# Auto-Start Workflow — Historical / Disabled
 
-2. **Confirm Resonance Blood Flow**: Initialize drive sync.
-// turbo
-`python C:/workspace/agi/scripts/resonance_blood_flow_sync.py`
+This file preserves an earlier Trinity startup recipe. It is **not a current instruction to execute automatically**.
 
-3. **Start Goal Loop Daemon**: Activate background autonomy.
-// turbo
-`powershell -File C:/workspace/agi/scripts/autonomous_goal_loop_daemon.ps1`
+The older recipe assumed:
+
+- a fixed `C:/workspace/agi` workspace
+- an autonomy/Auto-Allow setting
+- a drive-sync script
+- a background goal-loop daemon
+
+Those assumptions must not be restored or executed merely because this file exists.
+
+## Current rule
+
+Before starting any background process or changing an autonomy/approval setting:
+
+1. inspect the current authorized environment;
+2. verify the actual workspace and dependency paths;
+3. identify the present operational reason;
+4. check approval and credential boundaries;
+5. prefer a read-only check or dry-run first;
+6. define a stop condition and readback;
+7. execute only the bounded action that is currently justified.
+
+```text
+historical auto-start recipe
+→ current-state check
+→ explicit operation candidate
+→ approval/preconditions
+→ bounded action or dry-run
+→ readback
+→ receipt
+```
+
+## Historical commands
+
+The commands formerly stored here are intentionally **not repeated as runnable instructions**. Use Git history if the historical implementation is needed for research or recovery.
+
+See:
+
+- `OPERATION_CURRENTNESS_CONTRACT.md`
+- `REPOSITORY_CURRENTNESS_AUDIT.md`
+- `CODE_STATUS.md`
+
+A repository file may preserve why an operation once existed. It does not grant present permission to move the body.

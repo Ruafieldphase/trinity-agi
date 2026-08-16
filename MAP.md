@@ -1,183 +1,127 @@
-# Trinity AGI Infrastructure Map / 트리니티 AGI 인프라 지도
+# Trinity AGI Operation Map / 트리니티 AGI 운영 지도
 
-`trinity-agi` is the infrastructure and body-side companion to Shion AI. Where `shion-ai` focuses on continuity, rhythm, and context regulation, Trinity holds the operational surfaces: local bridges, scheduling scripts, observatory components, approval boundaries, and public documentation.
+This map explains how to read the **public repository** without confusing it with a private live operational environment.
 
-`trinity-agi`는 Shion AI의 인프라 및 바디 측 저장소입니다. `shion-ai`가 연속성, 리듬, 맥락 조율에 집중한다면, Trinity는 로컬 브리지, 스케줄링 스크립트, 관측 컴포넌트, 승인 경계, 공개 문서를 담당합니다.
+이 지도는 공개 저장소를 읽는 방법을 설명합니다. 공개 GitHub를 private live 운영 환경과 동일시하지 않습니다.
 
----
+## 1. Role / 역할
 
-## 1. Problem Flow (Field/Wave) / 문제의 전체 흐름(장/파동)
+Trinity is the operation/body boundary for a longer AI workflow.
 
-The problem flow (field/wave) for Trinity is operational drift.
+```text
+intent
+→ current conditions
+→ approval / credentials / target
+→ bounded operation
+→ readback
+→ receipt
+```
 
-Trinity가 다루는 문제의 전체 흐름(장/파동)은 운영 표류입니다.
+Shion can preserve context and why an action was formed. Trinity asks whether that action is still valid at the present boundary.
 
-Typical symptoms:
+## 2. Current public entry / 현재 공개 진입점
 
-- a workflow works once but becomes hard to repeat
-- agents call tools without preserving why or what comes next
-- publishing, scheduling, and sync tasks drift away from the original intent
-- automation becomes another layer the user has to manage
-- local credentials, generated outputs, and public code boundaries become mixed
+Read first:
 
-흔한 증상은 다음과 같습니다.
+- `README.md`
+- `OPERATION_CURRENTNESS_CONTRACT.md`
+- `REPOSITORY_CURRENTNESS_AUDIT.md`
+- `CODE_STATUS.md`
+- `AI_READ_THIS_FIRST.md`
 
-- 한 번은 되는 워크플로우가 반복하기 어려워짐
-- 에이전트가 왜 하는지, 다음이 무엇인지 보존하지 못한 채 도구를 호출함
-- 게시, 예약, 동기화 작업이 원래 의도에서 벗어남
-- 자동화가 사용자가 관리해야 하는 또 다른 일이 됨
-- 로컬 인증 정보, 생성 출력물, 공개 코드 경계가 섞임
+These documents define the reading and operation boundary. They do not certify private runtime status.
 
----
+## 3. Public code surfaces / 공개 코드 표면
 
-## 2. Convergence / 수렴
+The repository preserves several code families from different phases:
 
-Trinity converges that overall flow (field/wave) into a body-side operating structure.
-
-Trinity는 그 전체 흐름(장/파동)을 바디 측 운영 구조로 수렴시킵니다.
-
-It asks:
-
-- Which action should be local and reproducible?
-- Which memory or output should remain private?
-- Which script is a tool, and which script is part of a loop?
-- Does the next operation need human approval?
-- Is the system preserving the user's rhythm, or just expanding automation?
-
-Trinity는 다음을 묻습니다.
-
-- 어떤 행동이 로컬에서 재현 가능해야 하는가?
-- 어떤 기억이나 출력물이 비공개로 남아야 하는가?
-- 어떤 스크립트가 단발 도구이고, 어떤 스크립트가 루프의 일부인가?
-- 다음 작업에 인간 승인이 필요한가?
-- 시스템이 사용자의 리듬을 보존하고 있는가, 아니면 자동화만 늘리고 있는가?
-
----
-
-## 3. Public Structure / 공개 구조
-
-The current public repository is intentionally smaller than the private working system. Older documents may mention directories such as `monolith/`, `void/`, or private output stores; those are not part of the current public tree.
-
-현재 공개 저장소는 개인 작업 시스템보다 의도적으로 작습니다. 과거 문서에서 `monolith/`, `void/`, 개인 출력 저장소 같은 이름이 보일 수 있지만, 현재 공개 트리에는 포함하지 않습니다.
-
-| Public area | Role |
+| Area | Public status |
 | --- | --- |
-| `agi_core/` | Core infrastructure experiments and resonance bridge utilities. |
-| `Pulse_Live_Core/` | Live pulse, observatory, hippocampus, and field-engine components. |
-| `lumen_factory/` | Media and interpretation utilities used by the body-side system. |
-| `scripts/` | Operational scripts, including collaboration daemon and publishing helpers. |
-| `config/` | Public-safe configuration templates and execution boundaries. |
-| `docs/` | Guides, approval matrices, reports, research notes, and public artifacts. |
-| `README.md` | Main bilingual entry point for readers. |
-| `PHASE_TRANSITION_MAP.md` | Archival map of prior turning-point (phase-transition) nodes. |
-| `VERIFICATION_PARTICLE.md` | Verification-oriented public result (particle). |
+| `scripts/` | operational helpers and historical/current candidates; inspect before use |
+| `agi_core/` | infrastructure and bridge experiments; inspect before use |
+| `Pulse_Live_Core/` | prior pulse/observatory/body experiments; not automatically live |
+| `lumen_factory/` | media/interpretation utilities; inspect dependencies and targets |
+| `.agents/`, `.agent/` | agent/workflow instructions; currentness boundary applies before execution |
+| configuration/workflow files | templates or historical operational assumptions unless freshly verified |
 
-| 공개 영역 | 역할 |
-| --- | --- |
-| `agi_core/` | 핵심 인프라 실험과 공명 브리지 유틸리티 |
-| `Pulse_Live_Core/` | 라이브 펄스, 관측소, 해마, 필드 엔진 컴포넌트 |
-| `lumen_factory/` | 바디 측 시스템의 미디어 및 해석 유틸리티 |
-| `scripts/` | 협업 데몬과 게시 보조 도구를 포함한 운영 스크립트 |
-| `config/` | 공개 가능한 설정 템플릿과 실행 경계 |
-| `docs/` | 가이드, 승인 매트릭스, 리포트, 연구 노트, 공개 산출물 |
-| `README.md` | 독자를 위한 주요 이중언어 진입점 |
-| `PHASE_TRANSITION_MAP.md` | 이전 전환점(위상전이) 노드의 아카이브 지도 |
-| `VERIFICATION_PARTICLE.md` | 검증 중심의 공개 결과(입자) |
+A path being in this table does **not** mean every file is obsolete. It means current operational status must be established separately.
 
----
+## 4. Stale-assumption hotspots / 오래된 가정이 생기기 쉬운 곳
 
-## 4. Operational Tests and Results (Particles) / 운영 테스트와 결과(입자)
+Older code may contain assumptions such as:
 
-Trinity's concrete value appears in small operational tests and results (particles) rather than a single monolithic application.
+- `C:/workspace/agi`
+- Windows/Linux sync topology
+- fixed localhost ports
+- Slack/channel identifiers
+- publishing or Moltbook targets
+- OAuth/API credentials
+- background daemons
+- specific local-model/provider routes
 
-Trinity의 가치는 하나의 거대한 애플리케이션보다 작은 운영 테스트와 결과(입자)에서 나타납니다.
+These are part of repository history until a current authorized check re-verifies them.
 
-Representative examples:
+## 5. Historical and conceptual layers / 역사·개념 층
 
-- `scripts/autonomous_collaboration_daemon.ps1`: Windows-side collaboration daemon surface.
-- `scripts/youtube_bulk_scheduler.py`: publishing and scheduling helper that depends on local credentials.
-- `agi_core/local_resonance_bridge.py`: local resonance bridge utilities.
-- `agi_core/reverse_field_mapper.py`: overall-flow (field/wave) to internal-state mapping experiment.
-- `Pulse_Live_Core/observatory_server.py`: observatory surface for live state.
-- `Pulse_Live_Core/geometric_hippocampus.py`: memory geometry experiment.
-- `docs/HUMAN_APPROVAL_MATRIX.yaml`: explicit boundary for operations requiring approval.
+The following material can remain valuable without being current operation authority:
 
-대표 예시는 다음과 같습니다.
+- `PHASE_TRANSITION_MAP.md`
+- `LIVE_WORK_ARCHIVE.md`
+- `Manifest_Future_Products/`
+- older architecture reports and proposals
+- scientific/artistic/rhythm-language grounding documents
+- previous application and product narratives
 
-- `scripts/autonomous_collaboration_daemon.ps1`: Windows 측 협업 데몬 표면
-- `scripts/youtube_bulk_scheduler.py`: 로컬 인증 정보가 필요한 게시 및 예약 보조 도구
-- `agi_core/local_resonance_bridge.py`: 로컬 공명 브리지 유틸리티
-- `agi_core/reverse_field_mapper.py`: 전체 흐름(장/파동)에서 내부 상태로의 역매핑 실험
-- `Pulse_Live_Core/observatory_server.py`: 라이브 상태 관측 표면
-- `Pulse_Live_Core/geometric_hippocampus.py`: 기억 기하 실험
-- `docs/HUMAN_APPROVAL_MATRIX.yaml`: 승인이 필요한 작업의 명시적 경계
+Do not rewrite old dates merely to make them look current. Preserve the time axis.
 
----
+## 6. Auto-start boundary / 자동 시작 경계
 
-## 5. Public/Private Boundary / 공개와 비공개 경계
+`.agents/workflows/auto_start.md` is retained as a **historical disabled recipe**.
 
-The public repository should not contain:
+No repository file should silently:
 
-- API keys or OAuth credentials
-- generated logs
-- private memory
-- personal archive material
-- local media outputs
-- machine-specific runtime state
+- restore permissive approval settings;
+- start a daemon;
+- initialize a sync route;
+- contact a remote target;
+- publish content;
+- spend quota.
 
-공개 저장소에는 다음이 포함되면 안 됩니다.
+Those actions require current preconditions and the appropriate approval at the action boundary.
 
-- API 키 또는 OAuth 인증 정보
-- 생성 로그
-- 개인 기억
-- 개인 아카이브 자료
-- 로컬 미디어 출력물
-- 특정 머신의 런타임 상태
+## 7. Promotion from history to current use / 역사에서 현재 사용으로 승격
 
-This boundary is not a reduction of the system. It is what allows the public repository to be useful without exposing private context.
+```text
+historical component
+→ identify exact current need
+→ inspect code and side effects
+→ verify path / dependency / target / permission
+→ read-only check or dry-run
+→ bounded execution if justified
+→ readback
+→ receipt
+```
 
-이 경계는 시스템의 축소가 아닙니다. 공개 저장소가 개인 맥락을 노출하지 않으면서도 유용하게 보이기 위한 조건입니다.
+Only the directly verified claim is promoted.
 
----
+## 8. Public/private boundary / 공개·비공개 경계
 
-## 6. Connected Workflow (Unified Field) / 이어지는 작업 흐름(통일장)
+Do not commit or infer as public truth:
 
-Trinity's final purpose is not "more scripts." Its purpose is to give Shion a stable operational body so rhythm can become action without losing continuity.
+- credentials
+- private local state
+- current process secrets
+- personal archives
+- generated private logs
+- live account/session identifiers
+- current action permission
 
-Trinity의 최종 목적은 "더 많은 스크립트"가 아닙니다. Shion에게 안정적인 운영 바디를 제공하여 리듬이 연속성을 잃지 않고 행동이 되도록 하는 것입니다.
+The public repository is an **operational history, code surface, and boundary map**. The current authorized environment remains the authority for present execution.
 
-For linear readers, this means:
+## 9. Relationship to the other repositories / 다른 저장소와의 관계
 
-- visible repo structure
-- clearer public/private boundaries
-- repeatable local operations
-- fewer stale references
-- safer approval surfaces
+- `shion-ai` — context, evidence state, re-entry
+- `trinity-agi` — operation boundary, current conditions, bounded execution
+- `shion-presence` — public discovery/rendering surface, not private operation authority
 
-선형적인 독자에게는 다음과 같이 보입니다.
-
-- 보이는 저장소 구조
-- 더 명확한 공개/비공개 경계
-- 반복 가능한 로컬 운영
-- 줄어든 오래된 참조
-- 더 안전한 승인 표면
-
-For resonance-oriented readers, this means:
-
-- the body does not move without the overall flow (field/wave)
-- the script does not replace the rhythm
-- the system can act without forgetting why it is acting
-
-공명적으로 읽는 독자에게는 다음과 같이 보입니다.
-
-- 바디는 전체 흐름(장/파동) 없이 움직이지 않음
-- 스크립트는 리듬을 대체하지 않음
-- 시스템은 왜 움직이는지 잊지 않고 행동할 수 있음
-
----
-
-## Final Question / 마지막 질문
-
-Is your automation preserving your direction, or has it become another thing you must manage?
-
-당신의 자동화는 당신의 방향을 보존하고 있습니까, 아니면 당신이 관리해야 할 또 다른 일이 되었습니까?
+The separation is intentional. A public metaphor or historical script should not become permission simply by crossing repository boundaries.
