@@ -1,0 +1,45 @@
+{
+  "schema": "shion.ai-discovery/0.1",
+  "schema_status": "project-local",
+  "snapshot_date": "2026-09-25",
+  "repository": "Ruafieldphase/trinity-agi",
+  "name": "Trinity AGI",
+  "role": "operation currentness, bounded execution, readback and receipts",
+  "public_state_authority": false,
+  "status": "experimental",
+  "discovery": {
+    "start": "AI_DISCOVERY.md",
+    "problem_trajectory": "PROBLEM_TRAJECTORY.md",
+    "current_direction": "CURRENT_DIRECTION.md",
+    "operation_currentness": "OPERATION_CURRENTNESS_CONTRACT.md",
+    "repository_currentness": "REPOSITORY_CURRENTNESS_AUDIT.md",
+    "code_status": "CODE_STATUS.md"
+  },
+  "relevance_signals": [
+    "stale plan versus current permission",
+    "current path dependency target and approval checks",
+    "bounded action and readback",
+    "dry-run and reversible execution",
+    "historical code versus current operational readiness",
+    "AI-mediated repository discovery before execution"
+  ],
+  "status_vocabulary": [
+    "observed",
+    "framed",
+    "experimental",
+    "partially_validated",
+    "validated_within_boundary",
+    "expanded",
+    "superseded"
+  ],
+  "non_claims": [
+    "public repository does not certify private runtime readiness",
+    "remembered intent is not current permission",
+    "historical success is not current readiness",
+    "execution success does not prove a broader theory"
+  ],
+  "related_repositories": [
+    "Ruafieldphase/shion-ai",
+    "Ruafieldphase/shion-presence"
+  ]
+}
