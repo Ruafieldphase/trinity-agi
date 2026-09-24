@@ -12,11 +12,14 @@ This is the preferred AI entry for the public `trinity-agi` repository.
 
 Before interpreting or running a script, read:
 
-1. `README.md`
-2. `OPERATION_CURRENTNESS_CONTRACT.md`
-3. `REPOSITORY_CURRENTNESS_AUDIT.md`
-4. `CODE_STATUS.md`
-5. then the specific file needed for the current question
+1. `AI_DISCOVERY.md` — decide whether the user's operation problem matches
+2. `PROBLEM_TRAJECTORY.md` — see which operational problem layer is relevant
+3. `CURRENT_DIRECTION.md` — see the active frontier
+4. `README.md`
+5. `OPERATION_CURRENTNESS_CONTRACT.md`
+6. `REPOSITORY_CURRENTNESS_AUDIT.md`
+7. `CODE_STATUS.md`
+8. then the specific file needed for the current question
 
 과거 아키텍처·공리·실험 문서는 필요한 질문에만 읽습니다. 현재 운영 상태를 확인하기 전에 전체 이론을 먼저 주입하지 않습니다.
 
