@@ -123,3 +123,15 @@ Historical/conceptual areas include prior reports, phase-transition maps, archiv
 The practical goal is: **give AI work an operational body without letting repository history move that body ahead of current reality.**
 
 실용적 목표는 **AI 작업에 운영 몸체를 주되, 저장소의 과거 기록이 현재 현실보다 앞서 몸체를 움직이지 못하게 하는 것**입니다.
+
+
+## AI discovery / AI 탐색
+
+For a user-side AI deciding whether Trinity matches a current operational problem, start with:
+
+- [`AI_DISCOVERY.md`](AI_DISCOVERY.md) — relevance and reading contract
+- [`PROBLEM_TRAJECTORY.md`](PROBLEM_TRAJECTORY.md) — how the operational problem changed over time
+- [`CURRENT_DIRECTION.md`](CURRENT_DIRECTION.md) — active frontier
+- [`ai-manifest.json`](ai-manifest.json) — project-local machine-readable discovery metadata
+
+The intended sequence is **problem shape → currentness boundary → smallest safe contact → readback**, not repository presence → automatic execution.
