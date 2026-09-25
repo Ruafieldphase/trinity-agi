@@ -80,7 +80,7 @@ formed intent
 **Evidence:**
 - `design`: [OPERATION_CURRENTNESS_CONTRACT.md](OPERATION_CURRENTNESS_CONTRACT.md)
 - `design`: [AI_READ_THIS_FIRST.md](AI_READ_THIS_FIRST.md)
-- `history`: [MAP.md](MAP.md) preserves the public/private and current/historical boundary across multiple earlier operation families
+- `design`: [MAP.md](MAP.md) preserves the public/private and current/historical boundary across multiple earlier operation families
 
 **Boundary:** the public contract is transport-agnostic by design. Portability across arbitrary tools is not yet validated.
 
@@ -97,7 +97,7 @@ formed intent
 - `implementation`: [AI_DISCOVERY.md](AI_DISCOVERY.md)
 - `implementation`: [ai-manifest.json](ai-manifest.json)
 - `design`: [CURRENT_DIRECTION.md](CURRENT_DIRECTION.md)
-- `prospective_test`: [Ruafieldphase/shion-presence/DISCOVERY_EVAL.md](https://github.com/Ruafieldphase/shion-presence/blob/main/DISCOVERY_EVAL.md) after merge
+- `evaluation_plan`: [Ruafieldphase/shion-presence/DISCOVERY_EVAL.md](https://github.com/Ruafieldphase/shion-presence/blob/main/DISCOVERY_EVAL.md) after merge
 
 **Boundary:** the documents exist, but search-result discoverability and fresh-agent selection have not yet been validated. Repository descriptions/topics require a separate metadata update.
 
