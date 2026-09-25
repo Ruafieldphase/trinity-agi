@@ -4,7 +4,9 @@ Snapshot: 2026-09-25.
 
 This document shows how Trinity's operational problem changed, what public evidence exists, and what remains open.
 
-Shared status semantics are defined once in `Ruafieldphase/shion-presence/AI_DISCOVERY_CONTRACT.md` v0.1.
+Shared status semantics are defined by the immutable v0.1 contract snapshot:
+
+- [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/AI_DISCOVERY_CONTRACT.md)
 
 ## T0 — Remembered intent acting as current permission
 
@@ -19,7 +21,9 @@ Shared status semantics are defined once in `Ruafieldphase/shion-presence/AI_DIS
 - `implementation`: [scripts/upload_to_youtube.py](scripts/upload_to_youtube.py) requires explicit confirmation for live/public upload
 - `history_anchor`: [2026-08-16 operation-currentness audit](https://github.com/Ruafieldphase/trinity-agi/commit/82a7010f17addbf0d7e510a6c85cefaae1b8995e)
 
-**Boundary:** validation is limited to selected public code paths and public safety/currentness behavior. It does not prove that every historical script, private tool route, or external target is safe/current.
+**Boundary:**  
+**tested / directly supported:** selected public upload paths default to dry-run and require explicit confirmation before live/public upload.  
+**not tested / unresolved:** automatic detection of changed paths, credentials, services, targets, or environment state across the repository; general proof that every remembered plan is revalidated before action.
 
 **Current response:**
 
@@ -33,22 +37,23 @@ formed intent
 → receipt
 ```
 
+If the problem is primarily **memory/current-truth drift without an action boundary**, route to the Shion memory/currentness layer (P1).
+
 **What this exposed next:** repositories themselves contain stale operational assumptions that can still look executable.
 
 ## T1 — Repository history looking executable and current
 
 **Problem shape:** old code can still look authoritative because it remains runnable or sits on the default branch.
 
-**Maturity:** `partially_validated`  
+**Maturity:** `framed`  
 **Activity:** `active`
 
 **Evidence:**
-- `observation`: [REPOSITORY_CURRENTNESS_AUDIT.md](REPOSITORY_CURRENTNESS_AUDIT.md) identifies current/historical/conceptual/inspect-before-use classes
-- `implementation`: [CODE_STATUS.md](CODE_STATUS.md) defines inspect-before-use rules
-- `implementation`: [.agents/workflows/auto_start.md](.agents/workflows/auto_start.md) is explicitly retained as a historical disabled recipe
-- `history_anchor`: [2026-08-16 currentness audit commit](https://github.com/Ruafieldphase/trinity-agi/commit/82a7010f17addbf0d7e510a6c85cefaae1b8995e)
+- `design`: [REPOSITORY_CURRENTNESS_AUDIT.md](REPOSITORY_CURRENTNESS_AUDIT.md) defines current/historical/conceptual/inspect-before-use classes
+- `design`: [CODE_STATUS.md](CODE_STATUS.md) defines inspect-before-use rules
+- `history_anchor`: [2026-08-16 currentness audit commit](https://github.com/Ruafieldphase/trinity-agi/commit/82a7010f17addbf0d7e510a6c85cefaae1b8995e), which also records the stale auto-start recipe as disabled current authority
 
-**Boundary:** this demonstrates the public repository classification and stale-auto-start correction. It does not establish current private runtime status for every preserved executable.
+**Boundary:** the repository has an explicit classification/currentness design and a historical correction. This does not establish current private runtime status for every preserved executable.
 
 **What remains open:** scaling currentness classification as repositories and tool surfaces grow.
 
@@ -94,12 +99,12 @@ formed intent
 **Activity:** `frontier`
 
 **Evidence:**
-- `implementation`: [AI_DISCOVERY.md](AI_DISCOVERY.md)
-- `implementation`: [ai-manifest.json](ai-manifest.json)
+- `design`: [AI_DISCOVERY.md](AI_DISCOVERY.md)
+- `implementation`: [ai-manifest.json](ai-manifest.json) provides the v0.1 machine-readable pointer index
 - `design`: [CURRENT_DIRECTION.md](CURRENT_DIRECTION.md)
-- `evaluation_plan`: [Ruafieldphase/shion-presence/DISCOVERY_EVAL.md](https://github.com/Ruafieldphase/shion-presence/blob/main/DISCOVERY_EVAL.md) after merge
+- `evaluation_plan`: [shared predeclared discovery evaluation](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/DISCOVERY_EVAL.md)
 
-**Boundary:** the documents exist, but search-result discoverability and fresh-agent selection have not yet been validated. Repository descriptions/topics require a separate metadata update.
+**Boundary:** the discovery interface exists, but search-result discoverability and fresh-agent selection have not yet been validated. Repository descriptions/topics require a separate metadata update.
 
 **Desired property:** an external AI can say:
 
