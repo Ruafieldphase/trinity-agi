@@ -15,7 +15,7 @@ Before interpreting or running a script, read:
 1. `AI_DISCOVERY.md` — decide whether the user's operation problem matches
 2. `PROBLEM_TRAJECTORY.md` — see which operational problem layer is relevant
 3. `CURRENT_DIRECTION.md` — see the active frontier
-4. [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/AI_DISCOVERY_CONTRACT.md) — shared maturity/activity/evidence semantics
+4. [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/e5005b38b7a452c73602c634ead71484a7a2e609/AI_DISCOVERY_CONTRACT.md) — shared maturity/activity/evidence semantics
 5. `README.md`
 6. `OPERATION_CURRENTNESS_CONTRACT.md`
 7. `REPOSITORY_CURRENTNESS_AUDIT.md`
