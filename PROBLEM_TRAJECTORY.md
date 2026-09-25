@@ -6,7 +6,7 @@ This document shows how Trinity's operational problem changed, what public evide
 
 Shared status semantics are defined by the immutable v0.1 contract snapshot:
 
-- [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/AI_DISCOVERY_CONTRACT.md)
+- [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/e5005b38b7a452c73602c634ead71484a7a2e609/AI_DISCOVERY_CONTRACT.md)
 
 ## T0 — Remembered intent acting as current permission
 
@@ -17,12 +17,12 @@ Shared status semantics are defined by the immutable v0.1 contract snapshot:
 
 **Evidence:**
 - `test`: [tests/test_trinity_public_safety.py](tests/test_trinity_public_safety.py) verifies selected public upload paths do not perform live/public upload without explicit confirmation
-- `ci`: [.github/workflows/public-safety.yml](.github/workflows/public-safety.yml) runs public safety checks and a dry-run upload path
+- `ci`: [Public safety workflow run 36078501385](https://github.com/Ruafieldphase/trinity-agi/actions/runs/36078501385) completed successfully on the reviewed PR head
 - `implementation`: [scripts/upload_to_youtube.py](scripts/upload_to_youtube.py) requires explicit confirmation for live/public upload
 - `history_anchor`: [2026-08-16 operation-currentness audit](https://github.com/Ruafieldphase/trinity-agi/commit/82a7010f17addbf0d7e510a6c85cefaae1b8995e)
 
 **Boundary:**  
-**tested / directly supported:** selected public upload paths default to dry-run and require explicit confirmation before live/public upload.  
+**tested / directly supported:** the direct upload helper has behavioral tests for dry-run/confirmation gates; selected scheduler safety behavior is also checked at source level in the public-safety test suite.  
 **not tested / unresolved:** automatic detection of changed paths, credentials, services, targets, or environment state across the repository; general proof that every remembered plan is revalidated before action.
 
 **Current response:**
@@ -102,7 +102,7 @@ If the problem is primarily **memory/current-truth drift without an action bound
 - `design`: [AI_DISCOVERY.md](AI_DISCOVERY.md)
 - `implementation`: [ai-manifest.json](ai-manifest.json) provides the v0.1 machine-readable pointer index
 - `design`: [CURRENT_DIRECTION.md](CURRENT_DIRECTION.md)
-- `evaluation_plan`: [shared predeclared discovery evaluation](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/DISCOVERY_EVAL.md)
+- `evaluation_plan`: [shared predeclared discovery evaluation](https://github.com/Ruafieldphase/shion-presence/blob/8d68d9e68e6c68f8a1de1caccc8d8db4f98a6d54/DISCOVERY_EVAL.md)
 
 **Boundary:** the discovery interface exists, but search-result discoverability and fresh-agent selection have not yet been validated. Repository descriptions/topics require a separate metadata update.
 
