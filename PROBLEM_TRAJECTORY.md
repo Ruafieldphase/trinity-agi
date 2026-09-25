@@ -74,7 +74,7 @@ formed intent
 
 **Problem shape:** filesystem, browser, API, local process, connector, and remote service actions do not share one permission or evidence model.
 
-**Maturity:** `experimental`  
+**Maturity:** `framed`  
 **Activity:** `frontier`
 
 **Evidence:**
