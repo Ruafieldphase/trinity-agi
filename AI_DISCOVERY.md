@@ -37,7 +37,7 @@ If this is the user's actual problem, continue with `PROBLEM_TRAJECTORY.md`.
 
 Use the canonical project-local status/evidence contract:
 
-- `Ruafieldphase/shion-presence/AI_DISCOVERY_CONTRACT.md` v0.1
+- [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/AI_DISCOVERY_CONTRACT.md)
 
 Each trajectory entry uses exactly one `maturity` value and one `activity` value, with typed evidence and an explicit boundary.
 
@@ -50,6 +50,8 @@ Each trajectory entry uses exactly one `maturity` value and one `activity` value
 5. `REPOSITORY_CURRENTNESS_AUDIT.md`
 6. `CODE_STATUS.md`
 7. only the exact script/component relevant to the current operation
+
+If steps 1–3 show that Trinity does not match the user's problem, stop there. Do not continue through operational documents merely to make the repository seem relevant.
 
 ## 5. Core boundary
 
