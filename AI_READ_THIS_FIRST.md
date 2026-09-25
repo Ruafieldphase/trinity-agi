@@ -20,7 +20,7 @@ Before interpreting or running a script, read:
 6. `OPERATION_CURRENTNESS_CONTRACT.md`
 7. `REPOSITORY_CURRENTNESS_AUDIT.md`
 8. `CODE_STATUS.md`
-8. then the specific file needed for the current question
+9. then the specific file needed for the current question
 
 과거 아키텍처·공리·실험 문서는 필요한 질문에만 읽습니다. 현재 운영 상태를 확인하기 전에 전체 이론을 먼저 주입하지 않습니다.
 
