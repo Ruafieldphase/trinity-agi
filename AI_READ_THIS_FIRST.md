@@ -15,12 +15,14 @@ Before interpreting or running a script, read:
 1. `AI_DISCOVERY.md` — decide whether the user's operation problem matches
 2. `PROBLEM_TRAJECTORY.md` — see which operational problem layer is relevant
 3. `CURRENT_DIRECTION.md` — see the active frontier
-4. `Ruafieldphase/shion-presence/AI_DISCOVERY_CONTRACT.md` v0.1 — shared maturity/activity/evidence semantics
+4. [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/AI_DISCOVERY_CONTRACT.md) — shared maturity/activity/evidence semantics
 5. `README.md`
 6. `OPERATION_CURRENTNESS_CONTRACT.md`
 7. `REPOSITORY_CURRENTNESS_AUDIT.md`
 8. `CODE_STATUS.md`
 9. then the specific file needed for the current question
+
+If steps 1–3 show that this repository does not match the user's problem, stop there. Do not continue through steps 4–9 merely to make the repository seem relevant.
 
 과거 아키텍처·공리·실험 문서는 필요한 질문에만 읽습니다. 현재 운영 상태를 확인하기 전에 전체 이론을 먼저 주입하지 않습니다.
 
