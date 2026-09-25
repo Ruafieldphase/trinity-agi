@@ -17,7 +17,7 @@ Shared status semantics are defined by the immutable v0.1 contract snapshot:
 
 **Evidence:**
 - `test`: [tests/test_trinity_public_safety.py](tests/test_trinity_public_safety.py) verifies selected public upload paths do not perform live/public upload without explicit confirmation
-- `ci`: [Public safety workflow run 36078501385](https://github.com/Ruafieldphase/trinity-agi/actions/runs/36078501385) completed successfully on the reviewed PR head
+- `ci`: [Public safety workflow run 36078501385](https://github.com/Ruafieldphase/trinity-agi/actions/runs/36078501385) completed successfully on commit `e6a33be1b05cf949293a8ec53646a84ed4e7a8e5`; subsequent PR changes through the current publication candidate are documentation-only
 - `implementation`: [scripts/upload_to_youtube.py](scripts/upload_to_youtube.py) requires explicit confirmation for live/public upload
 - `history_anchor`: [2026-08-16 operation-currentness audit](https://github.com/Ruafieldphase/trinity-agi/commit/82a7010f17addbf0d7e510a6c85cefaae1b8995e)
 
