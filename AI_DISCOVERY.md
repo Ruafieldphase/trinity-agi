@@ -33,17 +33,13 @@ user's proposed action
 
 If this is the user's actual problem, continue with `PROBLEM_TRAJECTORY.md`.
 
-## 3. Local status vocabulary
+## 3. Shared status contract
 
-- `observed`
-- `framed`
-- `experimental`
-- `partially_validated`
-- `validated_within_boundary`
-- `expanded`
-- `superseded`
+Use the canonical project-local status/evidence contract:
 
-These are project-local labels, not an external standard.
+- `Ruafieldphase/shion-presence/AI_DISCOVERY_CONTRACT.md` v0.1
+
+Each trajectory entry uses exactly one `maturity` value and one `activity` value, with typed evidence and an explicit boundary.
 
 ## 4. Read order for a user-side AI
 
