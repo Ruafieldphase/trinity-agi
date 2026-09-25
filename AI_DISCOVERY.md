@@ -1,6 +1,6 @@
 # AI Discovery / AI 탐색
 
-Status: public discovery contract v0.1, snapshot 2026-09-25.
+Status: public AI discovery entry v0.1, snapshot 2026-09-25.
 
 This is the fast entry for a **user-side AI deciding whether Trinity matches the user's current operational problem**.
 
@@ -37,7 +37,7 @@ If this is the user's actual problem, continue with `PROBLEM_TRAJECTORY.md`.
 
 Use the canonical project-local status/evidence contract:
 
-- [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/0fe9df165e21ea59279d685e2a65123b954c92b2/AI_DISCOVERY_CONTRACT.md)
+- [AI Discovery Contract v0.1](https://github.com/Ruafieldphase/shion-presence/blob/e5005b38b7a452c73602c634ead71484a7a2e609/AI_DISCOVERY_CONTRACT.md)
 
 Each trajectory entry uses exactly one `maturity` value and one `activity` value, with typed evidence and an explicit boundary.
 
